@@ -36,7 +36,7 @@ fn main() {
 
     let mut target = vec![0];
     println!("   Initial: {:?}", target);
-    conditional.mutate_once(&mut target);
+    conditional.apply(&mut target);
     println!("   Result: {:?}\n", target);
 
     // 2. Conditional execution - when condition is not satisfied
@@ -53,7 +53,7 @@ fn main() {
 
     let mut target = vec![0];
     println!("   Initial: {:?}", target);
-    conditional.mutate_once(&mut target);
+    conditional.apply(&mut target);
     println!("   Result: {:?} (unchanged)\n", target);
 
     // 3. Using BoxPredicate
@@ -71,7 +71,7 @@ fn main() {
 
     let mut target = vec![0];
     println!("   Initial: {:?}", target);
-    conditional.mutate_once(&mut target);
+    conditional.apply(&mut target);
     println!("   Result: {:?}\n", target);
 
     // 4. Using composed predicate
@@ -93,7 +93,7 @@ fn main() {
 
     let mut target = vec![0];
     println!("   Initial: {:?}", target);
-    conditional.mutate_once(&mut target);
+    conditional.apply(&mut target);
     println!("   Result: {:?}\n", target);
 
     // 5. If-then-else with or_else - when branch
@@ -115,7 +115,7 @@ fn main() {
 
     let mut target = vec![0];
     println!("   Initial: {:?}", target);
-    mutator.mutate_once(&mut target);
+    mutator.apply(&mut target);
     println!("   Result: {:?}\n", target);
 
     // 6. If-then-else with or_else - else branch
@@ -137,7 +137,7 @@ fn main() {
 
     let mut target = vec![0];
     println!("   Initial: {:?}", target);
-    mutator.mutate_once(&mut target);
+    mutator.apply(&mut target);
     println!("   Result: {:?}\n", target);
 
     // 7. Conditional with integers
@@ -153,7 +153,7 @@ fn main() {
 
     let mut positive = 5;
     println!("   Initial (positive): {}", positive);
-    mutator.mutate_once(&mut positive);
+    mutator.apply(&mut positive);
     println!("   Result: {}\n", positive);
 
     // 8. Conditional with integers - not executed
@@ -169,7 +169,7 @@ fn main() {
 
     let mut negative = -5;
     println!("   Initial (negative): {}", negative);
-    mutator.mutate_once(&mut negative);
+    mutator.apply(&mut negative);
     println!("   Result: {} (unchanged)\n", negative);
 
     // 9. Chaining conditional mutators
@@ -198,7 +198,7 @@ fn main() {
 
     let mut target = vec![0];
     println!("   Initial: {:?}", target);
-    chained.mutate_once(&mut target);
+    chained.apply(&mut target);
     println!("   Result: {:?}\n", target);
 
     // 10. Complex conditional chain
@@ -226,7 +226,7 @@ fn main() {
 
     let mut target = vec![0];
     println!("   Initial: {:?}", target);
-    mutator.mutate_once(&mut target);
+    mutator.apply(&mut target);
     println!("   Result: {:?}\n", target);
 
     // 11. Real-world scenario: data validation and processing
@@ -258,10 +258,10 @@ fn main() {
 
             if is_valid {
                 if let Some(callback) = self.on_valid.take() {
-                    callback.mutate_once(data);
+                    callback.apply(data);
                 }
             } else if let Some(callback) = self.on_invalid.take() {
-                callback.mutate_once(data);
+                callback.apply(data);
             }
         }
     }

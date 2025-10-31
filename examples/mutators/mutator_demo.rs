@@ -37,7 +37,7 @@ fn main() {
     });
     let mut value = 5;
     println!("Initial value: {}", value);
-    mutator.mutate(&mut value);
+    mutator.apply(&mut value);
     println!("After BoxMutator execution: {}\n", value);
 
     // ========================================================================
@@ -58,7 +58,7 @@ fn main() {
 
     let mut value = 5;
     println!("Initial value: {}", value);
-    chained.mutate(&mut value);
+    chained.apply(&mut value);
     println!("Result: {} (5 * 2 + 10 = 20, 20 * 20 = 400)\n", value);
 
     // ========================================================================
@@ -71,7 +71,7 @@ fn main() {
 
     let mut value = 5;
     println!("Initial value: {}", value);
-    closure_chain.mutate(&mut value);
+    closure_chain.apply(&mut value);
     println!("Result: {} (5 * 2 + 10 = 20)\n", value);
 
     // ========================================================================
@@ -84,7 +84,7 @@ fn main() {
     let mut noop = BoxMutator::<i32>::noop();
     let mut value = 42;
     println!("Before noop: {}", value);
-    noop.mutate(&mut value);
+    noop.apply(&mut value);
     println!("After noop: {} (unchanged)\n", value);
 
     // ========================================================================
@@ -102,8 +102,8 @@ fn main() {
         "Before when - positive: {}, negative: {}",
         positive, negative
     );
-    increment_if_positive.mutate(&mut positive);
-    increment_if_positive.mutate(&mut negative);
+    increment_if_positive.apply(&mut positive);
+    increment_if_positive.apply(&mut negative);
     println!(
         "After when - positive: {}, negative: {}\n",
         positive, negative
@@ -120,8 +120,8 @@ fn main() {
         "Before when().or_else() - positive: {}, negative: {}",
         positive, negative
     );
-    adjust.mutate(&mut positive);
-    adjust.mutate(&mut negative);
+    adjust.apply(&mut positive);
+    adjust.apply(&mut negative);
     println!(
         "After when().or_else() - positive: {}, negative: {}\n",
         positive, negative
@@ -140,7 +140,7 @@ fn main() {
     let handle = thread::spawn(move || {
         let mut value = 5;
         let mut mutator = shared_clone;
-        mutator.mutate(&mut value);
+        mutator.apply(&mut value);
         println!("In thread: 5 * 2 = {}", value);
         value
     });
@@ -148,7 +148,7 @@ fn main() {
     // Use in main thread
     let mut value = 3;
     let mut mutator = shared;
-    mutator.mutate(&mut value);
+    mutator.apply(&mut value);
     println!("Main thread: 3 * 2 = {}", value);
 
     let thread_result = handle.join().unwrap();
@@ -169,18 +169,18 @@ fn main() {
 
     let mut value1 = 5;
     let mut p1 = pipeline1;
-    p1.mutate(&mut value1);
+    p1.apply(&mut value1);
     println!("pipeline1 (double then add): 5 -> {}", value1);
 
     let mut value2 = 5;
     let mut p2 = pipeline2;
-    p2.mutate(&mut value2);
+    p2.apply(&mut value2);
     println!("pipeline2 (add then double): 5 -> {}", value2);
 
     // double and add_ten are still available
     let mut value3 = 10;
     let mut d = double;
-    d.mutate(&mut value3);
+    d.apply(&mut value3);
     println!("Original double still available: 10 -> {}\n", value3);
 
     // ========================================================================
@@ -197,17 +197,17 @@ fn main() {
 
     let mut value1 = 5;
     let mut c1 = clone1;
-    c1.mutate(&mut value1);
+    c1.apply(&mut value1);
     println!("clone1: 5 -> {}", value1);
 
     let mut value2 = 3;
     let mut c2 = clone2;
-    c2.mutate(&mut value2);
+    c2.apply(&mut value2);
     println!("clone2: 3 -> {}", value2);
 
     let mut value3 = 7;
     let mut c3 = rc_mutator;
-    c3.mutate(&mut value3);
+    c3.apply(&mut value3);
     println!("Original: 7 -> {}\n", value3);
 
     // ========================================================================
@@ -224,12 +224,12 @@ fn main() {
 
     let mut value1 = 5;
     let mut p1 = pipeline1;
-    p1.mutate(&mut value1);
+    p1.apply(&mut value1);
     println!("pipeline1 (double then add): 5 -> {}", value1);
 
     let mut value2 = 5;
     let mut p2 = pipeline2;
-    p2.mutate(&mut value2);
+    p2.apply(&mut value2);
     println!("pipeline2 (add then double): 5 -> {}\n", value2);
 
     // ========================================================================
@@ -240,7 +240,7 @@ fn main() {
 
     fn apply_to_all<M: Mutator<i32>>(mutator: &mut M, values: &mut [i32]) {
         for value in values.iter_mut() {
-            mutator.mutate(value);
+            mutator.apply(value);
         }
     }
 
@@ -288,15 +288,15 @@ fn main() {
     });
 
     let mut value1 = -50;
-    pipeline.mutate(&mut value1);
+    pipeline.apply(&mut value1);
     println!("-50 -> {}", value1);
 
     let mut value2 = 200;
-    pipeline.mutate(&mut value2);
+    pipeline.apply(&mut value2);
     println!("200 -> {}", value2);
 
     let mut value3 = 30;
-    pipeline.mutate(&mut value3);
+    pipeline.apply(&mut value3);
     println!("30 -> {}\n", value3);
 
     // ========================================================================
@@ -311,7 +311,7 @@ fn main() {
 
     let mut text = String::from("Hello World");
     println!("Original: {}", text);
-    string_processor.mutate(&mut text);
+    string_processor.apply(&mut text);
     println!("After processing: {}\n", text);
 
     // ========================================================================
@@ -324,35 +324,35 @@ fn main() {
     let closure = |x: &mut i32| *x *= 2;
     let mut box_mut = closure.into_box();
     let mut value = 5;
-    box_mut.mutate(&mut value);
+    box_mut.apply(&mut value);
     println!("Closure -> BoxMutator: 5 -> {}", value);
 
     // Closure -> RcMutator
     let closure = |x: &mut i32| *x *= 2;
     let mut rc_mut = closure.into_rc();
     let mut value = 5;
-    rc_mut.mutate(&mut value);
+    rc_mut.apply(&mut value);
     println!("Closure -> RcMutator: 5 -> {}", value);
 
     // Closure -> ArcMutator
     let closure = |x: &mut i32| *x *= 2;
     let mut arc_mut = closure.into_arc();
     let mut value = 5;
-    arc_mut.mutate(&mut value);
+    arc_mut.apply(&mut value);
     println!("Closure -> ArcMutator: 5 -> {}", value);
 
     // BoxMutator -> RcMutator
     let box_mut = BoxMutator::new(|x: &mut i32| *x *= 2);
     let mut rc_mut = box_mut.into_rc();
     let mut value = 5;
-    rc_mut.mutate(&mut value);
+    rc_mut.apply(&mut value);
     println!("BoxMutator -> RcMutator: 5 -> {}", value);
 
     // RcMutator -> BoxMutator
     let rc_mut = RcMutator::new(|x: &mut i32| *x *= 2);
     let mut box_mut = rc_mut.into_box();
     let mut value = 5;
-    box_mut.mutate(&mut value);
+    box_mut.apply(&mut value);
     println!("RcMutator -> BoxMutator: 5 -> {}\n", value);
 
     // ========================================================================
@@ -373,7 +373,7 @@ fn main() {
 
     let mut point = Point { x: 3, y: 4 };
     println!("Original point: {:?}", point);
-    processor.mutate(&mut point);
+    processor.apply(&mut point);
     println!("After processing: {:?}\n", point);
 
     println!("=== All Examples Completed ===");
