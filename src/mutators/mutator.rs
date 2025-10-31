@@ -656,8 +656,6 @@ where
         }
     }
 
-    impl_mutator_noop!(new);
-
     /// Chains another mutator in sequence
     ///
     /// Returns a new mutator that first executes the current operation, then
