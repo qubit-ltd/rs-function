@@ -797,6 +797,6 @@ consumer.accept_once(&mut value);
 // 新代码
 use prism3_function::{Mutator, BoxMutator};
 let mut mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
-mutator.mutate(&mut value);
+mutator.apply(&mut value);
 ```
 

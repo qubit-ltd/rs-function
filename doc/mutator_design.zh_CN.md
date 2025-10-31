@@ -239,11 +239,11 @@ let mut mutator = BoxMutator::new(|x: &mut i32| *x *= 2)
     .or_else(|x: &mut i32| *x -= 1);  // 否则：减1
 
 let mut positive = 5;
-mutator.mutate(&mut positive);
+mutator.apply(&mut positive);
 assert_eq!(positive, 10);  // 5 * 2
 
 let mut negative = -5;
-mutator.mutate(&mut negative);
+mutator.apply(&mut negative);
 assert_eq!(negative, -6);  // -5 - 1
 ```
 
@@ -392,14 +392,14 @@ use prism3_function::{Mutator, BoxMutator};
 // 简单修改
 let mut mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
 let mut value = 5;
-mutator.mutate(&mut value);
+mutator.apply(&mut value);
 assert_eq!(value, 10);
 
 // 方法链
 let mut chained = BoxMutator::new(|x: &mut i32| *x *= 2)
     .and_then(|x: &mut i32| *x += 10);
 let mut value = 5;
-chained.mutate(&mut value);
+chained.apply(&mut value);
 assert_eq!(value, 20);  // (5 * 2) + 10
 ```
 
@@ -413,11 +413,11 @@ let mut conditional = BoxMutator::new(|x: &mut i32| *x *= 2)
     .when(|x: &i32| *x > 0);
 
 let mut positive = 5;
-conditional.mutate(&mut positive);
+conditional.apply(&mut positive);
 assert_eq!(positive, 10);  // 执行
 
 let mut negative = -5;
-conditional.mutate(&mut negative);
+conditional.apply(&mut negative);
 assert_eq!(negative, -5);  // 不执行
 
 // if-then-else
@@ -426,11 +426,11 @@ let mut branched = BoxMutator::new(|x: &mut i32| *x *= 2)
     .or_else(|x: &mut i32| *x -= 1);
 
 let mut positive = 5;
-branched.mutate(&mut positive);
+branched.apply(&mut positive);
 assert_eq!(positive, 10);  // then 分支
 
 let mut negative = -5;
-branched.mutate(&mut negative);
+branched.apply(&mut negative);
 assert_eq!(negative, -6);  // else 分支
 ```
 
@@ -445,7 +445,7 @@ let clone = mutator.clone();
 
 let mut value = 5;
 let mut m = mutator;
-m.mutate(&mut value);
+m.apply(&mut value);
 assert_eq!(value, 10);
 
 // RcMutator：单线程共享（更高效）
@@ -454,7 +454,7 @@ let clone = mutator.clone();
 
 let mut value = 5;
 let mut m = mutator;
-m.mutate(&mut value);
+m.apply(&mut value);
 assert_eq!(value, 10);
 ```
 
@@ -468,7 +468,7 @@ fn apply_mutator<M: Mutator<i32>>(
     value: i32
 ) -> i32 {
     let mut val = value;
-    mutator.mutate(&mut val);
+    mutator.apply(&mut val);
     val
 }
 
@@ -496,7 +496,7 @@ Integer result = doubler.apply(5);  // result = 10, 原值不变
 // Rust：就地修改
 let mut mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
 let mut value = 5;
-mutator.mutate(&mut value);  // value = 10, 就地修改
+mutator.apply(&mut value);  // value = 10, 就地修改
 ```
 
 **关键差异**：
