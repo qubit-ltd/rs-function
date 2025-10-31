@@ -77,7 +77,7 @@
 //! // BoxMutator: Single ownership, consumes self
 //! let mut mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
 //! let mut value = 5;
-//! mutator.mutate(&mut value);
+//! mutator.apply(&mut value);
 //! assert_eq!(value, 10);
 //!
 //! // ArcMutator: Shared ownership, cloneable, thread-safe
@@ -85,7 +85,7 @@
 //! let clone = shared.clone();
 //! let mut value = 5;
 //! let mut m = shared;
-//! m.mutate(&mut value);
+//! m.apply(&mut value);
 //! assert_eq!(value, 10);
 //!
 //! // RcMutator: Shared ownership, cloneable, single-threaded
@@ -93,7 +93,7 @@
 //! let clone = rc.clone();
 //! let mut value = 5;
 //! let mut m = rc;
-//! m.mutate(&mut value);
+//! m.apply(&mut value);
 //! assert_eq!(value, 10);
 //! ```
 //!
@@ -106,7 +106,7 @@
 //! let mut chained = BoxMutator::new(|x: &mut i32| *x *= 2)
 //!     .and_then(|x: &mut i32| *x += 10);
 //! let mut value = 5;
-//! chained.mutate(&mut value);
+//! chained.apply(&mut value);
 //! assert_eq!(value, 20); // (5 * 2) + 10
 //!
 //! // ArcMutator: Borrows &self, original still usable
@@ -123,17 +123,17 @@
 //! ```rust
 //! use prism3_function::{Mutator, FnMutatorOps};
 //!
-//! // Closures can use .mutate() directly
+//! // Closures can use .apply() directly
 //! let mut closure = |x: &mut i32| *x *= 2;
 //! let mut value = 5;
-//! closure.mutate(&mut value);
+//! closure.apply(&mut value);
 //! assert_eq!(value, 10);
 //!
 //! // Closures can be chained, returning BoxMutator
 //! let mut chained = (|x: &mut i32| *x *= 2)
 //!     .and_then(|x: &mut i32| *x += 10);
 //! let mut value = 5;
-//! chained.mutate(&mut value);
+//! chained.apply(&mut value);
 //! assert_eq!(value, 20);
 //! ```
 //!
@@ -167,11 +167,11 @@
 //!     .when(|x: &i32| *x > 0);
 //!
 //! let mut positive = 5;
-//! conditional.mutate(&mut positive);
+//! conditional.apply(&mut positive);
 //! assert_eq!(positive, 10); // Executed
 //!
 //! let mut negative = -5;
-//! conditional.mutate(&mut negative);
+//! conditional.apply(&mut negative);
 //! assert_eq!(negative, -5); // Not executed
 //!
 //! // Conditional with else branch (if-then-else)
@@ -180,11 +180,11 @@
 //!     .or_else(|x: &mut i32| *x -= 1);
 //!
 //! let mut positive = 5;
-//! branched.mutate(&mut positive);
+//! branched.apply(&mut positive);
 //! assert_eq!(positive, 10); // when branch
 //!
 //! let mut negative = -5;
-//! branched.mutate(&mut negative);
+//! branched.apply(&mut negative);
 //! assert_eq!(negative, -6); // or_else branch
 //! ```
 //!
@@ -201,7 +201,6 @@ use std::sync::{
 
 use crate::mutators::mutator_once::{
     BoxMutatorOnce,
-    MutatorOnce,
 };
 use crate::predicates::predicate::{
     ArcPredicate,
@@ -211,7 +210,17 @@ use crate::predicates::predicate::{
 };
 
 // ============================================================================
-// 1. Mutator Trait - Unified Mutator Interface
+// 1. Type Aliases
+// ============================================================================
+
+/// Type alias for Arc-wrapped mutable mutator function
+type ArcMutMutatorFn<T> = Arc<Mutex<dyn FnMut(&mut T) + Send>>;
+
+/// Type alias for Rc-wrapped mutable mutator function
+type RcMutMutatorFn<T> = Rc<RefCell<dyn FnMut(&mut T)>>;
+
+// ============================================================================
+// 2. Mutator Trait - Unified Mutator Interface
 // ============================================================================
 
 /// Mutator trait - Unified mutator interface
@@ -252,7 +261,7 @@ use crate::predicates::predicate::{
 ///     value: i32
 /// ) -> i32 {
 ///     let mut val = value;
-///     mutator.mutate(&mut val);
+///     mutator.apply(&mut val);
 ///     val
 /// }
 ///
@@ -300,10 +309,10 @@ pub trait StatefulMutator<T> {
     ///
     /// let mut mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
     /// let mut value = 5;
-    /// mutator.mutate(&mut value);
+    /// mutator.apply(&mut value);
     /// assert_eq!(value, 10);
     /// ```
-    fn mutate(&mut self, value: &mut T);
+    fn apply(&mut self, value: &mut T);
 
     /// Convert this mutator into a `BoxMutator<T>`.
     ///
@@ -330,7 +339,7 @@ pub trait StatefulMutator<T> {
     /// let closure = |x: &mut i32| *x *= 2;
     /// let mut boxed = closure.into_box();
     /// let mut value = 5;
-    /// boxed.mutate(&mut value);
+    /// boxed.apply(&mut value);
     /// assert_eq!(value, 10);
     /// ```
     fn into_box(mut self) -> BoxStatefulMutator<T>
@@ -338,7 +347,7 @@ pub trait StatefulMutator<T> {
         Self: Sized + 'static,
         T: 'static,
     {
-        BoxStatefulMutator::new(move |t| self.mutate(t))
+        BoxStatefulMutator::new(move |t| self.apply(t))
     }
 
     /// Convert this mutator into an `RcMutator<T>`.
@@ -364,7 +373,7 @@ pub trait StatefulMutator<T> {
     /// let closure = |x: &mut i32| *x *= 2;
     /// let mut rc = closure.into_rc();
     /// let mut value = 5;
-    /// rc.mutate(&mut value);
+    /// rc.apply(&mut value);
     /// assert_eq!(value, 10);
     /// ```
     fn into_rc(mut self) -> RcStatefulMutator<T>
@@ -372,7 +381,7 @@ pub trait StatefulMutator<T> {
         Self: Sized + 'static,
         T: 'static,
     {
-        RcStatefulMutator::new(move |t| self.mutate(t))
+        RcStatefulMutator::new(move |t| self.apply(t))
     }
 
     /// Convert this mutator into an `ArcMutator<T>`.
@@ -398,7 +407,7 @@ pub trait StatefulMutator<T> {
     /// let closure = |x: &mut i32| *x *= 2;
     /// let mut arc = closure.into_arc();
     /// let mut value = 5;
-    /// arc.mutate(&mut value);
+    /// arc.apply(&mut value);
     /// assert_eq!(value, 10);
     /// ```
     fn into_arc(mut self) -> ArcStatefulMutator<T>
@@ -406,7 +415,7 @@ pub trait StatefulMutator<T> {
         Self: Sized + Send + 'static,
         T: Send + 'static,
     {
-        ArcStatefulMutator::new(move |t| self.mutate(t))
+        ArcStatefulMutator::new(move |t| self.apply(t))
     }
 
     /// Consume the mutator and return an `FnMut(&mut T)` closure.
@@ -439,7 +448,7 @@ pub trait StatefulMutator<T> {
         Self: Sized + 'static,
         T: 'static,
     {
-        move |t| self.mutate(t)
+        move |t| self.apply(t)
     }
 
     /// Create a non-consuming `BoxMutator<T>` that forwards to `self`.
@@ -510,17 +519,60 @@ pub trait StatefulMutator<T> {
     {
         self.clone().into_fn()
     }
+
+    /// Convert this mutator into a `BoxMutatorOnce<T>` (consuming).
+    ///
+    /// This consuming conversion takes ownership of `self` and returns a
+    /// boxed one-time mutator that forwards calls to the original mutator.
+    /// The returned mutator can only be used once.
+    ///
+    /// # Consumption
+    ///
+    /// This method consumes the mutator: the original value will no longer
+    /// be available after the call. For cloneable mutators call `.clone()`
+    /// before converting if you need to retain the original instance.
+    ///
+    /// # Returns
+    ///
+    /// A `BoxMutatorOnce<T>` that forwards to the original mutator.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use prism3_function::{StatefulMutator, BoxStatefulMutator,
+    ///                       BoxMutatorOnce};
+    ///
+    /// let mutator = BoxStatefulMutator::new(|x: &mut i32| *x *= 2);
+    /// let once_mutator = mutator.into_once();
+    /// let mut value = 5;
+    /// once_mutator.apply(&mut value);
+    /// assert_eq!(value, 10);
+    /// ```
+    fn into_once(mut self) -> BoxMutatorOnce<T>
+    where
+        Self: Sized + 'static,
+        T: 'static,
+    {
+        BoxMutatorOnce::new(move |t| self.apply(t))
+    }
+
+    /// Create a non-consuming `BoxMutatorOnce<T>` that forwards to `self`.
+    ///
+    /// The default implementation clones `self` (requires `Clone`) and
+    /// returns a boxed one-time mutator that calls the cloned instance.
+    /// Override this method if a more efficient conversion exists.
+    ///
+    /// # Returns
+    ///
+    /// A `BoxMutatorOnce<T>` that forwards to a clone of `self`.
+    fn to_once(&self) -> BoxMutatorOnce<T>
+    where
+        Self: Sized + Clone + 'static,
+        T: 'static,
+    {
+        self.clone().into_once()
+    }
 }
-
-// ============================================================================
-// 2. Type Aliases
-// ============================================================================
-
-/// Type alias for Arc-wrapped mutable mutator function
-type ArcMutMutatorFn<T> = Arc<Mutex<dyn FnMut(&mut T) + Send>>;
-
-/// Type alias for Rc-wrapped mutable mutator function
-type RcMutMutatorFn<T> = Rc<RefCell<dyn FnMut(&mut T)>>;
 
 // ============================================================================
 // 3. BoxMutator - Single Ownership Implementation
@@ -563,7 +615,7 @@ type RcMutMutatorFn<T> = Rc<RefCell<dyn FnMut(&mut T)>>;
 ///
 /// let mut mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
 /// let mut value = 5;
-/// mutator.mutate(&mut value);
+/// mutator.apply(&mut value);
 /// assert_eq!(value, 10);
 /// ```
 ///
@@ -595,7 +647,7 @@ where
     ///
     /// let mut mutator = BoxMutator::new(|x: &mut i32| *x += 1);
     /// let mut value = 5;
-    /// mutator.mutate(&mut value);
+    /// mutator.apply(&mut value);
     /// assert_eq!(value, 6);
     /// ```
     pub fn new<F>(f: F) -> Self
@@ -622,7 +674,7 @@ where
     ///
     /// let mut noop = BoxMutator::<i32>::noop();
     /// let mut value = 42;
-    /// noop.mutate(&mut value);
+    /// noop.apply(&mut value);
     /// assert_eq!(value, 42); // Value unchanged
     /// ```
     pub fn noop() -> Self {
@@ -663,9 +715,9 @@ where
     /// // second is moved here
     /// let mut chained = first.and_then(second);
     /// let mut value = 5;
-    /// chained.mutate(&mut value);
+    /// chained.apply(&mut value);
     /// assert_eq!(value, 20);
-    /// // second.mutate(&mut value); // Would not compile - moved
+    /// // second.apply(&mut value); // Would not compile - moved
     /// ```
     ///
     /// ## Preserving original with clone
@@ -679,12 +731,12 @@ where
     /// // Clone to preserve original
     /// let mut chained = first.and_then(second.clone());
     /// let mut value = 5;
-    /// chained.mutate(&mut value);
+    /// chained.apply(&mut value);
     /// assert_eq!(value, 20);
     ///
     /// // Original still usable
     /// let mut value2 = 3;
-    /// second.mutate(&mut value2);
+    /// second.apply(&mut value2);
     /// assert_eq!(value2, 13);
     /// ```
     pub fn and_then<C>(self, next: C) -> Self
@@ -732,11 +784,11 @@ where
     /// let mut conditional = mutator.when(|x: &i32| *x > 0);
     ///
     /// let mut positive = 5;
-    /// conditional.mutate(&mut positive);
+    /// conditional.apply(&mut positive);
     /// assert_eq!(positive, 10);
     ///
     /// let mut negative = -5;
-    /// conditional.mutate(&mut negative);
+    /// conditional.apply(&mut negative);
     /// assert_eq!(negative, -5); // Unchanged
     /// ```
     ///
@@ -751,7 +803,7 @@ where
     /// let mut conditional = mutator.when(pred);
     ///
     /// let mut value = 5;
-    /// conditional.mutate(&mut value);
+    /// conditional.apply(&mut value);
     /// assert_eq!(value, 10);
     /// ```
     ///
@@ -766,11 +818,11 @@ where
     /// let mut conditional = mutator.when(pred);
     ///
     /// let mut value = 4;
-    /// conditional.mutate(&mut value);
+    /// conditional.apply(&mut value);
     /// assert_eq!(value, 8); // Positive and even
     ///
     /// let mut odd = 3;
-    /// conditional.mutate(&mut odd);
+    /// conditional.apply(&mut odd);
     /// assert_eq!(odd, 3); // Positive but odd, unchanged
     /// ```
     pub fn when<P>(self, predicate: P) -> BoxConditionalStatefulMutator<T>
@@ -786,7 +838,7 @@ where
 }
 
 impl<T> StatefulMutator<T> for BoxStatefulMutator<T> {
-    fn mutate(&mut self, value: &mut T) {
+    fn apply(&mut self, value: &mut T) {
         (self.function)(value)
     }
 
@@ -820,317 +872,8 @@ impl<T> StatefulMutator<T> for BoxStatefulMutator<T> {
     // and calling BoxMutator::to_xxx() will cause a compile error
 }
 
-impl<T> MutatorOnce<T> for BoxStatefulMutator<T>
-where
-    T: 'static,
-{
-    /// Performs the one-time mutation operation
-    ///
-    /// Consumes self and executes the mutation operation on the given mutable
-    /// reference. This is a one-time operation that cannot be called again.
-    ///
-    /// # Parameters
-    ///
-    /// * `value` - A mutable reference to the value to be mutated
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{Mutator, MutatorOnce, BoxMutator};
-    ///
-    /// let mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
-    /// let mut value = 5;
-    /// mutator.mutate_once(&mut value);
-    /// assert_eq!(value, 10);
-    /// ```
-    fn mutate_once(mut self, value: &mut T) {
-        (self.function)(value)
-    }
-
-    /// Converts to `BoxMutatorOnce` (consuming)
-    ///
-    /// Consumes `self` and returns an owned `BoxMutatorOnce<T>`. This is an
-    /// identity conversion since `BoxMutator` already uses `Box<dyn FnMut>`.
-    ///
-    /// # Returns
-    ///
-    /// Returns `self` as `BoxMutatorOnce<T>`
-    fn into_box_once(mut self) -> BoxMutatorOnce<T>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        BoxMutatorOnce::new(move |t| (self.function)(t))
-    }
-
-    /// Converts to a consuming closure `FnOnce(&mut T)`
-    ///
-    /// Consumes `self` and returns a closure that, when invoked, calls the
-    /// mutation operation.
-    ///
-    /// # Returns
-    ///
-    /// A closure implementing `FnOnce(&mut T)` which forwards to the original
-    /// mutator.
-    fn into_fn_once(mut self) -> impl FnOnce(&mut T)
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        move |t| (self.function)(t)
-    }
-
-    // do NOT override MutatorOnce::to_box_once() because BoxMutator is not
-    // Clone and calling BoxMutator::to_box_once() will cause a compile error
-
-    // do NOT override MutatorOnce::to_fn_once() because BoxMutator is not
-    // Clone and calling BoxMutator::to_fn_once() will cause a compile error
-}
-
 // ============================================================================
-// 3. BoxConditionalMutator - Box-based Conditional Mutator
-// ============================================================================
-
-/// BoxConditionalMutator struct
-///
-/// A conditional mutator that only executes when a predicate is satisfied.
-/// Uses `BoxMutator` and `BoxPredicate` for single ownership semantics.
-///
-/// This type is typically created by calling `BoxMutator::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
-///
-/// # Features
-///
-/// - **Single Ownership**: Not cloneable, consumes `self` on use
-/// - **Conditional Execution**: Only mutates when predicate returns `true`
-/// - **Chainable**: Can add `or_else` branch to create if-then-else logic
-/// - **Implements Mutator**: Can be used anywhere a `Mutator` is expected
-///
-/// # Examples
-///
-/// ## Basic Conditional Execution
-///
-/// ```rust
-/// use prism3_function::{Mutator, BoxMutator};
-///
-/// let mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
-/// let mut conditional = mutator.when(|x: &i32| *x > 0);
-///
-/// let mut positive = 5;
-/// conditional.mutate(&mut positive);
-/// assert_eq!(positive, 10); // Executed
-///
-/// let mut negative = -5;
-/// conditional.mutate(&mut negative);
-/// assert_eq!(negative, -5); // Not executed
-/// ```
-///
-/// ## With or_else Branch
-///
-/// ```rust
-/// use prism3_function::{Mutator, BoxMutator};
-///
-/// let mut mutator = BoxMutator::new(|x: &mut i32| *x *= 2)
-///     .when(|x: &i32| *x > 0)
-///     .or_else(|x: &mut i32| *x -= 1);
-///
-/// let mut positive = 5;
-/// mutator.mutate(&mut positive);
-/// assert_eq!(positive, 10); // when branch executed
-///
-/// let mut negative = -5;
-/// mutator.mutate(&mut negative);
-/// assert_eq!(negative, -6); // or_else branch executed
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-pub struct BoxConditionalStatefulMutator<T> {
-    mutator: BoxStatefulMutator<T>,
-    predicate: BoxPredicate<T>,
-}
-
-impl<T> BoxConditionalStatefulMutator<T>
-where
-    T: 'static,
-{
-    /// Chains another mutator in sequence
-    ///
-    /// Combines the current conditional mutator with another mutator into a new
-    /// mutator. The current conditional mutator executes first, followed by the
-    /// next mutator.
-    ///
-    /// # Parameters
-    ///
-    /// * `next` - The next mutator to execute. **Note: This parameter is passed
-    ///   by value and will transfer ownership.** If you need to preserve the
-    ///   original mutator, clone it first (if it implements `Clone`). Can be:
-    ///   - A closure: `|x: &mut T|`
-    ///   - A `BoxMutator<T>`
-    ///   - An `ArcMutator<T>`
-    ///   - An `RcMutator<T>`
-    ///   - Any type implementing `Mutator<T>`
-    ///
-    /// # Returns
-    ///
-    /// Returns a new `BoxMutator<T>`
-    ///
-    /// # Examples
-    ///
-    /// ## Direct value passing (ownership transfer)
-    ///
-    /// ```rust
-    /// use prism3_function::{Mutator, BoxMutator};
-    ///
-    /// let cond1 = BoxMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
-    /// let cond2 = BoxMutator::new(|x: &mut i32| *x = 100).when(|x: &i32| *x > 100);
-    ///
-    /// // cond2 is moved here
-    /// let mut chained = cond1.and_then(cond2);
-    /// let mut value = 60;
-    /// chained.mutate(&mut value);
-    /// assert_eq!(value, 100); // First *2 = 120, then capped to 100
-    /// // cond2.mutate(&mut value); // Would not compile - moved
-    /// ```
-    ///
-    /// ## Preserving original with clone
-    ///
-    /// ```rust
-    /// use prism3_function::{Mutator, BoxMutator};
-    ///
-    /// let cond1 = BoxMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
-    /// let cond2 = BoxMutator::new(|x: &mut i32| *x = 100).when(|x: &i32| *x > 100);
-    ///
-    /// // Clone to preserve original
-    /// let mut chained = cond1.and_then(cond2.clone());
-    /// let mut value = 60;
-    /// chained.mutate(&mut value);
-    /// assert_eq!(value, 100); // First *2 = 120, then capped to 100
-    ///
-    /// // Original still usable
-    /// let mut value2 = 50;
-    /// cond2.mutate(&mut value2);
-    /// assert_eq!(value2, 100);
-    /// ```
-    pub fn and_then<C>(self, next: C) -> BoxStatefulMutator<T>
-    where
-        C: StatefulMutator<T> + 'static,
-    {
-        let mut first = self;
-        let mut second = next.into_fn();
-        BoxStatefulMutator::new(move |t| {
-            first.mutate(t);
-            second(t);
-        })
-    }
-
-    /// Adds an else branch
-    ///
-    /// Executes the original mutator when the condition is satisfied, otherwise
-    /// executes else_mutator.
-    ///
-    /// # Parameters
-    ///
-    /// * `else_mutator` - The mutator for the else branch. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to preserve
-    ///   the original mutator, clone it first (if it implements `Clone`). Can be:
-    ///   - A closure: `|x: &mut T|`
-    ///   - A `BoxMutator<T>`
-    ///   - An `RcMutator<T>`
-    ///   - An `ArcMutator<T>`
-    ///   - Any type implementing `Mutator<T>`
-    ///
-    /// # Returns
-    ///
-    /// Returns the composed `BoxMutator<T>`
-    ///
-    /// # Examples
-    ///
-    /// ## Using a closure (recommended)
-    ///
-    /// ```rust
-    /// use prism3_function::{Mutator, BoxMutator};
-    ///
-    /// let mut mutator = BoxMutator::new(|x: &mut i32| *x *= 2)
-    ///     .when(|x: &i32| *x > 0)
-    ///     .or_else(|x: &mut i32| *x -= 1);
-    ///
-    /// let mut positive = 5;
-    /// mutator.mutate(&mut positive);
-    /// assert_eq!(positive, 10); // Condition satisfied, execute *2
-    ///
-    /// let mut negative = -5;
-    /// mutator.mutate(&mut negative);
-    /// assert_eq!(negative, -6); // Condition not satisfied, execute -1
-    /// ```
-    pub fn or_else<C>(self, else_mutator: C) -> BoxStatefulMutator<T>
-    where
-        C: StatefulMutator<T> + 'static,
-    {
-        let pred = self.predicate;
-        let mut then_mut = self.mutator;
-        let mut else_mut = else_mutator;
-        BoxStatefulMutator::new(move |t| {
-            if pred.test(t) {
-                then_mut.mutate(t);
-            } else {
-                else_mut.mutate(t);
-            }
-        })
-    }
-}
-
-impl<T> StatefulMutator<T> for BoxConditionalStatefulMutator<T>
-where
-    T: 'static,
-{
-    fn mutate(&mut self, value: &mut T) {
-        if self.predicate.test(value) {
-            self.mutator.mutate(value);
-        }
-    }
-
-    fn into_box(self) -> BoxStatefulMutator<T> {
-        let pred = self.predicate;
-        let mut mutator = self.mutator;
-        BoxStatefulMutator::new(move |t| {
-            if pred.test(t) {
-                mutator.mutate(t);
-            }
-        })
-    }
-
-    fn into_rc(self) -> RcStatefulMutator<T> {
-        let pred = self.predicate.into_rc();
-        let mutator = self.mutator.into_rc();
-        let mut mutator_fn = mutator;
-        RcStatefulMutator::new(move |t| {
-            if pred.test(t) {
-                mutator_fn.mutate(t);
-            }
-        })
-    }
-
-    // do NOT override Mutator::into_arc() because BoxConditionalMutator is not Send + Sync
-    // and calling BoxConditionalMutator::into_arc() will cause a compile error
-
-    fn into_fn(self) -> impl FnMut(&mut T) {
-        let pred = self.predicate;
-        let mut mutator = self.mutator;
-        move |t: &mut T| {
-            if pred.test(t) {
-                mutator.mutate(t);
-            }
-        }
-    }
-
-    // do NOT override Mutator::to_xxx() because BoxConditionalMutator is not Clone
-    // and calling BoxConditionalMutator::to_xxx() will cause a compile error
-}
-
-// ============================================================================
-// 4. RcMutator - Single-Threaded Shared Ownership Implementation
+// 3. RcMutator - Single-Threaded Shared Ownership Implementation
 // ============================================================================
 
 /// RcMutator struct
@@ -1322,7 +1065,7 @@ where
 }
 
 impl<T> StatefulMutator<T> for RcStatefulMutator<T> {
-    fn mutate(&mut self, value: &mut T) {
+    fn apply(&mut self, value: &mut T) {
         (self.function.borrow_mut())(value)
     }
 
@@ -1393,292 +1136,9 @@ impl<T> Clone for RcStatefulMutator<T> {
     }
 }
 
-impl<T> MutatorOnce<T> for RcStatefulMutator<T>
-where
-    T: 'static,
-{
-    /// Performs the one-time mutation operation
-    ///
-    /// Consumes self and executes the mutation operation on the given mutable
-    /// reference. This is a one-time operation that cannot be called again.
-    ///
-    /// # Parameters
-    ///
-    /// * `value` - A mutable reference to the value to be mutated
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{Mutator, MutatorOnce, RcMutator};
-    ///
-    /// let mutator = RcMutator::new(|x: &mut i32| *x *= 2);
-    /// let mut value = 5;
-    /// mutator.mutate_once(&mut value);
-    /// assert_eq!(value, 10);
-    /// ```
-    fn mutate_once(self, value: &mut T) {
-        (self.function.borrow_mut())(value)
-    }
-
-    /// Converts to `BoxMutatorOnce` (consuming)
-    ///
-    /// Consumes `self` and returns an owned `BoxMutatorOnce<T>`. The underlying
-    /// function is extracted from the `Rc<RefCell<>>` wrapper.
-    ///
-    /// # Returns
-    ///
-    /// Returns a `BoxMutatorOnce<T>` that forwards to the original mutator.
-    fn into_box_once(self) -> BoxMutatorOnce<T>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        BoxMutatorOnce::new(move |t| self.function.borrow_mut()(t))
-    }
-
-    /// Converts to a consuming closure `FnOnce(&mut T)`
-    ///
-    /// Consumes `self` and returns a closure that, when invoked, calls the
-    /// mutation operation.
-    ///
-    /// # Returns
-    ///
-    /// A closure implementing `FnOnce(&mut T)` which forwards to the original
-    /// mutator.
-    fn into_fn_once(self) -> impl FnOnce(&mut T)
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        move |t| self.function.borrow_mut()(t)
-    }
-
-    /// Non-consuming adapter to `BoxMutatorOnce`
-    ///
-    /// Creates a `BoxMutatorOnce<T>` that does not consume `self`. This method
-    /// clones the underlying `Rc` reference and creates a new boxed mutator.
-    ///
-    /// # Returns
-    ///
-    /// A `BoxMutatorOnce<T>` that forwards to a clone of `self`.
-    fn to_box_once(&self) -> BoxMutatorOnce<T>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        let self_fn = self.function.clone();
-        BoxMutatorOnce::new(move |t| self_fn.borrow_mut()(t))
-    }
-
-    /// Non-consuming adapter to a callable `FnOnce(&mut T)`
-    ///
-    /// Returns a closure that does not consume `self`. This method clones the
-    /// underlying `Rc` reference for the captured closure.
-    ///
-    /// # Returns
-    ///
-    /// A closure implementing `FnOnce(&mut T)` which forwards to a clone of
-    /// the original mutator.
-    fn to_fn_once(&self) -> impl FnOnce(&mut T)
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        let self_fn = self.function.clone();
-        move |t| self_fn.borrow_mut()(t)
-    }
-}
 
 // ============================================================================
-// 5. RcConditionalMutator - Rc-based Conditional Mutator
-// ============================================================================
-
-/// RcConditionalMutator struct
-///
-/// A single-threaded conditional mutator that only executes when a predicate is
-/// satisfied. Uses `RcMutator` and `RcPredicate` for shared ownership within a
-/// single thread.
-///
-/// This type is typically created by calling `RcMutator::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
-///
-/// # Features
-///
-/// - **Shared Ownership**: Cloneable via `Rc`, multiple owners allowed
-/// - **Single-Threaded**: Not thread-safe, cannot be sent across threads
-/// - **Conditional Execution**: Only mutates when predicate returns `true`
-/// - **No Lock Overhead**: More efficient than `ArcConditionalMutator`
-///
-/// # Examples
-///
-/// ```rust
-/// use prism3_function::{Mutator, RcMutator};
-///
-/// let conditional = RcMutator::new(|x: &mut i32| *x *= 2)
-///     .when(|x: &i32| *x > 0);
-///
-/// let conditional_clone = conditional.clone();
-///
-/// let mut value = 5;
-/// let mut m = conditional;
-/// m.mutate(&mut value);
-/// assert_eq!(value, 10);
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-pub struct RcConditionalStatefulMutator<T> {
-    mutator: RcStatefulMutator<T>,
-    predicate: RcPredicate<T>,
-}
-impl<T> StatefulMutator<T> for RcConditionalStatefulMutator<T>
-where
-    T: 'static,
-{
-    fn mutate(&mut self, value: &mut T) {
-        if self.predicate.test(value) {
-            self.mutator.mutate(value);
-        }
-    }
-
-    fn into_box(self) -> BoxStatefulMutator<T> {
-        let pred = self.predicate;
-        let mut mutator = self.mutator;
-        BoxStatefulMutator::new(move |t| {
-            if pred.test(t) {
-                mutator.mutate(t);
-            }
-        })
-    }
-
-    fn into_rc(self) -> RcStatefulMutator<T> {
-        let pred = self.predicate;
-        let mut mutator = self.mutator;
-        RcStatefulMutator::new(move |t| {
-            if pred.test(t) {
-                mutator.mutate(t);
-            }
-        })
-    }
-
-    // do NOT override Mutator::into_arc() because RcConditionalMutator is not Send + Sync
-    // and calling RcConditionalMutator::into_arc() will cause a compile error
-
-    fn into_fn(self) -> impl FnMut(&mut T) {
-        let pred = self.predicate;
-        let mut mutator = self.mutator;
-        move |t: &mut T| {
-            if pred.test(t) {
-                mutator.mutate(t);
-            }
-        }
-    }
-
-    fn to_box(&self) -> BoxStatefulMutator<T>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        self.clone().into_box()
-    }
-
-    fn to_rc(&self) -> RcStatefulMutator<T>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        self.clone().into_rc()
-    }
-
-    // do NOT override Mutator::to_arc() because RcMutator is not Send + Sync
-    // and calling RcMutator::to_arc() will cause a compile error
-
-    fn to_fn(&self) -> impl FnMut(&mut T)
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        self.clone().into_fn()
-    }
-}
-
-impl<T> RcConditionalStatefulMutator<T>
-where
-    T: 'static,
-{
-    /// Adds an else branch (single-threaded shared version)
-    ///
-    /// Executes the original mutator when the condition is satisfied, otherwise
-    /// executes else_mutator.
-    ///
-    /// # Parameters
-    ///
-    /// * `else_mutator` - The mutator for the else branch. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to preserve
-    ///   the original mutator, clone it first (if it implements `Clone`). Can be:
-    ///   - A closure: `|x: &mut T|`
-    ///   - An `RcMutator<T>`
-    ///   - A `BoxMutator<T>`
-    ///   - Any type implementing `Mutator<T>`
-    ///
-    /// # Returns
-    ///
-    /// Returns the composed `RcMutator<T>`
-    ///
-    /// # Examples
-    ///
-    /// ## Using a closure (recommended)
-    ///
-    /// ```rust
-    /// use prism3_function::{Mutator, RcMutator};
-    ///
-    /// let mut mutator = RcMutator::new(|x: &mut i32| *x *= 2)
-    ///     .when(|x: &i32| *x > 0)
-    ///     .or_else(|x: &mut i32| *x -= 1);
-    ///
-    /// let mut positive = 5;
-    /// mutator.mutate(&mut positive);
-    /// assert_eq!(positive, 10);
-    ///
-    /// let mut negative = -5;
-    /// mutator.mutate(&mut negative);
-    /// assert_eq!(negative, -6);
-    /// ```
-    pub fn or_else<M>(self, else_mutator: M) -> RcStatefulMutator<T>
-    where
-        M: StatefulMutator<T> + 'static,
-        T: 'static,
-    {
-        let pred = self.predicate;
-        let mut then_mut = self.mutator;
-        let mut else_mut = else_mutator;
-
-        RcStatefulMutator::new(move |t: &mut T| {
-            if pred.test(t) {
-                then_mut.mutate(t);
-            } else {
-                else_mut.mutate(t);
-            }
-        })
-    }
-}
-
-impl<T> Clone for RcConditionalStatefulMutator<T> {
-    /// Clones the conditional mutator
-    ///
-    /// Creates a new instance that shares the underlying mutator and predicate
-    /// with the original instance.
-    fn clone(&self) -> Self {
-        RcConditionalStatefulMutator {
-            mutator: self.mutator.clone(),
-            predicate: self.predicate.clone(),
-        }
-    }
-}
-
-// ============================================================================
-// 6. ArcMutator - Thread-Safe Shared Ownership Implementation
+// 4. ArcMutator - Thread-Safe Shared Ownership Implementation
 // ============================================================================
 
 /// ArcMutator struct
@@ -1874,7 +1334,7 @@ where
 }
 
 impl<T> StatefulMutator<T> for ArcStatefulMutator<T> {
-    fn mutate(&mut self, value: &mut T) {
+    fn apply(&mut self, value: &mut T) {
         (self.function.lock().unwrap())(value)
     }
 
@@ -1955,324 +1415,15 @@ impl<T> Clone for ArcStatefulMutator<T> {
     }
 }
 
-impl<T> MutatorOnce<T> for ArcStatefulMutator<T>
-where
-    T: Send + 'static,
-{
-    /// Performs the one-time mutation operation
-    ///
-    /// Consumes self and executes the mutation operation on the given mutable
-    /// reference. This is a one-time operation that cannot be called again.
-    ///
-    /// # Parameters
-    ///
-    /// * `value` - A mutable reference to the value to be mutated
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{Mutator, MutatorOnce, ArcMutator};
-    ///
-    /// let mutator = ArcMutator::new(|x: &mut i32| *x *= 2);
-    /// let mut value = 5;
-    /// mutator.mutate_once(&mut value);
-    /// assert_eq!(value, 10);
-    /// ```
-    fn mutate_once(self, value: &mut T) {
-        (self.function.lock().unwrap())(value)
-    }
-
-    /// Converts to `BoxMutatorOnce` (consuming)
-    ///
-    /// Consumes `self` and returns an owned `BoxMutatorOnce<T>`. The underlying
-    /// function is extracted from the `Arc<Mutex<>>` wrapper.
-    ///
-    /// # Returns
-    ///
-    /// Returns a `BoxMutatorOnce<T>` that forwards to the original mutator.
-    fn into_box_once(self) -> BoxMutatorOnce<T>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        BoxMutatorOnce::new(move |t| self.function.lock().unwrap()(t))
-    }
-
-    /// Converts to a consuming closure `FnOnce(&mut T)`
-    ///
-    /// Consumes `self` and returns a closure that, when invoked, calls the
-    /// mutation operation.
-    ///
-    /// # Returns
-    ///
-    /// A closure implementing `FnOnce(&mut T)` which forwards to the original
-    /// mutator.
-    fn into_fn_once(self) -> impl FnOnce(&mut T)
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        move |t| self.function.lock().unwrap()(t)
-    }
-
-    /// Non-consuming adapter to `BoxMutatorOnce`
-    ///
-    /// Creates a `BoxMutatorOnce<T>` that does not consume `self`. This method
-    /// clones the underlying `Arc` reference and creates a new boxed mutator.
-    ///
-    /// # Returns
-    ///
-    /// A `BoxMutatorOnce<T>` that forwards to a clone of `self`.
-    fn to_box_once(&self) -> BoxMutatorOnce<T>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        let self_fn = self.function.clone();
-        BoxMutatorOnce::new(move |t| self_fn.lock().unwrap()(t))
-    }
-
-    /// Non-consuming adapter to a callable `FnOnce(&mut T)`
-    ///
-    /// Returns a closure that does not consume `self`. This method clones the
-    /// underlying `Arc` reference for the captured closure.
-    ///
-    /// # Returns
-    ///
-    /// A closure implementing `FnOnce(&mut T)` which forwards to a clone of
-    /// the original mutator.
-    fn to_fn_once(&self) -> impl FnOnce(&mut T)
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        let self_fn = self.function.clone();
-        move |t| self_fn.lock().unwrap()(t)
-    }
-}
-
 // ============================================================================
-// 7. ArcConditionalMutator - Arc-based Conditional Mutator
-// ============================================================================
-
-/// ArcConditionalMutator struct
-///
-/// A thread-safe conditional mutator that only executes when a predicate is
-/// satisfied. Uses `ArcMutator` and `ArcPredicate` for shared ownership across
-/// threads.
-///
-/// This type is typically created by calling `ArcMutator::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
-///
-/// # Features
-///
-/// - **Shared Ownership**: Cloneable via `Arc`, multiple owners allowed
-/// - **Thread-Safe**: Implements `Send + Sync`, safe for concurrent use
-/// - **Conditional Execution**: Only mutates when predicate returns `true`
-/// - **Chainable**: Can add `or_else` branch to create if-then-else logic
-///
-/// # Examples
-///
-/// ```rust
-/// use prism3_function::{Mutator, ArcMutator};
-///
-/// let conditional = ArcMutator::new(|x: &mut i32| *x *= 2)
-///     .when(|x: &i32| *x > 0);
-///
-/// let conditional_clone = conditional.clone();
-///
-/// let mut value = 5;
-/// let mut m = conditional;
-/// m.mutate(&mut value);
-/// assert_eq!(value, 10);
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-pub struct ArcConditionalStatefulMutator<T> {
-    mutator: ArcStatefulMutator<T>,
-    predicate: ArcPredicate<T>,
-}
-impl<T> StatefulMutator<T> for ArcConditionalStatefulMutator<T>
-where
-    T: Send + 'static,
-{
-    fn mutate(&mut self, value: &mut T) {
-        if self.predicate.test(value) {
-            self.mutator.mutate(value);
-        }
-    }
-
-    fn into_box(self) -> BoxStatefulMutator<T>
-    where
-        T: 'static,
-    {
-        let pred = self.predicate;
-        let mut mutator = self.mutator;
-        BoxStatefulMutator::new(move |t| {
-            if pred.test(t) {
-                mutator.mutate(t);
-            }
-        })
-    }
-
-    fn into_rc(self) -> RcStatefulMutator<T>
-    where
-        T: 'static,
-    {
-        let pred = self.predicate.to_rc();
-        let mutator = self.mutator.into_rc();
-        let mut mutator_fn = mutator;
-        RcStatefulMutator::new(move |t| {
-            if pred.test(t) {
-                mutator_fn.mutate(t);
-            }
-        })
-    }
-
-    fn into_arc(self) -> ArcStatefulMutator<T>
-    where
-        T: Send + 'static,
-    {
-        let pred = self.predicate;
-        let mut mutator = self.mutator;
-        ArcStatefulMutator::new(move |t| {
-            if pred.test(t) {
-                mutator.mutate(t);
-            }
-        })
-    }
-
-    fn into_fn(self) -> impl FnMut(&mut T)
-    where
-        T: 'static,
-    {
-        let pred = self.predicate;
-        let mut mutator = self.mutator;
-        move |t: &mut T| {
-            if pred.test(t) {
-                mutator.mutate(t);
-            }
-        }
-    }
-
-    fn to_box(&self) -> BoxStatefulMutator<T>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        self.clone().into_box()
-    }
-
-    fn to_rc(&self) -> RcStatefulMutator<T>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        self.clone().into_rc()
-    }
-
-    fn to_arc(&self) -> ArcStatefulMutator<T>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        self.clone().into_arc()
-    }
-
-    fn to_fn(&self) -> impl FnMut(&mut T)
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        self.clone().into_fn()
-    }
-}
-
-impl<T> ArcConditionalStatefulMutator<T>
-where
-    T: Send + 'static,
-{
-    /// Adds an else branch (thread-safe version)
-    ///
-    /// Executes the original mutator when the condition is satisfied, otherwise
-    /// executes else_mutator.
-    ///
-    /// # Parameters
-    ///
-    /// * `else_mutator` - The mutator for the else branch. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to preserve
-    ///   the original mutator, clone it first (if it implements `Clone`).
-    ///   Must be `Send`, can be:
-    ///   - A closure: `|x: &mut T|` (must be `Send`)
-    ///   - An `ArcMutator<T>`
-    ///   - A `BoxMutator<T>`
-    ///   - Any type implementing `Mutator<T> + Send`
-    ///
-    /// # Returns
-    ///
-    /// Returns the composed `ArcMutator<T>`
-    ///
-    /// # Examples
-    ///
-    /// ## Using a closure (recommended)
-    ///
-    /// ```rust
-    /// use prism3_function::{Mutator, ArcMutator};
-    ///
-    /// let mut mutator = ArcMutator::new(|x: &mut i32| *x *= 2)
-    ///     .when(|x: &i32| *x > 0)
-    ///     .or_else(|x: &mut i32| *x -= 1);
-    ///
-    /// let mut positive = 5;
-    /// mutator.mutate(&mut positive);
-    /// assert_eq!(positive, 10);
-    ///
-    /// let mut negative = -5;
-    /// mutator.mutate(&mut negative);
-    /// assert_eq!(negative, -6);
-    /// ```
-    pub fn or_else<M>(&self, else_mutator: M) -> ArcStatefulMutator<T>
-    where
-        M: StatefulMutator<T> + Send + 'static,
-        T: Send + 'static,
-    {
-        let pred = self.predicate.clone();
-        let mut then_mut = self.mutator.clone();
-        let mut else_mut = else_mutator;
-        ArcStatefulMutator::new(move |t: &mut T| {
-            if pred.test(t) {
-                then_mut.mutate(t);
-            } else {
-                else_mut.mutate(t);
-            }
-        })
-    }
-}
-
-impl<T> Clone for ArcConditionalStatefulMutator<T> {
-    /// Clones the conditional mutator
-    ///
-    /// Creates a new instance that shares the underlying mutator and predicate
-    /// with the original instance.
-    fn clone(&self) -> Self {
-        ArcConditionalStatefulMutator {
-            mutator: self.mutator.clone(),
-            predicate: self.predicate.clone(),
-        }
-    }
-}
-
-// ============================================================================
-// 8. Implement Mutator trait for closures
+// 5. Implement Mutator trait for closures
 // ============================================================================
 
 impl<T, F> StatefulMutator<T> for F
 where
     F: FnMut(&mut T),
 {
-    fn mutate(&mut self, value: &mut T) {
+    fn apply(&mut self, value: &mut T) {
         self(value)
     }
 
@@ -2345,11 +1496,7 @@ where
 }
 
 // ============================================================================
-// 9. Provide extension methods for closures
-// ============================================================================
-
-// ============================================================================
-// 7. Provide extension methods for closures
+// 6. Provide extension methods for closures
 // ============================================================================
 
 /// Extension trait providing mutator composition methods for closures
@@ -2437,3 +1584,649 @@ pub trait FnMutStatefulMutatorOps<T>: FnMut(&mut T) + Sized {
 
 /// Implements FnMutatorOps for all closure types
 impl<T, F> FnMutStatefulMutatorOps<T> for F where F: FnMut(&mut T) {}
+
+// ============================================================================
+// 7. BoxConditionalMutator - Box-based Conditional Mutator
+// ============================================================================
+
+/// BoxConditionalMutator struct
+///
+/// A conditional mutator that only executes when a predicate is satisfied.
+/// Uses `BoxMutator` and `BoxPredicate` for single ownership semantics.
+///
+/// This type is typically created by calling `BoxMutator::when()` and is
+/// designed to work with the `or_else()` method to create if-then-else logic.
+///
+/// # Features
+///
+/// - **Single Ownership**: Not cloneable, consumes `self` on use
+/// - **Conditional Execution**: Only mutates when predicate returns `true`
+/// - **Chainable**: Can add `or_else` branch to create if-then-else logic
+/// - **Implements Mutator**: Can be used anywhere a `Mutator` is expected
+///
+/// # Examples
+///
+/// ## Basic Conditional Execution
+///
+/// ```rust
+/// use prism3_function::{Mutator, BoxMutator};
+///
+/// let mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
+/// let mut conditional = mutator.when(|x: &i32| *x > 0);
+///
+/// let mut positive = 5;
+/// conditional.apply(&mut positive);
+/// assert_eq!(positive, 10); // Executed
+///
+/// let mut negative = -5;
+/// conditional.apply(&mut negative);
+/// assert_eq!(negative, -5); // Not executed
+/// ```
+///
+/// ## With or_else Branch
+///
+/// ```rust
+/// use prism3_function::{Mutator, BoxMutator};
+///
+/// let mut mutator = BoxMutator::new(|x: &mut i32| *x *= 2)
+///     .when(|x: &i32| *x > 0)
+///     .or_else(|x: &mut i32| *x -= 1);
+///
+/// let mut positive = 5;
+/// mutator.apply(&mut positive);
+/// assert_eq!(positive, 10); // when branch executed
+///
+/// let mut negative = -5;
+/// mutator.apply(&mut negative);
+/// assert_eq!(negative, -6); // or_else branch executed
+/// ```
+///
+/// # Author
+///
+/// Haixing Hu
+pub struct BoxConditionalStatefulMutator<T> {
+    mutator: BoxStatefulMutator<T>,
+    predicate: BoxPredicate<T>,
+}
+
+impl<T> BoxConditionalStatefulMutator<T>
+where
+    T: 'static,
+{
+    /// Chains another mutator in sequence
+    ///
+    /// Combines the current conditional mutator with another mutator into a new
+    /// mutator. The current conditional mutator executes first, followed by the
+    /// next mutator.
+    ///
+    /// # Parameters
+    ///
+    /// * `next` - The next mutator to execute. **Note: This parameter is passed
+    ///   by value and will transfer ownership.** If you need to preserve the
+    ///   original mutator, clone it first (if it implements `Clone`). Can be:
+    ///   - A closure: `|x: &mut T|`
+    ///   - A `BoxMutator<T>`
+    ///   - An `ArcMutator<T>`
+    ///   - An `RcMutator<T>`
+    ///   - Any type implementing `Mutator<T>`
+    ///
+    /// # Returns
+    ///
+    /// Returns a new `BoxMutator<T>`
+    ///
+    /// # Examples
+    ///
+    /// ## Direct value passing (ownership transfer)
+    ///
+    /// ```rust
+    /// use prism3_function::{Mutator, BoxMutator};
+    ///
+    /// let cond1 = BoxMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
+    /// let cond2 = BoxMutator::new(|x: &mut i32| *x = 100).when(|x: &i32| *x > 100);
+    ///
+    /// // cond2 is moved here
+    /// let mut chained = cond1.and_then(cond2);
+    /// let mut value = 60;
+    /// chained.apply(&mut value);
+    /// assert_eq!(value, 100); // First *2 = 120, then capped to 100
+    /// // cond2.apply(&mut value); // Would not compile - moved
+    /// ```
+    ///
+    /// ## Preserving original with clone
+    ///
+    /// ```rust
+    /// use prism3_function::{Mutator, BoxMutator};
+    ///
+    /// let cond1 = BoxMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
+    /// let cond2 = BoxMutator::new(|x: &mut i32| *x = 100).when(|x: &i32| *x > 100);
+    ///
+    /// // Clone to preserve original
+    /// let mut chained = cond1.and_then(cond2.clone());
+    /// let mut value = 60;
+    /// chained.apply(&mut value);
+    /// assert_eq!(value, 100); // First *2 = 120, then capped to 100
+    ///
+    /// // Original still usable
+    /// let mut value2 = 50;
+    /// cond2.apply(&mut value2);
+    /// assert_eq!(value2, 100);
+    /// ```
+    pub fn and_then<C>(self, next: C) -> BoxStatefulMutator<T>
+    where
+        C: StatefulMutator<T> + 'static,
+    {
+        let mut first = self;
+        let mut second = next.into_fn();
+        BoxStatefulMutator::new(move |t| {
+            first.apply(t);
+            second(t);
+        })
+    }
+
+    /// Adds an else branch
+    ///
+    /// Executes the original mutator when the condition is satisfied, otherwise
+    /// executes else_mutator.
+    ///
+    /// # Parameters
+    ///
+    /// * `else_mutator` - The mutator for the else branch. **Note: This parameter
+    ///   is passed by value and will transfer ownership.** If you need to preserve
+    ///   the original mutator, clone it first (if it implements `Clone`). Can be:
+    ///   - A closure: `|x: &mut T|`
+    ///   - A `BoxMutator<T>`
+    ///   - An `RcMutator<T>`
+    ///   - An `ArcMutator<T>`
+    ///   - Any type implementing `Mutator<T>`
+    ///
+    /// # Returns
+    ///
+    /// Returns the composed `BoxMutator<T>`
+    ///
+    /// # Examples
+    ///
+    /// ## Using a closure (recommended)
+    ///
+    /// ```rust
+    /// use prism3_function::{Mutator, BoxMutator};
+    ///
+    /// let mut mutator = BoxMutator::new(|x: &mut i32| *x *= 2)
+    ///     .when(|x: &i32| *x > 0)
+    ///     .or_else(|x: &mut i32| *x -= 1);
+    ///
+    /// let mut positive = 5;
+    /// mutator.apply(&mut positive);
+    /// assert_eq!(positive, 10); // Condition satisfied, execute *2
+    ///
+    /// let mut negative = -5;
+    /// mutator.apply(&mut negative);
+    /// assert_eq!(negative, -6); // Condition not satisfied, execute -1
+    /// ```
+    pub fn or_else<C>(self, else_mutator: C) -> BoxStatefulMutator<T>
+    where
+        C: StatefulMutator<T> + 'static,
+    {
+        let pred = self.predicate;
+        let mut then_mut = self.mutator;
+        let mut else_mut = else_mutator;
+        BoxStatefulMutator::new(move |t| {
+            if pred.test(t) {
+                then_mut.apply(t);
+            } else {
+                else_mut.apply(t);
+            }
+        })
+    }
+}
+
+impl<T> StatefulMutator<T> for BoxConditionalStatefulMutator<T>
+where
+    T: 'static,
+{
+    fn apply(&mut self, value: &mut T) {
+        if self.predicate.test(value) {
+            self.mutator.apply(value);
+        }
+    }
+
+    fn into_box(self) -> BoxStatefulMutator<T> {
+        let pred = self.predicate;
+        let mut mutator = self.mutator;
+        BoxStatefulMutator::new(move |t| {
+            if pred.test(t) {
+                mutator.apply(t);
+            }
+        })
+    }
+
+    fn into_rc(self) -> RcStatefulMutator<T> {
+        let pred = self.predicate.into_rc();
+        let mutator = self.mutator.into_rc();
+        let mut mutator_fn = mutator;
+        RcStatefulMutator::new(move |t| {
+            if pred.test(t) {
+                mutator_fn.apply(t);
+            }
+        })
+    }
+
+    // do NOT override Mutator::into_arc() because BoxConditionalMutator is not Send + Sync
+    // and calling BoxConditionalMutator::into_arc() will cause a compile error
+
+    fn into_fn(self) -> impl FnMut(&mut T) {
+        let pred = self.predicate;
+        let mut mutator = self.mutator;
+        move |t: &mut T| {
+            if pred.test(t) {
+                mutator.apply(t);
+            }
+        }
+    }
+
+    // do NOT override Mutator::to_xxx() because BoxConditionalMutator is not Clone
+    // and calling BoxConditionalMutator::to_xxx() will cause a compile error
+}
+
+// ============================================================================
+// 8. RcConditionalMutator - Rc-based Conditional Mutator
+// ============================================================================
+
+/// RcConditionalMutator struct
+///
+/// A single-threaded conditional mutator that only executes when a predicate is
+/// satisfied. Uses `RcMutator` and `RcPredicate` for shared ownership within a
+/// single thread.
+///
+/// This type is typically created by calling `RcMutator::when()` and is
+/// designed to work with the `or_else()` method to create if-then-else logic.
+///
+/// # Features
+///
+/// - **Shared Ownership**: Cloneable via `Rc`, multiple owners allowed
+/// - **Single-Threaded**: Not thread-safe, cannot be sent across threads
+/// - **Conditional Execution**: Only mutates when predicate returns `true`
+/// - **No Lock Overhead**: More efficient than `ArcConditionalMutator`
+///
+/// # Examples
+///
+/// ```rust
+/// use prism3_function::{Mutator, RcMutator};
+///
+/// let conditional = RcMutator::new(|x: &mut i32| *x *= 2)
+///     .when(|x: &i32| *x > 0);
+///
+/// let conditional_clone = conditional.clone();
+///
+/// let mut value = 5;
+/// let mut m = conditional;
+/// m.mutate(&mut value);
+/// assert_eq!(value, 10);
+/// ```
+///
+/// # Author
+///
+/// Haixing Hu
+pub struct RcConditionalStatefulMutator<T> {
+    mutator: RcStatefulMutator<T>,
+    predicate: RcPredicate<T>,
+}
+
+impl<T> RcConditionalStatefulMutator<T>
+where
+    T: 'static,
+{
+    /// Adds an else branch (single-threaded shared version)
+    ///
+    /// Executes the original mutator when the condition is satisfied, otherwise
+    /// executes else_mutator.
+    ///
+    /// # Parameters
+    ///
+    /// * `else_mutator` - The mutator for the else branch. **Note: This parameter
+    ///   is passed by value and will transfer ownership.** If you need to preserve
+    ///   the original mutator, clone it first (if it implements `Clone`). Can be:
+    ///   - A closure: `|x: &mut T|`
+    ///   - An `RcMutator<T>`
+    ///   - A `BoxMutator<T>`
+    ///   - Any type implementing `Mutator<T>`
+    ///
+    /// # Returns
+    ///
+    /// Returns the composed `RcMutator<T>`
+    ///
+    /// # Examples
+    ///
+    /// ## Using a closure (recommended)
+    ///
+    /// ```rust
+    /// use prism3_function::{Mutator, RcMutator};
+    ///
+    /// let mut mutator = RcMutator::new(|x: &mut i32| *x *= 2)
+    ///     .when(|x: &i32| *x > 0)
+    ///     .or_else(|x: &mut i32| *x -= 1);
+    ///
+    /// let mut positive = 5;
+    /// mutator.mutate(&mut positive);
+    /// assert_eq!(positive, 10);
+    ///
+    /// let mut negative = -5;
+    /// mutator.mutate(&mut negative);
+    /// assert_eq!(negative, -6);
+    /// ```
+    pub fn or_else<M>(self, else_mutator: M) -> RcStatefulMutator<T>
+    where
+        M: StatefulMutator<T> + 'static,
+        T: 'static,
+    {
+        let pred = self.predicate;
+        let mut then_mut = self.mutator;
+        let mut else_mut = else_mutator;
+
+        RcStatefulMutator::new(move |t: &mut T| {
+            if pred.test(t) {
+                then_mut.apply(t);
+            } else {
+                else_mut.apply(t);
+            }
+        })
+    }
+}
+
+impl<T> StatefulMutator<T> for RcConditionalStatefulMutator<T>
+where
+    T: 'static,
+{
+    fn apply(&mut self, value: &mut T) {
+        if self.predicate.test(value) {
+            self.mutator.apply(value);
+        }
+    }
+
+    fn into_box(self) -> BoxStatefulMutator<T> {
+        let pred = self.predicate;
+        let mut mutator = self.mutator;
+        BoxStatefulMutator::new(move |t| {
+            if pred.test(t) {
+                mutator.apply(t);
+            }
+        })
+    }
+
+    fn into_rc(self) -> RcStatefulMutator<T> {
+        let pred = self.predicate;
+        let mut mutator = self.mutator;
+        RcStatefulMutator::new(move |t| {
+            if pred.test(t) {
+                mutator.apply(t);
+            }
+        })
+    }
+
+    // do NOT override Mutator::into_arc() because RcConditionalMutator is not Send + Sync
+    // and calling RcConditionalMutator::into_arc() will cause a compile error
+
+    fn into_fn(self) -> impl FnMut(&mut T) {
+        let pred = self.predicate;
+        let mut mutator = self.mutator;
+        move |t: &mut T| {
+            if pred.test(t) {
+                mutator.apply(t);
+            }
+        }
+    }
+
+    fn to_box(&self) -> BoxStatefulMutator<T>
+    where
+        Self: Sized + 'static,
+        T: 'static,
+    {
+        self.clone().into_box()
+    }
+
+    fn to_rc(&self) -> RcStatefulMutator<T>
+    where
+        Self: Sized + 'static,
+        T: 'static,
+    {
+        self.clone().into_rc()
+    }
+
+    // do NOT override Mutator::to_arc() because RcMutator is not Send + Sync
+    // and calling RcMutator::to_arc() will cause a compile error
+
+    fn to_fn(&self) -> impl FnMut(&mut T)
+    where
+        Self: Sized + 'static,
+        T: 'static,
+    {
+        self.clone().into_fn()
+    }
+}
+
+impl<T> Clone for RcConditionalStatefulMutator<T> {
+    /// Clones the conditional mutator
+    ///
+    /// Creates a new instance that shares the underlying mutator and predicate
+    /// with the original instance.
+    fn clone(&self) -> Self {
+        RcConditionalStatefulMutator {
+            mutator: self.mutator.clone(),
+            predicate: self.predicate.clone(),
+        }
+    }
+}
+
+
+// ============================================================================
+// 9. ArcConditionalMutator - Arc-based Conditional Mutator
+// ============================================================================
+
+/// ArcConditionalMutator struct
+///
+/// A thread-safe conditional mutator that only executes when a predicate is
+/// satisfied. Uses `ArcMutator` and `ArcPredicate` for shared ownership across
+/// threads.
+///
+/// This type is typically created by calling `ArcMutator::when()` and is
+/// designed to work with the `or_else()` method to create if-then-else logic.
+///
+/// # Features
+///
+/// - **Shared Ownership**: Cloneable via `Arc`, multiple owners allowed
+/// - **Thread-Safe**: Implements `Send + Sync`, safe for concurrent use
+/// - **Conditional Execution**: Only mutates when predicate returns `true`
+/// - **Chainable**: Can add `or_else` branch to create if-then-else logic
+///
+/// # Examples
+///
+/// ```rust
+/// use prism3_function::{Mutator, ArcMutator};
+///
+/// let conditional = ArcMutator::new(|x: &mut i32| *x *= 2)
+///     .when(|x: &i32| *x > 0);
+///
+/// let conditional_clone = conditional.clone();
+///
+/// let mut value = 5;
+/// let mut m = conditional;
+/// m.mutate(&mut value);
+/// assert_eq!(value, 10);
+/// ```
+///
+/// # Author
+///
+/// Haixing Hu
+pub struct ArcConditionalStatefulMutator<T> {
+    mutator: ArcStatefulMutator<T>,
+    predicate: ArcPredicate<T>,
+}
+
+impl<T> ArcConditionalStatefulMutator<T>
+where
+    T: Send + 'static,
+{
+    /// Adds an else branch (thread-safe version)
+    ///
+    /// Executes the original mutator when the condition is satisfied, otherwise
+    /// executes else_mutator.
+    ///
+    /// # Parameters
+    ///
+    /// * `else_mutator` - The mutator for the else branch. **Note: This parameter
+    ///   is passed by value and will transfer ownership.** If you need to preserve
+    ///   the original mutator, clone it first (if it implements `Clone`).
+    ///   Must be `Send`, can be:
+    ///   - A closure: `|x: &mut T|` (must be `Send`)
+    ///   - An `ArcMutator<T>`
+    ///   - A `BoxMutator<T>`
+    ///   - Any type implementing `Mutator<T> + Send`
+    ///
+    /// # Returns
+    ///
+    /// Returns the composed `ArcMutator<T>`
+    ///
+    /// # Examples
+    ///
+    /// ## Using a closure (recommended)
+    ///
+    /// ```rust
+    /// use prism3_function::{Mutator, ArcMutator};
+    ///
+    /// let mut mutator = ArcMutator::new(|x: &mut i32| *x *= 2)
+    ///     .when(|x: &i32| *x > 0)
+    ///     .or_else(|x: &mut i32| *x -= 1);
+    ///
+    /// let mut positive = 5;
+    /// mutator.mutate(&mut positive);
+    /// assert_eq!(positive, 10);
+    ///
+    /// let mut negative = -5;
+    /// mutator.mutate(&mut negative);
+    /// assert_eq!(negative, -6);
+    /// ```
+    pub fn or_else<M>(&self, else_mutator: M) -> ArcStatefulMutator<T>
+    where
+        M: StatefulMutator<T> + Send + 'static,
+        T: Send + 'static,
+    {
+        let pred = self.predicate.clone();
+        let mut then_mut = self.mutator.clone();
+        let mut else_mut = else_mutator;
+        ArcStatefulMutator::new(move |t: &mut T| {
+            if pred.test(t) {
+                then_mut.apply(t);
+            } else {
+                else_mut.apply(t);
+            }
+        })
+    }
+}
+
+impl<T> StatefulMutator<T> for ArcConditionalStatefulMutator<T>
+where
+    T: Send + 'static,
+{
+    fn apply(&mut self, value: &mut T) {
+        if self.predicate.test(value) {
+            self.mutator.apply(value);
+        }
+    }
+
+    fn into_box(self) -> BoxStatefulMutator<T>
+    where
+        T: 'static,
+    {
+        let pred = self.predicate;
+        let mut mutator = self.mutator;
+        BoxStatefulMutator::new(move |t| {
+            if pred.test(t) {
+                mutator.apply(t);
+            }
+        })
+    }
+
+    fn into_rc(self) -> RcStatefulMutator<T>
+    where
+        T: 'static,
+    {
+        let pred = self.predicate.to_rc();
+        let mutator = self.mutator.into_rc();
+        let mut mutator_fn = mutator;
+        RcStatefulMutator::new(move |t| {
+            if pred.test(t) {
+                mutator_fn.apply(t);
+            }
+        })
+    }
+
+    fn into_arc(self) -> ArcStatefulMutator<T>
+    where
+        T: Send + 'static,
+    {
+        let pred = self.predicate;
+        let mut mutator = self.mutator;
+        ArcStatefulMutator::new(move |t| {
+            if pred.test(t) {
+                mutator.apply(t);
+            }
+        })
+    }
+
+    fn into_fn(self) -> impl FnMut(&mut T)
+    where
+        T: 'static,
+    {
+        let pred = self.predicate;
+        let mut mutator = self.mutator;
+        move |t: &mut T| {
+            if pred.test(t) {
+                mutator.apply(t);
+            }
+        }
+    }
+
+    fn to_box(&self) -> BoxStatefulMutator<T>
+    where
+        Self: Sized + 'static,
+        T: 'static,
+    {
+        self.clone().into_box()
+    }
+
+    fn to_rc(&self) -> RcStatefulMutator<T>
+    where
+        Self: Sized + 'static,
+        T: 'static,
+    {
+        self.clone().into_rc()
+    }
+
+    fn to_arc(&self) -> ArcStatefulMutator<T>
+    where
+        Self: Sized + 'static,
+        T: 'static,
+    {
+        self.clone().into_arc()
+    }
+
+    fn to_fn(&self) -> impl FnMut(&mut T)
+    where
+        Self: Sized + 'static,
+        T: 'static,
+    {
+        self.clone().into_fn()
+    }
+}
+
+impl<T> Clone for ArcConditionalStatefulMutator<T> {
+    /// Clones the conditional mutator
+    ///
+    /// Creates a new instance that shares the underlying mutator and predicate
+    /// with the original instance.
+    fn clone(&self) -> Self {
+        ArcConditionalStatefulMutator {
+            mutator: self.mutator.clone(),
+            predicate: self.predicate.clone(),
+        }
+    }
+}
