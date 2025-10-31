@@ -38,6 +38,7 @@
 
 use crate::{
     consumers::macros::{
+        impl_box_conditional_consumer,
         impl_box_consumer_methods,
         impl_conditional_consumer_debug_display,
         impl_consumer_common_methods,
@@ -574,121 +575,12 @@ pub struct BoxConditionalBiConsumerOnce<T, U> {
     predicate: BoxBiPredicate<T, U>,
 }
 
-impl<T, U> BoxConditionalBiConsumerOnce<T, U>
-where
-    T: 'static,
-    U: 'static,
-{
-    /// Chains another consumer in sequence
-    ///
-    /// Combines the current conditional consumer with another consumer into a new
-    /// consumer. The current conditional consumer executes first, followed by the
-    /// next consumer.
-    ///
-    /// # Parameters
-    ///
-    /// * `next` - The next consumer to execute. **Note: This parameter is passed
-    ///   by value and will transfer ownership.** Since `BoxBiConsumerOnce`
-    ///   cannot be cloned, the parameter will be consumed. Can be:
-    ///   - A closure: `|x: &T, y: &U|`
-    ///   - A `BoxBiConsumerOnce<T, U>`
-    ///   - Any type implementing `BiConsumerOnce<T, U>`
-    ///
-    /// # Returns
-    ///
-    /// Returns a new `BoxBiConsumerOnce<T, U>`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{BiConsumerOnce, BoxBiConsumerOnce};
-    /// use std::sync::{Arc, Mutex};
-    ///
-    /// let log = Arc::new(Mutex::new(Vec::new()));
-    /// let l1 = log.clone();
-    /// let l2 = log.clone();
-    /// let cond = BoxBiConsumerOnce::new(move |x: &i32, y: &i32| {
-    ///     l1.lock().unwrap().push(*x + *y);
-    /// }).when(|x: &i32, y: &i32| *x > 0 && *y > 0);
-    /// let second = BoxBiConsumerOnce::new(move |x: &i32, y: &i32| {
-    ///     l2.lock().unwrap().push(*x * *y);
-    /// });
-    ///
-    /// // Both cond and second are moved and consumed
-    /// let chained = cond.and_then(second);
-    /// chained.accept(&5, &3);
-    /// assert_eq!(*log.lock().unwrap(), vec![8, 15]);
-    /// // cond.accept(&2, &3); // Would not compile - moved
-    /// // second.accept(&2, &3); // Would not compile - moved
-    /// ```
-    pub fn and_then<C>(self, next: C) -> BoxBiConsumerOnce<T, U>
-    where
-        C: BiConsumerOnce<T, U> + 'static,
-    {
-        let first = self;
-        let second = next;
-        BoxBiConsumerOnce::new(move |t, u| {
-            first.accept(t, u);
-            second.accept(t, u);
-        })
-    }
-
-    /// Adds an else branch
-    ///
-    /// Executes the original consumer when the condition is satisfied, otherwise
-    /// executes else_consumer.
-    ///
-    /// # Parameters
-    ///
-    /// * `else_consumer` - The consumer for the else branch. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** Since
-    ///   `BoxBiConsumerOnce` cannot be cloned, the parameter will be consumed.
-    ///   Can be:
-    ///   - A closure: `|x: &T, y: &U|`
-    ///   - A `BoxBiConsumerOnce<T, U>`
-    ///   - Any type implementing `BiConsumerOnce<T, U>`
-    ///
-    /// # Returns
-    ///
-    /// Returns the composed `BoxBiConsumerOnce<T, U>`
-    ///
-    /// # Examples
-    ///
-    /// ## Using a closure (recommended)
-    ///
-    /// ```rust
-    /// use prism3_function::{BiConsumerOnce, BoxBiConsumerOnce};
-    /// use std::sync::{Arc, Mutex};
-    ///
-    /// let log = Arc::new(Mutex::new(Vec::new()));
-    /// let l1 = log.clone();
-    /// let l2 = log.clone();
-    /// let consumer = BoxBiConsumerOnce::new(move |x: &i32, y: &i32| {
-    ///     l1.lock().unwrap().push(*x + *y);
-    /// }).when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-    ///   .or_else(move |x: &i32, y: &i32| {
-    ///     l2.lock().unwrap().push(*x * *y);
-    /// });
-    ///
-    /// consumer.accept(&5, &3);
-    /// assert_eq!(*log.lock().unwrap(), vec![8]); // Condition satisfied
-    /// ```
-    pub fn or_else<C>(self, else_consumer: C) -> BoxBiConsumerOnce<T, U>
-    where
-        C: BiConsumerOnce<T, U> + 'static,
-    {
-        let pred = self.predicate;
-        let then_cons = self.consumer;
-        let else_cons = else_consumer;
-        BoxBiConsumerOnce::new(move |t, u| {
-            if pred.test(t, u) {
-                then_cons.accept(t, u);
-            } else {
-                else_cons.accept(t, u);
-            }
-        })
-    }
-}
+// Generate and_then and or_else methods using macro
+impl_box_conditional_consumer!(
+    BoxConditionalBiConsumerOnce<T, U>,
+    BoxBiConsumerOnce,
+    BiConsumerOnce
+);
 
 impl<T, U> BiConsumerOnce<T, U> for BoxConditionalBiConsumerOnce<T, U>
 where
