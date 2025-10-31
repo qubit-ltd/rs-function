@@ -15,6 +15,7 @@
 //!
 //! Haixing Hu
 
+pub mod macros;
 pub mod mutator;
 pub mod mutator_once;
 pub mod stateful_mutator;
