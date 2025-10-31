@@ -80,9 +80,12 @@
 
 /// Generates conversion methods for Conditional Consumer implementations
 ///
-/// This macro generates the conversion methods (`into_box`, `into_rc`, `into_fn`) for
-/// conditional consumer types. It handles both immutable (Consumer) and mutable
-/// (StatefulConsumer) cases using the `#[allow(unused_mut)]` annotation.
+/// This macro should be used inside an existing impl block (typically within
+/// a trait implementation block). It generates individual conversion methods
+/// but does not create a complete impl block itself. This macro generates the
+/// conversion methods (`into_box`, `into_rc`, `into_fn`) for conditional consumer
+/// types. It handles both immutable (Consumer) and mutable (StatefulConsumer)
+/// cases using the `#[allow(unused_mut)]` annotation.
 ///
 /// The macro works by always declaring variables as `mut`, which is necessary for
 /// StatefulConsumer cases, while suppressing unused_mut warnings for Consumer cases

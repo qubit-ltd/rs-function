@@ -67,8 +67,11 @@
 
 /// Generates when and and_then method implementations for Arc/Rc-based Consumer
 ///
-/// Generates conditional execution when method and chaining and_then method
-/// for Arc/Rc-based consumers that borrow &self (because Arc/Rc can be cloned).
+/// This macro should be used inside an existing impl block for the target
+/// struct. It generates individual methods but does not create a complete
+/// impl block itself. Generates conditional execution when method and chaining
+/// and_then method for Arc/Rc-based consumers that borrow &self (because Arc/Rc
+/// can be cloned).
 ///
 /// This macro supports both single-parameter and two-parameter consumers through
 /// pattern matching on the struct signature.

@@ -34,8 +34,11 @@
 
 /// Generates Debug and Display trait implementations for Conditional Consumer structs
 ///
-/// Generates standard Debug and Display trait implementations for Conditional
-/// Consumer structs that have `consumer` and `predicate` fields but no `name` field.
+/// This macro should be used at the top level (outside of any impl block) as
+/// it generates complete `impl Debug` and `impl Display` blocks for the
+/// specified struct. Generates standard Debug and Display trait implementations
+/// for Conditional Consumer structs that have `consumer` and `predicate` fields
+/// but no `name` field.
 ///
 /// # Parameters
 ///

@@ -34,8 +34,10 @@
 
 /// Generates Debug and Display trait implementations for Consumer structs
 ///
-/// Generates standard Debug and Display trait implementations for Consumer
-/// structs that have a `name: Option<String>` field.
+/// This macro should be used at the top level (outside of any impl block) as
+/// it generates complete `impl Debug` and `impl Display` blocks for the
+/// specified struct. Generates standard Debug and Display trait implementations
+/// for Consumer structs that have a `name: Option<String>` field.
 ///
 /// # Parameters
 ///

@@ -66,9 +66,10 @@
 /// Generates common Consumer methods (new, new_with_name, name,
 /// set_name, noop)
 ///
-/// Generates constructor methods, name management methods and noop
-/// constructor for Consumer structs. This macro should be called inside
-/// an impl block.
+/// This macro should be used inside an existing impl block for the target
+/// struct. It generates individual methods but does not create a complete
+/// impl block itself. Generates constructor methods, name management methods
+/// and noop constructor for Consumer structs.
 ///
 /// The macro automatically detects the number of generic parameters and
 /// generates the appropriate implementations for single-parameter or

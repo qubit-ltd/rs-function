@@ -74,6 +74,8 @@
 
 /// Generates Arc/Rc-based Conditional Consumer implementations
 ///
+/// This macro should be used at the top level (outside of any impl block) as
+/// it generates a complete impl block with methods for the specified struct.
 /// For Arc/Rc-based conditional consumers, generates `and_then` and `or_else` methods,
 /// as well as complete Consumer/BiConsumer trait implementations.
 ///

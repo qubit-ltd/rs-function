@@ -41,9 +41,11 @@
 
 /// Generates Clone trait implementation for basic Consumer types
 ///
-/// Generates Clone implementation for Consumer structs that have `function`
-/// and `name` fields. The function field is cloned using its inherent `clone`
-/// method, which performs a shallow clone for smart pointers like `Arc` or `Rc`.
+/// This macro should be used at the top level (outside of any impl block) as
+/// it generates a complete `impl Clone for $struct_name` block. It generates
+/// Clone implementation for Consumer structs that have `function` and `name`
+/// fields. The function field is cloned using its inherent `clone` method,
+/// which performs a shallow clone for smart pointers like `Arc` or `Rc`.
 ///
 /// # Parameters
 ///

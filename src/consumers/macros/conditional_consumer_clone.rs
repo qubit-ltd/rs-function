@@ -37,9 +37,11 @@
 
 /// Generates Clone trait implementation for Conditional Consumer types
 ///
-/// Generates Clone implementation for Conditional Consumer structs that have
-/// `consumer` and `predicate` fields. Both fields are cloned using their
-/// respective Clone implementations.
+/// This macro should be used at the top level (outside of any impl block) as
+/// it generates a complete `impl Clone for $struct_name` block. Generates
+/// Clone implementation for Conditional Consumer structs that have `consumer`
+/// and `predicate` fields. Both fields are cloned using their respective
+/// Clone implementations.
 ///
 /// # Parameters
 ///

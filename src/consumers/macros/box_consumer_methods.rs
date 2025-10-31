@@ -59,6 +59,8 @@
 
 /// Generates when and and_then method implementations for Box-based Consumer
 ///
+/// This macro should be used at the top level (outside of any impl block) as
+/// it generates a complete impl block with methods for the specified struct.
 /// Generates conditional execution when method and chaining and_then method
 /// for Box-based consumers that consume self (because Box cannot be cloned).
 ///
