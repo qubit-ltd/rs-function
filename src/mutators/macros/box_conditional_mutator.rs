@@ -42,8 +42,10 @@
 
 /// Generates Box-based Conditional Mutator implementations
 ///
-/// For Box-based conditional mutators, generates `and_then` and `or_else` methods,
-/// as well as complete Mutator trait implementations.
+/// This macro should be used at the top level (outside of any impl block)
+/// to generate complete impl blocks for Box-based conditional mutators.
+/// It generates `and_then` and `or_else` methods, as well as complete Mutator
+/// trait implementations.
 ///
 /// Box type characteristics:
 /// - `and_then` and `or_else` consume self (because Box cannot Clone)
@@ -56,10 +58,16 @@
 /// * `$mutator_type` - Mutator wrapper type name
 /// * `$mutator_trait` - Mutator trait name
 ///
+/// # Usage Location
+///
+/// This macro should be used at the top level, outside of any impl block,
+/// typically in the same file as the struct definition. It generates a complete
+/// impl block internally.
+///
 /// # Usage Examples
 ///
 /// ```ignore
-/// // Single-parameter Mutator
+/// // At the top level, outside of any impl block
 /// impl_box_conditional_mutator!(
 ///     BoxConditionalMutator<T>,
 ///     BoxMutator,

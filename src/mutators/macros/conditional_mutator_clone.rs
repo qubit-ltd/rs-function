@@ -34,7 +34,9 @@
 
 /// Generates Clone trait implementation for Conditional Mutator types
 ///
-/// Generates Clone implementation for Conditional Mutator structs that have
+/// This macro should be used at the top level (outside of any impl block)
+/// to generate Clone trait implementations for Conditional Mutator structs.
+/// It generates Clone implementation for Conditional Mutator structs that have
 /// `mutator` and `predicate` fields. Both fields are cloned using their
 /// respective Clone implementations.
 ///
@@ -43,10 +45,15 @@
 /// * `$struct_name` - The struct name
 /// * `$generic` - Generic parameter list (one type parameter)
 ///
+/// # Usage Location
+///
+/// This macro should be used at the top level, outside of any impl block,
+/// typically in the same file as the struct definition.
+///
 /// # Examples
 ///
 /// ```ignore
-/// // For single type parameter
+/// // At the top level, outside of any impl block
 /// impl_conditional_mutator_clone!(ArcConditionalMutator<T>);
 /// impl_conditional_mutator_clone!(RcConditionalMutator<T>);
 /// ```

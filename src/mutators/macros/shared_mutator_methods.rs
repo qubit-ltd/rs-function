@@ -63,8 +63,9 @@
 
 /// Generates when and and_then method implementations for Arc/Rc-based Mutator
 ///
-/// Generates conditional execution when method and chaining and_then method
-/// for Arc/Rc-based mutators that borrow &self (because Arc/Rc can be cloned).
+/// This macro should be used inside an impl block to generate conditional
+/// execution when method and chaining and_then method for Arc/Rc-based mutators
+/// that borrow &self (because Arc/Rc can be cloned).
 ///
 /// This macro supports single-parameter mutators through
 /// pattern matching on the struct signature.
@@ -87,26 +88,34 @@
 /// | **ArcStatefulMutator** | `ArcStatefulMutator<T>` | ArcConditionalStatefulMutator | into_arc | StatefulMutator | Send + Sync + 'static |
 /// | **RcStatefulMutator** | `RcStatefulMutator<T>` | RcConditionalStatefulMutator | into_rc | StatefulMutator | 'static |
 ///
+/// # Usage Location
+///
+/// This macro should be used inside an impl block for the struct type.
+///
 /// # Examples
 ///
 /// ```ignore
-/// // Single-parameter with Arc
-/// impl_shared_mutator_methods!(
-///     ArcMutator<T>,
-///     ArcConditionalMutator,
-///     into_arc,
-///     Mutator,
-///     Send + Sync + 'static
-/// );
+/// impl<T> ArcMutator<T> {
+///     // Inside an impl block
+///     impl_shared_mutator_methods!(
+///         ArcMutator<T>,
+///         ArcConditionalMutator,
+///         into_arc,
+///         Mutator,
+///         Send + Sync + 'static
+///     );
+/// }
 ///
-/// // Single-parameter with Rc
-/// impl_shared_mutator_methods!(
-///     RcMutator<T>,
-///     RcConditionalMutator,
-///     into_rc,
-///     Mutator,
-///     'static
-/// );
+/// impl<T> RcMutator<T> {
+///     // Inside an impl block
+///     impl_shared_mutator_methods!(
+///         RcMutator<T>,
+///         RcConditionalMutator,
+///         into_rc,
+///         Mutator,
+///         'static
+///     );
+/// }
 /// ```
 macro_rules! impl_shared_mutator_methods {
     // Single generic parameter

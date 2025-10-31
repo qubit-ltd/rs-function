@@ -49,8 +49,9 @@
 
 /// Generates when and and_then method implementations for Box-based Mutator
 ///
-/// Generates conditional execution when method and chaining and_then method
-/// for Box-based mutators that consume self (because Box cannot be cloned).
+/// This macro should be used inside an impl block to generate conditional
+/// execution when method and chaining and_then method for Box-based mutators
+/// that consume self (because Box cannot be cloned).
 ///
 /// This macro supports single-parameter mutators through
 /// pattern matching on the struct signature.
@@ -70,15 +71,21 @@
 /// | **MutatorOnce** | `BoxMutatorOnce<T>` | BoxConditionalMutatorOnce | MutatorOnce |
 /// | **StatefulMutator** | `BoxStatefulMutator<T>` | BoxConditionalStatefulMutator | StatefulMutator |
 ///
+/// # Usage Location
+///
+/// This macro should be used inside an impl block for the struct type.
+///
 /// # Examples
 ///
 /// ```ignore
-/// // Single-parameter mutator
-/// impl_box_mutator_methods!(
-///     BoxMutator<T>,
-///     BoxConditionalMutator,
-///     Mutator
-/// );
+/// impl<T> BoxMutator<T> {
+///     // Inside an impl block
+///     impl_box_mutator_methods!(
+///         BoxMutator<T>,
+///         BoxConditionalMutator,
+///         Mutator
+///     );
+/// }
 /// ```
 macro_rules! impl_box_mutator_methods {
     // Single generic parameter - Mutator

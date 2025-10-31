@@ -59,10 +59,8 @@
 /// Generates common Mutator methods (new, new_with_name, name,
 /// set_name, noop)
 ///
-/// Generates constructor methods, name management methods and noop
-/// constructor for Mutator structs. This macro should be called inside
-/// an impl block.
-///
+/// This macro should be used inside an impl block to generate constructor
+/// methods, name management methods and noop constructor for Mutator structs.
 /// The macro automatically detects the number of generic parameters and
 /// generates the appropriate implementations for single-parameter mutators.
 ///
@@ -73,22 +71,30 @@
 ///   (e.g., `FnMut(&mut T) + 'static`)
 /// * `$wrapper_expr` - Wrapper expression (uses `f` for the closure)
 ///
+/// # Usage Location
+///
+/// This macro should be used inside an impl block for the struct type.
+///
 /// # Usage
 ///
 /// ```ignore
-/// // Single generic parameter - Mutator
-/// impl_mutator_common_methods!(
-///     BoxMutator<T>,
-///     (FnMut(&mut T) + 'static),
-///     |f| Box::new(f)
-/// );
+/// impl<T> BoxMutator<T> {
+///     // Inside an impl block
+///     impl_mutator_common_methods!(
+///         BoxMutator<T>,
+///         (FnMut(&mut T) + 'static),
+///         |f| Box::new(f)
+///     );
+/// }
 ///
-/// // Single generic parameter - StatefulMutator
-/// impl_mutator_common_methods!(
-///     ArcStatefulMutator<T>,
-///     (FnMut(&mut T) + Send + 'static),
-///     |f| Arc::new(Mutex::new(f))
-/// );
+/// impl<T> ArcStatefulMutator<T> {
+///     // Inside an impl block for StatefulMutator
+///     impl_mutator_common_methods!(
+///         ArcStatefulMutator<T>,
+///         (FnMut(&mut T) + Send + 'static),
+///         |f| Arc::new(Mutex::new(f))
+///     );
+/// }
 /// ```
 ///
 /// # Generated Methods

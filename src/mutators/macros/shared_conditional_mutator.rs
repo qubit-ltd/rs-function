@@ -57,8 +57,10 @@
 
 /// Generates Arc/Rc-based Conditional Mutator implementations
 ///
-/// For Arc/Rc-based conditional mutators, generates `and_then` and `or_else` methods,
-/// as well as complete Mutator trait implementations.
+/// This macro should be used at the top level (outside of any impl block)
+/// to generate complete impl blocks for Arc/Rc-based conditional mutators.
+/// It generates `and_then` and `or_else` methods, as well as complete Mutator
+/// trait implementations.
 ///
 /// Arc/Rc type characteristics:
 /// - `and_then` and `or_else` borrow &self (because Arc/Rc can Clone)
@@ -75,10 +77,16 @@
 /// * `$predicate_conversion` - Predicate conversion method (into_arc or into_rc)
 /// * `$extra_bounds` - Extra trait bounds
 ///
+/// # Usage Location
+///
+/// This macro should be used at the top level, outside of any impl block,
+/// typically in the same file as the struct definition. It generates a complete
+/// impl block internally.
+///
 /// # Usage Examples
 ///
 /// ```ignore
-/// // Arc single-parameter Mutator
+/// // At the top level, outside of any impl block
 /// impl_shared_conditional_mutator!(
 ///     ArcConditionalMutator<T>,
 ///     ArcMutator,

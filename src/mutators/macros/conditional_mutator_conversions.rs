@@ -81,9 +81,10 @@
 
 /// Generates conversion methods for Conditional Mutator implementations
 ///
-/// This macro generates the conversion methods (`into_box`, `into_rc`, `into_fn`) for
-/// conditional mutator types. It handles both immutable (Mutator) and mutable
-/// (StatefulMutator) cases using the `#[allow(unused_mut)]` annotation.
+/// This macro should be used inside an impl block to generate the conversion
+/// methods (`into_box`, `into_rc`, `into_fn`) for conditional mutator types.
+/// It handles both immutable (Mutator) and mutable (StatefulMutator) cases using
+/// the `#[allow(unused_mut)]` annotation.
 ///
 /// The macro works by always declaring variables as `mut`, which is necessary for
 /// StatefulMutator cases, while suppressing unused_mut warnings for Mutator cases
@@ -94,6 +95,11 @@
 /// * `$box_type<$t:ident>` - The box-based mutator type (e.g., `BoxMutator<T>`)
 /// * `$rc_type:ident` - The rc-based mutator type name (e.g., `RcMutator`)
 /// * `$fn_trait:ident` - The function trait (e.g., `Fn` or `FnMut`)
+///
+/// # Usage Location
+///
+/// This macro should be used inside an impl block for the conditional mutator
+/// type, typically within a trait implementation.
 ///
 /// # Usage Examples
 ///
@@ -109,6 +115,7 @@
 ///         }
 ///     }
 ///
+///     // Inside the trait impl block
 ///     impl_conditional_mutator_conversions!(
 ///         BoxMutator<T>,
 ///         RcMutator,

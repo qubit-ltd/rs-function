@@ -36,19 +36,26 @@
 
 /// Generates Clone trait implementation for basic Mutator types
 ///
-/// Generates Clone implementation for Mutator structs that have `function`
-/// and `name` fields. The function field is cloned using its inherent `clone`
-/// method, which performs a shallow clone for smart pointers like `Arc` or `Rc`.
+/// This macro should be used at the top level (outside of any impl block)
+/// to generate Clone trait implementations for Mutator structs. It generates
+/// Clone implementation for Mutator structs that have `function` and `name`
+/// fields. The function field is cloned using its inherent `clone` method,
+/// which performs a shallow clone for smart pointers like `Arc` or `Rc`.
 ///
 /// # Parameters
 ///
 /// * `$struct_name` - The struct name
 /// * `$generic` - Generic parameter list (one type parameter)
 ///
+/// # Usage Location
+///
+/// This macro should be used at the top level, outside of any impl block,
+/// typically in the same file as the struct definition.
+///
 /// # Examples
 ///
 /// ```ignore
-/// // For single type parameter with Arc
+/// // At the top level, outside of any impl block
 /// impl_mutator_clone!(ArcMutator<T>);
 ///
 /// // For single type parameter with Rc
