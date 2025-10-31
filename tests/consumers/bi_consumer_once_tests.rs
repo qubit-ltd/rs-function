@@ -141,7 +141,7 @@ mod box_bi_consumer_once_tests {
         let consumer = BoxBiConsumerOnce::new(move |x: &i32, y: &i32| {
             l.lock().unwrap().push(*x + *y);
         });
-        let mut func = consumer.into_fn();
+        let func = consumer.into_fn();
         func(&5, &3);
         assert_eq!(*log.lock().unwrap(), vec![8]);
     }
@@ -200,7 +200,7 @@ mod box_bi_consumer_once_tests {
             l.lock().unwrap().push(*x + *y);
         });
         let conditional = consumer.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
-        let mut func = conditional.into_fn();
+        let func = conditional.into_fn();
         func(&5, &3);
         assert_eq!(*log.lock().unwrap(), vec![8]);
     }
@@ -227,7 +227,7 @@ mod box_bi_consumer_once_tests {
             l.lock().unwrap().push(*x + *y);
         });
         let conditional = consumer.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
-        let mut func = conditional.into_fn();
+        let func = conditional.into_fn();
         // Test false branch: should not execute when condition is not met
         func(&-5, &3);
         assert_eq!(*log.lock().unwrap(), vec![]);
@@ -270,7 +270,7 @@ mod box_bi_consumer_once_tests {
             l.lock().unwrap().push(*x + *y);
         });
         // into_fn should unwrap the Box and return the inner function
-        let mut func = consumer.into_fn();
+        let func = consumer.into_fn();
         func(&5, &3);
         assert_eq!(*log.lock().unwrap(), vec![8]);
     }
@@ -314,7 +314,7 @@ mod closure_tests {
         let closure = move |x: &i32, y: &i32| {
             l.lock().unwrap().push(*x + *y);
         };
-        let mut func = closure.into_fn();
+        let func = closure.into_fn();
         func(&5, &3);
         assert_eq!(*log.lock().unwrap(), vec![8]);
     }
@@ -349,7 +349,7 @@ mod closure_tests {
         let closure: fn(&i32, &i32) = multiply_values;
 
         // Test to_fn - should not consume the closure since it's cloneable
-        let mut func = closure.to_fn();
+        let func = closure.to_fn();
         func(&5, &3);
 
         // Verify we can still use the closure again
@@ -414,7 +414,7 @@ mod closure_tests {
         let closure = move |x: &i32, y: &i32| consumer.consume(x, y);
 
         // Test to_fn
-        let mut func = closure.to_fn();
+        let func = closure.to_fn();
         func(&5, &3);
         assert_eq!(*log.lock().unwrap(), vec![15]);
 
@@ -493,7 +493,7 @@ mod type_conversion_tests {
         let consumer = BoxBiConsumerOnce::new(|x: &i32, y: &i32| {
             println!("x: {}, y: {}", x, y);
         });
-        let mut func = consumer.into_fn();
+        let func = consumer.into_fn();
         func(&10, &20);
     }
 
@@ -574,7 +574,7 @@ mod default_implementation_tests {
         let consumer = CustomBiConsumerOnce::new(log.clone(), 3);
 
         // Test default into_fn implementation
-        let mut func = consumer.into_fn();
+        let func = consumer.into_fn();
         func(&4, &2);
         assert_eq!(*log.lock().unwrap(), vec![18]); // (4 + 2) * 3 = 18
     }
@@ -600,7 +600,7 @@ mod default_implementation_tests {
         let consumer = CustomBiConsumerOnce::new(log.clone(), 5);
 
         // Test default to_fn implementation
-        let mut func = consumer.to_fn();
+        let func = consumer.to_fn();
         func(&2, &3);
         assert_eq!(*log.lock().unwrap(), vec![25]); // (2 + 3) * 5 = 25
 

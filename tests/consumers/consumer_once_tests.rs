@@ -181,7 +181,7 @@ mod box_consumer_once_tests {
         let consumer = BoxConsumerOnce::new(move |x: &i32| {
             l.lock().unwrap().push(*x * 2);
         });
-        let mut func = consumer.into_fn();
+        let func = consumer.into_fn();
         func(&5);
         assert_eq!(*log.lock().unwrap(), vec![10]);
     }
@@ -193,7 +193,7 @@ mod box_consumer_once_tests {
         let consumer = BoxConsumerOnce::new(move |x: &i32| {
             l.lock().unwrap().push(*x * 2);
         });
-        let mut func = consumer.into_fn();
+        let func = consumer.into_fn();
         // FnOnce can only be called once, so we call it once
         func(&5);
         assert_eq!(*log.lock().unwrap(), vec![10]);
@@ -254,7 +254,7 @@ mod closure_tests {
         let closure = move |x: &i32| {
             l.lock().unwrap().push(*x * 2);
         };
-        let mut func = closure.into_fn();
+        let func = closure.into_fn();
         func(&5);
         assert_eq!(*log.lock().unwrap(), vec![10]);
     }
@@ -334,7 +334,7 @@ mod debug_display_tests {
             l.lock().unwrap().push(*x);
         });
         let conditional = consumer.when(|x: &i32| *x > 0);
-        let mut func = conditional.into_fn();
+        let func = conditional.into_fn();
         func(&5);
         assert_eq!(*log.lock().unwrap(), vec![5]);
     }
@@ -406,7 +406,7 @@ mod custom_consumer_once_tests {
     fn test_custom_consumer_into_fn() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let consumer = CustomConsumer::new(log.clone(), 4);
-        let mut func = consumer.into_fn();
+        let func = consumer.into_fn();
         func(&3);
         assert_eq!(*log.lock().unwrap(), vec![12]);
     }
@@ -506,7 +506,7 @@ mod custom_consumer_once_tests {
     fn test_custom_string_consumer_into_fn() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let consumer = StringLogger::new(log.clone(), "Info: ");
-        let mut func = consumer.into_fn();
+        let func = consumer.into_fn();
         func(&"World".to_string());
         assert_eq!(*log.lock().unwrap(), vec!["Info: World".to_string()]);
     }
@@ -546,7 +546,7 @@ mod custom_consumer_once_tests {
         let counter = Arc::new(Mutex::new(0));
         let log = Arc::new(Mutex::new(Vec::new()));
         let consumer = CountingConsumer::new(counter.clone(), log.clone());
-        let mut func = consumer.into_fn();
+        let func = consumer.into_fn();
         func(&99);
         assert_eq!(*counter.lock().unwrap(), 1);
         assert_eq!(*log.lock().unwrap(), vec![99]);
@@ -651,7 +651,7 @@ mod box_conditional_consumer_once_tests {
             l.lock().unwrap().push(*x);
         });
         let conditional = consumer.when(|x: &i32| *x > 0);
-        let mut func = conditional.into_fn();
+        let func = conditional.into_fn();
         func(&5);
         assert_eq!(*log.lock().unwrap(), vec![5]);
     }
@@ -664,7 +664,7 @@ mod box_conditional_consumer_once_tests {
             l.lock().unwrap().push(*x);
         });
         let conditional = consumer.when(|x: &i32| *x > 0);
-        let mut func = conditional.into_fn();
+        let func = conditional.into_fn();
         func(&-5);
         assert_eq!(*log.lock().unwrap(), Vec::<i32>::new());
     }
@@ -677,7 +677,7 @@ mod box_conditional_consumer_once_tests {
             l.lock().unwrap().push(*x);
         });
         let conditional = consumer.when(|x: &i32| *x > 0);
-        let mut func = conditional.into_fn();
+        let func = conditional.into_fn();
         func(&0);
         assert_eq!(*log.lock().unwrap(), Vec::<i32>::new());
     }
@@ -718,7 +718,7 @@ mod box_conditional_consumer_once_tests {
             l.lock().unwrap().push(*x * 2);
         });
         let conditional = consumer.when(|x: &i32| *x % 2 == 0);
-        let mut func = conditional.into_fn();
+        let func = conditional.into_fn();
         func(&4);
         assert_eq!(*log.lock().unwrap(), vec![8]);
     }
@@ -731,7 +731,7 @@ mod box_conditional_consumer_once_tests {
             l.lock().unwrap().push(*x * 2);
         });
         let conditional = consumer.when(|x: &i32| *x % 2 == 0);
-        let mut func = conditional.into_fn();
+        let func = conditional.into_fn();
         func(&3);
         assert_eq!(*log.lock().unwrap(), Vec::<i32>::new());
     }
@@ -943,7 +943,7 @@ mod custom_consumer_to_methods_tests {
     fn test_custom_consumer_to_fn() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let consumer = CloneableConsumer::new(log.clone(), 4);
-        let mut func = consumer.to_fn();
+        let func = consumer.to_fn();
         func(&3);
         assert_eq!(*log.lock().unwrap(), vec![12]);
     }
@@ -953,7 +953,7 @@ mod custom_consumer_to_methods_tests {
         let log = Arc::new(Mutex::new(Vec::new()));
         let consumer = CloneableConsumer::new(log.clone(), 2);
 
-        let mut func = consumer.to_fn();
+        let func = consumer.to_fn();
         func(&5);
 
         // Original consumer should still be usable since to_fn() borrows, not consumes
@@ -1039,7 +1039,7 @@ mod closure_to_methods_tests {
         };
 
         // into_fn() works directly on closures
-        let mut func = closure.into_fn();
+        let func = closure.into_fn();
         func(&5);
         assert_eq!(*log.lock().unwrap(), vec![10]);
     }
@@ -1125,7 +1125,7 @@ mod closure_to_xxx_methods_tests {
             l.lock().unwrap().push(*x + 100);
         };
 
-        let mut func = closure.into_fn();
+        let func = closure.into_fn();
         func(&5);
         assert_eq!(*log.lock().unwrap(), vec![105]);
     }
@@ -1300,7 +1300,7 @@ mod closure_to_xxx_methods_tests {
             l.lock().unwrap().push(*x * 2);
         };
 
-        let mut func = closure.into_fn();
+        let func = closure.into_fn();
         // func can only be called once (FnOnce)
         func(&5);
 
@@ -1378,7 +1378,7 @@ mod closure_to_xxx_methods_tests {
         }
 
         // Function pointers are Copy, can call to_fn()
-        let mut func = increment_counter.to_fn();
+        let func = increment_counter.to_fn();
         func(&1);
 
         assert_eq!(COUNTER.load(Ordering::SeqCst), 1);
@@ -1423,7 +1423,7 @@ mod closure_to_xxx_methods_tests {
         }
 
         // to_fn() doesn't consume the function pointer
-        let mut func = increment_counter3.to_fn();
+        let func = increment_counter3.to_fn();
         func(&1);
 
         // Original function pointer can still be used
@@ -1526,7 +1526,7 @@ mod advanced_to_methods_tests {
     fn test_to_fn_then_call() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let consumer = CountingCloneableConsumer::new(log.clone());
-        let mut func = consumer.to_fn();
+        let func = consumer.to_fn();
         func(&7);
         assert_eq!(*log.lock().unwrap(), vec![7]);
     }
@@ -1618,7 +1618,7 @@ mod advanced_to_methods_tests {
         };
 
         // Uses default to_fn() implementation which calls accept()
-        let mut func = consumer.to_fn();
+        let func = consumer.to_fn();
         func(&6);
 
         assert_eq!(*log.lock().unwrap(), vec![18]);

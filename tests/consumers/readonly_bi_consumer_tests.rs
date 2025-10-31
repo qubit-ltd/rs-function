@@ -67,7 +67,7 @@ mod box_readonly_bi_consumer_tests {
         let consumer = BoxBiConsumer::new(|x: &i32, y: &i32| {
             println!("Sum: {}", x + y);
         });
-        let mut func = consumer.into_fn();
+        let func = consumer.into_fn();
         func(&5, &3);
     }
 
@@ -177,7 +177,7 @@ mod arc_readonly_bi_consumer_tests {
             c.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
         });
 
-        let mut func = consumer.to_fn();
+        let func = consumer.to_fn();
         func(&5, &3);
         assert_eq!(counter.load(std::sync::atomic::Ordering::SeqCst), 1);
     }
@@ -236,7 +236,7 @@ mod arc_readonly_bi_consumer_tests {
         let consumer = ArcBiConsumer::new(|x: &i32, y: &i32| {
             println!("Sum: {}", x + y);
         });
-        let mut func = consumer.into_fn();
+        let func = consumer.into_fn();
         func(&5, &3);
     }
 
@@ -248,7 +248,7 @@ mod arc_readonly_bi_consumer_tests {
         let consumer = ArcBiConsumer::new(move |x: &i32, y: &i32| {
             l.lock().unwrap().push(*x + *y);
         });
-        let mut func = consumer.into_fn();
+        let func = consumer.into_fn();
         func(&5, &3);
         func(&10, &20);
         assert_eq!(*log.lock().unwrap(), vec![8, 30]);
@@ -320,7 +320,7 @@ mod rc_readonly_bi_consumer_tests {
             c.set(c.get() + 1);
         });
 
-        let mut func = consumer.to_fn();
+        let func = consumer.to_fn();
         func(&5, &3);
         assert_eq!(counter.get(), 1);
     }
@@ -370,7 +370,7 @@ mod rc_readonly_bi_consumer_tests {
         let consumer = RcBiConsumer::new(|x: &i32, y: &i32| {
             println!("Sum: {}", x + y);
         });
-        let mut func = consumer.into_fn();
+        let func = consumer.into_fn();
         func(&5, &3);
     }
 
@@ -418,7 +418,7 @@ mod closure_tests {
         let closure = |x: &i32, y: &i32| {
             println!("Sum: {}", x + y);
         };
-        let mut func = closure.into_fn();
+        let func = closure.into_fn();
         func(&5, &3);
     }
 
@@ -581,7 +581,7 @@ mod edge_cases_tests {
         let consumer = ArcBiConsumer::new(move |x: &i32, y: &i32| {
             *c.lock().unwrap() += x + y;
         });
-        let mut func = consumer.to_fn();
+        let func = consumer.to_fn();
         func(&1, &2);
         func(&3, &4);
         func(&5, &6);
@@ -595,7 +595,7 @@ mod edge_cases_tests {
         let consumer = RcBiConsumer::new(move |x: &i32, y: &i32| {
             *c.borrow_mut() += x + y;
         });
-        let mut func = consumer.to_fn();
+        let func = consumer.to_fn();
         func(&1, &2);
         func(&3, &4);
         func(&5, &6);
@@ -949,7 +949,7 @@ mod custom_readonly_bi_consumer_tests {
         let custom = CustomBiConsumer::new(counter.clone());
 
         // Test default into_fn implementation
-        let mut func = custom.into_fn();
+        let func = custom.into_fn();
         func(&5, &3);
         assert_eq!(*counter.lock().unwrap(), 1);
 
@@ -1067,7 +1067,7 @@ mod custom_readonly_bi_consumer_tests {
         let custom = CustomBiConsumer::new(counter.clone());
 
         // Convert to function and call multiple times
-        let mut func = custom.into_fn();
+        let func = custom.into_fn();
 
         // Simulate usage in different contexts
         let simulate_usage = |f: &dyn Fn(&i32, &i32)| {
@@ -1246,7 +1246,7 @@ mod to_methods_tests {
             *c.lock().unwrap() += x + y;
         });
 
-        let mut func = arc_consumer.to_fn();
+        let func = arc_consumer.to_fn();
         func(&5, &3);
         assert_eq!(*counter.lock().unwrap(), 8);
 
@@ -1263,7 +1263,7 @@ mod to_methods_tests {
             *c.lock().unwrap() += x + y;
         });
 
-        let mut func = arc_consumer.to_fn();
+        let func = arc_consumer.to_fn();
         func(&1, &2);
         func(&3, &4);
         func(&5, &6);
@@ -1316,7 +1316,7 @@ mod to_methods_tests {
             *c.borrow_mut() += x + y;
         });
 
-        let mut func = rc_consumer.to_fn();
+        let func = rc_consumer.to_fn();
         func(&5, &3);
         assert_eq!(*counter.borrow(), 8);
 
@@ -1333,7 +1333,7 @@ mod to_methods_tests {
             *c.borrow_mut() += x + y;
         });
 
-        let mut func = rc_consumer.to_fn();
+        let func = rc_consumer.to_fn();
         func(&1, &2);
         func(&3, &4);
         func(&5, &6);
@@ -1403,7 +1403,7 @@ mod to_methods_tests {
             *c.lock().unwrap() += x + y;
         };
 
-        let mut func = closure.to_fn();
+        let func = closure.to_fn();
         func(&5, &3);
         assert_eq!(*counter.lock().unwrap(), 8);
 
@@ -1485,7 +1485,7 @@ mod to_methods_tests {
         let counter = Arc::new(std::sync::Mutex::new(0));
         let custom = CustomConsumer::new(counter.clone());
 
-        let mut func = custom.to_fn();
+        let func = custom.to_fn();
         func(&5, &3);
         assert_eq!(*counter.lock().unwrap(), 8);
 
@@ -1499,7 +1499,7 @@ mod to_methods_tests {
         let counter = Arc::new(std::sync::Mutex::new(0));
         let custom = CustomConsumer::new(counter.clone());
 
-        let mut func = custom.to_fn();
+        let func = custom.to_fn();
         func(&1, &2);
         func(&3, &4);
         func(&5, &6);
@@ -1604,7 +1604,7 @@ mod to_methods_tests {
         let box_consumer = custom.to_box();
         let rc_consumer = custom.to_rc();
         let arc_consumer = custom.to_arc();
-        let mut func = custom.to_fn();
+        let func = custom.to_fn();
 
         box_consumer.accept(&1, &1);
         assert_eq!(*counter.lock().unwrap(), 2);

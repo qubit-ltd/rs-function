@@ -124,7 +124,7 @@ mod box_readonly_consumer_tests {
         let consumer = BoxConsumer::new(|x: &i32| {
             println!("Value: {}", x);
         });
-        let mut func = consumer.into_fn();
+        let func = consumer.into_fn();
         func(&5);
     }
 
@@ -261,7 +261,7 @@ mod arc_readonly_consumer_tests {
         let consumer = ArcConsumer::new(|x: &i32| {
             println!("Value: {}", x);
         });
-        let mut func = consumer.into_fn();
+        let func = consumer.into_fn();
         func(&5);
     }
 
@@ -270,7 +270,7 @@ mod arc_readonly_consumer_tests {
         let consumer = ArcConsumer::new(|x: &i32| {
             println!("Value: {}", x);
         });
-        let mut func = consumer.to_fn();
+        let func = consumer.to_fn();
         func(&5);
 
         // Original consumer remains usable
@@ -409,7 +409,7 @@ mod rc_readonly_consumer_tests {
         let consumer = RcConsumer::new(|x: &i32| {
             println!("Value: {}", x);
         });
-        let mut func = consumer.into_fn();
+        let func = consumer.into_fn();
         func(&5);
     }
 
@@ -418,7 +418,7 @@ mod rc_readonly_consumer_tests {
         let consumer = RcConsumer::new(|x: &i32| {
             println!("Value: {}", x);
         });
-        let mut func = consumer.to_fn();
+        let func = consumer.to_fn();
         func(&5);
 
         // Original consumer remains usable
@@ -495,7 +495,7 @@ mod closure_tests {
         let closure = |x: &i32| {
             println!("Value: {}", x);
         };
-        let mut func = closure.into_fn();
+        let func = closure.into_fn();
         func(&5);
     }
 
@@ -822,7 +822,7 @@ mod custom_struct_tests {
 
         // into_fn()
         let my4 = MyConsumer::new(counter.clone());
-        let mut func = my4.into_fn();
+        let func = my4.into_fn();
         func(&1);
         assert_eq!(counter.load(Ordering::SeqCst), 4);
     }
@@ -857,7 +857,7 @@ mod custom_struct_tests {
         assert_eq!(counter.load(Ordering::SeqCst), 3);
 
         // to_fn() - Does not consume the original object
-        let mut func = my.to_fn();
+        let func = my.to_fn();
         func(&1);
         assert_eq!(counter.load(Ordering::SeqCst), 4);
 
@@ -946,7 +946,7 @@ mod to_xxx_methods_tests {
         });
 
         // to_fn() does not consume the original object
-        let mut func = consumer.to_fn();
+        let func = consumer.to_fn();
         func(&1);
         assert_eq!(counter.load(Ordering::SeqCst), 1);
 
@@ -1000,7 +1000,7 @@ mod to_xxx_methods_tests {
         });
 
         // to_fn() does not consume the original object
-        let mut func = consumer.to_fn();
+        let func = consumer.to_fn();
         func(&1);
         assert_eq!(*counter.borrow(), 1);
 
@@ -1088,7 +1088,7 @@ mod to_xxx_methods_tests {
         };
 
         // to_fn() does not consume the original closure
-        let mut func = closure.to_fn();
+        let func = closure.to_fn();
         func(&1);
         assert_eq!(counter.load(Ordering::SeqCst), 1);
 
@@ -1118,7 +1118,7 @@ mod to_xxx_methods_tests {
         arc_consumer.accept(&3);
         assert_eq!(counter.load(Ordering::SeqCst), 3);
 
-        let mut func = consumer.to_fn();
+        let func = consumer.to_fn();
         func(&4);
         assert_eq!(counter.load(Ordering::SeqCst), 4);
 
@@ -1144,7 +1144,7 @@ mod to_xxx_methods_tests {
         rc_consumer.accept(&2);
         assert_eq!(*counter.borrow(), 2);
 
-        let mut func = consumer.to_fn();
+        let func = consumer.to_fn();
         func(&3);
         assert_eq!(*counter.borrow(), 3);
 
@@ -1175,7 +1175,7 @@ mod to_xxx_methods_tests {
         arc_consumer.accept(&3);
         assert_eq!(counter.load(Ordering::SeqCst), 3);
 
-        let mut func = closure.to_fn();
+        let func = closure.to_fn();
         func(&4);
         assert_eq!(counter.load(Ordering::SeqCst), 4);
 
