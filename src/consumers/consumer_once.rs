@@ -33,6 +33,7 @@
 
 use crate::{
     consumers::macros::{
+        impl_box_conditional_consumer,
         impl_box_consumer_methods,
         impl_conditional_consumer_debug_display,
         impl_consumer_common_methods,
@@ -565,120 +566,12 @@ pub struct BoxConditionalConsumerOnce<T> {
     predicate: BoxPredicate<T>,
 }
 
-impl<T> BoxConditionalConsumerOnce<T>
-where
-    T: 'static,
-{
-    /// Chains another consumer in sequence
-    ///
-    /// Combines the current conditional consumer with another consumer into a new
-    /// consumer. The current conditional consumer executes first, followed by the
-    /// next consumer.
-    ///
-    /// # Parameters
-    ///
-    /// * `next` - The next consumer to execute. **Note: This parameter is passed
-    ///   by value and will transfer ownership.** Since `BoxConsumerOnce` cannot
-    ///   be cloned, the parameter will be consumed. Can be:
-    ///   - A closure: `|x: &T|`
-    ///   - A `BoxConsumerOnce<T>`
-    ///   - Any type implementing `ConsumerOnce<T>`
-    ///
-    /// # Returns
-    ///
-    /// Returns a new `BoxConsumerOnce<T>`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{ConsumerOnce, BoxConsumerOnce};
-    /// use std::sync::{Arc, Mutex};
-    ///
-    /// let log = Arc::new(Mutex::new(Vec::new()));
-    /// let l1 = log.clone();
-    /// let l2 = log.clone();
-    /// let cond1 = BoxConsumerOnce::new(move |x: &i32| {
-    ///     l1.lock().unwrap().push(*x * 2);
-    /// }).when(|x: &i32| *x > 0);
-    /// let cond2 = BoxConsumerOnce::new(move |x: &i32| {
-    ///     l2.lock().unwrap().push(*x + 100);
-    /// }).when(|x: &i32| *x > 10);
-    ///
-    /// // Both cond1 and cond2 are moved and consumed
-    /// let chained = cond1.and_then(cond2);
-    /// chained.accept(&6);
-    /// assert_eq!(*log.lock().unwrap(), vec![12, 106]); // First *2 = 12, then +100 = 106
-    /// // cond1.accept(&3); // Would not compile - moved
-    /// // cond2.accept(&3); // Would not compile - moved
-    /// ```
-    pub fn and_then<C>(self, next: C) -> BoxConsumerOnce<T>
-    where
-        C: ConsumerOnce<T> + 'static,
-    {
-        let first = self;
-        let second = next;
-        BoxConsumerOnce::new(move |t| {
-            first.accept(t);
-            second.accept(t);
-        })
-    }
-
-    /// Adds an else branch
-    ///
-    /// Executes the original consumer when the condition is satisfied, otherwise
-    /// executes else_consumer.
-    ///
-    /// # Parameters
-    ///
-    /// * `else_consumer` - The consumer for the else branch. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** Since `BoxConsumerOnce`
-    ///   cannot be cloned, the parameter will be consumed. Can be:
-    ///   - A closure: `|x: &T|`
-    ///   - A `BoxConsumerOnce<T>`
-    ///   - Any type implementing `ConsumerOnce<T>`
-    ///
-    /// # Returns
-    ///
-    /// Returns the composed `BoxConsumerOnce<T>`
-    ///
-    /// # Examples
-    ///
-    /// ## Using a closure (recommended)
-    ///
-    /// ```rust
-    /// use prism3_function::{ConsumerOnce, BoxConsumerOnce};
-    /// use std::sync::{Arc, Mutex};
-    ///
-    /// let log = Arc::new(Mutex::new(Vec::new()));
-    /// let l1 = log.clone();
-    /// let l2 = log.clone();
-    /// let consumer = BoxConsumerOnce::new(move |x: &i32| {
-    ///     l1.lock().unwrap().push(*x);
-    /// })
-    /// .when(|x: &i32| *x > 0)
-    /// .or_else(move |x: &i32| {
-    ///     l2.lock().unwrap().push(-*x);
-    /// });
-    ///
-    /// consumer.accept(&5);
-    /// assert_eq!(*log.lock().unwrap(), vec![5]); // Condition satisfied, execute first
-    /// ```
-    pub fn or_else<C>(self, else_consumer: C) -> BoxConsumerOnce<T>
-    where
-        C: ConsumerOnce<T> + 'static,
-    {
-        let pred = self.predicate;
-        let then_cons = self.consumer;
-        let else_cons = else_consumer;
-        BoxConsumerOnce::new(move |t| {
-            if pred.test(t) {
-                then_cons.accept(t);
-            } else {
-                else_cons.accept(t);
-            }
-        })
-    }
-}
+// Generate and_then and or_else methods using macro
+impl_box_conditional_consumer!(
+    BoxConditionalConsumerOnce<T>,
+    BoxConsumerOnce,
+    ConsumerOnce
+);
 
 impl<T> ConsumerOnce<T> for BoxConditionalConsumerOnce<T>
 where
