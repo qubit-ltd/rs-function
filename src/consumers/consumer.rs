@@ -942,6 +942,9 @@ where
     impl_conditional_consumer_conversions!(BoxConsumer<T>, RcConsumer, Fn);
 }
 
+// Use macro to generate Debug and Display implementations
+impl_conditional_consumer_debug_display!(BoxConditionalConsumer<T>);
+
 // ============================================================================
 // 8. ArcConditionalConsumer - Arc-based Conditional Consumer
 // ============================================================================
