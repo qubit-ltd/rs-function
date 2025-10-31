@@ -134,7 +134,7 @@
 /// );
 /// ```
 macro_rules! impl_shared_conditional_consumer {
-    // Single generic parameter - Consumer
+    // Single generic parameter - Consumer types
     (
         $struct_name:ident < $t:ident >,
         $consumer_type:ident,
@@ -237,7 +237,7 @@ macro_rules! impl_shared_conditional_consumer {
         }
     };
 
-    // Two generic parameters - BiConsumer
+    // Two generic parameters - BiConsumer types
     (
         $struct_name:ident < $t:ident, $u:ident >,
         $consumer_type:ident,

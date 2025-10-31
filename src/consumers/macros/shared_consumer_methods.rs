@@ -121,8 +121,33 @@
 /// );
 /// ```
 macro_rules! impl_shared_consumer_methods {
-    // Single generic parameter
+    // Single generic parameter - Consumer types
     ($struct_name:ident < $t:ident >, $return_type:ident, $predicate_conversion:ident, $consumer_trait:ident, $($extra_bounds:tt)+) => {
+        /// Creates a conditional consumer
+        ///
+        /// Wraps this consumer with a predicate condition, creating a new
+        /// conditional consumer that will only execute the original consumer
+        /// when the predicate evaluates to true.
+        ///
+        /// # Parameters
+        ///
+        /// * `predicate` - The condition that must be satisfied for the consumer
+        ///   to execute
+        ///
+        /// # Returns
+        ///
+        /// Returns a conditional consumer that executes this consumer only when
+        /// the predicate is satisfied
+        ///
+        /// # Examples
+        ///
+        /// ```ignore
+        /// let consumer = ArcConsumer::new(|x: &i32| println!("{}", x));
+        /// let conditional = consumer.when(|x| *x > 0);
+        ///
+        /// conditional.accept(&5);  // prints: 5
+        /// conditional.accept(&-5); // prints nothing
+        /// ```
         pub fn when<P>(&self, predicate: P) -> $return_type<$t>
         where
             P: Predicate<$t> + $($extra_bounds)+,
@@ -133,6 +158,31 @@ macro_rules! impl_shared_consumer_methods {
             }
         }
 
+        /// Chains another consumer in sequence
+        ///
+        /// Combines this consumer with another consumer into a new consumer
+        /// that executes both consumers in sequence. The returned consumer
+        /// first executes this consumer, then unconditionally executes the
+        /// `after` consumer.
+        ///
+        /// # Parameters
+        ///
+        /// * `after` - The consumer to execute after this one (always executed)
+        ///
+        /// # Returns
+        ///
+        /// Returns a new consumer that executes both consumers in sequence
+        ///
+        /// # Examples
+        ///
+        /// ```ignore
+        /// let consumer1 = ArcConsumer::new(|x: &i32| print!("first: {}", x));
+        /// let consumer2 = ArcConsumer::new(|x: &i32| println!(" second: {}", x));
+        ///
+        /// let chained = consumer1.and_then(consumer2);
+        ///
+        /// chained.accept(&5);  // prints: first: 5 second: 5
+        /// ```
         #[allow(unused_mut)]
         pub fn and_then<C>(&self, mut after: C) -> $struct_name<$t>
         where
@@ -146,8 +196,33 @@ macro_rules! impl_shared_consumer_methods {
             })
         }
     };
-    // Two generic parameters
+    // Two generic parameters - BiConsumer types
     ($struct_name:ident < $t:ident, $u:ident >, $return_type:ident, $predicate_conversion:ident, $consumer_trait:ident, $($extra_bounds:tt)+) => {
+        /// Creates a conditional bi-consumer
+        ///
+        /// Wraps this bi-consumer with a bi-predicate condition, creating a new
+        /// conditional bi-consumer that will only execute the original bi-consumer
+        /// when the predicate evaluates to true.
+        ///
+        /// # Parameters
+        ///
+        /// * `predicate` - The condition that must be satisfied for the bi-consumer
+        ///   to execute
+        ///
+        /// # Returns
+        ///
+        /// Returns a conditional bi-consumer that executes this bi-consumer only
+        /// when the predicate is satisfied
+        ///
+        /// # Examples
+        ///
+        /// ```ignore
+        /// let consumer = ArcBiConsumer::new(|x: &i32, y: &i32| println!("{}", x + y));
+        /// let conditional = consumer.when(|x, y| *x > 0 && *y > 0);
+        ///
+        /// conditional.accept(&5, &3);  // prints: 8
+        /// conditional.accept(&-5, &3); // prints nothing
+        /// ```
         pub fn when<P>(&self, predicate: P) -> $return_type<$t, $u>
         where
             P: BiPredicate<$t, $u> + $($extra_bounds)+,
@@ -158,6 +233,31 @@ macro_rules! impl_shared_consumer_methods {
             }
         }
 
+        /// Chains another bi-consumer in sequence
+        ///
+        /// Combines this bi-consumer with another bi-consumer into a new
+        /// bi-consumer that executes both bi-consumers in sequence. The returned
+        /// bi-consumer first executes this bi-consumer, then unconditionally
+        /// executes the `after` bi-consumer.
+        ///
+        /// # Parameters
+        ///
+        /// * `after` - The bi-consumer to execute after this one (always executed)
+        ///
+        /// # Returns
+        ///
+        /// Returns a new bi-consumer that executes both bi-consumers in sequence
+        ///
+        /// # Examples
+        ///
+        /// ```ignore
+        /// let consumer1 = ArcBiConsumer::new(|x: &i32, y: &i32| print!("first: {}", x + y));
+        /// let consumer2 = ArcBiConsumer::new(|x: &i32, y: &i32| println!(" second: {}", x * y));
+        ///
+        /// let chained = consumer1.and_then(consumer2);
+        ///
+        /// chained.accept(&5, &3);  // prints: first: 8 second: 15
+        /// ```
         #[allow(unused_mut)]
         pub fn and_then<C>(&self, mut after: C) -> $struct_name<$t, $u>
         where

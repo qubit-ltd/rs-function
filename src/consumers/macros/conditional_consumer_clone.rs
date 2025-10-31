@@ -60,7 +60,7 @@
 /// impl_conditional_consumer_clone!(RcConditionalBiConsumer<T, U>);
 /// ```
 macro_rules! impl_conditional_consumer_clone {
-    // Single generic parameter
+    // Single generic parameter - Consumer types
     ($struct_name:ident < $generic:ident >) => {
         impl<$generic> Clone for $struct_name<$generic> {
             fn clone(&self) -> Self {
@@ -71,7 +71,7 @@ macro_rules! impl_conditional_consumer_clone {
             }
         }
     };
-    // Two generic parameters
+    // Two generic parameters - BiConsumer types
     ($struct_name:ident < $generic1:ident, $generic2:ident >) => {
         impl<$generic1, $generic2> Clone for $struct_name<$generic1, $generic2> {
             fn clone(&self) -> Self {

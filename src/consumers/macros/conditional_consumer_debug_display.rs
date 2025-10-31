@@ -55,7 +55,7 @@
 /// impl_conditional_consumer_debug_display!(BoxConditionalBiConsumer<T, U>);
 /// ```
 macro_rules! impl_conditional_consumer_debug_display {
-    // Single generic parameter
+    // Single generic parameter - Consumer types
     ($struct_name:ident < $generic:ident >) => {
         impl<$generic> std::fmt::Debug for $struct_name<$generic> {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -78,7 +78,7 @@ macro_rules! impl_conditional_consumer_debug_display {
             }
         }
     };
-    // Two generic parameters
+    // Two generic parameters - BiConsumer types
     ($struct_name:ident < $generic1:ident, $generic2:ident >) => {
         impl<$generic1, $generic2> std::fmt::Debug for $struct_name<$generic1, $generic2> {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
