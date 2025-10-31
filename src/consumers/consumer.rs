@@ -423,7 +423,139 @@ impl<T> Consumer<T> for BoxConsumer<T> {
 impl_consumer_debug_display!(BoxConsumer<T>);
 
 // ============================================================================
-// 3. ArcConsumer - Thread-safe Shared Ownership Implementation
+// 3. RcConsumer - Single-threaded Shared Ownership Implementation
+// ============================================================================
+
+/// RcConsumer struct
+///
+/// Readonly consumer implementation based on `Rc<dyn Fn(&T)>` for
+/// single-threaded shared ownership scenarios. No RefCell needed because
+/// operations are readonly.
+///
+/// # Features
+///
+/// - **Shared Ownership**: Cloneable through `Rc`, allows multiple owners
+/// - **Single-threaded**: Not thread-safe, cannot be sent across threads
+/// - **No Interior Mutability Overhead**: No RefCell needed because it's readonly
+/// - **Non-consuming API**: `and_then` borrows `&self`, original object remains
+///   usable
+///
+/// # Use Cases
+///
+/// Choose `RcConsumer` when:
+/// - Need to share readonly consumer within a single thread
+/// - Pure observation operations, performance critical
+/// - Event handling in single-threaded UI frameworks
+///
+/// # Performance Advantages
+///
+/// `RcConsumer` has neither Arc's atomic operation overhead nor
+/// RefCell's runtime borrow checking overhead, making it the most performant of
+/// the three readonly consumers.
+///
+/// # Examples
+///
+/// ```rust
+/// use prism3_function::{Consumer, RcConsumer};
+///
+/// let consumer = RcConsumer::new(|x: &i32| {
+///     println!("Observed: {}", x);
+/// });
+/// let clone = consumer.clone();
+///
+/// consumer.accept(&5);
+/// clone.accept(&10);
+/// ```
+///
+/// # Author
+///
+/// Haixing Hu
+pub struct RcConsumer<T> {
+    function: Rc<dyn Fn(&T)>,
+    name: Option<String>,
+}
+
+impl<T> RcConsumer<T>
+where
+    T: 'static,
+{
+    // Generates: new(), new_with_name(), name(), set_name(), noop()
+    impl_consumer_common_methods!(RcConsumer<T>, (Fn(&T) + 'static), |f| Rc::new(f));
+
+    // Generates: when() and and_then() methods that borrow &self (Rc can clone)
+    impl_shared_consumer_methods!(
+        RcConsumer<T>,
+        RcConditionalConsumer,
+        into_rc,
+        Consumer,
+        'static
+    );
+}
+
+impl<T> Consumer<T> for RcConsumer<T> {
+    fn accept(&self, value: &T) {
+        (self.function)(value)
+    }
+
+    fn into_box(self) -> BoxConsumer<T>
+    where
+        T: 'static,
+    {
+        BoxConsumer::new(move |t| (self.function)(t))
+    }
+
+    fn into_rc(self) -> RcConsumer<T>
+    where
+        T: 'static,
+    {
+        self
+    }
+
+    // do NOT override Consumer::into_arc() because RcConsumer is not Send + Sync
+    // and calling RcConsumer::into_arc() will cause a compile error
+
+    fn into_fn(self) -> impl Fn(&T)
+    where
+        T: 'static,
+    {
+        move |t| (self.function)(t)
+    }
+
+    fn to_box(&self) -> BoxConsumer<T>
+    where
+        T: 'static,
+    {
+        let self_fn = self.function.clone();
+        BoxConsumer::new(move |t| self_fn(t))
+    }
+
+    fn to_rc(&self) -> RcConsumer<T>
+    where
+        T: 'static,
+    {
+        self.clone()
+    }
+
+    // do NOT override Consumer::to_arc() because RcConsumer is not Send + Sync
+    // and calling RcConsumer::to_arc() will cause a compile error
+
+    fn to_fn(&self) -> impl Fn(&T)
+    where
+        T: 'static,
+    {
+        let self_fn = self.function.clone();
+        move |t| self_fn(t)
+    }
+}
+
+// Use macro to generate Clone implementation
+impl_consumer_clone!(RcConsumer<T>);
+
+// Use macro to generate Debug and Display implementations
+impl_consumer_debug_display!(RcConsumer<T>);
+
+// ============================================================================
+// 4. ArcConsumer - Thread-safe Shared Ownership Implementation
 // ============================================================================
 
 /// ArcConsumer struct
@@ -565,138 +697,6 @@ impl_consumer_clone!(ArcConsumer<T>);
 
 // Use macro to generate Debug and Display implementations
 impl_consumer_debug_display!(ArcConsumer<T>);
-
-// ============================================================================
-// 4. RcConsumer - Single-threaded Shared Ownership Implementation
-// ============================================================================
-
-/// RcConsumer struct
-///
-/// Readonly consumer implementation based on `Rc<dyn Fn(&T)>` for
-/// single-threaded shared ownership scenarios. No RefCell needed because
-/// operations are readonly.
-///
-/// # Features
-///
-/// - **Shared Ownership**: Cloneable through `Rc`, allows multiple owners
-/// - **Single-threaded**: Not thread-safe, cannot be sent across threads
-/// - **No Interior Mutability Overhead**: No RefCell needed because it's readonly
-/// - **Non-consuming API**: `and_then` borrows `&self`, original object remains
-///   usable
-///
-/// # Use Cases
-///
-/// Choose `RcConsumer` when:
-/// - Need to share readonly consumer within a single thread
-/// - Pure observation operations, performance critical
-/// - Event handling in single-threaded UI frameworks
-///
-/// # Performance Advantages
-///
-/// `RcConsumer` has neither Arc's atomic operation overhead nor
-/// RefCell's runtime borrow checking overhead, making it the most performant of
-/// the three readonly consumers.
-///
-/// # Examples
-///
-/// ```rust
-/// use prism3_function::{Consumer, RcConsumer};
-///
-/// let consumer = RcConsumer::new(|x: &i32| {
-///     println!("Observed: {}", x);
-/// });
-/// let clone = consumer.clone();
-///
-/// consumer.accept(&5);
-/// clone.accept(&10);
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-pub struct RcConsumer<T> {
-    function: Rc<dyn Fn(&T)>,
-    name: Option<String>,
-}
-
-impl<T> RcConsumer<T>
-where
-    T: 'static,
-{
-    // Generates: new(), new_with_name(), name(), set_name(), noop()
-    impl_consumer_common_methods!(RcConsumer<T>, (Fn(&T) + 'static), |f| Rc::new(f));
-
-    // Generates: when() and and_then() methods that borrow &self (Rc can clone)
-    impl_shared_consumer_methods!(
-        RcConsumer<T>,
-        RcConditionalConsumer,
-        into_rc,
-        Consumer,
-        'static
-    );
-}
-
-impl<T> Consumer<T> for RcConsumer<T> {
-    fn accept(&self, value: &T) {
-        (self.function)(value)
-    }
-
-    fn into_box(self) -> BoxConsumer<T>
-    where
-        T: 'static,
-    {
-        BoxConsumer::new(move |t| (self.function)(t))
-    }
-
-    fn into_rc(self) -> RcConsumer<T>
-    where
-        T: 'static,
-    {
-        self
-    }
-
-    // do NOT override Consumer::into_arc() because RcConsumer is not Send + Sync
-    // and calling RcConsumer::into_arc() will cause a compile error
-
-    fn into_fn(self) -> impl Fn(&T)
-    where
-        T: 'static,
-    {
-        move |t| (self.function)(t)
-    }
-
-    fn to_box(&self) -> BoxConsumer<T>
-    where
-        T: 'static,
-    {
-        let self_fn = self.function.clone();
-        BoxConsumer::new(move |t| self_fn(t))
-    }
-
-    fn to_rc(&self) -> RcConsumer<T>
-    where
-        T: 'static,
-    {
-        self.clone()
-    }
-
-    // do NOT override Consumer::to_arc() because RcConsumer is not Send + Sync
-    // and calling RcConsumer::to_arc() will cause a compile error
-
-    fn to_fn(&self) -> impl Fn(&T)
-    where
-        T: 'static,
-    {
-        let self_fn = self.function.clone();
-        move |t| self_fn(t)
-    }
-}
-
-// Use macro to generate Clone implementation
-impl_consumer_clone!(RcConsumer<T>);
-
-// Use macro to generate Debug and Display implementations
-impl_consumer_debug_display!(RcConsumer<T>);
 
 // ============================================================================
 // 5. Implement Consumer trait for closures
@@ -927,7 +927,7 @@ pub struct BoxConditionalConsumer<T> {
 // Use macro to generate conditional consumer implementations
 impl_box_conditional_consumer!(BoxConditionalConsumer<T>, BoxConsumer, Consumer);
 
-// Hand-written Consumer trait implementation
+// Consumer trait implementation
 impl<T> Consumer<T> for BoxConditionalConsumer<T>
 where
     T: 'static,
@@ -946,99 +946,7 @@ where
 impl_conditional_consumer_debug_display!(BoxConditionalConsumer<T>);
 
 // ============================================================================
-// 8. ArcConditionalConsumer - Arc-based Conditional Consumer
-// ============================================================================
-
-/// ArcConditionalConsumer struct
-///
-/// A conditional readonly consumer that only executes when a predicate is satisfied.
-/// Uses `ArcConsumer` and `ArcPredicate` for thread-safe shared ownership semantics.
-///
-/// This type is typically created by calling `ArcConsumer::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
-///
-/// # Features
-///
-/// - **Shared Ownership**: Cloneable through `Arc`, allows multiple owners
-/// - **Thread Safe**: Implements `Send + Sync`, can be safely used concurrently
-/// - **Conditional Execution**: Only consumes when predicate returns `true`
-/// - **Chainable**: Can add `or_else` branch to create if-then-else logic
-/// - **Implements Consumer**: Can be used anywhere a `Consumer` is expected
-/// - **Readonly**: Neither modifies itself nor input values
-///
-/// # Examples
-///
-/// ## Basic Conditional Execution
-///
-/// ```rust
-/// use prism3_function::{Consumer, ArcConsumer};
-///
-/// let consumer = ArcConsumer::new(|x: &i32| {
-///     println!("Positive: {}", x);
-/// });
-/// let conditional = consumer.when(|x: &i32| *x > 0);
-///
-/// conditional.accept(&5);  // Prints: Positive: 5
-/// conditional.accept(&-5); // Does nothing
-/// ```
-///
-/// ## With or_else Branch
-///
-/// ```rust
-/// use prism3_function::{Consumer, ArcConsumer};
-///
-/// let consumer = ArcConsumer::new(|x: &i32| {
-///     println!("Positive: {}", x);
-/// })
-/// .when(|x: &i32| *x > 0)
-/// .or_else(|x: &i32| {
-///     println!("Non-positive: {}", x);
-/// });
-///
-/// consumer.accept(&5);  // Prints: Positive: 5
-/// consumer.accept(&-5); // Prints: Non-positive: -5
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-pub struct ArcConditionalConsumer<T> {
-    consumer: ArcConsumer<T>,
-    predicate: ArcPredicate<T>,
-}
-
-// Use macro to generate conditional consumer implementations
-impl_shared_conditional_consumer!(
-    ArcConditionalConsumer<T>,
-    ArcConsumer,
-    Consumer,
-    into_arc,
-    Send + Sync + 'static
-);
-
-// Hand-written Consumer trait implementation
-impl<T> Consumer<T> for ArcConditionalConsumer<T>
-where
-    T: 'static,
-{
-    fn accept(&self, value: &T) {
-        if self.predicate.test(value) {
-            self.consumer.accept(value);
-        }
-    }
-
-    // Generates: into_box(), into_rc(), into_fn()
-    impl_conditional_consumer_conversions!(BoxConsumer<T>, RcConsumer, Fn);
-}
-
-// Use macro to generate Clone implementation
-impl_conditional_consumer_clone!(ArcConditionalConsumer<T>);
-
-// Use macro to generate Debug and Display implementations
-impl_conditional_consumer_debug_display!(ArcConditionalConsumer<T>);
-
-// ============================================================================
-// 9. RcConditionalConsumer - Rc-based Conditional Consumer
+// 8. RcConditionalConsumer - Rc-based Conditional Consumer
 // ============================================================================
 
 /// RcConditionalConsumer struct
@@ -1130,5 +1038,93 @@ impl_conditional_consumer_clone!(RcConditionalConsumer<T>);
 impl_conditional_consumer_debug_display!(RcConditionalConsumer<T>);
 
 // ============================================================================
-// 10. BoxConditionalBiConsumer - Box-based Conditional BiConsumer
+// 9. ArcConditionalConsumer - Arc-based Conditional Consumer
 // ============================================================================
+
+/// ArcConditionalConsumer struct
+///
+/// A conditional readonly consumer that only executes when a predicate is satisfied.
+/// Uses `ArcConsumer` and `ArcPredicate` for thread-safe shared ownership semantics.
+///
+/// This type is typically created by calling `ArcConsumer::when()` and is
+/// designed to work with the `or_else()` method to create if-then-else logic.
+///
+/// # Features
+///
+/// - **Shared Ownership**: Cloneable through `Arc`, allows multiple owners
+/// - **Thread Safe**: Implements `Send + Sync`, can be safely used concurrently
+/// - **Conditional Execution**: Only consumes when predicate returns `true`
+/// - **Chainable**: Can add `or_else` branch to create if-then-else logic
+/// - **Implements Consumer**: Can be used anywhere a `Consumer` is expected
+/// - **Readonly**: Neither modifies itself nor input values
+///
+/// # Examples
+///
+/// ## Basic Conditional Execution
+///
+/// ```rust
+/// use prism3_function::{Consumer, ArcConsumer};
+///
+/// let consumer = ArcConsumer::new(|x: &i32| {
+///     println!("Positive: {}", x);
+/// });
+/// let conditional = consumer.when(|x: &i32| *x > 0);
+///
+/// conditional.accept(&5);  // Prints: Positive: 5
+/// conditional.accept(&-5); // Does nothing
+/// ```
+///
+/// ## With or_else Branch
+///
+/// ```rust
+/// use prism3_function::{Consumer, ArcConsumer};
+///
+/// let consumer = ArcConsumer::new(|x: &i32| {
+///     println!("Positive: {}", x);
+/// })
+/// .when(|x: &i32| *x > 0)
+/// .or_else(|x: &i32| {
+///     println!("Non-positive: {}", x);
+/// });
+///
+/// consumer.accept(&5);  // Prints: Positive: 5
+/// consumer.accept(&-5); // Prints: Non-positive: -5
+/// ```
+///
+/// # Author
+///
+/// Haixing Hu
+pub struct ArcConditionalConsumer<T> {
+    consumer: ArcConsumer<T>,
+    predicate: ArcPredicate<T>,
+}
+
+// Use macro to generate conditional consumer implementations
+impl_shared_conditional_consumer!(
+    ArcConditionalConsumer<T>,
+    ArcConsumer,
+    Consumer,
+    into_arc,
+    Send + Sync + 'static
+);
+
+// Hand-written Consumer trait implementation
+impl<T> Consumer<T> for ArcConditionalConsumer<T>
+where
+    T: 'static,
+{
+    fn accept(&self, value: &T) {
+        if self.predicate.test(value) {
+            self.consumer.accept(value);
+        }
+    }
+
+    // Generates: into_box(), into_rc(), into_fn()
+    impl_conditional_consumer_conversions!(BoxConsumer<T>, RcConsumer, Fn);
+}
+
+// Use macro to generate Clone implementation
+impl_conditional_consumer_clone!(ArcConditionalConsumer<T>);
+
+// Use macro to generate Debug and Display implementations
+impl_conditional_consumer_debug_display!(ArcConditionalConsumer<T>);

@@ -551,9 +551,11 @@ where
     T: 'static,
 {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
-    impl_consumer_common_methods!(BoxStatefulConsumer<T>, (FnMut(&T) + 'static), |f| Box::new(
-        f
-    ));
+    impl_consumer_common_methods!(
+        BoxStatefulConsumer<T>,
+        (FnMut(&T) + 'static),
+        |f| Box::new(f)
+    );
 
     // Generates: when() and and_then() methods that consume self
     impl_box_consumer_methods!(
@@ -601,162 +603,7 @@ impl<T> StatefulConsumer<T> for BoxStatefulConsumer<T> {
 impl_consumer_debug_display!(BoxStatefulConsumer<T>);
 
 // ============================================================================
-// 3. ArcStatefulConsumer - Thread-Safe Shared Ownership Implementation
-// ============================================================================
-
-/// ArcStatefulConsumer struct
-///
-/// Consumer implementation based on `Arc<Mutex<dyn FnMut(&T) + Send>>` for
-/// thread-safe shared ownership scenarios. This consumer can be safely cloned
-/// and shared across multiple threads.
-///
-/// # Features
-///
-/// - **Shared Ownership**: Cloneable through `Arc`, allowing multiple owners
-/// - **Thread Safety**: Implements `Send + Sync`, safe for concurrent use
-/// - **Interior Mutability**: Uses `Mutex` for safe mutable access
-/// - **Non-Consuming API**: `and_then` borrows `&self`, original object remains
-///   usable
-/// - **Cross-Thread Sharing**: Can be sent to other threads and used
-///
-/// # Use Cases
-///
-/// Choose `ArcStatefulConsumer` when:
-/// - Need to share consumers across multiple threads
-/// - Concurrent task processing (e.g., thread pools)
-/// - Using the same consumer in multiple places simultaneously
-/// - Need thread safety (Send + Sync)
-///
-/// # Performance Considerations
-///
-/// `ArcStatefulConsumer` has some performance overhead compared to `BoxStatefulConsumer`:
-/// - **Reference Counting**: Atomic operations on clone/drop
-/// - **Mutex Locking**: Each `accept` call requires lock acquisition
-/// - **Lock Contention**: High concurrency may cause contention
-///
-/// These overheads are necessary for safe concurrent access. If thread safety
-/// is not needed, consider using `RcStatefulConsumer` for less single-threaded sharing
-/// overhead.
-///
-/// # Examples
-///
-/// ```rust
-/// use prism3_function::{Consumer, ArcStatefulConsumer};
-/// use std::sync::{Arc, Mutex};
-///
-/// let log = Arc::new(Mutex::new(Vec::new()));
-/// let l = log.clone();
-/// let mut consumer = ArcStatefulConsumer::new(move |x: &i32| {
-///     l.lock().unwrap().push(*x * 2);
-/// });
-/// let mut clone = consumer.clone();
-///
-/// consumer.accept(&5);
-/// assert_eq!(*log.lock().unwrap(), vec![10]);
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-pub struct ArcStatefulConsumer<T> {
-    function: Arc<Mutex<SendConsumerFn<T>>>,
-    name: Option<String>,
-}
-
-impl<T> ArcStatefulConsumer<T>
-where
-    T: 'static,
-{
-    // Generates: new(), new_with_name(), name(), set_name(), noop()
-    impl_consumer_common_methods!(ArcStatefulConsumer<T>, (FnMut(&T) + Send + 'static), |f| {
-        Arc::new(Mutex::new(f))
-    });
-
-    // Generates: when() and and_then() methods that borrow &self (Arc can clone)
-    impl_shared_consumer_methods!(
-        ArcStatefulConsumer<T>,
-        ArcConditionalStatefulConsumer,
-        into_arc,
-        StatefulConsumer,
-        Send + Sync + 'static
-    );
-}
-
-impl<T> StatefulConsumer<T> for ArcStatefulConsumer<T> {
-    fn accept(&mut self, value: &T) {
-        (self.function.lock().unwrap())(value)
-    }
-
-    fn into_box(self) -> BoxStatefulConsumer<T>
-    where
-        T: 'static,
-    {
-        let self_fn = self.function;
-        BoxStatefulConsumer::new(move |t| self_fn.lock().unwrap()(t))
-    }
-
-    fn into_rc(self) -> RcStatefulConsumer<T>
-    where
-        T: 'static,
-    {
-        let self_fn = self.function;
-        RcStatefulConsumer::new(move |t| self_fn.lock().unwrap()(t))
-    }
-
-    fn into_arc(self) -> ArcStatefulConsumer<T>
-    where
-        T: 'static,
-    {
-        self
-    }
-
-    fn into_fn(self) -> impl FnMut(&T)
-    where
-        T: 'static,
-    {
-        let self_fn = self.function;
-        move |t: &T| {
-            self_fn.lock().unwrap()(t);
-        }
-    }
-
-    fn to_box(&self) -> BoxStatefulConsumer<T>
-    where
-        T: 'static,
-    {
-        let self_fn = self.function.clone();
-        BoxStatefulConsumer::new(move |t| self_fn.lock().unwrap()(t))
-    }
-
-    fn to_rc(&self) -> RcStatefulConsumer<T>
-    where
-        T: 'static,
-    {
-        let self_fn = self.function.clone();
-        RcStatefulConsumer::new(move |t| self_fn.lock().unwrap()(t))
-    }
-
-    fn to_arc(&self) -> ArcStatefulConsumer<T>
-    where
-        T: 'static,
-    {
-        self.clone()
-    }
-
-    fn to_fn(&self) -> impl FnMut(&T) {
-        let self_fn = self.function.clone();
-        move |t| self_fn.lock().unwrap()(t)
-    }
-}
-
-// Use macro to generate Clone implementation
-impl_consumer_clone!(ArcStatefulConsumer<T>);
-
-// Use macro to generate Debug and Display implementations
-impl_consumer_debug_display!(ArcStatefulConsumer<T>);
-
-// ============================================================================
-// 4. RcStatefulConsumer - Single-Threaded Shared Ownership Implementation
+// 3. RcStatefulConsumer - Single-Threaded Shared Ownership Implementation
 // ============================================================================
 
 /// RcStatefulConsumer struct
@@ -858,8 +705,7 @@ impl<T> StatefulConsumer<T> for RcStatefulConsumer<T> {
     where
         T: 'static,
     {
-        let self_fn = self.function;
-        BoxStatefulConsumer::new(move |t| self_fn.borrow_mut()(t))
+        BoxStatefulConsumer::new(move |t| self.function.borrow_mut()(t))
     }
 
     fn into_rc(self) -> RcStatefulConsumer<T>
@@ -876,8 +722,7 @@ impl<T> StatefulConsumer<T> for RcStatefulConsumer<T> {
     where
         T: 'static,
     {
-        let self_fn = self.function;
-        move |t| self_fn.borrow_mut()(t)
+        move |t| self.function.borrow_mut()(t)
     }
 
     fn to_box(&self) -> BoxStatefulConsumer<T>
@@ -909,6 +754,158 @@ impl_consumer_clone!(RcStatefulConsumer<T>);
 
 // Use macro to generate Debug and Display implementations
 impl_consumer_debug_display!(RcStatefulConsumer<T>);
+
+// ============================================================================
+// 4. ArcStatefulConsumer - Thread-Safe Shared Ownership Implementation
+// ============================================================================
+
+/// ArcStatefulConsumer struct
+///
+/// Consumer implementation based on `Arc<Mutex<dyn FnMut(&T) + Send>>` for
+/// thread-safe shared ownership scenarios. This consumer can be safely cloned
+/// and shared across multiple threads.
+///
+/// # Features
+///
+/// - **Shared Ownership**: Cloneable through `Arc`, allowing multiple owners
+/// - **Thread Safety**: Implements `Send + Sync`, safe for concurrent use
+/// - **Interior Mutability**: Uses `Mutex` for safe mutable access
+/// - **Non-Consuming API**: `and_then` borrows `&self`, original object remains
+///   usable
+/// - **Cross-Thread Sharing**: Can be sent to other threads and used
+///
+/// # Use Cases
+///
+/// Choose `ArcStatefulConsumer` when:
+/// - Need to share consumers across multiple threads
+/// - Concurrent task processing (e.g., thread pools)
+/// - Using the same consumer in multiple places simultaneously
+/// - Need thread safety (Send + Sync)
+///
+/// # Performance Considerations
+///
+/// `ArcStatefulConsumer` has some performance overhead compared to `BoxStatefulConsumer`:
+/// - **Reference Counting**: Atomic operations on clone/drop
+/// - **Mutex Locking**: Each `accept` call requires lock acquisition
+/// - **Lock Contention**: High concurrency may cause contention
+///
+/// These overheads are necessary for safe concurrent access. If thread safety
+/// is not needed, consider using `RcStatefulConsumer` for less single-threaded sharing
+/// overhead.
+///
+/// # Examples
+///
+/// ```rust
+/// use prism3_function::{Consumer, ArcStatefulConsumer};
+/// use std::sync::{Arc, Mutex};
+///
+/// let log = Arc::new(Mutex::new(Vec::new()));
+/// let l = log.clone();
+/// let mut consumer = ArcStatefulConsumer::new(move |x: &i32| {
+///     l.lock().unwrap().push(*x * 2);
+/// });
+/// let mut clone = consumer.clone();
+///
+/// consumer.accept(&5);
+/// assert_eq!(*log.lock().unwrap(), vec![10]);
+/// ```
+///
+/// # Author
+///
+/// Haixing Hu
+pub struct ArcStatefulConsumer<T> {
+    function: Arc<Mutex<SendConsumerFn<T>>>,
+    name: Option<String>,
+}
+
+impl<T> ArcStatefulConsumer<T>
+where
+    T: 'static,
+{
+    // Generates: new(), new_with_name(), name(), set_name(), noop()
+    impl_consumer_common_methods!(
+        ArcStatefulConsumer<T>,
+        (FnMut(&T) + Send + 'static),
+        |f| Arc::new(Mutex::new(f))
+    );
+
+    // Generates: when() and and_then() methods that borrow &self (Arc can clone)
+    impl_shared_consumer_methods!(
+        ArcStatefulConsumer<T>,
+        ArcConditionalStatefulConsumer,
+        into_arc,
+        StatefulConsumer,
+        Send + Sync + 'static
+    );
+}
+
+impl<T> StatefulConsumer<T> for ArcStatefulConsumer<T> {
+    fn accept(&mut self, value: &T) {
+        (self.function.lock().unwrap())(value)
+    }
+
+    fn into_box(self) -> BoxStatefulConsumer<T>
+    where
+        T: 'static,
+    {
+        BoxStatefulConsumer::new(move |t| self.function.lock().unwrap()(t))
+    }
+
+    fn into_rc(self) -> RcStatefulConsumer<T>
+    where
+        T: 'static,
+    {
+        RcStatefulConsumer::new(move |t| self.function.lock().unwrap()(t))
+    }
+
+    fn into_arc(self) -> ArcStatefulConsumer<T>
+    where
+        T: 'static,
+    {
+        self
+    }
+
+    fn into_fn(self) -> impl FnMut(&T)
+    where
+        T: 'static,
+    {
+        move |t: &T| self.function.lock().unwrap()(t)
+    }
+
+    fn to_box(&self) -> BoxStatefulConsumer<T>
+    where
+        T: 'static,
+    {
+        let self_fn = self.function.clone();
+        BoxStatefulConsumer::new(move |t| self_fn.lock().unwrap()(t))
+    }
+
+    fn to_rc(&self) -> RcStatefulConsumer<T>
+    where
+        T: 'static,
+    {
+        let self_fn = self.function.clone();
+        RcStatefulConsumer::new(move |t| self_fn.lock().unwrap()(t))
+    }
+
+    fn to_arc(&self) -> ArcStatefulConsumer<T>
+    where
+        T: 'static,
+    {
+        self.clone()
+    }
+
+    fn to_fn(&self) -> impl FnMut(&T) {
+        let self_fn = self.function.clone();
+        move |t| self_fn.lock().unwrap()(t)
+    }
+}
+
+// Use macro to generate Clone implementation
+impl_consumer_clone!(ArcStatefulConsumer<T>);
+
+// Use macro to generate Debug and Display implementations
+impl_consumer_debug_display!(ArcStatefulConsumer<T>);
 
 // ============================================================================
 // 5. Implement Consumer trait for closures
