@@ -137,6 +137,11 @@
 //!
 //! Haixing Hu
 
+use crate::mutators::macros::{
+    impl_box_mutator_methods,
+    impl_mutator_common_methods,
+    impl_mutator_debug_display,
+};
 use crate::predicates::predicate::{
     BoxPredicate,
     Predicate,
@@ -384,221 +389,29 @@ pub trait MutatorOnce<T> {
 /// Haixing Hu
 pub struct BoxMutatorOnce<T> {
     function: Box<dyn FnOnce(&mut T)>,
+    name: Option<String>,
 }
 
 impl<T> BoxMutatorOnce<T>
 where
     T: 'static,
 {
-    /// Creates a new BoxMutatorOnce
-    ///
-    /// # Parameters
-    ///
-    /// * `f` - The closure to wrap
-    ///
-    /// # Returns
-    ///
-    /// Returns a new `BoxMutatorOnce<T>` instance
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{MutatorOnce, BoxMutatorOnce};
-    ///
-    /// let data = String::from("world");
-    /// let mutator = BoxMutatorOnce::new(move |x: &mut String| {
-    ///     x.push_str(" ");
-    ///     x.push_str(&data); // Move data
-    /// });
-    ///
-    /// let mut target = String::from("hello");
-    /// mutator.apply(&mut target);
-    /// assert_eq!(target, "hello world");
-    /// ```
-    pub fn new<F>(f: F) -> Self
-    where
-        F: FnOnce(&mut T) + 'static,
-    {
-        BoxMutatorOnce {
-            function: Box::new(f),
-        }
-    }
+    impl_mutator_common_methods!(
+        BoxMutatorOnce<T>,
+        (FnOnce(&mut T) + 'static),
+        |f| Box::new(f)
+    );
 
-    /// Creates a no-op mutator
-    ///
-    /// Returns a mutator that performs no operation.
-    ///
-    /// # Returns
-    ///
-    /// Returns a no-op mutator
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{MutatorOnce, BoxMutatorOnce};
-    ///
-    /// let noop = BoxMutatorOnce::<i32>::noop();
-    /// let mut value = 42;
-    /// noop.apply(&mut value);
-    /// assert_eq!(value, 42); // Value unchanged
-    /// ```
-    pub fn noop() -> Self {
-        BoxMutatorOnce::new(|_| {})
-    }
-
-    /// Chains another mutator in sequence
-    ///
-    /// Returns a new mutator that first executes the current operation, then
-    /// executes the next operation. Consumes self.
-    ///
-    /// # Parameters
-    ///
-    /// * `next` - The mutator to execute after the current operation. **Note:
-    ///   This parameter is passed by value and will transfer ownership.** Since
-    ///   `BoxMutatorOnce` cannot be cloned, the parameter will be consumed.
-    ///   Can be:
-    ///   - A closure: `|x: &mut T|`
-    ///   - A `BoxMutatorOnce<T>`
-    ///   - Any type implementing `MutatorOnce<T>`
-    ///
-    /// # Returns
-    ///
-    /// Returns a new composed `BoxMutatorOnce<T>`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{MutatorOnce, BoxMutatorOnce};
-    ///
-    /// let data1 = vec![1, 2];
-    /// let data2 = vec![3, 4];
-    /// let data3 = vec![5, 6];
-    ///
-    /// let chained = BoxMutatorOnce::new(move |x: &mut Vec<i32>| {
-    ///     x.extend(data1);
-    /// })
-    /// .and_then(move |x: &mut Vec<i32>| {
-    ///     x.extend(data2);
-    /// })
-    /// .and_then(move |x: &mut Vec<i32>| {
-    ///     x.extend(data3);
-    /// });
-    ///
-    /// let mut target = vec![0];
-    /// chained.apply(&mut target);
-    /// assert_eq!(target, vec![0, 1, 2, 3, 4, 5, 6]);
-    /// ```
-    pub fn and_then<C>(self, next: C) -> Self
-    where
-        C: MutatorOnce<T> + 'static,
-        T: 'static,
-    {
-        let first = self.function;
-        BoxMutatorOnce::new(move |t| {
-            first(t);
-            next.apply(t);
-        })
-    }
-
-    /// Creates a conditional mutator
-    ///
-    /// Returns a mutator that only executes when a predicate is satisfied.
-    ///
-    /// # Parameters
-    ///
-    /// * `predicate` - The condition to check. **Note: This parameter is passed
-    ///   by value and will transfer ownership.** If you need to preserve the
-    ///   original predicate, clone it first (if it implements `Clone`). Can be:
-    ///   - A closure: `|x: &T| -> bool`
-    ///   - A function pointer: `fn(&T) -> bool`
-    ///   - A `BoxPredicate<T>`
-    ///   - An `RcPredicate<T>`
-    ///   - An `ArcPredicate<T>`
-    ///   - Any type implementing `Predicate<T>`
-    ///
-    /// # Returns
-    ///
-    /// Returns `BoxConditionalMutatorOnce<T>`
-    ///
-    /// # Examples
-    ///
-    /// ## Using a closure
-    ///
-    /// ```rust
-    /// use prism3_function::{MutatorOnce, BoxMutatorOnce};
-    ///
-    /// let data = vec![1, 2, 3];
-    /// let mutator = BoxMutatorOnce::new(move |x: &mut Vec<i32>| {
-    ///     x.extend(data);
-    /// });
-    /// let conditional = mutator.when(|x: &Vec<i32>| !x.is_empty());
-    ///
-    /// let mut target = vec![0];
-    /// conditional.apply(&mut target);
-    /// assert_eq!(target, vec![0, 1, 2, 3]);
-    ///
-    /// let mut empty = Vec::new();
-    /// let data2 = vec![4, 5];
-    /// let mutator2 = BoxMutatorOnce::new(move |x: &mut Vec<i32>| {
-    ///     x.extend(data2);
-    /// });
-    /// let conditional2 = mutator2.when(|x: &Vec<i32>| x.len() > 5);
-    /// conditional2.apply(&mut empty);
-    /// assert_eq!(empty, Vec::<i32>::new()); // Unchanged
-    /// ```
-    ///
-    /// ## Preserving predicate with clone
-    ///
-    /// ```rust
-    /// use prism3_function::{MutatorOnce, BoxMutatorOnce, RcPredicate};
-    /// use prism3_function::predicate::Predicate;
-    ///
-    /// let data = vec![1, 2, 3];
-    /// let mutator = BoxMutatorOnce::new(move |x: &mut Vec<i32>| {
-    ///     x.extend(data);
-    /// });
-    /// let predicate = RcPredicate::new(|x: &Vec<i32>| !x.is_empty());
-    ///
-    /// // Clone to preserve original predicate
-    /// let conditional = mutator.when(predicate.clone());
-    ///
-    /// let mut target = vec![0];
-    /// conditional.apply(&mut target);
-    /// assert_eq!(target, vec![0, 1, 2, 3]);
-    ///
-    /// // Original predicate still usable
-    /// assert!(predicate.test(&vec![1, 2]));
-    /// ```
-    ///
-    /// ## Using composed predicate
-    ///
-    /// ```rust
-    /// use prism3_function::{MutatorOnce, BoxMutatorOnce};
-    /// use prism3_function::predicate::{Predicate, FnPredicateOps};
-    ///
-    /// let pred = (|x: &Vec<i32>| !x.is_empty())
-    ///     .and(|x: &Vec<i32>| x.len() < 10);
-    /// let data = vec![1, 2, 3];
-    /// let mutator = BoxMutatorOnce::new(move |x: &mut Vec<i32>| {
-    ///     x.extend(data);
-    /// });
-    /// let conditional = mutator.when(pred);
-    ///
-    /// let mut target = vec![0];
-    /// conditional.apply(&mut target);
-    /// assert_eq!(target, vec![0, 1, 2, 3]);
-    /// ```
-    pub fn when<P>(self, predicate: P) -> BoxConditionalMutatorOnce<T>
-    where
-        P: Predicate<T> + 'static,
-        T: 'static,
-    {
-        BoxConditionalMutatorOnce {
-            mutator: self,
-            predicate: predicate.into_box(),
-        }
-    }
+// Generate box mutator methods (when, and_then, or_else, etc.)
+impl_box_mutator_methods!(
+    BoxMutatorOnce<T>,
+    BoxConditionalMutatorOnce,
+    MutatorOnce
+);
 }
+
+// Generate Debug and Display trait implementations
+impl_mutator_debug_display!(BoxMutatorOnce<T>);
 
 impl<T> MutatorOnce<T> for BoxMutatorOnce<T> {
     fn apply(self, value: &mut T) {
@@ -884,7 +697,7 @@ where
         Self: Sized + 'static,
         T: 'static,
     {
-        BoxMutatorOnce::new(self)
+        BoxMutatorOnce::new(move |t| self(t))
     }
 
     fn into_fn(self) -> impl FnOnce(&mut T)
