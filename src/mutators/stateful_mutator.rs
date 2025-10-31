@@ -202,6 +202,7 @@ use std::sync::{
 use crate::mutators::macros::{
     impl_box_conditional_mutator,
     impl_box_mutator_methods,
+    impl_conditional_mutator_conversions,
     impl_conditional_mutator_clone,
     impl_conditional_mutator_debug_display,
     impl_mutator_clone,
@@ -648,16 +649,13 @@ where
         |f| Box::new(f)
     );
 
-// Generate box mutator methods (when, and_then, or_else, etc.)
-impl_box_mutator_methods!(
-    BoxStatefulMutator<T>,
-    BoxConditionalStatefulMutator,
-    StatefulMutator
-);
+    // Generate box mutator methods (when, and_then, or_else, etc.)
+    impl_box_mutator_methods!(
+        BoxStatefulMutator<T>,
+        BoxConditionalStatefulMutator,
+        StatefulMutator
+    );
 }
-
-// Generate Debug and Display trait implementations
-impl_mutator_debug_display!(BoxStatefulMutator<T>);
 
 impl<T> StatefulMutator<T> for BoxStatefulMutator<T> {
     fn apply(&mut self, value: &mut T) {
@@ -682,17 +680,20 @@ impl<T> StatefulMutator<T> for BoxStatefulMutator<T> {
     // do NOT override Mutator::into_arc() because BoxMutator is not Send + Sync
     // and calling BoxMutator::into_arc() will cause a compile error
 
-    fn into_fn(mut self) -> impl FnMut(&mut T)
+    fn into_fn(self) -> impl FnMut(&mut T)
     where
         Self: Sized + 'static,
         T: 'static,
     {
-        move |t| (self.function)(t)
+        self.function
     }
 
     // do NOT override Mutator::to_xxx() because BoxMutator is not Clone
     // and calling BoxMutator::to_xxx() will cause a compile error
 }
+
+// Generate Debug and Display trait implementations
+impl_mutator_debug_display!(BoxStatefulMutator<T>);
 
 // ============================================================================
 // 3. RcMutator - Single-Threaded Shared Ownership Implementation
@@ -752,14 +753,14 @@ where
         |f| Rc::new(RefCell::new(f))
     );
 
-// Generate shared mutator methods (when, and_then, or_else, conversions)
-impl_shared_mutator_methods!(
-    RcStatefulMutator<T>,
-    RcConditionalStatefulMutator,
-    into_rc,
-    StatefulMutator,
-    'static
-);
+    // Generate shared mutator methods (when, and_then, or_else, conversions)
+    impl_shared_mutator_methods!(
+        RcStatefulMutator<T>,
+        RcConditionalStatefulMutator,
+        into_rc,
+        StatefulMutator,
+        'static
+    );
 }
 
 impl<T> StatefulMutator<T> for RcStatefulMutator<T> {
@@ -822,11 +823,11 @@ impl<T> StatefulMutator<T> for RcStatefulMutator<T> {
     }
 }
 
+// Use macro to generate Clone implementation
 impl_mutator_clone!(RcStatefulMutator<T>);
 
 // Generate Debug and Display trait implementations
 impl_mutator_debug_display!(RcStatefulMutator<T>);
-
 
 // ============================================================================
 // 4. ArcMutator - Thread-Safe Shared Ownership Implementation
@@ -877,7 +878,7 @@ pub struct ArcStatefulMutator<T> {
 
 impl<T> ArcStatefulMutator<T>
 where
-    T: Send + 'static,
+    T: 'static,
 {
     impl_mutator_common_methods!(
         ArcStatefulMutator<T>,
@@ -885,18 +886,15 @@ where
         |f| Arc::new(Mutex::new(f))
     );
 
-// Generate shared mutator methods (when, and_then, or_else, conversions)
-impl_shared_mutator_methods!(
-    ArcStatefulMutator<T>,
-    ArcConditionalStatefulMutator,
-    into_arc,
-    StatefulMutator,
-    Send + Sync + 'static
-);
+    // Generate shared mutator methods (when, and_then, or_else, conversions)
+    impl_shared_mutator_methods!(
+        ArcStatefulMutator<T>,
+        ArcConditionalStatefulMutator,
+        into_arc,
+        StatefulMutator,
+        Send + Sync + 'static
+    );
 }
-
-// Generate Debug and Display trait implementations
-impl_mutator_debug_display!(ArcStatefulMutator<T>);
 
 impl<T> StatefulMutator<T> for ArcStatefulMutator<T> {
     fn apply(&mut self, value: &mut T) {
@@ -968,7 +966,11 @@ impl<T> StatefulMutator<T> for ArcStatefulMutator<T> {
     }
 }
 
+// Use macro to generate Clone implementation
 impl_mutator_clone!(ArcStatefulMutator<T>);
+
+// Generate Debug and Display trait implementations
+impl_mutator_debug_display!(ArcStatefulMutator<T>);
 
 // ============================================================================
 // 5. Implement Mutator trait for closures
@@ -1204,21 +1206,12 @@ pub struct BoxConditionalStatefulMutator<T> {
     predicate: BoxPredicate<T>,
 }
 
-impl<T> BoxConditionalStatefulMutator<T>
-where
-    T: 'static,
-{
-}
-
 // Generate box conditional mutator methods (and_then, or_else)
 impl_box_conditional_mutator!(
     BoxConditionalStatefulMutator<T>,
     BoxStatefulMutator,
     StatefulMutator
 );
-
-// Generate Debug and Display trait implementations for conditional mutator
-impl_conditional_mutator_debug_display!(BoxConditionalStatefulMutator<T>);
 
 impl<T> StatefulMutator<T> for BoxConditionalStatefulMutator<T>
 where
@@ -1230,43 +1223,17 @@ where
         }
     }
 
-    fn into_box(self) -> BoxStatefulMutator<T> {
-        let pred = self.predicate;
-        let mut mutator = self.mutator;
-        BoxStatefulMutator::new(move |t| {
-            if pred.test(t) {
-                mutator.apply(t);
-            }
-        })
-    }
+    // Generates: into_box(), into_rc(), into_fn()
+    impl_conditional_mutator_conversions!(
+        BoxStatefulMutator<T>,
+        RcStatefulMutator,
+        FnMut
+    );
 
-    fn into_rc(self) -> RcStatefulMutator<T> {
-        let pred = self.predicate.into_rc();
-        let mutator = self.mutator.into_rc();
-        let mut mutator_fn = mutator;
-        RcStatefulMutator::new(move |t| {
-            if pred.test(t) {
-                mutator_fn.apply(t);
-            }
-        })
-    }
-
-    // do NOT override Mutator::into_arc() because BoxConditionalMutator is not Send + Sync
-    // and calling BoxConditionalMutator::into_arc() will cause a compile error
-
-    fn into_fn(self) -> impl FnMut(&mut T) {
-        let pred = self.predicate;
-        let mut mutator = self.mutator;
-        move |t: &mut T| {
-            if pred.test(t) {
-                mutator.apply(t);
-            }
-        }
-    }
-
-    // do NOT override Mutator::to_xxx() because BoxConditionalMutator is not Clone
-    // and calling BoxConditionalMutator::to_xxx() will cause a compile error
 }
+
+// Generate Debug and Display trait implementations for conditional mutator
+impl_conditional_mutator_debug_display!(BoxConditionalStatefulMutator<T>);
 
 // ============================================================================
 // 8. RcConditionalMutator - Rc-based Conditional Mutator
@@ -1312,6 +1279,14 @@ pub struct RcConditionalStatefulMutator<T> {
     predicate: RcPredicate<T>,
 }
 
+// Generate shared conditional mutator methods (and_then, or_else, conversions)
+impl_shared_conditional_mutator!(
+    RcConditionalStatefulMutator<T>,
+    RcStatefulMutator,
+    StatefulMutator,
+    into_rc,
+    'static
+);
 
 impl<T> StatefulMutator<T> for RcConditionalStatefulMutator<T>
 where
@@ -1323,65 +1298,12 @@ where
         }
     }
 
-    fn into_box(self) -> BoxStatefulMutator<T> {
-        let pred = self.predicate;
-        let mut mutator = self.mutator;
-        BoxStatefulMutator::new(move |t| {
-            if pred.test(t) {
-                mutator.apply(t);
-            }
-        })
-    }
-
-    fn into_rc(self) -> RcStatefulMutator<T> {
-        let pred = self.predicate;
-        let mut mutator = self.mutator;
-        RcStatefulMutator::new(move |t| {
-            if pred.test(t) {
-                mutator.apply(t);
-            }
-        })
-    }
-
-    // do NOT override Mutator::into_arc() because RcConditionalMutator is not Send + Sync
-    // and calling RcConditionalMutator::into_arc() will cause a compile error
-
-    fn into_fn(self) -> impl FnMut(&mut T) {
-        let pred = self.predicate;
-        let mut mutator = self.mutator;
-        move |t: &mut T| {
-            if pred.test(t) {
-                mutator.apply(t);
-            }
-        }
-    }
-
-    fn to_box(&self) -> BoxStatefulMutator<T>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        self.clone().into_box()
-    }
-
-    fn to_rc(&self) -> RcStatefulMutator<T>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        self.clone().into_rc()
-    }
-
-    // do NOT override Mutator::to_arc() because RcMutator is not Send + Sync
-    // and calling RcMutator::to_arc() will cause a compile error
-
-    fn to_fn(&self) -> impl FnMut(&mut T)
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        self.clone().into_fn()
-    }
+    // Generates: into_box(), into_rc(), into_fn()
+    impl_conditional_mutator_conversions!(
+        BoxStatefulMutator<T>,
+        RcStatefulMutator,
+        FnMut
+    );
 }
 
 // Generate Clone trait implementation for conditional mutator
@@ -1389,16 +1311,6 @@ impl_conditional_mutator_clone!(RcConditionalStatefulMutator<T>);
 
 // Generate Debug and Display trait implementations for conditional mutator
 impl_conditional_mutator_debug_display!(RcConditionalStatefulMutator<T>);
-
-// Generate shared conditional mutator methods (and_then, or_else, conversions)
-impl_shared_conditional_mutator!(
-    RcConditionalStatefulMutator<T>,
-    RcStatefulMutator,
-    StatefulMutator,
-    into_rc,
-    'static
-);
-
 
 // ============================================================================
 // 9. ArcConditionalMutator - Arc-based Conditional Mutator
@@ -1444,6 +1356,14 @@ pub struct ArcConditionalStatefulMutator<T> {
     predicate: ArcPredicate<T>,
 }
 
+// Generate shared conditional mutator methods (and_then, or_else, conversions)
+impl_shared_conditional_mutator!(
+    ArcConditionalStatefulMutator<T>,
+    ArcStatefulMutator,
+    StatefulMutator,
+    into_arc,
+    Send + Sync + 'static
+);
 
 impl<T> StatefulMutator<T> for ArcConditionalStatefulMutator<T>
 where
@@ -1455,90 +1375,12 @@ where
         }
     }
 
-    fn into_box(self) -> BoxStatefulMutator<T>
-    where
-        T: 'static,
-    {
-        let pred = self.predicate;
-        let mut mutator = self.mutator;
-        BoxStatefulMutator::new(move |t| {
-            if pred.test(t) {
-                mutator.apply(t);
-            }
-        })
-    }
-
-    fn into_rc(self) -> RcStatefulMutator<T>
-    where
-        T: 'static,
-    {
-        let pred = self.predicate.to_rc();
-        let mutator = self.mutator.into_rc();
-        let mut mutator_fn = mutator;
-        RcStatefulMutator::new(move |t| {
-            if pred.test(t) {
-                mutator_fn.apply(t);
-            }
-        })
-    }
-
-    fn into_arc(self) -> ArcStatefulMutator<T>
-    where
-        T: Send + 'static,
-    {
-        let pred = self.predicate;
-        let mut mutator = self.mutator;
-        ArcStatefulMutator::new(move |t| {
-            if pred.test(t) {
-                mutator.apply(t);
-            }
-        })
-    }
-
-    fn into_fn(self) -> impl FnMut(&mut T)
-    where
-        T: 'static,
-    {
-        let pred = self.predicate;
-        let mut mutator = self.mutator;
-        move |t: &mut T| {
-            if pred.test(t) {
-                mutator.apply(t);
-            }
-        }
-    }
-
-    fn to_box(&self) -> BoxStatefulMutator<T>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        self.clone().into_box()
-    }
-
-    fn to_rc(&self) -> RcStatefulMutator<T>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        self.clone().into_rc()
-    }
-
-    fn to_arc(&self) -> ArcStatefulMutator<T>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        self.clone().into_arc()
-    }
-
-    fn to_fn(&self) -> impl FnMut(&mut T)
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        self.clone().into_fn()
-    }
+    // Generates: into_box(), into_rc(), into_fn()
+    impl_conditional_mutator_conversions!(
+        BoxStatefulMutator<T>,
+        RcStatefulMutator,
+        FnMut
+    );
 }
 
 // Generate Clone trait implementation for conditional mutator
@@ -1546,12 +1388,3 @@ impl_conditional_mutator_clone!(ArcConditionalStatefulMutator<T>);
 
 // Generate Debug and Display trait implementations for conditional mutator
 impl_conditional_mutator_debug_display!(ArcConditionalStatefulMutator<T>);
-
-// Generate shared conditional mutator methods (and_then, or_else, conversions)
-impl_shared_conditional_mutator!(
-    ArcConditionalStatefulMutator<T>,
-    ArcStatefulMutator,
-    StatefulMutator,
-    into_arc,
-    Send + Sync + 'static
-);
