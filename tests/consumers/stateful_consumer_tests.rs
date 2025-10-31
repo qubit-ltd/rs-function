@@ -1602,6 +1602,24 @@ mod test_edge_cases {
     }
 
     #[test]
+    fn test_arc_conditional_debug() {
+        let mut consumer = ArcStatefulConsumer::new(|_x: &i32| {});
+        let conditional = consumer.when(|x: &i32| *x > 0);
+        let debug_str = format!("{:?}", conditional);
+        assert!(debug_str.contains("ArcConditionalStatefulConsumer"));
+        assert!(debug_str.contains("consumer"));
+        assert!(debug_str.contains("predicate"));
+    }
+
+    #[test]
+    fn test_arc_conditional_display() {
+        let mut consumer = ArcStatefulConsumer::new(|_x: &i32| {});
+        let conditional = consumer.when(|x: &i32| *x > 0);
+        let display_str = format!("{}", conditional);
+        assert!(display_str.contains("ArcConditionalStatefulConsumer"));
+    }
+
+    #[test]
     fn test_rc_when() {
         let log = Rc::new(RefCell::new(Vec::new()));
         let l = log.clone();
@@ -1693,6 +1711,24 @@ mod test_edge_cases {
         assert_eq!(*log.borrow(), vec![5]);
         with_else.accept(&-5);
         assert_eq!(*log.borrow(), vec![5, -10]);
+    }
+
+    #[test]
+    fn test_rc_conditional_debug() {
+        let mut consumer = RcStatefulConsumer::new(|_x: &i32| {});
+        let conditional = consumer.when(|x: &i32| *x > 0);
+        let debug_str = format!("{:?}", conditional);
+        assert!(debug_str.contains("RcConditionalStatefulConsumer"));
+        assert!(debug_str.contains("consumer"));
+        assert!(debug_str.contains("predicate"));
+    }
+
+    #[test]
+    fn test_rc_conditional_display() {
+        let mut consumer = RcStatefulConsumer::new(|_x: &i32| {});
+        let conditional = consumer.when(|x: &i32| *x > 0);
+        let display_str = format!("{}", conditional);
+        assert!(display_str.contains("RcConditionalStatefulConsumer"));
     }
 }
 
@@ -2752,5 +2788,106 @@ mod test_fn_stateful_consumer_ops {
         let mut second_copy = second;
         second_copy.accept(&3);
         assert_eq!(*log.lock().unwrap(), vec![10, 15, 13]);
+    }
+}
+
+// ============================================================================
+// Custom Struct Tests - Testing StatefulConsumer trait default implementations
+// ============================================================================
+
+#[cfg(test)]
+mod custom_struct_tests {
+    use super::*;
+    use prism3_function::ConsumerOnce;
+    use std::sync::atomic::{
+        AtomicUsize,
+        Ordering,
+    };
+
+    /// Custom struct implementing StatefulConsumer for testing default trait methods
+    pub struct MyStatefulConsumer {
+        counter: Arc<AtomicUsize>,
+    }
+
+    impl MyStatefulConsumer {
+        pub fn new(counter: Arc<AtomicUsize>) -> Self {
+            Self { counter }
+        }
+    }
+
+    impl StatefulConsumer<i32> for MyStatefulConsumer {
+        fn accept(&mut self, _value: &i32) {
+            self.counter.fetch_add(1, Ordering::SeqCst);
+        }
+    }
+
+    impl Clone for MyStatefulConsumer {
+        fn clone(&self) -> Self {
+            Self {
+                counter: self.counter.clone(),
+            }
+        }
+    }
+
+    #[test]
+    fn test_custom_consumer_into_once() {
+        let counter = Arc::new(AtomicUsize::new(0));
+        let my_consumer = MyStatefulConsumer::new(counter.clone());
+
+        // Test into_once() - should consume the original
+        let once_consumer = my_consumer.into_once();
+        once_consumer.accept(&1);
+        assert_eq!(counter.load(Ordering::SeqCst), 1);
+    }
+
+    #[test]
+    fn test_custom_consumer_to_once() {
+        let counter = Arc::new(AtomicUsize::new(0));
+        let my_consumer = MyStatefulConsumer::new(counter.clone());
+
+        // Test to_once() - should not consume the original
+        let once_consumer = my_consumer.to_once();
+        once_consumer.accept(&1);
+        assert_eq!(counter.load(Ordering::SeqCst), 1);
+
+        // Original consumer should still be usable
+        let mut my_consumer_copy = my_consumer;
+        my_consumer_copy.accept(&2);
+        assert_eq!(counter.load(Ordering::SeqCst), 2);
+    }
+
+    #[test]
+    fn test_custom_consumer_into_once_multiple_calls() {
+        let counter = Arc::new(AtomicUsize::new(0));
+        let my_consumer = MyStatefulConsumer::new(counter.clone());
+
+        // Convert to once consumer
+        let once_consumer = my_consumer.into_once();
+
+        // Call accept - should increment counter
+        once_consumer.accept(&1);
+        assert_eq!(counter.load(Ordering::SeqCst), 1);
+    }
+
+    #[test]
+    fn test_custom_consumer_to_once_preserves_original() {
+        let counter = Arc::new(AtomicUsize::new(0));
+        let my_consumer = MyStatefulConsumer::new(counter.clone());
+
+        // Create once consumer without consuming original
+        let once_consumer1 = my_consumer.to_once();
+        let once_consumer2 = my_consumer.to_once();
+
+        // Both once consumers should work
+        once_consumer1.accept(&1);
+        assert_eq!(counter.load(Ordering::SeqCst), 1);
+
+        once_consumer2.accept(&1);
+        assert_eq!(counter.load(Ordering::SeqCst), 2);
+
+        // Original should still work
+        let mut my_consumer_copy = my_consumer;
+        my_consumer_copy.accept(&1);
+        assert_eq!(counter.load(Ordering::SeqCst), 3);
     }
 }

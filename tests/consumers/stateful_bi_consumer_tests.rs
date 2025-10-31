@@ -495,6 +495,26 @@ mod box_conditional_bi_consumer_tests {
         conditional.accept(&5, &10);
         assert_eq!(*log.lock().unwrap(), vec![5]);
     }
+
+    // Test Debug trait implementation
+    #[test]
+    fn test_debug() {
+        let mut consumer = BoxStatefulBiConsumer::<i32, i32>::noop();
+        let conditional = consumer.when(|x: &i32, _y: &i32| *x > 0);
+        let debug_str = format!("{:?}", conditional);
+        assert!(debug_str.contains("BoxConditionalStatefulBiConsumer"));
+        assert!(debug_str.contains("consumer"));
+        assert!(debug_str.contains("predicate"));
+    }
+
+    // Test Display trait implementation
+    #[test]
+    fn test_display() {
+        let mut consumer = BoxStatefulBiConsumer::<i32, i32>::noop();
+        let conditional = consumer.when(|x: &i32, _y: &i32| *x > 0);
+        let display_str = format!("{}", conditional);
+        assert!(display_str.contains("BoxConditionalStatefulBiConsumer"));
+    }
 }
 
 // ============================================================================
@@ -1026,6 +1046,26 @@ mod arc_conditional_bi_consumer_tests {
         conditional_clone.accept(&2, &1);
         assert_eq!(*log.lock().unwrap(), vec![8, 3]);
     }
+
+    // Test Debug trait implementation
+    #[test]
+    fn test_debug() {
+        let mut consumer = ArcStatefulBiConsumer::new(|_x: &i32, _y: &i32| {});
+        let conditional = consumer.when(|x: &i32, _y: &i32| *x > 0);
+        let debug_str = format!("{:?}", conditional);
+        assert!(debug_str.contains("ArcConditionalStatefulBiConsumer"));
+        assert!(debug_str.contains("consumer"));
+        assert!(debug_str.contains("predicate"));
+    }
+
+    // Test Display trait implementation
+    #[test]
+    fn test_display() {
+        let mut consumer = ArcStatefulBiConsumer::new(|_x: &i32, _y: &i32| {});
+        let conditional = consumer.when(|x: &i32, _y: &i32| *x > 0);
+        let display_str = format!("{}", conditional);
+        assert!(display_str.contains("ArcConditionalStatefulBiConsumer"));
+    }
 }
 
 // ============================================================================
@@ -1466,6 +1506,26 @@ mod rc_conditional_bi_consumer_tests {
         conditional_clone.accept(&2, &1);
         assert_eq!(*log.borrow(), vec![8, 3]);
     }
+
+    // Test Debug trait implementation
+    #[test]
+    fn test_debug() {
+        let mut consumer = RcStatefulBiConsumer::new(|_x: &i32, _y: &i32| {});
+        let conditional = consumer.when(|x: &i32, _y: &i32| *x > 0);
+        let debug_str = format!("{:?}", conditional);
+        assert!(debug_str.contains("RcConditionalStatefulBiConsumer"));
+        assert!(debug_str.contains("consumer"));
+        assert!(debug_str.contains("predicate"));
+    }
+
+    // Test Display trait implementation
+    #[test]
+    fn test_display() {
+        let mut consumer = RcStatefulBiConsumer::new(|_x: &i32, _y: &i32| {});
+        let conditional = consumer.when(|x: &i32, _y: &i32| *x > 0);
+        let display_str = format!("{}", conditional);
+        assert!(display_str.contains("RcConditionalStatefulBiConsumer"));
+    }
 }
 
 // ============================================================================
@@ -1616,7 +1676,7 @@ mod closure_stateful_bi_consumer_tests {
         let closure = move |x: &i32, y: &i32| {
             l.lock().unwrap().push(*x + *y);
         };
-        let mut box_consumer = prism3_function::StatefulBiConsumer::<i32, i32>::into_box(closure);
+        let mut box_consumer = StatefulBiConsumer::into_box(closure);
         box_consumer.accept(&5, &3);
         assert_eq!(*log.lock().unwrap(), vec![8]);
     }
@@ -1655,7 +1715,7 @@ mod closure_stateful_bi_consumer_tests {
         let closure = move |x: &i32, y: &i32| {
             l.lock().unwrap().push(*x + *y);
         };
-        let mut func = prism3_function::BiConsumer::into_fn(closure);
+        let mut func = StatefulBiConsumer::into_fn(closure);
         func(&5, &3);
         assert_eq!(*log.lock().unwrap(), vec![8]);
     }
@@ -1669,7 +1729,7 @@ mod closure_stateful_bi_consumer_tests {
         let mut closure = move |x: &i32, y: &i32| {
             l1.lock().unwrap().push(*x + *y);
         };
-        let mut box_consumer = prism3_function::StatefulBiConsumer::<i32, i32>::to_box(&closure);
+        let mut box_consumer = StatefulBiConsumer::to_box(&closure);
         box_consumer.accept(&5, &3);
         // Original closure should still be usable
         closure.accept(&10, &20);
@@ -1717,11 +1777,27 @@ mod closure_stateful_bi_consumer_tests {
             l.lock().unwrap().push(*x + *y);
         };
         // to_fn() returns a clone of the closure
-        let mut func = prism3_function::BiConsumer::to_fn(&closure);
+        let mut func = StatefulBiConsumer::to_fn(&closure);
         func(&5, &3);
         func(&10, &20);
         assert_eq!(*log.lock().unwrap(), vec![8, 30]);
     }
+
+    // Test into_fn() on closure - consumes the closure
+    #[test]
+    fn test_closure_into_fn_consumes() {
+        let log = Arc::new(Mutex::new(Vec::new()));
+        let l = log.clone();
+        let closure = move |x: &i32, y: &i32| {
+            l.lock().unwrap().push(*x + *y);
+        };
+        // into_fn() consumes the closure and returns it
+        let mut func = StatefulBiConsumer::into_fn(closure);
+        func(&5, &3);
+        func(&10, &20);
+        assert_eq!(*log.lock().unwrap(), vec![8, 30]);
+    }
+
 }
 
 // ============================================================================
@@ -1980,4 +2056,142 @@ fn test_custom_stateful_bi_consumer_to_fn() {
     let mut custom_clone = custom.clone();
     custom_clone.accept(&2, &3); // (2 + 3) * 1 = 5 (independent state)
     assert_eq!(*log.lock().unwrap(), vec![7, 14, 5]);
+}
+
+// ============================================================================
+// Custom Struct into_once/to_once Tests - Testing StatefulBiConsumer trait default implementations
+// ============================================================================
+
+#[cfg(test)]
+mod custom_struct_once_tests {
+    use super::*;
+    use prism3_function::BiConsumerOnce;
+    use std::sync::atomic::{
+        AtomicUsize,
+        Ordering,
+    };
+
+    /// Custom struct implementing StatefulBiConsumer for testing default trait methods
+    pub struct MyStatefulBiConsumer {
+        counter: Arc<AtomicUsize>,
+    }
+
+    impl MyStatefulBiConsumer {
+        pub fn new(counter: Arc<AtomicUsize>) -> Self {
+            Self { counter }
+        }
+    }
+
+    impl StatefulBiConsumer<i32, i32> for MyStatefulBiConsumer {
+        fn accept(&mut self, first: &i32, second: &i32) {
+            self.counter.fetch_add((first + second) as usize, Ordering::SeqCst);
+        }
+    }
+
+    impl Clone for MyStatefulBiConsumer {
+        fn clone(&self) -> Self {
+            Self {
+                counter: self.counter.clone(),
+            }
+        }
+    }
+
+    #[test]
+    fn test_custom_bi_consumer_into_once() {
+        let counter = Arc::new(AtomicUsize::new(0));
+        let my_consumer = MyStatefulBiConsumer::new(counter.clone());
+
+        // Test into_once() - should consume the original
+        let once_consumer = my_consumer.into_once();
+        once_consumer.accept(&3, &5);
+        assert_eq!(counter.load(Ordering::SeqCst), 8);
+    }
+
+    #[test]
+    fn test_custom_bi_consumer_to_once() {
+        let counter = Arc::new(AtomicUsize::new(0));
+        let my_consumer = MyStatefulBiConsumer::new(counter.clone());
+
+        // Test to_once() - should not consume the original
+        let once_consumer = my_consumer.to_once();
+        once_consumer.accept(&3, &5);
+        assert_eq!(counter.load(Ordering::SeqCst), 8);
+
+        // Original consumer should still be usable
+        let mut my_consumer_copy = my_consumer;
+        my_consumer_copy.accept(&2, &4);
+        assert_eq!(counter.load(Ordering::SeqCst), 14); // 8 + 6
+    }
+
+    #[test]
+    fn test_custom_bi_consumer_into_once_multiple_calls() {
+        let counter = Arc::new(AtomicUsize::new(0));
+        let my_consumer = MyStatefulBiConsumer::new(counter.clone());
+
+        // Convert to once consumer
+        let once_consumer = my_consumer.into_once();
+
+        // Call accept - should increment counter
+        once_consumer.accept(&10, &20);
+        assert_eq!(counter.load(Ordering::SeqCst), 30);
+    }
+
+    #[test]
+    fn test_custom_bi_consumer_to_once_preserves_original() {
+        let counter = Arc::new(AtomicUsize::new(0));
+        let my_consumer = MyStatefulBiConsumer::new(counter.clone());
+
+        // Create once consumers without consuming original
+        let once_consumer1 = my_consumer.to_once();
+        let once_consumer2 = my_consumer.to_once();
+
+        // Both once consumers should work
+        once_consumer1.accept(&1, &2);
+        assert_eq!(counter.load(Ordering::SeqCst), 3);
+
+        once_consumer2.accept(&4, &5);
+        assert_eq!(counter.load(Ordering::SeqCst), 12); // 3 + 9
+
+        // Original should still work
+        let mut my_consumer_copy = my_consumer;
+        my_consumer_copy.accept(&10, &10);
+        assert_eq!(counter.load(Ordering::SeqCst), 32); // 12 + 20
+    }
+
+    #[test]
+    fn test_custom_bi_consumer_into_once_with_different_values() {
+        let counter = Arc::new(AtomicUsize::new(0));
+        let my_consumer = MyStatefulBiConsumer::new(counter.clone());
+
+        // Test with different value combinations
+        let once_consumer = my_consumer.into_once();
+        once_consumer.accept(&100, &200);
+        assert_eq!(counter.load(Ordering::SeqCst), 300);
+    }
+
+    #[test]
+    fn test_custom_bi_consumer_to_once_multiple_clones() {
+        let counter = Arc::new(AtomicUsize::new(0));
+        let my_consumer = MyStatefulBiConsumer::new(counter.clone());
+
+        // Create multiple once consumers from the same original
+        let once1 = my_consumer.to_once();
+        let once2 = my_consumer.to_once();
+        let once3 = my_consumer.to_once();
+
+        // All should work independently
+        once1.accept(&1, &1);
+        assert_eq!(counter.load(Ordering::SeqCst), 2);
+
+        once2.accept(&2, &2);
+        assert_eq!(counter.load(Ordering::SeqCst), 6); // 2 + 4
+
+        once3.accept(&3, &3);
+        assert_eq!(counter.load(Ordering::SeqCst), 12); // 6 + 6
+
+        // Original still works
+        let mut original = my_consumer;
+        original.accept(&5, &5);
+        assert_eq!(counter.load(Ordering::SeqCst), 22); // 12 + 10
+    }
 }

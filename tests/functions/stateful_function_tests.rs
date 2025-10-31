@@ -1037,3 +1037,79 @@ fn test_custom_stateful_function_to_fn() {
     let mut custom_clone = custom.clone();
     assert_eq!(custom_clone.apply(&10), 10); // 10 * 1 (independent state)
 }
+
+// ============================================================================
+// ArcConditionalStatefulFunction Clone Tests
+// ============================================================================
+
+#[test]
+fn test_arc_conditional_stateful_function_clone() {
+    // Test that ArcConditionalStatefulFunction can be cloned
+    let counter = Arc::new(Mutex::new(0));
+    let counter_clone = counter.clone();
+    let conditional = ArcStatefulFunction::new(move |x: &i32| {
+        *counter_clone.lock().unwrap() += 1;
+        x * 2
+    })
+    .when(|x: &i32| *x > 10);
+
+    // Clone the conditional function before calling or_else
+    let clone1 = conditional.clone();
+    let clone2 = conditional.clone();
+
+    // Convert to complete functions using or_else
+    let mut func = conditional.or_else(|x: &i32| x + 1);
+    let mut func_clone1 = clone1.or_else(|x: &i32| x + 1);
+    let mut func_clone2 = clone2.or_else(|x: &i32| x + 1);
+
+    // Test that all instances work independently but share the same counter
+    assert_eq!(func.apply(&15), 30); // 15 > 10, apply * 2
+    assert_eq!(*counter.lock().unwrap(), 1);
+
+    assert_eq!(func_clone1.apply(&20), 40); // 20 > 10, apply * 2
+    assert_eq!(*counter.lock().unwrap(), 2);
+
+    assert_eq!(func_clone2.apply(&5), 6); // 5 <= 10, apply + 1
+    assert_eq!(*counter.lock().unwrap(), 2); // Counter not incremented
+
+    assert_eq!(func_clone2.apply(&12), 24); // 12 > 10, apply * 2
+    assert_eq!(*counter.lock().unwrap(), 3);
+}
+
+// ============================================================================
+// RcConditionalStatefulFunction Clone Tests
+// ============================================================================
+
+#[test]
+fn test_rc_conditional_stateful_function_clone() {
+    // Test that RcConditionalStatefulFunction can be cloned
+    let counter = Rc::new(RefCell::new(0));
+    let counter_clone = counter.clone();
+    let conditional = RcStatefulFunction::new(move |x: &i32| {
+        *counter_clone.borrow_mut() += 1;
+        x * 2
+    })
+    .when(|x: &i32| *x > 10);
+
+    // Clone the conditional function before calling or_else
+    let clone1 = conditional.clone();
+    let clone2 = conditional.clone();
+
+    // Convert to complete functions using or_else
+    let mut func = conditional.or_else(|x: &i32| x + 1);
+    let mut func_clone1 = clone1.or_else(|x: &i32| x + 1);
+    let mut func_clone2 = clone2.or_else(|x: &i32| x + 1);
+
+    // Test that all instances work independently but share the same counter
+    assert_eq!(func.apply(&15), 30); // 15 > 10, apply * 2
+    assert_eq!(*counter.borrow(), 1);
+
+    assert_eq!(func_clone1.apply(&20), 40); // 20 > 10, apply * 2
+    assert_eq!(*counter.borrow(), 2);
+
+    assert_eq!(func_clone2.apply(&5), 6); // 5 <= 10, apply + 1
+    assert_eq!(*counter.borrow(), 2); // Counter not incremented
+
+    assert_eq!(func_clone2.apply(&12), 24); // 12 > 10, apply * 2
+    assert_eq!(*counter.borrow(), 3);
+}
