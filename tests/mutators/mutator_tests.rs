@@ -352,7 +352,6 @@ mod test_box_mutator {
 
     // Note: BoxMutator cannot be safely converted to ArcMutator because the
     // inner function may not be Send. This test has been removed.
-
 }
 
 // ============================================================================
@@ -627,7 +626,6 @@ mod test_arc_mutator {
         assert_eq!(value, 10);
     }
 
-
     #[test]
     fn test_conditional_into_box() {
         let conditional = ArcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
@@ -865,7 +863,6 @@ mod test_rc_mutator {
         closure(&mut value);
         assert_eq!(value, 10);
     }
-
 
     #[test]
     fn test_to_box() {

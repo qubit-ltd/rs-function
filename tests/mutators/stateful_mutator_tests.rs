@@ -1533,7 +1533,9 @@ mod test_into_fn {
         let closure = |x: &mut i32| *x *= 2;
         let mut values = vec![1, 2, 3, 4];
 
-        values.iter_mut().for_each(StatefulMutator::into_fn(closure));
+        values
+            .iter_mut()
+            .for_each(StatefulMutator::into_fn(closure));
 
         assert_eq!(values, vec![2, 4, 6, 8]);
     }
@@ -2691,4 +2693,3 @@ mod test_conditional_execution {
         assert_eq!(too_large, 150); // Not doubled
     }
 }
-

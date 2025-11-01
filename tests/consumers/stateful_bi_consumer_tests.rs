@@ -449,7 +449,7 @@ mod box_conditional_bi_consumer_tests {
         func(&5, &3);
         assert_eq!(*log.lock().unwrap(), vec![8]);
         func(&-5, &3);
-        assert_eq!(*log.lock().unwrap(), vec![8, -2]);  // 行452: 修复断言，匹配实际执行结果 (-5 + 3 = -2)
+        assert_eq!(*log.lock().unwrap(), vec![8, -2]); // 行452: 修复断言，匹配实际执行结果 (-5 + 3 = -2)
     }
 
     // Test with always true predicate
@@ -1796,7 +1796,6 @@ mod closure_stateful_bi_consumer_tests {
         func(&10, &20);
         assert_eq!(*log.lock().unwrap(), vec![8, 30]);
     }
-
 }
 
 // ============================================================================
@@ -2083,7 +2082,8 @@ mod custom_struct_once_tests {
 
     impl StatefulBiConsumer<i32, i32> for MyStatefulBiConsumer {
         fn accept(&mut self, first: &i32, second: &i32) {
-            self.counter.fetch_add((first + second) as usize, Ordering::SeqCst);
+            self.counter
+                .fetch_add((first + second) as usize, Ordering::SeqCst);
         }
     }
 
