@@ -25,10 +25,10 @@
 use std::rc::Rc;
 use std::sync::Arc;
 
-use crate::functions::function_once::{
-    BoxFunctionOnce,
-    FunctionOnce,
+use crate::functions::macros::{
+    impl_box_conditional_function, impl_box_function_methods, impl_function_clone, impl_function_common_methods, impl_function_constant_method, impl_function_debug_display, impl_function_identity_method, impl_shared_function_methods
 };
+
 use crate::predicates::predicate::{
     ArcPredicate,
     BoxPredicate,
@@ -59,12 +59,12 @@ pub trait Function<T, R> {
     ///
     /// # Parameters
     ///
-    /// * `input` - Reference to the input value
+    /// * `t` - Reference to the input value
     ///
     /// # Returns
     ///
     /// The computed output value
-    fn apply(&self, input: &T) -> R;
+    fn apply(&self, t: &T) -> R;
 
     /// Converts to BoxFunction
     ///
@@ -86,7 +86,7 @@ pub trait Function<T, R> {
         T: 'static,
         R: 'static,
     {
-        BoxFunction::new(move |x| self.apply(x))
+        BoxFunction::new(move |t| self.apply(t))
     }
 
     /// Converts to RcFunction
@@ -109,7 +109,7 @@ pub trait Function<T, R> {
         T: 'static,
         R: 'static,
     {
-        RcFunction::new(move |x| self.apply(x))
+        RcFunction::new(move |t| self.apply(t))
     }
 
     /// Converts to ArcFunction
@@ -130,9 +130,9 @@ pub trait Function<T, R> {
     where
         Self: Sized + Send + Sync + 'static,
         T: Send + Sync + 'static,
-        R: Send + Sync + 'static,
+        R: 'static,
     {
-        ArcFunction::new(move |x| self.apply(x))
+        ArcFunction::new(move |t| self.apply(t))
     }
 
     /// Converts function to a closure
@@ -155,7 +155,7 @@ pub trait Function<T, R> {
         T: 'static,
         R: 'static,
     {
-        move |t: &T| self.apply(t)
+        move |t| self.apply(t)
     }
 
     /// Converts to BoxFunction without consuming self
@@ -326,6 +326,7 @@ pub trait Function<T, R> {
 /// Haixing Hu
 pub struct BoxFunction<T, R> {
     function: Box<dyn Fn(&T) -> R>,
+    name: Option<String>,
 }
 
 impl<T, R> BoxFunction<T, R>
@@ -333,270 +334,30 @@ where
     T: 'static,
     R: 'static,
 {
-    /// Creates a new BoxFunction
-    ///
-    /// # Parameters
-    ///
-    /// * `f` - The closure or function to wrap
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{BoxFunction, Function};
-    ///
-    /// let double = BoxFunction::new(|x: i32| x * 2);
-    /// assert_eq!(double.apply(21), 42);
-    /// ```
-    pub fn new<F>(f: F) -> Self
-    where
-        F: Fn(&T) -> R + 'static,
-    {
-        BoxFunction {
-            function: Box::new(f),
-        }
-    }
+    // Generates: new(), new_with_name(), name(), set_name()
+    impl_function_common_methods!(
+        BoxFunction<T, R>,
+        (Fn(&T) -> R + 'static),
+        |f| Box::new(f)
+    );
 
-    /// Creates an identity function
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{BoxFunction, Function};
-    ///
-    /// let identity = BoxFunction::<i32, i32>::identity();
-    /// assert_eq!(identity.apply(&42), 42);
-    /// ```
-    pub fn identity() -> BoxFunction<T, T>
-    where
-        T: Clone,
-    {
-        BoxFunction::new(|x: &T| x.clone())
-    }
-
-    /// Chain composition - applies self first, then after
-    ///
-    /// Creates a new function that applies this function first, then
-    /// applies the after function to the result. Consumes self.
-    ///
-    /// # Type Parameters
-    ///
-    /// * `S` - The output type of the after function
-    /// * `F` - The type of the after function (must implement
-    ///   Function<R, S>)
-    ///
-    /// # Parameters
-    ///
-    /// * `after` - The function to apply after self. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to
-    ///   preserve the original function, clone it first (if it implements
-    ///   `Clone`). Can be:
-    ///   - A closure: `|x: R| -> S`
-    ///   - A function pointer: `fn(R) -> S`
-    ///   - A `BoxFunction<R, S>`
-    ///   - An `RcFunction<R, S>`
-    ///   - An `ArcFunction<R, S>`
-    ///   - Any type implementing `Function<R, S>`
-    ///
-    /// # Returns
-    ///
-    /// A new BoxFunction representing the composition
-    ///
-    /// # Examples
-    ///
-    /// ## Direct value passing (ownership transfer)
-    ///
-    /// ```rust
-    /// use prism3_function::{BoxFunction, Function};
-    ///
-    /// let double = BoxFunction::new(|x: i32| x * 2);
-    /// let to_string = BoxFunction::new(|x: i32| x.to_string());
-    ///
-    /// // to_string is moved here
-    /// let composed = double.and_then(to_string);
-    /// assert_eq!(composed.apply(21), "42");
-    /// // to_string.apply(5); // Would not compile - moved
-    /// ```
-    ///
-    /// ## Preserving original with clone
-    ///
-    /// ```rust
-    /// use prism3_function::{BoxFunction, Function};
-    ///
-    /// let double = BoxFunction::new(|x: i32| x * 2);
-    /// let to_string = BoxFunction::new(|x: i32| x.to_string());
-    ///
-    /// // Clone to preserve original
-    /// let composed = double.and_then(to_string.clone());
-    /// assert_eq!(composed.apply(21), "42");
-    ///
-    /// // Original still usable
-    /// assert_eq!(to_string.apply(5), "5");
-    /// ```
-    pub fn and_then<S, F>(self, after: F) -> BoxFunction<T, S>
-    where
-        S: 'static,
-        F: Function<R, S> + 'static,
-    {
-        let self_fn = self.function;
-        BoxFunction::new(move |x: &T| after.apply(&self_fn(x)))
-    }
-
-    /// Reverse composition - applies before first, then self
-    ///
-    /// Creates a new function that applies the before function first,
-    /// then applies this function to the result. Consumes self.
-    ///
-    /// # Type Parameters
-    ///
-    /// * `S` - The input type of the before function
-    /// * `F` - The type of the before function (must implement
-    ///   Function<S, T>)
-    ///
-    /// # Parameters
-    ///
-    /// * `before` - The function to apply before self. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to
-    ///   preserve the original function, clone it first (if it implements
-    ///   `Clone`). Can be:
-    ///   - A closure: `|x: S| -> T`
-    ///   - A function pointer: `fn(S) -> T`
-    ///   - A `BoxFunction<S, T>`
-    ///   - An `RcFunction<S, T>`
-    ///   - An `ArcFunction<S, T>`
-    ///   - Any type implementing `Function<S, T>`
-    ///
-    /// # Returns
-    ///
-    /// A new BoxFunction representing the composition
-    ///
-    /// # Examples
-    ///
-    /// ## Direct value passing (ownership transfer)
-    ///
-    /// ```rust
-    /// use prism3_function::{BoxFunction, Function};
-    ///
-    /// let double = BoxFunction::new(|x: i32| x * 2);
-    /// let add_one = BoxFunction::new(|x: i32| x + 1);
-    ///
-    /// // add_one is moved here
-    /// let composed = double.compose(add_one);
-    /// assert_eq!(composed.apply(5), 12); // (5 + 1) * 2
-    /// // add_one.apply(3); // Would not compile - moved
-    /// ```
-    ///
-    /// ## Preserving original with clone
-    ///
-    /// ```rust
-    /// use prism3_function::{BoxFunction, Function};
-    ///
-    /// let double = BoxFunction::new(|x: i32| x * 2);
-    /// let add_one = BoxFunction::new(|x: i32| x + 1);
-    ///
-    /// // Clone to preserve original
-    /// let composed = double.compose(add_one.clone());
-    /// assert_eq!(composed.apply(5), 12); // (5 + 1) * 2
-    ///
-    /// // Original still usable
-    /// assert_eq!(add_one.apply(3), 4);
-    /// ```
-    pub fn compose<S, F>(self, before: F) -> BoxFunction<S, R>
-    where
-        S: 'static,
-        F: Function<S, T> + 'static,
-    {
-        let self_fn = self.function;
-        BoxFunction::new(move |x: &S| self_fn(&before.apply(x)))
-    }
-
-    /// Creates a conditional function
-    ///
-    /// Returns a function that only executes when a predicate is satisfied.
-    /// You must call `or_else()` to provide an alternative function for when
-    /// the condition is not satisfied.
-    ///
-    /// # Parameters
-    ///
-    /// * `predicate` - The condition to check. **Note: This parameter is passed
-    ///   by value and will transfer ownership.** If you need to preserve the
-    ///   original predicate, clone it first (if it implements `Clone`). Can be:
-    ///   - A closure: `|x: &T| -> bool`
-    ///   - A function pointer: `fn(&T) -> bool`
-    ///   - A `BoxPredicate<T>`
-    ///   - An `RcPredicate<T>`
-    ///   - An `ArcPredicate<T>`
-    ///   - Any type implementing `Predicate<T>`
-    ///
-    /// # Returns
-    ///
-    /// Returns `BoxConditionalFunction<T, R>`
-    ///
-    /// # Examples
-    ///
-    /// ## Basic usage with or_else
-    ///
-    /// ```rust
-    /// use prism3_function::{Function, BoxFunction};
-    ///
-    /// let double = BoxFunction::new(|x: i32| x * 2);
-    /// let identity = BoxFunction::<i32, i32>::identity();
-    /// let conditional = double.when(|x: &i32| *x > 0).or_else(identity);
-    ///
-    /// assert_eq!(conditional.apply(5), 10);
-    /// assert_eq!(conditional.apply(-5), -5); // identity
-    /// ```
-    ///
-    /// ## Preserving predicate with clone
-    ///
-    /// ```rust
-    /// use prism3_function::{Function, BoxFunction, BoxPredicate};
-    ///
-    /// let double = BoxFunction::new(|x: i32| x * 2);
-    /// let is_positive = BoxPredicate::new(|x: &i32| *x > 0);
-    ///
-    /// // Clone to preserve original predicate
-    /// let conditional = double.when(is_positive.clone())
-    ///     .or_else(BoxFunction::identity());
-    ///
-    /// assert_eq!(conditional.apply(5), 10);
-    ///
-    /// // Original predicate still usable
-    /// assert!(is_positive.test(&3));
-    /// ```
-    pub fn when<P>(self, predicate: P) -> BoxConditionalFunction<T, R>
-    where
-        P: Predicate<T> + 'static,
-    {
-        BoxConditionalFunction {
-            function: self,
-            predicate: predicate.into_box(),
-        }
-    }
+    // Generates: when(), and_then(), compose()
+    impl_box_function_methods!(
+        BoxFunction<T, R>,
+        BoxConditionalFunction,
+        Function
+    );
 }
 
-impl<T, R> BoxFunction<T, R>
-where
-    T: 'static,
-    R: Clone + 'static,
-{
-    /// Creates a constant function
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{BoxFunction, Function};
-    ///
-    /// let constant = BoxFunction::constant("hello");
-    /// assert_eq!(constant.apply(123), "hello");
-    /// ```
-    pub fn constant(value: R) -> BoxFunction<T, R> {
-        BoxFunction::new(move |_| value.clone())
-    }
-}
+// Generates: constant() method for BoxFunction<T, R>
+impl_function_constant_method!(BoxFunction<T, R>, 'static);
+
+// Generates: identity() method for BoxFunction<T, T>
+impl_function_identity_method!(BoxFunction<T, T>);
 
 impl<T, R> Function<T, R> for BoxFunction<T, R> {
-    fn apply(&self, input: &T) -> R {
-        (self.function)(input)
+    fn apply(&self, t: &T) -> R {
+        (self.function)(t)
     }
 
     // Override with zero-cost implementation: directly return itself
@@ -614,9 +375,7 @@ impl<T, R> Function<T, R> for BoxFunction<T, R> {
         T: 'static,
         R: 'static,
     {
-        RcFunction {
-            function: Rc::from(self.function),
-        }
+        RcFunction::new_with_optional_name(self.function, self.name)
     }
 
     // do NOT override BoxFunction::into_arc() because BoxFunction is not Send + Sync
@@ -652,784 +411,8 @@ impl<T, R> Function<T, R> for BoxFunction<T, R> {
     //    guides users to the correct usage pattern
 }
 
-// ============================================================================
-
-// Function does not have a "once" variant since it uses Fn (not FnOnce)
-
-impl<T, R> FunctionOnce<T, R> for BoxFunction<T, R>
-where
-    T: 'static,
-    R: 'static,
-{
-    /// Transforms the input value, consuming both self and input
-    ///
-    /// # Parameters
-    ///
-    /// * `input` - The input value (consumed)
-    ///
-    /// # Returns
-    ///
-    /// The transformed output value
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{BoxFunction, FunctionOnce};
-    ///
-    /// let double = BoxFunction::new(|x: i32| x * 2);
-    /// let result = double.apply_once(21);
-    /// assert_eq!(result, 42);
-    /// ```
-    ///
-    /// # Author
-    ///
-    /// Haixing Hu
-    fn apply_once(self, input: &T) -> R {
-        (self.function)(input)
-    }
-}
-
-// ============================================================================
-// BoxConditionalFunction - Box-based Conditional Function
-// ============================================================================
-
-/// BoxConditionalFunction struct
-///
-/// A conditional function that only executes when a predicate is satisfied.
-/// Uses `BoxFunction` and `BoxPredicate` for single ownership semantics.
-///
-/// This type is typically created by calling `BoxFunction::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
-///
-/// # Features
-///
-/// - **Single Ownership**: Not cloneable, consumes `self` on use
-/// - **Conditional Execution**: Only transforms when predicate returns `true`
-/// - **Chainable**: Can add `or_else` branch to create if-then-else logic
-/// - **Implements Function**: Can be used anywhere a `Function` is expected
-///
-/// # Examples
-///
-/// ## With or_else Branch
-///
-/// ```rust
-/// use prism3_function::{Function, BoxFunction};
-///
-/// let double = BoxFunction::new(|x: i32| x * 2);
-/// let negate = BoxFunction::new(|x: i32| -x);
-/// let conditional = double.when(|x: &i32| *x > 0).or_else(negate);
-///
-/// assert_eq!(conditional.apply(5), 10); // when branch executed
-/// assert_eq!(conditional.apply(-5), 5); // or_else branch executed
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-pub struct BoxConditionalFunction<T, R> {
-    function: BoxFunction<T, R>,
-    predicate: BoxPredicate<T>,
-}
-
-impl<T, R> BoxConditionalFunction<T, R>
-where
-    T: 'static,
-    R: 'static,
-{
-    /// Adds an else branch
-    ///
-    /// Executes the original function when the condition is satisfied,
-    /// otherwise executes else_function.
-    ///
-    /// # Parameters
-    ///
-    /// * `else_function` - The function for the else branch, can be:
-    ///   - Closure: `|x: &T| -> R`
-    ///   - `BoxFunction<T, R>`, `RcFunction<T, R>`, `ArcFunction<T, R>`
-    ///   - Any type implementing `Function<T, R>`
-    ///
-    /// # Returns
-    ///
-    /// Returns the composed `BoxFunction<T, R>`
-    ///
-    /// # Examples
-    ///
-    /// ## Using a closure (recommended)
-    ///
-    /// ```rust
-    /// use prism3_function::{Function, BoxFunction};
-    ///
-    /// let double = BoxFunction::new(|x: i32| x * 2);
-    /// let conditional = double.when(|x: &i32| *x > 0).or_else(|x: i32| -x);
-    ///
-    /// assert_eq!(conditional.apply(5), 10); // Condition satisfied, execute double
-    /// assert_eq!(conditional.apply(-5), 5); // Condition not satisfied, execute negate
-    /// ```
-    pub fn or_else<F>(self, else_function: F) -> BoxFunction<T, R>
-    where
-        F: Function<T, R> + 'static,
-    {
-        let pred = self.predicate;
-        let then_function = self.function;
-        BoxFunction::new(move |t| {
-            if pred.test(t) {
-                then_function.apply(t)
-            } else {
-                else_function.apply(t)
-            }
-        })
-    }
-}
-
-// ============================================================================
-// ArcFunction - Arc<dyn Fn(&T) -> R + Send + Sync>
-// ============================================================================
-
-/// ArcFunction - thread-safe function wrapper
-///
-/// A thread-safe, clonable function wrapper suitable for multi-threaded
-/// scenarios. Can be called multiple times and shared across threads.
-///
-/// # Features
-///
-/// - **Based on**: `Arc<dyn Fn(&T) -> R + Send + Sync>`
-/// - **Ownership**: Shared ownership via reference counting
-/// - **Reusability**: Can be called multiple times (each call consumes its
-///   input)
-/// - **Thread Safety**: Thread-safe (`Send + Sync` required)
-/// - **Clonable**: Cheap cloning via `Arc::clone`
-///
-/// # Author
-///
-/// Haixing Hu
-pub struct ArcFunction<T, R> {
-    function: Arc<dyn Fn(&T) -> R + Send + Sync>,
-}
-
-impl<T, R> ArcFunction<T, R>
-where
-    T: Send + Sync + 'static,
-    R: 'static,
-{
-    /// Creates a new ArcFunction
-    ///
-    /// # Parameters
-    ///
-    /// * `f` - The closure or function to wrap (must be Send + Sync)
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{ArcFunction, Function};
-    ///
-    /// let double = ArcFunction::new(|x: i32| x * 2);
-    /// assert_eq!(double.apply(21), 42);
-    /// ```
-    pub fn new<F>(f: F) -> Self
-    where
-        F: Fn(&T) -> R + Send + Sync + 'static,
-    {
-        ArcFunction {
-            function: Arc::new(f),
-        }
-    }
-}
-
-impl<T> ArcFunction<T, T>
-where
-    T: Send + Sync + Clone + 'static,
-{
-    /// Creates an identity function
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{ArcFunction, Function};
-    ///
-    /// let identity = ArcFunction::<i32, i32>::identity();
-    /// assert_eq!(identity.apply(42), 42);
-    /// ```
-    pub fn identity() -> ArcFunction<T, T> {
-        ArcFunction::new(|x: &T| x.clone())
-    }
-}
-
-impl<T, R> ArcFunction<T, R>
-where
-    T: Send + Sync + 'static,
-    R: 'static,
-{
-    /// Chain composition - applies self first, then after
-    ///
-    /// Creates a new function that applies this function first, then
-    /// applies the after function to the result. Uses &self, so original
-    /// function remains usable.
-    ///
-    /// # Type Parameters
-    ///
-    /// * `S` - The output type of the after function
-    /// * `F` - The type of the after function (must implement
-    ///   Function<R, S>)
-    ///
-    /// # Parameters
-    ///
-    /// * `after` - The function to apply after self. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to
-    ///   preserve the original function, clone it first (if it implements
-    ///   `Clone`). Can be:
-    ///   - A closure: `|x: R| -> S`
-    ///   - A function pointer: `fn(R) -> S`
-    ///   - A `BoxFunction<R, S>`
-    ///   - An `RcFunction<R, S>`
-    ///   - An `ArcFunction<R, S>` (will be moved)
-    ///   - Any type implementing `Function<R, S> + Send + Sync`
-    ///
-    /// # Returns
-    ///
-    /// A new ArcFunction representing the composition
-    ///
-    /// # Examples
-    ///
-    /// ## Direct value passing (ownership transfer)
-    ///
-    /// ```rust
-    /// use prism3_function::{ArcFunction, Function};
-    ///
-    /// let double = ArcFunction::new(|x: i32| x * 2);
-    /// let to_string = ArcFunction::new(|x: i32| x.to_string());
-    ///
-    /// // to_string is moved here
-    /// let composed = double.and_then(to_string);
-    ///
-    /// // Original double function still usable (uses &self)
-    /// assert_eq!(double.apply(21), 42);
-    /// assert_eq!(composed.apply(21), "42");
-    /// // to_string.apply(5); // Would not compile - moved
-    /// ```
-    ///
-    /// ## Preserving original with clone
-    ///
-    /// ```rust
-    /// use prism3_function::{ArcFunction, Function};
-    ///
-    /// let double = ArcFunction::new(|x: i32| x * 2);
-    /// let to_string = ArcFunction::new(|x: i32| x.to_string());
-    ///
-    /// // Clone to preserve original
-    /// let composed = double.and_then(to_string.clone());
-    /// assert_eq!(composed.apply(21), "42");
-    ///
-    /// // Both originals still usable
-    /// assert_eq!(double.apply(21), 42);
-    /// assert_eq!(to_string.apply(5), "5");
-    /// ```
-    pub fn and_then<S, F>(&self, after: F) -> ArcFunction<T, S>
-    where
-        S: Send + Sync + 'static,
-        F: Function<R, S> + Send + Sync + 'static,
-    {
-        let self_fn = self.function.clone();
-        ArcFunction {
-            function: Arc::new(move |x: &T| after.apply(&self_fn(x))),
-        }
-    }
-
-    /// Reverse composition - applies before first, then self
-    ///
-    /// Creates a new function that applies the before function first,
-    /// then applies this function to the result. Uses &self, so original
-    /// function remains usable.
-    ///
-    /// # Type Parameters
-    ///
-    /// * `S` - The input type of the before function
-    /// * `F` - The type of the before function (must implement
-    ///   Function<S, T>)
-    ///
-    /// # Parameters
-    ///
-    /// * `before` - The function to apply before self. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to
-    ///   preserve the original function, clone it first (if it implements
-    ///   `Clone`). Can be:
-    ///   - A closure: `|x: S| -> T`
-    ///   - A function pointer: `fn(S) -> T`
-    ///   - A `BoxFunction<S, T>`
-    ///   - An `RcFunction<S, T>`
-    ///   - An `ArcFunction<S, T>` (will be moved)
-    ///   - Any type implementing `Function<S, T> + Send + Sync`
-    ///
-    /// # Returns
-    ///
-    /// A new ArcFunction representing the composition
-    ///
-    /// # Examples
-    ///
-    /// ## Direct value passing (ownership transfer)
-    ///
-    /// ```rust
-    /// use prism3_function::{ArcFunction, Function};
-    ///
-    /// let double = ArcFunction::new(|x: i32| x * 2);
-    /// let add_one = ArcFunction::new(|x: i32| x + 1);
-    ///
-    /// // add_one is moved here
-    /// let composed = double.compose(add_one);
-    /// assert_eq!(composed.apply(5), 12); // (5 + 1) * 2
-    /// // add_one.apply(3); // Would not compile - moved
-    /// ```
-    ///
-    /// ## Preserving original with clone
-    ///
-    /// ```rust
-    /// use prism3_function::{ArcFunction, Function};
-    ///
-    /// let double = ArcFunction::new(|x: i32| x * 2);
-    /// let add_one = ArcFunction::new(|x: i32| x + 1);
-    ///
-    /// // Clone to preserve original
-    /// let composed = double.compose(add_one.clone());
-    /// assert_eq!(composed.apply(5), 12); // (5 + 1) * 2
-    ///
-    /// // Both originals still usable
-    /// assert_eq!(double.apply(10), 20);
-    /// assert_eq!(add_one.apply(3), 4);
-    /// ```
-    pub fn compose<S, F>(&self, before: F) -> ArcFunction<S, R>
-    where
-        S: Send + Sync + 'static,
-        F: Function<S, T> + Send + Sync + 'static,
-    {
-        let self_fn = self.function.clone();
-        ArcFunction {
-            function: Arc::new(move |x: &S| self_fn(&before.apply(x))),
-        }
-    }
-
-    /// Creates a conditional function (thread-safe version)
-    ///
-    /// Returns a function that only executes when a predicate is satisfied.
-    /// You must call `or_else()` to provide an alternative function.
-    ///
-    /// # Parameters
-    ///
-    /// * `predicate` - The condition to check. **Note: This parameter is passed
-    ///   by value and will transfer ownership.** If you need to preserve the
-    ///   original predicate, clone it first (if it implements `Clone`). Must be
-    ///   `Send + Sync`, can be:
-    ///   - A closure: `|x: &T| -> bool` (requires `Send + Sync`)
-    ///   - A function pointer: `fn(&T) -> bool`
-    ///   - An `ArcPredicate<T>`
-    ///   - Any type implementing `Predicate<T> + Send + Sync`
-    ///
-    /// # Returns
-    ///
-    /// Returns `ArcConditionalFunction<T, R>`
-    ///
-    /// # Examples
-    ///
-    /// ## Basic usage with or_else
-    ///
-    /// ```rust
-    /// use prism3_function::{Function, ArcFunction};
-    ///
-    /// let double = ArcFunction::new(|x: i32| x * 2);
-    /// let identity = ArcFunction::<i32, i32>::identity();
-    /// let conditional = double.when(|x: &i32| *x > 0).or_else(identity);
-    ///
-    /// let conditional_clone = conditional.clone();
-    ///
-    /// assert_eq!(conditional.apply(5), 10);
-    /// assert_eq!(conditional_clone.apply(-5), -5);
-    /// ```
-    ///
-    /// ## Preserving predicate with clone
-    ///
-    /// ```rust
-    /// use prism3_function::{Function, ArcFunction, ArcPredicate};
-    ///
-    /// let double = ArcFunction::new(|x: i32| x * 2);
-    /// let is_positive = ArcPredicate::new(|x: &i32| *x > 0);
-    ///
-    /// // Clone to preserve original predicate
-    /// let conditional = double.when(is_positive.clone())
-    ///     .or_else(ArcFunction::identity());
-    ///
-    /// assert_eq!(conditional.apply(5), 10);
-    ///
-    /// // Original predicate still usable
-    /// assert!(is_positive.test(&3));
-    /// ```
-    pub fn when<P>(&self, predicate: P) -> ArcConditionalFunction<T, R>
-    where
-        P: Predicate<T> + Send + Sync + 'static,
-    {
-        ArcConditionalFunction {
-            function: self.clone(),
-            predicate: predicate.into_arc(),
-        }
-    }
-}
-
-impl<T, R> ArcFunction<T, R>
-where
-    T: Send + Sync + 'static,
-    R: Clone + 'static,
-{
-    /// Creates a constant function
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{ArcFunction, Function};
-    ///
-    /// let constant = ArcFunction::constant("hello");
-    /// assert_eq!(constant.apply(123), "hello");
-    /// ```
-    pub fn constant(value: R) -> ArcFunction<T, R>
-    where
-        R: Send + Sync,
-    {
-        ArcFunction::new(move |_| value.clone())
-    }
-}
-
-impl<T, R> Function<T, R> for ArcFunction<T, R> {
-    fn apply(&self, input: &T) -> R {
-        (self.function)(input)
-    }
-
-    fn into_box(self) -> BoxFunction<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        BoxFunction::new(move |t| (self.function)(t))
-    }
-
-    fn into_rc(self) -> RcFunction<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        RcFunction::new(move |t| (self.function)(t))
-    }
-
-    fn into_arc(self) -> ArcFunction<T, R>
-    where
-        T: Send + Sync + 'static,
-        R: Send + Sync + 'static,
-    {
-        self
-    }
-
-    fn into_fn(self) -> impl Fn(&T) -> R
-    where
-        T: 'static,
-        R: 'static,
-    {
-        move |t| (self.function)(t)
-    }
-
-    fn to_box(&self) -> BoxFunction<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        let self_fn = self.function.clone();
-        BoxFunction::new(move |t| self_fn(t))
-    }
-
-    fn to_rc(&self) -> RcFunction<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        let self_fn = self.function.clone();
-        RcFunction::new(move |t| self_fn(t))
-    }
-
-    fn to_arc(&self) -> ArcFunction<T, R>
-    where
-        T: Send + Sync + 'static,
-        R: Send + Sync + 'static,
-    {
-        self.clone()
-    }
-
-    fn to_fn(&self) -> impl Fn(&T) -> R
-    where
-        T: 'static,
-        R: 'static,
-    {
-        let self_fn = self.function.clone();
-        move |t| self_fn(t)
-    }
-}
-
-impl<T, R> Clone for ArcFunction<T, R> {
-    fn clone(&self) -> Self {
-        ArcFunction {
-            function: Arc::clone(&self.function),
-        }
-    }
-}
-
-// ============================================================================
-// ArcFunction FunctionOnce implementation
-// ============================================================================
-
-impl<T, R> FunctionOnce<T, R> for ArcFunction<T, R>
-where
-    T: Send + Sync + 'static,
-    R: 'static,
-{
-    /// Transforms the input value, consuming both self and input
-    ///
-    /// # Parameters
-    ///
-    /// * `input` - The input value (consumed)
-    ///
-    /// # Returns
-    ///
-    /// The transformed output value
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{ArcFunction, FunctionOnce};
-    ///
-    /// let double = ArcFunction::new(|x: i32| x * 2);
-    /// let result = double.apply_once(21);
-    /// assert_eq!(result, 42);
-    /// ```
-    ///
-    /// # Author
-    ///
-    /// Haixing Hu
-    fn apply_once(self, input: &T) -> R {
-        (self.function)(input)
-    }
-
-    /// Converts to BoxFunctionOnce
-    ///
-    /// **⚠️ Consumes `self`**: The original function becomes unavailable
-    /// after calling this method.
-    ///
-    /// # Returns
-    ///
-    /// Returns `BoxFunctionOnce<T, R>`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{ArcFunction, FunctionOnce};
-    ///
-    /// let double = ArcFunction::new(|x: i32| x * 2);
-    /// let boxed = double.into_box_once();
-    /// assert_eq!(boxed.apply_once(21), 42);
-    /// ```
-    fn into_box_once(self) -> BoxFunctionOnce<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        BoxFunctionOnce::new(move |t| (self.function)(t))
-    }
-
-    /// Converts function to a closure
-    ///
-    /// **⚠️ Consumes `self`**: The original function becomes unavailable
-    /// after calling this method.
-    ///
-    /// # Returns
-    ///
-    /// Returns a closure that implements `FnOnce(&T) -> R`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{ArcFunction, FunctionOnce};
-    ///
-    /// let double = ArcFunction::new(|x: i32| x * 2);
-    /// let func = double.into_fn_once();
-    /// assert_eq!(func(21), 42);
-    /// ```
-    fn into_fn_once(self) -> impl FnOnce(&T) -> R
-    where
-        T: 'static,
-        R: 'static,
-    {
-        move |t| (self.function)(t)
-    }
-
-    /// Converts to BoxFunctionOnce without consuming self
-    ///
-    /// **📌 Borrows `&self`**: The original function remains usable
-    /// after calling this method.
-    ///
-    /// # Returns
-    ///
-    /// Returns `BoxFunctionOnce<T, R>`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{ArcFunction, FunctionOnce};
-    ///
-    /// let double = ArcFunction::new(|x: i32| x * 2);
-    /// let boxed = double.to_box_once();
-    /// assert_eq!(boxed.apply_once(21), 42);
-    ///
-    /// // Original function still usable
-    /// assert_eq!(double.apply(21), 42);
-    /// ```
-    fn to_box_once(&self) -> BoxFunctionOnce<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        let self_fn = self.function.clone();
-        BoxFunctionOnce::new(move |t| self_fn(t))
-    }
-
-    /// Converts function to a closure without consuming self
-    ///
-    /// **📌 Borrows `&self`**: The original function remains usable
-    /// after calling this method.
-    ///
-    /// # Returns
-    ///
-    /// Returns a closure that implements `FnOnce(&T) -> R`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{ArcFunction, FunctionOnce};
-    ///
-    /// let double = ArcFunction::new(|x: i32| x * 2);
-    /// let func = double.to_fn_once();
-    /// assert_eq!(func(21), 42);
-    ///
-    /// // Original function still usable
-    /// assert_eq!(double.apply(21), 42);
-    /// ```
-    fn to_fn_once(&self) -> impl FnOnce(&T) -> R
-    where
-        T: 'static,
-        R: 'static,
-    {
-        let self_fn = self.function.clone();
-        move |t| self_fn(t)
-    }
-}
-
-// ============================================================================
-// ArcConditionalFunction - Arc-based Conditional Function
-// ============================================================================
-
-/// ArcConditionalFunction struct
-///
-/// A thread-safe conditional function that only executes when a predicate is
-/// satisfied. Uses `ArcFunction` and `ArcPredicate` for shared ownership
-/// across threads.
-///
-/// This type is typically created by calling `ArcFunction::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
-///
-/// # Features
-///
-/// - **Shared Ownership**: Cloneable via `Arc`, multiple owners allowed
-/// - **Thread-Safe**: Implements `Send + Sync`, safe for concurrent use
-/// - **Conditional Execution**: Only transforms when predicate returns `true`
-/// - **Chainable**: Can add `or_else` branch to create if-then-else logic
-///
-/// # Examples
-///
-/// ```rust
-/// use prism3_function::{Function, ArcFunction};
-///
-/// let double = ArcFunction::new(|x: i32| x * 2);
-/// let identity = ArcFunction::<i32, i32>::identity();
-/// let conditional = double.when(|x: &i32| *x > 0).or_else(identity);
-///
-/// let conditional_clone = conditional.clone();
-///
-/// assert_eq!(conditional.apply(5), 10);
-/// assert_eq!(conditional_clone.apply(-5), -5);
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-pub struct ArcConditionalFunction<T, R> {
-    function: ArcFunction<T, R>,
-    predicate: ArcPredicate<T>,
-}
-
-impl<T, R> ArcConditionalFunction<T, R>
-where
-    T: Send + Sync + 'static,
-    R: 'static,
-{
-    /// Adds an else branch (thread-safe version)
-    ///
-    /// Executes the original function when the condition is satisfied,
-    /// otherwise executes else_function.
-    ///
-    /// # Parameters
-    ///
-    /// * `else_function` - The function for the else branch, can be:
-    ///   - Closure: `|x: &T| -> R` (must be `Send + Sync`)
-    ///   - `ArcFunction<T, R>`, `BoxFunction<T, R>`
-    ///   - Any type implementing `Function<T, R> + Send + Sync`
-    ///
-    /// # Returns
-    ///
-    /// Returns the composed `ArcFunction<T, R>`
-    ///
-    /// # Examples
-    ///
-    /// ## Using a closure (recommended)
-    ///
-    /// ```rust
-    /// use prism3_function::{Function, ArcFunction};
-    ///
-    /// let double = ArcFunction::new(|x: i32| x * 2);
-    /// let conditional = double.when(|x: &i32| *x > 0).or_else(|x: i32| -x);
-    ///
-    /// assert_eq!(conditional.apply(5), 10);
-    /// assert_eq!(conditional.apply(-5), 5);
-    /// ```
-    pub fn or_else<F>(self, else_function: F) -> ArcFunction<T, R>
-    where
-        F: Function<T, R> + Send + Sync + 'static,
-        R: Send + Sync,
-    {
-        let pred = self.predicate;
-        let then_function = self.function;
-        ArcFunction::new(move |t| {
-            if pred.test(t) {
-                then_function.apply(t)
-            } else {
-                else_function.apply(t)
-            }
-        })
-    }
-}
-
-impl<T, R> Clone for ArcConditionalFunction<T, R> {
-    /// Clones the conditional function
-    ///
-    /// Creates a new instance that shares the underlying function and
-    /// predicate with the original instance.
-    fn clone(&self) -> Self {
-        Self {
-            function: self.function.clone(),
-            predicate: self.predicate.clone(),
-        }
-    }
-}
+// Generates: Debug and Display implementations for BoxFunction<T, R>
+impl_function_debug_display!(BoxFunction<T, R>);
 
 // ============================================================================
 // RcFunction - Rc<dyn Fn(&T) -> R>
@@ -1454,6 +437,7 @@ impl<T, R> Clone for ArcConditionalFunction<T, R> {
 /// Haixing Hu
 pub struct RcFunction<T, R> {
     function: Rc<dyn Fn(&T) -> R>,
+    name: Option<String>,
 }
 
 impl<T, R> RcFunction<T, R>
@@ -1461,293 +445,40 @@ where
     T: 'static,
     R: 'static,
 {
-    /// Creates a new RcFunction
-    ///
-    /// # Parameters
-    ///
-    /// * `f` - The closure or function to wrap
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{RcFunction, Function};
-    ///
-    /// let double = RcFunction::new(|x: i32| x * 2);
-    /// assert_eq!(double.apply(21), 42);
-    /// ```
-    pub fn new<F>(f: F) -> Self
-    where
-        F: Fn(&T) -> R + 'static,
-    {
-        RcFunction {
-            function: Rc::new(f),
-        }
-    }
+    // Generates: new(), new_with_name(), name(), set_name()
+    impl_function_common_methods!(
+        RcFunction<T, R>,
+        (Fn(&T) -> R + 'static),
+        |f| Rc::new(f)
+    );
 
-    /// Creates an identity function
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{RcFunction, Function};
-    ///
-    /// let identity = RcFunction::<i32, i32>::identity();
-    /// assert_eq!(identity.apply(42), 42);
-    /// ```
-    pub fn identity() -> RcFunction<T, T>
-    where
-        T: Clone,
-    {
-        RcFunction::new(|x: &T| x.clone())
-    }
-
-    /// Chain composition - applies self first, then after
-    ///
-    /// Creates a new function that applies this function first, then
-    /// applies the after function to the result. Uses &self, so original
-    /// function remains usable.
-    ///
-    /// # Type Parameters
-    ///
-    /// * `S` - The output type of the after function
-    /// * `F` - The type of the after function (must implement
-    ///   Function<R, S>)
-    ///
-    /// # Parameters
-    ///
-    /// * `after` - The function to apply after self. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to
-    ///   preserve the original function, clone it first (if it implements
-    ///   `Clone`). Can be:
-    ///   - A closure: `|x: R| -> S`
-    ///   - A function pointer: `fn(R) -> S`
-    ///   - A `BoxFunction<R, S>`
-    ///   - An `RcFunction<R, S>` (will be moved)
-    ///   - An `ArcFunction<R, S>`
-    ///   - Any type implementing `Function<R, S>`
-    ///
-    /// # Returns
-    ///
-    /// A new RcFunction representing the composition
-    ///
-    /// # Examples
-    ///
-    /// ## Direct value passing (ownership transfer)
-    ///
-    /// ```rust
-    /// use prism3_function::{RcFunction, Function};
-    ///
-    /// let double = RcFunction::new(|x: i32| x * 2);
-    /// let to_string = RcFunction::new(|x: i32| x.to_string());
-    ///
-    /// // to_string is moved here
-    /// let composed = double.and_then(to_string);
-    ///
-    /// // Original double function still usable (uses &self)
-    /// assert_eq!(double.apply(21), 42);
-    /// assert_eq!(composed.apply(21), "42");
-    /// // to_string.apply(5); // Would not compile - moved
-    /// ```
-    ///
-    /// ## Preserving original with clone
-    ///
-    /// ```rust
-    /// use prism3_function::{RcFunction, Function};
-    ///
-    /// let double = RcFunction::new(|x: i32| x * 2);
-    /// let to_string = RcFunction::new(|x: i32| x.to_string());
-    ///
-    /// // Clone to preserve original
-    /// let composed = double.and_then(to_string.clone());
-    /// assert_eq!(composed.apply(21), "42");
-    ///
-    /// // Both originals still usable
-    /// assert_eq!(double.apply(21), 42);
-    /// assert_eq!(to_string.apply(5), "5");
-    /// ```
-    pub fn and_then<S, F>(&self, after: F) -> RcFunction<T, S>
-    where
-        S: 'static,
-        F: Function<R, S> + 'static,
-    {
-        let self_fn = self.function.clone();
-        RcFunction {
-            function: Rc::new(move |x: &T| after.apply(&self_fn(x))),
-        }
-    }
-
-    /// Reverse composition - applies before first, then self
-    ///
-    /// Creates a new function that applies the before function first,
-    /// then applies this function to the result. Uses &self, so original
-    /// function remains usable.
-    ///
-    /// # Type Parameters
-    ///
-    /// * `S` - The input type of the before function
-    /// * `F` - The type of the before function (must implement
-    ///   Function<S, T>)
-    ///
-    /// # Parameters
-    ///
-    /// * `before` - The function to apply before self. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to
-    ///   preserve the original function, clone it first (if it implements
-    ///   `Clone`). Can be:
-    ///   - A closure: `|x: S| -> T`
-    ///   - A function pointer: `fn(S) -> T`
-    ///   - A `BoxFunction<S, T>`
-    ///   - An `RcFunction<S, T>` (will be moved)
-    ///   - An `ArcFunction<S, T>`
-    ///   - Any type implementing `Function<S, T>`
-    ///
-    /// # Returns
-    ///
-    /// A new RcFunction representing the composition
-    ///
-    /// # Examples
-    ///
-    /// ## Direct value passing (ownership transfer)
-    ///
-    /// ```rust
-    /// use prism3_function::{RcFunction, Function};
-    ///
-    /// let double = RcFunction::new(|x: i32| x * 2);
-    /// let add_one = RcFunction::new(|x: i32| x + 1);
-    ///
-    /// // add_one is moved here
-    /// let composed = double.compose(add_one);
-    /// assert_eq!(composed.apply(5), 12); // (5 + 1) * 2
-    /// // add_one.apply(3); // Would not compile - moved
-    /// ```
-    ///
-    /// ## Preserving original with clone
-    ///
-    /// ```rust
-    /// use prism3_function::{RcFunction, Function};
-    ///
-    /// let double = RcFunction::new(|x: i32| x * 2);
-    /// let add_one = RcFunction::new(|x: i32| x + 1);
-    ///
-    /// // Clone to preserve original
-    /// let composed = double.compose(add_one.clone());
-    /// assert_eq!(composed.apply(5), 12); // (5 + 1) * 2
-    ///
-    /// // Both originals still usable
-    /// assert_eq!(double.apply(10), 20);
-    /// assert_eq!(add_one.apply(3), 4);
-    /// ```
-    pub fn compose<S, F>(&self, before: F) -> RcFunction<S, R>
-    where
-        S: 'static,
-        F: Function<S, T> + 'static,
-    {
-        let self_fn = Rc::clone(&self.function);
-        RcFunction {
-            function: Rc::new(move |x: &S| self_fn(&before.apply(x))),
-        }
-    }
-
-    /// Creates a conditional function (single-threaded shared version)
-    ///
-    /// Returns a function that only executes when a predicate is satisfied.
-    /// You must call `or_else()` to provide an alternative function.
-    ///
-    /// # Parameters
-    ///
-    /// * `predicate` - The condition to check. **Note: This parameter is passed
-    ///   by value and will transfer ownership.** If you need to preserve the
-    ///   original predicate, clone it first (if it implements `Clone`). Can be:
-    ///   - A closure: `|x: &T| -> bool`
-    ///   - A function pointer: `fn(&T) -> bool`
-    ///   - A `BoxPredicate<T>`
-    ///   - An `RcPredicate<T>`
-    ///   - An `ArcPredicate<T>`
-    ///   - Any type implementing `Predicate<T>`
-    ///
-    /// # Returns
-    ///
-    /// Returns `RcConditionalFunction<T, R>`
-    ///
-    /// # Examples
-    ///
-    /// ## Basic usage with or_else
-    ///
-    /// ```rust
-    /// use prism3_function::{Function, RcFunction};
-    ///
-    /// let double = RcFunction::new(|x: i32| x * 2);
-    /// let identity = RcFunction::<i32, i32>::identity();
-    /// let conditional = double.when(|x: &i32| *x > 0).or_else(identity);
-    ///
-    /// let conditional_clone = conditional.clone();
-    ///
-    /// assert_eq!(conditional.apply(5), 10);
-    /// assert_eq!(conditional_clone.apply(-5), -5);
-    /// ```
-    ///
-    /// ## Preserving predicate with clone
-    ///
-    /// ```rust
-    /// use prism3_function::{Function, RcFunction, RcPredicate};
-    ///
-    /// let double = RcFunction::new(|x: i32| x * 2);
-    /// let is_positive = RcPredicate::new(|x: &i32| *x > 0);
-    ///
-    /// // Clone to preserve original predicate
-    /// let conditional = double.when(is_positive.clone())
-    ///     .or_else(RcFunction::identity());
-    ///
-    /// assert_eq!(conditional.apply(5), 10);
-    ///
-    /// // Original predicate still usable
-    /// assert!(is_positive.test(&3));
-    /// ```
-    pub fn when<P>(&self, predicate: P) -> RcConditionalFunction<T, R>
-    where
-        P: Predicate<T> + 'static,
-    {
-        RcConditionalFunction {
-            function: self.clone(),
-            predicate: predicate.into_rc(),
-        }
-    }
+    // Generates: when(), and_then(), compose()
+    impl_shared_function_methods!(
+        RcFunction<T, R>,
+        RcConditionalFunction,
+        into_rc,
+        Function,
+        'static
+    );
 }
 
-impl<T, R> RcFunction<T, R>
-where
-    T: 'static,
-    R: Clone + 'static,
-{
-    /// Creates a constant function
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{RcFunction, Function};
-    ///
-    /// let constant = RcFunction::constant("hello");
-    /// assert_eq!(constant.apply(123), "hello");
-    /// ```
-    pub fn constant(value: R) -> RcFunction<T, R> {
-        RcFunction::new(move |_| value.clone())
-    }
-}
+// Generates: constant() method for RcFunction<T, R>
+impl_function_constant_method!(RcFunction<T, R>, 'static);
+
+// Generates: identity() method for RcFunction<T, T>
+impl_function_identity_method!(RcFunction<T, T>);
 
 impl<T, R> Function<T, R> for RcFunction<T, R> {
-    fn apply(&self, input: &T) -> R {
-        (self.function)(input)
+    fn apply(&self, t: &T) -> R {
+        (self.function)(t)
     }
-
-    // RcFunction::into_box() is implemented by the default implementation
-    // of Function::into_box()
 
     fn into_box(self) -> BoxFunction<T, R>
     where
         T: 'static,
         R: 'static,
     {
-        BoxFunction::new(move |t| (self.function)(t))
+        BoxFunction::new_with_optional_name(move |t| (self.function)(t), self.name)
     }
 
     // Override with zero-cost implementation: directly return itself
@@ -1779,7 +510,8 @@ impl<T, R> Function<T, R> for RcFunction<T, R> {
         R: 'static,
     {
         let self_fn = self.function.clone();
-        BoxFunction::new(move |t| self_fn(t))
+        let self_name = self.name.clone();
+        BoxFunction::new_with_optional_name(move |t| self_fn(t), self_name)
     }
 
     // Override with zero-cost implementation: clone itself
@@ -1805,95 +537,96 @@ impl<T, R> Function<T, R> for RcFunction<T, R> {
     }
 }
 
-impl<T, R> Clone for RcFunction<T, R> {
-    fn clone(&self) -> Self {
-        RcFunction {
-            function: Rc::clone(&self.function),
-        }
-    }
+// Generates: Clone implementation for RcFunction<T, R>
+impl_function_clone!(RcFunction<T, R>);
+
+// Generates: Debug and Display implementations for RcFunction<T, R>
+impl_function_debug_display!(RcFunction<T, R>);
+
+// ============================================================================
+// ArcFunction - Arc<dyn Fn(&T) -> R + Send + Sync>
+// ============================================================================
+
+/// ArcFunction - thread-safe function wrapper
+///
+/// A thread-safe, clonable function wrapper suitable for multi-threaded
+/// scenarios. Can be called multiple times and shared across threads.
+///
+/// # Features
+///
+/// - **Based on**: `Arc<dyn Fn(&T) -> R + Send + Sync>`
+/// - **Ownership**: Shared ownership via reference counting
+/// - **Reusability**: Can be called multiple times (each call consumes its
+///   input)
+/// - **Thread Safety**: Thread-safe (`Send + Sync` required)
+/// - **Clonable**: Cheap cloning via `Arc::clone`
+///
+/// # Author
+///
+/// Haixing Hu
+pub struct ArcFunction<T, R> {
+    function: Arc<dyn Fn(&T) -> R>,
+    name: Option<String>,
 }
 
-// ============================================================================
-// RcFunction FunctionOnce implementation
-// ============================================================================
-
-impl<T, R> FunctionOnce<T, R> for RcFunction<T, R>
+impl<T, R> ArcFunction<T, R>
 where
     T: 'static,
     R: 'static,
 {
-    /// Transforms the input value, consuming both self and input
-    ///
-    /// # Parameters
-    ///
-    /// * `input` - The input value (consumed)
-    ///
-    /// # Returns
-    ///
-    /// The transformed output value
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{RcFunction, FunctionOnce};
-    ///
-    /// let double = RcFunction::new(|x: i32| x * 2);
-    /// let result = double.apply_once(21);
-    /// assert_eq!(result, 42);
-    /// ```
-    ///
-    /// # Author
-    ///
-    /// Haixing Hu
-    fn apply_once(self, input: &T) -> R {
-        (self.function)(input)
+    // Generates: new(), new_with_name(), name(), set_name()
+    impl_function_common_methods!(
+        ArcFunction<T, R>,
+        (Fn(&T) -> R + 'static),
+        |f| Arc::new(f)
+    );
+
+    // Generates: when(), and_then(), compose()
+    impl_shared_function_methods!(
+        ArcFunction<T, R>,
+        ArcConditionalFunction,
+        into_arc,
+        Function,
+        Send + Sync + 'static
+    );
+}
+
+// Generates: constant() method for ArcFunction<T, R>
+impl_function_constant_method!(ArcFunction<T, R>, Send + Sync + 'static);
+
+// Generates: identity() method for ArcFunction<T, T>
+impl_function_identity_method!(ArcFunction<T, T>);
+
+impl<T, R> Function<T, R> for ArcFunction<T, R> {
+    fn apply(&self, t: &T) -> R {
+        (self.function)(t)
     }
 
-    /// Converts to BoxFunctionOnce
-    ///
-    /// **⚠️ Consumes `self`**: The original function becomes unavailable
-    /// after calling this method.
-    ///
-    /// # Returns
-    ///
-    /// Returns `BoxFunctionOnce<T, R>`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{RcFunction, FunctionOnce};
-    ///
-    /// let double = RcFunction::new(|x: i32| x * 2);
-    /// let boxed = double.into_box_once();
-    /// assert_eq!(boxed.apply_once(21), 42);
-    /// ```
-    fn into_box_once(self) -> BoxFunctionOnce<T, R>
+    fn into_box(self) -> BoxFunction<T, R>
     where
         T: 'static,
         R: 'static,
     {
-        BoxFunctionOnce::new(move |t| (self.function)(t))
+        BoxFunction::new_with_optional_name(move |t| (self.function)(t), self.name)
     }
 
-    /// Converts function to a closure
-    ///
-    /// **⚠️ Consumes `self`**: The original function becomes unavailable
-    /// after calling this method.
-    ///
-    /// # Returns
-    ///
-    /// Returns a closure that implements `FnOnce(&T) -> R`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{RcFunction, FunctionOnce};
-    ///
-    /// let double = RcFunction::new(|x: i32| x * 2);
-    /// let func = double.into_fn_once();
-    /// assert_eq!(func(21), 42);
-    /// ```
-    fn into_fn_once(self) -> impl FnOnce(&T) -> R
+    fn into_rc(self) -> RcFunction<T, R>
+    where
+        T: 'static,
+        R: 'static,
+    {
+        RcFunction::new_with_optional_name(move |t| (self.function)(t), self.name)
+    }
+
+    fn into_arc(self) -> ArcFunction<T, R>
+    where
+        T: Send + Sync + 'static,
+        R: 'static,
+    {
+        self
+    }
+
+    fn into_fn(self) -> impl Fn(&T) -> R
     where
         T: 'static,
         R: 'static,
@@ -1901,58 +634,35 @@ where
         move |t| (self.function)(t)
     }
 
-    /// Converts to BoxFunctionOnce without consuming self
-    ///
-    /// **📌 Borrows `&self`**: The original function remains usable
-    /// after calling this method.
-    ///
-    /// # Returns
-    ///
-    /// Returns `BoxFunctionOnce<T, R>`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{RcFunction, FunctionOnce};
-    ///
-    /// let double = RcFunction::new(|x: i32| x * 2);
-    /// let boxed = double.to_box_once();
-    /// assert_eq!(boxed.apply_once(21), 42);
-    ///
-    /// // Original function still usable
-    /// assert_eq!(double.apply(21), 42);
-    /// ```
-    fn to_box_once(&self) -> BoxFunctionOnce<T, R>
+    fn to_box(&self) -> BoxFunction<T, R>
     where
         T: 'static,
         R: 'static,
     {
         let self_fn = self.function.clone();
-        BoxFunctionOnce::new(move |t| self_fn(t))
+        let self_name = self.name.clone();
+        BoxFunction::new_with_optional_name(move |t| self_fn(t), self_name)
     }
 
-    /// Converts function to a closure without consuming self
-    ///
-    /// **📌 Borrows `&self`**: The original function remains usable
-    /// after calling this method.
-    ///
-    /// # Returns
-    ///
-    /// Returns a closure that implements `FnOnce(&T) -> R`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{RcFunction, FunctionOnce};
-    ///
-    /// let double = RcFunction::new(|x: i32| x * 2);
-    /// let func = double.to_fn_once();
-    /// assert_eq!(func(21), 42);
-    ///
-    /// // Original function still usable
-    /// assert_eq!(double.apply(21), 42);
-    /// ```
-    fn to_fn_once(&self) -> impl FnOnce(&T) -> R
+    fn to_rc(&self) -> RcFunction<T, R>
+    where
+        T: 'static,
+        R: 'static,
+    {
+        let self_fn = self.function.clone();
+        let self_name = self.name.clone();
+        RcFunction::new_with_optional_name(move |t| self_fn(t), self_name)
+    }
+
+    fn to_arc(&self) -> ArcFunction<T, R>
+    where
+        T: Send + Sync + 'static,
+        R: Send + Sync + 'static,
+    {
+        self.clone()
+    }
+
+    fn to_fn(&self) -> impl Fn(&T) -> R
     where
         T: 'static,
         R: 'static,
@@ -1962,111 +672,11 @@ where
     }
 }
 
-// ============================================================================
-// RcConditionalFunction - Rc-based Conditional Function
-// ============================================================================
+// Generates: Clone implementation for ArcFunction<T, R>
+impl_function_clone!(ArcFunction<T, R>);
 
-/// RcConditionalFunction struct
-///
-/// A single-threaded conditional function that only executes when a
-/// predicate is satisfied. Uses `RcFunction` and `RcPredicate` for shared
-/// ownership within a single thread.
-///
-/// This type is typically created by calling `RcFunction::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
-///
-/// # Features
-///
-/// - **Shared Ownership**: Cloneable via `Rc`, multiple owners allowed
-/// - **Single-Threaded**: Not thread-safe, cannot be sent across threads
-/// - **Conditional Execution**: Only transforms when predicate returns `true`
-/// - **No Lock Overhead**: More efficient than `ArcConditionalFunction`
-///
-/// # Examples
-///
-/// ```rust
-/// use prism3_function::{Function, RcFunction};
-///
-/// let double = RcFunction::new(|x: i32| x * 2);
-/// let identity = RcFunction::<i32, i32>::identity();
-/// let conditional = double.when(|x: &i32| *x > 0).or_else(identity);
-///
-/// let conditional_clone = conditional.clone();
-///
-/// assert_eq!(conditional.apply(5), 10);
-/// assert_eq!(conditional_clone.apply(-5), -5);
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-pub struct RcConditionalFunction<T, R> {
-    function: RcFunction<T, R>,
-    predicate: RcPredicate<T>,
-}
-
-impl<T, R> RcConditionalFunction<T, R>
-where
-    T: 'static,
-    R: 'static,
-{
-    /// Adds an else branch (single-threaded shared version)
-    ///
-    /// Executes the original function when the condition is satisfied,
-    /// otherwise executes else_function.
-    ///
-    /// # Parameters
-    ///
-    /// * `else_function` - The function for the else branch, can be:
-    ///   - Closure: `|x: &T| -> R`
-    ///   - `RcFunction<T, R>`, `BoxFunction<T, R>`
-    ///   - Any type implementing `Function<T, R>`
-    ///
-    /// # Returns
-    ///
-    /// Returns the composed `RcFunction<T, R>`
-    ///
-    /// # Examples
-    ///
-    /// ## Using a closure (recommended)
-    ///
-    /// ```rust
-    /// use prism3_function::{Function, RcFunction};
-    ///
-    /// let double = RcFunction::new(|x: i32| x * 2);
-    /// let conditional = double.when(|x: &i32| *x > 0).or_else(|x: i32| -x);
-    ///
-    /// assert_eq!(conditional.apply(5), 10);
-    /// assert_eq!(conditional.apply(-5), 5);
-    /// ```
-    pub fn or_else<F>(self, else_function: F) -> RcFunction<T, R>
-    where
-        F: Function<T, R> + 'static,
-    {
-        let pred = self.predicate;
-        let then_function = self.function;
-        RcFunction::new(move |t| {
-            if pred.test(t) {
-                then_function.apply(t)
-            } else {
-                else_function.apply(t)
-            }
-        })
-    }
-}
-
-impl<T, R> Clone for RcConditionalFunction<T, R> {
-    /// Clones the conditional function
-    ///
-    /// Creates a new instance that shares the underlying function and
-    /// predicate with the original instance.
-    fn clone(&self) -> Self {
-        Self {
-            function: self.function.clone(),
-            predicate: self.predicate.clone(),
-        }
-    }
-}
+// Generates: Debug and Display implementations for ArcFunction<T, R>
+impl_function_debug_display!(ArcFunction<T, R>);
 
 // ============================================================================
 // Blanket implementation for standard Fn trait
@@ -2099,8 +709,8 @@ where
     T: 'static,
     R: 'static,
 {
-    fn apply(&self, input: &T) -> R {
-        self(input)
+    fn apply(&self, t: &T) -> R {
+        self(t)
     }
 
     fn into_box(self) -> BoxFunction<T, R>
@@ -2121,7 +731,7 @@ where
     where
         Self: Sized + Send + Sync + 'static,
         T: Send + Sync + 'static,
-        R: Send + Sync + 'static,
+        R: 'static,
     {
         ArcFunction::new(self)
     }
@@ -2151,7 +761,7 @@ where
     where
         Self: Clone + Sized + Send + Sync + 'static,
         T: Send + Sync + 'static,
-        R: Send + Sync + 'static,
+        R: 'static,
     {
         self.clone().into_arc()
     }
@@ -2578,3 +1188,265 @@ pub type ArcUnaryOperator<T> = ArcFunction<T, T>;
 ///
 /// Haixing Hu
 pub type RcUnaryOperator<T> = RcFunction<T, T>;
+
+// ============================================================================
+// BoxConditionalFunction - Box-based Conditional Function
+// ============================================================================
+
+/// BoxConditionalFunction struct
+///
+/// A conditional function that only executes when a predicate is satisfied.
+/// Uses `BoxFunction` and `BoxPredicate` for single ownership semantics.
+///
+/// This type is typically created by calling `BoxFunction::when()` and is
+/// designed to work with the `or_else()` method to create if-then-else logic.
+///
+/// # Features
+///
+/// - **Single Ownership**: Not cloneable, consumes `self` on use
+/// - **Conditional Execution**: Only transforms when predicate returns `true`
+/// - **Chainable**: Can add `or_else` branch to create if-then-else logic
+/// - **Implements Function**: Can be used anywhere a `Function` is expected
+///
+/// # Examples
+///
+/// ## With or_else Branch
+///
+/// ```rust
+/// use prism3_function::{Function, BoxFunction};
+///
+/// let double = BoxFunction::new(|x: i32| x * 2);
+/// let negate = BoxFunction::new(|x: i32| -x);
+/// let conditional = double.when(|x: &i32| *x > 0).or_else(negate);
+///
+/// assert_eq!(conditional.apply(5), 10); // when branch executed
+/// assert_eq!(conditional.apply(-5), 5); // or_else branch executed
+/// ```
+///
+/// # Author
+///
+/// Haixing Hu
+pub struct BoxConditionalFunction<T, R> {
+    function: BoxFunction<T, R>,
+    predicate: BoxPredicate<T>,
+}
+
+// Use macro to generate conditional function implementations
+impl_box_conditional_function!(
+    BoxConditionalFunction<T, R>,
+    BoxFunction,
+    Function
+);
+
+// ============================================================================
+// RcConditionalFunction - Rc-based Conditional Function
+// ============================================================================
+
+/// RcConditionalFunction struct
+///
+/// A single-threaded conditional function that only executes when a
+/// predicate is satisfied. Uses `RcFunction` and `RcPredicate` for shared
+/// ownership within a single thread.
+///
+/// This type is typically created by calling `RcFunction::when()` and is
+/// designed to work with the `or_else()` method to create if-then-else logic.
+///
+/// # Features
+///
+/// - **Shared Ownership**: Cloneable via `Rc`, multiple owners allowed
+/// - **Single-Threaded**: Not thread-safe, cannot be sent across threads
+/// - **Conditional Execution**: Only transforms when predicate returns `true`
+/// - **No Lock Overhead**: More efficient than `ArcConditionalFunction`
+///
+/// # Examples
+///
+/// ```rust
+/// use prism3_function::{Function, RcFunction};
+///
+/// let double = RcFunction::new(|x: i32| x * 2);
+/// let identity = RcFunction::<i32, i32>::identity();
+/// let conditional = double.when(|x: &i32| *x > 0).or_else(identity);
+///
+/// let conditional_clone = conditional.clone();
+///
+/// assert_eq!(conditional.apply(5), 10);
+/// assert_eq!(conditional_clone.apply(-5), -5);
+/// ```
+///
+/// # Author
+///
+/// Haixing Hu
+pub struct RcConditionalFunction<T, R> {
+    function: RcFunction<T, R>,
+    predicate: RcPredicate<T>,
+}
+
+impl<T, R> RcConditionalFunction<T, R>
+where
+    T: 'static,
+    R: 'static,
+{
+    /// Adds an else branch (single-threaded shared version)
+    ///
+    /// Executes the original function when the condition is satisfied,
+    /// otherwise executes else_function.
+    ///
+    /// # Parameters
+    ///
+    /// * `else_function` - The function for the else branch, can be:
+    ///   - Closure: `|x: &T| -> R`
+    ///   - `RcFunction<T, R>`, `BoxFunction<T, R>`
+    ///   - Any type implementing `Function<T, R>`
+    ///
+    /// # Returns
+    ///
+    /// Returns the composed `RcFunction<T, R>`
+    ///
+    /// # Examples
+    ///
+    /// ## Using a closure (recommended)
+    ///
+    /// ```rust
+    /// use prism3_function::{Function, RcFunction};
+    ///
+    /// let double = RcFunction::new(|x: i32| x * 2);
+    /// let conditional = double.when(|x: &i32| *x > 0).or_else(|x: i32| -x);
+    ///
+    /// assert_eq!(conditional.apply(5), 10);
+    /// assert_eq!(conditional.apply(-5), 5);
+    /// ```
+    pub fn or_else<F>(self, else_function: F) -> RcFunction<T, R>
+    where
+        F: Function<T, R> + 'static,
+    {
+        let pred = self.predicate;
+        let then_function = self.function;
+        RcFunction::new(move |t| {
+            if pred.test(t) {
+                then_function.apply(t)
+            } else {
+                else_function.apply(t)
+            }
+        })
+    }
+}
+
+impl<T, R> Clone for RcConditionalFunction<T, R> {
+    /// Clones the conditional function
+    ///
+    /// Creates a new instance that shares the underlying function and
+    /// predicate with the original instance.
+    fn clone(&self) -> Self {
+        Self {
+            function: self.function.clone(),
+            predicate: self.predicate.clone(),
+        }
+    }
+}
+
+// ============================================================================
+// ArcConditionalFunction - Arc-based Conditional Function
+// ============================================================================
+
+/// ArcConditionalFunction struct
+///
+/// A thread-safe conditional function that only executes when a predicate is
+/// satisfied. Uses `ArcFunction` and `ArcPredicate` for shared ownership
+/// across threads.
+///
+/// This type is typically created by calling `ArcFunction::when()` and is
+/// designed to work with the `or_else()` method to create if-then-else logic.
+///
+/// # Features
+///
+/// - **Shared Ownership**: Cloneable via `Arc`, multiple owners allowed
+/// - **Thread-Safe**: Implements `Send + Sync`, safe for concurrent use
+/// - **Conditional Execution**: Only transforms when predicate returns `true`
+/// - **Chainable**: Can add `or_else` branch to create if-then-else logic
+///
+/// # Examples
+///
+/// ```rust
+/// use prism3_function::{Function, ArcFunction};
+///
+/// let double = ArcFunction::new(|x: i32| x * 2);
+/// let identity = ArcFunction::<i32, i32>::identity();
+/// let conditional = double.when(|x: &i32| *x > 0).or_else(identity);
+///
+/// let conditional_clone = conditional.clone();
+///
+/// assert_eq!(conditional.apply(5), 10);
+/// assert_eq!(conditional_clone.apply(-5), -5);
+/// ```
+///
+/// # Author
+///
+/// Haixing Hu
+pub struct ArcConditionalFunction<T, R> {
+    function: ArcFunction<T, R>,
+    predicate: ArcPredicate<T>,
+}
+
+impl<T, R> ArcConditionalFunction<T, R>
+where
+    T: Send + Sync + 'static,
+    R: 'static,
+{
+    /// Adds an else branch (thread-safe version)
+    ///
+    /// Executes the original function when the condition is satisfied,
+    /// otherwise executes else_function.
+    ///
+    /// # Parameters
+    ///
+    /// * `else_function` - The function for the else branch, can be:
+    ///   - Closure: `|x: &T| -> R` (must be `Send + Sync`)
+    ///   - `ArcFunction<T, R>`, `BoxFunction<T, R>`
+    ///   - Any type implementing `Function<T, R> + Send + Sync`
+    ///
+    /// # Returns
+    ///
+    /// Returns the composed `ArcFunction<T, R>`
+    ///
+    /// # Examples
+    ///
+    /// ## Using a closure (recommended)
+    ///
+    /// ```rust
+    /// use prism3_function::{Function, ArcFunction};
+    ///
+    /// let double = ArcFunction::new(|x: i32| x * 2);
+    /// let conditional = double.when(|x: &i32| *x > 0).or_else(|x: i32| -x);
+    ///
+    /// assert_eq!(conditional.apply(5), 10);
+    /// assert_eq!(conditional.apply(-5), 5);
+    /// ```
+    pub fn or_else<F>(self, else_function: F) -> ArcFunction<T, R>
+    where
+        F: Function<T, R> + Send + Sync + 'static,
+        R: Send + Sync,
+    {
+        let pred = self.predicate;
+        let then_function = self.function;
+        ArcFunction::new(move |t| {
+            if pred.test(t) {
+                then_function.apply(t)
+            } else {
+                else_function.apply(t)
+            }
+        })
+    }
+}
+
+impl<T, R> Clone for ArcConditionalFunction<T, R> {
+    /// Clones the conditional function
+    ///
+    /// Creates a new instance that shares the underlying function and
+    /// predicate with the original instance.
+    fn clone(&self) -> Self {
+        Self {
+            function: self.function.clone(),
+            predicate: self.predicate.clone(),
+        }
+    }
+}

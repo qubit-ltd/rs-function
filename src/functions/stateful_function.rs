@@ -29,7 +29,10 @@ use std::sync::{
     Mutex,
 };
 
-// StatefulFunction does not have a "once" variant since it already uses FnMut
+use crate::functions::macros::{
+    impl_box_conditional_function, impl_box_function_methods, impl_function_clone, impl_function_common_methods, impl_function_constant_method, impl_function_debug_display, impl_function_identity_method, impl_shared_function_methods
+};
+
 use crate::predicates::predicate::{
     ArcPredicate,
     BoxPredicate,
@@ -61,12 +64,12 @@ pub trait StatefulFunction<T, R> {
     ///
     /// # Parameters
     ///
-    /// * `input` - The input value to transform (consumed)
+    /// * `t` - The input value to transform (consumed)
     ///
     /// # Returns
     ///
     /// The transformed output value
-    fn apply(&mut self, input: &T) -> R;
+    fn apply(&mut self, t: &T) -> R;
 
     /// Converts to BoxStatefulFunction
     ///
@@ -104,14 +107,13 @@ pub trait StatefulFunction<T, R> {
     /// assert_eq!(boxed.apply(10), 10);  // 10 * 1
     /// assert_eq!(boxed.apply(10), 20);  // 10 * 2
     /// ```
-    fn into_box(self) -> BoxStatefulFunction<T, R>
+    fn into_box(mut self) -> BoxStatefulFunction<T, R>
     where
         Self: Sized + 'static,
         T: 'static,
         R: 'static,
     {
-        let mut function = self;
-        BoxStatefulFunction::new(move |t| function.apply(t))
+        BoxStatefulFunction::new(move |t| self.apply(t))
     }
 
     /// Converts to RcStatefulFunction
@@ -150,14 +152,13 @@ pub trait StatefulFunction<T, R> {
     /// assert_eq!(rc_function.apply(10), 10);  // 10 * 1
     /// assert_eq!(rc_function.apply(10), 20);  // 10 * 2
     /// ```
-    fn into_rc(self) -> RcStatefulFunction<T, R>
+    fn into_rc(mut self) -> RcStatefulFunction<T, R>
     where
         Self: Sized + 'static,
         T: 'static,
         R: 'static,
     {
-        let mut function = self;
-        RcStatefulFunction::new(move |t| function.apply(t))
+        RcStatefulFunction::new(move |t| self.apply(t))
     }
 
     /// Converts to ArcStatefulFunction
@@ -196,14 +197,13 @@ pub trait StatefulFunction<T, R> {
     /// assert_eq!(arc_function.apply(10), 10);  // 10 * 1
     /// assert_eq!(arc_function.apply(10), 20);  // 10 * 2
     /// ```
-    fn into_arc(self) -> ArcStatefulFunction<T, R>
+    fn into_arc(mut self) -> ArcStatefulFunction<T, R>
     where
-        Self: Sized + Send + 'static,
+        Self: Sized + Send + Sync + 'static,
         T: Send + Sync + 'static,
-        R: Send + 'static,
+        R: 'static,
     {
-        let mut function = self;
-        ArcStatefulFunction::new(move |t| function.apply(t))
+        ArcStatefulFunction::new(move |t| self.apply(t))
     }
 
     /// Converts to a closure implementing `FnMut(&T) -> R`
@@ -230,14 +230,13 @@ pub trait StatefulFunction<T, R> {
     /// assert_eq!(closure(10), 20);
     /// assert_eq!(closure(15), 30);
     /// ```
-    fn into_fn(self) -> impl FnMut(&T) -> R
+    fn into_fn(mut self) -> impl FnMut(&T) -> R
     where
         Self: Sized + 'static,
         T: 'static,
         R: 'static,
     {
-        let mut function = self;
-        move |t| function.apply(t)
+        move |t| self.apply(t)
     }
 
     /// Non-consuming conversion to `BoxStatefulFunction`.
@@ -247,7 +246,7 @@ pub trait StatefulFunction<T, R> {
     /// across calls.
     fn to_box(&self) -> BoxStatefulFunction<T, R>
     where
-        Self: Sized + Clone + 'static,
+        Self: Clone + 'static,
         T: 'static,
         R: 'static,
     {
@@ -260,7 +259,7 @@ pub trait StatefulFunction<T, R> {
     /// resulting stateful function can be shared within a single thread.
     fn to_rc(&self) -> RcStatefulFunction<T, R>
     where
-        Self: Sized + Clone + 'static,
+        Self: Clone + 'static,
         T: 'static,
         R: 'static,
     {
@@ -274,7 +273,7 @@ pub trait StatefulFunction<T, R> {
     /// threads.
     fn to_arc(&self) -> ArcStatefulFunction<T, R>
     where
-        Self: Sized + Clone + Send + Sync + 'static,
+        Self: Clone + Send + Sync + 'static,
         T: Send + Sync + 'static,
         R: Send + 'static,
     {
@@ -319,6 +318,7 @@ pub trait StatefulFunction<T, R> {
 /// Haixing Hu
 pub struct BoxStatefulFunction<T, R> {
     function: Box<dyn FnMut(&T) -> R>,
+    name: Option<String>,
 }
 
 impl<T, R> BoxStatefulFunction<T, R>
@@ -326,242 +326,30 @@ where
     T: 'static,
     R: 'static,
 {
-    /// Creates a new BoxStatefulFunction
-    ///
-    /// # Parameters
-    ///
-    /// * `f` - The closure or function to wrap
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{BoxStatefulFunction, StatefulFunction};
-    ///
-    /// let mut counter = 0;
-    /// let mut function = BoxStatefulFunction::new(move |x: i32| {
-    ///     counter += 1;
-    ///     x + counter
-    /// });
-    /// assert_eq!(function.apply(10), 11);
-    /// assert_eq!(function.apply(10), 12);
-    /// ```
-    pub fn new<F>(f: F) -> Self
-    where
-        F: FnMut(&T) -> R + 'static,
-    {
-        BoxStatefulFunction {
-            function: Box::new(f),
-        }
-    }
+    // Generates: new(), new_with_name(), name(), set_name()
+    impl_function_common_methods!(
+        BoxStatefulFunction<T, R>,
+        (FnMut(&T) -> R + 'static),
+        |f| Box::new(f)
+    );
 
-    // BoxStatefulFunction is intentionally not given a `to_*` specialization here
-    // because the boxed `FnMut` is not clonable and we cannot produce a
-    // non-consuming adapter from `&self` without moving ownership or
-    // requiring `Clone` on the inner function. Consumers should use the
-    // blanket `StatefulFunction::to_*` defaults when their stateful function type implements
-    // `Clone`.
-
-    /// Creates an identity stateful function
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{BoxStatefulFunction, StatefulFunction};
-    ///
-    /// let mut identity = BoxStatefulFunction::<i32, i32>::identity();
-    /// assert_eq!(identity.apply(42), 42);
-    /// ```
-    pub fn identity() -> BoxStatefulFunction<T, T>
-    where
-        T: Clone,
-    {
-        BoxStatefulFunction::new(|x: &T| x.clone())
-    }
-
-    /// Chain composition - applies self first, then after
-    ///
-    /// Creates a new stateful function that applies this stateful function first, then applies
-    /// the after stateful function to the result. Consumes self.
-    ///
-    /// # Type Parameters
-    ///
-    /// * `S` - The output type of the after stateful function
-    /// * `F` - The type of the after stateful function (must implement StatefulFunction<R, S>)
-    ///
-    /// # Parameters
-    ///
-    /// * `after` - The stateful function to apply after self. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to
-    ///   preserve the original stateful function, clone it first (if it implements
-    ///   `Clone`). Can be:
-    ///   - A closure: `|x: R| -> S`
-    ///   - A `BoxStatefulFunction<R, S>`
-    ///   - An `RcStatefulFunction<R, S>`
-    ///   - An `ArcStatefulFunction<R, S>`
-    ///   - Any type implementing `StatefulFunction<R, S>`
-    ///
-    /// # Returns
-    ///
-    /// A new BoxStatefulFunction representing the composition
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{BoxStatefulFunction, StatefulFunction};
-    ///
-    /// let mut counter1 = 0;
-    /// let function1 = BoxStatefulFunction::new(move |x: i32| {
-    ///     counter1 += 1;
-    ///     x + counter1
-    /// });
-    ///
-    /// let mut counter2 = 0;
-    /// let function2 = BoxStatefulFunction::new(move |x: i32| {
-    ///     counter2 += 1;
-    ///     x * counter2
-    /// });
-    ///
-    /// let mut composed = function1.and_then(function2);
-    /// assert_eq!(composed.apply(10), 11);  // (10 + 1) * 1
-    /// assert_eq!(composed.apply(10), 24);  // (10 + 2) * 2
-    /// ```
-    pub fn and_then<S, F>(self, after: F) -> BoxStatefulFunction<T, S>
-    where
-        S: 'static,
-        F: StatefulFunction<R, S> + 'static,
-    {
-        let mut self_function = self;
-        let mut after_function = after;
-        BoxStatefulFunction::new(move |x: &T| {
-            let intermediate = self_function.apply(x);
-            after_function.apply(&intermediate)
-        })
-    }
-
-    /// Reverse composition - applies before first, then self
-    ///
-    /// Creates a new function that applies the before function first, then
-    /// applies this function to the result. Consumes self.
-    ///
-    /// # Type Parameters
-    ///
-    /// * `S` - The input type of the before function
-    /// * `F` - The type of the before function (must implement StatefulFunction<S, T>)
-    ///
-    /// # Parameters
-    ///
-    /// * `before` - The function to apply before self. **Note: This
-    ///   parameter is passed by value and will transfer ownership.** If
-    ///   you need to preserve the original function, clone it first (if it
-    ///   implements `Clone`). Can be:
-    ///   - A closure: `|x: S| -> T`
-    ///   - A `BoxStatefulFunction<S, T>`
-    ///   - An `RcStatefulFunction<S, T>`
-    ///   - An `ArcStatefulFunction<S, T>`
-    ///   - Any type implementing `StatefulFunction<S, T>`
-    ///
-    /// # Returns
-    ///
-    /// A new BoxStatefulFunction representing the composition
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{BoxStatefulFunction, StatefulFunction};
-    ///
-    /// let mut counter = 0;
-    /// let function = BoxStatefulFunction::new(move |x: i32| {
-    ///     counter += 1;
-    ///     x * counter
-    /// });
-    ///
-    /// let mut composed = function.compose(|x: i32| x + 1);
-    /// assert_eq!(composed.apply(10), 11); // (10 + 1) * 1
-    /// assert_eq!(composed.apply(10), 22); // (10 + 1) * 2
-    /// ```
-    pub fn compose<S, F>(self, before: F) -> BoxStatefulFunction<S, R>
-    where
-        S: 'static,
-        F: StatefulFunction<S, T> + 'static,
-    {
-        let mut self_fn = self.function;
-        let mut before_fn = before;
-        BoxStatefulFunction::new(move |x: &S| self_fn.apply(&before_fn.apply(x)))
-    }
-
-    /// Creates a conditional function
-    ///
-    /// Returns a function that only executes when a predicate is satisfied.
-    /// You must call `or_else()` to provide an alternative function for
-    /// when the condition is not satisfied.
-    ///
-    /// # Parameters
-    ///
-    /// * `predicate` - The condition to check. **Note: This parameter is
-    ///   passed by value and will transfer ownership.** If you need to
-    ///   preserve the original predicate, clone it first (if it
-    ///   implements `Clone`). Can be:
-    ///   - A closure: `|x: &T| -> bool`
-    ///   - A function pointer: `fn(&T) -> bool`
-    ///   - A `BoxPredicate<T>`
-    ///   - An `RcPredicate<T>`
-    ///   - An `ArcPredicate<T>`
-    ///   - Any type implementing `Predicate<T>`
-    ///
-    /// # Returns
-    ///
-    /// Returns `BoxConditionalStatefulFunction<T, R>`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{StatefulFunction, BoxStatefulFunction};
-    ///
-    /// let mut counter = 0;
-    /// let mut function = BoxStatefulFunction::new(move |x: i32| {
-    ///     counter += 1;
-    ///     x * 2
-    /// })
-    /// .when(|x: &i32| *x > 10)
-    /// .or_else(|x| x + 1);
-    ///
-    /// assert_eq!(function.apply(15), 30);  // 15 > 10, apply * 2
-    /// assert_eq!(function.apply(5), 6);    // 5 <= 10, apply + 1
-    /// ```
-    pub fn when<P>(self, predicate: P) -> BoxConditionalStatefulFunction<T, R>
-    where
-        P: Predicate<T> + 'static,
-    {
-        BoxConditionalStatefulFunction {
-            function: self,
-            predicate: predicate.into_box(),
-        }
-    }
+    // Generates: when(), and_then(), compose()
+    impl_box_function_methods!(
+        BoxStatefulFunction<T, R>,
+        BoxConditionalStatefulFunction,
+        StatefulFunction
+    );
 }
 
-impl<T, R> BoxStatefulFunction<T, R>
-where
-    T: 'static,
-    R: Clone + 'static,
-{
-    /// Creates a constant function
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{BoxStatefulFunction, StatefulFunction};
-    ///
-    /// let mut constant = BoxStatefulFunction::constant("hello");
-    /// assert_eq!(constant.apply(123), "hello");
-    /// ```
-    pub fn constant(value: R) -> BoxStatefulFunction<T, R> {
-        BoxStatefulFunction::new(move |_| value.clone())
-    }
-}
+// Generates: constant() method for BoxStatefulFunction<T, R>
+impl_function_constant_method!(BoxStatefulFunction<T, R>, 'static);
+
+// Generates: identity() method for BoxStatefulFunction<T, T>
+impl_function_identity_method!(BoxStatefulFunction<T, T>);
 
 impl<T, R> StatefulFunction<T, R> for BoxStatefulFunction<T, R> {
-    fn apply(&mut self, input: &T) -> R {
-        (self.function)(input)
+    fn apply(&mut self, t: &T) -> R {
+        (self.function)(t)
     }
 
     fn into_box(self) -> BoxStatefulFunction<T, R>
@@ -569,7 +357,6 @@ impl<T, R> StatefulFunction<T, R> for BoxStatefulFunction<T, R> {
         T: 'static,
         R: 'static,
     {
-        // Zero-cost: directly return itself
         self
     }
 
@@ -578,8 +365,7 @@ impl<T, R> StatefulFunction<T, R> for BoxStatefulFunction<T, R> {
         T: 'static,
         R: 'static,
     {
-        let self_fn = self.function;
-        RcStatefulFunction::new(self_fn)
+        RcStatefulFunction::new_with_optional_name(self.function, self.name)
     }
 
     // do NOT override StatefulFunction::into_arc() because BoxStatefulFunction is not Send + Sync
@@ -590,7 +376,6 @@ impl<T, R> StatefulFunction<T, R> for BoxStatefulFunction<T, R> {
         T: 'static,
         R: 'static,
     {
-        // Zero-cost: directly return the boxed function
         self.function
     }
 
@@ -598,105 +383,140 @@ impl<T, R> StatefulFunction<T, R> for BoxStatefulFunction<T, R> {
     // and calling BoxStatefulFunction::to_xxx() will cause a compile error
 }
 
+// Generates: Debug and Display implementations for BoxStatefulFunction<T, R>
+impl_function_debug_display!(BoxStatefulFunction<T, R>);
+
 // ============================================================================
-// BoxConditionalStatefulFunction - Box-based Conditional StatefulFunction
+// RcStatefulFunction - Rc<RefCell<dyn FnMut(&T) -> R>>
 // ============================================================================
 
-/// BoxConditionalStatefulFunction struct
+/// RcStatefulFunction - single-threaded function wrapper
 ///
-/// A conditional function that only executes when a predicate is satisfied.
-/// Uses `BoxStatefulFunction` and `BoxPredicate` for single ownership semantics.
-///
-/// This type is typically created by calling `BoxStatefulFunction::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else
-/// logic.
+/// A single-threaded, clonable function wrapper optimized for scenarios
+/// that require sharing without thread-safety overhead.
 ///
 /// # Features
 ///
-/// - **Single Ownership**: Not cloneable, consumes `self` on use
-/// - **Conditional Execution**: Only maps when predicate returns `true`
-/// - **Chainable**: Can add `or_else` branch to create if-then-else
-///   logic
-/// - **Implements StatefulFunction**: Can be used anywhere a `StatefulFunction` is expected
-///
-/// # Examples
-///
-/// ```rust
-/// use prism3_function::{StatefulFunction, BoxStatefulFunction};
-///
-/// let mut high_count = 0;
-/// let mut low_count = 0;
-///
-/// let mut function = BoxStatefulFunction::new(move |x: i32| {
-///     high_count += 1;
-///     x * 2
-/// })
-/// .when(|x: &i32| *x >= 10)
-/// .or_else(move |x| {
-///     low_count += 1;
-///     x + 1
-/// });
-///
-/// assert_eq!(function.apply(15), 30); // when branch executed
-/// assert_eq!(function.apply(5), 6);   // or_else branch executed
-/// ```
+/// - **Based on**: `Rc<RefCell<dyn FnMut(&T) -> R>>`
+/// - **Ownership**: Shared ownership via reference counting (non-atomic)
+/// - **Reusability**: Can be called multiple times (each call consumes
+///   its input)
+/// - **Thread Safety**: Not thread-safe (no `Send + Sync`)
+/// - **Clonable**: Cheap cloning via `Rc::clone`
+/// - **Statefulness**: Can modify internal state between calls
 ///
 /// # Author
 ///
 /// Haixing Hu
-pub struct BoxConditionalStatefulFunction<T, R> {
-    function: BoxStatefulFunction<T, R>,
-    predicate: BoxPredicate<T>,
+pub struct RcStatefulFunction<T, R> {
+    function: RcStatefulFn<T, R>,
+    name: Option<String>,
 }
 
-impl<T, R> BoxConditionalStatefulFunction<T, R>
+type RcStatefulFn<T, R> = Rc<RefCell<dyn FnMut(&T) -> R>>;
+
+impl<T, R> RcStatefulFunction<T, R>
 where
     T: 'static,
     R: 'static,
 {
-    /// Adds an else branch
-    ///
-    /// Executes the original function when the condition is satisfied,
-    /// otherwise executes else_function.
-    ///
-    /// # Parameters
-    ///
-    /// * `else_function` - The function for the else branch, can be:
-    ///   - Closure: `|x: &T| -> R`
-    ///   - `BoxStatefulFunction<T, R>`, `RcStatefulFunction<T, R>`, `ArcStatefulFunction<T, R>`
-    ///   - Any type implementing `StatefulFunction<T, R>`
-    ///
-    /// # Returns
-    ///
-    /// Returns the composed `BoxStatefulFunction<T, R>`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{StatefulFunction, BoxStatefulFunction};
-    ///
-    /// let mut function = BoxStatefulFunction::new(|x: i32| x * 2)
-    ///     .when(|x: &i32| *x > 0)
-    ///     .or_else(|x: i32| -x);
-    ///
-    /// assert_eq!(function.apply(5), 10);   // Condition satisfied
-    /// assert_eq!(function.apply(-5), 5);   // Condition not satisfied
-    /// ```
-    pub fn or_else<F>(self, mut else_function: F) -> BoxStatefulFunction<T, R>
+    // Generates: new(), new_with_name(), name(), set_name()
+    impl_function_common_methods!(
+        RcStatefulFunction<T, R>,
+        (FnMut(&T) -> R + 'static),
+        |f| Rc::new(RefCell::new(f))
+    );
+
+    // Generates: when(), and_then(), compose()
+    impl_shared_function_methods!(
+        RcStatefulFunction<T, R>,
+        RcConditionalStatefulFunction,
+        into_rc,
+        StatefulFunction,
+        'static
+    );
+}
+
+// Generates: constant() method for RcStatefulFunction<T, R>
+impl_function_constant_method!(RcStatefulFunction<T, R>, 'static);
+
+// Generates: identity() method for RcStatefulFunction<T, T>
+impl_function_identity_method!(RcStatefulFunction<T, T>);
+
+impl<T, R> StatefulFunction<T, R> for RcStatefulFunction<T, R> {
+    fn apply(&mut self, t: &T) -> R {
+        (self.function.borrow_mut())(t)
+    }
+
+    fn into_box(self) -> BoxStatefulFunction<T, R>
     where
-        F: StatefulFunction<T, R> + 'static,
+        T: 'static,
+        R: 'static,
     {
-        let pred = self.predicate;
-        let mut then_function = self.function;
-        BoxStatefulFunction::new(move |t| {
-            if pred.test(t) {
-                then_function.apply(t)
-            } else {
-                else_function.apply(t)
-            }
-        })
+        BoxStatefulFunction::new_with_optional_name(
+            move |t| self.function.borrow_mut()(t),
+            self.name,
+        )
+    }
+
+    fn into_rc(self) -> RcStatefulFunction<T, R>
+    where
+        T: 'static,
+        R: 'static,
+    {
+        self
+    }
+
+    // do NOT override StatefulFunction::into_arc() because RcStatefulFunction is not Send + Sync
+    // and calling RcStatefulFunction::into_arc() will cause a compile error
+
+    fn into_fn(self) -> impl FnMut(&T) -> R
+    where
+        T: 'static,
+        R: 'static,
+    {
+        move |t| (self.function.borrow_mut())(t)
+    }
+
+    // Override with optimized implementation: clone the Rc (cheap)
+    fn to_box(&self) -> BoxStatefulFunction<T, R>
+    where
+        T: 'static,
+        R: 'static,
+    {
+        let self_fn = self.function.clone();
+        let self_name = self.name.clone();
+        BoxStatefulFunction::new_with_optional_name(move |t| self_fn.borrow_mut()(t), self_name)
+    }
+
+    // Override with zero-cost implementation: clone itself
+    fn to_rc(&self) -> RcStatefulFunction<T, R>
+    where
+        T: 'static,
+        R: 'static,
+    {
+        self.clone()
+    }
+
+    // do NOT override RcFunction::to_arc() because RcFunction is not Send + Sync
+    // and calling RcFunction::to_arc() will cause a compile error
+
+    // Override with optimized implementation: clone the Rc (cheap)
+    fn to_fn(&self) -> impl FnMut(&T) -> R
+    where
+        T: 'static,
+        R: 'static,
+    {
+        let self_fn = self.function.clone();
+        move |t| self_fn.borrow_mut()(t)
     }
 }
+
+// Generates: Clone implementation for RcStatefulFunction<T, R>
+impl_function_clone!(RcStatefulFunction<T, R>);
+
+// Generates: Debug and Display implementations for RcStatefulFunction<T, R>
+impl_function_debug_display!(RcStatefulFunction<T, R>);
 
 // ============================================================================
 // ArcStatefulFunction - Arc<Mutex<dyn FnMut(&T) -> R + Send>>
@@ -723,242 +543,42 @@ where
 /// Haixing Hu
 pub struct ArcStatefulFunction<T, R> {
     function: ArcStatefulFn<T, R>,
+    name: Option<String>,
 }
 
-type ArcStatefulFn<T, R> = Arc<Mutex<dyn FnMut(&T) -> R + Send>>;
+type ArcStatefulFn<T, R> = Arc<Mutex<dyn FnMut(&T) -> R>>;
 
 impl<T, R> ArcStatefulFunction<T, R>
 where
-    T: Send + Sync + 'static,
-    R: Send + 'static,
+    T: 'static,
+    R: 'static,
 {
-    /// Creates a new ArcStatefulFunction
-    ///
-    /// # Parameters
-    ///
-    /// * `f` - The closure or function to wrap (must be Send)
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{ArcStatefulFunction, StatefulFunction};
-    ///
-    /// let mut counter = 0;
-    /// let mut function = ArcStatefulFunction::new(move |x: i32| {
-    ///     counter += 1;
-    ///     x + counter
-    /// });
-    /// assert_eq!(function.apply(10), 11);
-    /// assert_eq!(function.apply(10), 12);
-    /// ```
-    pub fn new<F>(f: F) -> Self
-    where
-        F: FnMut(&T) -> R + Send + 'static,
-    {
-        ArcStatefulFunction {
-            function: Arc::new(Mutex::new(f)),
-        }
-    }
+    // Generates: new(), new_with_name(), name(), set_name()
+    impl_function_common_methods!(
+        ArcStatefulFunction<T, R>,
+        (FnMut(&T) -> R + 'static),
+        |f| Arc::new(Mutex::new(f))
+    );
 
-    /// Creates an identity function
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{ArcStatefulFunction, StatefulFunction};
-    ///
-    /// let mut identity = ArcStatefulFunction::<i32, i32>::identity();
-    /// assert_eq!(identity.apply(42), 42);
-    /// ```
-    pub fn identity() -> ArcStatefulFunction<T, T>
-    where
-        T: Clone,
-    {
-        ArcStatefulFunction::new(|x: &T| x.clone())
-    }
-
-    /// Chain composition - applies self first, then after
-    ///
-    /// Creates a new function that applies this function first, then applies
-    /// the after function to the result. Uses &self, so original function
-    /// remains usable.
-    ///
-    /// # Type Parameters
-    ///
-    /// * `S` - The output type of the after function
-    /// * `F` - The type of the after function (must implement StatefulFunction<R, S>)
-    ///
-    /// # Parameters
-    ///
-    /// * `after` - The function to apply after self. Can be:
-    ///   - A closure: `|x: R| -> S`
-    ///   - A `BoxStatefulFunction<R, S>`
-    ///   - An `RcStatefulFunction<R, S>`
-    ///   - An `ArcStatefulFunction<R, S>` (will be cloned internally)
-    ///   - Any type implementing `StatefulFunction<R, S> + Send`
-    ///
-    /// # Returns
-    ///
-    /// A new ArcStatefulFunction representing the composition
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{ArcStatefulFunction, StatefulFunction};
-    ///
-    /// let mut counter1 = 0;
-    /// let function1 = ArcStatefulFunction::new(move |x: i32| {
-    ///     counter1 += 1;
-    ///     x + counter1
-    /// });
-    ///
-    /// let mut counter2 = 0;
-    /// let function2 = ArcStatefulFunction::new(move |x: i32| {
-    ///     counter2 += 1;
-    ///     x * counter2
-    /// });
-    ///
-    /// let mut composed = function1.and_then(function2);
-    ///
-    /// assert_eq!(composed.apply(10), 11);  // (10 + 1) * 1
-    /// assert_eq!(composed.apply(10), 24);  // (10 + 2) * 2
-    /// ```
-    pub fn and_then<S, F>(&self, after: F) -> ArcStatefulFunction<T, S>
-    where
-        S: Send + 'static,
-        F: StatefulFunction<R, S> + Send + 'static,
-    {
-        let self_fn = Arc::clone(&self.function);
-        let after = Arc::new(Mutex::new(after));
-        ArcStatefulFunction {
-            function: Arc::new(Mutex::new(move |x: &T| {
-                let intermediate = self_fn.lock().unwrap()(x);
-                after.lock().unwrap().apply(&intermediate)
-            })),
-        }
-    }
-
-    /// Reverse composition - applies before first, then self
-    ///
-    /// Creates a new function that applies the before function first, then
-    /// applies this function to the result. Uses &self, so original function
-    /// remains usable.
-    ///
-    /// # Type Parameters
-    ///
-    /// * `S` - The input type of the before function
-    /// * `F` - The type of the before function (must implement StatefulFunction<S, T>)
-    ///
-    /// # Parameters
-    ///
-    /// * `before` - The function to apply before self. Can be:
-    ///   - A closure: `|x: S| -> T`
-    ///   - A `BoxStatefulFunction<S, T>`
-    ///   - An `RcStatefulFunction<S, T>`
-    ///   - An `ArcStatefulFunction<S, T>` (will be cloned internally)
-    ///   - Any type implementing `StatefulFunction<S, T> + Send`
-    ///
-    /// # Returns
-    ///
-    /// A new ArcStatefulFunction representing the composition
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{ArcStatefulFunction, StatefulFunction};
-    ///
-    /// let mut counter = 0;
-    /// let function = ArcStatefulFunction::new(move |x: i32| {
-    ///     counter += 1;
-    ///     x * counter
-    /// });
-    ///
-    /// let mut composed = function.compose(|x: i32| x + 1);
-    /// assert_eq!(composed.apply(10), 11); // (10 + 1) * 1
-    /// assert_eq!(composed.apply(10), 22); // (10 + 1) * 2
-    /// ```
-    pub fn compose<S, F>(&self, before: F) -> ArcStatefulFunction<S, R>
-    where
-        S: Send + 'static,
-        F: StatefulFunction<S, T> + Send + 'static,
-    {
-        let self_fn = Arc::clone(&self.function);
-        let before = Arc::new(Mutex::new(before));
-        ArcStatefulFunction {
-            function: Arc::new(Mutex::new(move |x: &S| {
-                let intermediate = before.lock().unwrap().apply(x);
-                self_fn.lock().unwrap()(&intermediate)
-            })),
-        }
-    }
-
-    /// Creates a conditional function (thread-safe version)
-    ///
-    /// Returns a function that only executes when a predicate is satisfied.
-    /// You must call `or_else()` to provide an alternative function.
-    ///
-    /// # Parameters
-    ///
-    /// * `predicate` - The condition to check. Must be `Send`, can be:
-    ///   - A closure: `|x: &T| -> bool` (requires `Send`)
-    ///   - A function pointer: `fn(&T) -> bool`
-    ///   - An `ArcPredicate<T>`
-    ///   - Any type implementing `Predicate<T> + Send`
-    ///
-    /// # Returns
-    ///
-    /// Returns `ArcConditionalStatefulFunction<T, R>`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{StatefulFunction, ArcStatefulFunction};
-    ///
-    /// let mut counter = 0;
-    /// let mut function = ArcStatefulFunction::new(move |x: i32| {
-    ///     counter += 1;
-    ///     x * 2
-    /// })
-    /// .when(|x: &i32| *x > 10)
-    /// .or_else(|x| x + 1);
-    ///
-    /// assert_eq!(function.apply(15), 30);  // 15 > 10, apply * 2
-    /// assert_eq!(function.apply(5), 6);    // 5 <= 10, apply + 1
-    /// ```
-    pub fn when<P>(&self, predicate: P) -> ArcConditionalStatefulFunction<T, R>
-    where
-        P: Predicate<T> + Send + Sync + 'static,
-    {
-        ArcConditionalStatefulFunction {
-            function: self.clone(),
-            predicate: predicate.into_arc(),
-        }
-    }
+    // Generates: when(), and_then(), compose()
+    impl_shared_function_methods!(
+        ArcStatefulFunction<T, R>,
+        ArcConditionalStatefulFunction,
+        into_arc,
+        StatefulFunction,
+        Send + Sync + 'static
+    );
 }
 
-impl<T, R> ArcStatefulFunction<T, R>
-where
-    T: Send + Sync + 'static,
-    R: Clone + Send + 'static,
-{
-    /// Creates a constant function
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{ArcStatefulFunction, StatefulFunction};
-    ///
-    /// let mut constant = ArcStatefulFunction::constant("hello");
-    /// assert_eq!(constant.apply(123), "hello");
-    /// ```
-    pub fn constant(value: R) -> ArcStatefulFunction<T, R> {
-        ArcStatefulFunction::new(move |_| value.clone())
-    }
-}
+// Generates: constant() method for ArcStatefulFunction<T, R>
+impl_function_constant_method!(ArcStatefulFunction<T, R>, Send + Sync + 'static);
+
+// Generates: identity() method for ArcStatefulFunction<T, T>
+impl_function_identity_method!(ArcStatefulFunction<T, T>);
 
 impl<T, R> StatefulFunction<T, R> for ArcStatefulFunction<T, R> {
-    fn apply(&mut self, input: &T) -> R {
-        (self.function.lock().unwrap())(input)
+    fn apply(&mut self, t: &T) -> R {
+        (self.function.lock().unwrap())(t)
     }
 
     fn into_box(self) -> BoxStatefulFunction<T, R>
@@ -966,7 +586,10 @@ impl<T, R> StatefulFunction<T, R> for ArcStatefulFunction<T, R> {
         T: 'static,
         R: 'static,
     {
-        BoxStatefulFunction::new(move |x| self.function.lock().unwrap()(x))
+        BoxStatefulFunction::new_with_optional_name(
+            move |t| self.function.lock().unwrap()(t),
+            self.name,
+        )
     }
 
     fn into_rc(self) -> RcStatefulFunction<T, R>
@@ -974,15 +597,17 @@ impl<T, R> StatefulFunction<T, R> for ArcStatefulFunction<T, R> {
         T: 'static,
         R: 'static,
     {
-        RcStatefulFunction::new(move |x| self.function.lock().unwrap()(x))
+        RcStatefulFunction::new_with_optional_name(
+            move |t| self.function.lock().unwrap()(t),
+            self.name,
+        )
     }
 
     fn into_arc(self) -> ArcStatefulFunction<T, R>
     where
         T: Send + Sync + 'static,
-        R: Send + 'static,
+        R: 'static,
     {
-        // Zero-cost: directly return itself
         self
     }
 
@@ -991,8 +616,7 @@ impl<T, R> StatefulFunction<T, R> for ArcStatefulFunction<T, R> {
         T: 'static,
         R: 'static,
     {
-        // Efficient: use Arc cloning to create a closure
-        move |input: &T| (self.function.lock().unwrap())(input)
+        move |t| (self.function.lock().unwrap())(t)
     }
 
     fn to_box(&self) -> BoxStatefulFunction<T, R>
@@ -1001,7 +625,8 @@ impl<T, R> StatefulFunction<T, R> for ArcStatefulFunction<T, R> {
         R: 'static,
     {
         let self_fn = self.function.clone();
-        BoxStatefulFunction::new(move |x| self_fn.lock().unwrap()(x))
+        let self_name = self.name.clone();
+        BoxStatefulFunction::new_with_optional_name(move |t| self_fn.lock().unwrap()(t), self_name)
     }
 
     fn to_rc(&self) -> RcStatefulFunction<T, R>
@@ -1010,7 +635,8 @@ impl<T, R> StatefulFunction<T, R> for ArcStatefulFunction<T, R> {
         R: 'static,
     {
         let self_fn = self.function.clone();
-        RcStatefulFunction::new(move |x| self_fn.lock().unwrap()(x))
+        let self_name = self.name.clone();
+        RcStatefulFunction::new_with_optional_name(move |t| self_fn.lock().unwrap()(t), self_name)
     }
 
     fn to_arc(&self) -> ArcStatefulFunction<T, R>
@@ -1027,540 +653,15 @@ impl<T, R> StatefulFunction<T, R> for ArcStatefulFunction<T, R> {
         R: 'static,
     {
         let self_fn = self.function.clone();
-        move |input: &T| self_fn.lock().unwrap()(input)
+        move |t| self_fn.lock().unwrap()(t)
     }
 }
 
-impl<T, R> Clone for ArcStatefulFunction<T, R> {
-    fn clone(&self) -> Self {
-        ArcStatefulFunction {
-            function: Arc::clone(&self.function),
-        }
-    }
-}
+// Generates: Clone implementation for ArcStatefulFunction<T, R>
+impl_function_clone!(ArcStatefulFunction<T, R>);
 
-// ============================================================================
-// ArcConditionalStatefulFunction - Arc-based Conditional StatefulFunction
-// ============================================================================
-
-/// ArcConditionalStatefulFunction struct
-///
-/// A thread-safe conditional function that only executes when a predicate
-/// is satisfied. Uses `ArcStatefulFunction` and `ArcPredicate` for shared
-/// ownership across threads.
-///
-/// This type is typically created by calling `ArcStatefulFunction::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else
-/// logic.
-///
-/// # Features
-///
-/// - **Shared Ownership**: Cloneable via `Arc`, multiple owners allowed
-/// - **Thread-Safe**: Implements `Send`, safe for concurrent use
-/// - **Conditional Execution**: Only maps when predicate returns `true`
-/// - **Chainable**: Can add `or_else` branch to create if-then-else
-///   logic
-///
-/// # Examples
-///
-/// ```rust
-/// use prism3_function::{StatefulFunction, ArcStatefulFunction};
-///
-/// let mut function = ArcStatefulFunction::new(|x: i32| x * 2)
-///     .when(|x: &i32| *x > 0)
-///     .or_else(|x: i32| -x);
-///
-/// let mut function_clone = function.clone();
-///
-/// assert_eq!(function.apply(5), 10);
-/// assert_eq!(function_clone.apply(-5), 5);
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-pub struct ArcConditionalStatefulFunction<T, R> {
-    function: ArcStatefulFunction<T, R>,
-    predicate: ArcPredicate<T>,
-}
-
-impl<T, R> ArcConditionalStatefulFunction<T, R>
-where
-    T: Send + Sync + 'static,
-    R: Send + 'static,
-{
-    /// Adds an else branch (thread-safe version)
-    ///
-    /// Executes the original function when the condition is satisfied,
-    /// otherwise executes else_function.
-    ///
-    /// # Parameters
-    ///
-    /// * `else_function` - The function for the else branch, can be:
-    ///   - Closure: `|x: &T| -> R` (must be `Send`)
-    ///   - `ArcStatefulFunction<T, R>`, `BoxStatefulFunction<T, R>`
-    ///   - Any type implementing `StatefulFunction<T, R> + Send`
-    ///
-    /// # Returns
-    ///
-    /// Returns the composed `ArcStatefulFunction<T, R>`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{StatefulFunction, ArcStatefulFunction};
-    ///
-    /// let mut function = ArcStatefulFunction::new(|x: i32| x * 2)
-    ///     .when(|x: &i32| *x > 0)
-    ///     .or_else(|x: i32| -x);
-    ///
-    /// assert_eq!(function.apply(5), 10);
-    /// assert_eq!(function.apply(-5), 5);
-    /// ```
-    pub fn or_else<F>(self, else_function: F) -> ArcStatefulFunction<T, R>
-    where
-        F: StatefulFunction<T, R> + Send + 'static,
-    {
-        let pred = self.predicate;
-        let then_function = self.function;
-        let else_function = Arc::new(Mutex::new(else_function));
-        ArcStatefulFunction {
-            function: Arc::new(Mutex::new(move |t: &T| {
-                if pred.test(t) {
-                    then_function.function.lock().unwrap()(t)
-                } else {
-                    else_function.lock().unwrap().apply(t)
-                }
-            })),
-        }
-    }
-}
-
-impl<T, R> Clone for ArcConditionalStatefulFunction<T, R> {
-    /// Clones the conditional function
-    ///
-    /// Creates a new instance that shares the underlying function and
-    /// predicate with the original instance.
-    fn clone(&self) -> Self {
-        Self {
-            function: self.function.clone(),
-            predicate: self.predicate.clone(),
-        }
-    }
-}
-
-// ============================================================================
-// RcStatefulFunction - Rc<RefCell<dyn FnMut(&T) -> R>>
-// ============================================================================
-
-/// RcStatefulFunction - single-threaded function wrapper
-///
-/// A single-threaded, clonable function wrapper optimized for scenarios
-/// that require sharing without thread-safety overhead.
-///
-/// # Features
-///
-/// - **Based on**: `Rc<RefCell<dyn FnMut(&T) -> R>>`
-/// - **Ownership**: Shared ownership via reference counting (non-atomic)
-/// - **Reusability**: Can be called multiple times (each call consumes
-///   its input)
-/// - **Thread Safety**: Not thread-safe (no `Send + Sync`)
-/// - **Clonable**: Cheap cloning via `Rc::clone`
-/// - **Statefulness**: Can modify internal state between calls
-///
-/// # Author
-///
-/// Haixing Hu
-pub struct RcStatefulFunction<T, R> {
-    function: RcStatefulFn<T, R>,
-}
-
-type RcStatefulFn<T, R> = Rc<RefCell<dyn FnMut(&T) -> R>>;
-
-impl<T, R> RcStatefulFunction<T, R>
-where
-    T: 'static,
-    R: 'static,
-{
-    /// Creates a new RcStatefulFunction
-    ///
-    /// # Parameters
-    ///
-    /// * `f` - The closure or function to wrap
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{RcStatefulFunction, StatefulFunction};
-    ///
-    /// let mut counter = 0;
-    /// let mut function = RcStatefulFunction::new(move |x: i32| {
-    ///     counter += 1;
-    ///     x + counter
-    /// });
-    /// assert_eq!(function.apply(10), 11);
-    /// assert_eq!(function.apply(10), 12);
-    /// ```
-    pub fn new<F>(f: F) -> Self
-    where
-        F: FnMut(&T) -> R + 'static,
-    {
-        RcStatefulFunction {
-            function: Rc::new(RefCell::new(f)),
-        }
-    }
-
-    /// Creates an identity function
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{RcStatefulFunction, StatefulFunction};
-    ///
-    /// let mut identity = RcStatefulFunction::<i32, i32>::identity();
-    /// assert_eq!(identity.apply(42), 42);
-    /// ```
-    pub fn identity() -> RcStatefulFunction<T, T>
-    where
-        T: Clone,
-    {
-        RcStatefulFunction::new(|x: &T| x.clone())
-    }
-
-    /// Chain composition - applies self first, then after
-    ///
-    /// Creates a new function that applies this function first, then applies
-    /// the after function to the result. Uses &self, so original function
-    /// remains usable.
-    ///
-    /// # Type Parameters
-    ///
-    /// * `S` - The output type of the after function
-    /// * `F` - The type of the after function (must implement StatefulFunction<R, S>)
-    ///
-    /// # Parameters
-    ///
-    /// * `after` - The function to apply after self. Can be:
-    ///   - A closure: `|x: R| -> S`
-    ///   - A `BoxStatefulFunction<R, S>`
-    ///   - An `RcStatefulFunction<R, S>` (will be cloned internally)
-    ///   - An `ArcStatefulFunction<R, S>`
-    ///   - Any type implementing `StatefulFunction<R, S>`
-    ///
-    /// # Returns
-    ///
-    /// A new RcStatefulFunction representing the composition
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{RcStatefulFunction, StatefulFunction};
-    ///
-    /// let mut counter1 = 0;
-    /// let function1 = RcStatefulFunction::new(move |x: i32| {
-    ///     counter1 += 1;
-    ///     x + counter1
-    /// });
-    ///
-    /// let mut counter2 = 0;
-    /// let function2 = RcStatefulFunction::new(move |x: i32| {
-    ///     counter2 += 1;
-    ///     x * counter2
-    /// });
-    ///
-    /// let mut composed = function1.and_then(function2);
-    ///
-    /// assert_eq!(composed.apply(10), 11);  // (10 + 1) * 1
-    /// assert_eq!(composed.apply(10), 24);  // (10 + 2) * 2
-    /// ```
-    pub fn and_then<S, F>(&self, after: F) -> RcStatefulFunction<T, S>
-    where
-        S: 'static,
-        F: StatefulFunction<R, S> + 'static,
-    {
-        let self_fn = Rc::clone(&self.function);
-        let after = Rc::new(RefCell::new(after));
-        RcStatefulFunction {
-            function: Rc::new(RefCell::new(move |x: &T| {
-                let intermediate = self_fn.borrow_mut()(x);
-                after.borrow_mut().apply(&intermediate)
-            })),
-        }
-    }
-
-    /// Reverse composition - applies before first, then self
-    ///
-    /// Creates a new function that applies the before function first, then
-    /// applies this function to the result. Uses &self, so original function
-    /// remains usable.
-    ///
-    /// # Type Parameters
-    ///
-    /// * `S` - The input type of the before function
-    /// * `F` - The type of the before function (must implement StatefulFunction<S, T>)
-    ///
-    /// # Parameters
-    ///
-    /// * `before` - The function to apply before self. Can be:
-    ///   - A closure: `|x: S| -> T`
-    ///   - A `BoxStatefulFunction<S, T>`
-    ///   - An `RcStatefulFunction<S, T>` (will be cloned internally)
-    ///   - An `ArcStatefulFunction<S, T>`
-    ///   - Any type implementing `StatefulFunction<S, T>`
-    ///
-    /// # Returns
-    ///
-    /// A new RcStatefulFunction representing the composition
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{RcStatefulFunction, StatefulFunction};
-    ///
-    /// let mut counter = 0;
-    /// let function = RcStatefulFunction::new(move |x: i32| {
-    ///     counter += 1;
-    ///     x * counter
-    /// });
-    ///
-    /// let mut composed = function.compose(|x: i32| x + 1);
-    /// assert_eq!(composed.apply(10), 11); // (10 + 1) * 1
-    /// assert_eq!(composed.apply(10), 22); // (10 + 1) * 2
-    /// ```
-    pub fn compose<S, F>(&self, before: F) -> RcStatefulFunction<S, R>
-    where
-        S: 'static,
-        F: StatefulFunction<S, T> + 'static,
-    {
-        let self_fn = Rc::clone(&self.function);
-        let before = Rc::new(RefCell::new(before));
-        RcStatefulFunction {
-            function: Rc::new(RefCell::new(move |x: &S| {
-                let intermediate = before.borrow_mut().apply(x);
-                self_fn.borrow_mut()(&intermediate)
-            })),
-        }
-    }
-
-    /// Creates a conditional function (single-threaded shared version)
-    ///
-    /// Returns a function that only executes when a predicate is satisfied.
-    /// You must call `or_else()` to provide an alternative function.
-    ///
-    /// # Parameters
-    ///
-    /// * `predicate` - The condition to check. Can be:
-    ///   - A closure: `|x: &T| -> bool`
-    ///   - A function pointer: `fn(&T) -> bool`
-    ///   - A `BoxPredicate<T>`
-    ///   - An `RcPredicate<T>`
-    ///   - An `ArcPredicate<T>`
-    ///   - Any type implementing `Predicate<T>`
-    ///
-    /// # Returns
-    ///
-    /// Returns `RcConditionalStatefulFunction<T, R>`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{StatefulFunction, RcStatefulFunction};
-    ///
-    /// let mut counter = 0;
-    /// let mut function = RcStatefulFunction::new(move |x: i32| {
-    ///     counter += 1;
-    ///     x * 2
-    /// })
-    /// .when(|x: &i32| *x > 10)
-    /// .or_else(|x| x + 1);
-    ///
-    /// assert_eq!(function.apply(15), 30);  // 15 > 10, apply * 2
-    /// assert_eq!(function.apply(5), 6);    // 5 <= 10, apply + 1
-    /// ```
-    pub fn when<P>(self, predicate: P) -> RcConditionalStatefulFunction<T, R>
-    where
-        P: Predicate<T> + 'static,
-    {
-        RcConditionalStatefulFunction {
-            function: self,
-            predicate: predicate.into_rc(),
-        }
-    }
-}
-
-impl<T, R> RcStatefulFunction<T, R>
-where
-    T: 'static,
-    R: Clone + 'static,
-{
-    /// Creates a constant function
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{RcStatefulFunction, StatefulFunction};
-    ///
-    /// let mut constant = RcStatefulFunction::constant("hello");
-    /// assert_eq!(constant.apply(123), "hello");
-    /// ```
-    pub fn constant(value: R) -> RcStatefulFunction<T, R> {
-        RcStatefulFunction::new(move |_| value.clone())
-    }
-}
-
-impl<T, R> StatefulFunction<T, R> for RcStatefulFunction<T, R> {
-    fn apply(&mut self, input: &T) -> R {
-        (self.function.borrow_mut())(input)
-    }
-
-    fn into_box(self) -> BoxStatefulFunction<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        BoxStatefulFunction {
-            function: Box::new(move |x| self.function.borrow_mut()(x)),
-        }
-    }
-
-    fn into_rc(self) -> RcStatefulFunction<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        // Zero-cost: directly return itself
-        self
-    }
-
-    // do NOT override StatefulFunction::into_arc() because RcStatefulFunction is not Send + Sync
-    // and calling RcStatefulFunction::into_arc() will cause a compile error
-
-    fn into_fn(self) -> impl FnMut(&T) -> R
-    where
-        T: 'static,
-        R: 'static,
-    {
-        // Efficient: use Rc cloning to create a closure
-        move |input: &T| (self.function.borrow_mut())(input)
-    }
-}
-
-impl<T, R> Clone for RcStatefulFunction<T, R> {
-    fn clone(&self) -> Self {
-        RcStatefulFunction {
-            function: Rc::clone(&self.function),
-        }
-    }
-}
-
-// ============================================================================
-// RcConditionalStatefulFunction - Rc-based Conditional StatefulFunction
-// ============================================================================
-
-/// RcConditionalStatefulFunction struct
-///
-/// A single-threaded conditional function that only executes when a
-/// predicate is satisfied. Uses `RcStatefulFunction` and `RcPredicate` for shared
-/// ownership within a single thread.
-///
-/// This type is typically created by calling `RcStatefulFunction::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else
-/// logic.
-///
-/// # Features
-///
-/// - **Shared Ownership**: Cloneable via `Rc`, multiple owners allowed
-/// - **Single-Threaded**: Not thread-safe, cannot be sent across threads
-/// - **Conditional Execution**: Only maps when predicate returns `true`
-/// - **No Lock Overhead**: More efficient than `ArcConditionalStatefulFunction`
-///
-/// # Examples
-///
-/// ```rust
-/// use prism3_function::{StatefulFunction, RcStatefulFunction};
-///
-/// let mut function = RcStatefulFunction::new(|x: i32| x * 2)
-///     .when(|x: &i32| *x > 0)
-///     .or_else(|x: i32| -x);
-///
-/// let mut function_clone = function.clone();
-///
-/// assert_eq!(function.apply(5), 10);
-/// assert_eq!(function_clone.apply(-5), 5);
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-pub struct RcConditionalStatefulFunction<T, R> {
-    function: RcStatefulFunction<T, R>,
-    predicate: RcPredicate<T>,
-}
-
-impl<T, R> RcConditionalStatefulFunction<T, R>
-where
-    T: 'static,
-    R: 'static,
-{
-    /// Adds an else branch (single-threaded shared version)
-    ///
-    /// Executes the original function when the condition is satisfied,
-    /// otherwise executes else_function.
-    ///
-    /// # Parameters
-    ///
-    /// * `else_function` - The function for the else branch, can be:
-    ///   - Closure: `|x: &T| -> R`
-    ///   - `RcStatefulFunction<T, R>`, `BoxStatefulFunction<T, R>`
-    ///   - Any type implementing `StatefulFunction<T, R>`
-    ///
-    /// # Returns
-    ///
-    /// Returns the composed `RcStatefulFunction<T, R>`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{StatefulFunction, RcStatefulFunction};
-    ///
-    /// let mut function = RcStatefulFunction::new(|x: i32| x * 2)
-    ///     .when(|x: &i32| *x > 0)
-    ///     .or_else(|x: i32| -x);
-    ///
-    /// assert_eq!(function.apply(5), 10);
-    /// assert_eq!(function.apply(-5), 5);
-    /// ```
-    pub fn or_else<F>(self, else_function: F) -> RcStatefulFunction<T, R>
-    where
-        F: StatefulFunction<T, R> + 'static,
-    {
-        let pred = self.predicate;
-        let then_function = self.function;
-        let else_function = Rc::new(RefCell::new(else_function));
-        RcStatefulFunction {
-            function: Rc::new(RefCell::new(move |t: &T| {
-                if pred.test(t) {
-                    then_function.function.borrow_mut()(t)
-                } else {
-                    else_function.borrow_mut().apply(t)
-                }
-            })),
-        }
-    }
-}
-
-impl<T, R> Clone for RcConditionalStatefulFunction<T, R> {
-    /// Clones the conditional function
-    ///
-    /// Creates a new instance that shares the underlying function and
-    /// predicate with the original instance.
-    fn clone(&self) -> Self {
-        Self {
-            function: self.function.clone(),
-            predicate: self.predicate.clone(),
-        }
-    }
-}
+// Generates: Debug and Display implementations for ArcStatefulFunction<T, R>
+impl_function_debug_display!(ArcStatefulFunction<T, R>);
 
 // ============================================================================
 // Blanket implementation for standard FnMut trait
@@ -1595,8 +696,8 @@ where
     T: 'static,
     R: 'static,
 {
-    fn apply(&mut self, input: &T) -> R {
-        self(input)
+    fn apply(&mut self, t: &T) -> R {
+        self(t)
     }
 
     fn into_box(self) -> BoxStatefulFunction<T, R>
@@ -1617,7 +718,7 @@ where
     where
         Self: Sized + Send + 'static,
         T: Send + Sync + 'static,
-        R: Send + 'static,
+        R: 'static,
     {
         ArcStatefulFunction::new(self)
     }
@@ -1625,61 +726,38 @@ where
     fn into_fn(self) -> impl FnMut(&T) -> R
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
-        // Zero-cost: directly return itself (the closure)
         self
     }
 
-    /// Non-consuming conversion to `BoxStatefulFunction` for closures.
-    ///
-    /// We can create a `BoxStatefulFunction` by boxing the closure and returning a
-    /// new `BoxStatefulFunction`. This does not require `Clone` because we consume
-    /// the closure value passed by the caller when they call this
-    /// method. For `&self`-style non-consuming `to_*` adapters, users can
-    /// use the `StatefulFunction::to_*` defaults which clone the closure when
-    /// possible.
     fn to_box(&self) -> BoxStatefulFunction<T, R>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
-        // Clone the closure into a RefCell to allow interior mutability
-        // across calls.
-        let cell = RefCell::new(self.clone());
-        BoxStatefulFunction::new(move |input: &T| cell.borrow_mut().apply(input))
+        self.clone().into_box()
     }
 
     fn to_rc(&self) -> RcStatefulFunction<T, R>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
-        let cell = Rc::new(RefCell::new(self.clone()));
-        RcStatefulFunction::new(move |input: &T| cell.borrow_mut().apply(input))
+        self.clone().into_rc()
     }
 
     fn to_arc(&self) -> ArcStatefulFunction<T, R>
     where
         Self: Sized + Clone + Send + Sync + 'static,
         T: Send + Sync + 'static,
-        R: Send + 'static,
+        R: 'static,
     {
-        let cell = Arc::new(Mutex::new(self.clone()));
-        ArcStatefulFunction::new(move |input: &T| cell.lock().unwrap().apply(input))
+        self.clone().into_arc()
     }
 
     fn to_fn(&self) -> impl FnMut(&T) -> R
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
-        let cell = RefCell::new(self.clone());
-        move |input: &T| cell.borrow_mut().apply(input)
+        self.clone()
     }
 }
 
@@ -1913,3 +991,280 @@ pub trait FnStatefulFunctionOps<T, R>: FnMut(&T) -> R + Sized + 'static {
 ///
 /// Haixing Hu
 impl<T, R, F> FnStatefulFunctionOps<T, R> for F where F: FnMut(&T) -> R + 'static {}
+
+// ============================================================================
+// BoxConditionalStatefulFunction - Box-based Conditional StatefulFunction
+// ============================================================================
+
+/// BoxConditionalStatefulFunction struct
+///
+/// A conditional function that only executes when a predicate is satisfied.
+/// Uses `BoxStatefulFunction` and `BoxPredicate` for single ownership semantics.
+///
+/// This type is typically created by calling `BoxStatefulFunction::when()` and is
+/// designed to work with the `or_else()` method to create if-then-else
+/// logic.
+///
+/// # Features
+///
+/// - **Single Ownership**: Not cloneable, consumes `self` on use
+/// - **Conditional Execution**: Only maps when predicate returns `true`
+/// - **Chainable**: Can add `or_else` branch to create if-then-else
+///   logic
+/// - **Implements StatefulFunction**: Can be used anywhere a `StatefulFunction` is expected
+///
+/// # Examples
+///
+/// ```rust
+/// use prism3_function::{StatefulFunction, BoxStatefulFunction};
+///
+/// let mut high_count = 0;
+/// let mut low_count = 0;
+///
+/// let mut function = BoxStatefulFunction::new(move |x: i32| {
+///     high_count += 1;
+///     x * 2
+/// })
+/// .when(|x: &i32| *x >= 10)
+/// .or_else(move |x| {
+///     low_count += 1;
+///     x + 1
+/// });
+///
+/// assert_eq!(function.apply(15), 30); // when branch executed
+/// assert_eq!(function.apply(5), 6);   // or_else branch executed
+/// ```
+///
+/// # Author
+///
+/// Haixing Hu
+pub struct BoxConditionalStatefulFunction<T, R> {
+    function: BoxStatefulFunction<T, R>,
+    predicate: BoxPredicate<T>,
+}
+
+// Use macro to generate conditional function implementations
+impl_box_conditional_function!(
+    BoxConditionalStatefulFunction<T, R>,
+    BoxStatefulFunction,
+    StatefulFunction
+);
+
+// ============================================================================
+// RcConditionalStatefulFunction - Rc-based Conditional StatefulFunction
+// ============================================================================
+
+/// RcConditionalStatefulFunction struct
+///
+/// A single-threaded conditional function that only executes when a
+/// predicate is satisfied. Uses `RcStatefulFunction` and `RcPredicate` for shared
+/// ownership within a single thread.
+///
+/// This type is typically created by calling `RcStatefulFunction::when()` and is
+/// designed to work with the `or_else()` method to create if-then-else
+/// logic.
+///
+/// # Features
+///
+/// - **Shared Ownership**: Cloneable via `Rc`, multiple owners allowed
+/// - **Single-Threaded**: Not thread-safe, cannot be sent across threads
+/// - **Conditional Execution**: Only maps when predicate returns `true`
+/// - **No Lock Overhead**: More efficient than `ArcConditionalStatefulFunction`
+///
+/// # Examples
+///
+/// ```rust
+/// use prism3_function::{StatefulFunction, RcStatefulFunction};
+///
+/// let mut function = RcStatefulFunction::new(|x: i32| x * 2)
+///     .when(|x: &i32| *x > 0)
+///     .or_else(|x: i32| -x);
+///
+/// let mut function_clone = function.clone();
+///
+/// assert_eq!(function.apply(5), 10);
+/// assert_eq!(function_clone.apply(-5), 5);
+/// ```
+///
+/// # Author
+///
+/// Haixing Hu
+pub struct RcConditionalStatefulFunction<T, R> {
+    function: RcStatefulFunction<T, R>,
+    predicate: RcPredicate<T>,
+}
+
+impl<T, R> RcConditionalStatefulFunction<T, R>
+where
+    T: 'static,
+    R: 'static,
+{
+    /// Adds an else branch (single-threaded shared version)
+    ///
+    /// Executes the original function when the condition is satisfied,
+    /// otherwise executes else_function.
+    ///
+    /// # Parameters
+    ///
+    /// * `else_function` - The function for the else branch, can be:
+    ///   - Closure: `|x: &T| -> R`
+    ///   - `RcStatefulFunction<T, R>`, `BoxStatefulFunction<T, R>`
+    ///   - Any type implementing `StatefulFunction<T, R>`
+    ///
+    /// # Returns
+    ///
+    /// Returns the composed `RcStatefulFunction<T, R>`
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use prism3_function::{StatefulFunction, RcStatefulFunction};
+    ///
+    /// let mut function = RcStatefulFunction::new(|x: i32| x * 2)
+    ///     .when(|x: &i32| *x > 0)
+    ///     .or_else(|x: i32| -x);
+    ///
+    /// assert_eq!(function.apply(5), 10);
+    /// assert_eq!(function.apply(-5), 5);
+    /// ```
+    pub fn or_else<F>(self, else_function: F) -> RcStatefulFunction<T, R>
+    where
+        F: StatefulFunction<T, R> + 'static,
+    {
+        let pred = self.predicate;
+        let then_function = self.function;
+        let else_function = Rc::new(RefCell::new(else_function));
+        RcStatefulFunction {
+            function: Rc::new(RefCell::new(move |t: &T| {
+                if pred.test(t) {
+                    then_function.function.borrow_mut()(t)
+                } else {
+                    else_function.borrow_mut().apply(t)
+                }
+            })),
+        }
+    }
+}
+
+impl<T, R> Clone for RcConditionalStatefulFunction<T, R> {
+    /// Clones the conditional function
+    ///
+    /// Creates a new instance that shares the underlying function and
+    /// predicate with the original instance.
+    fn clone(&self) -> Self {
+        Self {
+            function: self.function.clone(),
+            predicate: self.predicate.clone(),
+        }
+    }
+}
+
+// ============================================================================
+// ArcConditionalStatefulFunction - Arc-based Conditional StatefulFunction
+// ============================================================================
+
+/// ArcConditionalStatefulFunction struct
+///
+/// A thread-safe conditional function that only executes when a predicate
+/// is satisfied. Uses `ArcStatefulFunction` and `ArcPredicate` for shared
+/// ownership across threads.
+///
+/// This type is typically created by calling `ArcStatefulFunction::when()` and is
+/// designed to work with the `or_else()` method to create if-then-else
+/// logic.
+///
+/// # Features
+///
+/// - **Shared Ownership**: Cloneable via `Arc`, multiple owners allowed
+/// - **Thread-Safe**: Implements `Send`, safe for concurrent use
+/// - **Conditional Execution**: Only maps when predicate returns `true`
+/// - **Chainable**: Can add `or_else` branch to create if-then-else
+///   logic
+///
+/// # Examples
+///
+/// ```rust
+/// use prism3_function::{StatefulFunction, ArcStatefulFunction};
+///
+/// let mut function = ArcStatefulFunction::new(|x: i32| x * 2)
+///     .when(|x: &i32| *x > 0)
+///     .or_else(|x: i32| -x);
+///
+/// let mut function_clone = function.clone();
+///
+/// assert_eq!(function.apply(5), 10);
+/// assert_eq!(function_clone.apply(-5), 5);
+/// ```
+///
+/// # Author
+///
+/// Haixing Hu
+pub struct ArcConditionalStatefulFunction<T, R> {
+    function: ArcStatefulFunction<T, R>,
+    predicate: ArcPredicate<T>,
+}
+
+impl<T, R> ArcConditionalStatefulFunction<T, R>
+where
+    T: Send + Sync + 'static,
+    R: Send + 'static,
+{
+    /// Adds an else branch (thread-safe version)
+    ///
+    /// Executes the original function when the condition is satisfied,
+    /// otherwise executes else_function.
+    ///
+    /// # Parameters
+    ///
+    /// * `else_function` - The function for the else branch, can be:
+    ///   - Closure: `|x: &T| -> R` (must be `Send`)
+    ///   - `ArcStatefulFunction<T, R>`, `BoxStatefulFunction<T, R>`
+    ///   - Any type implementing `StatefulFunction<T, R> + Send`
+    ///
+    /// # Returns
+    ///
+    /// Returns the composed `ArcStatefulFunction<T, R>`
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use prism3_function::{StatefulFunction, ArcStatefulFunction};
+    ///
+    /// let mut function = ArcStatefulFunction::new(|x: i32| x * 2)
+    ///     .when(|x: &i32| *x > 0)
+    ///     .or_else(|x: i32| -x);
+    ///
+    /// assert_eq!(function.apply(5), 10);
+    /// assert_eq!(function.apply(-5), 5);
+    /// ```
+    pub fn or_else<F>(self, else_function: F) -> ArcStatefulFunction<T, R>
+    where
+        F: StatefulFunction<T, R> + Send + 'static,
+    {
+        let pred = self.predicate;
+        let then_function = self.function;
+        let else_function = Arc::new(Mutex::new(else_function));
+        ArcStatefulFunction {
+            function: Arc::new(Mutex::new(move |t: &T| {
+                if pred.test(t) {
+                    then_function.function.lock().unwrap()(t)
+                } else {
+                    else_function.lock().unwrap().apply(t)
+                }
+            })),
+        }
+    }
+}
+
+impl<T, R> Clone for ArcConditionalStatefulFunction<T, R> {
+    /// Clones the conditional function
+    ///
+    /// Creates a new instance that shares the underlying function and
+    /// predicate with the original instance.
+    fn clone(&self) -> Self {
+        Self {
+            function: self.function.clone(),
+            predicate: self.predicate.clone(),
+        }
+    }
+}

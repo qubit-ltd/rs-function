@@ -128,6 +128,8 @@
 use std::rc::Rc;
 use std::sync::Arc;
 
+use crate::functions::macros::impl_function_common_methods;
+
 // =======================================================================
 // 1. MutatingFunction Trait - Unified Interface
 // =======================================================================
