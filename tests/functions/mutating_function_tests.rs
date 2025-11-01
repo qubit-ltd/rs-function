@@ -227,7 +227,7 @@ mod test_rc_mutating_function {
             *x += 10;
             *x
         });
-        let combined = f1.and_then(&f2);
+        let combined = f1.and_then(f2.clone());
 
         // f1 and f2 are still usable
         let mut value = 5;
@@ -407,7 +407,7 @@ mod test_arc_mutating_function {
             *x += 10;
             *x
         });
-        let combined = f1.and_then(&f2);
+        let combined = f1.and_then(f2.clone());
 
         // f1 and f2 are still usable
         let mut value = 5;

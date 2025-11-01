@@ -47,7 +47,7 @@ pub use mutating_function::{
 };
 pub use mutating_function_once::{
     BoxMutatingFunctionOnce,
-    FnOnceMutatingFunctionOps,
+    FnMutatingFunctionOnceOps,
     MutatingFunctionOnce,
 };
 pub use stateful_function::{
@@ -63,7 +63,7 @@ pub use stateful_function::{
 pub use stateful_mutating_function::{
     ArcStatefulMutatingFunction,
     BoxStatefulMutatingFunction,
-    FnMutStatefulMutatingFunctionOps,
+    FnStatefulMutatingFunctionOps,
     RcStatefulMutatingFunction,
     StatefulMutatingFunction,
 };

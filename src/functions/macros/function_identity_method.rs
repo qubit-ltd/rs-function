@@ -118,6 +118,22 @@ macro_rules! impl_function_identity_method {
         }
     };
 
+    // Special case for mutating functions that take &mut T
+    ($struct_name:ident < $t:ident , $r:ident >, mutating) => {
+        // Note: The caller must ensure $t and $r are the same identifier
+        impl<$t> $struct_name<$t, $t>
+        where
+            $t: Clone + 'static,
+        {
+            /// Creates an identity function
+            ///
+            /// # Examples
+            #[doc = concat!("/// ```rust\n/// use prism3_function::", stringify!($struct_name), ";\n///\n/// let mut identity = ", stringify!($struct_name), "::<i32, i32>::identity();\n/// let mut value = 42;\n/// assert_eq!(identity.apply(&mut value), 42);\n/// ```")]
+            pub fn identity() -> $struct_name<$t, $t> {
+                $struct_name::new(|x: &mut $t| x.clone())
+            }
+        }
+    };
 }
 
 pub(crate) use impl_function_identity_method;

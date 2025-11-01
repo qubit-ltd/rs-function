@@ -31,6 +31,7 @@ use crate::{
         impl_box_function_methods,
         impl_conditional_function_clone,
         impl_conditional_function_debug_display,
+        impl_fn_ops_trait,
         impl_function_clone,
         impl_function_common_methods,
         impl_function_constant_method,
@@ -578,7 +579,7 @@ impl<T, R> Function<T, R> for RcFunction<T, R> {
 ///
 /// Haixing Hu
 pub struct ArcFunction<T, R> {
-    function: Arc<dyn Fn(&T) -> R>,
+    function: Arc<dyn Fn(&T) -> R + Send + Sync>,
     name: Option<String>,
 }
 
@@ -590,7 +591,7 @@ where
     // Generates: new(), new_with_name(), new_with_optional_name(), name(), set_name()
     impl_function_common_methods!(
         ArcFunction<T, R>,
-        (Fn(&T) -> R + 'static),
+        (Fn(&T) -> R + Send + Sync + 'static),
         |f| Arc::new(f)
     );
 
@@ -792,274 +793,14 @@ where
 // FnFunctionOps - Extension trait for closure functions
 // ============================================================================
 
-/// Extension trait for closures implementing `Fn(&T) -> R`
-///
-/// Provides composition methods (`and_then`, `compose`, `when`) for closures
-/// and function pointers without requiring explicit wrapping in
-/// `BoxFunction`, `RcFunction`, or `ArcFunction`.
-///
-/// This trait is automatically implemented for all closures and function
-/// pointers that implement `Fn(&T) -> R`.
-///
-/// # Design Rationale
-///
-/// While closures automatically implement `Function<T, R>` through blanket
-/// implementation, they don't have access to instance methods like `and_then`,
-/// `compose`, and `when`. This extension trait provides those methods,
-/// returning `BoxFunction` for maximum flexibility.
-///
-/// # Examples
-///
-/// ## Chain composition with and_then
-///
-/// ```rust
-/// use prism3_function::{Function, FnFunctionOps};
-///
-/// let double = |x: i32| x * 2;
-/// let to_string = |x: i32| x.to_string();
-///
-/// let composed = double.and_then(to_string);
-/// assert_eq!(composed.apply(21), "42");
-/// ```
-///
-/// ## Reverse composition with compose
-///
-/// ```rust
-/// use prism3_function::{Function, FnFunctionOps};
-///
-/// let double = |x: i32| x * 2;
-/// let add_one = |x: i32| x + 1;
-///
-/// let composed = double.compose(add_one);
-/// assert_eq!(composed.apply(5), 12); // (5 + 1) * 2
-/// ```
-///
-/// ## Conditional transformation with when
-///
-/// ```rust
-/// use prism3_function::{Function, FnFunctionOps};
-///
-/// let double = |x: i32| x * 2;
-/// let conditional = double.when(|x: &i32| *x > 0).or_else(|x: i32| -x);
-///
-/// assert_eq!(conditional.apply(5), 10);
-/// assert_eq!(conditional.apply(-5), 5);
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-pub trait FnFunctionOps<T, R>: Fn(&T) -> R + Sized + 'static {
-    /// Chain composition - applies self first, then after
-    ///
-    /// Creates a new function that applies this function first, then
-    /// applies the after function to the result. Consumes self and returns
-    /// a `BoxFunction`.
-    ///
-    /// # Type Parameters
-    ///
-    /// * `S` - The output type of the after function
-    /// * `F` - The type of the after function (must implement Function<R, S>)
-    ///
-    /// # Parameters
-    ///
-    /// * `after` - The function to apply after self. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to
-    ///   preserve the original function, clone it first (if it implements
-    ///   `Clone`). Can be:
-    ///   - A closure: `|x: R| -> S`
-    ///   - A function pointer: `fn(R) -> S`
-    ///   - A `BoxFunction<R, S>`
-    ///   - An `RcFunction<R, S>`
-    ///   - An `ArcFunction<R, S>`
-    ///   - Any type implementing `Function<R, S>`
-    ///
-    /// # Returns
-    ///
-    /// A new `BoxFunction<T, S>` representing the composition
-    ///
-    /// # Examples
-    ///
-    /// ## Direct value passing (ownership transfer)
-    ///
-    /// ```rust
-    /// use prism3_function::{Function, FnFunctionOps, BoxFunction};
-    ///
-    /// let double = |x: i32| x * 2;
-    /// let to_string = BoxFunction::new(|x: i32| x.to_string());
-    ///
-    /// // to_string is moved here
-    /// let composed = double.and_then(to_string);
-    /// assert_eq!(composed.apply(21), "42");
-    /// // to_string.apply(5); // Would not compile - moved
-    /// ```
-    ///
-    /// ## Preserving original with clone
-    ///
-    /// ```rust
-    /// use prism3_function::{Function, FnFunctionOps, BoxFunction};
-    ///
-    /// let double = |x: i32| x * 2;
-    /// let to_string = BoxFunction::new(|x: i32| x.to_string());
-    ///
-    /// // Clone to preserve original
-    /// let composed = double.and_then(to_string.clone());
-    /// assert_eq!(composed.apply(21), "42");
-    ///
-    /// // Original still usable
-    /// assert_eq!(to_string.apply(5), "5");
-    /// ```
-    fn and_then<S, F>(self, after: F) -> BoxFunction<T, S>
-    where
-        S: 'static,
-        F: Function<R, S> + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        BoxFunction::new(move |x: &T| after.apply(&self(x)))
-    }
-
-    /// Reverse composition - applies before first, then self
-    ///
-    /// Creates a new function that applies the before function first,
-    /// then applies this function to the result. Consumes self and returns
-    /// a `BoxFunction`.
-    ///
-    /// # Type Parameters
-    ///
-    /// * `S` - The input type of the before function
-    /// * `F` - The type of the before function (must implement Function<S, T>)
-    ///
-    /// # Parameters
-    ///
-    /// * `before` - The function to apply before self. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to
-    ///   preserve the original function, clone it first (if it implements
-    ///   `Clone`). Can be:
-    ///   - A closure: `|x: S| -> T`
-    ///   - A function pointer: `fn(S) -> T`
-    ///   - A `BoxFunction<S, T>`
-    ///   - An `RcFunction<S, T>`
-    ///   - An `ArcFunction<S, T>`
-    ///   - Any type implementing `Function<S, T>`
-    ///
-    /// # Returns
-    ///
-    /// A new `BoxFunction<S, R>` representing the composition
-    ///
-    /// # Examples
-    ///
-    /// ## Direct value passing (ownership transfer)
-    ///
-    /// ```rust
-    /// use prism3_function::{Function, FnFunctionOps, BoxFunction};
-    ///
-    /// let double = |x: i32| x * 2;
-    /// let add_one = BoxFunction::new(|x: i32| x + 1);
-    ///
-    /// // add_one is moved here
-    /// let composed = double.compose(add_one);
-    /// assert_eq!(composed.apply(5), 12); // (5 + 1) * 2
-    /// // add_one.apply(3); // Would not compile - moved
-    /// ```
-    ///
-    /// ## Preserving original with clone
-    ///
-    /// ```rust
-    /// use prism3_function::{Function, FnFunctionOps, BoxFunction};
-    ///
-    /// let double = |x: i32| x * 2;
-    /// let add_one = BoxFunction::new(|x: i32| x + 1);
-    ///
-    /// // Clone to preserve original
-    /// let composed = double.compose(add_one.clone());
-    /// assert_eq!(composed.apply(5), 12); // (5 + 1) * 2
-    ///
-    /// // Original still usable
-    /// assert_eq!(add_one.apply(3), 4);
-    /// ```
-    fn compose<S, F>(self, before: F) -> BoxFunction<S, R>
-    where
-        S: 'static,
-        F: Function<S, T> + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        BoxFunction::new(move |x: &S| self(&before.apply(x)))
-    }
-
-    /// Creates a conditional function
-    ///
-    /// Returns a function that only executes when a predicate is satisfied.
-    /// You must call `or_else()` to provide an alternative function for when
-    /// the condition is not satisfied.
-    ///
-    /// # Parameters
-    ///
-    /// * `predicate` - The condition to check. **Note: This parameter is passed
-    ///   by value and will transfer ownership.** If you need to preserve the
-    ///   original predicate, clone it first (if it implements `Clone`). Can be:
-    ///   - A closure: `|x: &T| -> bool`
-    ///   - A function pointer: `fn(&T) -> bool`
-    ///   - A `BoxPredicate<T>`
-    ///   - An `RcPredicate<T>`
-    ///   - An `ArcPredicate<T>`
-    ///   - Any type implementing `Predicate<T>`
-    ///
-    /// # Returns
-    ///
-    /// Returns `BoxConditionalFunction<T, R>`
-    ///
-    /// # Examples
-    ///
-    /// ## Basic usage with or_else
-    ///
-    /// ```rust
-    /// use prism3_function::{Function, FnFunctionOps};
-    ///
-    /// let double = |x: i32| x * 2;
-    /// let conditional = double.when(|x: &i32| *x > 0).or_else(|x: i32| -x);
-    ///
-    /// assert_eq!(conditional.apply(5), 10);
-    /// assert_eq!(conditional.apply(-5), 5);
-    /// ```
-    ///
-    /// ## Preserving predicate with clone
-    ///
-    /// ```rust
-    /// use prism3_function::{Function, FnFunctionOps, BoxPredicate};
-    ///
-    /// let double = |x: i32| x * 2;
-    /// let is_positive = BoxPredicate::new(|x: &i32| *x > 0);
-    ///
-    /// // Clone to preserve original predicate
-    /// let conditional = double.when(is_positive.clone())
-    ///     .or_else(|x: i32| -x);
-    ///
-    /// assert_eq!(conditional.apply(5), 10);
-    ///
-    /// // Original predicate still usable
-    /// assert!(is_positive.test(&3));
-    /// ```
-    fn when<P>(self, predicate: P) -> BoxConditionalFunction<T, R>
-    where
-        P: Predicate<T> + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        BoxFunction::new(self).when(predicate)
-    }
-}
-
-/// Blanket implementation of FnFunctionOps for all closures
-///
-/// Automatically implements `FnFunctionOps<T, R>` for any type that
-/// implements `Fn(&T) -> R`.
-///
-/// # Author
-///
-/// Haixing Hu
-impl<T, R, F> FnFunctionOps<T, R> for F where F: Fn(&T) -> R + 'static {}
+// Generates: FnFunctionOps trait and blanket implementation
+impl_fn_ops_trait!(
+    (Fn(&T) -> R),
+    FnFunctionOps,
+    BoxFunction,
+    Function,
+    BoxConditionalFunction
+);
 
 // ============================================================================
 // UnaryOperator Trait - Marker trait for Function<T, T>

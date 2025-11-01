@@ -11,7 +11,7 @@
 
 use prism3_function::{
     BoxMutatingFunctionOnce,
-    FnOnceMutatingFunctionOps,
+    FnMutatingFunctionOnceOps,
     MutatingFunctionOnce,
 };
 
@@ -131,15 +131,15 @@ mod test_box_mutating_function_once {
             x.extend(data1);
             x.len()
         })
-        .and_then(move |x: &mut Vec<i32>| {
-            x.extend(data2);
-            x.len()
+        .and_then(move |len: &mut usize| {
+            // First function returned the length, now we can use it
+            *len + data2.len()
         });
 
         let mut target = vec![0];
         let final_len = chained.apply(&mut target);
-        assert_eq!(final_len, 5);
-        assert_eq!(target, vec![0, 1, 2, 3, 4]);
+        assert_eq!(final_len, 4); // 2 (from data1) + 2 (data2.len())
+        assert_eq!(target, vec![0, 1, 2]);
     }
 
     #[test]
@@ -152,19 +152,19 @@ mod test_box_mutating_function_once {
             x.extend(data1);
             x.len()
         })
-        .and_then(move |x: &mut Vec<i32>| {
-            x.extend(data2);
-            x.len()
+        .and_then(move |len: &mut usize| {
+            // First chain: add data2 length to current length
+            *len + data2.len()
         })
-        .and_then(move |x: &mut Vec<i32>| {
-            x.extend(data3);
-            x.len()
+        .and_then(move |len: &mut usize| {
+            // Second chain: add data3 length to current length
+            *len + data3.len()
         });
 
         let mut target = vec![0];
         let final_len = chained.apply(&mut target);
-        assert_eq!(final_len, 7);
-        assert_eq!(target, vec![0, 1, 2, 3, 4, 5, 6]);
+        assert_eq!(final_len, 6); // 2 (data1) + 2 (data2) + 2 (data3)
+        assert_eq!(target, vec![0, 1, 2]);
     }
 
     #[test]
@@ -184,7 +184,7 @@ mod test_box_mutating_function_once {
             x.extend(data);
             old_len
         });
-        let mapped = func.map(|old_len| format!("Old length: {}", old_len));
+        let mapped = func.and_then(move |old_len| format!("Old length: {}", old_len));
 
         let mut target = vec![0];
         let result = mapped.apply(&mut target);

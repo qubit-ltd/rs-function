@@ -133,9 +133,11 @@ use crate::{
         impl_box_function_methods,
         impl_conditional_function_clone,
         impl_conditional_function_debug_display,
+        impl_fn_ops_trait,
         impl_function_clone,
         impl_function_common_methods,
         impl_function_debug_display,
+        impl_function_identity_method,
         impl_shared_conditional_function,
         impl_shared_function_methods,
     },
@@ -567,6 +569,9 @@ where
 // Generates: Debug and Display implementations for BoxMutatingFunction<T, R>
 impl_function_debug_display!(BoxMutatingFunction<T, R>);
 
+// Generates: identity() method for BoxMutatingFunction<T, T>
+impl_function_identity_method!(BoxMutatingFunction<T, T>, mutating);
+
 // Implement MutatingFunction trait for BoxMutatingFunction<T, R>
 impl<T, R> MutatingFunction<T, R> for BoxMutatingFunction<T, R> {
     fn apply(&self, t: &mut T) -> R {
@@ -685,6 +690,9 @@ impl_function_clone!(RcMutatingFunction<T, R>);
 // Generates: Debug and Display implementations for RcMutatingFunction<T, R>
 impl_function_debug_display!(RcMutatingFunction<T, R>);
 
+// Generates: identity() method for RcMutatingFunction<T, T>
+impl_function_identity_method!(RcMutatingFunction<T, T>, mutating);
+
 impl<T, R> MutatingFunction<T, R> for RcMutatingFunction<T, R> {
     fn apply(&self, input: &mut T) -> R {
         (self.function)(input)
@@ -799,7 +807,7 @@ impl<T, R> MutatingFunction<T, R> for RcMutatingFunction<T, R> {
 ///
 /// Haixing Hu
 pub struct ArcMutatingFunction<T, R> {
-    function: Arc<dyn Fn(&mut T) -> R>,
+    function: Arc<dyn Fn(&mut T) -> R + Send + Sync>,
     name: Option<String>,
 }
 
@@ -811,7 +819,7 @@ where
     // Generates: new(), new_with_name(), new_with_optional_name(), name(), set_name()
     impl_function_common_methods!(
         ArcMutatingFunction<T, R>,
-        (Fn(&mut T) -> R + 'static),
+        (Fn(&mut T) -> R + Send + Sync + 'static),
         |f| Arc::new(f)
     );
 
@@ -830,6 +838,9 @@ impl_function_clone!(ArcMutatingFunction<T, R>);
 
 // Generates: Debug and Display implementations for ArcMutatingFunction<T, R>
 impl_function_debug_display!(ArcMutatingFunction<T, R>);
+
+// Generates: identity() method for ArcMutatingFunction<T, T>
+impl_function_identity_method!(ArcMutatingFunction<T, T>, mutating);
 
 impl<T, R> MutatingFunction<T, R> for ArcMutatingFunction<T, R> {
     fn apply(&self, input: &mut T) -> R {
@@ -1001,144 +1012,14 @@ where
 // 7. Provide extension methods for closures
 // =======================================================================
 
-/// Extension trait providing mutating function composition methods for
-/// closures
-///
-/// Provides `and_then` and other composition methods for all closures that
-/// implement `Fn(&mut T) -> R`, enabling direct method chaining on closures
-/// without explicit wrapper types.
-///
-/// # Features
-///
-/// - **Natural Syntax**: Chain operations directly on closures
-/// - **Returns BoxMutatingFunction**: Composition results are
-///   `BoxMutatingFunction<T, R>` for continued chaining
-/// - **Zero Cost**: No overhead when composing closures
-/// - **Automatic Implementation**: All `Fn(&mut T) -> R` closures get these
-///   methods automatically
-///
-/// # Examples
-///
-/// ```rust
-/// use prism3_function::{MutatingFunction, FnMutatingFunctionOps};
-///
-/// let chained = (|x: &mut i32| {
-///     *x *= 2;
-///     *x
-/// })
-/// .and_then(|x: &mut i32| {
-///     *x += 10;
-///     *x
-/// });
-///
-/// let mut value = 5;
-/// assert_eq!(chained.apply(&mut value), 20);
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-pub trait FnMutatingFunctionOps<T, R>: Fn(&mut T) -> R + Sized {
-    /// Chains another mutating function in sequence
-    ///
-    /// Returns a new function that first executes the current operation, then
-    /// executes the next operation. Consumes the current closure and returns
-    /// `BoxMutatingFunction<T, R2>`.
-    ///
-    /// # Parameters
-    ///
-    /// * `next` - The function to execute after the current operation.
-    ///   **Note: This parameter is passed by value and will transfer
-    ///   ownership.** If you need to preserve the original function, clone it
-    ///   first (if it implements `Clone`). Can be:
-    ///   - A closure: `|x: &mut T| -> R2`
-    ///   - A `BoxMutatingFunction<T, R2>`
-    ///   - An `ArcMutatingFunction<T, R2>`
-    ///   - An `RcMutatingFunction<T, R2>`
-    ///   - Any type implementing `MutatingFunction<T, R2>`
-    ///
-    /// # Returns
-    ///
-    /// Returns the composed `BoxMutatingFunction<T, R2>`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{MutatingFunction, FnMutatingFunctionOps};
-    ///
-    /// let chained = (|x: &mut i32| {
-    ///     *x *= 2;
-    ///     *x
-    /// })
-    /// .and_then(|x: &mut i32| {
-    ///     *x += 10;
-    ///     *x
-    /// });
-    ///
-    /// let mut value = 5;
-    /// assert_eq!(chained.apply(&mut value), 20);
-    /// ```
-    fn and_then<F, R2>(self, next: F) -> BoxMutatingFunction<T, R2>
-    where
-        Self: 'static,
-        F: MutatingFunction<T, R2> + 'static,
-        T: 'static,
-        R: 'static,
-        R2: 'static,
-    {
-        let first = self;
-        let second = next.into_fn();
-        BoxMutatingFunction::new(move |t| {
-            let _ = (first)(t);
-            (second)(t)
-        })
-    }
-
-    /// Maps the result using another function
-    ///
-    /// Returns a new function that applies this function and then transforms
-    /// the result.
-    ///
-    /// # Parameters
-    ///
-    /// * `mapper` - The function to transform the result
-    ///
-    /// # Returns
-    ///
-    /// Returns a new `BoxMutatingFunction<T, R2>`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{MutatingFunction, FnMutatingFunctionOps};
-    ///
-    /// let mapped = (|x: &mut i32| {
-    ///     *x *= 2;
-    ///     *x
-    /// })
-    /// .map(|result| result.to_string());
-    ///
-    /// let mut value = 5;
-    /// assert_eq!(mapped.apply(&mut value), "10");
-    /// ```
-    fn map<F, R2>(self, mapper: F) -> BoxMutatingFunction<T, R2>
-    where
-        Self: 'static,
-        F: Fn(R) -> R2 + 'static,
-        T: 'static,
-        R: 'static,
-        R2: 'static,
-    {
-        let func = self;
-        BoxMutatingFunction::new(move |t| {
-            let result = (func)(t);
-            mapper(result)
-        })
-    }
-}
-
-/// Implements FnMutatingFunctionOps for all closure types
-impl<T, R, F> FnMutatingFunctionOps<T, R> for F where F: Fn(&mut T) -> R {}
+// Generates: FnFunctionOps trait and blanket implementation
+impl_fn_ops_trait!(
+    (Fn(&mut T) -> R),
+    FnMutatingFunctionOps,
+    BoxMutatingFunction,
+    MutatingFunction,
+    BoxConditionalMutatingFunction
+);
 
 // ============================================================================
 // BoxConditionalMutatingFunction - Box-based Conditional Mutating Function

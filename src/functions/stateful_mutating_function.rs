@@ -125,12 +125,14 @@ use std::sync::{
     Mutex,
 };
 
+use crate::functions::macros::impl_function_identity_method;
 use crate::{
     functions::macros::{
         impl_box_conditional_function,
         impl_box_function_methods,
         impl_conditional_function_clone,
         impl_conditional_function_debug_display,
+        impl_fn_ops_trait,
         impl_function_clone,
         impl_function_common_methods,
         impl_function_debug_display,
@@ -521,7 +523,7 @@ pub trait StatefulMutatingFunction<T, R> {
 // =======================================================================
 
 /// Type alias for Arc-wrapped stateful mutating function
-type ArcStatefulMutatingFunctionFn<T, R> = Arc<Mutex<dyn FnMut(&mut T) -> R + Send>>;
+type ArcStatefulMutatingFunctionFn<T, R> = Arc<Mutex<dyn FnMut(&mut T) -> R + Send + 'static>>;
 
 /// Type alias for Rc-wrapped stateful mutating function
 type RcStatefulMutatingFunctionFn<T, R> = Rc<RefCell<dyn FnMut(&mut T) -> R>>;
@@ -609,8 +611,11 @@ where
     );
 }
 
-// Generates: Debug and Display implementations for BoxMutatingFunction<T, R>
+// Generates: Debug and Display implementations for BoxStatefulMutatingFunction<T, R>
 impl_function_debug_display!(BoxStatefulMutatingFunction<T, R>);
+
+// Generates: identity() method for BoxStatefulMutatingFunction<T, T>
+impl_function_identity_method!(BoxStatefulMutatingFunction<T, T>, mutating);
 
 // Implement StatefulMutatingFunction trait for BoxStatefulMutatingFunction<T, R>
 impl<T, R> StatefulMutatingFunction<T, R> for BoxStatefulMutatingFunction<T, R> {
@@ -735,6 +740,9 @@ impl_function_clone!(RcStatefulMutatingFunction<T, R>);
 
 // Generates: Debug and Display implementations for RcStatefulMutatingFunction<T, R>
 impl_function_debug_display!(RcStatefulMutatingFunction<T, R>);
+
+// Generates: identity() method for RcStatefulMutatingFunction<T, T>
+impl_function_identity_method!(RcStatefulMutatingFunction<T, T>, mutating);
 
 // Implement StatefulMutatingFunction trait for RcStatefulMutatingFunction<T, R>
 impl<T, R> StatefulMutatingFunction<T, R> for RcStatefulMutatingFunction<T, R> {
@@ -886,6 +894,9 @@ impl_function_clone!(ArcStatefulMutatingFunction<T, R>);
 
 // Generates: Debug and Display implementations for ArcStatefulMutatingFunction<T, R>
 impl_function_debug_display!(ArcStatefulMutatingFunction<T, R>);
+
+// Generates: identity() method for ArcStatefulMutatingFunction<T, T>
+impl_function_identity_method!(ArcStatefulMutatingFunction<T, T>, mutating);
 
 // Implement StatefulMutatingFunction trait for ArcStatefulMutatingFunction<T, R>
 impl<T, R> StatefulMutatingFunction<T, R> for ArcStatefulMutatingFunction<T, R> {
@@ -1058,157 +1069,14 @@ where
 // 7. Provide extension methods for closures
 // =======================================================================
 
-/// Extension trait providing stateful mutating function composition methods
-/// for closures
-///
-/// Provides `and_then` and other composition methods for all closures that
-/// implement `FnMut(&mut T) -> R`, enabling direct method chaining on
-/// closures without explicit wrapper types.
-///
-/// # Features
-///
-/// - **Natural Syntax**: Chain operations directly on closures
-/// - **Returns BoxStatefulMutatingFunction**: Composition results are
-///   `BoxStatefulMutatingFunction<T, R>` for continued chaining
-/// - **Zero Cost**: No overhead when composing closures
-/// - **Automatic Implementation**: All `FnMut(&mut T) -> R` closures get
-///   these methods automatically
-///
-/// # Examples
-///
-/// ```rust
-/// use prism3_function::{StatefulMutatingFunction,
-///                       FnMutStatefulMutatingFunctionOps};
-///
-/// let mut count1 = 0;
-/// let mut count2 = 0;
-/// let mut chained = (move |x: &mut i32| {
-///     count1 += 1;
-///     *x *= 2;
-///     count1
-/// })
-/// .and_then(move |x: &mut i32| {
-///     count2 += 1;
-///     *x += 10;
-///     count2
-/// });
-///
-/// let mut value = 5;
-/// assert_eq!(chained.apply(&mut value), 1);
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-pub trait FnMutStatefulMutatingFunctionOps<T, R>: FnMut(&mut T) -> R + Sized {
-    /// Chains another stateful mutating function in sequence
-    ///
-    /// Returns a new function that first executes the current operation, then
-    /// executes the next operation. Consumes the current closure and returns
-    /// `BoxStatefulMutatingFunction<T, R2>`.
-    ///
-    /// # Parameters
-    ///
-    /// * `next` - The function to execute after the current operation.
-    ///   **Note: This parameter is passed by value and will transfer
-    ///   ownership.** If you need to preserve the original function, clone it
-    ///   first (if it implements `Clone`). Can be:
-    ///   - A closure: `|x: &mut T| -> R2`
-    ///   - A `BoxStatefulMutatingFunction<T, R2>`
-    ///   - An `ArcStatefulMutatingFunction<T, R2>`
-    ///   - An `RcStatefulMutatingFunction<T, R2>`
-    ///   - Any type implementing `StatefulMutatingFunction<T, R2>`
-    ///
-    /// # Returns
-    ///
-    /// Returns the composed `BoxStatefulMutatingFunction<T, R2>`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{StatefulMutatingFunction,
-    ///                       FnMutStatefulMutatingFunctionOps};
-    ///
-    /// let mut count1 = 0;
-    /// let mut count2 = 0;
-    /// let mut chained = (move |x: &mut i32| {
-    ///     count1 += 1;
-    ///     *x *= 2;
-    ///     count1
-    /// })
-    /// .and_then(move |x: &mut i32| {
-    ///     count2 += 1;
-    ///     *x += 10;
-    ///     count2
-    /// });
-    ///
-    /// let mut value = 5;
-    /// assert_eq!(chained.apply(&mut value), 1);
-    /// ```
-    fn and_then<F, R2>(self, next: F) -> BoxStatefulMutatingFunction<T, R2>
-    where
-        Self: 'static,
-        F: StatefulMutatingFunction<T, R2> + 'static,
-        T: 'static,
-        R: 'static,
-        R2: 'static,
-    {
-        let mut first = self;
-        let mut second = next.into_fn();
-        BoxStatefulMutatingFunction::new(move |t| {
-            let _ = (first)(t);
-            (second)(t)
-        })
-    }
-
-    /// Maps the result using another function
-    ///
-    /// Returns a new function that applies this function and then transforms
-    /// the result.
-    ///
-    /// # Parameters
-    ///
-    /// * `mapper` - The function to transform the result
-    ///
-    /// # Returns
-    ///
-    /// Returns a new `BoxStatefulMutatingFunction<T, R2>`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{StatefulMutatingFunction,
-    ///                       FnMutStatefulMutatingFunctionOps};
-    ///
-    /// let mut count = 0;
-    /// let mut mapped = (move |x: &mut i32| {
-    ///     count += 1;
-    ///     *x *= 2;
-    ///     count
-    /// })
-    /// .map(|count| format!("Call #{}", count));
-    ///
-    /// let mut value = 5;
-    /// assert_eq!(mapped.apply(&mut value), "Call #1");
-    /// ```
-    fn map<F, R2>(self, mapper: F) -> BoxStatefulMutatingFunction<T, R2>
-    where
-        Self: 'static,
-        F: Fn(R) -> R2 + 'static,
-        T: 'static,
-        R: 'static,
-        R2: 'static,
-    {
-        let mut func = self;
-        BoxStatefulMutatingFunction::new(move |t| {
-            let result = (func)(t);
-            mapper(result)
-        })
-    }
-}
-
-/// Implements FnMutStatefulMutatingFunctionOps for all closure types
-impl<T, R, F> FnMutStatefulMutatingFunctionOps<T, R> for F where F: FnMut(&mut T) -> R {}
+// Generates: FnMutStatefulMutatingFunctionOps trait and blanket implementation
+impl_fn_ops_trait!(
+    (FnMut(&mut T) -> R),
+    FnStatefulMutatingFunctionOps,
+    BoxStatefulMutatingFunction,
+    StatefulMutatingFunction,
+    BoxConditionalStatefulMutatingFunction
+);
 
 // ============================================================================
 // BoxConditionalStatefulMutatingFunction - Box-based Conditional Stateful Mutating Function

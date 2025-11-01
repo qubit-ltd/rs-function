@@ -352,7 +352,7 @@ mod test_rc_stateful_mutating_function {
             })
         };
 
-        let mut combined = first.and_then(&second);
+        let mut combined = first.and_then(second.clone());
         let mut value = 5;
         assert_eq!(combined.apply(&mut value), 1);
         assert_eq!(value, 20); // (5 * 2) + 10
@@ -592,7 +592,7 @@ mod test_arc_stateful_mutating_function {
             })
         };
 
-        let mut combined = first.and_then(&second);
+        let mut combined = first.and_then(second.clone());
         let mut value = 5;
         assert_eq!(combined.apply(&mut value), 1);
         assert_eq!(value, 20); // (5 * 2) + 10

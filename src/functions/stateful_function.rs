@@ -34,6 +34,7 @@ use crate::{
         impl_box_function_methods,
         impl_conditional_function_clone,
         impl_conditional_function_debug_display,
+        impl_fn_ops_trait,
         impl_function_clone,
         impl_function_common_methods,
         impl_function_constant_method,
@@ -558,7 +559,7 @@ pub struct ArcStatefulFunction<T, R> {
     name: Option<String>,
 }
 
-type ArcStatefulFn<T, R> = Arc<Mutex<dyn FnMut(&T) -> R>>;
+type ArcStatefulFn<T, R> = Arc<Mutex<dyn FnMut(&T) -> R + Send + 'static>>;
 
 impl<T, R> ArcStatefulFunction<T, R>
 where
@@ -568,7 +569,7 @@ where
     // Generates: new(), new_with_name(), new_with_optional_name(), name(), set_name()
     impl_function_common_methods!(
         ArcStatefulFunction<T, R>,
-        (FnMut(&T) -> R + 'static),
+        (FnMut(&T) -> R + Send + 'static),
         |f| Arc::new(Mutex::new(f))
     );
 
@@ -778,232 +779,14 @@ where
 // FnStatefulFunctionOps - Extension trait for closure functions
 // ============================================================================
 
-/// Extension trait for closures implementing `FnMut(&T) -> R`
-///
-/// Provides composition methods (`and_then`, `compose`, `when`) for
-/// closures without requiring explicit wrapping in `BoxStatefulFunction`,
-/// `RcStatefulFunction`, or `ArcStatefulFunction`.
-///
-/// This trait is automatically implemented for all closures that
-/// implement `FnMut(&T) -> R`.
-///
-/// # Design Rationale
-///
-/// While closures automatically implement `StatefulFunction<T, R>` through blanket
-/// implementation, they don't have access to instance methods like
-/// `and_then`, `compose`, and `when`. This extension trait provides
-/// those methods, returning `BoxStatefulFunction` for maximum flexibility.
-///
-/// # Examples
-///
-/// ## Chain composition with and_then
-///
-/// ```rust
-/// use prism3_function::{StatefulFunction, FnStatefulFunctionOps};
-///
-/// let mut counter1 = 0;
-/// let function1 = move |x: i32| {
-///     counter1 += 1;
-///     x + counter1
-/// };
-///
-/// let mut counter2 = 0;
-/// let function2 = move |x: i32| {
-///     counter2 += 1;
-///     x * counter2
-/// };
-///
-/// let mut composed = function1.and_then(function2);
-/// assert_eq!(composed.apply(10), 11);  // (10 + 1) * 1
-/// ```
-///
-/// ## Reverse composition with compose
-///
-/// ```rust
-/// use prism3_function::{StatefulFunction, FnStatefulFunctionOps};
-///
-/// let mut counter = 0;
-/// let function = move |x: i32| {
-///     counter += 1;
-///     x * counter
-/// };
-///
-/// let mut composed = function.compose(|x: i32| x + 1);
-/// assert_eq!(composed.apply(10), 11); // (10 + 1) * 1
-/// ```
-///
-/// ## Conditional mapping with when
-///
-/// ```rust
-/// use prism3_function::{StatefulFunction, FnStatefulFunctionOps};
-///
-/// let mut function = (|x: i32| x * 2)
-///     .when(|x: &i32| *x > 0)
-///     .or_else(|x: i32| -x);
-///
-/// assert_eq!(function.apply(5), 10);
-/// assert_eq!(function.apply(-5), 5);
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-pub trait FnStatefulFunctionOps<T, R>: FnMut(&T) -> R + Sized + 'static {
-    /// Chain composition - applies self first, then after
-    ///
-    /// Creates a new function that applies this function first, then applies
-    /// the after function to the result. Consumes self and returns a
-    /// `BoxStatefulFunction`.
-    ///
-    /// # Type Parameters
-    ///
-    /// * `S` - The output type of the after function
-    /// * `F` - The type of the after function (must implement StatefulFunction<R, S>)
-    ///
-    /// # Parameters
-    ///
-    /// * `after` - The function to apply after self. Can be:
-    ///   - A closure: `|x: R| -> S`
-    ///   - A `BoxStatefulFunction<R, S>`
-    ///   - An `RcStatefulFunction<R, S>`
-    ///   - An `ArcStatefulFunction<R, S>`
-    ///   - Any type implementing `StatefulFunction<R, S>`
-    ///
-    /// # Returns
-    ///
-    /// A new `BoxStatefulFunction<T, S>` representing the composition
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{StatefulFunction, FnStatefulFunctionOps, BoxStatefulFunction};
-    ///
-    /// let mut counter1 = 0;
-    /// let function1 = move |x: i32| {
-    ///     counter1 += 1;
-    ///     x + counter1
-    /// };
-    ///
-    /// let mut counter2 = 0;
-    /// let function2 = BoxStatefulFunction::new(move |x: i32| {
-    ///     counter2 += 1;
-    ///     x * counter2
-    /// });
-    ///
-    /// let mut composed = function1.and_then(function2);
-    /// assert_eq!(composed.apply(10), 11);
-    /// ```
-    fn and_then<S, F>(self, after: F) -> BoxStatefulFunction<T, S>
-    where
-        S: 'static,
-        F: StatefulFunction<R, S> + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        BoxStatefulFunction::new(self).and_then(after)
-    }
-
-    /// Reverse composition - applies before first, then self
-    ///
-    /// Creates a new function that applies the before function first, then
-    /// applies this function to the result. Consumes self and returns a
-    /// `BoxStatefulFunction`.
-    ///
-    /// # Type Parameters
-    ///
-    /// * `S` - The input type of the before function
-    /// * `F` - The type of the before function (must implement StatefulFunction<S, T>)
-    ///
-    /// # Parameters
-    ///
-    /// * `before` - The function to apply before self. Can be:
-    ///   - A closure: `|x: S| -> T`
-    ///   - A `BoxStatefulFunction<S, T>`
-    ///   - An `RcStatefulFunction<S, T>`
-    ///   - An `ArcStatefulFunction<S, T>`
-    ///   - Any type implementing `StatefulFunction<S, T>`
-    ///
-    /// # Returns
-    ///
-    /// A new `BoxStatefulFunction<S, R>` representing the composition
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{StatefulFunction, FnStatefulFunctionOps, BoxStatefulFunction};
-    ///
-    /// let mut counter = 0;
-    /// let function = move |x: i32| {
-    ///     counter += 1;
-    ///     x * counter
-    /// };
-    ///
-    /// let before = BoxStatefulFunction::new(|x: i32| x + 1);
-    ///
-    /// let mut composed = function.compose(before);
-    /// assert_eq!(composed.apply(10), 11); // (10 + 1) * 1
-    /// ```
-    fn compose<S, F>(self, before: F) -> BoxStatefulFunction<S, R>
-    where
-        S: 'static,
-        F: StatefulFunction<S, T> + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        BoxStatefulFunction::new(self).compose(before)
-    }
-
-    /// Creates a conditional function
-    ///
-    /// Returns a function that only executes when a predicate is satisfied.
-    /// You must call `or_else()` to provide an alternative function for
-    /// when the condition is not satisfied.
-    ///
-    /// # Parameters
-    ///
-    /// * `predicate` - The condition to check. Can be:
-    ///   - A closure: `|x: &T| -> bool`
-    ///   - A function pointer: `fn(&T) -> bool`
-    ///   - A `BoxPredicate<T>`
-    ///   - An `RcPredicate<T>`
-    ///   - An `ArcPredicate<T>`
-    ///   - Any type implementing `Predicate<T>`
-    ///
-    /// # Returns
-    ///
-    /// Returns `BoxConditionalStatefulFunction<T, R>`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{StatefulFunction, FnStatefulFunctionOps};
-    ///
-    /// let mut function = (|x: i32| x * 2)
-    ///     .when(|x: &i32| *x > 0)
-    ///     .or_else(|x: i32| -x);
-    ///
-    /// assert_eq!(function.apply(5), 10);
-    /// assert_eq!(function.apply(-5), 5);
-    /// ```
-    fn when<P>(self, predicate: P) -> BoxConditionalStatefulFunction<T, R>
-    where
-        P: Predicate<T> + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        BoxStatefulFunction::new(self).when(predicate)
-    }
-}
-
-/// Blanket implementation of FnStatefulFunctionOps for all closures
-///
-/// Automatically implements `FnStatefulFunctionOps<T, R>` for any type that
-/// implements `FnMut(&T) -> R`.
-///
-/// # Author
-///
-/// Haixing Hu
-impl<T, R, F> FnStatefulFunctionOps<T, R> for F where F: FnMut(&T) -> R + 'static {}
+// Generates: FnStatefulFunctionOps trait and blanket implementation
+impl_fn_ops_trait!(
+    (FnMut(&T) -> R),
+    FnStatefulFunctionOps,
+    BoxStatefulFunction,
+    StatefulFunction,
+    BoxConditionalStatefulFunction
+);
 
 // ============================================================================
 // BoxConditionalStatefulFunction - Box-based Conditional StatefulFunction

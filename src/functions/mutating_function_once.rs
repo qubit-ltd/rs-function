@@ -140,8 +140,10 @@ use crate::{
         impl_box_conditional_function,
         impl_box_function_methods,
         impl_conditional_function_debug_display,
+        impl_fn_ops_trait,
         impl_function_common_methods,
         impl_function_debug_display,
+        impl_function_identity_method,
     },
     predicates::predicate::{
         BoxPredicate,
@@ -444,6 +446,9 @@ where
     );
 }
 
+// Generates: identity() method for BoxMutatingFunctionOnce<T, T>
+impl_function_identity_method!(BoxMutatingFunctionOnce<T, T>, mutating);
+
 // Generates: Debug and Display implementations for BoxMutatingFunctionOnce<T, R>
 impl_function_debug_display!(BoxMutatingFunctionOnce<T, R>);
 
@@ -526,155 +531,14 @@ where
 // 4. Provide extension methods for closures
 // =======================================================================
 
-/// Extension trait providing one-time mutating function composition methods
-/// for closures
-///
-/// Provides `and_then` and other composition methods for all closures that
-/// implement `FnOnce(&mut T) -> R`, enabling direct method chaining on
-/// closures without explicit wrapper types.
-///
-/// # Features
-///
-/// - **Natural Syntax**: Chain operations directly on closures
-/// - **Returns BoxMutatingFunctionOnce**: Composition results are
-///   `BoxMutatingFunctionOnce<T, R>` for continued chaining
-/// - **Zero Cost**: No overhead when composing closures
-/// - **Automatic Implementation**: All `FnOnce(&mut T) -> R` closures get
-///   these methods automatically
-///
-/// # Examples
-///
-/// ```rust
-/// use prism3_function::{MutatingFunctionOnce,
-///                       FnOnceMutatingFunctionOps};
-///
-/// let data1 = vec![1, 2];
-/// let data2 = vec![3, 4];
-///
-/// let chained = (move |x: &mut Vec<i32>| {
-///     x.extend(data1);
-///     x.len()
-/// })
-/// .and_then(move |x: &mut Vec<i32>| {
-///     x.extend(data2);
-///     x.len()
-/// });
-///
-/// let mut target = vec![0];
-/// let final_len = chained.apply(&mut target);
-/// assert_eq!(final_len, 5);
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-pub trait FnOnceMutatingFunctionOps<T, R>: FnOnce(&mut T) -> R + Sized {
-    /// Chains another mutating function in sequence
-    ///
-    /// Returns a new function that first executes the current operation, then
-    /// executes the next operation. Consumes the current closure and returns
-    /// `BoxMutatingFunctionOnce<T, R2>`.
-    ///
-    /// # Parameters
-    ///
-    /// * `next` - The function to execute after the current operation.
-    ///   **Note: This parameter is passed by value and will transfer
-    ///   ownership.** Since `BoxMutatingFunctionOnce` cannot be cloned, the
-    ///   parameter will be consumed. Can be:
-    ///   - A closure: `|x: &mut T| -> R2`
-    ///   - A `BoxMutatingFunctionOnce<T, R2>`
-    ///   - Any type implementing `MutatingFunctionOnce<T, R2>`
-    ///
-    /// # Returns
-    ///
-    /// Returns the composed `BoxMutatingFunctionOnce<T, R2>`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{MutatingFunctionOnce,
-    ///                       FnOnceMutatingFunctionOps};
-    ///
-    /// let data1 = vec![1, 2];
-    /// let data2 = vec![3, 4];
-    ///
-    /// // Both closures are moved and consumed
-    /// let chained = (move |x: &mut Vec<i32>| {
-    ///     x.extend(data1);
-    ///     x.len()
-    /// })
-    /// .and_then(move |x: &mut Vec<i32>| {
-    ///     x.extend(data2);
-    ///     x.len()
-    /// });
-    ///
-    /// let mut target = vec![0];
-    /// let final_len = chained.apply(&mut target);
-    /// assert_eq!(final_len, 5);
-    /// // The original closures are consumed and no longer usable
-    /// ```
-    fn and_then<F, R2>(self, next: F) -> BoxMutatingFunctionOnce<T, R2>
-    where
-        Self: 'static,
-        F: MutatingFunctionOnce<T, R2> + 'static,
-        T: 'static,
-        R: 'static,
-        R2: 'static,
-    {
-        BoxMutatingFunctionOnce::new(move |t| {
-            let _ = self(t);
-            next.apply(t)
-        })
-    }
-
-    /// Maps the result using another function
-    ///
-    /// Returns a new function that applies this function and then transforms
-    /// the result.
-    ///
-    /// # Parameters
-    ///
-    /// * `mapper` - The function to transform the result
-    ///
-    /// # Returns
-    ///
-    /// Returns a new `BoxMutatingFunctionOnce<T, R2>`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{MutatingFunctionOnce,
-    ///                       FnOnceMutatingFunctionOps};
-    ///
-    /// let data = vec![1, 2, 3];
-    /// let mapped = (move |x: &mut Vec<i32>| {
-    ///     let old_len = x.len();
-    ///     x.extend(data);
-    ///     old_len
-    /// })
-    /// .map(|old_len| format!("Old length: {}", old_len));
-    ///
-    /// let mut target = vec![0];
-    /// let result = mapped.apply(&mut target);
-    /// assert_eq!(result, "Old length: 1");
-    /// ```
-    fn map<F, R2>(self, mapper: F) -> BoxMutatingFunctionOnce<T, R2>
-    where
-        Self: 'static,
-        F: FnOnce(R) -> R2 + 'static,
-        T: 'static,
-        R: 'static,
-        R2: 'static,
-    {
-        BoxMutatingFunctionOnce::new(move |t| {
-            let result = self(t);
-            mapper(result)
-        })
-    }
-}
-
-/// Implements FnOnceMutatingFunctionOps for all closure types
-impl<T, R, F> FnOnceMutatingFunctionOps<T, R> for F where F: FnOnce(&mut T) -> R {}
+// Generates: FnMutatingFunctionOnceOps trait and blanket implementation
+impl_fn_ops_trait!(
+    (FnOnce(&mut T) -> R),
+    FnMutatingFunctionOnceOps,
+    BoxMutatingFunctionOnce,
+    MutatingFunctionOnce,
+    BoxConditionalMutatingFunctionOnce
+);
 
 // ============================================================================
 // BoxConditionalMutatingFunctionOnce - Box-based Conditional Mutating Function
