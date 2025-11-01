@@ -57,7 +57,7 @@
 /// - `and_then` and `or_else` consume self (because Box cannot Clone)
 /// - Does not implement `into_arc()` (because Box types are not Send + Sync)
 /// - Does not implement `to_xxx()` methods (because Box types cannot Clone)
-//
+///
 /// # Parameters
 ///
 /// * `$struct_name<$generics>` - Struct name with generic parameters
@@ -80,7 +80,7 @@
 ///     BoxBiFunction,
 ///     BiFunction
 /// );
-//! ```
+/// ```
 macro_rules! impl_box_conditional_function {
     // Two generic parameters - Function
     (
@@ -93,61 +93,6 @@ macro_rules! impl_box_conditional_function {
             $t: 'static,
             $r: 'static,
         {
-            /// Chains another function in sequence
-            ///
-            /// Combines the current conditional function with another function
-            /// into a new function that implements the following semantics:
-            ///
-            /// When the returned function is called with an argument:
-            /// 1. First, it checks the predicate of this conditional function
-            /// 2. If the predicate is satisfied, it executes the internal
-            ///    function of this conditional function
-            /// 3. Then, **regardless of whether the predicate was satisfied**,
-            ///    it unconditionally executes the `next` function
-            ///
-            /// In other words, this creates a function that conditionally
-            /// executes the first action (based on the predicate), and then
-            /// always executes the second action.
-            ///
-            /// # Parameters
-            ///
-            /// * `next` - The next function to execute (always executed)
-            ///
-            /// # Returns
-            ///
-            /// Returns a new combined function
-            ///
-            /// # Examples
-            ///
-            /// ```ignore
-            /// let func1 = BoxFunction::new(|x: i32| x * 2);
-            /// let func2 = BoxFunction::new(|x: i32| x + 10);
-            ///
-            /// let conditional = func1.when(|x| *x > 0);
-            /// let chained = conditional.and_then(func2);
-            ///
-            /// assert_eq!(chained.apply(5), 20);  // (5*2) + 10 = 20
-            /// ```
-            #[allow(unused_mut)]
-            pub fn and_then<F, S>(self, mut next: F) -> $function_type<$t, S>
-            where
-                F: $function_trait<$r, S> + 'static,
-                S: 'static,
-            {
-                let predicate = self.predicate;
-                let mut function = self.function;
-                $function_type::new(move |t| {
-                    if predicate.test(t) {
-                        let intermediate = function.apply(t);
-                        next.apply(&intermediate)
-                    } else {
-                        // For conditional functions without or_else, we need a default
-                        // This would typically be handled by the or_else method
-                        panic!("Conditional function without or_else case - use or_else() to provide alternative")
-                    }
-                })
-            }
-
             /// Provides an alternative function for when the predicate is not satisfied
             ///
             /// Combines the current conditional function with an alternative function
@@ -185,7 +130,7 @@ macro_rules! impl_box_conditional_function {
                 let mut then_function = self.function;
                 $function_type::new(move |t| {
                     if predicate.test(t) {
-                        then_function.apply(t);
+                        then_function.apply(t)
                     } else {
                         else_function.apply(t)
                     }
@@ -206,59 +151,6 @@ macro_rules! impl_box_conditional_function {
             $u: 'static,
             $r: 'static,
         {
-            /// Chains another function in sequence
-            ///
-            /// Combines the current conditional bifunction with another function
-            /// into a new bifunction that implements the following semantics:
-            ///
-            /// When the returned bifunction is called with two arguments:
-            /// 1. First, it checks the predicate of this conditional bifunction
-            /// 2. If the predicate is satisfied, it executes the internal
-            ///    bifunction of this conditional bifunction
-            /// 3. Then, **regardless of whether the predicate was satisfied**,
-            ///    it unconditionally executes the `next` function
-            ///
-            /// In other words, this creates a bifunction that conditionally
-            /// executes the first action (based on the predicate), and then
-            /// always executes the second action.
-            ///
-            /// # Parameters
-            ///
-            /// * `next` - The next function to execute (always executed)
-            ///
-            /// # Returns
-            ///
-            /// Returns a new combined bifunction
-            ///
-            /// # Examples
-            ///
-            /// ```ignore
-            /// let func1 = BoxBiFunction::new(|x: i32, y: i32| x + y);
-            /// let func2 = BoxBiFunction::new(|z: i32| z * 2);
-            ///
-            /// let conditional = func1.when(|x, y| *x > 0 && *y > 0);
-            /// let chained = conditional.and_then(func2);
-            ///
-            /// assert_eq!(chained.apply(3, 4), 14);  // (3+4) * 2 = 14
-            /// ```
-            #[allow(unused_mut)]
-            pub fn and_then<F, S>(self, mut next: F) -> $function_type<$t, $u, S>
-            where
-                F: $function_trait<$r, S> + 'static,
-                S: 'static,
-            {
-                let predicate = self.predicate;
-                let mut function = self.function;
-                $function_type::new(move |t, u| {
-                    if predicate.test(t, u) {
-                        let intermediate = function.apply(t, u);
-                        next.apply(&intermediate)
-                    } else {
-                        panic!("Conditional function without or_else case - use or_else() to provide alternative")
-                    }
-                })
-            }
-
             /// Provides an alternative function for when the predicate is not satisfied
             ///
             /// Combines the current conditional bifunction with an alternative bifunction

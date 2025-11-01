@@ -104,35 +104,35 @@
 ///     Function,
 ///     into_arc,
 ///     Send + Sync + 'static
-//! );
+/// );
 ///
-//! // Rc two-parameter Function
-//! impl_shared_conditional_function!(
-//!     RcConditionalFunction<T, R>,
-//!     RcFunction,
-//!     Function,
-//!     into_rc,
-//!     'static
-//! );
-//!
-//! // Arc three-parameter BiFunction
-//! impl_shared_conditional_function!(
-//!     ArcConditionalBiFunction<T, U, R>,
-//!     ArcBiFunction,
-//!     BiFunction,
-//!     into_arc,
-//!     Send + Sync + 'static
-//! );
-//!
-//! // Rc three-parameter BiFunction
-//! impl_shared_conditional_function!(
-//!     RcConditionalBiFunction<T, U, R>,
-//!     RcBiFunction,
-//!     BiFunction,
-//!     into_rc,
-//!     'static
-//! );
-//! ```
+/// // Rc two-parameter Function
+/// impl_shared_conditional_function!(
+///     RcConditionalFunction<T, R>,
+///     RcFunction,
+///     Function,
+///     into_rc,
+///     'static
+/// );
+///
+/// // Arc three-parameter BiFunction
+/// impl_shared_conditional_function!(
+///     ArcConditionalBiFunction<T, U, R>,
+///     ArcBiFunction,
+///     BiFunction,
+///     into_arc,
+///     Send + Sync + 'static
+/// );
+///
+/// // Rc three-parameter BiFunction
+/// impl_shared_conditional_function!(
+///     RcConditionalBiFunction<T, U, R>,
+///     RcBiFunction,
+///     BiFunction,
+///     into_rc,
+///     'static
+/// );
+/// ```
 macro_rules! impl_shared_conditional_function {
     // Two generic parameters - Function types
     (
