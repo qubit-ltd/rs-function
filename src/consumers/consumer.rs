@@ -374,18 +374,10 @@ where
     T: 'static,
 {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
-    impl_consumer_common_methods!(
-        BoxConsumer<T>,
-        (Fn(&T) + 'static),
-        |f| Box::new(f)
-    );
+    impl_consumer_common_methods!(BoxConsumer<T>, (Fn(&T) + 'static), |f| Box::new(f));
 
     // Generates: when() and and_then() methods that consume self
-    impl_box_consumer_methods!(
-        BoxConsumer<T>,
-        BoxConditionalConsumer,
-        Consumer
-    );
+    impl_box_consumer_methods!(BoxConsumer<T>, BoxConditionalConsumer, Consumer);
 }
 
 impl<T> Consumer<T> for BoxConsumer<T> {
@@ -611,11 +603,9 @@ where
     T: 'static,
 {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
-    impl_consumer_common_methods!(
-        ArcConsumer<T>,
-        (Fn(&T) + Send + Sync + 'static),
-        |f| Arc::new(f)
-    );
+    impl_consumer_common_methods!(ArcConsumer<T>, (Fn(&T) + Send + Sync + 'static), |f| {
+        Arc::new(f)
+    });
 
     // Generates: when() and and_then() methods that borrow &self (Arc can clone)
     impl_shared_consumer_methods!(

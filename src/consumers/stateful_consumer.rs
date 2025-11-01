@@ -551,11 +551,9 @@ where
     T: 'static,
 {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
-    impl_consumer_common_methods!(
-        BoxStatefulConsumer<T>,
-        (FnMut(&T) + 'static),
-        |f| Box::new(f)
-    );
+    impl_consumer_common_methods!(BoxStatefulConsumer<T>, (FnMut(&T) + 'static), |f| Box::new(
+        f
+    ));
 
     // Generates: when() and and_then() methods that consume self
     impl_box_consumer_methods!(
@@ -680,11 +678,9 @@ where
     T: 'static,
 {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
-    impl_consumer_common_methods!(
-        RcStatefulConsumer<T>,
-        (FnMut(&T) + 'static),
-        |f| Rc::new(RefCell::new(f))
-    );
+    impl_consumer_common_methods!(RcStatefulConsumer<T>, (FnMut(&T) + 'static), |f| Rc::new(
+        RefCell::new(f)
+    ));
 
     // Generates: when() and and_then() methods that borrow &self (Rc can clone)
     impl_shared_consumer_methods!(
@@ -823,11 +819,9 @@ where
     T: 'static,
 {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
-    impl_consumer_common_methods!(
-        ArcStatefulConsumer<T>,
-        (FnMut(&T) + Send + 'static),
-        |f| Arc::new(Mutex::new(f))
-    );
+    impl_consumer_common_methods!(ArcStatefulConsumer<T>, (FnMut(&T) + Send + 'static), |f| {
+        Arc::new(Mutex::new(f))
+    });
 
     // Generates: when() and and_then() methods that borrow &self (Arc can clone)
     impl_shared_consumer_methods!(
