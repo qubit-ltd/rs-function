@@ -675,10 +675,7 @@ impl<T: 'static> BoxPredicate<T> {
     where
         P: Predicate<T> + 'static,
     {
-        BoxPredicate {
-            function: Box::new(move |value: &T| (self.function)(value) && other.test(value)),
-            name: None,
-        }
+        BoxPredicate::new(move |value: &T| (self.function)(value) && other.test(value))
     }
 
     /// Returns a predicate that represents the logical OR of this predicate
@@ -757,10 +754,7 @@ impl<T: 'static> BoxPredicate<T> {
     where
         P: Predicate<T> + 'static,
     {
-        BoxPredicate {
-            function: Box::new(move |value: &T| (self.function)(value) || other.test(value)),
-            name: None,
-        }
+        BoxPredicate::new(move |value: &T| (self.function)(value) || other.test(value))
     }
 
     /// Returns a predicate that represents the logical negation of this
@@ -773,10 +767,7 @@ impl<T: 'static> BoxPredicate<T> {
     /// A new `BoxPredicate` representing the logical negation.
     #[allow(clippy::should_implement_trait)]
     pub fn not(self) -> BoxPredicate<T> {
-        BoxPredicate {
-            function: Box::new(move |value: &T| !(self.function)(value)),
-            name: None,
-        }
+        BoxPredicate::new(move |value: &T| !(self.function)(value))
     }
 
     /// Returns a predicate that represents the logical NAND (NOT AND) of this
@@ -858,10 +849,7 @@ impl<T: 'static> BoxPredicate<T> {
     where
         P: Predicate<T> + 'static,
     {
-        BoxPredicate {
-            function: Box::new(move |value: &T| !((self.function)(value) && other.test(value))),
-            name: None,
-        }
+        BoxPredicate::new(move |value: &T| !((self.function)(value) && other.test(value)))
     }
 
     /// Returns a predicate that represents the logical XOR (exclusive OR) of
@@ -944,10 +932,7 @@ impl<T: 'static> BoxPredicate<T> {
     where
         P: Predicate<T> + 'static,
     {
-        BoxPredicate {
-            function: Box::new(move |value: &T| (self.function)(value) ^ other.test(value)),
-            name: None,
-        }
+        BoxPredicate::new(move |value: &T| (self.function)(value) ^ other.test(value))
     }
 
     /// Returns a predicate that represents the logical NOR (NOT OR) of this
@@ -1034,10 +1019,7 @@ impl<T: 'static> BoxPredicate<T> {
     where
         P: Predicate<T> + 'static,
     {
-        BoxPredicate {
-            function: Box::new(move |value: &T| !((self.function)(value) || other.test(value))),
-            name: None,
-        }
+        BoxPredicate::new(move |value: &T| !((self.function)(value) || other.test(value)))
     }
 }
 

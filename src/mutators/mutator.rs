@@ -202,8 +202,8 @@ use std::sync::Arc;
 use crate::mutators::macros::{
     impl_box_conditional_mutator,
     impl_box_mutator_methods,
-    impl_conditional_mutator_conversions,
     impl_conditional_mutator_clone,
+    impl_conditional_mutator_conversions,
     impl_conditional_mutator_debug_display,
     impl_mutator_clone,
     impl_mutator_common_methods,
@@ -211,9 +211,7 @@ use crate::mutators::macros::{
     impl_shared_conditional_mutator,
     impl_shared_mutator_methods,
 };
-use crate::mutators::mutator_once::{
-    BoxMutatorOnce,
-};
+use crate::mutators::mutator_once::BoxMutatorOnce;
 use crate::predicates::predicate::{
     ArcPredicate,
     BoxPredicate,
@@ -641,18 +639,10 @@ where
     T: 'static,
 {
     // Generate common mutator methods (new, new_with_name, name, set_name, noop)
-    impl_mutator_common_methods!(
-        BoxMutator<T>,
-        (Fn(&mut T) + 'static),
-        |f| Box::new(f)
-    );
+    impl_mutator_common_methods!(BoxMutator<T>, (Fn(&mut T) + 'static), |f| Box::new(f));
 
     // Generate box mutator methods (when, and_then, or_else, etc.)
-    impl_box_mutator_methods!(
-        BoxMutator<T>,
-        BoxConditionalMutator,
-        Mutator
-    );
+    impl_box_mutator_methods!(BoxMutator<T>, BoxConditionalMutator, Mutator);
 }
 
 impl<T> Mutator<T> for BoxMutator<T> {
@@ -744,11 +734,7 @@ where
     T: 'static,
 {
     // Generate common mutator methods (new, new_with_name, name, set_name, noop)
-    impl_mutator_common_methods!(
-        RcMutator<T>,
-        (Fn(&mut T) + 'static),
-        |f| Rc::new(f)
-    );
+    impl_mutator_common_methods!(RcMutator<T>, (Fn(&mut T) + 'static), |f| Rc::new(f));
 
     // Generate shared mutator methods (when, and_then, or_else, conversions)
     impl_shared_mutator_methods!(
@@ -876,11 +862,9 @@ where
     T: 'static,
 {
     // Generate common mutator methods (new, new_with_name, name, set_name, noop)
-    impl_mutator_common_methods!(
-        ArcMutator<T>,
-        (Fn(&mut T) + Send + Sync + 'static),
-        |f| Arc::new(f)
-    );
+    impl_mutator_common_methods!(ArcMutator<T>, (Fn(&mut T) + Send + Sync + 'static), |f| {
+        Arc::new(f)
+    });
 
     // Generate shared mutator methods (when, and_then, or_else, conversions)
     impl_shared_mutator_methods!(
@@ -1200,11 +1184,7 @@ pub struct BoxConditionalMutator<T> {
 }
 
 // Generate box conditional mutator methods (and_then, or_else)
-impl_box_conditional_mutator!(
-    BoxConditionalMutator<T>,
-    BoxMutator,
-    Mutator
-);
+impl_box_conditional_mutator!(BoxConditionalMutator<T>, BoxMutator, Mutator);
 
 impl<T> Mutator<T> for BoxConditionalMutator<T>
 where
@@ -1217,11 +1197,7 @@ where
     }
 
     // Generates: into_box(), into_rc(), into_fn()
-    impl_conditional_mutator_conversions!(
-        BoxMutator<T>,
-        RcMutator,
-        Fn
-    );
+    impl_conditional_mutator_conversions!(BoxMutator<T>, RcMutator, Fn);
 }
 
 // Generate Debug and Display trait implementations for conditional mutator
@@ -1291,11 +1267,7 @@ where
     }
 
     // Generates: into_box(), into_rc(), into_fn()
-    impl_conditional_mutator_conversions!(
-        BoxMutator<T>,
-        RcMutator,
-        Fn
-    );
+    impl_conditional_mutator_conversions!(BoxMutator<T>, RcMutator, Fn);
 }
 
 // Generate Clone trait implementation for conditional mutator
@@ -1368,11 +1340,7 @@ where
     }
 
     // Generates: into_box(), into_rc(), into_fn()
-    impl_conditional_mutator_conversions!(
-        BoxMutator<T>,
-        RcMutator,
-        Fn
-    );
+    impl_conditional_mutator_conversions!(BoxMutator<T>, RcMutator, Fn);
 }
 
 // Generate Clone trait implementation for conditional mutator

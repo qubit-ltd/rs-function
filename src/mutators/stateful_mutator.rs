@@ -202,8 +202,8 @@ use std::sync::{
 use crate::mutators::macros::{
     impl_box_conditional_mutator,
     impl_box_mutator_methods,
-    impl_conditional_mutator_conversions,
     impl_conditional_mutator_clone,
+    impl_conditional_mutator_conversions,
     impl_conditional_mutator_debug_display,
     impl_mutator_clone,
     impl_mutator_common_methods,
@@ -211,9 +211,7 @@ use crate::mutators::macros::{
     impl_shared_conditional_mutator,
     impl_shared_mutator_methods,
 };
-use crate::mutators::mutator_once::{
-    BoxMutatorOnce,
-};
+use crate::mutators::mutator_once::BoxMutatorOnce;
 use crate::predicates::predicate::{
     ArcPredicate,
     BoxPredicate,
@@ -643,11 +641,9 @@ impl<T> BoxStatefulMutator<T>
 where
     T: 'static,
 {
-    impl_mutator_common_methods!(
-        BoxStatefulMutator<T>,
-        (FnMut(&mut T) + 'static),
-        |f| Box::new(f)
-    );
+    impl_mutator_common_methods!(BoxStatefulMutator<T>, (FnMut(&mut T) + 'static), |f| {
+        Box::new(f)
+    });
 
     // Generate box mutator methods (when, and_then, or_else, etc.)
     impl_box_mutator_methods!(
@@ -1224,12 +1220,7 @@ where
     }
 
     // Generates: into_box(), into_rc(), into_fn()
-    impl_conditional_mutator_conversions!(
-        BoxStatefulMutator<T>,
-        RcStatefulMutator,
-        FnMut
-    );
-
+    impl_conditional_mutator_conversions!(BoxStatefulMutator<T>, RcStatefulMutator, FnMut);
 }
 
 // Generate Debug and Display trait implementations for conditional mutator
@@ -1299,11 +1290,7 @@ where
     }
 
     // Generates: into_box(), into_rc(), into_fn()
-    impl_conditional_mutator_conversions!(
-        BoxStatefulMutator<T>,
-        RcStatefulMutator,
-        FnMut
-    );
+    impl_conditional_mutator_conversions!(BoxStatefulMutator<T>, RcStatefulMutator, FnMut);
 }
 
 // Generate Clone trait implementation for conditional mutator
@@ -1376,11 +1363,7 @@ where
     }
 
     // Generates: into_box(), into_rc(), into_fn()
-    impl_conditional_mutator_conversions!(
-        BoxStatefulMutator<T>,
-        RcStatefulMutator,
-        FnMut
-    );
+    impl_conditional_mutator_conversions!(BoxStatefulMutator<T>, RcStatefulMutator, FnMut);
 }
 
 // Generate Clone trait implementation for conditional mutator
