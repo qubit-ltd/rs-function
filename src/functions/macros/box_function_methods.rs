@@ -21,8 +21,10 @@
 //! * `$struct_name<$generics>` - The struct name with its generic parameters
 //!   - Single parameter: `BoxFunction<T, R>`
 //!   - Two parameters: `BoxBiFunction<T, U, R>`
-//! * `$conditional_type` - The conditional function type for when (e.g., BoxConditionalFunction)
-//! * `$function_trait` - Function trait name (e.g., Function, BiFunction)
+//! * `$conditional_type` - The conditional function type for when (e.g.,
+//!    BoxConditionalFunction)
+//! * `$chained_function_trait` - The name of the function trait that chained
+//!   after the execution of this function (e.g., Function, BiFunction)
 //!
 //! # Parameter Usage Comparison
 //!
@@ -72,8 +74,10 @@
 /// * `$struct_name<$generics>` - The struct name with its generic parameters
 ///   - Single parameter: `BoxFunction<T, R>`
 ///   - Two parameters: `BoxBiFunction<T, U, R>`
-/// * `$conditional_type` - The conditional function type for when (e.g., BoxConditionalFunction)
-/// * `$function_trait` - Function trait name (e.g., Function, BiFunction)
+/// * `$conditional_type` - The conditional function type for when (e.g.,
+///    BoxConditionalFunction)
+/// * `$chained_function_trait` - The name of the function trait that chained
+///   after the execution of this function (e.g., Function, BiFunction)
 ///
 /// # Parameter Usage Comparison
 ///
@@ -105,7 +109,11 @@
 /// ```
 macro_rules! impl_box_function_methods {
     // Two generic parameters - Function
-    ($struct_name:ident < $t:ident, $r:ident >, $conditional_type:ident, $function_trait:ident) => {
+    (
+        $struct_name:ident < $t:ident, $r:ident >,
+        $conditional_type:ident,
+        $chained_function_trait:ident
+    ) => {
         /// Creates a conditional function that executes based on predicate
         /// result.
         ///
@@ -167,61 +175,22 @@ macro_rules! impl_box_function_methods {
         pub fn and_then<S, F>(self, mut after: F) -> $struct_name<$t, S>
         where
             S: 'static,
-            F: $function_trait<$r, S> + 'static,
+            F: $chained_function_trait<$r, S> + 'static,
         {
             let mut before = self.function;
             $struct_name::new(move |t| {
-                let mut r = before(t);
-                after.apply(&mut r)
-            })
-        }
-
-        /// Creates a composed function that executes the provided function first,
-        /// then applies this function to its result.
-        ///
-        /// This is the reverse of `and_then`: `before` is executed first, then `self`.
-        ///
-        /// # Type Parameters
-        ///
-        /// * `S` - The input type of the before function
-        /// * `F` - The type of the before function
-        ///
-        /// # Parameters
-        ///
-        /// * `before` - The function to execute before this function
-        ///
-        /// # Returns
-        ///
-        /// Returns a new function that executes `before` first, then applies this
-        /// function to the result.
-        ///
-        /// # Examples
-        ///
-        /// ```rust
-        /// use prism3_function::{BoxFunction, Function};
-        ///
-        /// let to_string = BoxFunction::new(|x: i32| x.to_string());
-        /// let add_prefix = BoxFunction::new(|s: &str| format!("Value: {}", s));
-        ///
-        /// let composed = add_prefix.compose(to_string);
-        /// assert_eq!(composed.apply(42), "Value: 42");
-        /// ```
-        #[allow(unused_mut)]
-        pub fn compose<S, F>(self, mut before: F) -> $struct_name<S, $r>
-        where
-            S: 'static,
-            F: $function_trait<S, $t> + 'static,
-        {
-            let mut after = self.function;
-            $struct_name::new(move |s| {
-                let mut t = before.apply(s);
-                after(&mut t)
+                let r = before(t);
+                after.apply(&r)
             })
         }
     };
 
     // Three generic parameters - BiFunction
-    ($struct_name:ident < $t:ident, $u:ident, $r:ident >, $conditional_type:ident, $function_trait:ident) => {
+    (
+        $struct_name:ident < $t:ident, $u:ident, $r:ident >,
+        $conditional_type:ident,
+        $chained_function_trait:ident
+    ) => {
         /// Creates a conditional two-parameter function that executes based
         /// on bi-predicate result.
         ///
@@ -283,67 +252,12 @@ macro_rules! impl_box_function_methods {
         pub fn and_then<S, F>(self, mut after: F) -> $struct_name<$t, $u, S>
         where
             S: 'static,
-            F: $function_trait<$r, S> + 'static,
+            F: $chained_function_trait<$r, S> + 'static,
         {
             let mut before = self.function;
             $struct_name::new(move |t, u| {
                 let mut r = before(t, u);
                 after.apply(&mut r)
-            })
-        }
-
-        /// Creates a composed function that executes the provided function first,
-        /// then applies this function to its result along with the second parameter.
-        ///
-        /// This is the reverse of `and_then`: `before` is executed first, then `self`
-        /// is applied with the result of `before` as the first parameter and the
-        /// original second parameter.
-        ///
-        /// # Type Parameters
-        ///
-        /// * `S` - The input type of the before function
-        /// * `F` - The type of the before function
-        ///
-        /// # Parameters
-        ///
-        /// * `before1` - The first two parameters function to execute before this function
-        /// * `before2` - The second two parameter function to execute before this function
-        ///
-        /// # Returns
-        ///
-        /// Returns a new function that executes `before1` and `before2` first,
-        /// then applies this function with the result of `before1` and `before2`
-        /// as the first parameter and the second parameter.
-        ///
-        /// # Examples
-        ///
-        /// ```rust
-        /// use prism3_function::BoxBiFunction;
-        ///
-        /// let add = BoxBiFunction::new(|x: i32, y: i32| x + y);
-        /// let sub = BoxBiFunction::new(|x: i32, y: i32| x - y);
-        /// let multiply = BoxBiFunction::new(|x: i32, y: i32| x * y);
-        ///
-        /// let composed = multiply.compose(add, sub);
-        /// assert_eq!(composed.apply(4, 2), 12); // (4 + 2) * (4 - 2) = 12
-        /// ```
-        #[allow(unused_mut)]
-        pub fn compose<S1, S2, F1, F2>(
-            self,
-            mut before1: F1,
-            mut before2: F2,
-        ) -> $struct_name<S1, S2, $r>
-        where
-            S1: 'static,
-            S2: 'static,
-            F1: $function_trait<S1, $t> + 'static,
-            F2: $function_trait<S2, $u> + 'static,
-        {
-            let mut after = self.function;
-            $struct_name::new(move |s1, s2| {
-                let mut t = before1.apply(s1);
-                let mut u = before2.apply(s2);
-                after(&mut t, &mut u)
             })
         }
     };

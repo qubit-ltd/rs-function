@@ -23,9 +23,8 @@
 //! # Parameters
 //!
 //! * `$struct_name<$generics>` - Struct name with generic parameters
-//! * `$function_type` - Function wrapper type name
-//! * `$function_trait` - Function trait name
-//! * `$predicate_conversion` - Predicate conversion method (into_arc or into_rc)
+//! * `$shared_function_type` - Function wrapper type name
+//! * `$else_function_trait` - The name of the else function trait (e.g., Function, BiFunction)
 //! * `$extra_bounds` - Extra trait bounds
 //!
 //! # Usage Examples
@@ -36,7 +35,6 @@
 //!     ArcConditionalFunction<T, R>,
 //!     ArcFunction,
 //!     Function,
-//!     into_arc,
 //!     Send + Sync + 'static
 //! );
 //!
@@ -45,7 +43,6 @@
 //!     RcConditionalFunction<T, R>,
 //!     RcFunction,
 //!     Function,
-//!     into_rc,
 //!     'static
 //! );
 //!
@@ -54,7 +51,6 @@
 //!     ArcConditionalBiFunction<T, U, R>,
 //!     ArcBiFunction,
 //!     BiFunction,
-//!     into_arc,
 //!     Send + Sync + 'static
 //! );
 //!
@@ -63,7 +59,6 @@
 //!     RcConditionalBiFunction<T, U, R>,
 //!     RcBiFunction,
 //!     BiFunction,
-//!     into_rc,
 //!     'static
 //! );
 //! ```
@@ -89,8 +84,8 @@
 /// # Parameters
 ///
 /// * `$struct_name<$generics>` - Struct name with generic parameters
-/// * `$function_type` - Function wrapper type name
-/// * `$function_trait` - Function trait name
+/// * `$shared_function_type` - Function wrapper type name
+/// * `$else_function_trait` - The name of the else function trait (e.g., Function, BiFunction)
 /// * `$extra_bounds` - Extra trait bounds
 ///
 /// # Usage Examples
@@ -132,8 +127,8 @@ macro_rules! impl_shared_conditional_function {
     // Two generic parameters - Function types
     (
         $struct_name:ident < $t:ident, $r:ident >,
-        $function_type:ident,
-        $function_trait:ident,
+        $shared_function_type:ident,
+        $else_function_trait:ident,
         $($extra_bounds:tt)+
     ) => {
         impl<$t, $r> $struct_name<$t, $r>
@@ -170,13 +165,13 @@ macro_rules! impl_shared_conditional_function {
             /// assert_eq!(conditional.apply(-3), 7);  // -3 + 10 = 7
             /// ```
             #[allow(unused_mut)]
-            pub fn or_else<F>(&self, mut else_function: F) -> $function_type<$t, $r>
+            pub fn or_else<F>(&self, mut else_function: F) -> $shared_function_type<$t, $r>
             where
-                F: $function_trait<$t, $r> + $($extra_bounds)+,
+                F: $else_function_trait<$t, $r> + $($extra_bounds)+,
             {
                 let predicate = self.predicate.clone();
                 let mut then_function = self.function.clone();
-                $function_type::new(move |t| {
+                $shared_function_type::new(move |t| {
                     if predicate.test(t) {
                         then_function.apply(t)
                     } else {
@@ -190,8 +185,8 @@ macro_rules! impl_shared_conditional_function {
     // Three generic parameters - BiFunction types
     (
         $struct_name:ident < $t:ident, $u:ident, $r:ident >,
-        $function_type:ident,
-        $function_trait:ident,
+        $shared_function_type:ident,
+        $else_function_trait:ident,
         $($extra_bounds:tt)+
     ) => {
         impl<$t, $u, $r> $struct_name<$t, $u, $r>
@@ -229,13 +224,13 @@ macro_rules! impl_shared_conditional_function {
             /// assert_eq!(conditional.apply(-2, 4), -8); // -2 * 4 = -8 (predicate failed)
             /// ```
             #[allow(unused_mut)]
-            pub fn or_else<F>(&self, mut else_function: F) -> $function_type<$t, $u, $r>
+            pub fn or_else<F>(&self, mut else_function: F) -> $shared_function_type<$t, $u, $r>
             where
-                F: $function_trait<$t, $u, $r> + 'static,
+                F: $else_function_trait<$t, $u, $r> + 'static,
             {
                 let predicate = self.predicate.clone();
                 let mut then_function = self.function.clone();
-                $function_type::new(move |t, u| {
+                $shared_function_type::new(move |t, u| {
                     if predicate.test(t, u) {
                         then_function.apply(t, u)
                     } else {

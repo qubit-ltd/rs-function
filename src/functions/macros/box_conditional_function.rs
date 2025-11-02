@@ -19,8 +19,8 @@
 //! # Parameters
 //!
 //! * `$struct_name<$generics>` - Struct name with generic parameters
-//! * `$function_type` - Function wrapper type name
-//! * `$function_trait` - Function trait name
+//! * `$box_function_type` - Function wrapper type name
+//! * `$else_function_trait` - The name of the else function trait (e.g., Function, BiFunction)
 //!
 //! # Usage Examples
 //!
@@ -59,8 +59,8 @@
 /// # Parameters
 ///
 /// * `$struct_name<$generics>` - Struct name with generic parameters
-/// * `$function_type` - Function wrapper type name
-/// * `$function_trait` - Function trait name
+/// * `$box_function_type` - Function wrapper type name
+/// * `$else_function_trait` - The name of the else function trait (e.g., Function, BiFunction)
 ///
 /// # Usage Examples
 ///
@@ -83,8 +83,8 @@ macro_rules! impl_box_conditional_function {
     // Two generic parameters - Function
     (
         $struct_name:ident<$t:ident, $r:ident>,
-        $function_type:ident,
-        $function_trait:ident
+        $box_function_type:ident,
+        $else_function_trait:ident
     ) => {
         impl<$t, $r> $struct_name<$t, $r>
         where
@@ -120,13 +120,13 @@ macro_rules! impl_box_conditional_function {
             /// assert_eq!(conditional.apply(-3), 7);  // -3 + 10 = 7
             /// ```
             #[allow(unused_mut)]
-            pub fn or_else<F>(self, mut else_function: F) -> $function_type<$t, $r>
+            pub fn or_else<F>(self, mut else_function: F) -> $box_function_type<$t, $r>
             where
-                F: $function_trait<$t, $r> + 'static,
+                F: $else_function_trait<$t, $r> + 'static,
             {
                 let predicate = self.predicate;
                 let mut then_function = self.function;
-                $function_type::new(move |t| {
+                $box_function_type::new(move |t| {
                     if predicate.test(t) {
                         then_function.apply(t)
                     } else {
@@ -140,8 +140,8 @@ macro_rules! impl_box_conditional_function {
     // Three generic parameters - BiFunction
     (
         $struct_name:ident<$t:ident, $u:ident, $r:ident>,
-        $function_type:ident,
-        $function_trait:ident
+        $box_function_type:ident,
+        $else_function_trait:ident
     ) => {
         impl<$t, $u, $r> $struct_name<$t, $u, $r>
         where
@@ -178,13 +178,13 @@ macro_rules! impl_box_conditional_function {
             /// assert_eq!(conditional.apply(-2, 4), -8); // -2 * 4 = -8 (predicate failed)
             /// ```
             #[allow(unused_mut)]
-            pub fn or_else<F>(self, mut else_function: F) -> $function_type<$t, $u, $r>
+            pub fn or_else<F>(self, mut else_function: F) -> $box_function_type<$t, $u, $r>
             where
-                F: $function_trait<$t, $u, $r> + 'static,
+                F: $else_function_trait<$t, $u, $r> + 'static,
             {
                 let predicate = self.predicate;
                 let mut then_function = self.function;
-                $function_type::new(move |t, u| {
+                $box_function_type::new(move |t, u| {
                     if predicate.test(t, u) {
                         then_function.apply(t, u)
                     } else {

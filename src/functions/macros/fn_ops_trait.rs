@@ -11,9 +11,8 @@
 //! Generate extension traits and implementations for closure types
 //!
 //! This macro generates extension traits for closure types that implement
-//! `Fn` or `FnMut`, providing `and_then`, `compose`, and `when` methods
-//! without requiring explicit wrapping as `BoxFunction`, `RcFunction`, or
-//! `ArcFunction`.
+//! `Fn` or `FnMut`, providing `and_then` and `when` methods without requiring
+//! explicit wrapping as `BoxFunction`, `RcFunction`, or `ArcFunction`.
 //!
 //! # Parameters
 //!
@@ -22,7 +21,8 @@
 //! * `$trait_name` - Name of the extension trait (e.g., `FnFunctionOps`,
 //!   `FnStatefulFunctionOps`)
 //! * `$box_type` - Box wrapper type (e.g., `BoxFunction`, `BoxStatefulFunction`)
-//! * `$function_trait` - Function trait name (e.g., `Function`, `StatefulFunction`)
+//! * `$chained_function_trait` - The name of the function trait that chained
+//!   after the execution of this function (e.g., Function, BiFunction)
 //! * `$conditional_type` - Conditional function type (e.g., `BoxConditionalFunction`)
 //!
 //! # Implementation Notes
@@ -70,7 +70,7 @@
 /// Generate extension traits and implementations for closure types
 ///
 /// This macro generates an extension trait that provides composition methods
-/// (`and_then`, `compose`, `when`) for closures implementing the specified
+/// (`and_then`, `when`) for closures implementing the specified
 /// closure trait, without requiring explicit wrapping.
 ///
 /// # Unified Implementation Strategy
@@ -87,14 +87,14 @@
 /// * `$fn_signature` - Closure signature (in parentheses, without constraints)
 /// * `$trait_name` - Name of the extension trait
 /// * `$box_type` - Box wrapper type
-/// * `$function_trait` - Function trait name
+/// * `$chained_function_trait` - The name of the function trait that chained
+///   after the execution of this function (e.g., Function, BiFunction)
 /// * `$conditional_type` - Conditional function type
 ///
 /// # Generated Code
 ///
 /// Generates a trait definition and a blanket implementation, containing:
 /// - `and_then<S, F>` - Chain composition method
-/// - `compose<S, F>` - Reverse composition method
 /// - `when<P>` - Conditional execution method
 ///
 /// # Examples
@@ -134,12 +134,12 @@ macro_rules! impl_fn_ops_trait {
         ($($fn_signature:tt)+),
         $trait_name:ident,
         $box_type:ident,
-        $function_trait:ident,
+        $chained_function_trait:ident,
         $conditional_type:ident
     ) => {
         /// Extension trait for closures implementing the base function trait
         ///
-        /// Provides composition methods (`and_then`, `compose`, `when`) for closures
+        /// Provides composition methods (`and_then`, `when`) for closures
         /// and function pointers without requiring explicit wrapping.
         ///
         /// This trait is automatically implemented for all closures and function
@@ -149,7 +149,7 @@ macro_rules! impl_fn_ops_trait {
         ///
         /// While closures automatically implement the base function trait through blanket
         /// implementation, they don't have access to instance methods like `and_then`,
-        /// `compose`, and `when`. This extension trait provides those methods,
+        /// and `when`. This extension trait provides those methods,
         /// returning the appropriate Box-based function type for maximum flexibility.
         ///
         /// # Examples
@@ -164,18 +164,6 @@ macro_rules! impl_fn_ops_trait {
         ///
         /// let composed = double.and_then(to_string);
         /// assert_eq!(composed.apply(21), "42");
-        /// ```
-        ///
-        /// ## Reverse composition with compose
-        ///
-        /// ```rust
-        /// use prism3_function::{Function, FnFunctionOps};
-        ///
-        /// let double = |x: i32| x * 2;
-        /// let add_one = |x: i32| x + 1;
-        ///
-        /// let composed = double.compose(add_one);
-        /// assert_eq!(composed.apply(5), 12); // (5 + 1) * 2
         /// ```
         ///
         /// ## Conditional transformation with when
@@ -257,81 +245,14 @@ macro_rules! impl_fn_ops_trait {
             fn and_then<S, F>(mut self, mut after: F) -> $box_type<T, S>
             where
                 S: 'static,
-                F: $function_trait<R, S> + 'static,
+                F: $chained_function_trait<R, S> + 'static,
                 T: 'static,
                 R: 'static,
             {
-                $box_type::new(move |x| after.apply(&mut self(x)))
-            }
-
-            /// Reverse composition - applies before first, then self
-            ///
-            /// Creates a new function that applies the before function first,
-            /// then applies this function to the result. Consumes self and returns
-            /// a Box-based function.
-            ///
-            /// # Type Parameters
-            ///
-            /// * `S` - The input type of the before function
-            /// * `F` - The type of the before function (must implement the function trait)
-            ///
-            /// # Parameters
-            ///
-            /// * `before` - The function to apply before self. **Note: This parameter
-            ///   is passed by value and will transfer ownership.** If you need to
-            ///   preserve the original function, clone it first (if it implements
-            ///   `Clone`). Can be:
-            ///   - A closure
-            ///   - A function pointer
-            ///   - A Box-based function
-            ///   - An Rc-based function
-            ///   - An Arc-based function
-            ///   - Any type implementing the function trait
-            ///
-            /// # Returns
-            ///
-            /// A new Box-based function representing the composition
-            ///
-            /// # Examples
-            ///
-            /// ## Direct value passing (ownership transfer)
-            ///
-            /// ```rust
-            /// use prism3_function::{Function, FnFunctionOps, BoxFunction};
-            ///
-            /// let double = |x: i32| x * 2;
-            /// let add_one = BoxFunction::new(|x: i32| x + 1);
-            ///
-            /// // add_one is moved here
-            /// let composed = double.compose(add_one);
-            /// assert_eq!(composed.apply(5), 12); // (5 + 1) * 2
-            /// // add_one.apply(3); // Would not compile - moved
-            /// ```
-            ///
-            /// ## Preserving original with clone
-            ///
-            /// ```rust
-            /// use prism3_function::{Function, FnFunctionOps, BoxFunction};
-            ///
-            /// let double = |x: i32| x * 2;
-            /// let add_one = BoxFunction::new(|x: i32| x + 1);
-            ///
-            /// // Clone to preserve original
-            /// let composed = double.compose(add_one.clone());
-            /// assert_eq!(composed.apply(5), 12); // (5 + 1) * 2
-            ///
-            /// // Original still usable
-            /// assert_eq!(add_one.apply(3), 4);
-            /// ```
-            #[allow(unused_mut)]
-            fn compose<S, F>(mut self, mut before: F) -> $box_type<S, R>
-            where
-                S: 'static,
-                F: $function_trait<S, T> + 'static,
-                T: 'static,
-                R: 'static,
-            {
-                $box_type::new(move |x| self(&mut before.apply(x)))
+                $box_type::new(move |x| {
+                  let mut r = self(x);
+                  after.apply(&mut r)
+                })
             }
 
             /// Creates a conditional function
