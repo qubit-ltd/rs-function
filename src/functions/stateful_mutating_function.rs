@@ -127,17 +127,20 @@ use std::sync::{
 
 use crate::functions::macros::impl_function_identity_method;
 use crate::{
-    functions::macros::{
-        impl_box_conditional_function,
-        impl_box_function_methods,
-        impl_conditional_function_clone,
-        impl_conditional_function_debug_display,
-        impl_fn_ops_trait,
-        impl_function_clone,
-        impl_function_common_methods,
-        impl_function_debug_display,
-        impl_shared_conditional_function,
-        impl_shared_function_methods,
+    functions::{
+        macros::{
+            impl_box_conditional_function,
+            impl_box_function_methods,
+            impl_conditional_function_clone,
+            impl_conditional_function_debug_display,
+            impl_fn_ops_trait,
+            impl_function_clone,
+            impl_function_common_methods,
+            impl_function_debug_display,
+            impl_shared_conditional_function,
+            impl_shared_function_methods,
+        },
+        function::Function,
     },
     predicates::predicate::{
         ArcPredicate,
@@ -607,7 +610,7 @@ where
     impl_box_function_methods!(
         BoxStatefulMutatingFunction<T, R>,
         BoxConditionalStatefulMutatingFunction,
-        StatefulMutatingFunction
+        Function        // chains a non-mutating function after this mutating function
     );
 }
 
@@ -730,7 +733,7 @@ where
         RcStatefulMutatingFunction<T, R>,
         RcConditionalStatefulMutatingFunction,
         into_rc,
-        StatefulMutatingFunction,
+        Function,  // chains a non-mutating function after this mutating function
         'static
     );
 }
@@ -884,7 +887,7 @@ where
         ArcStatefulMutatingFunction<T, R>,
         ArcConditionalStatefulMutatingFunction,
         into_arc,
-        StatefulMutatingFunction,
+        Function,  // chains a non-mutating function after this mutating function
         Send + Sync + 'static
     );
 }

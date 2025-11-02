@@ -128,18 +128,21 @@ use std::rc::Rc;
 use std::sync::Arc;
 
 use crate::{
-    functions::macros::{
-        impl_box_conditional_function,
-        impl_box_function_methods,
-        impl_conditional_function_clone,
-        impl_conditional_function_debug_display,
-        impl_fn_ops_trait,
-        impl_function_clone,
-        impl_function_common_methods,
-        impl_function_debug_display,
-        impl_function_identity_method,
-        impl_shared_conditional_function,
-        impl_shared_function_methods,
+    functions::{
+        function::Function,
+        macros::{
+            impl_box_conditional_function,
+            impl_box_function_methods,
+            impl_conditional_function_clone,
+            impl_conditional_function_debug_display,
+            impl_fn_ops_trait,
+            impl_function_clone,
+            impl_function_common_methods,
+            impl_function_debug_display,
+            impl_function_identity_method,
+            impl_shared_conditional_function,
+            impl_shared_function_methods,
+        }
     },
     predicates::predicate::{
         ArcPredicate,
@@ -562,7 +565,7 @@ where
     impl_box_function_methods!(
         BoxMutatingFunction<T, R>,
         BoxConditionalMutatingFunction,
-        MutatingFunction
+        Function  // chains a non-mutating function after this mutating function
     );
 }
 
@@ -679,7 +682,7 @@ where
         RcMutatingFunction<T, R>,
         RcConditionalMutatingFunction,
         into_rc,
-        MutatingFunction,
+        Function,  // chains a non-mutating function after this mutating function
         'static
     );
 }
@@ -828,7 +831,7 @@ where
         ArcMutatingFunction<T, R>,
         ArcConditionalMutatingFunction,
         into_arc,
-        MutatingFunction,
+        Function,  // chains a non-mutating function after this mutating function
         Send + Sync + 'static
     );
 }
@@ -1017,7 +1020,7 @@ impl_fn_ops_trait!(
     (Fn(&mut T) -> R),
     FnMutatingFunctionOps,
     BoxMutatingFunction,
-    MutatingFunction,
+    Function,  // chains a non-mutating function after this mutating function
     BoxConditionalMutatingFunction
 );
 

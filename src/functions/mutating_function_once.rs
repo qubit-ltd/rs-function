@@ -136,14 +136,17 @@
 //!
 //! Haixing Hu
 use crate::{
-    functions::macros::{
-        impl_box_conditional_function,
-        impl_box_function_methods,
-        impl_conditional_function_debug_display,
-        impl_fn_ops_trait,
-        impl_function_common_methods,
-        impl_function_debug_display,
-        impl_function_identity_method,
+    functions::{
+        macros::{
+            impl_box_conditional_function,
+            impl_box_function_methods,
+            impl_conditional_function_debug_display,
+            impl_fn_ops_trait,
+            impl_function_common_methods,
+            impl_function_debug_display,
+            impl_function_identity_method,
+        },
+        function_once::FunctionOnce,
     },
     predicates::predicate::{
         BoxPredicate,
@@ -442,7 +445,7 @@ where
     impl_box_function_methods!(
         BoxMutatingFunctionOnce<T, R>,
         BoxConditionalMutatingFunctionOnce,
-        MutatingFunctionOnce
+        FunctionOnce    // chains a non-mutating function after this mutating function
     );
 }
 
@@ -536,7 +539,7 @@ impl_fn_ops_trait!(
     (FnOnce(&mut T) -> R),
     FnMutatingFunctionOnceOps,
     BoxMutatingFunctionOnce,
-    MutatingFunctionOnce,
+    FunctionOnce,
     BoxConditionalMutatingFunctionOnce
 );
 
