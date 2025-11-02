@@ -13,7 +13,7 @@
 use prism3_function::{
     ArcStatefulMutatingFunction,
     BoxStatefulMutatingFunction,
-    FnMutStatefulMutatingFunctionOps,
+    FnStatefulMutatingFunctionOps,
     RcStatefulMutatingFunction,
     StatefulMutatingFunction,
 };
@@ -201,30 +201,6 @@ mod test_box_stateful_mutating_function {
         assert_eq!(value2, 6);
     }
 
-    #[test]
-    fn test_and_then() {
-        let first = {
-            let mut count1 = 0;
-            BoxStatefulMutatingFunction::new(move |x: &mut i32| {
-                count1 += 1;
-                *x *= 2;
-                count1
-            })
-        };
-        let second = {
-            let mut count2 = 0;
-            BoxStatefulMutatingFunction::new(move |x: &mut i32| {
-                count2 += 1;
-                *x += 10;
-                count2
-            })
-        };
-
-        let mut chained = first.and_then(second);
-        let mut value = 5;
-        assert_eq!(chained.apply(&mut value), 1);
-        assert_eq!(value, 20); // (5 * 2) + 10
-    }
 
     #[test]
     fn test_identity() {
@@ -244,7 +220,7 @@ mod test_box_stateful_mutating_function {
                 count
             })
         };
-        let mut mapped = func.map(|count| format!("Call #{}", count));
+        let mut mapped = func.and_then::<String, _>(|count: &i32| format!("Call #{}", *count));
 
         let mut value = 5;
         assert_eq!(mapped.apply(&mut value), "Call #1");
@@ -333,30 +309,6 @@ mod test_rc_stateful_mutating_function {
         assert_eq!(value2, 6);
     }
 
-    #[test]
-    fn test_and_then() {
-        let first = {
-            let mut count1 = 0;
-            RcStatefulMutatingFunction::new(move |x: &mut i32| {
-                count1 += 1;
-                *x *= 2;
-                count1
-            })
-        };
-        let second = {
-            let mut count2 = 0;
-            RcStatefulMutatingFunction::new(move |x: &mut i32| {
-                count2 += 1;
-                *x += 10;
-                count2
-            })
-        };
-
-        let mut combined = first.and_then(second.clone());
-        let mut value = 5;
-        assert_eq!(combined.apply(&mut value), 1);
-        assert_eq!(value, 20); // (5 * 2) + 10
-    }
 
     #[test]
     fn test_identity() {
@@ -376,7 +328,7 @@ mod test_rc_stateful_mutating_function {
                 count
             })
         };
-        let mut mapped = func.map(|count| format!("Call #{}", count));
+        let mut mapped = func.and_then::<String, _>(|count: &i32| format!("Call #{}", *count));
 
         let mut value = 5;
         assert_eq!(mapped.apply(&mut value), "Call #1");
@@ -573,30 +525,6 @@ mod test_arc_stateful_mutating_function {
         assert_eq!(result, 1);
     }
 
-    #[test]
-    fn test_and_then() {
-        let first = {
-            let mut count1 = 0;
-            ArcStatefulMutatingFunction::new(move |x: &mut i32| {
-                count1 += 1;
-                *x *= 2;
-                count1
-            })
-        };
-        let second = {
-            let mut count2 = 0;
-            ArcStatefulMutatingFunction::new(move |x: &mut i32| {
-                count2 += 1;
-                *x += 10;
-                count2
-            })
-        };
-
-        let mut combined = first.and_then(second.clone());
-        let mut value = 5;
-        assert_eq!(combined.apply(&mut value), 1);
-        assert_eq!(value, 20); // (5 * 2) + 10
-    }
 
     #[test]
     fn test_identity() {
@@ -616,7 +544,7 @@ mod test_arc_stateful_mutating_function {
                 count
             })
         };
-        let mut mapped = func.map(|count| format!("Call #{}", count));
+        let mut mapped = func.and_then::<String, _>(|count: &i32| format!("Call #{}", *count));
 
         let mut value = 5;
         assert_eq!(mapped.apply(&mut value), "Call #1");
@@ -817,15 +745,15 @@ mod test_closure {
             *x *= 2;
             count1
         })
-        .and_then(move |x: &mut i32| {
+        .and_then::<i32, _>(move |x: &mut i32| {
             count2 += 1;
-            *x += 10;
-            count2
+            *x + 10
         });
 
         let mut value = 5;
-        assert_eq!(chained.apply(&mut value), 1);
-        assert_eq!(value, 20);
+        let result = chained.apply(&mut value);
+        assert_eq!(result, 11); // First function returns 1, second function returns 1 + 10
+        assert_eq!(value, 10); // Input only modified by first function
     }
 
     #[test]
@@ -836,7 +764,7 @@ mod test_closure {
             *x *= 2;
             count
         })
-        .map(|count| format!("Call #{}", count));
+        .and_then::<String, _>(|count: &mut i32| format!("Call #{}", *count));
 
         let mut value = 5;
         assert_eq!(mapped.apply(&mut value), "Call #1");

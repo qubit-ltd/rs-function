@@ -169,25 +169,6 @@ fn test_box_function_and_then_with_closure() {
     assert_eq!(composed.apply(&16), 42);
 }
 
-#[test]
-fn test_box_function_compose() {
-    // Test BoxFunction::compose reverse composition
-    let double = BoxFunction::new(|x: &i32| x * 2);
-    let add_one = BoxFunction::new(|x: &i32| x + 1);
-    let composed = double.compose(add_one);
-    assert_eq!(composed.apply(&5), 12); // (5 + 1) * 2
-    assert_eq!(composed.apply(&0), 2); // (0 + 1) * 2
-    assert_eq!(composed.apply(&-1), 0); // (-1 + 1) * 2
-}
-
-#[test]
-fn test_box_function_compose_with_closure() {
-    // Test compose with closure
-    let double = BoxFunction::new(|x: &i32| x * 2);
-    let composed = double.compose(|x: &i32| x + 1);
-    assert_eq!(composed.apply(&5), 12); // (5 + 1) * 2
-}
-
 // ============================================================================
 // BoxFunction Tests - Conditional Execution
 // ============================================================================
@@ -357,16 +338,6 @@ fn test_arc_function_and_then_with_clone() {
     assert_eq!(to_string.apply(&5), "5");
 }
 
-#[test]
-fn test_arc_function_compose() {
-    // Test ArcFunction::compose reverse composition
-    let double = ArcFunction::new(|x: &i32| x * 2);
-    let add_one = ArcFunction::new(|x: &i32| x + 1);
-    let composed = double.compose(add_one);
-    assert_eq!(composed.apply(&5), 12); // (5 + 1) * 2
-                                        // Original still usable
-    assert_eq!(double.apply(&10), 20);
-}
 
 // ============================================================================
 // ArcFunction Tests - Conditional Execution
@@ -561,16 +532,6 @@ fn test_rc_function_and_then_with_clone() {
     assert_eq!(to_string.apply(&5), "5");
 }
 
-#[test]
-fn test_rc_function_compose() {
-    // Test RcFunction::compose reverse composition
-    let double = RcFunction::new(|x: &i32| x * 2);
-    let add_one = RcFunction::new(|x: &i32| x + 1);
-    let composed = double.compose(add_one);
-    assert_eq!(composed.apply(&5), 12); // (5 + 1) * 2
-                                        // Original still usable
-    assert_eq!(double.apply(&10), 20);
-}
 
 // ============================================================================
 // RcFunction Tests - Conditional Execution
@@ -754,16 +715,6 @@ fn test_fn_function_ops_and_then() {
     assert_eq!(composed.apply(&21), "42");
 }
 
-#[test]
-fn test_fn_function_ops_compose() {
-    // Test FnFunctionOps::compose for closures
-    use prism3_function::FnFunctionOps;
-
-    let double = |x: &i32| x * 2;
-    let add_one = |x: &i32| x + 1;
-    let composed = double.compose(add_one);
-    assert_eq!(composed.apply(&5), 12); // (5 + 1) * 2
-}
 
 #[test]
 fn test_fn_function_ops_when() {

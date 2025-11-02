@@ -75,14 +75,12 @@ mod test_box_mutating_function {
             *x *= 2;
             *x
         })
-        .and_then(|x: &mut i32| {
-            *x += 10;
-            *x
-        });
+        .and_then(|x: &i32| *x + 10);
 
         let mut value = 5;
-        assert_eq!(func.apply(&mut value), 20); // (5 * 2) + 10
-        assert_eq!(value, 20);
+        let result = func.apply(&mut value);
+        assert_eq!(result, 20); // (5 * 2) + 10
+        assert_eq!(value, 10); // Input only modified by first function
     }
 
     #[test]
@@ -91,36 +89,18 @@ mod test_box_mutating_function {
             *x += 1;
             *x
         })
-        .and_then(|x: &mut i32| {
-            *x *= 2;
-            *x
+        .and_then(|x: &i32| {
+            *x * 2
         })
-        .and_then(|x: &mut i32| {
-            *x -= 5;
-            *x
+        .and_then(|x: &i32| {
+            *x - 5
         });
 
         let mut value = 10;
         assert_eq!(func.apply(&mut value), 17); // ((10 + 1) * 2) - 5
-        assert_eq!(value, 17);
+        assert_eq!(value, 11); // Input only modified by first function
     }
 
-    #[test]
-    fn test_and_then_with_box_mutating_function() {
-        let f1 = BoxMutatingFunction::new(|x: &mut i32| {
-            *x *= 2;
-            *x
-        });
-        let f2 = BoxMutatingFunction::new(|x: &mut i32| {
-            *x += 10;
-            *x
-        });
-        let combined = f1.and_then(f2);
-
-        let mut value = 5;
-        assert_eq!(combined.apply(&mut value), 20);
-        assert_eq!(value, 20);
-    }
 
     #[test]
     fn test_identity() {
@@ -136,7 +116,7 @@ mod test_box_mutating_function {
             *x *= 2;
             *x
         });
-        let mapped = func.map(|result| result.to_string());
+        let mapped = func.and_then(|result: &i32| result.to_string());
 
         let mut value = 5;
         assert_eq!(mapped.apply(&mut value), "10");
@@ -217,23 +197,6 @@ mod test_rc_mutating_function {
         assert_eq!(clone.apply(&mut value2), 6);
     }
 
-    #[test]
-    fn test_and_then() {
-        let f1 = RcMutatingFunction::new(|x: &mut i32| {
-            *x *= 2;
-            *x
-        });
-        let f2 = RcMutatingFunction::new(|x: &mut i32| {
-            *x += 10;
-            *x
-        });
-        let combined = f1.and_then(f2.clone());
-
-        // f1 and f2 are still usable
-        let mut value = 5;
-        assert_eq!(combined.apply(&mut value), 20);
-        assert_eq!(value, 20);
-    }
 
     #[test]
     fn test_identity() {
@@ -249,7 +212,7 @@ mod test_rc_mutating_function {
             *x *= 2;
             *x
         });
-        let mapped = func.map(|result| result.to_string());
+        let mapped = func.and_then(|result: &i32| result.to_string());
 
         let mut value = 5;
         assert_eq!(mapped.apply(&mut value), "10");
@@ -397,23 +360,6 @@ mod test_arc_mutating_function {
         assert_eq!(result, 10);
     }
 
-    #[test]
-    fn test_and_then() {
-        let f1 = ArcMutatingFunction::new(|x: &mut i32| {
-            *x *= 2;
-            *x
-        });
-        let f2 = ArcMutatingFunction::new(|x: &mut i32| {
-            *x += 10;
-            *x
-        });
-        let combined = f1.and_then(f2.clone());
-
-        // f1 and f2 are still usable
-        let mut value = 5;
-        assert_eq!(combined.apply(&mut value), 20);
-        assert_eq!(value, 20);
-    }
 
     #[test]
     fn test_identity() {
@@ -429,7 +375,7 @@ mod test_arc_mutating_function {
             *x *= 2;
             *x
         });
-        let mapped = func.map(|result| result.to_string());
+        let mapped = func.and_then(|result: &i32| result.to_string());
 
         let mut value = 5;
         assert_eq!(mapped.apply(&mut value), "10");
@@ -577,14 +523,13 @@ mod test_closure {
             *x *= 2;
             *x
         })
-        .and_then(|x: &mut i32| {
-            *x += 10;
-            *x
+        .and_then(|x: &i32| {
+            *x + 10
         });
 
         let mut value = 5;
         assert_eq!(chained.apply(&mut value), 20);
-        assert_eq!(value, 20);
+        assert_eq!(value, 10); // Input only modified by first function
     }
 
     #[test]
@@ -593,7 +538,7 @@ mod test_closure {
             *x *= 2;
             *x
         })
-        .map(|result| result.to_string());
+        .and_then(|result: &i32| result.to_string());
 
         let mut value = 5;
         assert_eq!(mapped.apply(&mut value), "10");

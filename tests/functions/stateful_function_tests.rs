@@ -219,19 +219,6 @@ fn test_box_stateful_function_and_then() {
     assert_eq!(composed.apply(&10), 24); // (10 + 2) * 2
 }
 
-#[test]
-fn test_box_stateful_function_compose() {
-    // Test BoxStatefulFunction::compose reverse composition
-    let mut counter = 0;
-    let func = BoxStatefulFunction::new(move |x: &i32| {
-        counter += 1;
-        x * counter
-    });
-
-    let mut composed = func.compose(|x: &i32| x + 1);
-    assert_eq!(composed.apply(&10), 11); // (10 + 1) * 1
-    assert_eq!(composed.apply(&10), 22); // (10 + 1) * 2
-}
 
 // ============================================================================
 // BoxStatefulFunction Tests - Conditional Execution
@@ -392,19 +379,6 @@ fn test_arc_stateful_function_and_then() {
     assert_eq!(composed.apply(&10), 24); // (10 + 2) * 2
 }
 
-#[test]
-fn test_arc_stateful_function_compose() {
-    // Test ArcStatefulFunction::compose reverse composition
-    let mut counter = 0;
-    let func = ArcStatefulFunction::new(move |x: &i32| {
-        counter += 1;
-        x * counter
-    });
-
-    let mut composed = func.compose(|x: &i32| x + 1);
-    assert_eq!(composed.apply(&10), 11); // (10 + 1) * 1
-    assert_eq!(composed.apply(&10), 22); // (10 + 1) * 2
-}
 
 // ============================================================================
 // ArcStatefulFunction Tests - Conditional Execution
@@ -648,19 +622,6 @@ fn test_rc_stateful_function_and_then() {
     assert_eq!(composed.apply(&10), 24); // (10 + 2) * 2
 }
 
-#[test]
-fn test_rc_stateful_function_compose() {
-    // Test RcStatefulFunction::compose reverse composition
-    let mut counter = 0;
-    let func = RcStatefulFunction::new(move |x: &i32| {
-        counter += 1;
-        x * counter
-    });
-
-    let mut composed = func.compose(|x: &i32| x + 1);
-    assert_eq!(composed.apply(&10), 11); // (10 + 1) * 1
-    assert_eq!(composed.apply(&10), 22); // (10 + 1) * 2
-}
 
 // ============================================================================
 // RcStatefulFunction Tests - Conditional Execution
@@ -861,22 +822,6 @@ fn test_fn_stateful_function_ops_and_then() {
     assert_eq!(composed.apply(&10), 11);
 }
 
-#[test]
-fn test_fn_stateful_function_ops_compose() {
-    // Test FnStatefulFunctionOps::compose for closures
-    use prism3_function::FnStatefulFunctionOps;
-
-    let mut counter = 0;
-    let func = move |x: &i32| {
-        counter += 1;
-        x * counter
-    };
-
-    let before = move |x: &i32| x + 1;
-
-    let mut composed = func.compose(before);
-    assert_eq!(composed.apply(&10), 11);
-}
 
 #[test]
 fn test_fn_stateful_function_ops_when() {

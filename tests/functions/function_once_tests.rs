@@ -152,29 +152,7 @@ fn test_box_function_once_and_then_with_move() {
     assert_eq!(composed.apply(&input), vec![0, 1, 2, 3, 4]);
 }
 
-#[test]
-fn test_box_function_once_compose() {
-    // Test BoxFunctionOnce::compose reverse composition
-    let double = BoxFunctionOnce::new(|x: &i32| x * 2);
-    let add_one = BoxFunctionOnce::new(|x: &i32| x + 1);
-    let composed = double.compose(add_one);
-    assert_eq!(composed.apply(&5), 12); // (5 + 1) * 2
-}
 
-#[test]
-fn test_box_function_once_compose_with_move() {
-    // Test compose with moved values
-    let prefix = String::from("Hello");
-    let suffix = String::from("!");
-
-    let add_prefix = BoxFunctionOnce::new(move |s: &String| format!("{} {}", prefix, s));
-
-    let add_suffix = BoxFunctionOnce::new(move |s: &String| format!("{}{}", s, suffix));
-
-    let composed = add_suffix.compose(add_prefix);
-    let input = String::from("World");
-    assert_eq!(composed.apply(&input), "Hello World!");
-}
 
 // ============================================================================
 // BoxFunctionOnce Tests - Conditional Execution
@@ -400,16 +378,6 @@ fn test_fn_function_once_ops_and_then() {
     assert_eq!(composed.apply(&String::from("21")), 42);
 }
 
-#[test]
-fn test_fn_function_once_ops_compose() {
-    // Test FnFunctionOnceOps::compose for closures
-    use prism3_function::FnFunctionOnceOps;
-
-    let double = |x: &i32| x * 2;
-    let to_string = |x: &i32| x.to_string();
-    let composed = to_string.compose(double);
-    assert_eq!(composed.apply(&21), "42");
-}
 
 #[test]
 fn test_fn_function_once_ops_when() {
