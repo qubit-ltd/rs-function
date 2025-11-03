@@ -46,6 +46,7 @@ use crate::{
         Predicate,
         RcPredicate,
     },
+    macros::{impl_common_name_methods, impl_common_new_methods},
 };
 
 // ============================================================================

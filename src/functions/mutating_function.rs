@@ -142,7 +142,7 @@ use crate::{
             impl_function_identity_method,
             impl_shared_conditional_function,
             impl_shared_function_methods,
-        }
+        },
     },
     predicates::predicate::{
         ArcPredicate,
@@ -150,6 +150,7 @@ use crate::{
         Predicate,
         RcPredicate,
     },
+    macros::{impl_common_name_methods, impl_common_new_methods},
 };
 
 // =======================================================================
