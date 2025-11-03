@@ -665,7 +665,7 @@ mod test_arc_consumer {
     // Test into_box() preserves name
     #[test]
     fn test_into_box_preserves_name() {
-        let mut consumer = ArcStatefulConsumer::new_with_name("original_consumer", |_x: &i32| {});
+        let consumer = ArcStatefulConsumer::new_with_name("original_consumer", |_x: &i32| {});
         let boxed = consumer.into_box();
         assert_eq!(boxed.name(), Some("original_consumer"));
     }
@@ -681,7 +681,7 @@ mod test_arc_consumer {
     // Test into_rc() preserves name
     #[test]
     fn test_into_rc_preserves_name() {
-        let mut consumer = ArcStatefulConsumer::new_with_name("original_consumer", |_x: &i32| {});
+        let consumer = ArcStatefulConsumer::new_with_name("original_consumer", |_x: &i32| {});
         let rced = consumer.into_rc();
         assert_eq!(rced.name(), Some("original_consumer"));
     }
@@ -697,7 +697,7 @@ mod test_arc_consumer {
     // Test to_box() preserves name
     #[test]
     fn test_to_box_preserves_name() {
-        let mut consumer = ArcStatefulConsumer::new_with_name("original_consumer", |_x: &i32| {});
+        let consumer = ArcStatefulConsumer::new_with_name("original_consumer", |_x: &i32| {});
         let boxed = consumer.to_box();
         assert_eq!(boxed.name(), Some("original_consumer"));
         // Original consumer should still be usable and have the same name
@@ -716,7 +716,7 @@ mod test_arc_consumer {
     // Test to_rc() preserves name
     #[test]
     fn test_to_rc_preserves_name() {
-        let mut consumer = ArcStatefulConsumer::new_with_name("original_consumer", |_x: &i32| {});
+        let consumer = ArcStatefulConsumer::new_with_name("original_consumer", |_x: &i32| {});
         let rced = consumer.to_rc();
         assert_eq!(rced.name(), Some("original_consumer"));
         // Original consumer should still be usable and have the same name
@@ -735,7 +735,7 @@ mod test_arc_consumer {
     // Test to_arc() preserves name (clones self)
     #[test]
     fn test_to_arc_preserves_name() {
-        let mut consumer = ArcStatefulConsumer::new_with_name("original_consumer", |_x: &i32| {});
+        let consumer = ArcStatefulConsumer::new_with_name("original_consumer", |_x: &i32| {});
         let arced = consumer.to_arc();
         assert_eq!(arced.name(), Some("original_consumer"));
         // Original consumer should still be usable and have the same name
@@ -902,7 +902,7 @@ mod test_rc_consumer {
     // Test into_box() preserves name
     #[test]
     fn test_into_box_preserves_name() {
-        let mut consumer = RcStatefulConsumer::new_with_name("original_consumer", |_x: &i32| {});
+        let consumer = RcStatefulConsumer::new_with_name("original_consumer", |_x: &i32| {});
         let boxed = consumer.into_box();
         assert_eq!(boxed.name(), Some("original_consumer"));
     }
@@ -919,7 +919,7 @@ mod test_rc_consumer {
     // Test to_box() preserves name
     #[test]
     fn test_to_box_preserves_name() {
-        let mut consumer = RcStatefulConsumer::new_with_name("original_consumer", |_x: &i32| {});
+        let consumer = RcStatefulConsumer::new_with_name("original_consumer", |_x: &i32| {});
         let boxed = consumer.to_box();
         assert_eq!(boxed.name(), Some("original_consumer"));
         // Original consumer should still be usable and have the same name
