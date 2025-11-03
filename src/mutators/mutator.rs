@@ -665,8 +665,7 @@ impl<T> Mutator<T> for BoxMutator<T> {
     where
         T: 'static,
     {
-        let self_fn = self.function;
-        RcMutator::new(move |t| (self_fn)(t))
+        RcMutator::new_with_optional_name(self.function, self.name)
     }
 
     // do NOT override Mutator::into_arc() because BoxMutator is not Send + Sync
@@ -759,7 +758,7 @@ impl<T> Mutator<T> for RcMutator<T> {
     where
         T: 'static,
     {
-        BoxMutator::new(move |t| (self.function)(t))
+        BoxMutator::new_with_optional_name(move |t| (self.function)(t), self.name)
     }
 
     fn into_rc(self) -> RcMutator<T>
@@ -786,7 +785,8 @@ impl<T> Mutator<T> for RcMutator<T> {
         T: 'static,
     {
         let self_fn = self.function.clone();
-        BoxMutator::new(move |t| (self_fn)(t))
+        let self_name = self.name.clone();
+        BoxMutator::new_with_optional_name(move |t| (self_fn)(t), self_name)
     }
 
     fn to_rc(&self) -> RcMutator<T>
@@ -889,14 +889,14 @@ impl<T> Mutator<T> for ArcMutator<T> {
     where
         T: 'static,
     {
-        BoxMutator::new(move |t| (self.function)(t))
+        BoxMutator::new_with_optional_name(move |t| (self.function)(t), self.name)
     }
 
     fn into_rc(self) -> RcMutator<T>
     where
         T: 'static,
     {
-        RcMutator::new(move |t| (self.function)(t))
+        RcMutator::new_with_optional_name(move |t| (self.function)(t), self.name)
     }
 
     fn into_arc(self) -> ArcMutator<T>
@@ -920,7 +920,8 @@ impl<T> Mutator<T> for ArcMutator<T> {
         T: 'static,
     {
         let self_fn = self.function.clone();
-        BoxMutator::new(move |t| (self_fn)(t))
+        let self_name = self.name.clone();
+        BoxMutator::new_with_optional_name(move |t| (self_fn)(t), self_name)
     }
 
     fn to_rc(&self) -> RcMutator<T>
@@ -929,7 +930,8 @@ impl<T> Mutator<T> for ArcMutator<T> {
         T: 'static,
     {
         let self_fn = self.function.clone();
-        RcMutator::new(move |t| (self_fn)(t))
+        let self_name = self.name.clone();
+        RcMutator::new_with_optional_name(move |t| (self_fn)(t), self_name)
     }
 
     fn to_arc(&self) -> ArcMutator<T>
