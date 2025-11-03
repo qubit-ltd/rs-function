@@ -227,6 +227,25 @@ pub trait BiConsumer<T, U> {
         move |t, u| self.accept(t, u)
     }
 
+    /// Convert to BiConsumerOnce
+    ///
+    /// **⚠️ Consumes `self`**: The original consumer will be unavailable after calling this method.
+    ///
+    /// Converts a reusable readonly bi-consumer to a one-time consumer that consumes itself on use.
+    /// This enables passing `BiConsumer` to functions that require `BiConsumerOnce`.
+    ///
+    /// # Returns
+    ///
+    /// Returns a `BoxBiConsumerOnce<T, U>`
+    fn into_once(self) -> BoxBiConsumerOnce<T, U>
+    where
+        Self: Sized + 'static,
+        T: 'static,
+        U: 'static,
+    {
+        BoxBiConsumerOnce::new(move |t, u| self.accept(t, u))
+    }
+
     /// Converts to BoxBiConsumer (without consuming self)
     ///
     /// Creates a new `BoxBiConsumer` by cloning the current consumer.
@@ -349,25 +368,6 @@ pub trait BiConsumer<T, U> {
         U: 'static,
     {
         self.clone().into_fn()
-    }
-
-    /// Convert to BiConsumerOnce
-    ///
-    /// **⚠️ Consumes `self`**: The original consumer will be unavailable after calling this method.
-    ///
-    /// Converts a reusable readonly bi-consumer to a one-time consumer that consumes itself on use.
-    /// This enables passing `BiConsumer` to functions that require `BiConsumerOnce`.
-    ///
-    /// # Returns
-    ///
-    /// Returns a `BoxBiConsumerOnce<T, U>`
-    fn into_once(self) -> BoxBiConsumerOnce<T, U>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-        U: 'static,
-    {
-        BoxBiConsumerOnce::new(move |t, u| self.accept(t, u))
     }
 
     /// Convert to BiConsumerOnce without consuming self
