@@ -16,8 +16,8 @@
 //!
 //! Haixing Hu
 
-pub(crate) mod constants;
 mod box_predicate_methods;
+pub(crate) mod constants;
 mod predicate_clone;
 mod predicate_common_methods;
 mod predicate_debug_display;
