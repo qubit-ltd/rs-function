@@ -850,6 +850,7 @@ impl_box_conditional_function!(
     StatefulFunction
 );
 
+
 // Use macro to generate conditional function debug and display implementations
 impl_conditional_function_debug_display!(BoxConditionalStatefulFunction<T, R>);
 
@@ -904,6 +905,7 @@ impl_shared_conditional_function!(
     StatefulFunction,
     'static
 );
+
 
 // Use macro to generate conditional function clone implementations
 impl_conditional_function_clone!(RcConditionalStatefulFunction<T, R>);
@@ -963,6 +965,7 @@ impl_shared_conditional_function!(
     StatefulFunction,
     Send + Sync + 'static
 );
+
 
 // Use macro to generate conditional function clone implementations
 impl_conditional_function_clone!(ArcConditionalStatefulFunction<T, R>);
