@@ -40,6 +40,7 @@ use crate::transformers::transformer_once::{
     BoxTransformerOnce,
     TransformerOnce,
 };
+use crate::transformers::macros::impl_transformer_common_methods;
 
 // ============================================================================
 // Core Trait
@@ -323,6 +324,7 @@ pub trait StatefulTransformer<T, R> {
 /// Haixing Hu
 pub struct BoxStatefulTransformer<T, R> {
     function: Box<dyn FnMut(T) -> R>,
+    name: Option<String>,
 }
 
 impl<T, R> BoxStatefulTransformer<T, R>
@@ -330,33 +332,11 @@ where
     T: 'static,
     R: 'static,
 {
-    /// Creates a new BoxStatefulTransformer
-    ///
-    /// # Parameters
-    ///
-    /// * `f` - The closure or function to wrap
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{BoxStatefulTransformer, StatefulTransformer};
-    ///
-    /// let mut counter = 0;
-    /// let mut transformer = BoxStatefulTransformer::new(move |x: i32| {
-    ///     counter += 1;
-    ///     x + counter
-    /// });
-    /// assert_eq!(transformer.apply(10), 11);
-    /// assert_eq!(transformer.apply(10), 12);
-    /// ```
-    pub fn new<F>(f: F) -> Self
-    where
-        F: FnMut(T) -> R + 'static,
-    {
-        BoxStatefulTransformer {
-            function: Box::new(f),
-        }
-    }
+    impl_transformer_common_methods!(
+        BoxStatefulTransformer<T, R>,
+        (FnMut(T) -> R + 'static),
+        |f| Box::new(f)
+    );
 
     // BoxStatefulTransformer is intentionally not given a `to_*` specialization here
     // because the boxed `FnMut` is not clonable and we cannot produce a
@@ -364,20 +344,6 @@ where
     // requiring `Clone` on the inner function. Consumers should use the
     // blanket `StatefulTransformer::to_*` defaults when their transformer type implements
     // `Clone`.
-
-    /// Creates an identity transformer
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{BoxStatefulTransformer, StatefulTransformer};
-    ///
-    /// let mut identity = BoxStatefulTransformer::<i32, i32>::identity();
-    /// assert_eq!(identity.apply(42), 42);
-    /// ```
-    pub fn identity() -> BoxStatefulTransformer<T, T> {
-        BoxStatefulTransformer::new(|x| x)
-    }
 
     /// Chain composition - applies self first, then after
     ///
@@ -754,6 +720,7 @@ where
 /// Haixing Hu
 pub struct ArcStatefulTransformer<T, R> {
     function: Arc<Mutex<dyn FnMut(T) -> R + Send>>,
+    name: Option<String>,
 }
 
 impl<T, R> ArcStatefulTransformer<T, R>
@@ -761,47 +728,11 @@ where
     T: Send + 'static,
     R: Send + 'static,
 {
-    /// Creates a new ArcStatefulTransformer
-    ///
-    /// # Parameters
-    ///
-    /// * `f` - The closure or function to wrap (must be Send)
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{ArcStatefulTransformer, StatefulTransformer};
-    ///
-    /// let mut counter = 0;
-    /// let mut transformer = ArcStatefulTransformer::new(move |x: i32| {
-    ///     counter += 1;
-    ///     x + counter
-    /// });
-    /// assert_eq!(transformer.apply(10), 11);
-    /// assert_eq!(transformer.apply(10), 12);
-    /// ```
-    pub fn new<F>(f: F) -> Self
-    where
-        F: FnMut(T) -> R + Send + 'static,
-    {
-        ArcStatefulTransformer {
-            function: Arc::new(Mutex::new(f)),
-        }
-    }
-
-    /// Creates an identity transformer
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{ArcStatefulTransformer, StatefulTransformer};
-    ///
-    /// let mut identity = ArcStatefulTransformer::<i32, i32>::identity();
-    /// assert_eq!(identity.apply(42), 42);
-    /// ```
-    pub fn identity() -> ArcStatefulTransformer<T, T> {
-        ArcStatefulTransformer::new(|x| x)
-    }
+    impl_transformer_common_methods!(
+        ArcStatefulTransformer<T, R>,
+        (FnMut(T) -> R + Send + 'static),
+        |f| Arc::new(Mutex::new(f))
+    );
 
     /// Chain composition - applies self first, then after
     ///
@@ -1042,6 +973,7 @@ impl<T, R> Clone for ArcStatefulTransformer<T, R> {
     fn clone(&self) -> Self {
         Self {
             function: self.function.clone(),
+            name: self.name.clone(),
         }
     }
 }
@@ -1239,6 +1171,7 @@ impl<T, R> Clone for ArcConditionalStatefulTransformer<T, R> {
 /// Haixing Hu
 pub struct RcStatefulTransformer<T, R> {
     function: Rc<RefCell<dyn FnMut(T) -> R>>,
+    name: Option<String>,
 }
 
 impl<T, R> RcStatefulTransformer<T, R>
@@ -1246,47 +1179,11 @@ where
     T: 'static,
     R: 'static,
 {
-    /// Creates a new RcStatefulTransformer
-    ///
-    /// # Parameters
-    ///
-    /// * `f` - The closure or function to wrap
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{RcStatefulTransformer, StatefulTransformer};
-    ///
-    /// let mut counter = 0;
-    /// let mut transformer = RcStatefulTransformer::new(move |x: i32| {
-    ///     counter += 1;
-    ///     x + counter
-    /// });
-    /// assert_eq!(transformer.apply(10), 11);
-    /// assert_eq!(transformer.apply(10), 12);
-    /// ```
-    pub fn new<F>(f: F) -> Self
-    where
-        F: FnMut(T) -> R + 'static,
-    {
-        RcStatefulTransformer {
-            function: Rc::new(RefCell::new(f)),
-        }
-    }
-
-    /// Creates an identity transformer
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{RcStatefulTransformer, StatefulTransformer};
-    ///
-    /// let mut identity = RcStatefulTransformer::<i32, i32>::identity();
-    /// assert_eq!(identity.apply(42), 42);
-    /// ```
-    pub fn identity() -> RcStatefulTransformer<T, T> {
-        RcStatefulTransformer::new(|x| x)
-    }
+    impl_transformer_common_methods!(
+        RcStatefulTransformer<T, R>,
+        (FnMut(T) -> R + 'static),
+        |f| Rc::new(RefCell::new(f))
+    );
 
     /// Chain composition - applies self first, then after
     ///
@@ -1519,6 +1416,7 @@ impl<T, R> Clone for RcStatefulTransformer<T, R> {
     fn clone(&self) -> Self {
         Self {
             function: self.function.clone(),
+            name: self.name.clone(),
         }
     }
 }
@@ -1668,6 +1566,7 @@ where
                     else_trans.apply(t)
                 }
             })),
+            name: None,
         }
     }
 }

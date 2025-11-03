@@ -40,6 +40,7 @@ use crate::transformers::bi_transformer_once::{
     BiTransformerOnce,
     BoxBiTransformerOnce,
 };
+use crate::transformers::macros::impl_transformer_common_methods;
 use crate::transformers::stateful_transformer::StatefulTransformer;
 
 // ============================================================================
@@ -251,6 +252,7 @@ pub trait StatefulBiTransformer<T, U, R> {
 /// Haixing Hu
 pub struct BoxStatefulBiTransformer<T, U, R> {
     function: Box<dyn FnMut(T, U) -> R>,
+    name: Option<String>,
 }
 
 impl<T, U, R> BoxStatefulBiTransformer<T, U, R>
@@ -259,28 +261,11 @@ where
     U: 'static,
     R: 'static,
 {
-    /// Creates a new BoxStatefulBiTransformer
-    ///
-    /// # Parameters
-    ///
-    /// * `f` - The closure or function to wrap
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{BoxStatefulBiTransformer, StatefulBiTransformer};
-    ///
-    /// let add = BoxStatefulBiTransformer::new(|x: i32, y: i32| x + y);
-    /// assert_eq!(add.apply(20, 22), 42);
-    /// ```
-    pub fn new<F>(f: F) -> Self
-    where
-        F: FnMut(T, U) -> R + 'static,
-    {
-        BoxStatefulBiTransformer {
-            function: Box::new(f),
-        }
-    }
+    impl_transformer_common_methods!(
+        BoxStatefulBiTransformer<T, U, R>,
+        (FnMut(T, U) -> R + 'static),
+        |f| Box::new(f)
+    );
 
     /// Chain composition - applies self first, then after
     ///
@@ -645,6 +630,7 @@ where
 /// Haixing Hu
 pub struct ArcStatefulBiTransformer<T, U, R> {
     function: Arc<Mutex<dyn FnMut(T, U) -> R + Send>>,
+    name: Option<String>,
 }
 
 impl<T, U, R> ArcStatefulBiTransformer<T, U, R>
@@ -653,28 +639,11 @@ where
     U: Send + 'static,
     R: 'static,
 {
-    /// Creates a new ArcStatefulBiTransformer
-    ///
-    /// # Parameters
-    ///
-    /// * `f` - The closure or function to wrap (must be Send + Sync)
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{ArcStatefulBiTransformer, StatefulBiTransformer};
-    ///
-    /// let add = ArcStatefulBiTransformer::new(|x: i32, y: i32| x + y);
-    /// assert_eq!(add.apply(20, 22), 42);
-    /// ```
-    pub fn new<F>(f: F) -> Self
-    where
-        F: FnMut(T, U) -> R + Send + 'static,
-    {
-        ArcStatefulBiTransformer {
-            function: Arc::new(Mutex::new(f)),
-        }
-    }
+    impl_transformer_common_methods!(
+        ArcStatefulBiTransformer<T, U, R>,
+        (FnMut(T, U) -> R + Send + 'static),
+        |f| Arc::new(Mutex::new(f))
+    );
 
     /// Chain composition - applies self first, then after
     ///
@@ -912,6 +881,7 @@ impl<T, U, R> Clone for ArcStatefulBiTransformer<T, U, R> {
     fn clone(&self) -> Self {
         Self {
             function: self.function.clone(),
+            name: self.name.clone(),
         }
     }
 }
@@ -1124,6 +1094,7 @@ impl<T, U, R> Clone for ArcConditionalStatefulBiTransformer<T, U, R> {
 /// Haixing Hu
 pub struct RcStatefulBiTransformer<T, U, R> {
     function: Rc<RefCell<dyn FnMut(T, U) -> R>>,
+    name: Option<String>,
 }
 
 impl<T, U, R> RcStatefulBiTransformer<T, U, R>
@@ -1132,28 +1103,11 @@ where
     U: 'static,
     R: 'static,
 {
-    /// Creates a new RcStatefulBiTransformer
-    ///
-    /// # Parameters
-    ///
-    /// * `f` - The closure or function to wrap
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{RcStatefulBiTransformer, StatefulBiTransformer};
-    ///
-    /// let add = RcStatefulBiTransformer::new(|x: i32, y: i32| x + y);
-    /// assert_eq!(add.apply(20, 22), 42);
-    /// ```
-    pub fn new<F>(f: F) -> Self
-    where
-        F: FnMut(T, U) -> R + 'static,
-    {
-        RcStatefulBiTransformer {
-            function: Rc::new(RefCell::new(f)),
-        }
-    }
+    impl_transformer_common_methods!(
+        RcStatefulBiTransformer<T, U, R>,
+        (FnMut(T, U) -> R + 'static),
+        |f| Rc::new(RefCell::new(f))
+    );
 
     /// Chain composition - applies self first, then after
     ///
@@ -1379,6 +1333,7 @@ impl<T, U, R> Clone for RcStatefulBiTransformer<T, U, R> {
     fn clone(&self) -> Self {
         Self {
             function: self.function.clone(),
+            name: self.name.clone(),
         }
     }
 }

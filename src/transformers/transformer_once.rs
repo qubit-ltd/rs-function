@@ -25,6 +25,7 @@ use crate::predicates::predicate::{
     BoxPredicate,
     Predicate,
 };
+use crate::transformers::macros::impl_transformer_common_methods;
 
 // ============================================================================
 // Core Trait
@@ -199,6 +200,7 @@ pub trait TransformerOnce<T, R> {
 /// Haixing Hu
 pub struct BoxTransformerOnce<T, R> {
     function: Box<dyn FnOnce(T) -> R>,
+    name: Option<String>,
 }
 
 impl<T, R> BoxTransformerOnce<T, R>
@@ -206,45 +208,11 @@ where
     T: 'static,
     R: 'static,
 {
-    /// Creates a new BoxTransformerOnce
-    ///
-    /// # Parameters
-    ///
-    /// * `f` - The closure or function to wrap
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{BoxTransformerOnce, TransformerOnce};
-    ///
-    /// let parse = BoxTransformerOnce::new(|s: String| {
-    ///     s.parse::<i32>().unwrap_or(0)
-    /// });
-    ///
-    /// assert_eq!(parse.apply_once("42".to_string()), 42);
-    /// ```
-    pub fn new<F>(f: F) -> Self
-    where
-        F: FnOnce(T) -> R + 'static,
-    {
-        BoxTransformerOnce {
-            function: Box::new(f),
-        }
-    }
-
-    /// Creates an identity transformer
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{BoxTransformerOnce, TransformerOnce};
-    ///
-    /// let identity = BoxTransformerOnce::<i32, i32>::identity();
-    /// assert_eq!(identity.apply_once(42), 42);
-    /// ```
-    pub fn identity() -> BoxTransformerOnce<T, T> {
-        BoxTransformerOnce::new(|x| x)
-    }
+    impl_transformer_common_methods!(
+        BoxTransformerOnce<T, R>,
+        (FnOnce(T) -> R + 'static),
+        |f| Box::new(f)
+    );
 
     /// Chain composition - applies self first, then after
     ///

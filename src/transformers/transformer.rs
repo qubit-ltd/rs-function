@@ -34,6 +34,7 @@ use crate::predicates::predicate::{
     RcPredicate,
 };
 use crate::transformers::transformer_once::BoxTransformerOnce;
+use crate::transformers::macros::impl_transformer_common_methods;
 
 // ============================================================================
 // Core Trait
@@ -325,6 +326,7 @@ pub trait Transformer<T, R> {
 /// Haixing Hu
 pub struct BoxTransformer<T, R> {
     function: Box<dyn Fn(T) -> R>,
+    name: Option<String>,
 }
 
 impl<T, R> BoxTransformer<T, R>
@@ -332,42 +334,11 @@ where
     T: 'static,
     R: 'static,
 {
-    /// Creates a new BoxTransformer
-    ///
-    /// # Parameters
-    ///
-    /// * `f` - The closure or function to wrap
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{BoxTransformer, Transformer};
-    ///
-    /// let double = BoxTransformer::new(|x: i32| x * 2);
-    /// assert_eq!(double.apply(21), 42);
-    /// ```
-    pub fn new<F>(f: F) -> Self
-    where
-        F: Fn(T) -> R + 'static,
-    {
-        BoxTransformer {
-            function: Box::new(f),
-        }
-    }
-
-    /// Creates an identity transformer
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{BoxTransformer, Transformer};
-    ///
-    /// let identity = BoxTransformer::<i32, i32>::identity();
-    /// assert_eq!(identity.apply(42), 42);
-    /// ```
-    pub fn identity() -> BoxTransformer<T, T> {
-        BoxTransformer::new(|x| x)
-    }
+    impl_transformer_common_methods!(
+        BoxTransformer<T, R>,
+        (Fn(T) -> R + 'static),
+        |f| Box::new(f)
+    );
 
     /// Chain composition - applies self first, then after
     ///
@@ -612,6 +583,7 @@ impl<T, R> Transformer<T, R> for BoxTransformer<T, R> {
     {
         RcTransformer {
             function: Rc::from(self.function),
+            name: self.name.clone(),
         }
     }
 
@@ -802,6 +774,7 @@ where
 /// Haixing Hu
 pub struct ArcTransformer<T, R> {
     function: Arc<dyn Fn(T) -> R + Send + Sync>,
+    name: Option<String>,
 }
 
 impl<T, R> ArcTransformer<T, R>
@@ -809,42 +782,11 @@ where
     T: Send + Sync + 'static,
     R: 'static,
 {
-    /// Creates a new ArcTransformer
-    ///
-    /// # Parameters
-    ///
-    /// * `f` - The closure or function to wrap (must be Send + Sync)
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{ArcTransformer, Transformer};
-    ///
-    /// let double = ArcTransformer::new(|x: i32| x * 2);
-    /// assert_eq!(double.apply(21), 42);
-    /// ```
-    pub fn new<F>(f: F) -> Self
-    where
-        F: Fn(T) -> R + Send + Sync + 'static,
-    {
-        ArcTransformer {
-            function: Arc::new(f),
-        }
-    }
-
-    /// Creates an identity transformer
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{ArcTransformer, Transformer};
-    ///
-    /// let identity = ArcTransformer::<i32, i32>::identity();
-    /// assert_eq!(identity.apply(42), 42);
-    /// ```
-    pub fn identity() -> ArcTransformer<T, T> {
-        ArcTransformer::new(|x| x)
-    }
+    impl_transformer_common_methods!(
+        ArcTransformer<T, R>,
+        (Fn(T) -> R + Send + Sync + 'static),
+        |f| Arc::new(f)
+    );
 
     /// Chain composition - applies self first, then after
     ///
@@ -918,6 +860,7 @@ where
         let self_fn = self.function.clone();
         ArcTransformer {
             function: Arc::new(move |x: T| after.apply(self_fn(x))),
+            name: None,
         }
     }
 
@@ -990,6 +933,7 @@ where
         let self_fn = self.function.clone();
         ArcTransformer {
             function: Arc::new(move |x: S| self_fn(before.apply(x))),
+            name: None,
         }
     }
 
@@ -1158,6 +1102,7 @@ impl<T, R> Clone for ArcTransformer<T, R> {
     fn clone(&self) -> Self {
         ArcTransformer {
             function: Arc::clone(&self.function),
+            name: self.name.clone(),
         }
     }
 }
@@ -1441,6 +1386,7 @@ impl<T, R> Clone for ArcConditionalTransformer<T, R> {
 /// Haixing Hu
 pub struct RcTransformer<T, R> {
     function: Rc<dyn Fn(T) -> R>,
+    name: Option<String>,
 }
 
 impl<T, R> RcTransformer<T, R>
@@ -1448,42 +1394,11 @@ where
     T: 'static,
     R: 'static,
 {
-    /// Creates a new RcTransformer
-    ///
-    /// # Parameters
-    ///
-    /// * `f` - The closure or function to wrap
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{RcTransformer, Transformer};
-    ///
-    /// let double = RcTransformer::new(|x: i32| x * 2);
-    /// assert_eq!(double.apply(21), 42);
-    /// ```
-    pub fn new<F>(f: F) -> Self
-    where
-        F: Fn(T) -> R + 'static,
-    {
-        RcTransformer {
-            function: Rc::new(f),
-        }
-    }
-
-    /// Creates an identity transformer
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{RcTransformer, Transformer};
-    ///
-    /// let identity = RcTransformer::<i32, i32>::identity();
-    /// assert_eq!(identity.apply(42), 42);
-    /// ```
-    pub fn identity() -> RcTransformer<T, T> {
-        RcTransformer::new(|x| x)
-    }
+    impl_transformer_common_methods!(
+        RcTransformer<T, R>,
+        (Fn(T) -> R + 'static),
+        |f| Rc::new(f)
+    );
 
     /// Chain composition - applies self first, then after
     ///
@@ -1557,6 +1472,7 @@ where
         let self_fn = self.function.clone();
         RcTransformer {
             function: Rc::new(move |x: T| after.apply(self_fn(x))),
+            name: None,
         }
     }
 
@@ -1629,6 +1545,7 @@ where
         let self_clone = Rc::clone(&self.function);
         RcTransformer {
             function: Rc::new(move |x: S| self_clone(before.apply(x))),
+            name: None,
         }
     }
 
@@ -1793,6 +1710,7 @@ impl<T, R> Clone for RcTransformer<T, R> {
     fn clone(&self) -> Self {
         RcTransformer {
             function: Rc::clone(&self.function),
+            name: self.name.clone(),
         }
     }
 }

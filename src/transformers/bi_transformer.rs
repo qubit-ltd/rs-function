@@ -36,6 +36,7 @@ use crate::transformers::bi_transformer_once::{
     BiTransformerOnce,
     BoxBiTransformerOnce,
 };
+use crate::transformers::macros::impl_transformer_common_methods;
 
 // ============================================================================
 // Core Trait
@@ -242,6 +243,7 @@ pub trait BiTransformer<T, U, R> {
 /// Haixing Hu
 pub struct BoxBiTransformer<T, U, R> {
     function: Box<dyn Fn(T, U) -> R>,
+    name: Option<String>,
 }
 
 impl<T, U, R> BoxBiTransformer<T, U, R>
@@ -250,28 +252,11 @@ where
     U: 'static,
     R: 'static,
 {
-    /// Creates a new BoxBiTransformer
-    ///
-    /// # Parameters
-    ///
-    /// * `f` - The closure or function to wrap
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{BoxBiTransformer, BiTransformer};
-    ///
-    /// let add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
-    /// assert_eq!(add.apply(20, 22), 42);
-    /// ```
-    pub fn new<F>(f: F) -> Self
-    where
-        F: Fn(T, U) -> R + 'static,
-    {
-        BoxBiTransformer {
-            function: Box::new(f),
-        }
-    }
+    impl_transformer_common_methods!(
+        BoxBiTransformer<T, U, R>,
+        (Fn(T, U) -> R + 'static),
+        |f| Box::new(f)
+    );
 
     /// Chain composition - applies self first, then after
     ///
@@ -633,6 +618,7 @@ where
 /// Haixing Hu
 pub struct ArcBiTransformer<T, U, R> {
     function: Arc<dyn Fn(T, U) -> R + Send + Sync>,
+    name: Option<String>,
 }
 
 impl<T, U, R> ArcBiTransformer<T, U, R>
@@ -641,28 +627,11 @@ where
     U: Send + Sync + 'static,
     R: 'static,
 {
-    /// Creates a new ArcBiTransformer
-    ///
-    /// # Parameters
-    ///
-    /// * `f` - The closure or function to wrap (must be Send + Sync)
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{ArcBiTransformer, BiTransformer};
-    ///
-    /// let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
-    /// assert_eq!(add.apply(20, 22), 42);
-    /// ```
-    pub fn new<F>(f: F) -> Self
-    where
-        F: Fn(T, U) -> R + Send + Sync + 'static,
-    {
-        ArcBiTransformer {
-            function: Arc::new(f),
-        }
-    }
+    impl_transformer_common_methods!(
+        ArcBiTransformer<T, U, R>,
+        (Fn(T, U) -> R + Send + Sync + 'static),
+        |f| Arc::new(f)
+    );
 
     /// Chain composition - applies self first, then after
     ///
@@ -735,6 +704,7 @@ where
         let self_clone = Arc::clone(&self.function);
         ArcBiTransformer {
             function: Arc::new(move |t: T, u: U| after.apply(self_clone(t, u))),
+            name: None,
         }
     }
 
@@ -916,6 +886,7 @@ impl<T, U, R> Clone for ArcBiTransformer<T, U, R> {
     fn clone(&self) -> Self {
         ArcBiTransformer {
             function: Arc::clone(&self.function),
+            name: self.name.clone(),
         }
     }
 }
@@ -1114,6 +1085,7 @@ impl<T, U, R> Clone for ArcConditionalBiTransformer<T, U, R> {
 /// Haixing Hu
 pub struct RcBiTransformer<T, U, R> {
     function: Rc<dyn Fn(T, U) -> R>,
+    name: Option<String>,
 }
 
 impl<T, U, R> RcBiTransformer<T, U, R>
@@ -1122,28 +1094,11 @@ where
     U: 'static,
     R: 'static,
 {
-    /// Creates a new RcBiTransformer
-    ///
-    /// # Parameters
-    ///
-    /// * `f` - The closure or function to wrap
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{RcBiTransformer, BiTransformer};
-    ///
-    /// let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
-    /// assert_eq!(add.apply(20, 22), 42);
-    /// ```
-    pub fn new<F>(f: F) -> Self
-    where
-        F: Fn(T, U) -> R + 'static,
-    {
-        RcBiTransformer {
-            function: Rc::new(f),
-        }
-    }
+    impl_transformer_common_methods!(
+        RcBiTransformer<T, U, R>,
+        (Fn(T, U) -> R + 'static),
+        |f| Rc::new(f)
+    );
 
     /// Chain composition - applies self first, then after
     ///
@@ -1216,6 +1171,7 @@ where
         let self_clone = Rc::clone(&self.function);
         RcBiTransformer {
             function: Rc::new(move |t: T, u: U| after.apply(self_clone(t, u))),
+            name: None,
         }
     }
 
@@ -1383,6 +1339,7 @@ impl<T, U, R> Clone for RcBiTransformer<T, U, R> {
     fn clone(&self) -> Self {
         RcBiTransformer {
             function: Rc::clone(&self.function),
+            name: self.name.clone(),
         }
     }
 }

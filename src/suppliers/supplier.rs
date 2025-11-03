@@ -489,67 +489,18 @@ pub trait Supplier<T> {
 /// Haixing Hu
 pub struct BoxSupplier<T> {
     function: Box<dyn Fn() -> T>,
+    name: Option<String>,
 }
 
 impl<T> BoxSupplier<T>
 where
     T: 'static,
 {
-    /// Creates a new `BoxSupplier`.
-    ///
-    /// # Parameters
-    ///
-    /// * `f` - The closure to wrap
-    ///
-    /// # Returns
-    ///
-    /// A new `BoxSupplier<T>` instance
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{BoxSupplier, Supplier};
-    ///
-    /// let supplier = BoxSupplier::new(|| 42);
-    /// assert_eq!(supplier.get(), 42);
-    /// ```
-    pub fn new<F>(f: F) -> Self
-    where
-        F: Fn() -> T + 'static,
-    {
-        BoxSupplier {
-            function: Box::new(f),
-        }
-    }
-
-    /// Creates a constant supplier.
-    ///
-    /// Returns a supplier that always produces the same value (via
-    /// cloning).
-    ///
-    /// # Parameters
-    ///
-    /// * `value` - The constant value to return
-    ///
-    /// # Returns
-    ///
-    /// A constant supplier
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{BoxSupplier, Supplier};
-    ///
-    /// let constant = BoxSupplier::constant(42);
-    /// assert_eq!(constant.get(), 42);
-    /// assert_eq!(constant.get(), 42);
-    /// ```
-    pub fn constant(value: T) -> Self
-    where
-        T: Clone + 'static,
-    {
-        BoxSupplier::new(move || value.clone())
-    }
+    impl_supplier_common_methods!(
+        BoxSupplier<T>,
+        (Fn() -> T + 'static),
+        |f| Box::new(f)
+    );
 
     /// Maps the output using a transformation function.
     ///

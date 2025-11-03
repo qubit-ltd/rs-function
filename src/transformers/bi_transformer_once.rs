@@ -25,6 +25,7 @@ use crate::predicates::bi_predicate::{
     BiPredicate,
     BoxBiPredicate,
 };
+use crate::transformers::macros::impl_transformer_common_methods;
 
 // ============================================================================
 // Core Trait
@@ -173,6 +174,7 @@ pub trait BiTransformerOnce<T, U, R> {
 /// Haixing Hu
 pub struct BoxBiTransformerOnce<T, U, R> {
     function: Box<dyn FnOnce(T, U) -> R>,
+    name: Option<String>,
 }
 
 impl<T, U, R> BoxBiTransformerOnce<T, U, R>
@@ -181,28 +183,11 @@ where
     U: 'static,
     R: 'static,
 {
-    /// Creates a new BoxBiTransformerOnce
-    ///
-    /// # Parameters
-    ///
-    /// * `f` - The closure or function to wrap
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{BoxBiTransformerOnce, BiTransformerOnce};
-    ///
-    /// let add = BoxBiTransformerOnce::new(|x: i32, y: i32| x + y);
-    /// assert_eq!(add.apply_once(20, 22), 42);
-    /// ```
-    pub fn new<F>(f: F) -> Self
-    where
-        F: FnOnce(T, U) -> R + 'static,
-    {
-        BoxBiTransformerOnce {
-            function: Box::new(f),
-        }
-    }
+    impl_transformer_common_methods!(
+        BoxBiTransformerOnce<T, U, R>,
+        (FnOnce(T, U) -> R + 'static),
+        |f| Box::new(f)
+    );
 
     /// Chain composition - applies self first, then after
     ///
