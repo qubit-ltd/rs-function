@@ -1580,3 +1580,148 @@ mod test_conditional_mutator_debug_display {
         assert!(display_str.contains("ArcConditionalMutator"));
     }
 }
+
+// ============================================================================
+// Name Preservation Tests for into_xxx and to_xxx Methods
+// ============================================================================
+
+#[test]
+fn test_rc_mutator_into_box_preserves_name() {
+    // Test that RcMutator::into_box preserves the name
+    let original = RcMutator::new_with_name("test_rc_mutator", |x: &mut i32| *x *= 2);
+    assert_eq!(original.name(), Some("test_rc_mutator"));
+    
+    let boxed = original.into_box();
+    assert_eq!(boxed.name(), Some("test_rc_mutator"));
+    
+    let mut value = 21;
+    boxed.apply(&mut value);
+    assert_eq!(value, 42);
+}
+
+#[test]
+fn test_arc_mutator_into_box_preserves_name() {
+    // Test that ArcMutator::into_box preserves the name
+    let original = ArcMutator::new_with_name("test_arc_mutator", |x: &mut i32| *x *= 2);
+    assert_eq!(original.name(), Some("test_arc_mutator"));
+    
+    let boxed = original.into_box();
+    assert_eq!(boxed.name(), Some("test_arc_mutator"));
+    
+    let mut value = 21;
+    boxed.apply(&mut value);
+    assert_eq!(value, 42);
+}
+
+#[test]
+fn test_arc_mutator_into_rc_preserves_name() {
+    // Test that ArcMutator::into_rc preserves the name
+    let original = ArcMutator::new_with_name("test_arc_mutator", |x: &mut i32| *x *= 2);
+    assert_eq!(original.name(), Some("test_arc_mutator"));
+    
+    let rc = original.into_rc();
+    assert_eq!(rc.name(), Some("test_arc_mutator"));
+    
+    let mut value = 21;
+    rc.apply(&mut value);
+    assert_eq!(value, 42);
+}
+
+#[test]
+fn test_rc_mutator_to_box_preserves_name() {
+    // Test that RcMutator::to_box preserves the name
+    let original = RcMutator::new_with_name("test_rc_mutator", |x: &mut i32| *x *= 2);
+    assert_eq!(original.name(), Some("test_rc_mutator"));
+    
+    let boxed = original.to_box();
+    assert_eq!(boxed.name(), Some("test_rc_mutator"));
+    
+    let mut value = 21;
+    boxed.apply(&mut value);
+    assert_eq!(value, 42);
+
+    // Original should still be usable
+    let mut value2 = 10;
+    original.apply(&mut value2);
+    assert_eq!(value2, 20);
+}
+
+#[test]
+fn test_arc_mutator_to_box_preserves_name() {
+    // Test that ArcMutator::to_box preserves the name
+    let original = ArcMutator::new_with_name("test_arc_mutator", |x: &mut i32| *x *= 2);
+    assert_eq!(original.name(), Some("test_arc_mutator"));
+    
+    let boxed = original.to_box();
+    assert_eq!(boxed.name(), Some("test_arc_mutator"));
+    
+    let mut value = 21;
+    boxed.apply(&mut value);
+    assert_eq!(value, 42);
+
+    // Original should still be usable
+    let mut value2 = 10;
+    original.apply(&mut value2);
+    assert_eq!(value2, 20);
+}
+
+#[test]
+fn test_arc_mutator_to_rc_preserves_name() {
+    // Test that ArcMutator::to_rc preserves the name
+    let original = ArcMutator::new_with_name("test_arc_mutator", |x: &mut i32| *x *= 2);
+    assert_eq!(original.name(), Some("test_arc_mutator"));
+    
+    let rc = original.to_rc();
+    assert_eq!(rc.name(), Some("test_arc_mutator"));
+    
+    let mut value = 21;
+    rc.apply(&mut value);
+    assert_eq!(value, 42);
+
+    // Original should still be usable
+    let mut value2 = 10;
+    original.apply(&mut value2);
+    assert_eq!(value2, 20);
+}
+
+#[test]
+fn test_mutator_conversions_without_name() {
+    // Test that conversions work correctly even when there's no name
+    let original = RcMutator::new(|x: &mut i32| *x *= 2);
+    assert_eq!(original.name(), None);
+    
+    let boxed = original.into_box();
+    assert_eq!(boxed.name(), None);
+    
+    let mut value = 21;
+    boxed.apply(&mut value);
+    assert_eq!(value, 42);
+}
+
+#[test]
+fn test_multiple_mutator_conversions_preserve_name() {
+    // Test that multiple conversions preserve the name correctly
+    let original = ArcMutator::new_with_name("original_mutator", |x: &mut i32| *x *= 2);
+    assert_eq!(original.name(), Some("original_mutator"));
+    
+    // Arc -> Rc
+    let rc = original.to_rc();
+    assert_eq!(rc.name(), Some("original_mutator"));
+    
+    let mut value1 = 5;
+    rc.apply(&mut value1);
+    assert_eq!(value1, 10);
+    
+    // Rc -> Box
+    let boxed = rc.to_box();
+    assert_eq!(boxed.name(), Some("original_mutator"));
+    
+    let mut value2 = 3;
+    boxed.apply(&mut value2);
+    assert_eq!(value2, 6);
+    
+    // Original Arc should still work
+    let mut value3 = 7;
+    original.apply(&mut value3);
+    assert_eq!(value3, 14);
+}
