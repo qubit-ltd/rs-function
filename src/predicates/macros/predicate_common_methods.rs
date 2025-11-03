@@ -58,12 +58,12 @@
 //! Haixing Hu
 
 /// Generates common Predicate methods (new, new_with_name, name,
-/// set_name, always_true)
+/// set_name, always_true, always_false)
 ///
 /// This macro should be used inside an existing impl block for the target
 /// struct. It generates individual methods but does not create a complete
 /// impl block itself. Generates constructor methods, name management methods
-/// and always_true constructor for Predicate structs.
+/// and always_true/always_false constructors for Predicate structs.
 ///
 /// The macro automatically detects the number of generic parameters and
 /// generates the appropriate implementations for single-parameter or
@@ -74,7 +74,7 @@
 /// * `$struct_name<$generics>` - Struct name with generic parameters
 /// * `$fn_trait_with_bounds` - Closure trait with complete bounds
 ///   (e.g., `Fn(&T) -> bool + 'static`)
-/// * `$wrapper_expr` - Wrapper expression (uses `f` for the closure)
+/// * `$wrapper_ctor` - Wrapper constructor function (e.g., `Box::new`, `Rc::new`, `Arc::new`)
 ///
 /// # Usage
 ///
@@ -83,14 +83,14 @@
 /// impl_predicate_common_methods!(
 ///     BoxPredicate<T>,
 ///     (Fn(&T) -> bool + 'static),
-///     |f| Box::new(f)
+///     Box::new
 /// );
 ///
 /// // Two generic parameters - BiPredicate
 /// impl_predicate_common_methods!(
 ///     BoxBiPredicate<T, U>,
 ///     (Fn(&T, &U) -> bool + 'static),
-///     |f| Box::new(f)
+///     Box::new
 /// );
 /// ```
 ///
@@ -101,16 +101,17 @@
 /// * `name()` - Gets the name of the predicate
 /// * `set_name()` - Sets the name of the predicate
 /// * `always_true()` - Creates a predicate that always returns true
+/// * `always_false()` - Creates a predicate that always returns false
 macro_rules! impl_predicate_common_methods {
     // Internal rule: generates new and new_with_name methods
     // Parameters:
     //   $fn_trait_with_bounds - Function trait bounds
     //   $f - Closure parameter name
-    //   $wrapper_expr - Wrapper expression
+    //   $wrapper_ctor - Wrapper constructor function
     //   $type_desc - Type description for docs (e.g., "predicate" or "bi-predicate")
     (@new_methods
         ($($fn_trait_with_bounds:tt)+),
-        |$f:ident| $wrapper_expr:expr,
+        |$f:ident| $wrapper_ctor:path,
         $type_desc:literal
     ) => {
         #[doc = concat!("Creates a new ", $type_desc, ".")]
@@ -133,7 +134,7 @@ macro_rules! impl_predicate_common_methods {
             F: $($fn_trait_with_bounds)+,
         {
             Self {
-                function: $wrapper_expr,
+                function: $wrapper_ctor($f),
                 name: None,
             }
         }
@@ -160,7 +161,7 @@ macro_rules! impl_predicate_common_methods {
             F: $($fn_trait_with_bounds)+,
         {
             Self {
-                function: $wrapper_expr,
+                function: $wrapper_ctor($f),
                 name: Some(name.to_string()),
             }
         }
@@ -191,11 +192,15 @@ macro_rules! impl_predicate_common_methods {
     (
         $struct_name:ident < $t:ident >,
         ($($fn_trait_with_bounds:tt)+),
-        |$f:ident| $wrapper_expr:expr
+        $wrapper_ctor:path
     ) => {
+        // Constants for always_true/always_false methods
+        const ALWAYS_TRUE_NAME: &str = "always_true";
+        const ALWAYS_FALSE_NAME: &str = "always_false";
+
         impl_predicate_common_methods!(@new_methods
             ($($fn_trait_with_bounds)+),
-            |$f| $wrapper_expr,
+            |f| $wrapper_ctor,
             "predicate"
         );
 
@@ -208,7 +213,7 @@ macro_rules! impl_predicate_common_methods {
         #[doc = concat!("A new `", stringify!($struct_name), "` that always returns `true`.")]
         pub fn always_true() -> Self {
             Self {
-                function: Box::new(|_| true),
+                function: $wrapper_ctor(|_| true),
                 name: Some(ALWAYS_TRUE_NAME.to_string()),
             }
         }
@@ -220,7 +225,7 @@ macro_rules! impl_predicate_common_methods {
         #[doc = concat!("A new `", stringify!($struct_name), "` that always returns `false`.")]
         pub fn always_false() -> Self {
             Self {
-                function: Box::new(|_| false),
+                function: $wrapper_ctor(|_| false),
                 name: Some(ALWAYS_FALSE_NAME.to_string()),
             }
         }
@@ -230,11 +235,15 @@ macro_rules! impl_predicate_common_methods {
     (
         $struct_name:ident < $t:ident, $u:ident >,
         ($($fn_trait_with_bounds:tt)+),
-        |$f:ident| $wrapper_expr:expr
+        $wrapper_ctor:path
     ) => {
+        // Constants for always_true/always_false methods
+        const ALWAYS_TRUE_NAME: &str = "always_true";
+        const ALWAYS_FALSE_NAME: &str = "always_false";
+
         impl_predicate_common_methods!(@new_methods
             ($($fn_trait_with_bounds)+),
-            |$f| $wrapper_expr,
+            |f| $wrapper_ctor,
             "bi-predicate"
         );
 
@@ -247,7 +256,7 @@ macro_rules! impl_predicate_common_methods {
         #[doc = concat!("A new `", stringify!($struct_name), "` that always returns `true`.")]
         pub fn always_true() -> Self {
             Self {
-                function: Box::new(|_, _| true),
+                function: $wrapper_ctor(|_, _| true),
                 name: Some(ALWAYS_TRUE_NAME.to_string()),
             }
         }
@@ -259,7 +268,7 @@ macro_rules! impl_predicate_common_methods {
         #[doc = concat!("A new `", stringify!($struct_name), "` that always returns `false`.")]
         pub fn always_false() -> Self {
             Self {
-                function: Box::new(|_, _| false),
+                function: $wrapper_ctor(|_, _| false),
                 name: Some(ALWAYS_FALSE_NAME.to_string()),
             }
         }
