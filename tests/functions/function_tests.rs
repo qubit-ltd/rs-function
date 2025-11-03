@@ -338,7 +338,6 @@ fn test_arc_function_and_then_with_clone() {
     assert_eq!(to_string.apply(&5), "5");
 }
 
-
 // ============================================================================
 // ArcFunction Tests - Conditional Execution
 // ============================================================================
@@ -532,7 +531,6 @@ fn test_rc_function_and_then_with_clone() {
     assert_eq!(to_string.apply(&5), "5");
 }
 
-
 // ============================================================================
 // RcFunction Tests - Conditional Execution
 // ============================================================================
@@ -714,7 +712,6 @@ fn test_fn_function_ops_and_then() {
     let composed = double.and_then(to_string);
     assert_eq!(composed.apply(&21), "42");
 }
-
 
 #[test]
 fn test_fn_function_ops_when() {
@@ -1084,4 +1081,3 @@ fn test_rc_conditional_function_clone_multiple() {
     assert_eq!(result3.apply(&5), 5);
     assert_eq!(result4.apply(&5), 5);
 }
-

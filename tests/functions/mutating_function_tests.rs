@@ -89,18 +89,13 @@ mod test_box_mutating_function {
             *x += 1;
             *x
         })
-        .and_then(|x: &i32| {
-            *x * 2
-        })
-        .and_then(|x: &i32| {
-            *x - 5
-        });
+        .and_then(|x: &i32| *x * 2)
+        .and_then(|x: &i32| *x - 5);
 
         let mut value = 10;
         assert_eq!(func.apply(&mut value), 17); // ((10 + 1) * 2) - 5
         assert_eq!(value, 11); // Input only modified by first function
     }
-
 
     #[test]
     fn test_identity() {
@@ -196,7 +191,6 @@ mod test_rc_mutating_function {
         let mut value2 = 3;
         assert_eq!(clone.apply(&mut value2), 6);
     }
-
 
     #[test]
     fn test_identity() {
@@ -360,7 +354,6 @@ mod test_arc_mutating_function {
         assert_eq!(result, 10);
     }
 
-
     #[test]
     fn test_identity() {
         let identity = ArcMutatingFunction::<i32, i32>::identity();
@@ -523,9 +516,7 @@ mod test_closure {
             *x *= 2;
             *x
         })
-        .and_then(|x: &i32| {
-            *x + 10
-        });
+        .and_then(|x: &i32| *x + 10);
 
         let mut value = 5;
         assert_eq!(chained.apply(&mut value), 20);
@@ -826,7 +817,8 @@ fn test_rc_mutating_function_debug_display() {
     assert_eq!(display_str, "RcMutatingFunction");
 
     // Test Debug and Display for RcMutatingFunction with name
-    let named_double = RcMutatingFunction::new_with_name("rc_mutating_double", |x: &mut i32| *x * 2);
+    let named_double =
+        RcMutatingFunction::new_with_name("rc_mutating_double", |x: &mut i32| *x * 2);
     let named_debug_str = format!("{:?}", named_double);
     assert!(named_debug_str.contains("RcMutatingFunction"));
     assert!(named_debug_str.contains("name"));
@@ -849,14 +841,18 @@ fn test_arc_mutating_function_debug_display() {
     assert_eq!(display_str, "ArcMutatingFunction");
 
     // Test Debug and Display for ArcMutatingFunction with name
-    let named_double = ArcMutatingFunction::new_with_name("arc_mutating_double", |x: &mut i32| *x * 2);
+    let named_double =
+        ArcMutatingFunction::new_with_name("arc_mutating_double", |x: &mut i32| *x * 2);
     let named_debug_str = format!("{:?}", named_double);
     assert!(named_debug_str.contains("ArcMutatingFunction"));
     assert!(named_debug_str.contains("name"));
     assert!(named_debug_str.contains("function"));
 
     let named_display_str = format!("{}", named_double);
-    assert_eq!(named_display_str, "ArcMutatingFunction(arc_mutating_double)");
+    assert_eq!(
+        named_display_str,
+        "ArcMutatingFunction(arc_mutating_double)"
+    );
 }
 
 // ============================================================================
@@ -1033,7 +1029,8 @@ fn test_arc_conditional_mutating_function_debug_display() {
     assert!(display_str.ends_with(")"));
 
     // Test Debug and Display for ArcConditionalMutatingFunction with name
-    let triple = ArcMutatingFunction::new_with_name("arc_triple_mutating_func", |x: &mut i32| *x * 3);
+    let triple =
+        ArcMutatingFunction::new_with_name("arc_triple_mutating_func", |x: &mut i32| *x * 3);
     let named_conditional = triple.when(|x: &i32| *x % 2 == 0);
 
     let named_debug_str = format!("{:?}", named_conditional);

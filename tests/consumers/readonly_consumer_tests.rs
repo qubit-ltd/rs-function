@@ -690,6 +690,76 @@ mod name_tests {
         consumer.accept(&1);
         assert_eq!(consumer.name(), Some("test_consumer"));
     }
+
+    #[test]
+    fn test_box_consumer_into_rc_preserves_name() {
+        let mut consumer = BoxConsumer::new(|_x: &i32| {});
+        consumer.set_name("original_consumer");
+        assert_eq!(consumer.name(), Some("original_consumer"));
+
+        let converted = consumer.into_rc();
+        assert_eq!(converted.name(), Some("original_consumer"));
+    }
+
+    #[test]
+    fn test_rc_consumer_into_box_preserves_name() {
+        let mut consumer = RcConsumer::new(|_x: &i32| {});
+        consumer.set_name("original_consumer");
+        assert_eq!(consumer.name(), Some("original_consumer"));
+
+        let converted = consumer.into_box();
+        assert_eq!(converted.name(), Some("original_consumer"));
+    }
+
+    #[test]
+    fn test_arc_consumer_into_box_preserves_name() {
+        let mut consumer = ArcConsumer::new(|_x: &i32| {});
+        consumer.set_name("original_consumer");
+        assert_eq!(consumer.name(), Some("original_consumer"));
+
+        let converted = consumer.into_box();
+        assert_eq!(converted.name(), Some("original_consumer"));
+    }
+
+    #[test]
+    fn test_arc_consumer_into_rc_preserves_name() {
+        let mut consumer = ArcConsumer::new(|_x: &i32| {});
+        consumer.set_name("original_consumer");
+        assert_eq!(consumer.name(), Some("original_consumer"));
+
+        let converted = consumer.into_rc();
+        assert_eq!(converted.name(), Some("original_consumer"));
+    }
+
+    #[test]
+    fn test_rc_consumer_to_box_preserves_name() {
+        let mut consumer = RcConsumer::new(|_x: &i32| {});
+        consumer.set_name("original_consumer");
+        assert_eq!(consumer.name(), Some("original_consumer"));
+
+        let converted = consumer.to_box();
+        assert_eq!(converted.name(), Some("original_consumer"));
+    }
+
+    #[test]
+    fn test_arc_consumer_to_box_preserves_name() {
+        let mut consumer = ArcConsumer::new(|_x: &i32| {});
+        consumer.set_name("original_consumer");
+        assert_eq!(consumer.name(), Some("original_consumer"));
+
+        let converted = consumer.to_box();
+        assert_eq!(converted.name(), Some("original_consumer"));
+    }
+
+    #[test]
+    fn test_arc_consumer_to_rc_preserves_name() {
+        let mut consumer = ArcConsumer::new(|_x: &i32| {});
+        consumer.set_name("original_consumer");
+        assert_eq!(consumer.name(), Some("original_consumer"));
+
+        let converted = consumer.to_rc();
+        assert_eq!(converted.name(), Some("original_consumer"));
+    }
 }
 
 // ============================================================================

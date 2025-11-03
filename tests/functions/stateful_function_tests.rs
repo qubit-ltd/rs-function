@@ -219,7 +219,6 @@ fn test_box_stateful_function_and_then() {
     assert_eq!(composed.apply(&10), 24); // (10 + 2) * 2
 }
 
-
 // ============================================================================
 // BoxStatefulFunction Tests - Conditional Execution
 // ============================================================================
@@ -378,7 +377,6 @@ fn test_arc_stateful_function_and_then() {
     assert_eq!(composed.apply(&10), 11); // (10 + 1) * 1
     assert_eq!(composed.apply(&10), 24); // (10 + 2) * 2
 }
-
 
 // ============================================================================
 // ArcStatefulFunction Tests - Conditional Execution
@@ -621,7 +619,6 @@ fn test_rc_stateful_function_and_then() {
     assert_eq!(composed.apply(&10), 11); // (10 + 1) * 1
     assert_eq!(composed.apply(&10), 24); // (10 + 2) * 2
 }
-
 
 // ============================================================================
 // RcStatefulFunction Tests - Conditional Execution
@@ -869,7 +866,6 @@ fn test_fn_stateful_function_ops_and_then() {
     let mut composed = func1.and_then(func2);
     assert_eq!(composed.apply(&10), 11);
 }
-
 
 #[test]
 fn test_fn_stateful_function_ops_when() {
@@ -1173,10 +1169,11 @@ fn test_rc_stateful_function_debug_display() {
 
     // Test Debug and Display for RcStatefulFunction with name
     let mut counter2 = 0;
-    let mut named_double = RcStatefulFunction::new_with_name("rc_stateful_double", move |x: &i32| {
-        counter2 += 1;
-        x * 2
-    });
+    let mut named_double =
+        RcStatefulFunction::new_with_name("rc_stateful_double", move |x: &i32| {
+            counter2 += 1;
+            x * 2
+        });
     // Call apply to use the counter2 variable
     let _result2 = named_double.apply(&3);
 
@@ -1212,10 +1209,11 @@ fn test_arc_stateful_function_debug_display() {
 
     // Test Debug and Display for ArcStatefulFunction with name
     let mut counter2 = 0;
-    let mut named_double = ArcStatefulFunction::new_with_name("arc_stateful_double", move |x: &i32| {
-        counter2 += 1;
-        x * 2
-    });
+    let mut named_double =
+        ArcStatefulFunction::new_with_name("arc_stateful_double", move |x: &i32| {
+            counter2 += 1;
+            x * 2
+        });
     // Call apply to use the counter2 variable
     let _result2 = named_double.apply(&3);
 
@@ -1225,7 +1223,10 @@ fn test_arc_stateful_function_debug_display() {
     assert!(named_debug_str.contains("function"));
 
     let named_display_str = format!("{}", named_double);
-    assert_eq!(named_display_str, "ArcStatefulFunction(arc_stateful_double)");
+    assert_eq!(
+        named_display_str,
+        "ArcStatefulFunction(arc_stateful_double)"
+    );
 }
 
 // ============================================================================
@@ -1392,10 +1393,11 @@ fn test_rc_conditional_stateful_function_debug_display() {
 
     // Test Debug and Display for RcConditionalStatefulFunction with name
     let mut counter2 = 0;
-    let mut named_double = RcStatefulFunction::new_with_name("rc_stateful_double", move |x: &i32| {
-        counter2 += 1;
-        x * 2
-    });
+    let mut named_double =
+        RcStatefulFunction::new_with_name("rc_stateful_double", move |x: &i32| {
+            counter2 += 1;
+            x * 2
+        });
     // Call apply to use the counter2 variable
     let _result2 = named_double.apply(&3);
 
@@ -1443,10 +1445,11 @@ fn test_arc_conditional_stateful_function_debug_display() {
 
     // Test Debug and Display for ArcConditionalStatefulFunction with name
     let mut counter2 = 0;
-    let mut named_double = ArcStatefulFunction::new_with_name("arc_stateful_double", move |x: &i32| {
-        counter2 += 1;
-        x * 2
-    });
+    let mut named_double =
+        ArcStatefulFunction::new_with_name("arc_stateful_double", move |x: &i32| {
+            counter2 += 1;
+            x * 2
+        });
     // Call apply to use the counter2 variable
     let _result2 = named_double.apply(&3);
 

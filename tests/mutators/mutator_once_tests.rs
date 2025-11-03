@@ -402,50 +402,53 @@ mod test_box_conditional_mutator_once_debug_display {
         let mutator = BoxMutatorOnce::new(move |x: &mut Vec<i32>| x.extend(data));
         let conditional = mutator.when(|x: &Vec<i32>| !x.is_empty());
 
-    let display_str = format!("{}", conditional);
-    assert!(display_str.contains("BoxConditionalMutatorOnce"));
-}
+        let display_str = format!("{}", conditional);
+        assert!(display_str.contains("BoxConditionalMutatorOnce"));
+    }
 
-#[test]
-fn test_box_mutator_once_new_with_name() {
-    let mutator = BoxMutatorOnce::new_with_name("test_mutator_once", |x: &mut i32| *x += 1);
-    assert_eq!(mutator.name(), Some("test_mutator_once"));
+    #[test]
+    fn test_box_mutator_once_new_with_name() {
+        let mutator = BoxMutatorOnce::new_with_name("test_mutator_once", |x: &mut i32| *x += 1);
+        assert_eq!(mutator.name(), Some("test_mutator_once"));
 
-    let mut value = 5;
-    mutator.apply(&mut value);
-    assert_eq!(value, 6);
-}
+        let mut value = 5;
+        mutator.apply(&mut value);
+        assert_eq!(value, 6);
+    }
 
-#[test]
-fn test_box_mutator_once_new_with_optional_name_some() {
-    let mutator = BoxMutatorOnce::new_with_optional_name(|x: &mut i32| *x += 1, Some("optional_once".to_string()));
-    assert_eq!(mutator.name(), Some("optional_once"));
+    #[test]
+    fn test_box_mutator_once_new_with_optional_name_some() {
+        let mutator = BoxMutatorOnce::new_with_optional_name(
+            |x: &mut i32| *x += 1,
+            Some("optional_once".to_string()),
+        );
+        assert_eq!(mutator.name(), Some("optional_once"));
 
-    let mut value = 5;
-    mutator.apply(&mut value);
-    assert_eq!(value, 6);
-}
+        let mut value = 5;
+        mutator.apply(&mut value);
+        assert_eq!(value, 6);
+    }
 
-#[test]
-fn test_box_mutator_once_new_with_optional_name_none() {
-    let mutator = BoxMutatorOnce::new_with_optional_name(|x: &mut i32| *x += 1, None);
-    assert_eq!(mutator.name(), None);
+    #[test]
+    fn test_box_mutator_once_new_with_optional_name_none() {
+        let mutator = BoxMutatorOnce::new_with_optional_name(|x: &mut i32| *x += 1, None);
+        assert_eq!(mutator.name(), None);
 
-    let mut value = 5;
-    mutator.apply(&mut value);
-    assert_eq!(value, 6);
-}
+        let mut value = 5;
+        mutator.apply(&mut value);
+        assert_eq!(value, 6);
+    }
 
-#[test]
-fn test_box_mutator_once_name_and_set_name() {
-    let mut mutator = BoxMutatorOnce::new(|x: &mut i32| *x += 1);
-    assert_eq!(mutator.name(), None);
+    #[test]
+    fn test_box_mutator_once_name_and_set_name() {
+        let mut mutator = BoxMutatorOnce::new(|x: &mut i32| *x += 1);
+        assert_eq!(mutator.name(), None);
 
-    mutator.set_name("set_name_once");
-    assert_eq!(mutator.name(), Some("set_name_once"));
+        mutator.set_name("set_name_once");
+        assert_eq!(mutator.name(), Some("set_name_once"));
 
-    let mut value = 5;
-    mutator.apply(&mut value);
-    assert_eq!(value, 6);
-}
+        let mut value = 5;
+        mutator.apply(&mut value);
+        assert_eq!(value, 6);
+    }
 }

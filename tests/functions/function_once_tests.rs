@@ -152,8 +152,6 @@ fn test_box_function_once_and_then_with_move() {
     assert_eq!(composed.apply(&input), vec![0, 1, 2, 3, 4]);
 }
 
-
-
 // ============================================================================
 // BoxFunctionOnce Tests - Conditional Execution
 // ============================================================================
@@ -377,7 +375,6 @@ fn test_fn_function_once_ops_and_then() {
     let composed = parse.and_then(double);
     assert_eq!(composed.apply(&String::from("21")), 42);
 }
-
 
 #[test]
 fn test_fn_function_once_ops_when() {

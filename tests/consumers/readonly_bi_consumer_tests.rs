@@ -778,6 +778,76 @@ mod name_tests {
         consumer.set_name("name2");
         assert_eq!(consumer.name(), Some("name2"));
     }
+
+    #[test]
+    fn test_box_bi_consumer_into_rc_preserves_name() {
+        let mut consumer = BoxBiConsumer::new(|_x: &i32, _y: &i32| {});
+        consumer.set_name("original_consumer");
+        assert_eq!(consumer.name(), Some("original_consumer"));
+
+        let converted = consumer.into_rc();
+        assert_eq!(converted.name(), Some("original_consumer"));
+    }
+
+    #[test]
+    fn test_rc_bi_consumer_into_box_preserves_name() {
+        let mut consumer = RcBiConsumer::new(|_x: &i32, _y: &i32| {});
+        consumer.set_name("original_consumer");
+        assert_eq!(consumer.name(), Some("original_consumer"));
+
+        let converted = consumer.into_box();
+        assert_eq!(converted.name(), Some("original_consumer"));
+    }
+
+    #[test]
+    fn test_arc_bi_consumer_into_box_preserves_name() {
+        let mut consumer = ArcBiConsumer::new(|_x: &i32, _y: &i32| {});
+        consumer.set_name("original_consumer");
+        assert_eq!(consumer.name(), Some("original_consumer"));
+
+        let converted = consumer.into_box();
+        assert_eq!(converted.name(), Some("original_consumer"));
+    }
+
+    #[test]
+    fn test_arc_bi_consumer_into_rc_preserves_name() {
+        let mut consumer = ArcBiConsumer::new(|_x: &i32, _y: &i32| {});
+        consumer.set_name("original_consumer");
+        assert_eq!(consumer.name(), Some("original_consumer"));
+
+        let converted = consumer.into_rc();
+        assert_eq!(converted.name(), Some("original_consumer"));
+    }
+
+    #[test]
+    fn test_rc_bi_consumer_to_box_preserves_name() {
+        let mut consumer = RcBiConsumer::new(|_x: &i32, _y: &i32| {});
+        consumer.set_name("original_consumer");
+        assert_eq!(consumer.name(), Some("original_consumer"));
+
+        let converted = consumer.to_box();
+        assert_eq!(converted.name(), Some("original_consumer"));
+    }
+
+    #[test]
+    fn test_arc_bi_consumer_to_box_preserves_name() {
+        let mut consumer = ArcBiConsumer::new(|_x: &i32, _y: &i32| {});
+        consumer.set_name("original_consumer");
+        assert_eq!(consumer.name(), Some("original_consumer"));
+
+        let converted = consumer.to_box();
+        assert_eq!(converted.name(), Some("original_consumer"));
+    }
+
+    #[test]
+    fn test_arc_bi_consumer_to_rc_preserves_name() {
+        let mut consumer = ArcBiConsumer::new(|_x: &i32, _y: &i32| {});
+        consumer.set_name("original_consumer");
+        assert_eq!(consumer.name(), Some("original_consumer"));
+
+        let converted = consumer.to_rc();
+        assert_eq!(converted.name(), Some("original_consumer"));
+    }
 }
 
 // ============================================================================
