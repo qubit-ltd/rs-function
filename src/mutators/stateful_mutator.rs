@@ -645,9 +645,11 @@ impl<T> BoxStatefulMutator<T>
 where
     T: 'static,
 {
-    impl_mutator_common_methods!(BoxStatefulMutator<T>, (FnMut(&mut T) + 'static), |f| {
-        Box::new(f)
-    });
+    impl_mutator_common_methods!(
+        BoxStatefulMutator<T>,
+        (FnMut(&mut T) + 'static),
+        |f| Box::new(f)
+    );
 
     // Generate box mutator methods (when, and_then, or_else, etc.)
     impl_box_mutator_methods!(
@@ -674,7 +676,10 @@ impl<T> StatefulMutator<T> for BoxStatefulMutator<T> {
         T: 'static,
     {
         let mut self_fn = self.function;
-        RcStatefulMutator::new(move |t| self_fn(t))
+        RcStatefulMutator::new_with_optional_name(
+            move |t| self_fn(t),
+            self.name
+        )
     }
 
     // do NOT override Mutator::into_arc() because BoxMutator is not Send + Sync
@@ -799,7 +804,10 @@ impl<T> StatefulMutator<T> for RcStatefulMutator<T> {
         T: 'static,
     {
         let self_fn = self.function.clone();
-        BoxStatefulMutator::new(move |t| self_fn.borrow_mut()(t))
+        BoxStatefulMutator::new_with_optional_name(
+            move |t| self_fn.borrow_mut()(t),
+            self.name.clone()
+        )
     }
 
     fn to_rc(&self) -> RcStatefulMutator<T>
@@ -905,14 +913,20 @@ impl<T> StatefulMutator<T> for ArcStatefulMutator<T> {
     where
         T: 'static,
     {
-        BoxStatefulMutator::new(move |t| self.function.lock().unwrap()(t))
+        BoxStatefulMutator::new_with_optional_name(
+            move |t| self.function.lock().unwrap()(t),
+            self.name
+        )
     }
 
     fn into_rc(self) -> RcStatefulMutator<T>
     where
         T: 'static,
     {
-        RcStatefulMutator::new(move |t| self.function.lock().unwrap()(t))
+        RcStatefulMutator::new_with_optional_name(
+            move |t| self.function.lock().unwrap()(t),
+            self.name
+        )
     }
 
     fn into_arc(self) -> ArcStatefulMutator<T>
@@ -936,7 +950,10 @@ impl<T> StatefulMutator<T> for ArcStatefulMutator<T> {
         T: 'static,
     {
         let self_fn = self.function.clone();
-        BoxStatefulMutator::new(move |t| self_fn.lock().unwrap()(t))
+        BoxStatefulMutator::new_with_optional_name(
+            move |t| self_fn.lock().unwrap()(t),
+            self.name.clone()
+        )
     }
 
     fn to_rc(&self) -> RcStatefulMutator<T>
@@ -945,7 +962,10 @@ impl<T> StatefulMutator<T> for ArcStatefulMutator<T> {
         T: 'static,
     {
         let self_fn = self.function.clone();
-        RcStatefulMutator::new(move |t| self_fn.lock().unwrap()(t))
+        RcStatefulMutator::new_with_optional_name(
+            move |t| self_fn.lock().unwrap()(t),
+            self.name.clone()
+        )
     }
 
     fn to_arc(&self) -> ArcStatefulMutator<T>
@@ -1224,7 +1244,11 @@ where
     }
 
     // Generates: into_box(), into_rc(), into_fn()
-    impl_conditional_mutator_conversions!(BoxStatefulMutator<T>, RcStatefulMutator, FnMut);
+    impl_conditional_mutator_conversions!(
+        BoxStatefulMutator<T>,
+        RcStatefulMutator,
+        FnMut
+    );
 }
 
 // Generate Debug and Display trait implementations for conditional mutator
@@ -1294,7 +1318,11 @@ where
     }
 
     // Generates: into_box(), into_rc(), into_fn()
-    impl_conditional_mutator_conversions!(BoxStatefulMutator<T>, RcStatefulMutator, FnMut);
+    impl_conditional_mutator_conversions!(
+        BoxStatefulMutator<T>,
+        RcStatefulMutator,
+        FnMut
+    );
 }
 
 // Generate Clone trait implementation for conditional mutator
@@ -1367,7 +1395,11 @@ where
     }
 
     // Generates: into_box(), into_rc(), into_fn()
-    impl_conditional_mutator_conversions!(BoxStatefulMutator<T>, RcStatefulMutator, FnMut);
+    impl_conditional_mutator_conversions!(
+        BoxStatefulMutator<T>,
+        RcStatefulMutator,
+        FnMut
+    );
 }
 
 // Generate Clone trait implementation for conditional mutator

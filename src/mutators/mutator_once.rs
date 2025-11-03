@@ -402,12 +402,18 @@ impl<T> BoxMutatorOnce<T>
 where
     T: 'static,
 {
-    impl_mutator_common_methods!(BoxMutatorOnce<T>, (FnOnce(&mut T) + 'static), |f| Box::new(
-        f
-    ));
+    impl_mutator_common_methods!(
+        BoxMutatorOnce<T>,
+        (FnOnce(&mut T) + 'static),
+        |f| Box::new(f)
+    );
 
     // Generate box mutator methods (when, and_then, or_else, etc.)
-    impl_box_mutator_methods!(BoxMutatorOnce<T>, BoxConditionalMutatorOnce, MutatorOnce);
+    impl_box_mutator_methods!(
+        BoxMutatorOnce<T>,
+        BoxConditionalMutatorOnce,
+        MutatorOnce
+    );
 }
 
 impl<T> MutatorOnce<T> for BoxMutatorOnce<T> {
