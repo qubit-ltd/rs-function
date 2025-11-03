@@ -208,11 +208,11 @@ macro_rules! impl_conditional_consumer_conversions {
         fn into_rc(self) -> $rc_type<$t, $u> {
             let pred = self.predicate.into_rc();
             let mut consumer = self.consumer.into_rc();
-            $rc_type::new(move |t, u| {
+            $rc_type::new_with_optional_name(move |t, u| {
                 if pred.test(t, u) {
                     consumer.accept(t, u);
                 }
-            })
+            }, None)
         }
 
         #[allow(unused_mut)]
