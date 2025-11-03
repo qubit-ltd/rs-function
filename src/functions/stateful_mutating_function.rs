@@ -643,7 +643,10 @@ impl<T, R> StatefulMutatingFunction<T, R> for BoxStatefulMutatingFunction<T, R> 
         T: 'static,
         R: 'static,
     {
-        RcStatefulMutatingFunction::new(move |t| (self.function)(t))
+        RcStatefulMutatingFunction::new_with_optional_name(
+            move |t| (self.function)(t),
+            self.name
+        )
     }
 
     // do NOT override StatefulMutatingFunction::into_arc() because
@@ -793,7 +796,10 @@ impl<T, R> StatefulMutatingFunction<T, R> for RcStatefulMutatingFunction<T, R> {
         R: 'static,
     {
         let self_fn = self.function.clone();
-        BoxStatefulMutatingFunction::new(move |t| (self_fn.borrow_mut())(t))
+        BoxStatefulMutatingFunction::new_with_optional_name(
+            move |t| (self_fn.borrow_mut())(t),
+            self.name.clone()
+        )
     }
 
     fn to_rc(&self) -> RcStatefulMutatingFunction<T, R>
@@ -916,7 +922,10 @@ impl<T, R> StatefulMutatingFunction<T, R> for ArcStatefulMutatingFunction<T, R> 
         T: 'static,
         R: 'static,
     {
-        BoxStatefulMutatingFunction::new(move |t| (self.function.lock().unwrap())(t))
+        BoxStatefulMutatingFunction::new_with_optional_name(
+            move |t| (self.function.lock().unwrap())(t),
+            self.name
+        )
     }
 
     fn into_rc(self) -> RcStatefulMutatingFunction<T, R>
@@ -924,7 +933,10 @@ impl<T, R> StatefulMutatingFunction<T, R> for ArcStatefulMutatingFunction<T, R> 
         T: 'static,
         R: 'static,
     {
-        RcStatefulMutatingFunction::new(move |t| (self.function.lock().unwrap())(t))
+        RcStatefulMutatingFunction::new_with_optional_name(
+            move |t| (self.function.lock().unwrap())(t),
+            self.name
+        )
     }
 
     fn into_arc(self) -> ArcStatefulMutatingFunction<T, R>
@@ -951,7 +963,10 @@ impl<T, R> StatefulMutatingFunction<T, R> for ArcStatefulMutatingFunction<T, R> 
         R: 'static,
     {
         let self_fn = self.function.clone();
-        BoxStatefulMutatingFunction::new(move |t| (self_fn.lock().unwrap())(t))
+        BoxStatefulMutatingFunction::new_with_optional_name(
+            move |t| (self_fn.lock().unwrap())(t),
+            self.name.clone()
+        )
     }
 
     fn to_rc(&self) -> RcStatefulMutatingFunction<T, R>
@@ -961,7 +976,10 @@ impl<T, R> StatefulMutatingFunction<T, R> for ArcStatefulMutatingFunction<T, R> 
         R: 'static,
     {
         let self_fn = self.function.clone();
-        RcStatefulMutatingFunction::new(move |t| (self_fn.lock().unwrap())(t))
+        RcStatefulMutatingFunction::new_with_optional_name(
+            move |t| (self_fn.lock().unwrap())(t),
+            self.name.clone()
+        )
     }
 
     fn to_arc(&self) -> ArcStatefulMutatingFunction<T, R>
