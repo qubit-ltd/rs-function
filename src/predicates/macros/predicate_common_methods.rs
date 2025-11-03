@@ -209,10 +209,7 @@ macro_rules! impl_predicate_common_methods {
         ///
         #[doc = concat!("A new `", stringify!($struct_name), "` that always returns `true`.")]
         pub fn always_true() -> Self {
-            Self {
-                function: $wrapper_ctor(|_| true),
-                name: Some(ALWAYS_TRUE_NAME.to_string()),
-            }
+            Self::new_with_name(ALWAYS_TRUE_NAME, |_| true)
         }
 
         /// Creates a predicate that always returns `false`.
@@ -221,10 +218,7 @@ macro_rules! impl_predicate_common_methods {
         ///
         #[doc = concat!("A new `", stringify!($struct_name), "` that always returns `false`.")]
         pub fn always_false() -> Self {
-            Self {
-                function: $wrapper_ctor(|_| false),
-                name: Some(ALWAYS_FALSE_NAME.to_string()),
-            }
+            Self::new_with_name(ALWAYS_FALSE_NAME, |_| false)
         }
     };
 
@@ -249,10 +243,7 @@ macro_rules! impl_predicate_common_methods {
         ///
         #[doc = concat!("A new `", stringify!($struct_name), "` that always returns `true`.")]
         pub fn always_true() -> Self {
-            Self {
-                function: $wrapper_ctor(|_, _| true),
-                name: Some(ALWAYS_TRUE_NAME.to_string()),
-            }
+            Self::new_with_name(ALWAYS_TRUE_NAME, |_, _| true)
         }
 
         /// Creates a bi-predicate that always returns `false`.
@@ -261,10 +252,7 @@ macro_rules! impl_predicate_common_methods {
         ///
         #[doc = concat!("A new `", stringify!($struct_name), "` that always returns `false`.")]
         pub fn always_false() -> Self {
-            Self {
-                function: $wrapper_ctor(|_, _| false),
-                name: Some(ALWAYS_FALSE_NAME.to_string()),
-            }
+            Self::new_with_name(ALWAYS_FALSE_NAME, |_, _| false)
         }
     };
 }
