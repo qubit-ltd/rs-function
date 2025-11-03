@@ -9,15 +9,15 @@
 
 //! # Predicate Constants
 //!
-//! 定义 Predicate 和 BiPredicate 使用的常量。
+//! Defines constants used by Predicate and BiPredicate.
 //!
-//! # 作者
+//! # Author
 //!
-//! 胡海星
+//! Huxing Hu
 
-/// `always_true` 方法使用的名称常量
+/// Name constant used by the `always_true` method
 pub const ALWAYS_TRUE_NAME: &str = "always_true";
 
-/// `always_false` 方法使用的名称常量
+/// Name constant used by the `always_false` method
 pub const ALWAYS_FALSE_NAME: &str = "always_false";
 
