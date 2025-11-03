@@ -6,14 +6,14 @@
  *    All rights reserved.
  *
  ******************************************************************************/
-//! # Transformer Macros Module
+// # Transformer Macros Module
 //!
-//! Provides declarative macros to simplify Transformer implementations and
-//! reduce code duplication.
+// Provides declarative macros to simplify Transformer implementations and
+// reduce code duplication.
 //!
-//! # Author
+// # Author
 //!
-//! Haixing Hu
+// Haixing Hu
 
 // Module declarations
 mod box_conditional_transformer;
