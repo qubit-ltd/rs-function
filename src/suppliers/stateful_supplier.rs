@@ -1096,6 +1096,7 @@ where
         let first = Arc::clone(&self.function);
         ArcStatefulSupplier {
             function: Arc::new(Mutex::new(move || (first.lock().unwrap()(), other.get()))),
+            name: None,
         }
     }
 
