@@ -93,6 +93,10 @@
 /// // Stateful transformer
 /// impl_transformer_constant_method!(BoxStatefulTransformer<T, R>);
 /// ```
+///
+/// # Author
+///
+/// Haixing Hu
 macro_rules! impl_transformer_constant_method {
     // Single-parameter transformer (BoxTransformer, RcTransformer, BoxTransformerOnce)
     ($struct_name:ident < $t:ident, $r:ident >) => {

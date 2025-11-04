@@ -37,11 +37,18 @@ use crate::transformers::bi_transformer_once::{
     BoxBiTransformerOnce,
 };
 use crate::transformers::macros::{
+    impl_box_conditional_transformer,
+    impl_box_transformer_methods,
+    impl_conditional_transformer_clone,
+    impl_conditional_transformer_debug_display,
+    impl_shared_conditional_transformer,
+    impl_shared_transformer_methods,
+    impl_transformer_clone,
     impl_transformer_common_methods,
     impl_transformer_constant_method,
     impl_transformer_debug_display,
-    impl_transformer_clone,
 };
+use crate::transformers::transformer::Transformer;
 
 // ============================================================================
 // Core Trait
@@ -251,8 +258,7 @@ pub struct BoxBiTransformer<T, U, R> {
     name: Option<String>,
 }
 
-impl_transformer_debug_display!(BoxBiTransformer<T, U, R>);
-
+// Implement BoxBiTransformer
 impl<T, U, R> BoxBiTransformer<T, U, R>
 where
     T: 'static,
@@ -265,143 +271,20 @@ where
         |f| Box::new(f)
     );
 
-    /// Chain composition - applies self first, then after
-    ///
-    /// Creates a new bi-transformer that applies this bi-transformer first,
-    /// then applies the after transformer to the result. Consumes self.
-    ///
-    /// # Type Parameters
-    ///
-    /// * `S` - The output type of the after transformer
-    /// * `F` - The type of the after transformer (must implement Transformer<R, S>)
-    ///
-    /// # Parameters
-    ///
-    /// * `after` - The transformer to apply after self. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to
-    ///   preserve the original transformer, clone it first (if it implements
-    ///   `Clone`). Can be:
-    ///   - A closure: `|x: R| -> S`
-    ///   - A function pointer: `fn(R) -> S`
-    ///   - A `BoxTransformer<R, S>`
-    ///   - An `RcTransformer<R, S>`
-    ///   - An `ArcTransformer<R, S>`
-    ///   - Any type implementing `Transformer<R, S>`
-    ///
-    /// # Returns
-    ///
-    /// A new `BoxBiTransformer<T, U, S>` representing the composition
-    ///
-    /// # Examples
-    ///
-    /// ## Direct value passing (ownership transfer)
-    ///
-    /// ```rust
-    /// use prism3_function::{BiTransformer, BoxBiTransformer, BoxTransformer};
-    ///
-    /// let add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
-    /// let double = BoxTransformer::new(|x: i32| x * 2);
-    ///
-    /// // double is moved here
-    /// let composed = add.and_then(double);
-    /// assert_eq!(composed.apply(3, 5), 16); // (3 + 5) * 2
-    /// // double.apply(10); // Would not compile - moved
-    /// ```
-    ///
-    /// ## Preserving original with clone
-    ///
-    /// ```rust
-    /// use prism3_function::{BiTransformer, BoxBiTransformer, BoxTransformer};
-    ///
-    /// let add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
-    /// let double = BoxTransformer::new(|x: i32| x * 2);
-    ///
-    /// // Clone to preserve original
-    /// let composed = add.and_then(double.clone());
-    /// assert_eq!(composed.apply(3, 5), 16); // (3 + 5) * 2
-    ///
-    /// // Original still usable
-    /// assert_eq!(double.apply(10), 20);
-    /// ```
-    pub fn and_then<S, F>(self, after: F) -> BoxBiTransformer<T, U, S>
-    where
-        S: 'static,
-        F: crate::transformers::transformer::Transformer<R, S> + 'static,
-    {
-        let self_fn = self.function;
-        BoxBiTransformer::new(move |t: T, u: U| after.apply(self_fn(t, u)))
-    }
-
-    /// Creates a conditional bi-transformer
-    ///
-    /// Returns a bi-transformer that only executes when a bi-predicate is
-    /// satisfied. You must call `or_else()` to provide an alternative
-    /// bi-transformer for when the condition is not satisfied.
-    ///
-    /// # Parameters
-    ///
-    /// * `predicate` - The condition to check. **Note: This parameter is passed
-    ///   by value and will transfer ownership.** If you need to preserve the
-    ///   original bi-predicate, clone it first (if it implements `Clone`).
-    ///   Can be:
-    ///   - A closure: `|x: &T, y: &U| -> bool`
-    ///   - A function pointer: `fn(&T, &U) -> bool`
-    ///   - A `BoxBiPredicate<T, U>`
-    ///   - An `RcBiPredicate<T, U>`
-    ///   - An `ArcBiPredicate<T, U>`
-    ///   - Any type implementing `BiPredicate<T, U>`
-    ///
-    /// # Returns
-    ///
-    /// Returns `BoxConditionalBiTransformer<T, U, R>`
-    ///
-    /// # Examples
-    ///
-    /// ## Basic usage with or_else
-    ///
-    /// ```rust
-    /// use prism3_function::{BiTransformer, BoxBiTransformer};
-    ///
-    /// let add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
-    /// let multiply = BoxBiTransformer::new(|x: i32, y: i32| x * y);
-    /// let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-    ///     .or_else(multiply);
-    ///
-    /// assert_eq!(conditional.apply(5, 3), 8);  // add
-    /// assert_eq!(conditional.apply(-5, 3), -15); // multiply
-    /// ```
-    ///
-    /// ## Preserving bi-predicate with clone
-    ///
-    /// ```rust
-    /// use prism3_function::{BiTransformer, BoxBiTransformer, RcBiPredicate};
-    ///
-    /// let add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
-    /// let both_positive = RcBiPredicate::new(|x: &i32, y: &i32|
-    ///     *x > 0 && *y > 0);
-    ///
-    /// // Clone to preserve original bi-predicate
-    /// let conditional = add.when(both_positive.clone())
-    ///     .or_else(BoxBiTransformer::new(|x, y| x * y));
-    ///
-    /// assert_eq!(conditional.apply(5, 3), 8);
-    ///
-    /// // Original bi-predicate still usable
-    /// assert!(both_positive.test(&5, &3));
-    /// ```
-    pub fn when<P>(self, predicate: P) -> BoxConditionalBiTransformer<T, U, R>
-    where
-        P: BiPredicate<T, U> + 'static,
-    {
-        BoxConditionalBiTransformer {
-            transformer: self,
-            predicate: predicate.into_box(),
-        }
-    }
+    impl_box_transformer_methods!(
+        BoxBiTransformer<T, U, R>,
+        BoxConditionalBiTransformer,
+        Transformer
+    );
 }
 
+// Implement constant method for BoxBiTransformer
 impl_transformer_constant_method!(BoxBiTransformer<T, U, R>);
 
+// Implement Debug and Display for BoxBiTransformer
+impl_transformer_debug_display!(BoxBiTransformer<T, U, R>);
+
+// Implement BiTransformer trait for BoxBiTransformer
 impl<T, U, R> BiTransformer<T, U, R> for BoxBiTransformer<T, U, R> {
     fn apply(&self, first: T, second: U) -> R {
         (self.function)(first, second)
@@ -443,40 +326,90 @@ impl<T, U, R> BiTransformer<T, U, R> for BoxBiTransformer<T, U, R> {
 }
 
 // ============================================================================
-// BoxBiTransformer BiTransformerOnce Implementation
+// RcBiTransformer - Rc<dyn Fn(T, U) -> R>
 // ============================================================================
 
-impl<T, U, R> BiTransformerOnce<T, U, R> for BoxBiTransformer<T, U, R>
+/// RcBiTransformer - single-threaded bi-transformer wrapper
+///
+/// A single-threaded, clonable bi-transformer wrapper optimized for scenarios
+/// that require sharing without thread-safety overhead.
+///
+/// # Features
+///
+/// - **Based on**: `Rc<dyn Fn(T, U) -> R>`
+/// - **Ownership**: Shared ownership via reference counting (non-atomic)
+/// - **Reusability**: Can be called multiple times (each call consumes its
+///   inputs)
+/// - **Thread Safety**: Not thread-safe (no `Send + Sync`)
+/// - **Clonable**: Cheap cloning via `Rc::clone`
+///
+/// # Author
+///
+/// Haixing Hu
+pub struct RcBiTransformer<T, U, R> {
+    function: Rc<dyn Fn(T, U) -> R>,
+    name: Option<String>,
+}
+
+impl<T, U, R> RcBiTransformer<T, U, R>
 where
     T: 'static,
     U: 'static,
     R: 'static,
 {
-    /// Transforms two input values, consuming self and both inputs
-    ///
-    /// # Parameters
-    ///
-    /// * `first` - The first input value (consumed)
-    /// * `second` - The second input value (consumed)
-    ///
-    /// # Returns
-    ///
-    /// The transformed output value
-    fn apply_once(self, first: T, second: U) -> R {
+    impl_transformer_common_methods!(
+        RcBiTransformer<T, U, R>,
+        (Fn(T, U) -> R + 'static),
+        |f| Rc::new(f)
+    );
+
+    impl_shared_transformer_methods!(
+        RcBiTransformer<T, U, R>,
+        RcConditionalBiTransformer,
+        into_rc,
+        Transformer,
+        'static
+    );
+}
+
+// Implement constant method for RcBiTransformer
+impl_transformer_constant_method!(RcBiTransformer<T, U, R>);
+
+// Implement Debug and Display for RcBiTransformer
+impl_transformer_debug_display!(RcBiTransformer<T, U, R>);
+
+// Implement Clone for RcBiTransformer
+impl_transformer_clone!(RcBiTransformer<T, U, R>);
+
+// Implement BiTransformer trait for RcBiTransformer
+impl<T, U, R> BiTransformer<T, U, R> for RcBiTransformer<T, U, R> {
+    fn apply(&self, first: T, second: U) -> R {
         (self.function)(first, second)
     }
 
-    fn into_box_once(self) -> BoxBiTransformerOnce<T, U, R>
+    fn into_box(self) -> BoxBiTransformer<T, U, R>
+    where
+        T: 'static,
+        U: 'static,
+        R: 'static,
+    {
+        BoxBiTransformer::new(move |t, u| (self.function)(t, u))
+    }
+
+    fn into_rc(self) -> RcBiTransformer<T, U, R>
     where
         T: 'static,
         U: 'static,
         R: 'static,
     {
         // Zero-cost: directly return itself
-        BoxBiTransformerOnce::new(move |t: T, u: U| (self.function)(t, u))
+        self
     }
 
-    fn into_fn_once(self) -> impl FnOnce(T, U) -> R
+    // do NOT override RcBiTransformer::into_arc() because RcBiTransformer is not Send + Sync
+    // and calling RcBiTransformer::into_arc() will cause a compile error
+
+    fn into_fn(self) -> impl Fn(T, U) -> R
     where
         T: 'static,
         U: 'static,
@@ -485,101 +418,36 @@ where
         move |t: T, u: U| (self.function)(t, u)
     }
 
-    // do NOT override BoxBiTransformer::to_xxxx() because BoxBiTransformer is not Clone
-    // and calling BoxBiTransformer::to_xxxx() will cause a compile error
-}
-
-// ============================================================================
-// BoxConditionalBiTransformer - Box-based Conditional BiTransformer
-// ============================================================================
-
-/// BoxConditionalBiTransformer struct
-///
-/// A conditional bi-transformer that only executes when a bi-predicate is
-/// satisfied. Uses `BoxBiTransformer` and `BoxBiPredicate` for single
-/// ownership semantics.
-///
-/// This type is typically created by calling `BoxBiTransformer::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
-///
-/// # Features
-///
-/// - **Single Ownership**: Not cloneable, consumes `self` on use
-/// - **Conditional Execution**: Only transforms when bi-predicate returns `true`
-/// - **Chainable**: Can add `or_else` branch to create if-then-else logic
-/// - **Implements BiTransformer**: Can be used anywhere a `BiTransformer` is expected
-///
-/// # Examples
-///
-/// ## With or_else Branch
-///
-/// ```rust
-/// use prism3_function::{BiTransformer, BoxBiTransformer};
-///
-/// let add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
-/// let multiply = BoxBiTransformer::new(|x: i32, y: i32| x * y);
-/// let conditional = add.when(|x: &i32, y: &i32| *x > 0).or_else(multiply);
-///
-/// assert_eq!(conditional.apply(5, 3), 8);  // when branch executed
-/// assert_eq!(conditional.apply(-5, 3), -15); // or_else branch executed
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-pub struct BoxConditionalBiTransformer<T, U, R> {
-    transformer: BoxBiTransformer<T, U, R>,
-    predicate: BoxBiPredicate<T, U>,
-}
-
-impl<T, U, R> BoxConditionalBiTransformer<T, U, R>
-where
-    T: 'static,
-    U: 'static,
-    R: 'static,
-{
-    /// Adds an else branch
-    ///
-    /// Executes the original bi-transformer when the condition is satisfied,
-    /// otherwise executes else_transformer.
-    ///
-    /// # Parameters
-    ///
-    /// * `else_transformer` - The bi-transformer for the else branch, can be:
-    ///   - Closure: `|x: T, y: U| -> R`
-    ///   - `BoxBiTransformer<T, U, R>`, `RcBiTransformer<T, U, R>`, `ArcBiTransformer<T, U, R>`
-    ///   - Any type implementing `BiTransformer<T, U, R>`
-    ///
-    /// # Returns
-    ///
-    /// Returns the composed `BoxBiTransformer<T, U, R>`
-    ///
-    /// # Examples
-    ///
-    /// ## Using a closure (recommended)
-    ///
-    /// ```rust
-    /// use prism3_function::{BiTransformer, BoxBiTransformer};
-    ///
-    /// let add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
-    /// let conditional = add.when(|x: &i32, y: &i32| *x > 0).or_else(|x: i32, y: i32| x * y);
-    ///
-    /// assert_eq!(conditional.apply(5, 3), 8);   // Condition satisfied, execute add
-    /// assert_eq!(conditional.apply(-5, 3), -15); // Condition not satisfied, execute multiply
-    /// ```
-    pub fn or_else<F>(self, else_transformer: F) -> BoxBiTransformer<T, U, R>
+    fn to_box(&self) -> BoxBiTransformer<T, U, R>
     where
-        F: BiTransformer<T, U, R> + 'static,
+        T: 'static,
+        U: 'static,
+        R: 'static,
     {
-        let pred = self.predicate;
-        let then_trans = self.transformer;
-        BoxBiTransformer::new(move |t, u| {
-            if pred.test(&t, &u) {
-                then_trans.apply(t, u)
-            } else {
-                else_transformer.apply(t, u)
-            }
-        })
+        let self_fn = self.function.clone();
+        BoxBiTransformer::new(move |t, u| self_fn(t, u))
+    }
+
+    fn to_rc(&self) -> RcBiTransformer<T, U, R>
+    where
+        T: 'static,
+        U: 'static,
+        R: 'static,
+    {
+        self.clone()
+    }
+
+    // do NOT override RcBiTransformer::to_arc() because RcBiTransformer is not Send + Sync
+    // and calling RcBiTransformer::to_arc() will cause a compile error
+
+    fn to_fn(&self) -> impl Fn(T, U) -> R
+    where
+        T: 'static,
+        U: 'static,
+        R: 'static,
+    {
+        let self_fn = self.function.clone();
+        move |t: T, u: U| self_fn(t, u)
     }
 }
 
@@ -609,12 +477,10 @@ pub struct ArcBiTransformer<T, U, R> {
     name: Option<String>,
 }
 
-impl_transformer_debug_display!(ArcBiTransformer<T, U, R>);
-
 impl<T, U, R> ArcBiTransformer<T, U, R>
 where
-    T: Send + Sync + 'static,
-    U: Send + Sync + 'static,
+    T: 'static,
+    U: 'static,
     R: 'static,
 {
     impl_transformer_common_methods!(
@@ -623,151 +489,25 @@ where
         |f| Arc::new(f)
     );
 
-    /// Chain composition - applies self first, then after
-    ///
-    /// Creates a new bi-transformer that applies this bi-transformer first,
-    /// then applies the after transformer to the result. Uses &self, so original
-    /// bi-transformer remains usable.
-    ///
-    /// # Type Parameters
-    ///
-    /// * `S` - The output type of the after transformer
-    /// * `F` - The type of the after transformer (must implement Transformer<R, S>)
-    ///
-    /// # Parameters
-    ///
-    /// * `after` - The transformer to apply after self. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to
-    ///   preserve the original transformer, clone it first (if it implements
-    ///   `Clone`). Must be `Send + Sync`, can be:
-    ///   - A closure: `|x: R| -> S` (must be `Send + Sync`)
-    ///   - A function pointer: `fn(R) -> S`
-    ///   - A `BoxTransformer<R, S>`
-    ///   - An `RcTransformer<R, S>`
-    ///   - An `ArcTransformer<R, S>` (will be moved)
-    ///   - Any type implementing `Transformer<R, S> + Send + Sync`
-    ///
-    /// # Returns
-    ///
-    /// A new `ArcBiTransformer<T, U, S>` representing the composition
-    ///
-    /// # Examples
-    ///
-    /// ## Direct value passing (ownership transfer)
-    ///
-    /// ```rust
-    /// use prism3_function::{BiTransformer, ArcBiTransformer, ArcTransformer};
-    ///
-    /// let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
-    /// let double = ArcTransformer::new(|x: i32| x * 2);
-    ///
-    /// // double is moved here
-    /// let composed = add.and_then(double);
-    ///
-    /// // Original add bi-transformer still usable (uses &self)
-    /// assert_eq!(add.apply(20, 22), 42);
-    /// assert_eq!(composed.apply(3, 5), 16); // (3 + 5) * 2
-    /// // double.apply(10); // Would not compile - moved
-    /// ```
-    ///
-    /// ## Preserving original with clone
-    ///
-    /// ```rust
-    /// use prism3_function::{BiTransformer, ArcBiTransformer, ArcTransformer};
-    ///
-    /// let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
-    /// let double = ArcTransformer::new(|x: i32| x * 2);
-    ///
-    /// // Clone to preserve original
-    /// let composed = add.and_then(double.clone());
-    /// assert_eq!(composed.apply(3, 5), 16); // (3 + 5) * 2
-    ///
-    /// // Both originals still usable
-    /// assert_eq!(add.apply(20, 22), 42);
-    /// assert_eq!(double.apply(10), 20);
-    /// ```
-    pub fn and_then<S, F>(&self, after: F) -> ArcBiTransformer<T, U, S>
-    where
-        S: Send + Sync + 'static,
-        F: crate::transformers::transformer::Transformer<R, S> + Send + Sync + 'static,
-    {
-        let self_clone = Arc::clone(&self.function);
-        ArcBiTransformer {
-            function: Arc::new(move |t: T, u: U| after.apply(self_clone(t, u))),
-            name: None,
-        }
-    }
-
-    /// Creates a conditional bi-transformer (thread-safe version)
-    ///
-    /// Returns a bi-transformer that only executes when a bi-predicate is
-    /// satisfied. You must call `or_else()` to provide an alternative
-    /// bi-transformer.
-    ///
-    /// # Parameters
-    ///
-    /// * `predicate` - The condition to check. **Note: This parameter is passed
-    ///   by value and will transfer ownership.** If you need to preserve the
-    ///   original bi-predicate, clone it first (if it implements `Clone`).
-    ///   Must be `Send + Sync`, can be:
-    ///   - A closure: `|x: &T, y: &U| -> bool` (requires `Send + Sync`)
-    ///   - A function pointer: `fn(&T, &U) -> bool`
-    ///   - An `ArcBiPredicate<T, U>`
-    ///   - Any type implementing `BiPredicate<T, U> + Send + Sync`
-    ///
-    /// # Returns
-    ///
-    /// Returns `ArcConditionalBiTransformer<T, U, R>`
-    ///
-    /// # Examples
-    ///
-    /// ## Basic usage with or_else
-    ///
-    /// ```rust
-    /// use prism3_function::{BiTransformer, ArcBiTransformer};
-    ///
-    /// let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
-    /// let multiply = ArcBiTransformer::new(|x: i32, y: i32| x * y);
-    /// let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-    ///     .or_else(multiply);
-    ///
-    /// let conditional_clone = conditional.clone();
-    ///
-    /// assert_eq!(conditional.apply(5, 3), 8);
-    /// assert_eq!(conditional_clone.apply(-5, 3), -15);
-    /// ```
-    ///
-    /// ## Preserving bi-predicate with clone
-    ///
-    /// ```rust
-    /// use prism3_function::{BiTransformer, ArcBiTransformer, ArcBiPredicate};
-    ///
-    /// let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
-    /// let both_positive = ArcBiPredicate::new(|x: &i32, y: &i32|
-    ///     *x > 0 && *y > 0);
-    ///
-    /// // Clone to preserve original bi-predicate
-    /// let conditional = add.when(both_positive.clone())
-    ///     .or_else(ArcBiTransformer::new(|x, y| x * y));
-    ///
-    /// assert_eq!(conditional.apply(5, 3), 8);
-    ///
-    /// // Original bi-predicate still usable
-    /// assert!(both_positive.test(&5, &3));
-    /// ```
-    pub fn when<P>(&self, predicate: P) -> ArcConditionalBiTransformer<T, U, R>
-    where
-        P: BiPredicate<T, U> + Send + Sync + 'static,
-    {
-        ArcConditionalBiTransformer {
-            transformer: self.clone(),
-            predicate: predicate.into_arc(),
-        }
-    }
+    impl_shared_transformer_methods!(
+        ArcBiTransformer<T, U, R>,
+        ArcConditionalBiTransformer,
+        into_arc,
+        Transformer,
+        Send + Sync + 'static
+    );
 }
 
+// Implement constant method for ArcBiTransformer
 impl_transformer_constant_method!(thread_safe ArcBiTransformer<T, U, R>);
 
+// Implement Debug and Display for ArcBiTransformer
+impl_transformer_debug_display!(ArcBiTransformer<T, U, R>);
+
+// Implement Clone for ArcBiTransformer
+impl_transformer_clone!(ArcBiTransformer<T, U, R>);
+
+// Implement BiTransformer trait for ArcBiTransformer
 impl<T, U, R> BiTransformer<T, U, R> for ArcBiTransformer<T, U, R> {
     fn apply(&self, first: T, second: U) -> R {
         (self.function)(first, second)
@@ -847,621 +587,6 @@ impl<T, U, R> BiTransformer<T, U, R> for ArcBiTransformer<T, U, R> {
     {
         let self_fn = self.function.clone();
         move |t: T, u: U| self_fn(t, u)
-    }
-}
-
-impl<T, U, R> Clone for ArcBiTransformer<T, U, R> {
-    fn clone(&self) -> Self {
-        ArcBiTransformer {
-            function: Arc::clone(&self.function),
-            name: self.name.clone(),
-        }
-    }
-}
-
-// ============================================================================
-// ArcBiTransformer BiTransformerOnce Implementation
-// ============================================================================
-
-impl<T, U, R> BiTransformerOnce<T, U, R> for ArcBiTransformer<T, U, R>
-where
-    T: 'static,
-    U: 'static,
-    R: 'static,
-{
-    /// Transforms two input values, consuming self and both inputs
-    ///
-    /// # Parameters
-    ///
-    /// * `first` - The first input value (consumed)
-    /// * `second` - The second input value (consumed)
-    ///
-    /// # Returns
-    ///
-    /// The transformed output value
-    fn apply_once(self, first: T, second: U) -> R {
-        (self.function)(first, second)
-    }
-
-    fn into_box_once(self) -> BoxBiTransformerOnce<T, U, R>
-    where
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        BoxBiTransformerOnce::new(move |t: T, u: U| (self.function)(t, u))
-    }
-
-    fn into_fn_once(self) -> impl FnOnce(T, U) -> R
-    where
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        move |t: T, u: U| (self.function)(t, u)
-    }
-
-    fn to_box_once(&self) -> BoxBiTransformerOnce<T, U, R>
-    where
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        let self_fn = self.function.clone();
-        BoxBiTransformerOnce::new(move |t: T, u: U| self_fn(t, u))
-    }
-
-    fn to_fn_once(&self) -> impl FnOnce(T, U) -> R
-    where
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        let self_fn = self.function.clone();
-        move |t: T, u: U| self_fn(t, u)
-    }
-}
-
-// ============================================================================
-// ArcConditionalBiTransformer - Arc-based Conditional BiTransformer
-// ============================================================================
-
-/// ArcConditionalBiTransformer struct
-///
-/// A thread-safe conditional bi-transformer that only executes when a
-/// bi-predicate is satisfied. Uses `ArcBiTransformer` and `ArcBiPredicate` for
-/// shared ownership across threads.
-///
-/// This type is typically created by calling `ArcBiTransformer::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
-///
-/// # Features
-///
-/// - **Shared Ownership**: Cloneable via `Arc`, multiple owners allowed
-/// - **Thread-Safe**: Implements `Send + Sync`, safe for concurrent use
-/// - **Conditional Execution**: Only transforms when bi-predicate returns `true`
-/// - **Chainable**: Can add `or_else` branch to create if-then-else logic
-///
-/// # Examples
-///
-/// ```rust
-/// use prism3_function::{BiTransformer, ArcBiTransformer};
-///
-/// let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
-/// let multiply = ArcBiTransformer::new(|x: i32, y: i32| x * y);
-/// let conditional = add.when(|x: &i32, y: &i32| *x > 0).or_else(multiply);
-///
-/// let conditional_clone = conditional.clone();
-///
-/// assert_eq!(conditional.apply(5, 3), 8);
-/// assert_eq!(conditional_clone.apply(-5, 3), -15);
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-pub struct ArcConditionalBiTransformer<T, U, R> {
-    transformer: ArcBiTransformer<T, U, R>,
-    predicate: ArcBiPredicate<T, U>,
-}
-
-impl<T, U, R> ArcConditionalBiTransformer<T, U, R>
-where
-    T: Send + Sync + 'static,
-    U: Send + Sync + 'static,
-    R: 'static,
-{
-    /// Adds an else branch (thread-safe version)
-    ///
-    /// Executes the original bi-transformer when the condition is satisfied,
-    /// otherwise executes else_transformer.
-    ///
-    /// # Parameters
-    ///
-    /// * `else_transformer` - The bi-transformer for the else branch, can be:
-    ///   - Closure: `|x: T, y: U| -> R` (must be `Send + Sync`)
-    ///   - `ArcBiTransformer<T, U, R>`, `BoxBiTransformer<T, U, R>`
-    ///   - Any type implementing `BiTransformer<T, U, R> + Send + Sync`
-    ///
-    /// # Returns
-    ///
-    /// Returns the composed `ArcBiTransformer<T, U, R>`
-    ///
-    /// # Examples
-    ///
-    /// ## Using a closure (recommended)
-    ///
-    /// ```rust
-    /// use prism3_function::{BiTransformer, ArcBiTransformer};
-    ///
-    /// let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
-    /// let conditional = add.when(|x: &i32, y: &i32| *x > 0).or_else(|x: i32, y: i32| x * y);
-    ///
-    /// assert_eq!(conditional.apply(5, 3), 8);
-    /// assert_eq!(conditional.apply(-5, 3), -15);
-    /// ```
-    pub fn or_else<F>(&self, else_transformer: F) -> ArcBiTransformer<T, U, R>
-    where
-        F: BiTransformer<T, U, R> + Send + Sync + 'static,
-        R: Send + Sync,
-    {
-        let pred = self.predicate.clone();
-        let then_trans = self.transformer.clone();
-        ArcBiTransformer::new(move |t, u| {
-            if pred.test(&t, &u) {
-                then_trans.apply(t, u)
-            } else {
-                else_transformer.apply(t, u)
-            }
-        })
-    }
-}
-
-impl<T, U, R> Clone for ArcConditionalBiTransformer<T, U, R> {
-    /// Clones the conditional bi-transformer
-    ///
-    /// Creates a new instance that shares the underlying bi-transformer and
-    /// bi-predicate with the original instance.
-    fn clone(&self) -> Self {
-        ArcConditionalBiTransformer {
-            transformer: self.transformer.clone(),
-            predicate: self.predicate.clone(),
-        }
-    }
-}
-
-// ============================================================================
-// RcBiTransformer - Rc<dyn Fn(T, U) -> R>
-// ============================================================================
-
-/// RcBiTransformer - single-threaded bi-transformer wrapper
-///
-/// A single-threaded, clonable bi-transformer wrapper optimized for scenarios
-/// that require sharing without thread-safety overhead.
-///
-/// # Features
-///
-/// - **Based on**: `Rc<dyn Fn(T, U) -> R>`
-/// - **Ownership**: Shared ownership via reference counting (non-atomic)
-/// - **Reusability**: Can be called multiple times (each call consumes its
-///   inputs)
-/// - **Thread Safety**: Not thread-safe (no `Send + Sync`)
-/// - **Clonable**: Cheap cloning via `Rc::clone`
-///
-/// # Author
-///
-/// Haixing Hu
-pub struct RcBiTransformer<T, U, R> {
-    function: Rc<dyn Fn(T, U) -> R>,
-    name: Option<String>,
-}
-
-impl_transformer_debug_display!(RcBiTransformer<T, U, R>);
-
-impl<T, U, R> RcBiTransformer<T, U, R>
-where
-    T: 'static,
-    U: 'static,
-    R: 'static,
-{
-    impl_transformer_common_methods!(
-        RcBiTransformer<T, U, R>,
-        (Fn(T, U) -> R + 'static),
-        |f| Rc::new(f)
-    );
-
-    /// Chain composition - applies self first, then after
-    ///
-    /// Creates a new bi-transformer that applies this bi-transformer first,
-    /// then applies the after transformer to the result. Uses &self, so original
-    /// bi-transformer remains usable.
-    ///
-    /// # Type Parameters
-    ///
-    /// * `S` - The output type of the after transformer
-    /// * `F` - The type of the after transformer (must implement Transformer<R, S>)
-    ///
-    /// # Parameters
-    ///
-    /// * `after` - The transformer to apply after self. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to
-    ///   preserve the original transformer, clone it first (if it implements
-    ///   `Clone`). Can be:
-    ///   - A closure: `|x: R| -> S`
-    ///   - A function pointer: `fn(R) -> S`
-    ///   - A `BoxTransformer<R, S>`
-    ///   - An `RcTransformer<R, S>` (will be moved)
-    ///   - An `ArcTransformer<R, S>`
-    ///   - Any type implementing `Transformer<R, S>`
-    ///
-    /// # Returns
-    ///
-    /// A new `RcBiTransformer<T, U, S>` representing the composition
-    ///
-    /// # Examples
-    ///
-    /// ## Direct value passing (ownership transfer)
-    ///
-    /// ```rust
-    /// use prism3_function::{BiTransformer, RcBiTransformer, RcTransformer};
-    ///
-    /// let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
-    /// let double = RcTransformer::new(|x: i32| x * 2);
-    ///
-    /// // double is moved here
-    /// let composed = add.and_then(double);
-    ///
-    /// // Original add bi-transformer still usable (uses &self)
-    /// assert_eq!(add.apply(20, 22), 42);
-    /// assert_eq!(composed.apply(3, 5), 16); // (3 + 5) * 2
-    /// // double.apply(10); // Would not compile - moved
-    /// ```
-    ///
-    /// ## Preserving original with clone
-    ///
-    /// ```rust
-    /// use prism3_function::{BiTransformer, RcBiTransformer, RcTransformer};
-    ///
-    /// let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
-    /// let double = RcTransformer::new(|x: i32| x * 2);
-    ///
-    /// // Clone to preserve original
-    /// let composed = add.and_then(double.clone());
-    /// assert_eq!(composed.apply(3, 5), 16); // (3 + 5) * 2
-    ///
-    /// // Both originals still usable
-    /// assert_eq!(add.apply(20, 22), 42);
-    /// assert_eq!(double.apply(10), 20);
-    /// ```
-    pub fn and_then<S, F>(&self, after: F) -> RcBiTransformer<T, U, S>
-    where
-        S: 'static,
-        F: crate::transformers::transformer::Transformer<R, S> + 'static,
-    {
-        let self_clone = Rc::clone(&self.function);
-        RcBiTransformer {
-            function: Rc::new(move |t: T, u: U| after.apply(self_clone(t, u))),
-            name: None,
-        }
-    }
-
-    /// Creates a conditional bi-transformer (single-threaded shared version)
-    ///
-    /// Returns a bi-transformer that only executes when a bi-predicate is
-    /// satisfied. You must call `or_else()` to provide an alternative
-    /// bi-transformer.
-    ///
-    /// # Parameters
-    ///
-    /// * `predicate` - The condition to check. **Note: This parameter is passed
-    ///   by value and will transfer ownership.** If you need to preserve the
-    ///   original bi-predicate, clone it first (if it implements `Clone`).
-    ///   Can be:
-    ///   - A closure: `|x: &T, y: &U| -> bool`
-    ///   - A function pointer: `fn(&T, &U) -> bool`
-    ///   - A `BoxBiPredicate<T, U>`
-    ///   - An `RcBiPredicate<T, U>`
-    ///   - An `ArcBiPredicate<T, U>`
-    ///   - Any type implementing `BiPredicate<T, U>`
-    ///
-    /// # Returns
-    ///
-    /// Returns `RcConditionalBiTransformer<T, U, R>`
-    ///
-    /// # Examples
-    ///
-    /// ## Basic usage with or_else
-    ///
-    /// ```rust
-    /// use prism3_function::{BiTransformer, RcBiTransformer};
-    ///
-    /// let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
-    /// let multiply = RcBiTransformer::new(|x: i32, y: i32| x * y);
-    /// let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-    ///     .or_else(multiply);
-    ///
-    /// let conditional_clone = conditional.clone();
-    ///
-    /// assert_eq!(conditional.apply(5, 3), 8);
-    /// assert_eq!(conditional_clone.apply(-5, 3), -15);
-    /// ```
-    ///
-    /// ## Preserving bi-predicate with clone
-    ///
-    /// ```rust
-    /// use prism3_function::{BiTransformer, RcBiTransformer, RcBiPredicate};
-    ///
-    /// let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
-    /// let both_positive = RcBiPredicate::new(|x: &i32, y: &i32|
-    ///     *x > 0 && *y > 0);
-    ///
-    /// // Clone to preserve original bi-predicate
-    /// let conditional = add.when(both_positive.clone())
-    ///     .or_else(RcBiTransformer::new(|x, y| x * y));
-    ///
-    /// assert_eq!(conditional.apply(5, 3), 8);
-    ///
-    /// // Original bi-predicate still usable
-    /// assert!(both_positive.test(&5, &3));
-    /// ```
-    pub fn when<P>(&self, predicate: P) -> RcConditionalBiTransformer<T, U, R>
-    where
-        P: BiPredicate<T, U> + 'static,
-    {
-        RcConditionalBiTransformer {
-            transformer: self.clone(),
-            predicate: predicate.into_rc(),
-        }
-    }
-}
-
-impl_transformer_constant_method!(RcBiTransformer<T, U, R>);
-
-impl<T, U, R> BiTransformer<T, U, R> for RcBiTransformer<T, U, R> {
-    fn apply(&self, first: T, second: U) -> R {
-        (self.function)(first, second)
-    }
-
-    fn into_box(self) -> BoxBiTransformer<T, U, R>
-    where
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        BoxBiTransformer::new(move |t, u| (self.function)(t, u))
-    }
-
-    fn into_rc(self) -> RcBiTransformer<T, U, R>
-    where
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        // Zero-cost: directly return itself
-        self
-    }
-
-    // do NOT override RcBiTransformer::into_arc() because RcBiTransformer is not Send + Sync
-    // and calling RcBiTransformer::into_arc() will cause a compile error
-
-    fn into_fn(self) -> impl Fn(T, U) -> R
-    where
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        move |t: T, u: U| (self.function)(t, u)
-    }
-
-    fn to_box(&self) -> BoxBiTransformer<T, U, R>
-    where
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        let self_fn = self.function.clone();
-        BoxBiTransformer::new(move |t, u| self_fn(t, u))
-    }
-
-    fn to_rc(&self) -> RcBiTransformer<T, U, R>
-    where
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        self.clone()
-    }
-
-    // do NOT override RcBiTransformer::to_arc() because RcBiTransformer is not Send + Sync
-    // and calling RcBiTransformer::to_arc() will cause a compile error
-
-    fn to_fn(&self) -> impl Fn(T, U) -> R
-    where
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        let self_fn = self.function.clone();
-        move |t: T, u: U| self_fn(t, u)
-    }
-}
-
-impl<T, U, R> Clone for RcBiTransformer<T, U, R> {
-    fn clone(&self) -> Self {
-        RcBiTransformer {
-            function: Rc::clone(&self.function),
-            name: self.name.clone(),
-        }
-    }
-}
-
-// ============================================================================
-// RcBiTransformer BiTransformerOnce Implementation
-// ============================================================================
-
-impl<T, U, R> BiTransformerOnce<T, U, R> for RcBiTransformer<T, U, R>
-where
-    T: 'static,
-    U: 'static,
-    R: 'static,
-{
-    /// Transforms two input values, consuming self and both inputs
-    ///
-    /// # Parameters
-    ///
-    /// * `first` - The first input value (consumed)
-    /// * `second` - The second input value (consumed)
-    ///
-    /// # Returns
-    ///
-    /// The transformed output value
-    fn apply_once(self, first: T, second: U) -> R {
-        (self.function)(first, second)
-    }
-
-    fn into_box_once(self) -> BoxBiTransformerOnce<T, U, R>
-    where
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        BoxBiTransformerOnce::new(move |t: T, u: U| (self.function)(t, u))
-    }
-
-    fn into_fn_once(self) -> impl FnOnce(T, U) -> R
-    where
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        move |t: T, u: U| (self.function)(t, u)
-    }
-
-    fn to_box_once(&self) -> BoxBiTransformerOnce<T, U, R>
-    where
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        let self_fn = self.function.clone();
-        BoxBiTransformerOnce::new(move |t: T, u: U| self_fn(t, u))
-    }
-
-    fn to_fn_once(&self) -> impl FnOnce(T, U) -> R
-    where
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        let self_fn = self.function.clone();
-        move |t: T, u: U| self_fn(t, u)
-    }
-}
-
-// ============================================================================
-// RcConditionalBiTransformer - Rc-based Conditional BiTransformer
-// ============================================================================
-
-/// RcConditionalBiTransformer struct
-///
-/// A single-threaded conditional bi-transformer that only executes when a
-/// bi-predicate is satisfied. Uses `RcBiTransformer` and `RcBiPredicate` for
-/// shared ownership within a single thread.
-///
-/// This type is typically created by calling `RcBiTransformer::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
-///
-/// # Features
-///
-/// - **Shared Ownership**: Cloneable via `Rc`, multiple owners allowed
-/// - **Single-Threaded**: Not thread-safe, cannot be sent across threads
-/// - **Conditional Execution**: Only transforms when bi-predicate returns `true`
-/// - **No Lock Overhead**: More efficient than `ArcConditionalBiTransformer`
-///
-/// # Examples
-///
-/// ```rust
-/// use prism3_function::{BiTransformer, RcBiTransformer};
-///
-/// let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
-/// let multiply = RcBiTransformer::new(|x: i32, y: i32| x * y);
-/// let conditional = add.when(|x: &i32, y: &i32| *x > 0).or_else(multiply);
-///
-/// let conditional_clone = conditional.clone();
-///
-/// assert_eq!(conditional.apply(5, 3), 8);
-/// assert_eq!(conditional_clone.apply(-5, 3), -15);
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-pub struct RcConditionalBiTransformer<T, U, R> {
-    transformer: RcBiTransformer<T, U, R>,
-    predicate: RcBiPredicate<T, U>,
-}
-
-impl<T, U, R> RcConditionalBiTransformer<T, U, R>
-where
-    T: 'static,
-    U: 'static,
-    R: 'static,
-{
-    /// Adds an else branch (single-threaded shared version)
-    ///
-    /// Executes the original bi-transformer when the condition is satisfied,
-    /// otherwise executes else_transformer.
-    ///
-    /// # Parameters
-    ///
-    /// * `else_transformer` - The bi-transformer for the else branch, can be:
-    ///   - Closure: `|x: T, y: U| -> R`
-    ///   - `RcBiTransformer<T, U, R>`, `BoxBiTransformer<T, U, R>`
-    ///   - Any type implementing `BiTransformer<T, U, R>`
-    ///
-    /// # Returns
-    ///
-    /// Returns the composed `RcBiTransformer<T, U, R>`
-    ///
-    /// # Examples
-    ///
-    /// ## Using a closure (recommended)
-    ///
-    /// ```rust
-    /// use prism3_function::{BiTransformer, RcBiTransformer};
-    ///
-    /// let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
-    /// let conditional = add.when(|x: &i32, y: &i32| *x > 0).or_else(|x: i32, y: i32| x * y);
-    ///
-    /// assert_eq!(conditional.apply(5, 3), 8);
-    /// assert_eq!(conditional.apply(-5, 3), -15);
-    /// ```
-    pub fn or_else<F>(&self, else_transformer: F) -> RcBiTransformer<T, U, R>
-    where
-        F: BiTransformer<T, U, R> + 'static,
-    {
-        let pred = self.predicate.clone();
-        let then_trans = self.transformer.clone();
-        RcBiTransformer::new(move |t, u| {
-            if pred.test(&t, &u) {
-                then_trans.apply(t, u)
-            } else {
-                else_transformer.apply(t, u)
-            }
-        })
-    }
-}
-
-impl<T, U, R> Clone for RcConditionalBiTransformer<T, U, R> {
-    /// Clones the conditional bi-transformer
-    ///
-    /// Creates a new instance that shares the underlying bi-transformer and
-    /// bi-predicate with the original instance.
-    fn clone(&self) -> Self {
-        RcConditionalBiTransformer {
-            transformer: self.transformer.clone(),
-            predicate: self.predicate.clone(),
-        }
     }
 }
 
@@ -1915,3 +1040,172 @@ pub type ArcBinaryOperator<T> = ArcBiTransformer<T, T, T>;
 ///
 /// Haixing Hu
 pub type RcBinaryOperator<T> = RcBiTransformer<T, T, T>;
+
+// ============================================================================
+// BoxConditionalBiTransformer - Box-based Conditional BiTransformer
+// ============================================================================
+
+/// BoxConditionalBiTransformer struct
+///
+/// A conditional bi-transformer that only executes when a bi-predicate is
+/// satisfied. Uses `BoxBiTransformer` and `BoxBiPredicate` for single
+/// ownership semantics.
+///
+/// This type is typically created by calling `BoxBiTransformer::when()` and is
+/// designed to work with the `or_else()` method to create if-then-else logic.
+///
+/// # Features
+///
+/// - **Single Ownership**: Not cloneable, consumes `self` on use
+/// - **Conditional Execution**: Only transforms when bi-predicate returns `true`
+/// - **Chainable**: Can add `or_else` branch to create if-then-else logic
+/// - **Implements BiTransformer**: Can be used anywhere a `BiTransformer` is expected
+///
+/// # Examples
+///
+/// ## With or_else Branch
+///
+/// ```rust
+/// use prism3_function::{BiTransformer, BoxBiTransformer};
+///
+/// let add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
+/// let multiply = BoxBiTransformer::new(|x: i32, y: i32| x * y);
+/// let conditional = add.when(|x: &i32, y: &i32| *x > 0).or_else(multiply);
+///
+/// assert_eq!(conditional.apply(5, 3), 8);  // when branch executed
+/// assert_eq!(conditional.apply(-5, 3), -15); // or_else branch executed
+/// ```
+///
+/// # Author
+///
+/// Haixing Hu
+pub struct BoxConditionalBiTransformer<T, U, R> {
+    transformer: BoxBiTransformer<T, U, R>,
+    predicate: BoxBiPredicate<T, U>,
+}
+
+// Implement BoxConditionalTransformer
+impl_box_conditional_transformer!(
+    BoxConditionalBiTransformer<T, U, R>,
+    BoxBiTransformer,
+    BiTransformer
+);
+
+// Use macro to generate Debug and Display implementations
+impl_conditional_transformer_debug_display!(BoxConditionalBiTransformer<T, U, R>);
+
+// ============================================================================
+// RcConditionalBiTransformer - Rc-based Conditional BiTransformer
+// ============================================================================
+
+/// RcConditionalBiTransformer struct
+///
+/// A single-threaded conditional bi-transformer that only executes when a
+/// bi-predicate is satisfied. Uses `RcBiTransformer` and `RcBiPredicate` for
+/// shared ownership within a single thread.
+///
+/// This type is typically created by calling `RcBiTransformer::when()` and is
+/// designed to work with the `or_else()` method to create if-then-else logic.
+///
+/// # Features
+///
+/// - **Shared Ownership**: Cloneable via `Rc`, multiple owners allowed
+/// - **Single-Threaded**: Not thread-safe, cannot be sent across threads
+/// - **Conditional Execution**: Only transforms when bi-predicate returns `true`
+/// - **No Lock Overhead**: More efficient than `ArcConditionalBiTransformer`
+///
+/// # Examples
+///
+/// ```rust
+/// use prism3_function::{BiTransformer, RcBiTransformer};
+///
+/// let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
+/// let multiply = RcBiTransformer::new(|x: i32, y: i32| x * y);
+/// let conditional = add.when(|x: &i32, y: &i32| *x > 0).or_else(multiply);
+///
+/// let conditional_clone = conditional.clone();
+///
+/// assert_eq!(conditional.apply(5, 3), 8);
+/// assert_eq!(conditional_clone.apply(-5, 3), -15);
+/// ```
+///
+/// # Author
+///
+/// Haixing Hu
+pub struct RcConditionalBiTransformer<T, U, R> {
+    transformer: RcBiTransformer<T, U, R>,
+    predicate: RcBiPredicate<T, U>,
+}
+
+// Implement RcConditionalBiTransformer
+impl_shared_conditional_transformer!(
+    RcConditionalBiTransformer<T, U, R>,
+    RcBiTransformer,
+    BiTransformer,
+    into_rc,
+    'static
+);
+
+// Use macro to generate Debug and Display implementations
+impl_conditional_transformer_debug_display!(RcConditionalBiTransformer<T, U, R>);
+
+// Implement Clone for RcConditionalBiTransformer
+impl_conditional_transformer_clone!(RcConditionalBiTransformer<T, U, R>);
+
+// ============================================================================
+// ArcConditionalBiTransformer - Arc-based Conditional BiTransformer
+// ============================================================================
+
+/// ArcConditionalBiTransformer struct
+///
+/// A thread-safe conditional bi-transformer that only executes when a
+/// bi-predicate is satisfied. Uses `ArcBiTransformer` and `ArcBiPredicate` for
+/// shared ownership across threads.
+///
+/// This type is typically created by calling `ArcBiTransformer::when()` and is
+/// designed to work with the `or_else()` method to create if-then-else logic.
+///
+/// # Features
+///
+/// - **Shared Ownership**: Cloneable via `Arc`, multiple owners allowed
+/// - **Thread-Safe**: Implements `Send + Sync`, safe for concurrent use
+/// - **Conditional Execution**: Only transforms when bi-predicate returns `true`
+/// - **Chainable**: Can add `or_else` branch to create if-then-else logic
+///
+/// # Examples
+///
+/// ```rust
+/// use prism3_function::{BiTransformer, ArcBiTransformer};
+///
+/// let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
+/// let multiply = ArcBiTransformer::new(|x: i32, y: i32| x * y);
+/// let conditional = add.when(|x: &i32, y: &i32| *x > 0).or_else(multiply);
+///
+/// let conditional_clone = conditional.clone();
+///
+/// assert_eq!(conditional.apply(5, 3), 8);
+/// assert_eq!(conditional_clone.apply(-5, 3), -15);
+/// ```
+///
+/// # Author
+///
+/// Haixing Hu
+pub struct ArcConditionalBiTransformer<T, U, R> {
+    transformer: ArcBiTransformer<T, U, R>,
+    predicate: ArcBiPredicate<T, U>,
+}
+
+// Implement ArcConditionalBiTransformer
+impl_shared_conditional_transformer!(
+    ArcConditionalBiTransformer<T, U, R>,
+    ArcBiTransformer,
+    BiTransformer,
+    into_arc,
+    Send + Sync + 'static
+);
+
+// Implement Debug and Display for ArcConditionalBiTransformer
+impl_conditional_transformer_debug_display!(ArcConditionalBiTransformer<T, U, R>);
+
+// Implement Clone for ArcConditionalBiTransformer
+impl_conditional_transformer_clone!(ArcConditionalBiTransformer<T, U, R>);

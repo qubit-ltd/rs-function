@@ -1705,35 +1705,35 @@ mod box_bi_transformer_once_tests {
     use prism3_function::BiTransformerOnce;
 
     #[test]
-    fn test_apply_once() {
+    fn test_apply() {
         let add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
-        assert_eq!(add.apply_once(20, 22), 42);
+        assert_eq!(add.apply(20, 22), 42);
     }
 
     #[test]
-    fn test_into_box_once() {
+    fn test_into_box() {
         let add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
-        let box_once = add.into_box_once();
-        assert_eq!(box_once.apply_once(10, 20), 30);
+        let box_once = add.into_box();
+        assert_eq!(box_once.apply(10, 20), 30);
     }
 
     #[test]
-    fn test_into_fn_once() {
+    fn test_into_fn() {
         let add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
-        let fn_once = add.into_fn_once();
+        let fn_once = add.into_fn();
         assert_eq!(fn_once(5, 15), 20);
     }
 
     #[test]
     fn test_multiply_once() {
         let multiply = BoxBiTransformer::new(|x: i32, y: i32| x * y);
-        assert_eq!(multiply.apply_once(6, 7), 42);
+        assert_eq!(multiply.apply(6, 7), 42);
     }
 
     #[test]
     fn test_string_concatenation_once() {
         let concat = BoxBiTransformer::new(|x: String, y: String| format!("{} {}", x, y));
-        let result = concat.apply_once("Hello".to_string(), "World".to_string());
+        let result = concat.apply("Hello".to_string(), "World".to_string());
         assert_eq!(result, "Hello World");
     }
 }
@@ -1748,39 +1748,39 @@ mod rc_bi_transformer_once_tests {
     use prism3_function::BiTransformerOnce;
 
     #[test]
-    fn test_apply_once() {
+    fn test_apply() {
         let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
-        assert_eq!(add.apply_once(20, 22), 42);
+        assert_eq!(add.apply(20, 22), 42);
     }
 
     #[test]
-    fn test_into_box_once() {
+    fn test_into_box() {
         let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
-        let box_once = add.into_box_once();
-        assert_eq!(box_once.apply_once(10, 20), 30);
+        let box_once = add.into_box();
+        assert_eq!(box_once.apply(10, 20), 30);
     }
 
     #[test]
-    fn test_into_fn_once() {
+    fn test_into_fn() {
         let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
-        let fn_once = add.into_fn_once();
+        let fn_once = add.into_fn();
         assert_eq!(fn_once(5, 15), 20);
     }
 
     #[test]
-    fn test_to_box_once() {
+    fn test_to_box() {
         let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
-        let box_once = add.to_box_once();
-        assert_eq!(box_once.apply_once(3, 7), 10);
+        let box_once = add.to_box();
+        assert_eq!(box_once.apply(3, 7), 10);
 
         // Original should still be usable
         assert_eq!(add.apply(1, 2), 3);
     }
 
     #[test]
-    fn test_to_fn_once() {
+    fn test_to_fn() {
         let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
-        let fn_once = add.to_fn_once();
+        let fn_once = add.to_fn();
         assert_eq!(fn_once(4, 6), 10);
 
         // Original should still be usable
@@ -1790,13 +1790,13 @@ mod rc_bi_transformer_once_tests {
     #[test]
     fn test_multiply_once() {
         let multiply = RcBiTransformer::new(|x: i32, y: i32| x * y);
-        assert_eq!(multiply.apply_once(6, 7), 42);
+        assert_eq!(multiply.apply(6, 7), 42);
     }
 
     #[test]
     fn test_string_concatenation_once() {
         let concat = RcBiTransformer::new(|x: String, y: String| format!("{} {}", x, y));
-        let result = concat.apply_once("Hello".to_string(), "World".to_string());
+        let result = concat.apply("Hello".to_string(), "World".to_string());
         assert_eq!(result, "Hello World");
     }
 }
@@ -1812,39 +1812,39 @@ mod arc_bi_transformer_once_tests {
     use std::thread;
 
     #[test]
-    fn test_apply_once() {
+    fn test_apply() {
         let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
-        assert_eq!(add.apply_once(20, 22), 42);
+        assert_eq!(add.apply(20, 22), 42);
     }
 
     #[test]
-    fn test_into_box_once() {
+    fn test_into_box() {
         let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
-        let box_once = add.into_box_once();
-        assert_eq!(box_once.apply_once(10, 20), 30);
+        let box_once = add.into_box();
+        assert_eq!(box_once.apply(10, 20), 30);
     }
 
     #[test]
-    fn test_into_fn_once() {
+    fn test_into_fn() {
         let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
-        let fn_once = add.into_fn_once();
+        let fn_once = add.into_fn();
         assert_eq!(fn_once(5, 15), 20);
     }
 
     #[test]
-    fn test_to_box_once() {
+    fn test_to_box() {
         let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
-        let box_once = add.to_box_once();
-        assert_eq!(box_once.apply_once(3, 7), 10);
+        let box_once = add.to_box();
+        assert_eq!(box_once.apply(3, 7), 10);
 
         // Original should still be usable
         assert_eq!(add.apply(1, 2), 3);
     }
 
     #[test]
-    fn test_to_fn_once() {
+    fn test_to_fn() {
         let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
-        let fn_once = add.to_fn_once();
+        let fn_once = add.to_fn();
         assert_eq!(fn_once(4, 6), 10);
 
         // Original should still be usable
@@ -1854,36 +1854,36 @@ mod arc_bi_transformer_once_tests {
     #[test]
     fn test_multiply_once() {
         let multiply = ArcBiTransformer::new(|x: i32, y: i32| x * y);
-        assert_eq!(multiply.apply_once(6, 7), 42);
+        assert_eq!(multiply.apply(6, 7), 42);
     }
 
     #[test]
     fn test_string_concatenation_once() {
         let concat = ArcBiTransformer::new(|x: String, y: String| format!("{} {}", x, y));
-        let result = concat.apply_once("Hello".to_string(), "World".to_string());
+        let result = concat.apply("Hello".to_string(), "World".to_string());
         assert_eq!(result, "Hello World");
     }
 
     #[test]
-    fn test_thread_safety_apply_once() {
+    fn test_thread_safety_apply() {
         let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
-        let handle = thread::spawn(move || add.apply_once(10, 20));
+        let handle = thread::spawn(move || add.apply(10, 20));
         assert_eq!(handle.join().unwrap(), 30);
     }
 
     #[test]
-    fn test_thread_safety_to_box_once() {
+    fn test_thread_safety_to_box() {
         let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
-        let box_once = add.to_box_once();
+        let box_once = add.to_box();
         // BoxBiTransformerOnce is not Send, so we can't use it in threads
         // Test it directly instead
-        assert_eq!(box_once.apply_once(5, 15), 20);
+        assert_eq!(box_once.apply(5, 15), 20);
     }
 
     #[test]
-    fn test_thread_safety_to_fn_once() {
+    fn test_thread_safety_to_fn() {
         let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
-        let fn_once = add.to_fn_once();
+        let fn_once = add.to_fn();
         // Test it directly since BoxBiTransformerOnce is not Send
         assert_eq!(fn_once(3, 7), 10);
     }

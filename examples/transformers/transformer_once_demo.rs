@@ -30,44 +30,44 @@ fn main() {
     // BoxTransformer TransformerOnce demonstration
     println!("1. BoxTransformer TransformerOnce demonstration:");
     let double = BoxTransformer::new(|x: i32| x * 2);
-    let result = double.apply_once(21);
-    println!("   double.apply_once(21) = {}", result);
+    let result = double.apply(21);
+    println!("   double.apply(21) = {}", result);
 
     // Convert to BoxTransformerOnce
     let double = BoxTransformer::new(|x: i32| x * 2);
-    let boxed = double.into_box_once();
-    let result = boxed.apply_once(21);
-    println!("   double.into_box_once().apply_once(21) = {}", result);
+    let boxed = double.into_box();
+    let result = boxed.apply(21);
+    println!("   double.into_box().apply(21) = {}", result);
 
     // Convert to function
     let double = BoxTransformer::new(|x: i32| x * 2);
-    let func = double.into_fn_once();
+    let func = double.into_fn();
     let result = func(21);
-    println!("   double.into_fn_once()(21) = {}", result);
+    println!("   double.into_fn()(21) = {}", result);
 
     println!();
 
     // RcTransformer TransformerOnce demonstration
     println!("2. RcTransformer TransformerOnce demonstration:");
     let uppercase = RcTransformer::new(|s: String| s.to_uppercase());
-    let result = uppercase.apply_once("hello".to_string());
-    println!("   uppercase.apply_once(\"hello\") = {}", result);
+    let result = uppercase.apply("hello".to_string());
+    println!("   uppercase.apply(\"hello\") = {}", result);
 
     // Use after cloning
     let uppercase = RcTransformer::new(|s: String| s.to_uppercase());
     let uppercase_clone = uppercase.clone();
-    let result1 = uppercase.apply_once("world".to_string());
-    let result2 = uppercase_clone.apply_once("rust".to_string());
-    println!("   uppercase.apply_once(\"world\") = {}", result1);
-    println!("   uppercase_clone.apply_once(\"rust\") = {}", result2);
+    let result1 = uppercase.apply("world".to_string());
+    let result2 = uppercase_clone.apply("rust".to_string());
+    println!("   uppercase.apply(\"world\") = {}", result1);
+    println!("   uppercase_clone.apply(\"rust\") = {}", result2);
 
     println!();
 
     // ArcTransformer TransformerOnce demonstration
     println!("3. ArcTransformer TransformerOnce demonstration:");
     let parse_and_double = ArcTransformer::new(|s: String| s.parse::<i32>().unwrap_or(0) * 2);
-    let result = parse_and_double.apply_once("21".to_string());
-    println!("   parse_and_double.apply_once(\"21\") = {}", result);
+    let result = parse_and_double.apply("21".to_string());
+    println!("   parse_and_double.apply(\"21\") = {}", result);
 
     // Thread safety demonstration
     println!("4. ArcTransformer thread safety demonstration:");
@@ -78,12 +78,12 @@ fn main() {
     let handle = thread::spawn(move || {
         // Create a new transformer in the thread to demonstrate thread safety
         let new_double = ArcTransformer::new(|x: i32| x * 2);
-        new_double.apply_once(21)
+        new_double.apply(21)
     });
 
     let result = handle.join().unwrap();
     println!(
-        "   Executed in thread: new_double.apply_once(21) = {}",
+        "   Executed in thread: new_double.apply(21) = {}",
         result
     );
 

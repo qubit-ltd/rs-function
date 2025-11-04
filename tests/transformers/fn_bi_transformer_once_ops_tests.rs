@@ -23,7 +23,7 @@ mod tests {
         let double = |x: i32| x * 2;
 
         let composed = add.and_then(double);
-        assert_eq!(composed.apply_once(3, 5), 16); // (3 + 5) * 2 = 16
+        assert_eq!(composed.apply(3, 5), 16); // (3 + 5) * 2 = 16
     }
 
     #[test]
@@ -33,7 +33,7 @@ mod tests {
         let to_string = |x: i32| x.to_string();
 
         let composed = add.and_then(to_string);
-        assert_eq!(composed.apply_once(20, 22), "42");
+        assert_eq!(composed.apply(20, 22), "42");
     }
 
     #[test]
@@ -45,7 +45,7 @@ mod tests {
         let conditional = add
             .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
             .or_else(multiply);
-        assert_eq!(conditional.apply_once(5, 3), 8); // Condition met, execute addition
+        assert_eq!(conditional.apply(5, 3), 8); // Condition met, execute addition
 
         // Need to recreate because it's FnOnce
         let add2 = |x: i32, y: i32| x + y;
@@ -53,7 +53,7 @@ mod tests {
         let conditional2 = add2
             .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
             .or_else(multiply2);
-        assert_eq!(conditional2.apply_once(-5, 3), -15); // Condition not met, execute multiplication
+        assert_eq!(conditional2.apply(-5, 3), -15); // Condition not met, execute multiplication
     }
 
     #[test]
@@ -63,12 +63,12 @@ mod tests {
         let subtract = |x: i32, y: i32| x - y;
 
         let conditional = add.when(|x: &i32, _y: &i32| *x > 0).or_else(subtract);
-        assert_eq!(conditional.apply_once(10, 3), 13); // x > 0, execute addition
+        assert_eq!(conditional.apply(10, 3), 13); // x > 0, execute addition
 
         let add2 = |x: i32, y: i32| x + y;
         let subtract2 = |x: i32, y: i32| x - y;
         let conditional2 = add2.when(|x: &i32, _y: &i32| *x > 0).or_else(subtract2);
-        assert_eq!(conditional2.apply_once(-10, 3), -13); // x <= 0, execute subtraction
+        assert_eq!(conditional2.apply(-10, 3), -13); // x <= 0, execute subtraction
     }
 
     #[test]
@@ -82,7 +82,7 @@ mod tests {
         }
 
         let composed = add.and_then(double);
-        assert_eq!(composed.apply_once(3, 5), 16);
+        assert_eq!(composed.apply(3, 5), 16);
     }
 
     #[test]
@@ -99,10 +99,10 @@ mod tests {
         }
 
         let conditional = add.when(both_positive).or_else(multiply);
-        assert_eq!(conditional.apply_once(5, 3), 8);
+        assert_eq!(conditional.apply(5, 3), 8);
 
         let conditional2 = add.when(both_positive).or_else(multiply);
-        assert_eq!(conditional2.apply_once(-5, 3), -15);
+        assert_eq!(conditional2.apply(-5, 3), -15);
     }
 
     #[test]
@@ -113,7 +113,7 @@ mod tests {
         let double = |x: i32| x * 2;
 
         let step1 = add.and_then(double);
-        let result = step1.apply_once(3, 5);
+        let result = step1.apply(3, 5);
         assert_eq!(result, 16); // (3 + 5) * 2 = 16
     }
 
@@ -126,7 +126,7 @@ mod tests {
 
         let composed = concat.and_then(uppercase);
         assert_eq!(
-            composed.apply_once("hello".to_string(), "world".to_string()),
+            composed.apply("hello".to_string(), "world".to_string()),
             "PREFIX-HELLOWORLD"
         );
     }
@@ -140,20 +140,20 @@ mod tests {
         let conditional = add
             .when(|x: &i32, y: &i32| *x > 0 && *y > 0 && (*x + *y) < 20)
             .or_else(multiply);
-        assert_eq!(conditional.apply_once(5, 3), 8); // Condition met
+        assert_eq!(conditional.apply(5, 3), 8); // Condition met
 
         let add2 = |x: i32, y: i32| x + y;
         let multiply2 = |x: i32, y: i32| x * y;
         let conditional2 = add2
             .when(|x: &i32, y: &i32| *x > 0 && *y > 0 && (*x + *y) < 20)
             .or_else(multiply2);
-        assert_eq!(conditional2.apply_once(15, 10), 150); // Condition not met (sum >= 20)
+        assert_eq!(conditional2.apply(15, 10), 150); // Condition not met (sum >= 20)
 
         let add3 = |x: i32, y: i32| x + y;
         let multiply3 = |x: i32, y: i32| x * y;
         let conditional3 = add3
             .when(|x: &i32, y: &i32| *x > 0 && *y > 0 && (*x + *y) < 20)
             .or_else(multiply3);
-        assert_eq!(conditional3.apply_once(-5, 3), -15); // Condition not met (x <= 0)
+        assert_eq!(conditional3.apply(-5, 3), -15); // Condition not met (x <= 0)
     }
 }

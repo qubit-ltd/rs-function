@@ -27,7 +27,7 @@ mod tests {
         let double = |x: i32| x * 2;
 
         let composed = parse.and_then(double);
-        assert_eq!(composed.apply_once("21".to_string()), 42);
+        assert_eq!(composed.apply("21".to_string()), 42);
     }
 
     #[test]
@@ -36,7 +36,7 @@ mod tests {
         let to_string = |x: i32| x.to_string();
 
         let composed = to_string.compose(double);
-        assert_eq!(composed.apply_once(21), "42");
+        assert_eq!(composed.apply(21), "42");
     }
 
     #[test]
@@ -44,9 +44,9 @@ mod tests {
         let double = |x: i32| x * 2;
         let conditional = double.when(|x: &i32| *x > 0).or_else(|x: i32| -x);
 
-        assert_eq!(conditional.apply_once(5), 10);
+        assert_eq!(conditional.apply(5), 10);
         let conditional2 = (|x: i32| x * 2).when(|x: &i32| *x > 0).or_else(|x: i32| -x);
-        assert_eq!(conditional2.apply_once(-5), 5);
+        assert_eq!(conditional2.apply(-5), 5);
     }
 }
 
@@ -64,7 +64,7 @@ mod composition_with_box_tests {
         let double = BoxTransformerOnce::new(|x: i32| x * 2);
 
         let composed = parse.and_then(double);
-        assert_eq!(composed.apply_once("21".to_string()), 42);
+        assert_eq!(composed.apply("21".to_string()), 42);
     }
 
     #[test]
@@ -73,7 +73,7 @@ mod composition_with_box_tests {
         let to_string = |x: i32| x.to_string();
 
         let composed = to_string.compose(double);
-        assert_eq!(composed.apply_once(21), "42");
+        assert_eq!(composed.apply(21), "42");
     }
 
     #[test]
@@ -82,7 +82,7 @@ mod composition_with_box_tests {
         let double = |x: i32| x * 2;
 
         let composed = parse.and_then(double);
-        assert_eq!(composed.apply_once("21".to_string()), 42);
+        assert_eq!(composed.apply("21".to_string()), 42);
     }
 
     #[test]
@@ -91,7 +91,7 @@ mod composition_with_box_tests {
         let double = |x: i32| x * 2;
 
         let composed = to_string.compose(double);
-        assert_eq!(composed.apply_once(21), "42");
+        assert_eq!(composed.apply(21), "42");
     }
 }
 
@@ -110,7 +110,7 @@ mod multiple_composition_tests {
         let to_string = |x: i32| x.to_string();
 
         let composed = add_one.and_then(double).and_then(to_string);
-        assert_eq!(composed.apply_once(5), "12");
+        assert_eq!(composed.apply(5), "12");
     }
 
     #[test]
@@ -120,7 +120,7 @@ mod multiple_composition_tests {
         let square = |x: i32| x * x;
 
         let composed = square.compose(double).compose(add_one);
-        assert_eq!(composed.apply_once(5), 144); // ((5 + 1) * 2)^2
+        assert_eq!(composed.apply(5), 144); // ((5 + 1) * 2)^2
     }
 
     #[test]
@@ -130,7 +130,7 @@ mod multiple_composition_tests {
         let double = |x: i32| x * 2;
 
         let composed = parse.and_then(add_ten).and_then(double);
-        assert_eq!(composed.apply_once("16".to_string()), 52); // (16 + 10) * 2
+        assert_eq!(composed.apply("16".to_string()), 52); // (16 + 10) * 2
     }
 }
 
@@ -152,7 +152,7 @@ mod conditional_mapping_tests {
         let is_positive = |x: &i32| *x > 0;
 
         let conditional = double.when(is_positive).or_else(|x: i32| -x);
-        assert_eq!(conditional.apply_once(5), 10);
+        assert_eq!(conditional.apply(5), 10);
     }
 
     #[test]
@@ -163,7 +163,7 @@ mod conditional_mapping_tests {
         // Clone to preserve original predicate
         let conditional = double.when(is_positive.clone()).or_else(|x: i32| -x);
 
-        assert_eq!(conditional.apply_once(5), 10);
+        assert_eq!(conditional.apply(5), 10);
 
         // Original predicate still usable
         assert!(is_positive.test(&3));
@@ -178,7 +178,7 @@ mod conditional_mapping_tests {
         let conditional = double.when(is_positive).or_else(negate);
         let composed = conditional.and_then(|x| x + 1);
 
-        assert_eq!(composed.apply_once(5), 11); // (5 * 2) + 1
+        assert_eq!(composed.apply(5), 11); // (5 * 2) + 1
     }
 }
 
@@ -198,7 +198,7 @@ mod complex_pipeline_tests {
         let to_string = |x: i32| format!("Result: {}", x);
 
         let pipeline = parse.and_then(double).and_then(add_ten).and_then(to_string);
-        assert_eq!(pipeline.apply_once("16".to_string()), "Result: 42");
+        assert_eq!(pipeline.apply("16".to_string()), "Result: 42");
     }
 
     #[test]
@@ -211,10 +211,10 @@ mod complex_pipeline_tests {
 
         let pipeline = parse
             .and_then(double)
-            .and_then(move |x: i32| (|y: i32| y).when(is_even).or_else(identity).apply_once(x))
+            .and_then(move |x: i32| (|y: i32| y).when(is_even).or_else(identity).apply(x))
             .and_then(half);
 
-        assert_eq!(pipeline.apply_once("21".to_string()), 21); // (21 * 2) / 2
+        assert_eq!(pipeline.apply("21".to_string()), 21); // (21 * 2) / 2
     }
 
     #[test]
@@ -224,10 +224,7 @@ mod complex_pipeline_tests {
         let to_string = |opt: Option<i32>| opt.map(|x| x.to_string());
 
         let pipeline = parse.and_then(double).and_then(to_string);
-        assert_eq!(
-            pipeline.apply_once("21".to_string()),
-            Some("42".to_string())
-        );
+        assert_eq!(pipeline.apply("21".to_string()), Some("42".to_string()));
     }
 }
 
@@ -254,25 +251,25 @@ mod function_pointer_tests {
     #[test]
     fn test_function_pointer_and_then() {
         let composed = double.and_then(add_ten);
-        assert_eq!(composed.apply_once(16), 42); // (16 * 2) + 10
+        assert_eq!(composed.apply(16), 42); // (16 * 2) + 10
     }
 
     #[test]
     fn test_function_pointer_compose() {
         let composed = add_ten.compose(double);
-        assert_eq!(composed.apply_once(16), 42); // (16 * 2) + 10
+        assert_eq!(composed.apply(16), 42); // (16 * 2) + 10
     }
 
     #[test]
     fn test_function_pointer_chain() {
         let composed = double.and_then(add_ten).and_then(to_string);
-        assert_eq!(composed.apply_once(16), "42");
+        assert_eq!(composed.apply(16), "42");
     }
 
     #[test]
     fn test_function_pointer_when() {
         let conditional = double.when(|x: &i32| *x > 0).or_else(|x: i32| -x);
-        assert_eq!(conditional.apply_once(5), 10);
+        assert_eq!(conditional.apply(5), 10);
     }
 }
 
@@ -290,7 +287,7 @@ mod captured_state_tests {
         let multiply = move |x: i32| x * multiplier;
 
         let composed = multiply.and_then(|x| x + 10);
-        assert_eq!(composed.apply_once(10), 40); // (10 * 3) + 10
+        assert_eq!(composed.apply(10), 40); // (10 * 3) + 10
     }
 
     #[test]
@@ -299,7 +296,7 @@ mod captured_state_tests {
         let format_with_prefix = move |x: i32| format!("{}{}", prefix, x);
 
         let composed = format_with_prefix.and_then(|s| s + "!");
-        assert_eq!(composed.apply_once(42), "Value: 42!");
+        assert_eq!(composed.apply(42), "Value: 42!");
     }
 
     #[test]
@@ -310,7 +307,7 @@ mod captured_state_tests {
         let transform = move |x: i32| (x * multiplier) + offset;
         let composed = transform.and_then(|x: i32| x.to_string());
 
-        assert_eq!(composed.apply_once(16), "42"); // (16 * 2) + 10
+        assert_eq!(composed.apply(16), "42"); // (16 * 2) + 10
     }
 }
 
@@ -328,7 +325,7 @@ mod type_conversion_tests {
         let add_suffix = |s: String| s + "_suffix";
 
         let composed = to_string.and_then(add_suffix);
-        assert_eq!(composed.apply_once(42), "42_suffix");
+        assert_eq!(composed.apply(42), "42_suffix");
     }
 
     #[test]
@@ -337,7 +334,7 @@ mod type_conversion_tests {
         let double = |x: i32| x * 2;
 
         let composed = parse.and_then(double);
-        assert_eq!(composed.apply_once("21".to_string()), 42);
+        assert_eq!(composed.apply("21".to_string()), 42);
     }
 
     #[test]
@@ -347,7 +344,7 @@ mod type_conversion_tests {
         let unwrap_or = |opt: Option<i32>| opt.unwrap_or(0);
 
         let composed = parse.and_then(double).and_then(unwrap_or);
-        assert_eq!(composed.apply_once("21".to_string()), 42);
+        assert_eq!(composed.apply("21".to_string()), 42);
     }
 
     #[test]
@@ -357,7 +354,7 @@ mod type_conversion_tests {
         let unwrap_or = |r: Result<i32, _>| r.unwrap_or(0);
 
         let composed = parse.and_then(double).and_then(unwrap_or);
-        assert_eq!(composed.apply_once("21".to_string()), 42);
+        assert_eq!(composed.apply("21".to_string()), 42);
     }
 }
 
@@ -375,7 +372,7 @@ mod edge_cases_tests {
         let double = |x: i32| x * 2;
 
         let composed = identity.and_then(double);
-        assert_eq!(composed.apply_once(21), 42);
+        assert_eq!(composed.apply(21), 42);
     }
 
     #[test]
@@ -384,7 +381,7 @@ mod edge_cases_tests {
         let double = |x: i32| x * 2;
 
         let composed = constant.and_then(double);
-        assert_eq!(composed.apply_once(0), 84);
+        assert_eq!(composed.apply(0), 84);
     }
 
     #[test]
@@ -393,7 +390,7 @@ mod edge_cases_tests {
         let double = |x: i32| x * 2;
 
         let composed = parse.and_then(double);
-        assert_eq!(composed.apply_once("".to_string()), 0);
+        assert_eq!(composed.apply("".to_string()), 0);
     }
 
     #[test]
@@ -402,7 +399,7 @@ mod edge_cases_tests {
         let add_ten = |x: i32| x + 10;
 
         let composed = double.and_then(add_ten);
-        assert_eq!(composed.apply_once(0), 10);
+        assert_eq!(composed.apply(0), 10);
     }
 
     #[test]
@@ -411,7 +408,7 @@ mod edge_cases_tests {
         let double = |x: i32| x * 2;
 
         let composed = negate.and_then(double);
-        assert_eq!(composed.apply_once(21), -42);
+        assert_eq!(composed.apply(21), -42);
     }
 }
 
@@ -429,7 +426,7 @@ mod advanced_usage_tests {
         let count = |v: Vec<String>| v.len();
 
         let composed = split.and_then(count);
-        assert_eq!(composed.apply_once("a,b,c".to_string()), 3);
+        assert_eq!(composed.apply("a,b,c".to_string()), 3);
     }
 
     #[test]
@@ -439,10 +436,10 @@ mod advanced_usage_tests {
             |opt: Option<i32>| opt.and_then(|x| if x > 0 { Some(x * 2) } else { None });
 
         let composed = parse.and_then(double_if_positive);
-        assert_eq!(composed.apply_once("21".to_string()), Some(42));
+        assert_eq!(composed.apply("21".to_string()), Some(42));
         let composed2 = (|s: String| s.parse::<i32>().ok())
             .and_then(|opt: Option<i32>| opt.and_then(|x| if x > 0 { Some(x * 2) } else { None }));
-        assert_eq!(composed2.apply_once("-10".to_string()), None);
+        assert_eq!(composed2.apply("-10".to_string()), None);
     }
 
     #[test]
@@ -452,11 +449,11 @@ mod advanced_usage_tests {
         let clamp = |x: i32| if x > 100 { 100 } else { x };
 
         let composed = scale.when(is_in_range).or_else(clamp);
-        assert_eq!(composed.apply_once(21), 42); // in range, scaled
+        assert_eq!(composed.apply(21), 42); // in range, scaled
         let composed2 = (|x: i32| x * 2)
             .when(|x: &i32| *x >= 0 && *x <= 100)
             .or_else(|x: i32| if x > 100 { 100 } else { x });
-        assert_eq!(composed2.apply_once(150), 100); // out of range, clamped
+        assert_eq!(composed2.apply(150), 100); // out of range, clamped
     }
 
     #[test]
@@ -466,7 +463,7 @@ mod advanced_usage_tests {
         let rebox = |x: i32| Box::new(x);
 
         let composed = unbox.and_then(double).and_then(rebox);
-        let result = composed.apply_once(Box::new(21));
+        let result = composed.apply(Box::new(21));
         assert_eq!(*result, 42);
     }
 }

@@ -23,7 +23,7 @@ mod tests {
         let double = |x: i32| x * 2;
 
         let composed = parse.and_then(double);
-        assert_eq!(composed.apply_once("21".to_string()), 42);
+        assert_eq!(composed.apply("21".to_string()), 42);
     }
 
     #[test]
@@ -33,7 +33,7 @@ mod tests {
         let double = |x: i32| x * 2;
 
         let composed = parse.and_then(add_one).and_then(double);
-        assert_eq!(composed.apply_once("5".to_string()), 12); // (5 + 1) * 2 = 12
+        assert_eq!(composed.apply("5".to_string()), 12); // (5 + 1) * 2 = 12
     }
 
     #[test]
@@ -42,7 +42,7 @@ mod tests {
         let to_string = |x: i32| x.to_string();
 
         let composed = to_string.compose(double);
-        assert_eq!(composed.apply_once(21), "42");
+        assert_eq!(composed.apply(21), "42");
     }
 
     #[test]
@@ -52,7 +52,7 @@ mod tests {
         let to_string = |x: i32| x.to_string();
 
         let composed = to_string.compose(triple).compose(add_two);
-        assert_eq!(composed.apply_once(5), "21"); // ((5 + 2) * 3).to_string() = "21"
+        assert_eq!(composed.apply(5), "21"); // ((5 + 2) * 3).to_string() = "21"
     }
 
     #[test]
@@ -60,7 +60,7 @@ mod tests {
         let double = |x: i32| x * 2;
         let conditional = double.when(|x: &i32| *x > 0).or_else(|x: i32| -x);
 
-        assert_eq!(conditional.apply_once(5), 10);
+        assert_eq!(conditional.apply(5), 10);
     }
 
     #[test]
@@ -68,7 +68,7 @@ mod tests {
         let double = |x: i32| x * 2;
         let conditional = double.when(|x: &i32| *x > 0).or_else(|x: i32| -x);
 
-        assert_eq!(conditional.apply_once(-5), 5);
+        assert_eq!(conditional.apply(-5), 5);
     }
 
     #[test]
@@ -76,7 +76,7 @@ mod tests {
         let double = |x: i32| x * 2;
         let conditional = double.when(|x: &i32| *x > 10).or_else(|x: i32| x);
 
-        assert_eq!(conditional.apply_once(20), 40);
+        assert_eq!(conditional.apply(20), 40);
     }
 
     #[test]
@@ -84,7 +84,7 @@ mod tests {
         let double = |x: i32| x * 2;
         let conditional = double.when(|x: &i32| *x > 10).or_else(|x: i32| x);
 
-        assert_eq!(conditional.apply_once(5), 5);
+        assert_eq!(conditional.apply(5), 5);
     }
 
     #[test]
@@ -99,7 +99,7 @@ mod tests {
             .and_then(double.when(|x: &i32| *x > 5).or_else(triple))
             .and_then(to_string);
 
-        assert_eq!(composed.apply_once("10".to_string()), "20"); // 10 > 5, so 10 * 2 = 20
+        assert_eq!(composed.apply("10".to_string()), "20"); // 10 > 5, so 10 * 2 = 20
     }
 
     #[test]
@@ -113,7 +113,7 @@ mod tests {
             .and_then(double.when(|x: &i32| *x > 5).or_else(triple))
             .and_then(to_string);
 
-        assert_eq!(composed.apply_once("3".to_string()), "9"); // 3 <= 5, so 3 * 3 = 9
+        assert_eq!(composed.apply("3".to_string()), "9"); // 3 <= 5, so 3 * 3 = 9
     }
 
     #[test]
@@ -126,7 +126,7 @@ mod tests {
         }
 
         let composed = parse.and_then(double);
-        assert_eq!(composed.apply_once("21".to_string()), 42);
+        assert_eq!(composed.apply("21".to_string()), 42);
     }
 
     #[test]
@@ -137,7 +137,7 @@ mod tests {
 
         let double = |x: i32| x * 2;
         let composed = parse.and_then(double);
-        assert_eq!(composed.apply_once("21".to_string()), 42);
+        assert_eq!(composed.apply("21".to_string()), 42);
     }
 
     #[test]
@@ -146,7 +146,7 @@ mod tests {
         let get_length = |s: String| s.len();
 
         let composed = to_string.and_then(get_length);
-        assert_eq!(composed.apply_once(12345), 5);
+        assert_eq!(composed.apply(12345), 5);
     }
 
     #[test]
@@ -157,7 +157,7 @@ mod tests {
         // If negative, take absolute value; otherwise double
         let transformer = abs.when(|x: &i32| *x < 0).or_else(double);
 
-        assert_eq!(transformer.apply_once(-5), 5);
+        assert_eq!(transformer.apply(-5), 5);
     }
 
     #[test]
@@ -167,7 +167,7 @@ mod tests {
 
         let transformer = abs.when(|x: &i32| *x < 0).or_else(double);
 
-        assert_eq!(transformer.apply_once(5), 10);
+        assert_eq!(transformer.apply(5), 10);
     }
 
     #[test]
@@ -177,7 +177,7 @@ mod tests {
         let add_ten = |x: i32| x + 10;
 
         let composed = multiply.and_then(add_ten);
-        assert_eq!(composed.apply_once(5), 25); // 5 * 3 + 10
+        assert_eq!(composed.apply(5), 25); // 5 * 3 + 10
     }
 
     #[test]
@@ -187,7 +187,7 @@ mod tests {
         let uppercase = |s: String| s.to_uppercase();
 
         let composed = append.and_then(uppercase);
-        assert_eq!(composed.apply_once("world".to_string()), "WORLD HELLO");
+        assert_eq!(composed.apply("world".to_string()), "WORLD HELLO");
     }
 
     #[test]
@@ -202,7 +202,7 @@ mod tests {
         };
 
         let composed = parse.and_then(validate);
-        assert_eq!(composed.apply_once("42".to_string()), 42);
+        assert_eq!(composed.apply("42".to_string()), 42);
     }
 
     #[test]
@@ -217,6 +217,6 @@ mod tests {
         };
 
         let composed = parse.and_then(validate);
-        assert_eq!(composed.apply_once("-5".to_string()), 1);
+        assert_eq!(composed.apply("-5".to_string()), 1);
     }
 }

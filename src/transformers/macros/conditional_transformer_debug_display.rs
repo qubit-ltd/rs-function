@@ -43,7 +43,9 @@
 /// # Parameters
 ///
 /// * `$struct_name` - The struct name
-/// * `$generic` - Generic parameter list (two or three type parameters)
+/// * `$t` - Generic parameter list (two or three type parameters)
+/// * `$u` - Generic parameter list (two or three type parameters)
+/// * `$r` - Generic parameter list (two or three type parameters)
 ///
 /// # Examples
 ///
@@ -53,11 +55,15 @@
 ///
 /// // For three type parameters
 /// impl_conditional_transformer_debug_display!(BoxConditionalBiTransformer<T, U, V>);
-// ```
+/// ```
+///
+/// # Author
+///
+/// Haixing Hu
 macro_rules! impl_conditional_transformer_debug_display {
     // Two generic parameters
-    ($struct_name:ident < $generic1:ident, $generic2:ident >) => {
-        impl<$generic1, $generic2> std::fmt::Debug for $struct_name<$generic1, $generic2> {
+    ($struct_name:ident < $t:ident, $r:ident >) => {
+        impl<$t, $r> std::fmt::Debug for $struct_name<$t, $r> {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 f.debug_struct(stringify!($struct_name))
                     .field("transformer", &self.transformer)
@@ -66,7 +72,7 @@ macro_rules! impl_conditional_transformer_debug_display {
             }
         }
 
-        impl<$generic1, $generic2> std::fmt::Display for $struct_name<$generic1, $generic2> {
+        impl<$t, $r> std::fmt::Display for $struct_name<$t, $r> {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 write!(
                     f,
@@ -79,8 +85,8 @@ macro_rules! impl_conditional_transformer_debug_display {
         }
     };
     // Three generic parameters
-    ($struct_name:ident < $generic1:ident, $generic2:ident, $generic3:ident >) => {
-        impl<$generic1, $generic2, $generic3> std::fmt::Debug for $struct_name<$generic1, $generic2, $generic3> {
+    ($struct_name:ident < $t:ident, $u:ident, $r:ident >) => {
+        impl<$t, $u, $r> std::fmt::Debug for $struct_name<$t, $u, $r> {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 f.debug_struct(stringify!($struct_name))
                     .field("transformer", &self.transformer)
@@ -89,7 +95,7 @@ macro_rules! impl_conditional_transformer_debug_display {
             }
         }
 
-        impl<$generic1, $generic2, $generic3> std::fmt::Display for $struct_name<$generic1, $generic2, $generic3> {
+        impl<$t, $u, $r> std::fmt::Display for $struct_name<$t, $u, $r> {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 write!(
                     f,

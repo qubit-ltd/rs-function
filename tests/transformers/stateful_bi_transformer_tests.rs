@@ -947,93 +947,93 @@ fn test_rc_conditional_stateful_transformers() {
 // ============================================================================
 
 #[test]
-fn test_box_stateful_bi_transformer_apply_once() {
-    // Test apply_once consuming the transformer
+fn test_box_stateful_bi_transformer_apply() {
+    // Test apply consuming the transformer
     let mut counter = 0;
     let transformer = BoxStatefulBiTransformer::new(move |x: i32, y: i32| {
         counter += 1;
         x + y + counter
     });
 
-    assert_eq!(transformer.apply_once(10, 20), 31);
+    assert_eq!(transformer.apply(10, 20), 31);
     // transformer is now consumed
 }
 
 #[test]
-fn test_box_stateful_bi_transformer_into_box_once() {
-    // Test into_box_once conversion
+fn test_box_stateful_bi_transformer_into_box() {
+    // Test into_box conversion
     let mut counter = 0;
     let transformer = BoxStatefulBiTransformer::new(move |x: i32, y: i32| {
         counter += 1;
         x * y * counter
     });
 
-    let once_transformer = transformer.into_box_once();
-    assert_eq!(once_transformer.apply_once(10, 2), 20); // 10 * 2 * 1
+    let once_transformer = transformer.into_box();
+    assert_eq!(once_transformer.apply(10, 2), 20); // 10 * 2 * 1
 }
 
 #[test]
-fn test_box_stateful_bi_transformer_into_fn_once() {
-    // Test into_fn_once conversion
+fn test_box_stateful_bi_transformer_into_fn() {
+    // Test into_fn conversion
     let mut counter = 0;
     let transformer = BoxStatefulBiTransformer::new(move |x: i32, y: i32| {
         counter += 1;
         x * y * counter
     });
 
-    let fn_once = transformer.into_fn_once();
+    let fn_once = transformer.into_fn();
     assert_eq!(fn_once(10, 2), 20); // 10 * 2 * 1
 }
 
 #[test]
-fn test_arc_stateful_bi_transformer_apply_once() {
-    // Test apply_once for ArcStatefulBiTransformer
+fn test_arc_stateful_bi_transformer_apply() {
+    // Test apply for ArcStatefulBiTransformer
     let mut counter = 0;
     let transformer = ArcStatefulBiTransformer::new(move |x: i32, y: i32| {
         counter += 1;
         x + y + counter
     });
 
-    assert_eq!(transformer.apply_once(10, 20), 31);
+    assert_eq!(transformer.apply(10, 20), 31);
 }
 
 #[test]
-fn test_arc_stateful_bi_transformer_into_box_once() {
-    // Test into_box_once conversion
+fn test_arc_stateful_bi_transformer_into_box() {
+    // Test into_box conversion
     let mut counter = 0;
     let transformer = ArcStatefulBiTransformer::new(move |x: i32, y: i32| {
         counter += 1;
         x * y * counter
     });
 
-    let once_transformer = transformer.into_box_once();
-    assert_eq!(once_transformer.apply_once(10, 2), 20);
+    let once_transformer = transformer.into_box();
+    assert_eq!(once_transformer.apply(10, 2), 20);
 }
 
 #[test]
-fn test_arc_stateful_bi_transformer_into_fn_once() {
-    // Test into_fn_once conversion
+fn test_arc_stateful_bi_transformer_into_fn() {
+    // Test into_fn conversion
     let mut counter = 0;
     let transformer = ArcStatefulBiTransformer::new(move |x: i32, y: i32| {
         counter += 1;
         x * y * counter
     });
 
-    let fn_once = transformer.into_fn_once();
+    let fn_once = transformer.into_fn();
     assert_eq!(fn_once(10, 2), 20);
 }
 
 #[test]
-fn test_arc_stateful_bi_transformer_to_box_once() {
-    // Test non-consuming to_box_once conversion
+fn test_arc_stateful_bi_transformer_to_box() {
+    // Test non-consuming to_box conversion
     let mut counter = 0;
     let transformer = ArcStatefulBiTransformer::new(move |x: i32, y: i32| {
         counter += 1;
         x * y * counter
     });
 
-    let once_transformer = transformer.to_box_once();
-    assert_eq!(once_transformer.apply_once(10, 2), 20); // 10 * 2 * 1
+    let once_transformer = transformer.to_box();
+    assert_eq!(once_transformer.apply(10, 2), 20); // 10 * 2 * 1
 
     // Original still usable
     let mut original = transformer.clone();
@@ -1041,15 +1041,15 @@ fn test_arc_stateful_bi_transformer_to_box_once() {
 }
 
 #[test]
-fn test_arc_stateful_bi_transformer_to_fn_once() {
-    // Test non-consuming to_fn_once conversion
+fn test_arc_stateful_bi_transformer_to_fn() {
+    // Test non-consuming to_fn conversion
     let mut counter = 0;
     let transformer = ArcStatefulBiTransformer::new(move |x: i32, y: i32| {
         counter += 1;
         x * y * counter
     });
 
-    let fn_once = transformer.to_fn_once();
+    let fn_once = transformer.to_fn();
     assert_eq!(fn_once(10, 2), 20); // 10 * 2 * 1
 
     // Original still usable
@@ -1058,54 +1058,54 @@ fn test_arc_stateful_bi_transformer_to_fn_once() {
 }
 
 #[test]
-fn test_rc_stateful_bi_transformer_apply_once() {
-    // Test apply_once for RcStatefulBiTransformer
+fn test_rc_stateful_bi_transformer_apply() {
+    // Test apply for RcStatefulBiTransformer
     let mut counter = 0;
     let transformer = RcStatefulBiTransformer::new(move |x: i32, y: i32| {
         counter += 1;
         x + y + counter
     });
 
-    assert_eq!(transformer.apply_once(10, 20), 31);
+    assert_eq!(transformer.apply(10, 20), 31);
 }
 
 #[test]
-fn test_rc_stateful_bi_transformer_into_box_once() {
-    // Test into_box_once conversion
+fn test_rc_stateful_bi_transformer_into_box() {
+    // Test into_box conversion
     let mut counter = 0;
     let transformer = RcStatefulBiTransformer::new(move |x: i32, y: i32| {
         counter += 1;
         x * y * counter
     });
 
-    let once_transformer = transformer.into_box_once();
-    assert_eq!(once_transformer.apply_once(10, 2), 20);
+    let once_transformer = transformer.into_box();
+    assert_eq!(once_transformer.apply(10, 2), 20);
 }
 
 #[test]
-fn test_rc_stateful_bi_transformer_into_fn_once() {
-    // Test into_fn_once conversion
+fn test_rc_stateful_bi_transformer_into_fn() {
+    // Test into_fn conversion
     let mut counter = 0;
     let transformer = RcStatefulBiTransformer::new(move |x: i32, y: i32| {
         counter += 1;
         x * y * counter
     });
 
-    let fn_once = transformer.into_fn_once();
+    let fn_once = transformer.into_fn();
     assert_eq!(fn_once(10, 2), 20);
 }
 
 #[test]
-fn test_rc_stateful_bi_transformer_to_box_once() {
-    // Test non-consuming to_box_once conversion
+fn test_rc_stateful_bi_transformer_to_box() {
+    // Test non-consuming to_box conversion
     let mut counter = 0;
     let transformer = RcStatefulBiTransformer::new(move |x: i32, y: i32| {
         counter += 1;
         x * y * counter
     });
 
-    let once_transformer = transformer.to_box_once();
-    assert_eq!(once_transformer.apply_once(10, 2), 20); // 10 * 2 * 1
+    let once_transformer = transformer.to_box();
+    assert_eq!(once_transformer.apply(10, 2), 20); // 10 * 2 * 1
 
     // Original still usable
     let mut original = transformer.clone();
@@ -1113,15 +1113,15 @@ fn test_rc_stateful_bi_transformer_to_box_once() {
 }
 
 #[test]
-fn test_rc_stateful_bi_transformer_to_fn_once() {
-    // Test non-consuming to_fn_once conversion
+fn test_rc_stateful_bi_transformer_to_fn() {
+    // Test non-consuming to_fn conversion
     let mut counter = 0;
     let transformer = RcStatefulBiTransformer::new(move |x: i32, y: i32| {
         counter += 1;
         x * y * counter
     });
 
-    let fn_once = transformer.to_fn_once();
+    let fn_once = transformer.to_fn();
     assert_eq!(fn_once(10, 2), 20); // 10 * 2 * 1
 
     // Original still usable

@@ -26,10 +26,14 @@ use crate::predicates::bi_predicate::{
     BoxBiPredicate,
 };
 use crate::transformers::macros::{
+    impl_box_conditional_transformer,
+    impl_box_transformer_methods,
+    impl_conditional_transformer_debug_display,
     impl_transformer_common_methods,
     impl_transformer_constant_method,
     impl_transformer_debug_display,
 };
+use crate::transformers::transformer_once::TransformerOnce;
 
 // ============================================================================
 // Core Trait
@@ -61,7 +65,7 @@ pub trait BiTransformerOnce<T, U, R> {
     /// # Returns
     ///
     /// The transformed output value
-    fn apply_once(self, first: T, second: U) -> R;
+    fn apply(self, first: T, second: U) -> R;
 
     /// Converts to BoxBiTransformerOnce
     ///
@@ -71,14 +75,14 @@ pub trait BiTransformerOnce<T, U, R> {
     /// # Returns
     ///
     /// Returns `BoxBiTransformerOnce<T, U, R>`
-    fn into_box_once(self) -> BoxBiTransformerOnce<T, U, R>
+    fn into_box(self) -> BoxBiTransformerOnce<T, U, R>
     where
         Self: Sized + 'static,
         T: 'static,
         U: 'static,
         R: 'static,
     {
-        BoxBiTransformerOnce::new(move |t: T, u: U| self.apply_once(t, u))
+        BoxBiTransformerOnce::new(move |t: T, u: U| self.apply(t, u))
     }
 
     /// Converts bi-transformer to a closure
@@ -89,14 +93,14 @@ pub trait BiTransformerOnce<T, U, R> {
     /// # Returns
     ///
     /// Returns a closure that implements `FnOnce(T, U) -> R`
-    fn into_fn_once(self) -> impl FnOnce(T, U) -> R
+    fn into_fn(self) -> impl FnOnce(T, U) -> R
     where
         Self: Sized + 'static,
         T: 'static,
         U: 'static,
         R: 'static,
     {
-        move |t: T, u: U| self.apply_once(t, u)
+        move |t: T, u: U| self.apply(t, u)
     }
 
     /// Converts bi-transformer to a boxed function pointer
@@ -114,17 +118,17 @@ pub trait BiTransformerOnce<T, U, R> {
     /// use prism3_function::BiTransformerOnce;
     ///
     /// let add = |x: i32, y: i32| x + y;
-    /// let func = add.to_fn_once();
+    /// let func = add.to_fn();
     /// assert_eq!(func(20, 22), 42);
     /// ```
-    fn to_box_once(&self) -> BoxBiTransformerOnce<T, U, R>
+    fn to_box(&self) -> BoxBiTransformerOnce<T, U, R>
     where
         Self: Clone + 'static,
         T: 'static,
         U: 'static,
         R: 'static,
     {
-        self.clone().into_box_once()
+        self.clone().into_box()
     }
 
     /// Converts bi-transformer to a closure
@@ -142,17 +146,17 @@ pub trait BiTransformerOnce<T, U, R> {
     /// use prism3_function::BiTransformerOnce;
     ///
     /// let add = |x: i32, y: i32| x + y;
-    /// let func = add.to_fn_once();
+    /// let func = add.to_fn();
     /// assert_eq!(func(20, 22), 42);
     /// ```
-    fn to_fn_once(&self) -> impl FnOnce(T, U) -> R
+    fn to_fn(&self) -> impl FnOnce(T, U) -> R
     where
         Self: Clone + 'static,
         T: 'static,
         U: 'static,
         R: 'static,
     {
-        self.clone().into_fn_once()
+        self.clone().into_fn()
     }
 }
 
@@ -181,8 +185,7 @@ pub struct BoxBiTransformerOnce<T, U, R> {
     name: Option<String>,
 }
 
-impl_transformer_debug_display!(BoxBiTransformerOnce<T, U, R>);
-
+// Implement BoxBiTransformerOnce
 impl<T, U, R> BoxBiTransformerOnce<T, U, R>
 where
     T: 'static,
@@ -195,135 +198,26 @@ where
         |f| Box::new(f)
     );
 
-    /// Chain composition - applies self first, then after
-    ///
-    /// Creates a new bi-transformer that applies this bi-transformer first,
-    /// then applies the after transformer to the result. Consumes self and
-    /// returns a new `BoxBiTransformerOnce`.
-    ///
-    /// # Type Parameters
-    ///
-    /// * `S` - The output type of the after transformer
-    /// * `F` - The type of the after transformer (must implement TransformerOnce<R, S>)
-    ///
-    /// # Parameters
-    ///
-    /// * `after` - The transformer to apply after self. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** Since
-    ///   `BoxBiTransformerOnce` cannot be cloned, the parameter will be consumed.
-    ///   Can be:
-    ///   - A closure: `|x: R| -> S`
-    ///   - A function pointer: `fn(R) -> S`
-    ///   - A `BoxTransformerOnce<R, S>`
-    ///   - Any type implementing `TransformerOnce<R, S>`
-    ///
-    /// # Returns
-    ///
-    /// A new `BoxBiTransformerOnce<T, U, S>` representing the composition
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use prism3_function::{BiTransformerOnce, BoxBiTransformerOnce};
-    ///
-    /// let add = BoxBiTransformerOnce::new(|x: i32, y: i32| x + y);
-    /// let double = |x: i32| x * 2;
-    ///
-    /// // Both add and double are moved and consumed
-    /// let composed = add.and_then(double);
-    /// assert_eq!(composed.apply_once(3, 5), 16); // (3 + 5) * 2
-    /// // add.apply_once(1, 2); // Would not compile - moved
-    /// // double(10); // Would not compile - moved
-    /// ```
-    pub fn and_then<S, F>(self, after: F) -> BoxBiTransformerOnce<T, U, S>
-    where
-        S: 'static,
-        F: crate::transformers::transformer_once::TransformerOnce<R, S> + 'static,
-    {
-        let self_fn = self.function;
-        BoxBiTransformerOnce::new(move |t: T, u: U| after.apply_once(self_fn(t, u)))
-    }
-
-    /// Creates a conditional bi-transformer
-    ///
-    /// Returns a bi-transformer that only executes when a bi-predicate is
-    /// satisfied. You must call `or_else()` to provide an alternative
-    /// bi-transformer.
-    ///
-    /// # Parameters
-    ///
-    /// * `predicate` - The condition to check. **Note: This parameter is passed
-    ///   by value and will transfer ownership.** If you need to preserve the
-    ///   original bi-predicate, clone it first (if it implements `Clone`).
-    ///   Can be:
-    ///   - A closure: `|x: &T, y: &U| -> bool`
-    ///   - A function pointer: `fn(&T, &U) -> bool`
-    ///   - A `BoxBiPredicate<T, U>`
-    ///   - An `RcBiPredicate<T, U>`
-    ///   - An `ArcBiPredicate<T, U>`
-    ///   - Any type implementing `BiPredicate<T, U>`
-    ///
-    /// # Returns
-    ///
-    /// Returns `BoxConditionalBiTransformerOnce<T, U, R>`
-    ///
-    /// # Examples
-    ///
-    /// ## Basic usage with or_else
-    ///
-    /// ```rust
-    /// use prism3_function::{BiTransformerOnce, BoxBiTransformerOnce};
-    ///
-    /// let add = BoxBiTransformerOnce::new(|x: i32, y: i32| x + y);
-    /// let multiply = BoxBiTransformerOnce::new(|x: i32, y: i32| x * y);
-    /// let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-    ///     .or_else(multiply);
-    /// assert_eq!(conditional.apply_once(5, 3), 8);
-    ///
-    /// let add2 = BoxBiTransformerOnce::new(|x: i32, y: i32| x + y);
-    /// let multiply2 = BoxBiTransformerOnce::new(|x: i32, y: i32| x * y);
-    /// let conditional2 = add2.when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-    ///     .or_else(multiply2);
-    /// assert_eq!(conditional2.apply_once(-5, 3), -15);
-    /// ```
-    ///
-    /// ## Preserving bi-predicate with clone
-    ///
-    /// ```rust
-    /// use prism3_function::{BiTransformerOnce, BoxBiTransformerOnce, RcBiPredicate};
-    ///
-    /// let add = BoxBiTransformerOnce::new(|x: i32, y: i32| x + y);
-    /// let both_positive = RcBiPredicate::new(|x: &i32, y: &i32|
-    ///     *x > 0 && *y > 0);
-    ///
-    /// // Clone to preserve original bi-predicate
-    /// let conditional = add.when(both_positive.clone())
-    ///     .or_else(BoxBiTransformerOnce::new(|x, y| x * y));
-    ///
-    /// assert_eq!(conditional.apply_once(5, 3), 8);
-    ///
-    /// // Original bi-predicate still usable
-    /// assert!(both_positive.test(&5, &3));
-    /// ```
-    pub fn when<P>(self, predicate: P) -> BoxConditionalBiTransformerOnce<T, U, R>
-    where
-        P: BiPredicate<T, U> + 'static,
-    {
-        BoxConditionalBiTransformerOnce {
-            transformer: self,
-            predicate: predicate.into_box(),
-        }
-    }
+    impl_box_transformer_methods!(
+        BoxBiTransformerOnce<T, U, R>,
+        BoxConditionalBiTransformerOnce,
+        TransformerOnce
+    );
 }
 
+// Implement constant method for BoxBiTransformerOnce
 impl_transformer_constant_method!(BoxBiTransformerOnce<T, U, R>);
 
+// Use macro to generate Debug and Display implementations
+impl_transformer_debug_display!(BoxBiTransformerOnce<T, U, R>);
+
+// Implement BiTransformerOnce trait for BoxBiTransformerOnce
 impl<T, U, R> BiTransformerOnce<T, U, R> for BoxBiTransformerOnce<T, U, R> {
-    fn apply_once(self, first: T, second: U) -> R {
+    fn apply(self, first: T, second: U) -> R {
         (self.function)(first, second)
     }
 
-    fn into_box_once(self) -> BoxBiTransformerOnce<T, U, R>
+    fn into_box(self) -> BoxBiTransformerOnce<T, U, R>
     where
         T: 'static,
         U: 'static,
@@ -333,116 +227,17 @@ impl<T, U, R> BiTransformerOnce<T, U, R> for BoxBiTransformerOnce<T, U, R> {
         self
     }
 
-    fn into_fn_once(self) -> impl FnOnce(T, U) -> R
+    fn into_fn(self) -> impl FnOnce(T, U) -> R
     where
         T: 'static,
         U: 'static,
         R: 'static,
     {
-        move |t: T, u: U| self.apply_once(t, u)
+        move |t: T, u: U| self.apply(t, u)
     }
 
     //  do NOT override BoxBiTransformerOnce::to_xxxx() because BoxBiTransformerOnce is not Clone
     //  and calling BoxBiTransformerOnce::to_xxxx() will cause a compile error
-}
-
-// ============================================================================
-// BoxConditionalBiTransformerOnce - Box-based Conditional BiTransformer
-// ============================================================================
-
-/// BoxConditionalBiTransformerOnce struct
-///
-/// A conditional consuming bi-transformer that only executes when a bi-predicate
-/// is satisfied. Uses `BoxBiTransformerOnce` and `BoxBiPredicate` for single
-/// ownership semantics.
-///
-/// This type is typically created by calling `BoxBiTransformerOnce::when()` and
-/// is designed to work with the `or_else()` method to create if-then-else logic.
-///
-/// # Features
-///
-/// - **Single Ownership**: Not cloneable, consumes `self` on use
-/// - **One-time Use**: Can only be called once
-/// - **Conditional Execution**: Only transforms when bi-predicate returns `true`
-/// - **Chainable**: Can add `or_else` branch to create if-then-else logic
-///
-/// # Examples
-///
-/// ## With or_else Branch
-///
-/// ```rust
-/// use prism3_function::{BiTransformerOnce, BoxBiTransformerOnce};
-///
-/// let add = BoxBiTransformerOnce::new(|x: i32, y: i32| x + y);
-/// let multiply = BoxBiTransformerOnce::new(|x: i32, y: i32| x * y);
-/// let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply);
-/// assert_eq!(conditional.apply_once(5, 3), 8); // when branch executed
-///
-/// let add2 = BoxBiTransformerOnce::new(|x: i32, y: i32| x + y);
-/// let multiply2 = BoxBiTransformerOnce::new(|x: i32, y: i32| x * y);
-/// let conditional2 = add2.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply2);
-/// assert_eq!(conditional2.apply_once(-5, 3), -15); // or_else branch executed
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-pub struct BoxConditionalBiTransformerOnce<T, U, R> {
-    transformer: BoxBiTransformerOnce<T, U, R>,
-    predicate: BoxBiPredicate<T, U>,
-}
-
-impl<T, U, R> BoxConditionalBiTransformerOnce<T, U, R>
-where
-    T: 'static,
-    U: 'static,
-    R: 'static,
-{
-    /// Adds an else branch
-    ///
-    /// Executes the original bi-transformer when the condition is satisfied,
-    /// otherwise executes else_transformer.
-    ///
-    /// # Parameters
-    ///
-    /// * `else_transformer` - The bi-transformer for the else branch, can be:
-    ///   - Closure: `|x: T, y: U| -> R`
-    ///   - `BoxBiTransformerOnce<T, U, R>`
-    ///   - Any type implementing `BiTransformerOnce<T, U, R>`
-    ///
-    /// # Returns
-    ///
-    /// Returns the composed `BoxBiTransformerOnce<T, U, R>`
-    ///
-    /// # Examples
-    ///
-    /// ## Using a closure (recommended)
-    ///
-    /// ```rust
-    /// use prism3_function::{BiTransformerOnce, BoxBiTransformerOnce};
-    ///
-    /// let add = BoxBiTransformerOnce::new(|x: i32, y: i32| x + y);
-    /// let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(|x: i32, y: i32| x * y);
-    /// assert_eq!(conditional.apply_once(5, 3), 8); // Condition satisfied, execute add
-    ///
-    /// let add2 = BoxBiTransformerOnce::new(|x: i32, y: i32| x + y);
-    /// let conditional2 = add2.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(|x: i32, y: i32| x * y);
-    /// assert_eq!(conditional2.apply_once(-5, 3), -15); // Condition not satisfied, execute multiply
-    /// ```
-    pub fn or_else<F>(self, else_transformer: F) -> BoxBiTransformerOnce<T, U, R>
-    where
-        F: BiTransformerOnce<T, U, R> + 'static,
-    {
-        let pred = self.predicate;
-        let then_trans = self.transformer;
-        BoxBiTransformerOnce::new(move |t, u| {
-            if pred.test(&t, &u) {
-                then_trans.apply_once(t, u)
-            } else {
-                else_transformer.apply_once(t, u)
-            }
-        })
-    }
 }
 
 // ============================================================================
@@ -464,14 +259,14 @@ where
 ///     x + y
 /// }
 ///
-/// assert_eq!(add.apply_once(20, 22), 42);
+/// assert_eq!(add.apply(20, 22), 42);
 ///
 /// let owned_x = String::from("hello");
 /// let owned_y = String::from("world");
 /// let concat = |x: String, y: String| {
 ///     format!("{} {}", x, y)
 /// };
-/// assert_eq!(concat.apply_once(owned_x, owned_y), "hello world");
+/// assert_eq!(concat.apply(owned_x, owned_y), "hello world");
 /// ```
 ///
 /// # Author
@@ -484,25 +279,25 @@ where
     U: 'static,
     R: 'static,
 {
-    fn apply_once(self, first: T, second: U) -> R {
+    fn apply(self, first: T, second: U) -> R {
         self(first, second)
     }
 
-    fn into_box_once(self) -> BoxBiTransformerOnce<T, U, R>
+    fn into_box(self) -> BoxBiTransformerOnce<T, U, R>
     where
         Self: Sized + 'static,
     {
         BoxBiTransformerOnce::new(self)
     }
 
-    fn into_fn_once(self) -> impl FnOnce(T, U) -> R
+    fn into_fn(self) -> impl FnOnce(T, U) -> R
     where
         Self: Sized + 'static,
     {
         move |first: T, second: U| -> R { self(first, second) }
     }
 
-    fn to_box_once(&self) -> BoxBiTransformerOnce<T, U, R>
+    fn to_box(&self) -> BoxBiTransformerOnce<T, U, R>
     where
         Self: Clone + 'static,
         T: 'static,
@@ -512,7 +307,7 @@ where
         BoxBiTransformerOnce::new(self.clone())
     }
 
-    fn to_fn_once(&self) -> impl FnOnce(T, U) -> R
+    fn to_fn(&self) -> impl FnOnce(T, U) -> R
     where
         Self: Clone + 'static,
         T: 'static,
@@ -554,7 +349,7 @@ where
 /// let double = |x: i32| x * 2;
 ///
 /// let composed = add.and_then(double);
-/// assert_eq!(composed.apply_once(3, 5), 16); // (3 + 5) * 2
+/// assert_eq!(composed.apply(3, 5), 16); // (3 + 5) * 2
 /// ```
 ///
 /// ## Conditional execution with when
@@ -566,7 +361,7 @@ where
 /// let multiply = |x: i32, y: i32| x * y;
 ///
 /// let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply);
-/// assert_eq!(conditional.apply_once(5, 3), 8); // add
+/// assert_eq!(conditional.apply(5, 3), 8); // add
 /// ```
 ///
 /// # Author
@@ -609,8 +404,8 @@ pub trait FnBiTransformerOnceOps<T, U, R>: FnOnce(T, U) -> R + Sized + 'static {
     ///
     /// // to_string is moved and consumed
     /// let composed = add.and_then(to_string);
-    /// assert_eq!(composed.apply_once(20, 22), "42");
-    /// // to_string.apply_once(10); // Would not compile - moved
+    /// assert_eq!(composed.apply(20, 22), "42");
+    /// // to_string.apply(10); // Would not compile - moved
     /// ```
     fn and_then<S, F>(self, after: F) -> BoxBiTransformerOnce<T, U, S>
     where
@@ -620,7 +415,7 @@ pub trait FnBiTransformerOnceOps<T, U, R>: FnOnce(T, U) -> R + Sized + 'static {
         U: 'static,
         R: 'static,
     {
-        BoxBiTransformerOnce::new(move |t: T, u: U| after.apply_once(self(t, u)))
+        BoxBiTransformerOnce::new(move |t: T, u: U| after.apply(self(t, u)))
     }
 
     /// Creates a conditional bi-transformer
@@ -658,7 +453,7 @@ pub trait FnBiTransformerOnceOps<T, U, R>: FnOnce(T, U) -> R + Sized + 'static {
     /// let conditional = add.when(|x: &i32, y: &i32| *x > 0)
     ///     .or_else(multiply);
     ///
-    /// assert_eq!(conditional.apply_once(5, 3), 8);
+    /// assert_eq!(conditional.apply(5, 3), 8);
     /// ```
     ///
     /// ## Preserving bi-predicate with clone
@@ -675,7 +470,7 @@ pub trait FnBiTransformerOnceOps<T, U, R>: FnOnce(T, U) -> R + Sized + 'static {
     /// let conditional = add.when(both_positive.clone())
     ///     .or_else(|x: i32, y: i32| x * y);
     ///
-    /// assert_eq!(conditional.apply_once(5, 3), 8);
+    /// assert_eq!(conditional.apply(5, 3), 8);
     ///
     /// // Original bi-predicate still usable
     /// assert!(both_positive.test(&5, &3));
@@ -733,7 +528,7 @@ impl<T, U, R, F> FnBiTransformerOnceOps<T, U, R> for F where F: FnOnce(T, U) -> 
 /// where
 ///     O: BinaryOperatorOnce<T>,
 /// {
-///     op.apply_once(a, b)
+///     op.apply(a, b)
 /// }
 ///
 /// let multiply = |x: i32, y: i32| x * y;
@@ -777,10 +572,66 @@ where
 /// use prism3_function::{BoxBinaryOperatorOnce, BiTransformerOnce};
 ///
 /// let add: BoxBinaryOperatorOnce<i32> = BoxBinaryOperatorOnce::new(|x, y| x + y);
-/// assert_eq!(add.apply_once(20, 22), 42);
+/// assert_eq!(add.apply(20, 22), 42);
 /// ```
 ///
 /// # Author
 ///
 /// Haixing Hu
 pub type BoxBinaryOperatorOnce<T> = BoxBiTransformerOnce<T, T, T>;
+
+// ============================================================================
+// BoxConditionalBiTransformerOnce - Box-based Conditional BiTransformer
+// ============================================================================
+
+/// BoxConditionalBiTransformerOnce struct
+///
+/// A conditional consuming bi-transformer that only executes when a bi-predicate
+/// is satisfied. Uses `BoxBiTransformerOnce` and `BoxBiPredicate` for single
+/// ownership semantics.
+///
+/// This type is typically created by calling `BoxBiTransformerOnce::when()` and
+/// is designed to work with the `or_else()` method to create if-then-else logic.
+///
+/// # Features
+///
+/// - **Single Ownership**: Not cloneable, consumes `self` on use
+/// - **One-time Use**: Can only be called once
+/// - **Conditional Execution**: Only transforms when bi-predicate returns `true`
+/// - **Chainable**: Can add `or_else` branch to create if-then-else logic
+///
+/// # Examples
+///
+/// ## With or_else Branch
+///
+/// ```rust
+/// use prism3_function::{BiTransformerOnce, BoxBiTransformerOnce};
+///
+/// let add = BoxBiTransformerOnce::new(|x: i32, y: i32| x + y);
+/// let multiply = BoxBiTransformerOnce::new(|x: i32, y: i32| x * y);
+/// let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply);
+/// assert_eq!(conditional.apply(5, 3), 8); // when branch executed
+///
+/// let add2 = BoxBiTransformerOnce::new(|x: i32, y: i32| x + y);
+/// let multiply2 = BoxBiTransformerOnce::new(|x: i32, y: i32| x * y);
+/// let conditional2 = add2.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply2);
+/// assert_eq!(conditional2.apply(-5, 3), -15); // or_else branch executed
+/// ```
+///
+/// # Author
+///
+/// Haixing Hu
+pub struct BoxConditionalBiTransformerOnce<T, U, R> {
+    transformer: BoxBiTransformerOnce<T, U, R>,
+    predicate: BoxBiPredicate<T, U>,
+}
+
+// Implement BoxConditionalTransformerOnce
+impl_box_conditional_transformer!(
+    BoxConditionalBiTransformerOnce<T, U, R>,
+    BoxBiTransformerOnce,
+    BiTransformerOnce
+);
+
+// Use macro to generate Debug and Display implementations
+impl_conditional_transformer_debug_display!(BoxConditionalBiTransformerOnce<T, U, R>);

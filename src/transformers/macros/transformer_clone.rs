@@ -50,7 +50,9 @@
 /// # Parameters
 ///
 /// * `$struct_name` - The struct name
-/// * `$generic` - Generic parameter list (two or three type parameters)
+/// * `$t` - Generic parameter list (two or three type parameters)
+/// * `$u` - Generic parameter list (two or three type parameters)
+/// * `$r` - Generic parameter list (two or three type parameters)
 ///
 /// # Examples
 ///
@@ -66,11 +68,15 @@
 ///
 /// // For three type parameters with Rc
 /// impl_transformer_clone!(RcBiTransformer<T, U, V>);
-// ```
+/// ```
+///
+/// # Author
+///
+/// Haixing Hu
 macro_rules! impl_transformer_clone {
     // Two generic parameters
-    ($struct_name:ident < $generic1:ident, $generic2:ident >) => {
-        impl<$generic1, $generic2> Clone for $struct_name<$generic1, $generic2> {
+    ($struct_name:ident < $t:ident, $r:ident >) => {
+        impl<$t, $r> Clone for $struct_name<$t, $r> {
             fn clone(&self) -> Self {
                 Self {
                     function: self.function.clone(),
@@ -80,8 +86,8 @@ macro_rules! impl_transformer_clone {
         }
     };
     // Three generic parameters
-    ($struct_name:ident < $generic1:ident, $generic2:ident, $generic3:ident >) => {
-        impl<$generic1, $generic2, $generic3> Clone for $struct_name<$generic1, $generic2, $generic3> {
+    ($struct_name:ident < $t:ident, $u:ident, $r:ident >) => {
+        impl<$t, $u, $r> Clone for $struct_name<$t, $u, $r> {
             fn clone(&self) -> Self {
                 Self {
                     function: self.function.clone(),

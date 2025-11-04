@@ -33,27 +33,27 @@ fn main() {
 
     let arc_double = ArcTransformer::new(|x: i32| x * 2);
 
-    // Test into_box_once - consumes self
-    let boxed_once = arc_double.clone().into_box_once();
+    // Test into_box - consumes self
+    let boxed_once = arc_double.clone().into_box();
     println!(
-        "   ArcTransformer::into_box_once(): {}",
-        boxed_once.apply_once(21)
+        "   ArcTransformer::into_box(): {}",
+        boxed_once.apply(21)
     );
 
-    // Test into_fn_once - consumes self
-    let fn_once = arc_double.clone().into_fn_once();
-    println!("   ArcTransformer::into_fn_once(): {}", fn_once(21));
+    // Test into_fn - consumes self
+    let fn_once = arc_double.clone().into_fn();
+    println!("   ArcTransformer::into_fn(): {}", fn_once(21));
 
-    // Test to_box_once - borrows self
-    let boxed_once_borrowed = arc_double.to_box_once();
+    // Test to_box - borrows self
+    let boxed_once_borrowed = arc_double.to_box();
     println!(
-        "   ArcTransformer::to_box_once(): {}",
-        boxed_once_borrowed.apply_once(21)
+        "   ArcTransformer::to_box(): {}",
+        boxed_once_borrowed.apply(21)
     );
 
-    // Test to_fn_once - borrows self
-    let fn_once_borrowed = arc_double.to_fn_once();
-    println!("   ArcTransformer::to_fn_once(): {}", fn_once_borrowed(21));
+    // Test to_fn - borrows self
+    let fn_once_borrowed = arc_double.to_fn();
+    println!("   ArcTransformer::to_fn(): {}", fn_once_borrowed(21));
 
     // Original transformer still usable after to_xxx methods
     println!(
@@ -71,27 +71,27 @@ fn main() {
 
     let rc_triple = RcTransformer::new(|x: i32| x * 3);
 
-    // Test into_box_once - consumes self
-    let boxed_once = rc_triple.clone().into_box_once();
+    // Test into_box - consumes self
+    let boxed_once = rc_triple.clone().into_box();
     println!(
-        "   RcTransformer::into_box_once(): {}",
-        boxed_once.apply_once(14)
+        "   RcTransformer::into_box(): {}",
+        boxed_once.apply(14)
     );
 
-    // Test into_fn_once - consumes self
-    let fn_once = rc_triple.clone().into_fn_once();
-    println!("   RcTransformer::into_fn_once(): {}", fn_once(14));
+    // Test into_fn - consumes self
+    let fn_once = rc_triple.clone().into_fn();
+    println!("   RcTransformer::into_fn(): {}", fn_once(14));
 
-    // Test to_box_once - borrows self
-    let boxed_once_borrowed = rc_triple.to_box_once();
+    // Test to_box - borrows self
+    let boxed_once_borrowed = rc_triple.to_box();
     println!(
-        "   RcTransformer::to_box_once(): {}",
-        boxed_once_borrowed.apply_once(14)
+        "   RcTransformer::to_box(): {}",
+        boxed_once_borrowed.apply(14)
     );
 
-    // Test to_fn_once - borrows self
-    let fn_once_borrowed = rc_triple.to_fn_once();
-    println!("   RcTransformer::to_fn_once(): {}", fn_once_borrowed(14));
+    // Test to_fn - borrows self
+    let fn_once_borrowed = rc_triple.to_fn();
+    println!("   RcTransformer::to_fn(): {}", fn_once_borrowed(14));
 
     // Original transformer still usable after to_xxx methods
     println!(
@@ -110,15 +110,15 @@ fn main() {
     let arc_square = ArcTransformer::new(|x: i32| x * x);
 
     // Using specialized method (more efficient)
-    let specialized_box = arc_square.clone().into_box_once();
+    let specialized_box = arc_square.clone().into_box();
     println!(
-        "   Specialized into_box_once: {}",
-        specialized_box.apply_once(5)
+        "   Specialized into_box: {}",
+        specialized_box.apply(5)
     );
 
     // Using default implementation (less efficient)
-    let default_box = arc_square.clone().into_box_once();
-    println!("   Default into_box_once: {}", default_box.apply_once(5));
+    let default_box = arc_square.clone().into_box();
+    println!("   Default into_box: {}", default_box.apply(5));
 
     println!();
 
@@ -135,8 +135,8 @@ fn main() {
 
     // Use in different thread context (simulated)
     let handle = std::thread::spawn(move || {
-        let boxed = arc_clone.into_box_once();
-        boxed.apply_once(50)
+        let boxed = arc_clone.into_box();
+        boxed.apply(50)
     });
 
     let result = handle.join().unwrap();
@@ -162,15 +162,15 @@ fn main() {
     let test_string = "hello world".to_string();
 
     // Using specialized methods
-    let boxed_upper = arc_uppercase.clone().into_box_once();
-    let result = boxed_upper.apply_once(test_string.clone());
+    let boxed_upper = arc_uppercase.clone().into_box();
+    let result = boxed_upper.apply(test_string.clone());
     println!(
         "   String transformation: '{}' -> '{}'",
         test_string, result
     );
 
     // Using to_xxx methods (borrowing)
-    let fn_upper = arc_uppercase.to_fn_once();
+    let fn_upper = arc_uppercase.to_fn();
     let result2 = fn_upper(test_string.clone());
     println!(
         "   String transformation (borrowed): '{}' -> '{}'",

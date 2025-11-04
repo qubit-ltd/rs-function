@@ -81,12 +81,14 @@
 /// * `$struct_name<$generics>` - The struct name with its generic parameters
 ///   - Single parameter: `BoxTransformer<T, U>`
 ///   - Two parameters: `BoxBiTransformer<T, U, V>`
-/// * `$conditional_type` - The conditional transformer type for when (e.g., BoxConditionalTransformer)
-/// * `$transformer_trait` - Transformer trait name (e.g., Transformer, BiTransformer)
+/// * `$conditional_type` - The conditional transformer type for when (e.g.,
+///   BoxConditionalTransformer)
+/// * `$chained_transformer_trait` - The name of the transformer trait that chained
+///   after the execution of this transformer (e.g., Transformer, BiTransformer)
 ///
 /// # Parameter Usage Comparison
 ///
-/// | Transformer Type | Struct Signature | `$conditional_type` | `$transformer_trait` |
+/// | Transformer Type | Struct Signature | `$conditional_type` | `$chained_transformer_trait` |
 // |------------------|-----------------|----------------|---------------------|
 // | **Transformer** | `BoxTransformer<T, U>` | BoxConditionalTransformer | Transformer |
 // | **TransformerOnce** | `BoxTransformerOnce<T, U>` | BoxConditionalTransformerOnce | TransformerOnce |
@@ -111,10 +113,18 @@
 ///     BoxConditionalBiTransformer,
 ///     BiTransformer
 /// );
-// ```
+/// ```
+///
+/// # Author
+///
+/// Haixing Hu
 macro_rules! impl_box_transformer_methods {
-    // Single generic parameter - Transformer
-    ($struct_name:ident < $t:ident, $u:ident >, $conditional_type:ident, $transformer_trait:ident) => {
+    // Two generic parameter - Transformer
+    (
+        $struct_name:ident < $t:ident, $r:ident >,
+        $conditional_type:ident,
+        $chained_transformer_trait:ident
+    ) => {
         /// Creates a conditional transformer that executes based on predicate
         /// result.
         ///
@@ -143,7 +153,7 @@ macro_rules! impl_box_transformer_methods {
         /// assert_eq!(conditional.transform(&5), 10);  // transformed
         /// assert_eq!(conditional.transform(&-1), -1); // identity (unchanged)
         /// ```
-        pub fn when<P>(self, predicate: P) -> $conditional_type<$t, $u>
+        pub fn when<P>(self, predicate: P) -> $conditional_type<$t, $r>
         where
             P: Predicate<$t> + 'static,
         {
@@ -183,22 +193,25 @@ macro_rules! impl_box_transformer_methods {
         /// assert_eq!(chained.transform(&5), 12); // (5 + 1) * 2 = 12
         /// ```
         #[allow(unused_mut)]
-        pub fn and_then<C>(self, mut after: C) -> $struct_name<$t, $u>
+        pub fn and_then<S, F>(self, mut after: F) -> $struct_name<$t, S>
         where
-            Self: Sized + 'static,
-            $t: 'static,
-            $u: 'static,
-            C: $transformer_trait<$t, $u> + 'static,
+            S: 'static,
+            F: $chained_transformer_trait<$r, S> + 'static,
         {
-            let mut first = self;
-            $struct_name::new(move |t: &$t| {
-                let intermediate = first.transform(t);
-                after.transform(&intermediate)
+            let mut before = self.function;
+            $struct_name::new(move |t| {
+                let r = before(t);
+                after.apply(r)
             })
         }
     };
-    // Two generic parameters - BiTransformer
-    ($struct_name:ident < $t:ident, $u:ident, $v:ident >, $conditional_type:ident, $transformer_trait:ident) => {
+
+    // Three generic parameters - BiTransformer
+    (
+        $struct_name:ident < $t:ident, $u:ident, $r:ident >,
+        $conditional_type:ident,
+        $chained_transformer_trait:ident
+    ) => {
         /// Creates a conditional two-parameter transformer that executes based
         /// on bi-predicate result.
         ///
@@ -225,7 +238,7 @@ macro_rules! impl_box_transformer_methods {
         /// assert_eq!(conditional.transform(&"test".to_string(), &5), "test: 5".to_string());  // transformed
         /// assert_eq!(conditional.transform(&"test".to_string(), &-1), "test".to_string());    // identity (key unchanged)
         /// ```
-        pub fn when<P>(self, predicate: P) -> $conditional_type<$t, $u, $v>
+        pub fn when<P>(self, predicate: P) -> $conditional_type<$t, $u, $r>
         where
             P: BiPredicate<$t, $u> + 'static,
         {
@@ -266,18 +279,15 @@ macro_rules! impl_box_transformer_methods {
         /// assert_eq!(result, "test: 6"); // (value + 1) = 6
         /// ```
         #[allow(unused_mut)]
-        pub fn and_then<C>(self, mut after: C) -> $struct_name<$t, $u, $v>
+        pub fn and_then<S, F>(self, mut after: F) -> $struct_name<$t, $u, S>
         where
-            Self: Sized + 'static,
-            $t: 'static,
-            $u: 'static,
-            $v: 'static,
-            C: $transformer_trait<$t, $u, $v> + 'static,
+            S: 'static,
+            F: $chained_transformer_trait<$r, S> + 'static,
         {
-            let mut first = self;
-            $struct_name::new(move |t: &$t, u: &$u| {
-                let intermediate = first.transform(t, u);
-                after.transform(&intermediate.0, &intermediate.1)
+            let mut before = self.function;
+            $struct_name::new(move |t, u| {
+                let mut r = before(t, u);
+                after.apply(r)
             })
         }
     };

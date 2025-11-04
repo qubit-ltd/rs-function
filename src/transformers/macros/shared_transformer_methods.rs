@@ -9,7 +9,7 @@
 //! # Shared Transformer Methods Macro
 //!
 //! Generates when and and_then method implementations for Arc/Rc-based Transformer
-//
+//!
 //! Generates conditional execution when method and chaining and_then method
 //! for Arc/Rc-based transformers that borrow &self (because Arc/Rc can be cloned).
 //!
@@ -17,7 +17,7 @@
 //! pattern matching on the struct signature.
 //!
 //! # Parameters
-//
+//!
 //! * `$struct_name<$generics>` - The struct name with its generic parameters
 //!   - Two parameters: `ArcTransformer<T, U>`
 //!   - Three parameters: `ArcBiTransformer<T, U, V>`
@@ -49,7 +49,7 @@
 //! | into_rc | BiTransformer | 'static |
 //! | into_arc | StatefulBiTransformer | Send + Sync + 'static |
 //! | into_rc | StatefulBiTransformer | 'static |
-//
+//!
 //! # Examples
 //!
 //! ```ignore
@@ -92,24 +92,24 @@
 /// * `$struct_name<$generics>` - The struct name with its generic parameters
 ///   - Two parameters: `ArcTransformer<T, U>`
 ///   - Three parameters: `ArcBiTransformer<T, U, V>`
-/// * `$return_type` - The return type for when (e.g., ArcConditionalTransformer)
+/// * `conditional_type` - The return type for when (e.g., ArcConditionalTransformer)
 /// * `$predicate_conversion` - Method to convert predicate (into_arc or into_rc)
-/// * `$transformer_trait` - Transformer trait name (e.g., Transformer, BiTransformer)
+/// * `$chained_transformer_trait` - Transformer trait name (e.g., Transformer, BiTransformer)
 /// * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync + 'static for Arc)
 ///
 /// # All Macro Invocations
 ///
-/// | Transformer Type | Struct Signature | `$return_type` | `$predicate_conversion` | `$transformer_trait` | `$extra_bounds` |
-// |------------------|------------------|----------------|-------------------------|---------------------|----------------|
-// | **ArcTransformer** | `ArcTransformer<T, U>` | ArcConditionalTransformer | into_arc | Transformer | Send + Sync + 'static |
-// | **RcTransformer** | `RcTransformer<T, U>` | RcConditionalTransformer | into_rc | Transformer | 'static |
-// | **ArcStatefulTransformer** | `ArcStatefulTransformer<T, U>` | ArcConditionalStatefulTransformer | into_arc | StatefulTransformer | Send + Sync + 'static |
-// | **RcStatefulTransformer** | `RcStatefulTransformer<T, U>` | RcConditionalStatefulTransformer | into_rc | StatefulTransformer | 'static |
-// | **ArcBiTransformer** | `ArcBiTransformer<T, U, V>` | ArcConditionalBiTransformer | into_arc | BiTransformer | Send + Sync + 'static |
-// | **RcBiTransformer** | `RcBiTransformer<T, U, V>` | RcConditionalBiTransformer | into_rc | BiTransformer | 'static |
-// | **ArcStatefulBiTransformer** | `ArcStatefulBiTransformer<T, U, V>` | ArcConditionalStatefulBiTransformer | into_arc | StatefulBiTransformer | Send + Sync + 'static |
-// | **RcStatefulBiTransformer** | `RcStatefulBiTransformer<T, U, V>` | RcConditionalStatefulBiTransformer | into_rc | StatefulBiTransformer | 'static |
-//
+/// | Transformer Type | Struct Signature | `conditional_type` | `$predicate_conversion` | `$chained_transformer_trait` | `$extra_bounds` |
+/// |------------------|------------------|----------------|-------------------------|---------------------|----------------|
+/// | **ArcTransformer** | `ArcTransformer<T, U>` | ArcConditionalTransformer | into_arc | Transformer | Send + Sync + 'static |
+/// | **RcTransformer** | `RcTransformer<T, U>` | RcConditionalTransformer | into_rc | Transformer | 'static |
+/// | **ArcStatefulTransformer** | `ArcStatefulTransformer<T, U>` | ArcConditionalStatefulTransformer | into_arc | StatefulTransformer | Send + Sync + 'static |
+/// | **RcStatefulTransformer** | `RcStatefulTransformer<T, U>` | RcConditionalStatefulTransformer | into_rc | StatefulTransformer | 'static |
+/// | **ArcBiTransformer** | `ArcBiTransformer<T, U, V>` | ArcConditionalBiTransformer | into_arc | BiTransformer | Send + Sync + 'static |
+/// | **RcBiTransformer** | `RcBiTransformer<T, U, V>` | RcConditionalBiTransformer | into_rc | BiTransformer | 'static |
+/// | **ArcStatefulBiTransformer** | `ArcStatefulBiTransformer<T, U, V>` | ArcConditionalStatefulBiTransformer | into_arc | StatefulBiTransformer | Send + Sync + 'static |
+/// | **RcStatefulBiTransformer** | `RcStatefulBiTransformer<T, U, V>` | RcConditionalStatefulBiTransformer | into_rc | StatefulBiTransformer | 'static |
+///
 /// # Examples
 ///
 /// ```ignore
@@ -117,71 +117,85 @@
 /// impl_shared_transformer_methods!(
 ///     ArcTransformer<T, U>,
 ///     ArcConditionalTransformer,
-//     into_arc,
-//     Transformer,
-//     Send + Sync + 'static
-// );
-//
-// // Three-parameter with Rc
+///     into_arc,
+///     Transformer,
+///     Send + Sync + 'static
+/// );
+///
+/// // Three-parameter with Rc
 /// impl_shared_transformer_methods!(
 ///     RcBiTransformer<T, U, V>,
-//     RcConditionalBiTransformer,
-//     into_rc,
-//     BiTransformer,
-//     'static
-// );
-// ```
+///     RcConditionalBiTransformer,
+///     into_rc,
+///     BiTransformer,
+///     'static
+/// );
+/// ```
+///
+/// # Author
+///
+/// Haixing Hu
 macro_rules! impl_shared_transformer_methods {
     // Two generic parameters
-    ($struct_name:ident < $t:ident, $u:ident >, $return_type:ident, $predicate_conversion:ident, $transformer_trait:ident, $($extra_bounds:tt)+) => {
-        pub fn when<P>(&self, predicate: P) -> $return_type<$t, $u>
+    (
+        $struct_name:ident < $t:ident, $r:ident >,
+        $conditional_type:ident,
+        $predicate_conversion:ident,
+        $chained_transformer_trait:ident,
+        $($extra_bounds:tt)+
+    ) => {
+        pub fn when<P>(&self, predicate: P) -> $conditional_type<$t, $r>
         where
             P: Predicate<$t> + $($extra_bounds)+,
         {
-            $return_type {
+            $conditional_type {
                 transformer: self.clone(),
                 predicate: predicate.$predicate_conversion(),
             }
         }
 
         #[allow(unused_mut)]
-        pub fn and_then<C>(&self, mut after: C) -> $struct_name<$t, $u>
+        pub fn and_then<S, F>(&self, mut after: F) -> $struct_name<$t, S>
         where
-            $t: 'static,
-            $u: 'static,
-            C: $transformer_trait<$u, $u> + $($extra_bounds)+,
+            S: 'static,
+            F: $chained_transformer_trait<$r, S> + $($extra_bounds)+,
         {
-            let mut first = self.clone();
-            $struct_name::new(move |t: &$t| {
-                let intermediate = first.transform(t);
-                after.transform(&intermediate)
+            let mut before = self.clone();
+            $struct_name::new(move |t| {
+                let r = before.apply(t);
+                after.apply(r)
             })
         }
     };
+
     // Three generic parameters
-    ($struct_name:ident < $t:ident, $u:ident, $v:ident >, $return_type:ident, $predicate_conversion:ident, $transformer_trait:ident, $($extra_bounds:tt)+) => {
-        pub fn when<P>(&self, predicate: P) -> $return_type<$t, $u, $v>
+    (
+        $struct_name:ident < $t:ident, $u:ident, $r:ident >,
+        $conditional_type:ident,
+        $predicate_conversion:ident,
+        $chained_transformer_trait:ident,
+        $($extra_bounds:tt)+
+    ) => {
+        pub fn when<P>(&self, predicate: P) -> $conditional_type<$t, $u, $r>
         where
             P: BiPredicate<$t, $u> + $($extra_bounds)+,
         {
-            $return_type {
+            $conditional_type {
                 transformer: self.clone(),
                 predicate: predicate.$predicate_conversion(),
             }
         }
 
         #[allow(unused_mut)]
-        pub fn and_then<C>(&self, mut after: C) -> $struct_name<$t, $u, $v>
+        pub fn and_then<S, F>(&self, mut after: F) -> $struct_name<$t, $u, S>
         where
-            $t: 'static,
-            $u: 'static,
-            $v: 'static,
-            C: $transformer_trait<$v, $v, $v> + $($extra_bounds)+,
+            S: 'static,
+            F: $chained_transformer_trait<$r, S> + $($extra_bounds)+,
         {
-            let mut first = self.clone();
-            $struct_name::new(move |t: &$t, u: &$u| {
-                let intermediate = first.transform(t, u);
-                after.transform(&intermediate, &intermediate)
+            let mut before = self.clone();
+            $struct_name::new(move |t, u| {
+                let mut r = before.apply(t, u);
+                after.apply(r)
             })
         }
     };

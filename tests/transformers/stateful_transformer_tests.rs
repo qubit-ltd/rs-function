@@ -1636,7 +1636,7 @@ fn test_closure_to_arc_multiple_conversions() {
 
 /// Test BoxStatefulTransformer implements TransformerOnce trait
 #[test]
-fn test_box_mapper_apply_once() {
+fn test_box_mapper_apply() {
     let mut counter = 0;
     let mapper = BoxStatefulTransformer::new(move |x: i32| {
         counter += 1;
@@ -1644,38 +1644,38 @@ fn test_box_mapper_apply_once() {
     });
 
     // BoxStatefulTransformer can be consumed as TransformerOnce
-    assert_eq!(mapper.apply_once(10), 11); // 10 + 1
+    assert_eq!(mapper.apply(10), 11); // 10 + 1
 }
 
-/// Test BoxStatefulTransformer::into_box_once conversion
+/// Test BoxStatefulTransformer::into_box conversion
 #[test]
-fn test_box_mapper_into_box_once() {
+fn test_box_mapper_into_box() {
     let mut counter = 0;
     let mapper = BoxStatefulTransformer::new(move |x: i32| {
         counter += 1;
         x * counter
     });
 
-    let once_mapper = mapper.into_box_once();
-    assert_eq!(once_mapper.apply_once(10), 10); // 10 * 1
+    let once_mapper = mapper.into_box();
+    assert_eq!(once_mapper.apply(10), 10); // 10 * 1
 }
 
-/// Test BoxStatefulTransformer::into_fn_once conversion
+/// Test BoxStatefulTransformer::into_fn conversion
 #[test]
-fn test_box_mapper_into_fn_once() {
+fn test_box_mapper_into_fn() {
     let mut counter = 0;
     let mapper = BoxStatefulTransformer::new(move |x: i32| {
         counter += 1;
         x * counter
     });
 
-    let fn_once = mapper.into_fn_once();
+    let fn_once = mapper.into_fn();
     assert_eq!(fn_once(10), 10); // 10 * 1
 }
 
 /// Test BoxStatefulTransformer with stateful transformation consumed once
 #[test]
-fn test_box_mapper_stateful_apply_once() {
+fn test_box_mapper_stateful_apply() {
     let mut accumulator = 0;
     let mapper = BoxStatefulTransformer::new(move |x: i32| {
         accumulator += x;
@@ -1683,13 +1683,13 @@ fn test_box_mapper_stateful_apply_once() {
     });
 
     // First and only call
-    assert_eq!(mapper.apply_once(5), 5); // 0 + 5 = 5
-                                         // mapper is now consumed and cannot be used again
+    assert_eq!(mapper.apply(5), 5); // 0 + 5 = 5
+                                    // mapper is now consumed and cannot be used again
 }
 
 /// Test RcStatefulTransformer implements TransformerOnce trait
 #[test]
-fn test_rc_mapper_apply_once() {
+fn test_rc_mapper_apply() {
     let mut counter = 0;
     let mapper = RcStatefulTransformer::new(move |x: i32| {
         counter += 1;
@@ -1697,38 +1697,38 @@ fn test_rc_mapper_apply_once() {
     });
 
     // RcStatefulTransformer can be consumed as TransformerOnce
-    assert_eq!(mapper.apply_once(10), 11); // 10 + 1
+    assert_eq!(mapper.apply(10), 11); // 10 + 1
 }
 
-/// Test RcStatefulTransformer::into_box_once conversion
+/// Test RcStatefulTransformer::into_box conversion
 #[test]
-fn test_rc_mapper_into_box_once() {
+fn test_rc_mapper_into_box() {
     let mut counter = 0;
     let mapper = RcStatefulTransformer::new(move |x: i32| {
         counter += 1;
         x * counter
     });
 
-    let once_mapper = mapper.into_box_once();
-    assert_eq!(once_mapper.apply_once(10), 10); // 10 * 1
+    let once_mapper = mapper.into_box();
+    assert_eq!(once_mapper.apply(10), 10); // 10 * 1
 }
 
-/// Test RcStatefulTransformer::into_fn_once conversion
+/// Test RcStatefulTransformer::into_fn conversion
 #[test]
-fn test_rc_mapper_into_fn_once() {
+fn test_rc_mapper_into_fn() {
     let mut counter = 0;
     let mapper = RcStatefulTransformer::new(move |x: i32| {
         counter += 1;
         x * counter
     });
 
-    let fn_once = mapper.into_fn_once();
+    let fn_once = mapper.into_fn();
     assert_eq!(fn_once(10), 10); // 10 * 1
 }
 
-/// Test RcStatefulTransformer::to_box_once (non-consuming)
+/// Test RcStatefulTransformer::to_box (non-consuming)
 #[test]
-fn test_rc_mapper_to_box_once() {
+fn test_rc_mapper_to_box() {
     let mut counter = 0;
     let mapper = RcStatefulTransformer::new(move |x: i32| {
         counter += 1;
@@ -1736,17 +1736,17 @@ fn test_rc_mapper_to_box_once() {
     });
 
     // Non-consuming conversion
-    let once_mapper = mapper.to_box_once();
-    assert_eq!(once_mapper.apply_once(10), 10); // 10 * 1
+    let once_mapper = mapper.to_box();
+    assert_eq!(once_mapper.apply(10), 10); // 10 * 1
 
     // Original mapper still usable
     let mut mapper_ref = mapper.clone();
     assert_eq!(mapper_ref.apply(20), 40); // 20 * 2 (state continues)
 }
 
-/// Test RcStatefulTransformer::to_fn_once (non-consuming)
+/// Test RcStatefulTransformer::to_fn (non-consuming)
 #[test]
-fn test_rc_mapper_to_fn_once() {
+fn test_rc_mapper_to_fn() {
     let mut counter = 0;
     let mapper = RcStatefulTransformer::new(move |x: i32| {
         counter += 1;
@@ -1754,7 +1754,7 @@ fn test_rc_mapper_to_fn_once() {
     });
 
     // Non-consuming conversion
-    let fn_once = mapper.to_fn_once();
+    let fn_once = mapper.to_fn();
     assert_eq!(fn_once(10), 10); // 10 * 1
 
     // Original mapper still usable
@@ -1764,7 +1764,7 @@ fn test_rc_mapper_to_fn_once() {
 
 /// Test ArcStatefulTransformer implements TransformerOnce trait
 #[test]
-fn test_arc_mapper_apply_once() {
+fn test_arc_mapper_apply() {
     let mut counter = 0;
     let mapper = ArcStatefulTransformer::new(move |x: i32| {
         counter += 1;
@@ -1772,38 +1772,38 @@ fn test_arc_mapper_apply_once() {
     });
 
     // ArcStatefulTransformer can be consumed as TransformerOnce
-    assert_eq!(mapper.apply_once(10), 11); // 10 + 1
+    assert_eq!(mapper.apply(10), 11); // 10 + 1
 }
 
-/// Test ArcStatefulTransformer::into_box_once conversion
+/// Test ArcStatefulTransformer::into_box conversion
 #[test]
-fn test_arc_mapper_into_box_once() {
+fn test_arc_mapper_into_box() {
     let mut counter = 0;
     let mapper = ArcStatefulTransformer::new(move |x: i32| {
         counter += 1;
         x * counter
     });
 
-    let once_mapper = mapper.into_box_once();
-    assert_eq!(once_mapper.apply_once(10), 10); // 10 * 1
+    let once_mapper = mapper.into_box();
+    assert_eq!(once_mapper.apply(10), 10); // 10 * 1
 }
 
-/// Test ArcStatefulTransformer::into_fn_once conversion
+/// Test ArcStatefulTransformer::into_fn conversion
 #[test]
-fn test_arc_mapper_into_fn_once() {
+fn test_arc_mapper_into_fn() {
     let mut counter = 0;
     let mapper = ArcStatefulTransformer::new(move |x: i32| {
         counter += 1;
         x * counter
     });
 
-    let fn_once = mapper.into_fn_once();
+    let fn_once = mapper.into_fn();
     assert_eq!(fn_once(10), 10); // 10 * 1
 }
 
-/// Test ArcStatefulTransformer::to_box_once (non-consuming)
+/// Test ArcStatefulTransformer::to_box (non-consuming)
 #[test]
-fn test_arc_mapper_to_box_once() {
+fn test_arc_mapper_to_box() {
     let mut counter = 0;
     let mapper = ArcStatefulTransformer::new(move |x: i32| {
         counter += 1;
@@ -1811,17 +1811,17 @@ fn test_arc_mapper_to_box_once() {
     });
 
     // Non-consuming conversion
-    let once_mapper = mapper.to_box_once();
-    assert_eq!(once_mapper.apply_once(10), 10); // 10 * 1
+    let once_mapper = mapper.to_box();
+    assert_eq!(once_mapper.apply(10), 10); // 10 * 1
 
     // Original mapper still usable
     let mut mapper_ref = mapper.clone();
     assert_eq!(mapper_ref.apply(20), 40); // 20 * 2 (state continues)
 }
 
-/// Test ArcStatefulTransformer::to_fn_once (non-consuming)
+/// Test ArcStatefulTransformer::to_fn (non-consuming)
 #[test]
-fn test_arc_mapper_to_fn_once() {
+fn test_arc_mapper_to_fn() {
     let mut counter = 0;
     let mapper = ArcStatefulTransformer::new(move |x: i32| {
         counter += 1;
@@ -1829,7 +1829,7 @@ fn test_arc_mapper_to_fn_once() {
     });
 
     // Non-consuming conversion
-    let fn_once = mapper.to_fn_once();
+    let fn_once = mapper.to_fn();
     assert_eq!(fn_once(10), 10); // 10 * 1
 
     // Original mapper still usable
@@ -1839,19 +1839,19 @@ fn test_arc_mapper_to_fn_once() {
 
 /// Test BoxStatefulTransformer consumed as TransformerOnce with complex state
 #[test]
-fn test_box_mapper_complex_state_apply_once() {
+fn test_box_mapper_complex_state_apply() {
     let data = [1, 2, 3, 4, 5];
     let mapper = BoxStatefulTransformer::new(move |multiplier: i32| {
         data.iter().map(|x| x * multiplier).sum::<i32>()
     });
 
     // Consume the mapper once
-    assert_eq!(mapper.apply_once(2), 30); // (1+2+3+4+5) * 2 = 30
+    assert_eq!(mapper.apply(2), 30); // (1+2+3+4+5) * 2 = 30
 }
 
-/// Test RcStatefulTransformer shared state with apply_once
+/// Test RcStatefulTransformer shared state with apply
 #[test]
-fn test_rc_mapper_shared_state_apply_once() {
+fn test_rc_mapper_shared_state_apply() {
     use std::cell::RefCell;
     use std::rc::Rc;
 
@@ -1868,7 +1868,7 @@ fn test_rc_mapper_shared_state_apply_once() {
     let mut mapper_clone = mapper.clone();
 
     // Consume one instance
-    assert_eq!(mapper.apply_once(10), 10); // 10 * 1
+    assert_eq!(mapper.apply(10), 10); // 10 * 1
 
     // Use the cloned instance
     assert_eq!(mapper_clone.apply(10), 20); // 10 * 2 (shared state)
@@ -1877,9 +1877,9 @@ fn test_rc_mapper_shared_state_apply_once() {
     assert_eq!(*shared_counter.borrow(), 2);
 }
 
-/// Test ArcStatefulTransformer thread-safe with apply_once
+/// Test ArcStatefulTransformer thread-safe with apply
 #[test]
-fn test_arc_mapper_thread_safe_apply_once() {
+fn test_arc_mapper_thread_safe_apply() {
     use std::sync::{
         Arc,
         Mutex,
@@ -1898,7 +1898,7 @@ fn test_arc_mapper_thread_safe_apply_once() {
     let mut mapper_clone = mapper.clone();
 
     // Consume one instance
-    assert_eq!(mapper.apply_once(10), 10); // 10 * 1
+    assert_eq!(mapper.apply(10), 10); // 10 * 1
 
     // Use the cloned instance
     assert_eq!(mapper_clone.apply(10), 20); // 10 * 2 (shared state)
@@ -1911,14 +1911,14 @@ fn test_arc_mapper_thread_safe_apply_once() {
 #[test]
 fn test_box_mapper_to_box_mapper_once_composition() {
     let mapper1 = BoxStatefulTransformer::new(|x: i32| x + 1);
-    let once_mapper1 = mapper1.into_box_once();
+    let once_mapper1 = mapper1.into_box();
 
     let mapper2 = BoxStatefulTransformer::new(|x: i32| x * 2);
-    let once_mapper2 = mapper2.into_box_once();
+    let once_mapper2 = mapper2.into_box();
 
     // Compose using and_then
     let composed = once_mapper1.and_then(once_mapper2);
-    assert_eq!(composed.apply_once(5), 12); // (5 + 1) * 2 = 12
+    assert_eq!(composed.apply(5), 12); // (5 + 1) * 2 = 12
 }
 
 /// Test RcStatefulTransformer multiple clones with one consumed as TransformerOnce
@@ -1934,7 +1934,7 @@ fn test_rc_mapper_multiple_clones_one_consumed() {
     let mut clone2 = mapper.clone();
 
     // Consume original
-    assert_eq!(mapper.apply_once(10), 10); // 10 * 1
+    assert_eq!(mapper.apply(10), 10); // 10 * 1
 
     // Use clones
     assert_eq!(clone2.apply(10), 20); // 10 * 2
@@ -1956,7 +1956,7 @@ fn test_arc_mapper_multiple_clones_one_consumed() {
     let mut clone2 = mapper.clone();
 
     // Consume original
-    assert_eq!(mapper.apply_once(10), 10); // 10 * 1
+    assert_eq!(mapper.apply(10), 10); // 10 * 1
 
     // Use clones
     assert_eq!(clone2.apply(10), 20); // 10 * 2
