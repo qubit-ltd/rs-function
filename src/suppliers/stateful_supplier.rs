@@ -1143,6 +1143,7 @@ where
                     value
                 }
             })),
+            name: None,
         }
     }
 }
@@ -1493,6 +1494,7 @@ where
                 let value = self_fn.borrow_mut()();
                 mapper.borrow_mut().apply(value)
             })),
+            name: None,
         }
     }
 
