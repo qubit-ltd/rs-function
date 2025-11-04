@@ -1008,6 +1008,7 @@ where
                 let value = self_fn.lock().unwrap()();
                 mapper.lock().unwrap().apply(value)
             })),
+            name: None,
         }
     }
 
@@ -1055,6 +1056,7 @@ where
                     None
                 }
             })),
+            name: None,
         }
     }
 
