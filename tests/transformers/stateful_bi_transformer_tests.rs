@@ -22,6 +22,11 @@ use prism3_function::{
     RcStatefulTransformer,
     StatefulBiTransformer,
 };
+use prism3_function::transformers::stateful_bi_transformer::{
+    ArcConditionalStatefulBiTransformer,
+    BoxConditionalStatefulBiTransformer,
+    RcConditionalStatefulBiTransformer,
+};
 
 // ============================================================================
 // BoxStatefulBiTransformer Tests
@@ -1006,4 +1011,224 @@ fn test_arc_stateful_bi_transformer_to_fn() {
     // Original still usable
     let mut original = transformer.clone();
     assert_eq!(original.apply(10, 2), 40); // 10 * 2 * 2 (state continues)
+}
+
+// ============================================================================
+// Conditional StatefulBiTransformer Display/Debug Tests
+// ============================================================================
+
+#[cfg(test)]
+mod conditional_stateful_bi_transformer_display_debug_tests {
+    use super::*;
+
+    #[test]
+    fn test_box_conditional_stateful_bi_transformer_display() {
+        let mut counter = 0;
+        let add = BoxStatefulBiTransformer::new(move |x: i32, y: i32| {
+            counter += 1;
+            x + y + counter
+        });
+        let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+        let display_str = format!("{}", conditional);
+        assert!(display_str.contains("BoxConditionalStatefulBiTransformer"));
+    }
+
+    #[test]
+    fn test_box_conditional_stateful_bi_transformer_display_no_name() {
+        let mut counter = 0;
+        let add = BoxStatefulBiTransformer::new(move |x: i32, y: i32| {
+            counter += 1;
+            x + y + counter
+        });
+        let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+        let display_str = format!("{}", conditional);
+        assert_eq!(display_str, "BoxConditionalStatefulBiTransformer(BoxStatefulBiTransformer, BoxBiPredicate(unnamed))");
+    }
+
+    #[test]
+    fn test_box_conditional_stateful_bi_transformer_debug() {
+        let mut counter = 0;
+        let add = BoxStatefulBiTransformer::new(move |x: i32, y: i32| {
+            counter += 1;
+            x + y + counter
+        });
+        let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+        let debug_str = format!("{:?}", conditional);
+        assert!(debug_str.contains("BoxConditionalStatefulBiTransformer"));
+    }
+
+    #[test]
+    fn test_rc_conditional_stateful_bi_transformer_display() {
+        let mut counter = 0;
+        let add = RcStatefulBiTransformer::new(move |x: i32, y: i32| {
+            counter += 1;
+            x + y + counter
+        });
+        let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+        let display_str = format!("{}", conditional);
+        assert!(display_str.contains("RcConditionalStatefulBiTransformer"));
+    }
+
+    #[test]
+    fn test_rc_conditional_stateful_bi_transformer_display_no_name() {
+        let mut counter = 0;
+        let add = RcStatefulBiTransformer::new(move |x: i32, y: i32| {
+            counter += 1;
+            x + y + counter
+        });
+        let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+        let display_str = format!("{}", conditional);
+        assert_eq!(display_str, "RcConditionalStatefulBiTransformer(RcStatefulBiTransformer, RcBiPredicate(unnamed))");
+    }
+
+    #[test]
+    fn test_rc_conditional_stateful_bi_transformer_debug() {
+        let mut counter = 0;
+        let add = RcStatefulBiTransformer::new(move |x: i32, y: i32| {
+            counter += 1;
+            x + y + counter
+        });
+        let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+        let debug_str = format!("{:?}", conditional);
+        assert!(debug_str.contains("RcConditionalStatefulBiTransformer"));
+    }
+
+    #[test]
+    fn test_arc_conditional_stateful_bi_transformer_display() {
+        let mut counter = 0;
+        let add = ArcStatefulBiTransformer::new(move |x: i32, y: i32| {
+            counter += 1;
+            x + y + counter
+        });
+        let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+        let display_str = format!("{}", conditional);
+        assert!(display_str.contains("ArcConditionalStatefulBiTransformer"));
+    }
+
+    #[test]
+    fn test_arc_conditional_stateful_bi_transformer_display_no_name() {
+        let mut counter = 0;
+        let add = ArcStatefulBiTransformer::new(move |x: i32, y: i32| {
+            counter += 1;
+            x + y + counter
+        });
+        let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+        let display_str = format!("{}", conditional);
+        assert_eq!(display_str, "ArcConditionalStatefulBiTransformer(ArcStatefulBiTransformer, ArcBiPredicate(unnamed))");
+    }
+
+    #[test]
+    fn test_arc_conditional_stateful_bi_transformer_debug() {
+        let mut counter = 0;
+        let add = ArcStatefulBiTransformer::new(move |x: i32, y: i32| {
+            counter += 1;
+            x + y + counter
+        });
+        let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+        let debug_str = format!("{:?}", conditional);
+        assert!(debug_str.contains("ArcConditionalStatefulBiTransformer"));
+    }
+}
+
+// ============================================================================
+// StatefulBiTransformer Trait Default Methods Tests
+// ============================================================================
+
+#[cfg(test)]
+mod stateful_bi_transformer_trait_default_methods_tests {
+    use super::*;
+
+    // Custom struct implementing StatefulBiTransformer to test default methods
+    #[derive(Clone)]
+    struct TestStatefulBiTransformer {
+        state: i32,
+    }
+
+    impl TestStatefulBiTransformer {
+        fn new(initial_state: i32) -> Self {
+            Self { state: initial_state }
+        }
+    }
+
+    impl StatefulBiTransformer<i32, i32, i32> for TestStatefulBiTransformer {
+        fn apply(&mut self, first: i32, second: i32) -> i32 {
+            self.state += 1;
+            first + second + self.state
+        }
+    }
+
+    #[test]
+    fn test_into_box() {
+        let transformer = TestStatefulBiTransformer::new(10);
+        let mut boxed = StatefulBiTransformer::into_box(transformer);
+
+        assert_eq!(boxed.apply(5, 3), 19); // 5 + 3 + 11 (initial 10 + 1)
+        assert_eq!(boxed.apply(5, 3), 20); // 5 + 3 + 12 (state continues)
+    }
+
+    #[test]
+    fn test_into_rc() {
+        let transformer = TestStatefulBiTransformer::new(20);
+        let mut rc_transformer = StatefulBiTransformer::into_rc(transformer);
+
+        assert_eq!(rc_transformer.apply(2, 4), 27); // 2 + 4 + 21
+        assert_eq!(rc_transformer.apply(2, 4), 28); // 2 + 4 + 22
+    }
+
+    #[test]
+    fn test_into_arc() {
+        let transformer = TestStatefulBiTransformer::new(30);
+        let mut arc_transformer = StatefulBiTransformer::into_arc(transformer);
+
+        assert_eq!(arc_transformer.apply(1, 2), 34); // 1 + 2 + 31
+        assert_eq!(arc_transformer.apply(1, 2), 35); // 1 + 2 + 32
+    }
+
+    #[test]
+    fn test_into_fn() {
+        let transformer = TestStatefulBiTransformer::new(40);
+        let mut fn_transformer = StatefulBiTransformer::into_fn(transformer);
+
+        assert_eq!(fn_transformer(3, 3), 47); // 3 + 3 + 41
+        assert_eq!(fn_transformer(3, 3), 48); // 3 + 3 + 42
+    }
+
+    #[test]
+    fn test_to_box() {
+        let transformer = TestStatefulBiTransformer::new(50);
+        let mut boxed = StatefulBiTransformer::to_box(&transformer);
+
+        // Test that the boxed transformer works
+        assert_eq!(boxed.apply(4, 2), 57); // 4 + 2 + 51
+
+        // Test that original transformer is still usable
+        let mut original = transformer.clone();
+        assert_eq!(original.apply(4, 2), 57); // 4 + 2 + 51 (independent state)
+    }
+
+    #[test]
+    fn test_to_rc() {
+        let transformer = TestStatefulBiTransformer::new(60);
+        let mut rc_transformer = StatefulBiTransformer::to_rc(&transformer);
+
+        // Test that the Rc transformer works
+        assert_eq!(rc_transformer.apply(6, 1), 68); // 6 + 1 + 61
+
+        // Test that original transformer is still usable
+        let mut original = transformer.clone();
+        assert_eq!(original.apply(6, 1), 68); // 6 + 1 + 61 (independent state)
+    }
+
+    #[test]
+    fn test_to_arc() {
+        let transformer = TestStatefulBiTransformer::new(70);
+        let mut arc_transformer = StatefulBiTransformer::to_arc(&transformer);
+
+        // Test that the Arc transformer works
+        assert_eq!(arc_transformer.apply(7, 2), 80); // 7 + 2 + 71
+
+        // Test that original transformer is still usable
+        let mut original = transformer.clone();
+        assert_eq!(original.apply(7, 2), 80); // 7 + 2 + 71 (independent state)
+    }
 }

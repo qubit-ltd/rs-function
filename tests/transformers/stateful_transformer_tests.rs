@@ -21,6 +21,11 @@ use prism3_function::{
     Transformer,
     TransformerOnce,
 };
+use prism3_function::transformers::stateful_transformer::{
+    ArcConditionalStatefulTransformer,
+    BoxConditionalStatefulTransformer,
+    RcConditionalStatefulTransformer,
+};
 
 // ============================================================================
 // BoxStatefulTransformer Tests
@@ -1632,5 +1637,122 @@ fn test_box_mapper_apply() {
 
     // BoxStatefulTransformer can be consumed as TransformerOnce
     assert_eq!(StatefulTransformer::apply(&mut mapper, 10), 11); // 10 + 1
+}
+
+// ============================================================================
+// Conditional StatefulTransformer Display/Debug Tests
+// ============================================================================
+
+#[cfg(test)]
+mod conditional_stateful_transformer_display_debug_tests {
+    use super::*;
+
+    #[test]
+    fn test_box_conditional_stateful_transformer_display() {
+        let mut counter = 0;
+        let add = BoxStatefulTransformer::new(move |x: i32| {
+            counter += 1;
+            x + counter
+        });
+        let conditional = add.when(|x: &i32| *x > 0);
+        let display_str = format!("{}", conditional);
+        assert!(display_str.contains("BoxConditionalStatefulTransformer"));
+    }
+
+    #[test]
+    fn test_box_conditional_stateful_transformer_display_no_name() {
+        let mut counter = 0;
+        let add = BoxStatefulTransformer::new(move |x: i32| {
+            counter += 1;
+            x + counter
+        });
+        let conditional = add.when(|x: &i32| *x > 0);
+        let display_str = format!("{}", conditional);
+        assert_eq!(display_str, "BoxConditionalStatefulTransformer(BoxStatefulTransformer, BoxPredicate(unnamed))");
+    }
+
+    #[test]
+    fn test_box_conditional_stateful_transformer_debug() {
+        let mut counter = 0;
+        let add = BoxStatefulTransformer::new(move |x: i32| {
+            counter += 1;
+            x + counter
+        });
+        let conditional = add.when(|x: &i32| *x > 0);
+        let debug_str = format!("{:?}", conditional);
+        assert!(debug_str.contains("BoxConditionalStatefulTransformer"));
+    }
+
+    #[test]
+    fn test_rc_conditional_stateful_transformer_display() {
+        let mut counter = 0;
+        let add = RcStatefulTransformer::new(move |x: i32| {
+            counter += 1;
+            x + counter
+        });
+        let conditional = add.when(|x: &i32| *x > 0);
+        let display_str = format!("{}", conditional);
+        assert!(display_str.contains("RcConditionalStatefulTransformer"));
+    }
+
+    #[test]
+    fn test_rc_conditional_stateful_transformer_display_no_name() {
+        let mut counter = 0;
+        let add = RcStatefulTransformer::new(move |x: i32| {
+            counter += 1;
+            x + counter
+        });
+        let conditional = add.when(|x: &i32| *x > 0);
+        let display_str = format!("{}", conditional);
+        assert_eq!(display_str, "RcConditionalStatefulTransformer(RcStatefulTransformer, RcPredicate(unnamed))");
+    }
+
+    #[test]
+    fn test_rc_conditional_stateful_transformer_debug() {
+        let mut counter = 0;
+        let add = RcStatefulTransformer::new(move |x: i32| {
+            counter += 1;
+            x + counter
+        });
+        let conditional = add.when(|x: &i32| *x > 0);
+        let debug_str = format!("{:?}", conditional);
+        assert!(debug_str.contains("RcConditionalStatefulTransformer"));
+    }
+
+    #[test]
+    fn test_arc_conditional_stateful_transformer_display() {
+        let mut counter = 0;
+        let add = ArcStatefulTransformer::new(move |x: i32| {
+            counter += 1;
+            x + counter
+        });
+        let conditional = add.when(|x: &i32| *x > 0);
+        let display_str = format!("{}", conditional);
+        assert!(display_str.contains("ArcConditionalStatefulTransformer"));
+    }
+
+    #[test]
+    fn test_arc_conditional_stateful_transformer_display_no_name() {
+        let mut counter = 0;
+        let add = ArcStatefulTransformer::new(move |x: i32| {
+            counter += 1;
+            x + counter
+        });
+        let conditional = add.when(|x: &i32| *x > 0);
+        let display_str = format!("{}", conditional);
+        assert_eq!(display_str, "ArcConditionalStatefulTransformer(ArcStatefulTransformer, ArcPredicate(unnamed))");
+    }
+
+    #[test]
+    fn test_arc_conditional_stateful_transformer_debug() {
+        let mut counter = 0;
+        let add = ArcStatefulTransformer::new(move |x: i32| {
+            counter += 1;
+            x + counter
+        });
+        let conditional = add.when(|x: &i32| *x > 0);
+        let debug_str = format!("{:?}", conditional);
+        assert!(debug_str.contains("ArcConditionalStatefulTransformer"));
+    }
 }
 

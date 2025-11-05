@@ -20,6 +20,11 @@ use prism3_function::{
     BoxBiTransformer,
     RcBiTransformer,
 };
+use prism3_function::transformers::bi_transformer::{
+    ArcConditionalBiTransformer,
+    BoxConditionalBiTransformer,
+    RcConditionalBiTransformer,
+};
 use std::thread;
 
 // ============================================================================
@@ -1886,5 +1891,86 @@ mod arc_bi_transformer_once_tests {
         let fn_once = add.to_fn();
         // Test it directly since BoxBiTransformerOnce is not Send
         assert_eq!(fn_once(3, 7), 10);
+    }
+}
+
+// ============================================================================
+// Conditional Transformer Display/Debug Tests
+// ============================================================================
+
+#[cfg(test)]
+mod conditional_transformer_display_debug_tests {
+    use super::*;
+
+    #[test]
+    fn test_box_conditional_bi_transformer_display() {
+        let add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
+        let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+        let display_str = format!("{}", conditional);
+        assert!(display_str.contains("BoxConditionalBiTransformer"));
+    }
+
+    #[test]
+    fn test_box_conditional_bi_transformer_display_no_name() {
+        let add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
+        let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+        let display_str = format!("{}", conditional);
+        assert_eq!(display_str, "BoxConditionalBiTransformer(BoxBiTransformer, BoxBiPredicate(unnamed))");
+    }
+
+    #[test]
+    fn test_box_conditional_bi_transformer_debug() {
+        let add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
+        let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+        let debug_str = format!("{:?}", conditional);
+        assert!(debug_str.contains("BoxConditionalBiTransformer"));
+    }
+
+    #[test]
+    fn test_rc_conditional_bi_transformer_display() {
+        let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
+        let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+        let display_str = format!("{}", conditional);
+        assert!(display_str.contains("RcConditionalBiTransformer"));
+    }
+
+    #[test]
+    fn test_rc_conditional_bi_transformer_display_no_name() {
+        let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
+        let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+        let display_str = format!("{}", conditional);
+        assert_eq!(display_str, "RcConditionalBiTransformer(RcBiTransformer, RcBiPredicate(unnamed))");
+    }
+
+    #[test]
+    fn test_rc_conditional_bi_transformer_debug() {
+        let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
+        let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+        let debug_str = format!("{:?}", conditional);
+        assert!(debug_str.contains("RcConditionalBiTransformer"));
+    }
+
+    #[test]
+    fn test_arc_conditional_bi_transformer_display() {
+        let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
+        let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+        let display_str = format!("{}", conditional);
+        assert!(display_str.contains("ArcConditionalBiTransformer"));
+    }
+
+    #[test]
+    fn test_arc_conditional_bi_transformer_display_no_name() {
+        let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
+        let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+        let display_str = format!("{}", conditional);
+        assert_eq!(display_str, "ArcConditionalBiTransformer(ArcBiTransformer, ArcBiPredicate(unnamed))");
+    }
+
+    #[test]
+    fn test_arc_conditional_bi_transformer_debug() {
+        let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
+        let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+        let debug_str = format!("{:?}", conditional);
+        assert!(debug_str.contains("ArcConditionalBiTransformer"));
     }
 }
