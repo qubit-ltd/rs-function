@@ -36,12 +36,17 @@ use crate::predicates::bi_predicate::{
     BoxBiPredicate,
     RcBiPredicate,
 };
-use crate::transformers::bi_transformer_once::{
-    BiTransformerOnce,
-    BoxBiTransformerOnce,
-};
 use crate::transformers::macros::{
-    impl_box_conditional_transformer, impl_box_transformer_methods, impl_conditional_transformer_clone, impl_conditional_transformer_debug_display, impl_shared_conditional_transformer, impl_shared_transformer_methods, impl_transformer_clone, impl_transformer_common_methods, impl_transformer_constant_method, impl_transformer_debug_display
+    impl_box_conditional_transformer,
+    impl_box_transformer_methods,
+    impl_conditional_transformer_clone,
+    impl_conditional_transformer_debug_display,
+    impl_shared_conditional_transformer,
+    impl_shared_transformer_methods,
+    impl_transformer_clone,
+    impl_transformer_common_methods,
+    impl_transformer_constant_method,
+    impl_transformer_debug_display,
 };
 use crate::transformers::stateful_transformer::StatefulTransformer;
 
@@ -618,35 +623,8 @@ where
         self
     }
 
-    fn to_box(&self) -> BoxStatefulBiTransformer<T, U, R>
-    where
-        Self: Sized + Clone + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        BoxStatefulBiTransformer::new(self.clone())
-    }
-
-    fn to_rc(&self) -> RcStatefulBiTransformer<T, U, R>
-    where
-        Self: Sized + Clone + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        RcStatefulBiTransformer::new(self.clone())
-    }
-
-    fn to_arc(&self) -> ArcStatefulBiTransformer<T, U, R>
-    where
-        Self: Sized + Clone + Send + Sync + 'static,
-        T: Send + Sync + 'static,
-        U: Send + Sync + 'static,
-        R: Send + Sync + 'static,
-    {
-        ArcStatefulBiTransformer::new(self.clone())
-    }
+    // use the default implementation of to_box(), to_rc(), to_arc()
+    // from StatefulBiTransformer trait
 
     fn to_fn(&self) -> impl FnMut(T, U) -> R
     where

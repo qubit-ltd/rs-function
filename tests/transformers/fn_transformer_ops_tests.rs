@@ -51,7 +51,8 @@ mod tests {
         let add_two = |x: i32| x + 2;
         let subtract_one = |x: i32| x - 1;
 
-        let composed = triple.compose(add_two).compose(subtract_one);
+        let temp = FnTransformerOps::compose(add_two, subtract_one);
+        let composed = FnTransformerOps::compose(triple, temp);
         assert_eq!(composed.apply(5), 18); // ((5 - 1) + 2) * 3 = 18
     }
 

@@ -47,10 +47,6 @@ use crate::transformers::macros::{
     impl_transformer_constant_method,
     impl_transformer_debug_display,
 };
-use crate::transformers::transformer_once::{
-    BoxTransformerOnce,
-    TransformerOnce,
-};
 
 // ============================================================================
 // Core Trait
@@ -689,44 +685,10 @@ where
         T: 'static,
         R: 'static,
     {
-        // Zero-cost: directly return itself (the closure)
         self
     }
 
-    /// Non-consuming conversion to `BoxStatefulTransformer` for closures.
-    ///
-    /// We can create a `BoxStatefulTransformer` by boxing the closure and returning a
-    /// new `BoxStatefulTransformer`. This does not require `Clone` because we consume
-    /// the closure value passed by the caller when they call this
-    /// method. For `&self`-style non-consuming `to_*` adapters, users can
-    /// use the `StatefulTransformer::to_*` defaults which clone the closure when
-    /// possible.
-    fn to_box(&self) -> BoxStatefulTransformer<T, R>
-    where
-        Self: Sized + Clone + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        BoxStatefulTransformer::new(self.clone())
-    }
-
-    fn to_rc(&self) -> RcStatefulTransformer<T, R>
-    where
-        Self: Sized + Clone + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        RcStatefulTransformer::new(self.clone())
-    }
-
-    fn to_arc(&self) -> ArcStatefulTransformer<T, R>
-    where
-        Self: Sized + Clone + Send + Sync + 'static,
-        T: Send + 'static,
-        R: Send + 'static,
-    {
-        ArcStatefulTransformer::new(self.clone())
-    }
+    // use the default implementation of to_box(), to_rc(), to_arc() from StatefulTransformer trait
 
     fn to_fn(&self) -> impl FnMut(T) -> R
     where

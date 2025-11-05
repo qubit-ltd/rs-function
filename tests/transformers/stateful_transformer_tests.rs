@@ -115,7 +115,7 @@ fn test_box_mapper_into_box() {
         x + counter
     });
 
-    let mut boxed = mapper.into_box();
+    let mut boxed = StatefulTransformer::into_box(mapper);
     assert_eq!(boxed.apply(10), 11);
     assert_eq!(boxed.apply(10), 12);
 }
@@ -138,7 +138,7 @@ fn test_mapper_to_box_rc_arc_fn_non_consuming() {
 
     let mapper = CloneStatefulTransformer { counter: 0 };
 
-    let mut b = mapper.to_box();
+    let mut b = StatefulTransformer::to_box(&mapper);
     assert_eq!(b.apply(10), 11);
     assert_eq!(b.apply(10), 12);
 
@@ -169,7 +169,7 @@ fn test_mapper_to_box_rc_arc_fn_non_consuming() {
     assert_eq!(a.apply(3), 3);
     assert_eq!(a.apply(3), 6);
 
-    let mut f = mapper.to_fn();
+    let mut f = StatefulTransformer::to_fn(&mapper);
     assert_eq!(f(5), 6);
     assert_eq!(f(5), 7);
 }
@@ -298,7 +298,7 @@ fn test_arc_mapper_into_box() {
         x + counter
     });
 
-    let mut boxed = mapper.into_box();
+    let mut boxed = StatefulTransformer::into_box(mapper);
     assert_eq!(boxed.apply(10), 11);
     assert_eq!(boxed.apply(10), 12);
 }
@@ -338,12 +338,12 @@ fn test_arc_mapper_to_box() {
     });
 
     // Non-consuming conversion: the original mapper is still usable
-    let mut boxed1 = mapper.to_box();
+    let mut boxed1 = StatefulTransformer::to_box(&mapper);
     assert_eq!(boxed1.apply(10), 11); // 10 + 1
     assert_eq!(boxed1.apply(10), 12); // 10 + 2
 
     // Can call to_box() multiple times, each sharing the same underlying state
-    let mut boxed2 = mapper.to_box();
+    let mut boxed2 = StatefulTransformer::to_box(&mapper);
     assert_eq!(boxed2.apply(10), 13); // 10 + 3 (shared state)
 
     // Original mapper also shares state
@@ -406,12 +406,12 @@ fn test_arc_mapper_to_fn() {
     });
 
     // Non-consuming conversion
-    let mut closure1 = mapper.to_fn();
+    let mut closure1 = StatefulTransformer::to_fn(&mapper);
     assert_eq!(closure1(5), 15); // 5 + 1 * 10
     assert_eq!(closure1(5), 25); // 5 + 2 * 10
 
     // Can call to_fn() multiple times, each sharing the same underlying state
-    let mut closure2 = mapper.to_fn();
+    let mut closure2 = StatefulTransformer::to_fn(&mapper);
     assert_eq!(closure2(5), 35); // 5 + 3 * 10 (shared state)
 
     // Original mapper also shares state
@@ -427,11 +427,11 @@ fn test_arc_mapper_to_box_with_string() {
         format!("[{}] {}", count, x)
     });
 
-    let mut boxed1 = mapper.to_box();
+    let mut boxed1 = StatefulTransformer::to_box(&mapper);
     assert_eq!(boxed1.apply("hello".to_string()), "[1] hello");
     assert_eq!(boxed1.apply("world".to_string()), "[2] world");
 
-    let mut boxed2 = mapper.to_box();
+    let mut boxed2 = StatefulTransformer::to_box(&mapper);
     assert_eq!(boxed2.apply("rust".to_string()), "[3] rust"); // shared state
 }
 
@@ -487,11 +487,11 @@ fn test_arc_mapper_to_fn_complex_type() {
         (x, history.len())
     });
 
-    let mut fn1 = mapper.to_fn();
+    let mut fn1 = StatefulTransformer::to_fn(&mapper);
     assert_eq!(fn1(10), (10, 1));
     assert_eq!(fn1(20), (20, 2));
 
-    let mut fn2 = mapper.to_fn();
+    let mut fn2 = StatefulTransformer::to_fn(&mapper);
     assert_eq!(fn2(30), (30, 3)); // shared state
 
     // Original mapper also shares state
@@ -610,7 +610,7 @@ fn test_rc_mapper_into_box() {
         x + counter
     });
 
-    let mut boxed = mapper.into_box();
+    let mut boxed = StatefulTransformer::into_box(mapper);
     assert_eq!(boxed.apply(10), 11);
     assert_eq!(boxed.apply(10), 12);
 }
@@ -695,7 +695,7 @@ fn test_closure_into_box() {
         x + counter
     };
 
-    let mut boxed = mapper.into_box();
+    let mut boxed = StatefulTransformer::into_box(mapper);
     assert_eq!(boxed.apply(10), 11);
     assert_eq!(boxed.apply(10), 12);
 }
@@ -1012,7 +1012,7 @@ unsafe impl Sync for CustomSendStatefulTransformer {}
 #[test]
 fn test_custom_mapper_into_box() {
     let mapper = CustomStatefulTransformer { multiplier: 0 };
-    let mut boxed = mapper.into_box();
+    let mut boxed = StatefulTransformer::into_box(mapper);
 
     assert_eq!(boxed.apply(10), 10); // 10 * 1
     assert_eq!(boxed.apply(10), 20); // 10 * 2
@@ -1117,7 +1117,7 @@ impl StatefulTransformer<String, String> for StringLengthStatefulTransformer {
 #[test]
 fn test_custom_string_mapper_into_box() {
     let mapper = StringLengthStatefulTransformer { total_length: 0 };
-    let mut boxed = mapper.into_box();
+    let mut boxed = StatefulTransformer::into_box(mapper);
 
     assert_eq!(boxed.apply("hello".to_string()), "[5] hello");
     assert_eq!(boxed.apply("world".to_string()), "[10] world");
@@ -1157,7 +1157,7 @@ fn test_stateful_mapper_into_box() {
         sum: 0,
         history: Vec::new(),
     };
-    let mut boxed = mapper.into_box();
+    let mut boxed = StatefulTransformer::into_box(mapper);
 
     assert_eq!(boxed.apply(10), (1, 10, 1));
     assert_eq!(boxed.apply(20), (2, 30, 2));
@@ -1194,7 +1194,7 @@ fn test_box_mapper_into_fn() {
         x + counter
     });
 
-    let mut closure = mapper.into_fn();
+    let mut closure = StatefulTransformer::into_fn(mapper);
     assert_eq!(closure(10), 11); // 10 + 1
     assert_eq!(closure(10), 12); // 10 + 2
     assert_eq!(closure(10), 13); // 10 + 3
@@ -1203,7 +1203,7 @@ fn test_box_mapper_into_fn() {
 #[test]
 fn test_box_mapper_into_fn_identity() {
     let mapper = BoxStatefulTransformer::<i32, i32>::identity();
-    let mut closure = mapper.into_fn();
+    let mut closure = StatefulTransformer::into_fn(mapper);
 
     assert_eq!(closure(42), 42);
     assert_eq!(closure(100), 100);
@@ -1212,7 +1212,7 @@ fn test_box_mapper_into_fn_identity() {
 #[test]
 fn test_box_mapper_into_fn_constant() {
     let mapper = BoxStatefulTransformer::constant("hello");
-    let mut closure = mapper.into_fn();
+    let mut closure = StatefulTransformer::into_fn(mapper);
 
     assert_eq!(closure(1), "hello");
     assert_eq!(closure(2), "hello");
@@ -1227,7 +1227,7 @@ fn test_arc_mapper_into_fn() {
         x * counter
     });
 
-    let mut closure = mapper.into_fn();
+    let mut closure = StatefulTransformer::into_fn(mapper);
     assert_eq!(closure(10), 10); // 10 * 1
     assert_eq!(closure(10), 20); // 10 * 2
     assert_eq!(closure(10), 30); // 10 * 3
@@ -1236,7 +1236,7 @@ fn test_arc_mapper_into_fn() {
 #[test]
 fn test_arc_mapper_into_fn_identity() {
     let mapper = ArcStatefulTransformer::<i32, i32>::identity();
-    let mut closure = mapper.into_fn();
+    let mut closure = StatefulTransformer::into_fn(mapper);
 
     assert_eq!(closure(42), 42);
     assert_eq!(closure(100), 100);
@@ -1245,7 +1245,7 @@ fn test_arc_mapper_into_fn_identity() {
 #[test]
 fn test_arc_mapper_into_fn_constant() {
     let mapper = ArcStatefulTransformer::constant("world");
-    let mut closure = mapper.into_fn();
+    let mut closure = StatefulTransformer::into_fn(mapper);
 
     assert_eq!(closure(1), "world");
     assert_eq!(closure(2), "world");
@@ -1259,7 +1259,7 @@ fn test_rc_mapper_into_fn() {
         x - counter
     });
 
-    let mut closure = mapper.into_fn();
+    let mut closure = StatefulTransformer::into_fn(mapper);
     assert_eq!(closure(10), 9); // 10 - 1
     assert_eq!(closure(10), 8); // 10 - 2
     assert_eq!(closure(10), 7); // 10 - 3
@@ -1268,7 +1268,7 @@ fn test_rc_mapper_into_fn() {
 #[test]
 fn test_rc_mapper_into_fn_identity() {
     let mapper = RcStatefulTransformer::<i32, i32>::identity();
-    let mut closure = mapper.into_fn();
+    let mut closure = StatefulTransformer::into_fn(mapper);
 
     assert_eq!(closure(42), 42);
     assert_eq!(closure(100), 100);
@@ -1277,7 +1277,7 @@ fn test_rc_mapper_into_fn_identity() {
 #[test]
 fn test_rc_mapper_into_fn_constant() {
     let mapper = RcStatefulTransformer::constant("rust");
-    let mut closure = mapper.into_fn();
+    let mut closure = StatefulTransformer::into_fn(mapper);
 
     assert_eq!(closure(1), "rust");
     assert_eq!(closure(2), "rust");
@@ -1291,7 +1291,7 @@ fn test_closure_into_fn() {
         x + counter * 10
     };
 
-    let mut closure = mapper.into_fn();
+    let mut closure = StatefulTransformer::into_fn(mapper);
     assert_eq!(closure(5), 15); // 5 + 1 * 10
     assert_eq!(closure(5), 25); // 5 + 2 * 10
     assert_eq!(closure(5), 35); // 5 + 3 * 10
@@ -1300,11 +1300,10 @@ fn test_closure_into_fn() {
 #[test]
 fn test_closure_into_fn_direct() {
     let mut counter = 0;
-    let mut closure = (move |x: i32| {
+    let mut closure = StatefulTransformer::into_fn((move |x: i32| {
         counter += 1;
         x * counter
-    })
-    .into_fn();
+    }));
 
     assert_eq!(closure(10), 10); // 10 * 1
     assert_eq!(closure(10), 20); // 10 * 2
@@ -1313,7 +1312,7 @@ fn test_closure_into_fn_direct() {
 #[test]
 fn test_custom_mapper_into_fn() {
     let mapper = CustomStatefulTransformer { multiplier: 0 };
-    let mut closure = mapper.into_fn();
+    let mut closure = StatefulTransformer::into_fn(mapper);
 
     assert_eq!(closure(10), 10); // 10 * 1
     assert_eq!(closure(10), 20); // 10 * 2
@@ -1323,7 +1322,7 @@ fn test_custom_mapper_into_fn() {
 #[test]
 fn test_custom_string_mapper_into_fn() {
     let mapper = StringLengthStatefulTransformer { total_length: 0 };
-    let mut closure = mapper.into_fn();
+    let mut closure = StatefulTransformer::into_fn(mapper);
 
     assert_eq!(closure("hello".to_string()), "[5] hello");
     assert_eq!(closure("world".to_string()), "[10] world");
@@ -1337,7 +1336,7 @@ fn test_stateful_mapper_into_fn() {
         sum: 0,
         history: Vec::new(),
     };
-    let mut closure = mapper.into_fn();
+    let mut closure = StatefulTransformer::into_fn(mapper);
 
     assert_eq!(closure(10), (1, 10, 1));
     assert_eq!(closure(20), (2, 30, 2));
@@ -1380,7 +1379,7 @@ fn test_into_fn_after_conversion() {
 #[test]
 fn test_into_fn_with_string_return() {
     let mapper = BoxStatefulTransformer::new(|x: i32| format!("Value: {}", x * 2));
-    let mut closure = mapper.into_fn();
+    let mut closure = StatefulTransformer::into_fn(mapper);
 
     assert_eq!(closure(5), "Value: 10");
     assert_eq!(closure(10), "Value: 20");
@@ -1416,12 +1415,12 @@ fn test_closure_to_box() {
     };
 
     // Non-consuming conversion: original closure still usable
-    let mut boxed = mapper.to_box();
+    let mut boxed = StatefulTransformer::to_box(&mapper);
     assert_eq!(boxed.apply(10), 11); // 10 + 1
     assert_eq!(boxed.apply(10), 12); // 10 + 2
 
     // Can call to_box() multiple times
-    let mut boxed2 = mapper.to_box();
+    let mut boxed2 = StatefulTransformer::to_box(&mapper);
     assert_eq!(boxed2.apply(20), 21); // 20 + 1 (new state)
     assert_eq!(boxed2.apply(20), 22); // 20 + 2
 
@@ -1486,12 +1485,12 @@ fn test_closure_to_fn() {
     };
 
     // Non-consuming conversion
-    let mut closure = mapper.to_fn();
+    let mut closure = StatefulTransformer::to_fn(&mapper);
     assert_eq!(closure(5), 15); // 5 + 1 * 10
     assert_eq!(closure(5), 25); // 5 + 2 * 10
 
     // Can call to_fn() again, creating a new independent state
-    let mut closure2 = mapper.to_fn();
+    let mut closure2 = StatefulTransformer::to_fn(&mapper);
     assert_eq!(closure2(5), 15); // 5 + 1 * 10 (new state)
     assert_eq!(closure2(5), 25); // 5 + 2 * 10
 
@@ -1507,11 +1506,11 @@ fn test_closure_to_box_with_string() {
         format!("[{}] {}", count, x)
     };
 
-    let mut boxed1 = mapper.to_box();
+    let mut boxed1 = StatefulTransformer::to_box(&mapper);
     assert_eq!(boxed1.apply("hello".to_string()), "[1] hello");
     assert_eq!(boxed1.apply("world".to_string()), "[2] world");
 
-    let mut boxed2 = mapper.to_box();
+    let mut boxed2 = StatefulTransformer::to_box(&mapper);
     assert_eq!(boxed2.apply("rust".to_string()), "[1] rust"); // new state
 }
 
@@ -1559,7 +1558,7 @@ fn test_closure_to_box_complex_type() {
         (x, history.len())
     };
 
-    let mut boxed = mapper.to_box();
+    let mut boxed = StatefulTransformer::to_box(&mapper);
     assert_eq!(boxed.apply(10), (10, 1));
     assert_eq!(boxed.apply(20), (20, 2));
     assert_eq!(boxed.apply(30), (30, 3));
@@ -1574,12 +1573,12 @@ fn test_closure_to_fn_multiple_calls() {
     };
 
     // First call to to_fn()
-    let mut fn1 = mapper.to_fn();
+    let mut fn1 = StatefulTransformer::to_fn(&mapper);
     assert_eq!(fn1(100), (100, 1));
     assert_eq!(fn1(200), (200, 2));
 
     // Second call to to_fn(), creating independent state
-    let mut fn2 = mapper.to_fn();
+    let mut fn2 = StatefulTransformer::to_fn(&mapper);
     assert_eq!(fn2(300), (300, 1)); // new counter starts from 1
 
     // First closure's state unaffected
@@ -1649,399 +1648,3 @@ fn test_box_mapper_apply() {
 
 /// Test BoxStatefulTransformer::into_box conversion
 #[test]
-fn test_box_mapper_into_box() {
-    let mut counter = 0;
-    let mapper = BoxStatefulTransformer::new(move |x: i32| {
-        counter += 1;
-        x * counter
-    });
-
-    let once_mapper = mapper.into_box();
-    assert_eq!(once_mapper.apply(10), 10); // 10 * 1
-}
-
-/// Test BoxStatefulTransformer::into_fn conversion
-#[test]
-fn test_box_mapper_into_fn() {
-    let mut counter = 0;
-    let mapper = BoxStatefulTransformer::new(move |x: i32| {
-        counter += 1;
-        x * counter
-    });
-
-    let fn_once = mapper.into_fn();
-    assert_eq!(fn_once(10), 10); // 10 * 1
-}
-
-/// Test BoxStatefulTransformer with stateful transformation consumed once
-#[test]
-fn test_box_mapper_stateful_apply() {
-    let mut accumulator = 0;
-    let mapper = BoxStatefulTransformer::new(move |x: i32| {
-        accumulator += x;
-        accumulator
-    });
-
-    // First and only call
-    assert_eq!(mapper.apply(5), 5); // 0 + 5 = 5
-                                    // mapper is now consumed and cannot be used again
-}
-
-/// Test RcStatefulTransformer implements TransformerOnce trait
-#[test]
-fn test_rc_mapper_apply() {
-    let mut counter = 0;
-    let mapper = RcStatefulTransformer::new(move |x: i32| {
-        counter += 1;
-        x + counter
-    });
-
-    // RcStatefulTransformer can be consumed as TransformerOnce
-    assert_eq!(mapper.apply(10), 11); // 10 + 1
-}
-
-/// Test RcStatefulTransformer::into_box conversion
-#[test]
-fn test_rc_mapper_into_box() {
-    let mut counter = 0;
-    let mapper = RcStatefulTransformer::new(move |x: i32| {
-        counter += 1;
-        x * counter
-    });
-
-    let once_mapper = mapper.into_box();
-    assert_eq!(once_mapper.apply(10), 10); // 10 * 1
-}
-
-/// Test RcStatefulTransformer::into_fn conversion
-#[test]
-fn test_rc_mapper_into_fn() {
-    let mut counter = 0;
-    let mapper = RcStatefulTransformer::new(move |x: i32| {
-        counter += 1;
-        x * counter
-    });
-
-    let fn_once = mapper.into_fn();
-    assert_eq!(fn_once(10), 10); // 10 * 1
-}
-
-/// Test RcStatefulTransformer::to_box (non-consuming)
-#[test]
-fn test_rc_mapper_to_box() {
-    let mut counter = 0;
-    let mapper = RcStatefulTransformer::new(move |x: i32| {
-        counter += 1;
-        x * counter
-    });
-
-    // Non-consuming conversion
-    let once_mapper = mapper.to_box();
-    assert_eq!(once_mapper.apply(10), 10); // 10 * 1
-
-    // Original mapper still usable
-    let mut mapper_ref = mapper.clone();
-    assert_eq!(mapper_ref.apply(20), 40); // 20 * 2 (state continues)
-}
-
-/// Test RcStatefulTransformer::to_fn (non-consuming)
-#[test]
-fn test_rc_mapper_to_fn() {
-    let mut counter = 0;
-    let mapper = RcStatefulTransformer::new(move |x: i32| {
-        counter += 1;
-        x * counter
-    });
-
-    // Non-consuming conversion
-    let fn_once = mapper.to_fn();
-    assert_eq!(fn_once(10), 10); // 10 * 1
-
-    // Original mapper still usable
-    let mut mapper_ref = mapper.clone();
-    assert_eq!(mapper_ref.apply(20), 40); // 20 * 2 (state continues)
-}
-
-/// Test ArcStatefulTransformer implements TransformerOnce trait
-#[test]
-fn test_arc_mapper_apply() {
-    let mut counter = 0;
-    let mapper = ArcStatefulTransformer::new(move |x: i32| {
-        counter += 1;
-        x + counter
-    });
-
-    // ArcStatefulTransformer can be consumed as TransformerOnce
-    assert_eq!(mapper.apply(10), 11); // 10 + 1
-}
-
-/// Test ArcStatefulTransformer::into_box conversion
-#[test]
-fn test_arc_mapper_into_box() {
-    let mut counter = 0;
-    let mapper = ArcStatefulTransformer::new(move |x: i32| {
-        counter += 1;
-        x * counter
-    });
-
-    let once_mapper = mapper.into_box();
-    assert_eq!(once_mapper.apply(10), 10); // 10 * 1
-}
-
-/// Test ArcStatefulTransformer::into_fn conversion
-#[test]
-fn test_arc_mapper_into_fn() {
-    let mut counter = 0;
-    let mapper = ArcStatefulTransformer::new(move |x: i32| {
-        counter += 1;
-        x * counter
-    });
-
-    let fn_once = mapper.into_fn();
-    assert_eq!(fn_once(10), 10); // 10 * 1
-}
-
-/// Test ArcStatefulTransformer::to_box (non-consuming)
-#[test]
-fn test_arc_mapper_to_box() {
-    let mut counter = 0;
-    let mapper = ArcStatefulTransformer::new(move |x: i32| {
-        counter += 1;
-        x * counter
-    });
-
-    // Non-consuming conversion
-    let once_mapper = mapper.to_box();
-    assert_eq!(once_mapper.apply(10), 10); // 10 * 1
-
-    // Original mapper still usable
-    let mut mapper_ref = mapper.clone();
-    assert_eq!(mapper_ref.apply(20), 40); // 20 * 2 (state continues)
-}
-
-/// Test ArcStatefulTransformer::to_fn (non-consuming)
-#[test]
-fn test_arc_mapper_to_fn() {
-    let mut counter = 0;
-    let mapper = ArcStatefulTransformer::new(move |x: i32| {
-        counter += 1;
-        x * counter
-    });
-
-    // Non-consuming conversion
-    let fn_once = mapper.to_fn();
-    assert_eq!(fn_once(10), 10); // 10 * 1
-
-    // Original mapper still usable
-    let mut mapper_ref = mapper.clone();
-    assert_eq!(mapper_ref.apply(20), 40); // 20 * 2 (state continues)
-}
-
-/// Test BoxStatefulTransformer consumed as TransformerOnce with complex state
-#[test]
-fn test_box_mapper_complex_state_apply() {
-    let data = [1, 2, 3, 4, 5];
-    let mapper = BoxStatefulTransformer::new(move |multiplier: i32| {
-        data.iter().map(|x| x * multiplier).sum::<i32>()
-    });
-
-    // Consume the mapper once
-    assert_eq!(mapper.apply(2), 30); // (1+2+3+4+5) * 2 = 30
-}
-
-/// Test RcStatefulTransformer shared state with apply
-#[test]
-fn test_rc_mapper_shared_state_apply() {
-    use std::cell::RefCell;
-    use std::rc::Rc;
-
-    let shared_counter = Rc::new(RefCell::new(0));
-    let counter_clone = Rc::clone(&shared_counter);
-
-    let mapper = RcStatefulTransformer::new(move |x: i32| {
-        let mut count = counter_clone.borrow_mut();
-        *count += 1;
-        x * *count
-    });
-
-    // Clone before consuming
-    let mut mapper_clone = mapper.clone();
-
-    // Consume one instance
-    assert_eq!(mapper.apply(10), 10); // 10 * 1
-
-    // Use the cloned instance
-    assert_eq!(mapper_clone.apply(10), 20); // 10 * 2 (shared state)
-
-    // Verify shared counter
-    assert_eq!(*shared_counter.borrow(), 2);
-}
-
-/// Test ArcStatefulTransformer thread-safe with apply
-#[test]
-fn test_arc_mapper_thread_safe_apply() {
-    use std::sync::{
-        Arc,
-        Mutex,
-    };
-
-    let shared_counter = Arc::new(Mutex::new(0));
-    let counter_clone = Arc::clone(&shared_counter);
-
-    let mapper = ArcStatefulTransformer::new(move |x: i32| {
-        let mut count = counter_clone.lock().unwrap();
-        *count += 1;
-        x * *count
-    });
-
-    // Clone before consuming
-    let mut mapper_clone = mapper.clone();
-
-    // Consume one instance
-    assert_eq!(mapper.apply(10), 10); // 10 * 1
-
-    // Use the cloned instance
-    assert_eq!(mapper_clone.apply(10), 20); // 10 * 2 (shared state)
-
-    // Verify shared counter
-    assert_eq!(*shared_counter.lock().unwrap(), 2);
-}
-
-/// Test composition: BoxStatefulTransformer -> BoxTransformerOnce chain
-#[test]
-fn test_box_mapper_to_box_mapper_once_composition() {
-    let mapper1 = BoxStatefulTransformer::new(|x: i32| x + 1);
-    let once_mapper1 = mapper1.into_box();
-
-    let mapper2 = BoxStatefulTransformer::new(|x: i32| x * 2);
-    let once_mapper2 = mapper2.into_box();
-
-    // Compose using and_then
-    let composed = once_mapper1.and_then(once_mapper2);
-    assert_eq!(composed.apply(5), 12); // (5 + 1) * 2 = 12
-}
-
-/// Test RcStatefulTransformer multiple clones with one consumed as TransformerOnce
-#[test]
-fn test_rc_mapper_multiple_clones_one_consumed() {
-    let mut counter = 0;
-    let mapper = RcStatefulTransformer::new(move |x: i32| {
-        counter += 1;
-        x * counter
-    });
-
-    let clone1 = mapper.clone();
-    let mut clone2 = mapper.clone();
-
-    // Consume original
-    assert_eq!(mapper.apply(10), 10); // 10 * 1
-
-    // Use clones
-    assert_eq!(clone2.apply(10), 20); // 10 * 2
-
-    let mut clone1_mut = clone1.clone();
-    assert_eq!(clone1_mut.apply(10), 30); // 10 * 3
-}
-
-/// Test ArcStatefulTransformer multiple clones with one consumed as TransformerOnce
-#[test]
-fn test_arc_mapper_multiple_clones_one_consumed() {
-    let mut counter = 0;
-    let mapper = ArcStatefulTransformer::new(move |x: i32| {
-        counter += 1;
-        x * counter
-    });
-
-    let clone1 = mapper.clone();
-    let mut clone2 = mapper.clone();
-
-    // Consume original
-    assert_eq!(mapper.apply(10), 10); // 10 * 1
-
-    // Use clones
-    assert_eq!(clone2.apply(10), 20); // 10 * 2
-
-    let mut clone1_mut = clone1.clone();
-    assert_eq!(clone1_mut.apply(10), 30); // 10 * 3
-}
-
-// ============================================================================
-// Custom Struct Tests - StatefulTransformer Default Implementation to_xxx()
-// ============================================================================
-
-#[test]
-fn test_custom_mapper_to_box() {
-    let mapper = CustomStatefulTransformer { multiplier: 0 };
-    let mut boxed = mapper.to_box();
-    assert_eq!(boxed.apply(10), 10); // 10 * 1
-    assert_eq!(boxed.apply(10), 20); // 10 * 2
-                                     // Original mapper is still usable (was cloned)
-    let mut mapper_clone = mapper.clone();
-    assert_eq!(mapper_clone.apply(10), 10); // 10 * 1 (independent state)
-}
-
-#[test]
-fn test_custom_mapper_to_rc() {
-    let mapper = CustomStatefulTransformer { multiplier: 0 };
-    let mut rc = mapper.to_rc();
-    assert_eq!(rc.apply(10), 10); // 10 * 1
-    assert_eq!(rc.apply(10), 20); // 10 * 2
-                                  // Original mapper is still usable (was cloned)
-    let mut mapper_clone = mapper.clone();
-    assert_eq!(mapper_clone.apply(10), 10); // 10 * 1 (independent state)
-}
-
-#[test]
-fn test_custom_send_mapper_to_arc() {
-    let mapper = CustomSendStatefulTransformer { multiplier: 0 };
-    let mut arc = mapper.to_arc();
-    assert_eq!(arc.apply(10), 10); // 10 * 1
-    assert_eq!(arc.apply(10), 20); // 10 * 2
-                                   // Original mapper is still usable (was cloned)
-    let mut mapper_clone = mapper.clone();
-    assert_eq!(mapper_clone.apply(10), 10); // 10 * 1 (independent state)
-}
-
-#[test]
-fn test_custom_mapper_to_fn() {
-    let mapper = CustomStatefulTransformer { multiplier: 0 };
-    let mut closure = mapper.to_fn();
-    assert_eq!(closure(10), 10); // 10 * 1
-    assert_eq!(closure(10), 20); // 10 * 2
-                                 // Original mapper is still usable (was cloned)
-    let mut mapper_clone = mapper.clone();
-    assert_eq!(mapper_clone.apply(10), 10); // 10 * 1 (independent state)
-}
-
-#[test]
-fn test_custom_string_mapper_to_box() {
-    let mapper = StringLengthStatefulTransformer { total_length: 0 };
-    let mut boxed = mapper.to_box();
-    assert_eq!(boxed.apply("hello".to_string()), "[5] hello");
-    assert_eq!(boxed.apply("world".to_string()), "[10] world");
-    // Original mapper is still usable (was cloned)
-    let mut mapper_clone = mapper.clone();
-    assert_eq!(mapper_clone.apply("test".to_string()), "[4] test");
-}
-
-#[test]
-fn test_custom_string_mapper_to_rc() {
-    let mapper = StringLengthStatefulTransformer { total_length: 0 };
-    let mut rc = mapper.to_rc();
-    assert_eq!(rc.apply("hello".to_string()), "[5] hello");
-    assert_eq!(rc.apply("world".to_string()), "[10] world");
-    // Original mapper is still usable (was cloned)
-    let mut mapper_clone = mapper.clone();
-    assert_eq!(mapper_clone.apply("test".to_string()), "[4] test");
-}
-
-#[test]
-fn test_custom_string_mapper_to_fn() {
-    let mapper = StringLengthStatefulTransformer { total_length: 0 };
-    let mut closure = mapper.to_fn();
-    assert_eq!(closure("hello".to_string()), "[5] hello");
-    assert_eq!(closure("world".to_string()), "[10] world");
-    // Original mapper is still usable (was cloned)
-    let mut mapper_clone = mapper.clone();
-    assert_eq!(mapper_clone.apply("test".to_string()), "[4] test");
-}

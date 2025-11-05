@@ -32,10 +32,6 @@ use crate::predicates::bi_predicate::{
     BoxBiPredicate,
     RcBiPredicate,
 };
-use crate::transformers::bi_transformer_once::{
-    BiTransformerOnce,
-    BoxBiTransformerOnce,
-};
 use crate::transformers::macros::{
     impl_box_conditional_transformer,
     impl_box_transformer_methods,
@@ -657,35 +653,8 @@ where
         move |t: T, u: U| self(t, u)
     }
 
-    fn to_box(&self) -> BoxBiTransformer<T, U, R>
-    where
-        Self: Sized + Clone + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        BoxBiTransformer::new(self.clone())
-    }
-
-    fn to_rc(&self) -> RcBiTransformer<T, U, R>
-    where
-        Self: Sized + Clone + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        RcBiTransformer::new(self.clone())
-    }
-
-    fn to_arc(&self) -> ArcBiTransformer<T, U, R>
-    where
-        Self: Sized + Clone + Send + Sync + 'static,
-        T: Send + Sync + 'static,
-        U: Send + Sync + 'static,
-        R: Send + Sync + 'static,
-    {
-        ArcBiTransformer::new(self.clone())
-    }
+    // use the default implementation of to_box(), to_rc(), to_arc() from
+    // BiTransformer trait
 
     fn to_fn(&self) -> impl Fn(T, U) -> R
     where

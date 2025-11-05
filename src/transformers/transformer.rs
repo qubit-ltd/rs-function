@@ -746,28 +746,8 @@ where
         self
     }
 
-    fn to_box(&self) -> BoxTransformer<T, R>
-    where
-        Self: Clone + Sized + 'static,
-    {
-        self.clone().into_box()
-    }
-
-    fn to_rc(&self) -> RcTransformer<T, R>
-    where
-        Self: Clone + Sized + 'static,
-    {
-        self.clone().into_rc()
-    }
-
-    fn to_arc(&self) -> ArcTransformer<T, R>
-    where
-        Self: Clone + Sized + Send + Sync + 'static,
-        T: Send + Sync + 'static,
-        R: Send + Sync + 'static,
-    {
-        self.clone().into_arc()
-    }
+    // use the default implementation of to_box(), to_rc(), to_arc() from
+    // Transformer trait
 
     fn to_fn(&self) -> impl Fn(T) -> R
     where

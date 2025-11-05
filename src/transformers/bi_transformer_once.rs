@@ -297,15 +297,7 @@ where
         move |first: T, second: U| -> R { self(first, second) }
     }
 
-    fn to_box(&self) -> BoxBiTransformerOnce<T, U, R>
-    where
-        Self: Clone + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        BoxBiTransformerOnce::new(self.clone())
-    }
+    // use the default implementation of to_box() from BiTransformerOnce trait
 
     fn to_fn(&self) -> impl FnOnce(T, U) -> R
     where

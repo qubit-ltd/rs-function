@@ -9,6 +9,7 @@
 
 use prism3_function::{
     BoxTransformerOnce,
+    FnTransformerOps,
     TransformerOnce,
 };
 
@@ -50,8 +51,8 @@ mod box_transformer_once_tests {
     #[test]
     fn test_compose() {
         let double = BoxTransformerOnce::new(|x: i32| x * 2);
-        let add_one = |x: i32| x + 1;
-        let composed = double.compose(add_one);
+        let add_one = BoxTransformerOnce::new(|x: i32| x + 1);
+        let composed = add_one.and_then(double);
         assert_eq!(composed.apply(5), 12); // (5 + 1) * 2
     }
 
@@ -169,10 +170,10 @@ mod complex_composition_tests {
 
     #[test]
     fn test_multiple_compose() {
-        let add_one = |x: i32| x + 1;
-        let double = |x: i32| x * 2;
+        let add_one = BoxTransformerOnce::new(|x: i32| x + 1);
+        let double = BoxTransformerOnce::new(|x: i32| x * 2);
         let square = BoxTransformerOnce::new(|x: i32| x * x);
-        let composed = square.compose(double).compose(add_one);
+        let composed = add_one.and_then(double).and_then(square);
         assert_eq!(composed.apply(5), 144); // ((5 + 1) * 2)^2 = 144
     }
 
@@ -658,6 +659,7 @@ mod custom_type_default_impl_tests {
 mod box_transformer_transformer_once_tests {
     use prism3_function::{
         BoxTransformer,
+        Transformer,
         TransformerOnce,
     };
 
@@ -705,6 +707,7 @@ mod box_transformer_transformer_once_tests {
 mod rc_transformer_transformer_once_tests {
     use prism3_function::{
         RcTransformer,
+        Transformer,
         TransformerOnce,
     };
 
@@ -762,6 +765,7 @@ mod rc_transformer_transformer_once_tests {
 mod arc_transformer_transformer_once_tests {
     use prism3_function::{
         ArcTransformer,
+        Transformer,
         TransformerOnce,
     };
     use std::sync::Arc;

@@ -316,16 +316,10 @@ where
     where
         Self: Sized + 'static,
     {
-        // Zero-cost: directly return self since F is already FnOnce(T) -> R
         self
     }
 
-    fn to_box(&self) -> BoxTransformerOnce<T, R>
-    where
-        Self: Clone + Sized + 'static,
-    {
-        self.clone().into_box()
-    }
+    // use the default implementation of to_box() from TransformerOnce trait
 
     fn to_fn(&self) -> impl FnOnce(T) -> R
     where

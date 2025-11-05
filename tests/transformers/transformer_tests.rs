@@ -15,6 +15,7 @@
 mod box_transformer_tests {
     use prism3_function::{
         BoxTransformer,
+        FnTransformerOps,
         Transformer,
     };
 
@@ -72,7 +73,7 @@ mod box_transformer_tests {
     fn test_compose() {
         let double = BoxTransformer::new(|x: i32| x * 2);
         let add_one = BoxTransformer::new(|x: i32| x + 1);
-        let composed = double.compose(add_one);
+        let composed = add_one.and_then(double);
         assert_eq!(composed.apply(5), 12); // (5 + 1) * 2
     }
 }
@@ -158,7 +159,7 @@ mod arc_transformer_tests {
     fn test_compose() {
         let double = ArcTransformer::new(|x: i32| x * 2);
         let add_one = ArcTransformer::new(|x: i32| x + 1);
-        let composed = double.compose(add_one);
+        let composed = add_one.and_then(double);
 
         assert_eq!(composed.apply(5), 12); // (5 + 1) * 2
     }
@@ -229,7 +230,7 @@ mod rc_transformer_tests {
     fn test_compose() {
         let double = RcTransformer::new(|x: i32| x * 2);
         let add_one = RcTransformer::new(|x: i32| x + 1);
-        let composed = double.compose(add_one);
+        let composed = add_one.and_then(double);
 
         assert_eq!(composed.apply(5), 12); // (5 + 1) * 2
     }
@@ -244,15 +245,16 @@ mod box_conditional_tests {
     use prism3_function::{
         BoxPredicate,
         BoxTransformer,
+        FnTransformerOps,
         Transformer,
     };
 
     #[test]
     fn test_when_or_else() {
-        let double = BoxTransformer::new(|x: i32| x * 2);
-        let is_positive = BoxPredicate::new(|x: &i32| *x > 0);
-        let negate = BoxTransformer::new(|x: i32| -x);
-        let result = double.when(is_positive).or_else(negate);
+        let double_fn = |x: i32| x * 2;
+        let negate_fn = |x: i32| -x;
+        let conditional = FnTransformerOps::when(double_fn, |x: &i32| *x > 0).or_else(negate_fn);
+        let result = conditional.into_box();
 
         assert_eq!(result.apply(5), 10);
         assert_eq!(result.apply(-5), 5);
@@ -260,8 +262,8 @@ mod box_conditional_tests {
 
     #[test]
     fn test_when_or_else_with_closure() {
-        let double = BoxTransformer::new(|x: i32| x * 2);
-        let result = double.when(|x: &i32| *x > 0).or_else(|x: i32| -x);
+        let double_fn = |x: i32| x * 2;
+        let result = FnTransformerOps::when(double_fn, |x: &i32| *x > 0).or_else(|x: i32| -x);
 
         assert_eq!(result.apply(5), 10);
         assert_eq!(result.apply(-5), 5);
@@ -274,15 +276,15 @@ mod arc_conditional_tests {
     use prism3_function::{
         ArcPredicate,
         ArcTransformer,
+        FnTransformerOps,
         Transformer,
     };
 
     #[test]
     fn test_when_or_else() {
-        let double = ArcTransformer::new(|x: i32| x * 2);
-        let is_positive = ArcPredicate::new(|x: &i32| *x > 0);
-        let negate = ArcTransformer::new(|x: i32| -x);
-        let result = double.when(is_positive).or_else(negate);
+        let double_fn = |x: i32| x * 2;
+        let negate_fn = |x: i32| -x;
+        let result = FnTransformerOps::when(double_fn, |x: &i32| *x > 0).or_else(negate_fn);
 
         assert_eq!(result.apply(5), 10);
         assert_eq!(result.apply(-5), 5);
@@ -290,8 +292,8 @@ mod arc_conditional_tests {
 
     #[test]
     fn test_when_or_else_with_closure() {
-        let double = ArcTransformer::new(|x: i32| x * 2);
-        let result = double.when(|x: &i32| *x > 0).or_else(|x: i32| -x);
+        let double_fn = |x: i32| x * 2;
+        let result = FnTransformerOps::when(double_fn, |x: &i32| *x > 0).or_else(|x: i32| -x);
 
         assert_eq!(result.apply(5), 10);
         assert_eq!(result.apply(-5), 5);
@@ -300,8 +302,8 @@ mod arc_conditional_tests {
 
     #[test]
     fn test_conditional_clone() {
-        let double = ArcTransformer::new(|x: i32| x * 2);
-        let conditional = double.when(|x: &i32| *x > 0);
+        let double_fn = |x: i32| x * 2;
+        let conditional = FnTransformerOps::when(double_fn, |x: &i32| *x > 0);
         let cloned = conditional.clone();
 
         let result1 = conditional.or_else(|x: i32| -x);
@@ -317,6 +319,7 @@ mod arc_conditional_tests {
 #[cfg(test)]
 mod rc_conditional_tests {
     use prism3_function::{
+        FnTransformerOps,
         RcPredicate,
         RcTransformer,
         Transformer,
@@ -324,10 +327,9 @@ mod rc_conditional_tests {
 
     #[test]
     fn test_when_or_else() {
-        let double = RcTransformer::new(|x: i32| x * 2);
-        let is_positive = RcPredicate::new(|x: &i32| *x > 0);
-        let negate = RcTransformer::new(|x: i32| -x);
-        let result = double.when(is_positive).or_else(negate);
+        let double_fn = |x: i32| x * 2;
+        let negate_fn = |x: i32| -x;
+        let result = FnTransformerOps::when(double_fn, |x: &i32| *x > 0).or_else(negate_fn);
 
         assert_eq!(result.apply(5), 10);
         assert_eq!(result.apply(-5), 5);
@@ -335,8 +337,8 @@ mod rc_conditional_tests {
 
     #[test]
     fn test_when_or_else_with_closure() {
-        let double = RcTransformer::new(|x: i32| x * 2);
-        let result = double.when(|x: &i32| *x > 0).or_else(|x: i32| -x);
+        let double_fn = |x: i32| x * 2;
+        let result = FnTransformerOps::when(double_fn, |x: &i32| *x > 0).or_else(|x: i32| -x);
 
         assert_eq!(result.apply(5), 10);
         assert_eq!(result.apply(-5), 5);
@@ -345,8 +347,8 @@ mod rc_conditional_tests {
 
     #[test]
     fn test_conditional_clone() {
-        let double = RcTransformer::new(|x: i32| x * 2);
-        let conditional = double.when(|x: &i32| *x > 0);
+        let double_fn = |x: i32| x * 2;
+        let conditional = FnTransformerOps::when(double_fn, |x: &i32| *x > 0);
         let cloned = conditional.clone();
 
         let result1 = conditional.or_else(|x: i32| -x);
@@ -700,6 +702,7 @@ mod to_conversion_tests {
 mod trait_usage_tests {
     use prism3_function::{
         BoxTransformer,
+        FnTransformerOps,
         Transformer,
     };
 
@@ -860,6 +863,7 @@ mod edge_cases_tests {
 mod default_implementation_tests {
     use prism3_function::{
         BoxTransformer,
+        FnTransformerOps,
         Transformer,
     };
     use std::thread;

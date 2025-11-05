@@ -10,6 +10,8 @@
 
 use prism3_function::{
     FnTransformerOnceOps,
+    FnTransformerOps,
+    Transformer,
     TransformerOnce,
 };
 
@@ -22,7 +24,7 @@ mod tests {
         let parse = |s: String| s.parse::<i32>().unwrap_or(0);
         let double = |x: i32| x * 2;
 
-        let composed = parse.and_then(double);
+        let composed = FnTransformerOnceOps::and_then(parse, double);
         assert_eq!(composed.apply("21".to_string()), 42);
     }
 
@@ -32,7 +34,7 @@ mod tests {
         let add_one = |x: i32| x + 1;
         let double = |x: i32| x * 2;
 
-        let composed = parse.and_then(add_one).and_then(double);
+        let composed = FnTransformerOnceOps::and_then(parse, FnTransformerOnceOps::and_then(add_one, double));
         assert_eq!(composed.apply("5".to_string()), 12); // (5 + 1) * 2 = 12
     }
 
@@ -51,14 +53,16 @@ mod tests {
         let add_two = |x: i32| x + 2;
         let to_string = |x: i32| x.to_string();
 
-        let composed = to_string.compose(triple).compose(add_two);
-        assert_eq!(composed.apply(5), "21"); // ((5 + 2) * 3).to_string() = "21"
+        // ((5 + 2) * 3).to_string() = "21"
+        let temp = FnTransformerOps::compose(triple, add_two);
+        let composed = FnTransformerOps::compose(to_string, temp);
+        assert_eq!(composed.apply(5), "21");
     }
 
     #[test]
     fn test_when_with_closure_predicate() {
         let double = |x: i32| x * 2;
-        let conditional = double.when(|x: &i32| *x > 0).or_else(|x: i32| -x);
+        let conditional = FnTransformerOnceOps::when(double, |x: &i32| *x > 0).or_else(|x: i32| -x);
 
         assert_eq!(conditional.apply(5), 10);
     }
@@ -66,7 +70,7 @@ mod tests {
     #[test]
     fn test_when_with_negative_value() {
         let double = |x: i32| x * 2;
-        let conditional = double.when(|x: &i32| *x > 0).or_else(|x: i32| -x);
+        let conditional = FnTransformerOnceOps::when(double, |x: &i32| *x > 0).or_else(|x: i32| -x);
 
         assert_eq!(conditional.apply(-5), 5);
     }
@@ -74,7 +78,7 @@ mod tests {
     #[test]
     fn test_when_with_identity_else() {
         let double = |x: i32| x * 2;
-        let conditional = double.when(|x: &i32| *x > 10).or_else(|x: i32| x);
+        let conditional = FnTransformerOnceOps::when(double, |x: &i32| *x > 10).or_else(|x: i32| x);
 
         assert_eq!(conditional.apply(20), 40);
     }
@@ -82,7 +86,7 @@ mod tests {
     #[test]
     fn test_when_with_identity_else_false_condition() {
         let double = |x: i32| x * 2;
-        let conditional = double.when(|x: &i32| *x > 10).or_else(|x: i32| x);
+        let conditional = FnTransformerOnceOps::when(double, |x: &i32| *x > 10).or_else(|x: i32| x);
 
         assert_eq!(conditional.apply(5), 5);
     }
@@ -95,9 +99,10 @@ mod tests {
         let triple = |x: i32| x * 3;
         let to_string = |x: i32| x.to_string();
 
-        let composed = parse
-            .and_then(double.when(|x: &i32| *x > 5).or_else(triple))
-            .and_then(to_string);
+        let conditional = FnTransformerOnceOps::when(double, |x: &i32| *x > 5).or_else(triple);
+        let conditional_boxed = conditional.into_box();
+        let temp = conditional_boxed.and_then(to_string);
+        let composed = FnTransformerOnceOps::and_then(parse, temp);
 
         assert_eq!(composed.apply("10".to_string()), "20"); // 10 > 5, so 10 * 2 = 20
     }
@@ -109,9 +114,10 @@ mod tests {
         let triple = |x: i32| x * 3;
         let to_string = |x: i32| x.to_string();
 
-        let composed = parse
-            .and_then(double.when(|x: &i32| *x > 5).or_else(triple))
-            .and_then(to_string);
+        let conditional = FnTransformerOnceOps::when(double, |x: &i32| *x > 5).or_else(triple);
+        let conditional_boxed = conditional.into_box();
+        let temp = conditional_boxed.and_then(to_string);
+        let composed = FnTransformerOnceOps::and_then(parse, temp);
 
         assert_eq!(composed.apply("3".to_string()), "9"); // 3 <= 5, so 3 * 3 = 9
     }
@@ -125,7 +131,7 @@ mod tests {
             x * 2
         }
 
-        let composed = parse.and_then(double);
+        let composed = FnTransformerOnceOps::and_then(parse, double);
         assert_eq!(composed.apply("21".to_string()), 42);
     }
 
@@ -136,7 +142,7 @@ mod tests {
         }
 
         let double = |x: i32| x * 2;
-        let composed = parse.and_then(double);
+        let composed = FnTransformerOnceOps::and_then(parse, double);
         assert_eq!(composed.apply("21".to_string()), 42);
     }
 
@@ -145,7 +151,7 @@ mod tests {
         let to_string = |x: i32| x.to_string();
         let get_length = |s: String| s.len();
 
-        let composed = to_string.and_then(get_length);
+        let composed = FnTransformerOnceOps::and_then(to_string, get_length);
         assert_eq!(composed.apply(12345), 5);
     }
 
@@ -155,7 +161,7 @@ mod tests {
         let double = |x: i32| x * 2;
 
         // If negative, take absolute value; otherwise double
-        let transformer = abs.when(|x: &i32| *x < 0).or_else(double);
+        let transformer = FnTransformerOnceOps::when(abs, |x: &i32| *x < 0).or_else(double);
 
         assert_eq!(transformer.apply(-5), 5);
     }
@@ -165,7 +171,7 @@ mod tests {
         let abs = |x: i32| x.abs();
         let double = |x: i32| x * 2;
 
-        let transformer = abs.when(|x: &i32| *x < 0).or_else(double);
+        let transformer = FnTransformerOnceOps::when(abs, |x: &i32| *x < 0).or_else(double);
 
         assert_eq!(transformer.apply(5), 10);
     }
@@ -176,7 +182,7 @@ mod tests {
         let multiply = move |x: i32| x * multiplier;
         let add_ten = |x: i32| x + 10;
 
-        let composed = multiply.and_then(add_ten);
+        let composed = FnTransformerOnceOps::and_then(multiply, add_ten);
         assert_eq!(composed.apply(5), 25); // 5 * 3 + 10
     }
 
@@ -186,7 +192,7 @@ mod tests {
         let append = move |s: String| format!("{} {}", s, owned);
         let uppercase = |s: String| s.to_uppercase();
 
-        let composed = append.and_then(uppercase);
+        let composed = FnTransformerOnceOps::and_then(append, uppercase);
         assert_eq!(composed.apply("world".to_string()), "WORLD HELLO");
     }
 
@@ -201,7 +207,7 @@ mod tests {
             }
         };
 
-        let composed = parse.and_then(validate);
+        let composed = FnTransformerOnceOps::and_then(parse, validate);
         assert_eq!(composed.apply("42".to_string()), 42);
     }
 
@@ -216,7 +222,7 @@ mod tests {
             }
         };
 
-        let composed = parse.and_then(validate);
+        let composed = FnTransformerOnceOps::and_then(parse, validate);
         assert_eq!(composed.apply("-5".to_string()), 1);
     }
 }
