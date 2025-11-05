@@ -122,7 +122,6 @@
 use std::rc::Rc;
 use std::sync::Arc;
 
-use crate::suppliers::macros::impl_supplier_common_methods;
 use crate::transformers::transformer::Transformer;
 
 // ======================================================================

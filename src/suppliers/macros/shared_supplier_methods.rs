@@ -140,4 +140,3 @@ macro_rules! impl_shared_supplier_methods {
     };
 }
 
-pub(crate) use impl_shared_supplier_methods;

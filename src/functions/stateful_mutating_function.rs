@@ -126,10 +126,6 @@ use std::sync::{
 };
 
 use crate::functions::macros::impl_function_identity_method;
-use crate::macros::{
-    impl_common_name_methods,
-    impl_common_new_methods,
-};
 use crate::{
     functions::{
         function::Function,

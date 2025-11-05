@@ -144,10 +144,6 @@ use crate::{
             impl_shared_function_methods,
         },
     },
-    macros::{
-        impl_common_name_methods,
-        impl_common_new_methods,
-    },
     predicates::predicate::{
         ArcPredicate,
         BoxPredicate,

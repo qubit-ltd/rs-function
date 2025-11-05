@@ -146,10 +146,6 @@
 use std::rc::Rc;
 use std::sync::Arc;
 
-use crate::macros::{
-    impl_common_name_methods,
-    impl_common_new_methods,
-};
 use crate::predicates::macros::{
     constants::{
         ALWAYS_FALSE_NAME,
