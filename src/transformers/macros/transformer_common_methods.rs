@@ -162,18 +162,6 @@ macro_rules! impl_transformer_common_methods {
         );
 
         impl_common_name_methods!("bi-transformer");
-
-        /// Creates an identity bi-transformer.
-        ///
-        /// Creates a bi-transformer that returns the first input value unchanged. Useful for
-        /// default values or placeholder implementations.
-        ///
-        /// # Returns
-        ///
-        /// Returns a new bi-transformer instance that returns the first input unchanged.
-        pub fn identity() -> $struct_name<$t, $u, $t> {
-            $struct_name::<$t, $u, $t>::new(|t, _| t)
-        }
     };
 }
 
