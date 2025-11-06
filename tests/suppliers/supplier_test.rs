@@ -218,21 +218,21 @@ mod test_box_readonly_supplier {
         #[test]
         fn test_filter_passes() {
             // Test filter that passes
-            let filtered = BoxSupplier::new(|| 42).filter(|x| x % 2 == 0);
+            let filtered = BoxSupplier::new(|| 42).filter(|x: &i32| x % 2 == 0);
             assert_eq!(filtered.get(), Some(42));
         }
 
         #[test]
         fn test_filter_fails() {
             // Test filter that fails
-            let filtered = BoxSupplier::new(|| 43).filter(|x| x % 2 == 0);
+            let filtered = BoxSupplier::new(|| 43).filter(|x: &i32| x % 2 == 0);
             assert_eq!(filtered.get(), None);
         }
 
         #[test]
         fn test_filter_with_map() {
             // Test combining filter and map
-            let pipeline = BoxSupplier::new(|| 10).map(|x| x * 2).filter(|x| *x > 15);
+            let pipeline = BoxSupplier::new(|| 10).map(|x| x * 2).filter(|x: &i32| *x > 15);
             assert_eq!(pipeline.get(), Some(20));
         }
     }
@@ -412,7 +412,7 @@ mod test_arc_readonly_supplier {
         fn test_filter_passes() {
             // Test filter that passes
             let source = ArcSupplier::new(|| 42);
-            let filtered = source.filter(|x| x % 2 == 0);
+            let filtered = source.filter(|x: &i32| x % 2 == 0);
             assert_eq!(filtered.get(), Some(42));
         }
 
@@ -420,7 +420,7 @@ mod test_arc_readonly_supplier {
         fn test_filter_fails() {
             // Test filter that fails
             let source = ArcSupplier::new(|| 43);
-            let filtered = source.filter(|x| x % 2 == 0);
+            let filtered = source.filter(|x: &i32| x % 2 == 0);
             assert_eq!(filtered.get(), None);
         }
     }
@@ -433,7 +433,7 @@ mod test_arc_readonly_supplier {
             // Test zipping two suppliers
             let first = ArcSupplier::new(|| 42);
             let second = ArcSupplier::new(|| "hello");
-            let zipped = first.zip(&second);
+            let zipped = first.zip(second);
             assert_eq!(zipped.get(), (42, "hello"));
         }
 
@@ -442,7 +442,7 @@ mod test_arc_readonly_supplier {
             // Test that zip doesn't consume originals
             let first = ArcSupplier::new(|| 42);
             let second = ArcSupplier::new(|| "hello");
-            let _zipped = first.zip(&second);
+            let _zipped = first.zip(second.clone());
             // Both are still usable
             assert_eq!(first.get(), 42);
             assert_eq!(second.get(), "hello");
@@ -681,7 +681,7 @@ mod test_rc_readonly_supplier {
         fn test_filter_passes() {
             // Test filter that passes
             let source = RcSupplier::new(|| 42);
-            let filtered = source.filter(|x| x % 2 == 0);
+            let filtered = source.filter(|x: &i32| x % 2 == 0);
             assert_eq!(filtered.get(), Some(42));
         }
 
@@ -689,7 +689,7 @@ mod test_rc_readonly_supplier {
         fn test_filter_fails() {
             // Test filter that fails
             let source = RcSupplier::new(|| 43);
-            let filtered = source.filter(|x| x % 2 == 0);
+            let filtered = source.filter(|x: &i32| x % 2 == 0);
             assert_eq!(filtered.get(), None);
         }
     }
@@ -702,7 +702,7 @@ mod test_rc_readonly_supplier {
             // Test zipping two suppliers
             let first = RcSupplier::new(|| 42);
             let second = RcSupplier::new(|| "hello");
-            let zipped = first.zip(&second);
+            let zipped = first.zip(second);
             assert_eq!(zipped.get(), (42, "hello"));
         }
 
@@ -711,7 +711,7 @@ mod test_rc_readonly_supplier {
             // Test that zip doesn't consume originals
             let first = RcSupplier::new(|| 42);
             let second = RcSupplier::new(|| "hello");
-            let _zipped = first.zip(&second);
+            let _zipped = first.zip(second.clone());
             // Both are still usable
             assert_eq!(first.get(), 42);
             assert_eq!(second.get(), "hello");
@@ -868,7 +868,7 @@ mod test_integration {
         // Test combining multiple transformation methods
         let pipeline = BoxSupplier::new(|| 10)
             .map(|x| x * 2)
-            .filter(|x| *x > 15)
+            .filter(|x: &i32| *x > 15)
             .map(|opt: Option<i32>| opt.map(|x| x.to_string()));
 
         assert_eq!(pipeline.get(), Some(String::from("20")));
@@ -1821,4 +1821,145 @@ mod test_to_methods {
     // BoxSupplier, the compiler will fail with an error
     // indicating that BoxSupplier<T> does not implement
     // Clone, which is required by the default implementations.
+}
+
+// ======================================================================
+// Debug and Display Trait Tests
+// ======================================================================
+
+#[cfg(test)]
+mod test_supplier_debug_display {
+    use super::*;
+
+    // ============================================================
+    // BoxSupplier Debug and Display Tests
+    // ============================================================
+
+    mod test_box_supplier_debug_display {
+        use super::*;
+
+        #[test]
+        fn test_debug_without_name() {
+            // Test Debug formatting for BoxSupplier without name
+            let supplier = BoxSupplier::new(|| 42);
+            let debug_str = format!("{:?}", supplier);
+            assert!(debug_str.contains("BoxSupplier"));
+            assert!(debug_str.contains("name: None"));
+            assert!(debug_str.contains("function: \"<function>\""));
+        }
+
+        #[test]
+        fn test_debug_with_name() {
+            // Test Debug formatting for BoxSupplier with name
+            let supplier = BoxSupplier::new_with_name("test_supplier", || 42);
+            let debug_str = format!("{:?}", supplier);
+            assert!(debug_str.contains("BoxSupplier"));
+            assert!(debug_str.contains("name: Some(\"test_supplier\")"));
+            assert!(debug_str.contains("function: \"<function>\""));
+        }
+
+        #[test]
+        fn test_display_without_name() {
+            // Test Display formatting for BoxSupplier without name
+            let supplier = BoxSupplier::new(|| 42);
+            let display_str = format!("{}", supplier);
+            assert_eq!(display_str, "BoxSupplier");
+        }
+
+        #[test]
+        fn test_display_with_name() {
+            // Test Display formatting for BoxSupplier with name
+            let supplier = BoxSupplier::new_with_name("test_supplier", || 42);
+            let display_str = format!("{}", supplier);
+            assert_eq!(display_str, "BoxSupplier(test_supplier)");
+        }
+    }
+
+    // ============================================================
+    // ArcSupplier Debug and Display Tests
+    // ============================================================
+
+    mod test_arc_supplier_debug_display {
+        use super::*;
+
+        #[test]
+        fn test_debug_without_name() {
+            // Test Debug formatting for ArcSupplier without name
+            let supplier = ArcSupplier::new(|| 42);
+            let debug_str = format!("{:?}", supplier);
+            assert!(debug_str.contains("ArcSupplier"));
+            assert!(debug_str.contains("name: None"));
+            assert!(debug_str.contains("function: \"<function>\""));
+        }
+
+        #[test]
+        fn test_debug_with_name() {
+            // Test Debug formatting for ArcSupplier with name
+            let supplier = ArcSupplier::new_with_name("test_supplier", || 42);
+            let debug_str = format!("{:?}", supplier);
+            assert!(debug_str.contains("ArcSupplier"));
+            assert!(debug_str.contains("name: Some(\"test_supplier\")"));
+            assert!(debug_str.contains("function: \"<function>\""));
+        }
+
+        #[test]
+        fn test_display_without_name() {
+            // Test Display formatting for ArcSupplier without name
+            let supplier = ArcSupplier::new(|| 42);
+            let display_str = format!("{}", supplier);
+            assert_eq!(display_str, "ArcSupplier");
+        }
+
+        #[test]
+        fn test_display_with_name() {
+            // Test Display formatting for ArcSupplier with name
+            let supplier = ArcSupplier::new_with_name("test_supplier", || 42);
+            let display_str = format!("{}", supplier);
+            assert_eq!(display_str, "ArcSupplier(test_supplier)");
+        }
+    }
+
+    // ============================================================
+    // RcSupplier Debug and Display Tests
+    // ============================================================
+
+    mod test_rc_supplier_debug_display {
+        use super::*;
+
+        #[test]
+        fn test_debug_without_name() {
+            // Test Debug formatting for RcSupplier without name
+            let supplier = RcSupplier::new(|| 42);
+            let debug_str = format!("{:?}", supplier);
+            assert!(debug_str.contains("RcSupplier"));
+            assert!(debug_str.contains("name: None"));
+            assert!(debug_str.contains("function: \"<function>\""));
+        }
+
+        #[test]
+        fn test_debug_with_name() {
+            // Test Debug formatting for RcSupplier with name
+            let supplier = RcSupplier::new_with_name("test_supplier", || 42);
+            let debug_str = format!("{:?}", supplier);
+            assert!(debug_str.contains("RcSupplier"));
+            assert!(debug_str.contains("name: Some(\"test_supplier\")"));
+            assert!(debug_str.contains("function: \"<function>\""));
+        }
+
+        #[test]
+        fn test_display_without_name() {
+            // Test Display formatting for RcSupplier without name
+            let supplier = RcSupplier::new(|| 42);
+            let display_str = format!("{}", supplier);
+            assert_eq!(display_str, "RcSupplier");
+        }
+
+        #[test]
+        fn test_display_with_name() {
+            // Test Display formatting for RcSupplier with name
+            let supplier = RcSupplier::new_with_name("test_supplier", || 42);
+            let display_str = format!("{}", supplier);
+            assert_eq!(display_str, "RcSupplier(test_supplier)");
+        }
+    }
 }
