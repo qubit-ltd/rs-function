@@ -11,6 +11,8 @@
 //! Provides implementations of consumer interfaces for executing operations
 //! that accept a single input parameter but return no result.
 //!
+//! It is similar to the `FnMut(&T)` trait in the standard library.
+//!
 //! This module provides a unified `Consumer` trait and three concrete
 //! implementations based on different ownership models:
 //!
@@ -81,6 +83,8 @@ type SendConsumerFn<T> = dyn FnMut(&T) + Send;
 /// Defines the core behavior of all consumer types. Similar to Java's
 /// `Consumer<T>` interface, executes operations that accept a value but return
 /// no result (side effects only).
+///
+/// It is similar to the `FnMut(&T)` trait in the standard library.
 ///
 /// Consumer can modify its own state (such as accumulation, counting), but
 /// should not modify the consumed value itself.

@@ -11,6 +11,8 @@
 //! Provides bi-consumer interface implementations for operations accepting
 //! two input parameters without returning a result.
 //!
+//! It is similar to the `FnMut(&T, &U)` trait in the standard library.
+//!
 //! This module provides a unified `BiConsumer` trait and three concrete
 //! implementations based on different ownership models:
 //!
@@ -79,6 +81,8 @@ type SendBiConsumerFn<T, U> = dyn FnMut(&T, &U) + Send;
 /// Defines core behavior for all bi-consumer types. Similar to Java's
 /// `BiConsumer<T, U>` interface, performs operations accepting two values
 /// but returning no result (side effects only).
+///
+/// It is similar to the `FnMut(&T, &U)` trait in the standard library.
 ///
 /// BiConsumer can modify its own state (e.g., accumulate, count) but
 /// should NOT modify the consumed values themselves.

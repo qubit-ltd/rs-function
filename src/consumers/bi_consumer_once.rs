@@ -11,6 +11,8 @@
 //! Provides one-time bi-consumer interface implementations for operations
 //! accepting two input parameters without returning a result.
 //!
+//! It is similar to the `FnOnce(&T, &U)` trait in the standard library.
+//!
 //! This module provides a unified `BiConsumerOnce` trait and one concrete
 //! implementation:
 //!
@@ -63,6 +65,8 @@ type BiConsumerOnceFn<T, U> = dyn FnOnce(&T, &U);
 // =======================================================================
 
 /// BiConsumerOnce trait - Unified one-time bi-consumer interface
+///
+/// It is similar to the `FnOnce(&T, &U)` trait in the standard library.
 ///
 /// Defines core behavior for all one-time bi-consumer types. Similar to a
 /// bi-consumer implementing `FnOnce(&T, &U)`, performs operations

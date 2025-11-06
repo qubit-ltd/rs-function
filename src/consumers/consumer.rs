@@ -11,6 +11,8 @@
 //! Provides implementations of readonly consumer interfaces for executing
 //! operations that neither modify their own state nor modify input values.
 //!
+//! It is similar to the `Fn(&T)` trait in the standard library.
+//!
 //! This module provides a unified `Consumer` trait and three concrete
 //! implementations based on different ownership models:
 //!
@@ -61,6 +63,8 @@ use crate::predicates::predicate::{
 // ============================================================================
 
 /// Consumer trait - Unified readonly consumer interface
+///
+/// It is similar to the `Fn(&T)` trait in the standard library.
 ///
 /// Defines the core behavior of all readonly consumer types. Unlike `Consumer`,
 /// `Consumer` neither modifies its own state nor modifies input values,

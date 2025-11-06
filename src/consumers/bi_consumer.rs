@@ -12,6 +12,8 @@
 //! that accept two input parameters without modifying their own state or
 //! the input values.
 //!
+//! It is similar to the `Fn(&T, &U)` trait in the standard library.
+//!
 //! This module provides a unified `BiConsumer` trait and three
 //! concrete implementations based on different ownership models:
 //!
@@ -71,6 +73,8 @@ type ThreadSafeBiConsumerFn<T, U> = dyn Fn(&T, &U) + Send + Sync;
 // =======================================================================
 
 /// BiConsumer trait - Unified readonly bi-consumer interface
+///
+/// It is similar to the `Fn(&T, &U)` trait in the standard library.
 ///
 /// Defines core behavior for all readonly bi-consumer types. Unlike
 /// `BiConsumer`, `BiConsumer` neither modifies its own state nor

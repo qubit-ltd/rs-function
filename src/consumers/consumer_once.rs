@@ -11,6 +11,8 @@
 //! Provides implementations of one-time consumer interfaces for executing one-time operations
 //! that accept a single input parameter but return no result.
 //!
+//! It is similar to the `FnOnce(&T)` trait in the standard library.
+//!
 //! This module provides a unified `ConsumerOnce` trait and one concrete implementation:
 //!
 //! - **`BoxConsumerOnce<T>`**: Box-based single ownership implementation
@@ -51,6 +53,8 @@ use crate::{
 // ============================================================================
 
 /// ConsumerOnce trait - Unified one-time consumer interface
+///
+/// It is similar to the `FnOnce(&T)` trait in the standard library.
 ///
 /// Defines the core behavior of all one-time consumer types. Similar to consumers
 /// implementing `FnOnce(&T)`, executes operations that accept a value reference but
