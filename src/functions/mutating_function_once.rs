@@ -12,6 +12,8 @@
 //! for performing operations that consume self, accept a mutable reference,
 //! and return a result.
 //!
+//! It is similar to the `FnOnce(&mut T) -> R` trait in the standard library.
+//!
 //! This module provides a unified `MutatingFunctionOnce` trait and a
 //! Box-based single ownership implementation:
 //!
@@ -159,6 +161,8 @@ use crate::{
 // =======================================================================
 
 /// MutatingFunctionOnce trait - One-time mutating function interface
+///
+/// It is similar to the `FnOnce(&mut T) -> R` trait in the standard library.
 ///
 /// Defines the core behavior of all one-time mutating function types.
 /// Performs operations that consume self, accept a mutable reference,

@@ -12,6 +12,8 @@
 //! from input references. Functions borrow input values (not consuming them)
 //! and produce output values.
 //!
+//! It is similar to the `Fn(&T) -> R` trait in the standard library.
+//!
 //! This module provides the `Function<T, R>` trait and three
 //! implementations:
 //!

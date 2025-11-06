@@ -11,6 +11,8 @@
 //! Provides Java-like `MutatingFunction` interface implementations for
 //! performing operations that accept a mutable reference and return a result.
 //!
+//! It is similar to the `Fn(&mut T) -> R` trait in the standard library.
+//!
 //! This module provides a unified `MutatingFunction` trait and three concrete
 //! implementations based on different ownership models:
 //!
@@ -157,6 +159,8 @@ use crate::{
 // =======================================================================
 
 /// MutatingFunction trait - Unified mutating function interface
+///
+/// It is similar to the `Fn(&mut T) -> R` trait in the standard library.
 ///
 /// Defines the core behavior of all mutating function types. Performs
 /// operations that accept a mutable reference, potentially modify it, and

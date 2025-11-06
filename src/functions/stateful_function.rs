@@ -12,6 +12,8 @@
 //! transformation. StatefulFunctions consume input values (taking ownership) and
 //! produce output values while allowing internal state modification.
 //!
+//! It is similar to the `FnMut(&T) -> R` trait in the standard library.
+//!
 //! This module provides the `StatefulFunction<T, R>` trait and three implementations:
 //!
 //! - [`BoxStatefulFunction`]: Single ownership, not cloneable

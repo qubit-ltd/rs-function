@@ -12,6 +12,8 @@
 //! for performing operations that accept a mutable reference, potentially
 //! modify internal state, and return a result.
 //!
+//! It is similar to the `FnMut(&mut T) -> R` trait in the standard library.
+//!
 //! This module provides a unified `StatefulMutatingFunction` trait and three
 //! concrete implementations based on different ownership models:
 //!
@@ -156,6 +158,8 @@ use crate::{
 
 /// StatefulMutatingFunction trait - Unified stateful mutating function
 /// interface
+///
+/// It is similar to the `FnMut(&mut T) -> R` trait in the standard library.
 ///
 /// Defines the core behavior of all stateful mutating function types.
 /// Performs operations that accept a mutable reference, potentially modify

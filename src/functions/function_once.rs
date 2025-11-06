@@ -9,7 +9,7 @@
 //! # FunctionOnce Types
 //!
 //! Provides Rust implementations of consuming function traits similar to
-//! Rust's `FnOnce` trait, for computing output from input references.
+//! Rust's `FnOnce(&T) -> R` trait, for computing output from input references.
 //!
 //! This module provides the `FunctionOnce<T, R>` trait and one-time use
 //! implementations:
