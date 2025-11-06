@@ -445,7 +445,7 @@ pub trait BiPredicate<T, U> {
 ///
 /// Haixing Hu
 pub struct BoxBiPredicate<T, U> {
-    function: Box<dyn Fn(&T, &U) -> bool>,
+    function: Box<BiPredicateFn<T, U>>,
     name: Option<String>,
 }
 
