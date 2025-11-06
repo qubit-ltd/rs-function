@@ -138,7 +138,7 @@ fn main() {
         let closure = move |x: &i32| {
             l.lock().unwrap().push(*x);
         };
-        let box_consumer = closure.into_box_once();
+        let box_consumer = closure.into_box();
         box_consumer.accept_once(&1);
         println!("  BoxConsumerOnce: {:?}", *log.lock().unwrap());
     }
