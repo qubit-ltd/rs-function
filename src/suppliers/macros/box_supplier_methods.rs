@@ -111,12 +111,14 @@ macro_rules! impl_box_supplier_methods {
         ///     .map(|x| x + 5);
         /// assert_eq!(mapped.get(), 25);
         /// ```
+        #[allow(unused_mut)]
         pub fn map<U, M>(self, mapper: M) -> $struct_name<U>
         where
             M: Transformer<$t, U> + 'static,
             U: 'static,
         {
-            $struct_name::new(move || mapper.apply(self.get()))
+            let mut self_fn = self.function;
+            $struct_name::new(move || mapper.apply(self_fn()))
         }
 
         /// Filters output based on a predicate.
@@ -142,12 +144,14 @@ macro_rules! impl_box_supplier_methods {
         ///
         /// assert_eq!(filtered.get(), Some(42));
         /// ```
+        #[allow(unused_mut)]
         pub fn filter<P>(self, predicate: P) -> $struct_name<Option<$t>>
         where
             P: Predicate<$t> + 'static,
         {
+            let mut self_fn = self.function;
             $struct_name::new(move || {
-                let value = self.get();
+                let value = self_fn();
                 if predicate.test(&value) {
                     Some(value)
                 } else {
@@ -180,13 +184,16 @@ macro_rules! impl_box_supplier_methods {
         ///
         /// assert_eq!(zipped.get(), (42, "hello"));
         /// ```
-        pub fn zip<U>(self, other: $struct_name<U>) -> $struct_name<($t, U)>
+        #[allow(unused_mut)]
+        pub fn zip<U, S>(self, mut other: S) -> $struct_name<($t, U)>
         where
+            S: $supplier_trait<U> + 'static,
             U: 'static,
         {
-            $struct_name::new(move || (self.get(), other.get()))
+            let mut self_fn = self.function;
+            $struct_name::new(move || (self_fn(), other.get()))
         }
     };
 }
 
-pub (crate) use impl_box_supplier_methods;
+pub(crate) use impl_box_supplier_methods;

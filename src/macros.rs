@@ -126,4 +126,3 @@ macro_rules! impl_common_name_methods {
         }
     };
 }
-
