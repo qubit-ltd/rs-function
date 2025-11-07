@@ -154,6 +154,8 @@ use crate::{
     },
 };
 
+use crate::BoxMutatingFunctionOnce;
+
 // =======================================================================
 // 1. MutatingFunction Trait - Unified Interface
 // =======================================================================
@@ -417,6 +419,46 @@ pub trait MutatingFunction<T, R> {
         move |t| self.apply(t)
     }
 
+    /// Convert to MutatingFunctionOnce
+    ///
+    /// **⚠️ Consumes `self`**: The original function will be unavailable
+    /// after calling this method.
+    ///
+    /// Converts a reusable mutating function to a one-time function that
+    /// consumes itself on use. This enables passing `MutatingFunction` to
+    /// functions that require `MutatingFunctionOnce`.
+    ///
+    /// # Returns
+    ///
+    /// Returns a `BoxMutatingFunctionOnce<T, R>`
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use prism3_function::{MutatingFunctionOnce, MutatingFunction,
+    ///                       BoxMutatingFunction};
+    ///
+    /// fn takes_once<F: MutatingFunctionOnce<i32, i32>>(func: F, value: &mut i32) {
+    ///     let result = func.apply(value);
+    ///     println!("Result: {}", result);
+    /// }
+    ///
+    /// let func = BoxMutatingFunction::new(|x: &mut i32| {
+    ///     *x *= 2;
+    ///     *x
+    /// });
+    /// let mut value = 5;
+    /// takes_once(func.into_once(), &mut value);
+    /// ```
+    fn into_once(self) -> BoxMutatingFunctionOnce<T, R>
+    where
+        Self: Sized + 'static,
+        T: 'static,
+        R: 'static,
+    {
+        BoxMutatingFunctionOnce::new(move |t| self.apply(t))
+    }
+
     /// Create a non-consuming `BoxMutatingFunction<T, R>` that forwards to
     /// `self`.
     ///
@@ -492,6 +534,42 @@ pub trait MutatingFunction<T, R> {
         R: 'static,
     {
         self.clone().into_fn()
+    }
+
+    /// Convert to MutatingFunctionOnce without consuming self
+    ///
+    /// **⚠️ Requires Clone**: This method requires `Self` to implement `Clone`.
+    /// Clones the current function and converts the clone to a one-time function.
+    ///
+    /// # Returns
+    ///
+    /// Returns a `BoxMutatingFunctionOnce<T, R>`
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use prism3_function::{MutatingFunctionOnce, MutatingFunction,
+    ///                       BoxMutatingFunction};
+    ///
+    /// fn takes_once<F: MutatingFunctionOnce<i32, i32>>(func: F, value: &mut i32) {
+    ///     let result = func.apply(value);
+    ///     println!("Result: {}", result);
+    /// }
+    ///
+    /// let func = BoxMutatingFunction::new(|x: &mut i32| {
+    ///     *x *= 2;
+    ///     *x
+    /// });
+    /// let mut value = 5;
+    /// takes_once(func.to_once(), &mut value);
+    /// ```
+    fn to_once(&self) -> BoxMutatingFunctionOnce<T, R>
+    where
+        Self: Clone + 'static,
+        T: 'static,
+        R: 'static,
+    {
+        self.clone().into_once()
     }
 }
 
@@ -598,7 +676,7 @@ impl<T, R> MutatingFunction<T, R> for BoxMutatingFunction<T, R> {
         T: 'static,
         R: 'static,
     {
-        RcMutatingFunction::new(move |t| (self.function)(t))
+        RcMutatingFunction::new_with_optional_name(self.function, self.name)
     }
 
     // do NOT override MutatingFunction::into_arc() because
@@ -612,6 +690,15 @@ impl<T, R> MutatingFunction<T, R> for BoxMutatingFunction<T, R> {
         R: 'static,
     {
         move |t| (self.function)(t)
+    }
+
+    fn into_once(self) -> BoxMutatingFunctionOnce<T, R>
+    where
+        Self: Sized + 'static,
+        T: 'static,
+        R: 'static,
+    {
+        BoxMutatingFunctionOnce::new_with_optional_name(self.function, self.name)
     }
 
     // do NOT override MutatingFunction::to_xxx() because
@@ -710,7 +797,10 @@ impl<T, R> MutatingFunction<T, R> for RcMutatingFunction<T, R> {
         T: 'static,
         R: 'static,
     {
-        BoxMutatingFunction::new_with_optional_name(move |t| (self.function)(t), self.name)
+        BoxMutatingFunction::new_with_optional_name(
+            move |t| (self.function)(t),
+            self.name
+        )
     }
 
     fn into_rc(self) -> RcMutatingFunction<T, R>
@@ -732,6 +822,18 @@ impl<T, R> MutatingFunction<T, R> for RcMutatingFunction<T, R> {
         R: 'static,
     {
         move |t| (self.function)(t)
+    }
+
+    fn into_once(self) -> BoxMutatingFunctionOnce<T, R>
+    where
+        Self: Sized + 'static,
+        T: 'static,
+        R: 'static,
+    {
+        BoxMutatingFunctionOnce::new_with_optional_name(
+            move |t| (self.function)(t),
+            self.name
+        )
     }
 
     fn to_box(&self) -> BoxMutatingFunction<T, R>
@@ -765,6 +867,19 @@ impl<T, R> MutatingFunction<T, R> for RcMutatingFunction<T, R> {
     {
         let self_fn = self.function.clone();
         move |t| (self_fn)(t)
+    }
+
+    fn to_once(&self) -> BoxMutatingFunctionOnce<T, R>
+    where
+        Self: Sized + 'static,
+        T: 'static,
+        R: 'static,
+    {
+        let self_fn = self.function.clone();
+        BoxMutatingFunctionOnce::new_with_optional_name(
+            move |t| (self_fn)(t),
+            self.name.clone()
+        )
     }
 }
 
@@ -925,6 +1040,25 @@ impl<T, R> MutatingFunction<T, R> for ArcMutatingFunction<T, R> {
         let self_fn = self.function.clone();
         move |t| (self_fn)(t)
     }
+
+    fn into_once(self) -> BoxMutatingFunctionOnce<T, R>
+    where
+        Self: Sized + 'static,
+        T: 'static,
+        R: 'static,
+    {
+        BoxMutatingFunctionOnce::new_with_optional_name(move |t| (self.function)(t), self.name)
+    }
+
+    fn to_once(&self) -> BoxMutatingFunctionOnce<T, R>
+    where
+        Self: Sized + 'static,
+        T: 'static,
+        R: 'static,
+    {
+        let self_fn = self.function.clone();
+        BoxMutatingFunctionOnce::new_with_optional_name(move |t| (self_fn)(t), self.name.clone())
+    }
 }
 
 // =======================================================================
@@ -1012,6 +1146,24 @@ where
         R: 'static,
     {
         self.clone()
+    }
+
+    fn into_once(self) -> BoxMutatingFunctionOnce<T, R>
+    where
+        Self: Sized + 'static,
+        T: 'static,
+        R: 'static,
+    {
+        BoxMutatingFunctionOnce::new(self)
+    }
+
+    fn to_once(&self) -> BoxMutatingFunctionOnce<T, R>
+    where
+        Self: Sized + Clone + 'static,
+        T: 'static,
+        R: 'static,
+    {
+        BoxMutatingFunctionOnce::new(self.clone())
     }
 }
 
