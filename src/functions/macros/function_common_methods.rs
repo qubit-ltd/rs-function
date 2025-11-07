@@ -126,12 +126,12 @@ macro_rules! impl_function_common_methods {
         ($($fn_trait_with_bounds:tt)+),
         |$f:ident| $wrapper_expr:expr
     ) => {
-        impl_common_new_methods!(
+        crate::macros::impl_common_new_methods!(
             ($($fn_trait_with_bounds)+),
             |$f| $wrapper_expr,
             "function"
         );
-        impl_common_name_methods!("function");
+        crate::macros::impl_common_name_methods!("function");
     };
 
     // Three generic parameters - BiFunction types (if applicable)
@@ -140,12 +140,12 @@ macro_rules! impl_function_common_methods {
         ($($fn_trait_with_bounds:tt)+),
         |$f:ident| $wrapper_expr:expr
     ) => {
-        impl_common_new_methods!(
+        crate::macros::impl_common_new_methods!(
             ($($fn_trait_with_bounds)+),
             |$f| $wrapper_expr,
             "bi-function"
         );
-        impl_common_name_methods!("bi-function");
+        crate::macros::impl_common_name_methods!("bi-function");
     };
 }
 

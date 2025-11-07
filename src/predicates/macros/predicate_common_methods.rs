@@ -113,12 +113,12 @@ macro_rules! impl_predicate_common_methods {
         ($($fn_trait_with_bounds:tt)+),
         |$f:ident| $wrapper_expr:expr
     ) => {
-        impl_common_new_methods!(
+        crate::macros::impl_common_new_methods!(
             ($($fn_trait_with_bounds)+),
             |$f| $wrapper_expr,
             "predicate"
         );
-        impl_common_name_methods!("predicate");
+        crate::macros::impl_common_name_methods!("predicate");
 
         /// Creates a predicate that always returns `true`.
         ///
@@ -145,12 +145,12 @@ macro_rules! impl_predicate_common_methods {
         ($($fn_trait_with_bounds:tt)+),
         |$f:ident| $wrapper_expr:expr
     ) => {
-        impl_common_new_methods!(
+        crate::macros::impl_common_new_methods!(
             ($($fn_trait_with_bounds)+),
             |$f| $wrapper_expr,
             "bi-predicate"
         );
-        impl_common_name_methods!("bi-predicate");
+        crate::macros::impl_common_name_methods!("bi-predicate");
 
         /// Creates a bi-predicate that always returns `true`.
         ///

@@ -125,12 +125,12 @@ macro_rules! impl_consumer_common_methods {
         ($($fn_trait_with_bounds:tt)+),
         |$f:ident| $wrapper_expr:expr
     ) => {
-        impl_common_new_methods!(
+        crate::macros::impl_common_new_methods!(
             ($($fn_trait_with_bounds)+),
             |$f| $wrapper_expr,
             "consumer"
         );
-        impl_common_name_methods!("consumer");
+        crate::macros::impl_common_name_methods!("consumer");
 
         /// Creates a no-operation consumer.
         ///
@@ -151,12 +151,12 @@ macro_rules! impl_consumer_common_methods {
         ($($fn_trait_with_bounds:tt)+),
         |$f:ident| $wrapper_expr:expr
     ) => {
-        impl_common_new_methods!(
+        crate::macros::impl_common_new_methods!(
             ($($fn_trait_with_bounds)+),
             |$f| $wrapper_expr,
             "bi-consumer"
         );
-        impl_common_name_methods!("bi-consumer");
+        crate::macros::impl_common_name_methods!("bi-consumer");
 
         /// Creates a no-operation bi-consumer.
         ///

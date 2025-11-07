@@ -114,12 +114,12 @@ macro_rules! impl_mutator_common_methods {
         ($($fn_trait_with_bounds:tt)+),
         |$f:ident| $wrapper_expr:expr
     ) => {
-        impl_common_new_methods!(
+        crate::macros::impl_common_new_methods!(
             ($($fn_trait_with_bounds)+),
             |$f| $wrapper_expr,
             "mutator"
         );
-        impl_common_name_methods!("mutator");
+        crate::macros::impl_common_name_methods!("mutator");
 
         /// Creates a no-operation mutator.
         ///

@@ -128,13 +128,13 @@ macro_rules! impl_transformer_common_methods {
         ($($fn_trait_with_bounds:tt)+),
         |$f:ident| $wrapper_expr:expr
     ) => {
-        impl_common_new_methods!(
+        crate::macros::impl_common_new_methods!(
             ($($fn_trait_with_bounds)+),
             |$f| $wrapper_expr,
             "transformer"
         );
 
-        impl_common_name_methods!("transformer");
+        crate::macros::impl_common_name_methods!("transformer");
 
         /// Creates an identity transformer.
         ///
@@ -155,13 +155,13 @@ macro_rules! impl_transformer_common_methods {
         ($($fn_trait_with_bounds:tt)+),
         |$f:ident| $wrapper_expr:expr
     ) => {
-        impl_common_new_methods!(
+        crate::macros::impl_common_new_methods!(
             ($($fn_trait_with_bounds)+),
             |$f| $wrapper_expr,
             "bi-transformer"
         );
 
-        impl_common_name_methods!("bi-transformer");
+        crate::macros::impl_common_name_methods!("bi-transformer");
     };
 }
 
