@@ -27,10 +27,9 @@
 //!
 //! Haixing Hu
 
-#[macro_use]
-pub mod macros;
 
 // Module declarations
+pub mod macros;
 pub mod comparator;
 pub mod consumers;
 pub mod functions;
@@ -118,7 +117,7 @@ pub use functions::{
     RcStatefulFunction,
     RcStatefulMutatingFunction,
     StatefulFunction,
-    StatefulMutatingFunction,
+    StatefulMutatingFunction
 };
 
 // Mutator - Fn(&mut T)
