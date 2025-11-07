@@ -28,19 +28,22 @@ use std::rc::Rc;
 use std::sync::Arc;
 
 use crate::{
-    functions::macros::{
-        impl_box_conditional_function,
-        impl_box_function_methods,
-        impl_conditional_function_clone,
-        impl_conditional_function_debug_display,
-        impl_fn_ops_trait,
-        impl_function_clone,
-        impl_function_common_methods,
-        impl_function_constant_method,
-        impl_function_debug_display,
-        impl_function_identity_method,
-        impl_shared_conditional_function,
-        impl_shared_function_methods,
+    functions::{
+        function_once::BoxFunctionOnce,
+        macros::{
+            impl_box_conditional_function,
+            impl_box_function_methods,
+            impl_conditional_function_clone,
+            impl_conditional_function_debug_display,
+            impl_fn_ops_trait,
+            impl_function_clone,
+            impl_function_common_methods,
+            impl_function_constant_method,
+            impl_function_debug_display,
+            impl_function_identity_method,
+            impl_shared_conditional_function,
+            impl_shared_function_methods,
+        },
     },
     predicates::predicate::{
         ArcPredicate,
@@ -170,6 +173,38 @@ pub trait Function<T, R> {
         R: 'static,
     {
         move |t| self.apply(t)
+    }
+
+    /// Converts to FunctionOnce
+    ///
+    /// **⚠️ Consumes `self`**: The original function becomes unavailable after calling this method.
+    ///
+    /// Converts a reusable function to a one-time function that consumes itself on use.
+    /// This enables passing `Function` to functions that require `FunctionOnce`.
+    ///
+    /// # Returns
+    ///
+    /// Returns a `BoxFunctionOnce<T, R>`
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    ///
+    /// fn takes_once<F: FunctionOnce<i32, i32>>(func: F, value: &i32) -> i32 {
+    ///     func.apply(value)
+    /// }
+    ///
+    /// let func = BoxFunction::new(|x: &i32| x * 2);
+    /// let result = takes_once(func.into_once(), &5);
+    /// assert_eq!(result, 10);
+    /// ```
+    fn into_once(self) -> BoxFunctionOnce<T, R>
+    where
+        Self: Sized + 'static,
+        T: 'static,
+        R: 'static,
+    {
+        BoxFunctionOnce::new(move |t| self.apply(t))
     }
 
     /// Converts to BoxFunction without consuming self
@@ -315,6 +350,36 @@ pub trait Function<T, R> {
     {
         self.clone().into_fn()
     }
+
+    /// Convert to FunctionOnce without consuming self
+    ///
+    /// **⚠️ Requires Clone**: This method requires `Self` to implement `Clone`.
+    /// Clones the current function and converts the clone to a one-time function.
+    ///
+    /// # Returns
+    ///
+    /// Returns a `BoxFunctionOnce<T, R>`
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    ///
+    /// fn takes_once<F: FunctionOnce<i32, i32>>(func: F, value: &i32) -> i32 {
+    ///     func.apply(value)
+    /// }
+    ///
+    /// let func = BoxFunction::new(|x: &i32| x * 2);
+    /// let result = takes_once(func.to_once(), &5);
+    /// assert_eq!(result, 10);
+    /// ```
+    fn to_once(&self) -> BoxFunctionOnce<T, R>
+    where
+        Self: Clone + 'static,
+        T: 'static,
+        R: 'static,
+    {
+        self.clone().into_once()
+    }
 }
 
 // ============================================================================
@@ -413,6 +478,15 @@ impl<T, R> Function<T, R> for BoxFunction<T, R> {
     // implementations that require Clone cannot be used. We need to provide
     // special implementations that create new functions by wrapping the
     // function reference.
+
+    // Override with optimized implementation: create BoxFunctionOnce directly
+    fn into_once(self) -> BoxFunctionOnce<T, R>
+    where
+        T: 'static,
+        R: 'static,
+    {
+        BoxFunctionOnce::new_with_optional_name(self.function, self.name)
+    }
 
     // Override: BoxFunction doesn't implement Clone, can't use default
     // We create a new BoxFunction that references self through a closure
@@ -525,6 +599,15 @@ impl<T, R> Function<T, R> for RcFunction<T, R> {
         move |t| (self.function)(t)
     }
 
+    // Override with optimized implementation: create BoxFunctionOnce
+    fn into_once(self) -> BoxFunctionOnce<T, R>
+    where
+        T: 'static,
+        R: 'static,
+    {
+        BoxFunctionOnce::new_with_optional_name(move |t| (self.function)(t), self.name)
+    }
+
     // Override with optimized implementation: clone the Rc (cheap)
     fn to_box(&self) -> BoxFunction<T, R>
     where
@@ -556,6 +639,17 @@ impl<T, R> Function<T, R> for RcFunction<T, R> {
     {
         let self_fn = self.function.clone();
         move |t| self_fn(t)
+    }
+
+    // Override with optimized implementation: clone the Rc (cheap)
+    fn to_once(&self) -> BoxFunctionOnce<T, R>
+    where
+        T: 'static,
+        R: 'static,
+    {
+        let self_fn = self.function.clone();
+        let self_name = self.name.clone();
+        BoxFunctionOnce::new_with_optional_name(move |t| self_fn(t), self_name)
     }
 }
 
@@ -657,6 +751,14 @@ impl<T, R> Function<T, R> for ArcFunction<T, R> {
         move |t| (self.function)(t)
     }
 
+    fn into_once(self) -> BoxFunctionOnce<T, R>
+    where
+        T: 'static,
+        R: 'static,
+    {
+        BoxFunctionOnce::new_with_optional_name(move |t| (self.function)(t), self.name)
+    }
+
     fn to_box(&self) -> BoxFunction<T, R>
     where
         T: 'static,
@@ -692,6 +794,16 @@ impl<T, R> Function<T, R> for ArcFunction<T, R> {
     {
         let self_fn = self.function.clone();
         move |t| self_fn(t)
+    }
+
+    fn to_once(&self) -> BoxFunctionOnce<T, R>
+    where
+        T: 'static,
+        R: 'static,
+    {
+        let self_fn = self.function.clone();
+        let self_name = self.name.clone();
+        BoxFunctionOnce::new_with_optional_name(move |t| self_fn(t), self_name)
     }
 }
 
@@ -788,6 +900,20 @@ where
         Self: Clone + Sized + 'static,
     {
         self.clone()
+    }
+
+    fn into_once(self) -> BoxFunctionOnce<T, R>
+    where
+        Self: Sized + 'static,
+    {
+        BoxFunctionOnce::new(self)
+    }
+
+    fn to_once(&self) -> BoxFunctionOnce<T, R>
+    where
+        Self: Clone + Sized + 'static,
+    {
+        BoxFunctionOnce::new(self.clone())
     }
 }
 
