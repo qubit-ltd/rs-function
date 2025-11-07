@@ -401,7 +401,8 @@ impl<T> Consumer<T> for BoxConsumer<T> {
     where
         T: 'static,
     {
-        RcConsumer::new_with_optional_name(move |t| (self.function)(t), self.name)
+        let self_fn = self.function;
+        RcConsumer::new_with_optional_name(self_fn, self.name)
     }
 
     // do NOT override Consumer::into_arc() because BoxConsumer is not Send + Sync
@@ -412,6 +413,14 @@ impl<T> Consumer<T> for BoxConsumer<T> {
         T: 'static,
     {
         self.function
+    }
+
+    fn into_once(self) -> BoxConsumerOnce<T>
+    where
+        T: 'static,
+    {
+        let self_fn = self.function;
+        BoxConsumerOnce::new_with_optional_name(self_fn, self.name)
     }
 }
 
@@ -517,6 +526,13 @@ impl<T> Consumer<T> for RcConsumer<T> {
         move |t| (self.function)(t)
     }
 
+    fn into_once(self) -> BoxConsumerOnce<T>
+    where
+        T: 'static,
+    {
+        BoxConsumerOnce::new_with_optional_name(move |t| (self.function)(t), self.name)
+    }
+
     fn to_box(&self) -> BoxConsumer<T>
     where
         T: 'static,
@@ -541,6 +557,15 @@ impl<T> Consumer<T> for RcConsumer<T> {
     {
         let self_fn = self.function.clone();
         move |t| self_fn(t)
+    }
+
+    fn to_once(&self) -> BoxConsumerOnce<T>
+    where
+        T: 'static,
+    {
+        let self_fn = self.function.clone();
+        let self_name = self.name.clone();
+        BoxConsumerOnce::new_with_optional_name(move |t| self_fn(t), self_name)
     }
 }
 
@@ -654,6 +679,13 @@ impl<T> Consumer<T> for ArcConsumer<T> {
         move |t| (self.function)(t)
     }
 
+    fn into_once(self) -> BoxConsumerOnce<T>
+    where
+        T: 'static,
+    {
+        BoxConsumerOnce::new_with_optional_name(move |t| (self.function)(t), self.name)
+    }
+
     fn to_box(&self) -> BoxConsumer<T>
     where
         T: 'static,
@@ -683,6 +715,15 @@ impl<T> Consumer<T> for ArcConsumer<T> {
     {
         let self_fn = self.function.clone();
         move |t| self_fn(t)
+    }
+
+    fn to_once(&self) -> BoxConsumerOnce<T>
+    where
+        T: 'static,
+    {
+        let self_fn = self.function.clone();
+        let self_name = self.name.clone();
+        BoxConsumerOnce::new_with_optional_name(move |t| self_fn(t), self_name)
     }
 }
 
@@ -737,6 +778,14 @@ where
         self
     }
 
+    fn into_once(self) -> BoxConsumerOnce<T>
+    where
+        Self: Sized + 'static,
+        T: 'static,
+    {
+        BoxConsumerOnce::new(self)
+    }
+
     fn to_box(&self) -> BoxConsumer<T>
     where
         Self: Clone + 'static,
@@ -770,6 +819,15 @@ where
         T: 'static,
     {
         self.clone()
+    }
+
+    fn to_once(&self) -> BoxConsumerOnce<T>
+    where
+        Self: Clone + 'static,
+        T: 'static,
+    {
+        let self_fn = self.clone();
+        BoxConsumerOnce::new(self_fn)
     }
 }
 

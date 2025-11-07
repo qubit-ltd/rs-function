@@ -481,6 +481,15 @@ impl<T, U> BiConsumer<T, U> for BoxBiConsumer<T, U> {
     {
         self.function
     }
+
+    fn into_once(self) -> BoxBiConsumerOnce<T, U>
+    where
+        T: 'static,
+        U: 'static,
+    {
+        let self_fn = self.function;
+        BoxBiConsumerOnce::new_with_optional_name(move |t, u| self_fn(t, u), self.name)
+    }
 }
 
 // Use macro to generate Debug and Display implementations

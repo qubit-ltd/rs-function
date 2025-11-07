@@ -604,6 +604,15 @@ impl<T, U> StatefulBiConsumer<T, U> for BoxStatefulBiConsumer<T, U> {
         self.function
     }
 
+    fn into_once(self) -> BoxBiConsumerOnce<T, U>
+    where
+        T: 'static,
+        U: 'static,
+    {
+        let mut self_fn = self.function;
+        BoxBiConsumerOnce::new_with_optional_name(move |t, u| self_fn(t, u), self.name)
+    }
+
     // do NOT override BiConsumer::to_xxx() because BoxStatefulBiConsumer is not Clone
     // and calling BoxStatefulBiConsumer::to_xxx() will cause a compile error
 }
@@ -707,11 +716,10 @@ impl<T, U> StatefulBiConsumer<T, U> for ArcStatefulBiConsumer<T, U> {
         T: 'static,
         U: 'static,
     {
-        let name = self.name;
         let self_fn = self.function;
         BoxStatefulBiConsumer::new_with_optional_name(
             move |t, u| self_fn.lock().unwrap()(t, u),
-            name,
+            self.name,
         )
     }
 
@@ -742,6 +750,18 @@ impl<T, U> StatefulBiConsumer<T, U> for ArcStatefulBiConsumer<T, U> {
     {
         let self_fn = self.function;
         move |t, u| self_fn.lock().unwrap()(t, u)
+    }
+
+    fn into_once(self) -> BoxBiConsumerOnce<T, U>
+    where
+        T: 'static,
+        U: 'static,
+    {
+        let self_fn = self.function;
+        BoxBiConsumerOnce::new_with_optional_name(
+            move |t, u| self_fn.lock().unwrap()(t, u),
+            self.name
+        )
     }
 
     fn to_box(&self) -> BoxStatefulBiConsumer<T, U>
@@ -783,6 +803,18 @@ impl<T, U> StatefulBiConsumer<T, U> for ArcStatefulBiConsumer<T, U> {
     {
         let self_fn = self.function.clone();
         move |t, u| self_fn.lock().unwrap()(t, u)
+    }
+
+    fn to_once(&self) -> BoxBiConsumerOnce<T, U>
+    where
+        T: 'static,
+        U: 'static,
+    {
+        let self_fn = self.function.clone();
+        BoxBiConsumerOnce::new_with_optional_name(
+            move |t, u| self_fn.lock().unwrap()(t, u),
+            self.name.clone()
+        )
     }
 }
 
@@ -904,15 +936,72 @@ impl<T, U> StatefulBiConsumer<T, U> for RcStatefulBiConsumer<T, U> {
         BoxStatefulBiConsumer::new_with_optional_name(move |t, u| self_fn.borrow_mut()(t, u), name)
     }
 
+    fn into_rc(self) -> RcStatefulBiConsumer<T, U>
+    where
+        T: 'static,
+        U: 'static,
+    {
+        self
+    }
+
+    fn into_fn(self) -> impl FnMut(&T, &U)
+    where
+        T: 'static,
+        U: 'static,
+    {
+        move |t, u| self.function.borrow_mut()(t, u)
+    }
+
+    fn into_once(self) -> BoxBiConsumerOnce<T, U>
+    where
+        T: 'static,
+        U: 'static,
+    {
+        let self_fn = self.function;
+        BoxBiConsumerOnce::new_with_optional_name(move |t, u| self_fn.borrow_mut()(t, u), self.name)
+    }
+
+    fn to_box(&self) -> BoxStatefulBiConsumer<T, U>
+    where
+        T: 'static,
+        U: 'static,
+    {
+        let self_fn = self.function.clone();
+        BoxStatefulBiConsumer::new_with_optional_name(
+            move |t, u| self_fn.borrow_mut()(t, u),
+            self.name.clone()
+        )
+    }
+
+    fn to_rc(&self) -> RcStatefulBiConsumer<T, U>
+    where
+        T: 'static,
+        U: 'static,
+    {
+        self.clone()
+    }
+
     fn to_fn(&self) -> impl FnMut(&T, &U)
     where
         T: 'static,
         U: 'static,
     {
-        let func = Rc::clone(&self.function);
+        let func = self.function.clone();
         move |t: &T, u: &U| {
             func.borrow_mut()(t, u);
         }
+    }
+
+    fn to_once(&self) -> BoxBiConsumerOnce<T, U>
+    where
+        T: 'static,
+        U: 'static,
+    {
+        let self_fn = self.function.clone();
+        BoxBiConsumerOnce::new_with_optional_name(
+            move |t, u| self_fn.borrow_mut()(t, u),
+            self.name.clone()
+        )
     }
 }
 
@@ -937,7 +1026,7 @@ where
 
     fn into_box(self) -> BoxStatefulBiConsumer<T, U>
     where
-        Self: Sized + 'static,
+        Self: 'static,
         T: 'static,
         U: 'static,
     {
@@ -946,7 +1035,7 @@ where
 
     fn into_rc(self) -> RcStatefulBiConsumer<T, U>
     where
-        Self: Sized + 'static,
+        Self: 'static,
         T: 'static,
         U: 'static,
     {
@@ -955,7 +1044,7 @@ where
 
     fn into_arc(self) -> ArcStatefulBiConsumer<T, U>
     where
-        Self: Sized + Send + 'static,
+        Self: Send + 'static,
         T: 'static,
         U: 'static,
     {
@@ -971,9 +1060,18 @@ where
         self
     }
 
+    fn into_once(mut self) -> BoxBiConsumerOnce<T, U>
+    where
+        Self: 'static,
+        T: 'static,
+        U: 'static,
+    {
+        BoxBiConsumerOnce::new(move |t, u| self(t, u))
+    }
+
     fn to_box(&self) -> BoxStatefulBiConsumer<T, U>
     where
-        Self: Sized + Clone + 'static,
+        Self: Clone + 'static,
         T: 'static,
         U: 'static,
     {
@@ -983,7 +1081,7 @@ where
 
     fn to_rc(&self) -> RcStatefulBiConsumer<T, U>
     where
-        Self: Sized + Clone + 'static,
+        Self: Clone + 'static,
         T: 'static,
         U: 'static,
     {
@@ -993,7 +1091,7 @@ where
 
     fn to_arc(&self) -> ArcStatefulBiConsumer<T, U>
     where
-        Self: Sized + Clone + Send + 'static,
+        Self: Clone + Send + 'static,
         T: 'static,
         U: 'static,
     {
@@ -1003,11 +1101,21 @@ where
 
     fn to_fn(&self) -> impl FnMut(&T, &U)
     where
-        Self: Sized + Clone + 'static,
+        Self: Clone + 'static,
         T: 'static,
         U: 'static,
     {
         self.clone()
+    }
+
+    fn to_once(&self) -> BoxBiConsumerOnce<T, U>
+    where
+        Self: Clone + 'static,
+        T: 'static,
+        U: 'static,
+    {
+        let mut cloned = (*self).clone();
+        BoxBiConsumerOnce::new(move |t, u| cloned(t, u))
     }
 }
 

@@ -584,8 +584,8 @@ impl<T> StatefulConsumer<T> for BoxStatefulConsumer<T> {
     where
         T: 'static,
     {
-        let mut self_fn = self.function;
-        RcStatefulConsumer::new(move |t| self_fn(t))
+        let self_fn = self.function;
+        RcStatefulConsumer::new_with_optional_name(self_fn, self.name)
     }
 
     // do NOT override Consumer::into_arc() because BoxStatefulConsumer is not Send + Sync
@@ -596,6 +596,14 @@ impl<T> StatefulConsumer<T> for BoxStatefulConsumer<T> {
         T: 'static,
     {
         self.function
+    }
+
+    fn into_once(self) -> BoxConsumerOnce<T>
+    where
+        T: 'static,
+    {
+        let self_fn = self.function;
+        BoxConsumerOnce::new_with_optional_name(self_fn, self.name)
     }
 
     // do NOT override Consumer::to_xxx() because BoxStatefulConsumer is not Clone
@@ -729,6 +737,17 @@ impl<T> StatefulConsumer<T> for RcStatefulConsumer<T> {
         move |t| self.function.borrow_mut()(t)
     }
 
+    fn into_once(self) -> BoxConsumerOnce<T>
+    where
+        T: 'static,
+    {
+        let self_fn = self.function;
+        BoxConsumerOnce::new_with_optional_name(
+            move |t| self_fn.borrow_mut()(t),
+            self.name
+        )
+    }
+
     fn to_box(&self) -> BoxStatefulConsumer<T>
     where
         T: 'static,
@@ -753,6 +772,15 @@ impl<T> StatefulConsumer<T> for RcStatefulConsumer<T> {
     fn to_fn(&self) -> impl FnMut(&T) {
         let self_fn = self.function.clone();
         move |t| self_fn.borrow_mut()(t)
+    }
+
+    fn to_once(&self) -> BoxConsumerOnce<T>
+    where
+        T: 'static,
+    {
+        let self_fn = self.function.clone();
+        let self_name = self.name.clone();
+        BoxConsumerOnce::new_with_optional_name(move |t| self_fn.borrow_mut()(t), self_name)
     }
 }
 
@@ -883,6 +911,14 @@ impl<T> StatefulConsumer<T> for ArcStatefulConsumer<T> {
         move |t: &T| self.function.lock().unwrap()(t)
     }
 
+    fn into_once(self) -> BoxConsumerOnce<T>
+    where
+        T: 'static,
+    {
+        let self_fn = self.function;
+        BoxConsumerOnce::new_with_optional_name(move |t| self_fn.lock().unwrap()(t), self.name)
+    }
+
     fn to_box(&self) -> BoxStatefulConsumer<T>
     where
         T: 'static,
@@ -916,6 +952,15 @@ impl<T> StatefulConsumer<T> for ArcStatefulConsumer<T> {
         let self_fn = self.function.clone();
         move |t| self_fn.lock().unwrap()(t)
     }
+
+    fn to_once(&self) -> BoxConsumerOnce<T>
+    where
+        T: 'static,
+    {
+        let self_fn = self.function.clone();
+        let self_name = self.name.clone();
+        BoxConsumerOnce::new_with_optional_name(move |t| self_fn.lock().unwrap()(t), self_name)
+    }
 }
 
 // Use macro to generate Clone implementation
@@ -931,7 +976,7 @@ impl_consumer_debug_display!(ArcStatefulConsumer<T>);
 /// Implement Consumer for all FnMut(&T)
 impl<T, F> StatefulConsumer<T> for F
 where
-    F: FnMut(&T),
+    F: FnMut(&T) + 'static,
 {
     fn accept(&mut self, value: &T) {
         self(value)
@@ -969,6 +1014,13 @@ where
         self
     }
 
+    fn into_once(mut self) -> BoxConsumerOnce<T>
+    where
+        T: 'static,
+    {
+        BoxConsumerOnce::new(move |t| self(t))
+    }
+
     fn to_box(&self) -> BoxStatefulConsumer<T>
     where
         Self: Sized + Clone + 'static,
@@ -1002,6 +1054,15 @@ where
         T: 'static,
     {
         self.clone()
+    }
+
+    fn to_once(&self) -> BoxConsumerOnce<T>
+    where
+        Self: Clone + 'static,
+        T: 'static,
+    {
+        let mut cloned = self.clone();
+        BoxConsumerOnce::new(move |t| cloned(t))
     }
 }
 
