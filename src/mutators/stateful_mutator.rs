@@ -213,7 +213,7 @@ use crate::mutators::macros::{
     impl_shared_conditional_mutator,
     impl_shared_mutator_methods,
 };
-use crate::macros::impl_box_conversions;
+use crate::macros::{impl_box_conversions, impl_rc_conversions};
 use crate::mutators::mutator_once::BoxMutatorOnce;
 use crate::predicates::predicate::{
     ArcPredicate,
@@ -746,62 +746,13 @@ impl<T> StatefulMutator<T> for RcStatefulMutator<T> {
         (self.function.borrow_mut())(value)
     }
 
-    fn into_box(self) -> BoxStatefulMutator<T>
-    where
-        T: 'static,
-    {
-        BoxStatefulMutator::new(move |t| self.function.borrow_mut()(t))
-    }
-
-    fn into_rc(self) -> RcStatefulMutator<T>
-    where
-        T: 'static,
-    {
-        self
-    }
-
-    // do NOT override Mutator::into_arc() because RcMutator is not Send + Sync
-    // and calling RcMutator::into_arc() will cause a compile error
-
-    fn into_fn(self) -> impl FnMut(&mut T)
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        move |t| self.function.borrow_mut()(t)
-    }
-
-    fn to_box(&self) -> BoxStatefulMutator<T>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        let self_fn = self.function.clone();
-        BoxStatefulMutator::new_with_optional_name(
-            move |t| self_fn.borrow_mut()(t),
-            self.name.clone(),
-        )
-    }
-
-    fn to_rc(&self) -> RcStatefulMutator<T>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        self.clone()
-    }
-
-    // do NOT override Mutator::to_arc() because RcMutator is not Send + Sync
-    // and calling RcMutator::to_arc() will cause a compile error
-
-    fn to_fn(&self) -> impl FnMut(&mut T)
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        let self_fn = self.function.clone();
-        move |t| self_fn.borrow_mut()(t)
-    }
+    // Generate all conversion methods using the unified macro
+    impl_rc_conversions!(
+        RcStatefulMutator<T>,
+        BoxStatefulMutator,
+        BoxMutatorOnce,
+        FnMut(t: &mut T)
+    );
 }
 
 // Use macro to generate Clone implementation

@@ -213,7 +213,7 @@ use crate::mutators::macros::{
     impl_shared_conditional_mutator,
     impl_shared_mutator_methods,
 };
-use crate::macros::impl_box_conversions;
+use crate::macros::{impl_box_conversions, impl_rc_conversions};
 use crate::mutators::mutator_once::BoxMutatorOnce;
 use crate::predicates::predicate::{
     ArcPredicate,
@@ -733,60 +733,13 @@ impl<T> Mutator<T> for RcMutator<T> {
         (self.function)(value)
     }
 
-    fn into_box(self) -> BoxMutator<T>
-    where
-        T: 'static,
-    {
-        BoxMutator::new_with_optional_name(move |t| (self.function)(t), self.name)
-    }
-
-    fn into_rc(self) -> RcMutator<T>
-    where
-        T: 'static,
-    {
-        self
-    }
-
-    // do NOT override Mutator::into_arc() because RcMutator is not Send + Sync
-    // and calling RcMutator::into_arc() will cause a compile error
-
-    fn into_fn(self) -> impl Fn(&mut T)
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        move |t| (self.function)(t)
-    }
-
-    fn to_box(&self) -> BoxMutator<T>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        let self_fn = self.function.clone();
-        let self_name = self.name.clone();
-        BoxMutator::new_with_optional_name(move |t| (self_fn)(t), self_name)
-    }
-
-    fn to_rc(&self) -> RcMutator<T>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        self.clone()
-    }
-
-    // do NOT override Mutator::to_arc() because RcMutator is not Send + Sync
-    // and calling RcMutator::to_arc() will cause a compile error
-
-    fn to_fn(&self) -> impl Fn(&mut T)
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        let self_fn = self.function.clone();
-        move |t| (self_fn)(t)
-    }
+    // Generate all conversion methods using the unified macro
+    impl_rc_conversions!(
+        RcMutator<T>,
+        BoxMutator,
+        BoxMutatorOnce,
+        Fn(t: &mut T)
+    );
 }
 
 // Generate Clone trait implementation for mutator

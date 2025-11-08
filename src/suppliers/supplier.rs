@@ -130,7 +130,7 @@ use crate::suppliers::macros::{
     impl_supplier_common_methods,
     impl_supplier_debug_display,
 };
-use crate::macros::impl_box_conversions;
+use crate::macros::{impl_box_conversions, impl_rc_conversions};
 use crate::transformers::transformer::Transformer;
 use crate::BoxSupplierOnce;
 
@@ -809,63 +809,13 @@ impl<T> Supplier<T> for RcSupplier<T> {
         (self.function)()
     }
 
-    fn into_box(self) -> BoxSupplier<T>
-    where
-        T: 'static,
-    {
-        BoxSupplier::new(move || (self.function)())
-    }
-
-    fn into_rc(self) -> RcSupplier<T>
-    where
-        T: 'static,
-    {
-        self
-    }
-
-    // do NOT override RcSupplier::to_arc() because RcSupplier
-    // is not Send + Sync and calling RcSupplier::to_arc() will cause a compile error
-
-    fn into_fn(self) -> impl FnMut() -> T {
-        move || (self.function)()
-    }
-
-    // Optimized implementations using Rc::clone instead of wrapping
-    // in a closure
-
-    fn to_box(&self) -> BoxSupplier<T>
-    where
-        Self: Clone + 'static,
-        T: 'static,
-    {
-        let self_fn = self.function.clone();
-        BoxSupplier::new(move || self_fn())
-    }
-
-    fn to_rc(&self) -> RcSupplier<T>
-    where
-        Self: Clone + 'static,
-        T: 'static,
-    {
-        self.clone()
-    }
-
-    // Note: to_arc cannot be implemented for RcSupplier
-    // because Rc is not Send + Sync, which is required for
-    // ArcSupplier.
-    //
-    // If you call to_arc on RcSupplier, the compiler will
-    // fail with an error indicating that RcSupplier<T> does
-    // not satisfy the Send + Sync bounds required by the default
-    // implementation of to_arc.
-
-    fn to_fn(&self) -> impl FnMut() -> T
-    where
-        Self: Clone,
-    {
-        let self_fn = self.function.clone();
-        move || self_fn()
-    }
+    // Generate all conversion methods using the unified macro
+    impl_rc_conversions!(
+        RcSupplier<T>,
+        BoxSupplier,
+        BoxSupplierOnce,
+        Fn() -> T
+    );
 }
 
 // ======================================================================
