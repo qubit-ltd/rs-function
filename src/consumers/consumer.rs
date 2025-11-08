@@ -51,6 +51,7 @@ use crate::consumers::macros::{
     impl_shared_conditional_consumer,
     impl_shared_consumer_methods,
 };
+use crate::macros::impl_box_into_conversions;
 use crate::predicates::predicate::{
     ArcPredicate,
     BoxPredicate,
@@ -385,43 +386,18 @@ where
     impl_box_consumer_methods!(BoxConsumer<T>, BoxConditionalConsumer, Consumer);
 }
 
-impl<T> Consumer<T> for BoxConsumer<T> {
+impl<T: 'static> Consumer<T> for BoxConsumer<T> {
     fn accept(&self, value: &T) {
         (self.function)(value)
     }
 
-    fn into_box(self) -> BoxConsumer<T>
-    where
-        T: 'static,
-    {
-        self
-    }
-
-    fn into_rc(self) -> RcConsumer<T>
-    where
-        T: 'static,
-    {
-        let self_fn = self.function;
-        RcConsumer::new_with_optional_name(self_fn, self.name)
-    }
-
-    // do NOT override Consumer::into_arc() because BoxConsumer is not Send + Sync
-    // and calling BoxConsumer::into_arc() will cause a compile error
-
-    fn into_fn(self) -> impl Fn(&T)
-    where
-        T: 'static,
-    {
-        self.function
-    }
-
-    fn into_once(self) -> BoxConsumerOnce<T>
-    where
-        T: 'static,
-    {
-        let self_fn = self.function;
-        BoxConsumerOnce::new_with_optional_name(self_fn, self.name)
-    }
+    // Generates: into_box(), into_rc(), into_fn(), into_once()
+    impl_box_into_conversions!(
+        BoxConsumer<T>,
+        RcConsumer,
+        BoxConsumerOnce,
+        impl Fn(&T)
+    );
 }
 
 // Use macro to generate Debug and Display implementations

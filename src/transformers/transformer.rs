@@ -33,6 +33,7 @@ use crate::predicates::predicate::{
     Predicate,
     RcPredicate,
 };
+use crate::macros::impl_box_into_conversions;
 use crate::transformers::macros::{
     impl_box_conditional_transformer,
     impl_box_transformer_methods,
@@ -45,6 +46,7 @@ use crate::transformers::macros::{
     impl_transformer_constant_method,
     impl_transformer_debug_display,
 };
+use crate::BoxTransformerOnce;
 
 // ============================================================================
 // Core Trait
@@ -166,6 +168,34 @@ pub trait Transformer<T, R> {
         R: 'static,
     {
         move |t: T| self.apply(t)
+    }
+
+    /// Converts to `BoxTransformerOnce`.
+    ///
+    /// This method has a default implementation that wraps the
+    /// transformer in a `BoxTransformerOnce`. Custom implementations
+    /// can override this method for optimization purposes.
+    ///
+    /// # Returns
+    ///
+    /// A new `BoxTransformerOnce<T, R>` instance
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use prism3_function::Transformer;
+    ///
+    /// let closure = |x: i32| x * 2;
+    /// let once = closure.into_once();
+    /// assert_eq!(once.apply(5), 10);
+    /// ```
+    fn into_once(self) -> BoxTransformerOnce<T, R>
+    where
+        Self: Sized + 'static,
+        T: 'static,
+        R: 'static,
+    {
+        BoxTransformerOnce::new(move |t| self.apply(t))
     }
 
     /// Converts to BoxTransformer without consuming self
@@ -370,58 +400,13 @@ impl<T, R> Transformer<T, R> for BoxTransformer<T, R> {
         (self.function)(input)
     }
 
-    // Override with zero-cost implementation: directly return itself
-    fn into_box(self) -> BoxTransformer<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        self
-    }
-
-    // Override with optimized implementation: convert Box to Rc
-    fn into_rc(self) -> RcTransformer<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        RcTransformer {
-            function: Rc::from(self.function),
-            name: self.name.clone(),
-        }
-    }
-
-    // do NOT override BoxTransformer::into_arc() because BoxTransformer is not Send + Sync
-    // and calling BoxTransformer::to_arc() will cause a compile error
-
-    // Override with optimized implementation: directly return the
-    // underlying function by unwrapping the Box
-    fn into_fn(self) -> impl Fn(T) -> R
-    where
-        T: 'static,
-        R: 'static,
-    {
-        self.function
-    }
-
-    // Note: BoxTransformer doesn't implement Clone, so the default to_xxx()
-    // implementations that require Clone cannot be used. We need to provide
-    // special implementations that create new transformers by wrapping the
-    // function reference.
-
-    // Override: BoxTransformer doesn't implement Clone, can't use default
-    // We create a new BoxTransformer that references self through a closure
-    // This requires T and R to be Clone-independent
-    // Users should prefer using RcTransformer if they need sharing
-
-    // Note: We intentionally don't override to_box(), to_rc(), to_arc(), to_fn()
-    // for BoxTransformer because:
-    // 1. BoxTransformer doesn't implement Clone
-    // 2. We can't share ownership of Box<dyn Fn> without cloning
-    // 3. Users should convert to RcTransformer or ArcTransformer first if they
-    //    need to create multiple references
-    // 4. The default implementations will fail to compile (as expected), which
-    //    guides users to the correct usage pattern
+    // Generates: into_box(), into_rc(), into_fn(), into_once()
+    impl_box_into_conversions!(
+        BoxTransformer<T, R>,
+        RcTransformer,
+        BoxTransformerOnce,
+        impl Fn(T) -> R
+    );
 }
 
 // ============================================================================

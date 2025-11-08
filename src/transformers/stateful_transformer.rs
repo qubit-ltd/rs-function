@@ -29,6 +29,7 @@ use std::sync::{
     Mutex,
 };
 
+use crate::macros::impl_box_into_conversions;
 use crate::predicates::predicate::{
     ArcPredicate,
     BoxPredicate,
@@ -47,6 +48,7 @@ use crate::transformers::macros::{
     impl_transformer_constant_method,
     impl_transformer_debug_display,
 };
+use crate::BoxTransformerOnce;
 
 // ============================================================================
 // Core Trait
@@ -251,6 +253,35 @@ pub trait StatefulTransformer<T, R> {
         move |t| transformer.apply(t)
     }
 
+    /// Converts to `BoxTransformerOnce`.
+    ///
+    /// This method has a default implementation that wraps the
+    /// transformer in a `BoxTransformerOnce`. Custom implementations
+    /// can override this method for optimization purposes.
+    ///
+    /// # Returns
+    ///
+    /// A new `BoxTransformerOnce<T, R>` instance
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use prism3_function::StatefulTransformer;
+    ///
+    /// let closure = |x: i32| x * 2;
+    /// let once = closure.into_once();
+    /// assert_eq!(once.apply(5), 10);
+    /// ```
+    fn into_once(self) -> BoxTransformerOnce<T, R>
+    where
+        Self: Sized + 'static,
+        T: 'static,
+        R: 'static,
+    {
+        let mut transformer = self;
+        BoxTransformerOnce::new(move |t| transformer.apply(t))
+    }
+
     /// Non-consuming conversion to `BoxStatefulTransformer`.
     ///
     /// Default implementation requires `Self: Clone` and wraps a cloned
@@ -363,34 +394,13 @@ impl<T, R> StatefulTransformer<T, R> for BoxStatefulTransformer<T, R> {
         (self.function)(input)
     }
 
-    fn into_box(self) -> BoxStatefulTransformer<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        // Zero-cost: directly return itself
-        self
-    }
-
-    fn into_rc(self) -> RcStatefulTransformer<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        RcStatefulTransformer::new(self.function)
-    }
-
-    // do NOT override StatefulTransformer::into_arc() because BoxStatefulTransformer is not Send + Sync
-    // and calling BoxStatefulTransformer::into_arc() will cause a compile error
-
-    fn into_fn(self) -> impl FnMut(T) -> R
-    where
-        T: 'static,
-        R: 'static,
-    {
-        // Zero-cost: directly return the boxed function
-        self.function
-    }
+    // Generates: into_box(), into_rc(), into_fn(), into_once()
+    impl_box_into_conversions!(
+        BoxStatefulTransformer<T, R>,
+        RcStatefulTransformer,
+        BoxTransformerOnce,
+        impl FnMut(T) -> R
+    );
 
     // do NOT override StatefulTransformer::to_xxx() because BoxStatefulTransformer is not Clone
     // and calling BoxStatefulTransformer::to_xxx() will cause a compile error

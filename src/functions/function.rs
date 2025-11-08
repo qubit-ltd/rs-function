@@ -45,6 +45,7 @@ use crate::{
             impl_shared_function_methods,
         },
     },
+    macros::impl_box_into_conversions,
     predicates::predicate::{
         ArcPredicate,
         BoxPredicate,
@@ -443,64 +444,13 @@ impl<T, R> Function<T, R> for BoxFunction<T, R> {
         (self.function)(t)
     }
 
-    // Override with zero-cost implementation: directly return itself
-    fn into_box(self) -> BoxFunction<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        self
-    }
-
-    // Override with optimized implementation: convert Box to Rc
-    fn into_rc(self) -> RcFunction<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        RcFunction::new_with_optional_name(self.function, self.name)
-    }
-
-    // do NOT override BoxFunction::into_arc() because BoxFunction is not Send + Sync
-    // and calling BoxFunction::to_arc() will cause a compile error
-
-    // Override with optimized implementation: directly return the
-    // underlying function by unwrapping the Box
-    fn into_fn(self) -> impl Fn(&T) -> R
-    where
-        T: 'static,
-        R: 'static,
-    {
-        self.function
-    }
-
-    // Note: BoxFunction doesn't implement Clone, so the default to_xxx()
-    // implementations that require Clone cannot be used. We need to provide
-    // special implementations that create new functions by wrapping the
-    // function reference.
-
-    // Override with optimized implementation: create BoxFunctionOnce directly
-    fn into_once(self) -> BoxFunctionOnce<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        BoxFunctionOnce::new_with_optional_name(self.function, self.name)
-    }
-
-    // Override: BoxFunction doesn't implement Clone, can't use default
-    // We create a new BoxFunction that references self through a closure
-    // This requires T and R to be Clone-independent
-    // Users should prefer using RcFunction if they need sharing
-
-    // Note: We intentionally don't override to_box(), to_rc(), to_arc(), to_fn()
-    // for BoxFunction because:
-    // 1. BoxFunction doesn't implement Clone
-    // 2. We can't share ownership of Box<dyn Fn> without cloning
-    // 3. Users should convert to RcFunction or ArcFunction first if they
-    //    need to create multiple references
-    // 4. The default implementations will fail to compile (as expected), which
-    //    guides users to the correct usage pattern
+    // Generates: into_box(), into_rc(), into_fn(), into_once()
+    impl_box_into_conversions!(
+        BoxFunction<T, R>,
+        RcFunction,
+        BoxFunctionOnce,
+        impl Fn(&T) -> R
+    );
 }
 
 // ============================================================================

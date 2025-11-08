@@ -46,6 +46,7 @@ use crate::{
         impl_shared_function_methods,
     },
     functions::function_once::BoxFunctionOnce,
+    macros::impl_box_into_conversions,
     predicates::predicate::{
         ArcPredicate,
         BoxPredicate,
@@ -433,48 +434,18 @@ impl_function_identity_method!(BoxStatefulFunction<T, T>);
 impl_function_debug_display!(BoxStatefulFunction<T, R>);
 
 // Implement StatefulFunction trait for BoxStatefulFunction<T, R>
-impl<T, R> StatefulFunction<T, R> for BoxStatefulFunction<T, R> {
+impl<T: 'static, R: 'static> StatefulFunction<T, R> for BoxStatefulFunction<T, R> {
     fn apply(&mut self, t: &T) -> R {
         (self.function)(t)
     }
 
-    fn into_box(self) -> BoxStatefulFunction<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        self
-    }
-
-    fn into_rc(self) -> RcStatefulFunction<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        RcStatefulFunction::new_with_optional_name(self.function, self.name)
-    }
-
-    // do NOT override StatefulFunction::into_arc() because BoxStatefulFunction is not Send + Sync
-    // and calling BoxStatefulFunction::into_arc() will cause a compile error
-
-    fn into_fn(self) -> impl FnMut(&T) -> R
-    where
-        T: 'static,
-        R: 'static,
-    {
-        self.function
-    }
-
-    fn into_once(self) -> BoxFunctionOnce<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        BoxFunctionOnce::new_with_optional_name(self.function, self.name)
-    }
-
-    // do NOT override StatefulFunction::to_xxx() because BoxStatefulFunction is not Clone
-    // and calling BoxStatefulFunction::to_xxx() will cause a compile error
+    // Generates: into_box(), into_rc(), into_fn(), into_once()
+    impl_box_into_conversions!(
+        BoxStatefulFunction<T, R>,
+        RcStatefulFunction,
+        BoxFunctionOnce,
+        impl FnMut(&T) -> R
+    );
 }
 
 // ============================================================================

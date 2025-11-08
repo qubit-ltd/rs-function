@@ -145,6 +145,7 @@ use crate::{
             impl_shared_function_methods,
         },
     },
+    macros::impl_box_into_conversions,
     predicates::predicate::{
         ArcPredicate,
         BoxPredicate,
@@ -709,48 +710,13 @@ impl<T, R> StatefulMutatingFunction<T, R> for BoxStatefulMutatingFunction<T, R> 
         (self.function)(t)
     }
 
-    fn into_box(self) -> BoxStatefulMutatingFunction<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        self
-    }
-
-    fn into_rc(self) -> RcStatefulMutatingFunction<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        let self_fn = self.function;
-        RcStatefulMutatingFunction::new_with_optional_name(self_fn, self.name)
-    }
-
-    // do NOT override StatefulMutatingFunction::into_arc() because
-    // BoxStatefulMutatingFunction is not Send and calling
-    // BoxStatefulMutatingFunction::into_arc() will cause a compile error
-
-    fn into_fn(mut self) -> impl FnMut(&mut T) -> R
-    where
-        Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        move |t| (self.function)(t)
-    }
-
-    fn into_once(self) -> BoxMutatingFunctionOnce<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        let self_fn = self.function;
-        BoxMutatingFunctionOnce::new_with_optional_name(self_fn, self.name)
-    }
-
-    // do NOT override StatefulMutatingFunction::to_xxx() because
-    // BoxStatefulMutatingFunction is not Clone and calling
-    // BoxStatefulMutatingFunction::to_xxx() will cause a compile error
+    // Generates: into_box(), into_rc(), into_fn(), into_once()
+    impl_box_into_conversions!(
+        BoxStatefulMutatingFunction<T, R>,
+        RcStatefulMutatingFunction,
+        BoxMutatingFunctionOnce,
+        impl FnMut(&mut T) -> R
+    );
 }
 
 // =======================================================================

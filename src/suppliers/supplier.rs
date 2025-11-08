@@ -130,7 +130,9 @@ use crate::suppliers::macros::{
     impl_supplier_common_methods,
     impl_supplier_debug_display,
 };
+use crate::macros::impl_box_into_conversions;
 use crate::transformers::transformer::Transformer;
+use crate::BoxSupplierOnce;
 
 // ======================================================================
 // Supplier Trait
@@ -334,6 +336,33 @@ pub trait Supplier<T> {
         move || self.get()
     }
 
+    /// Converts to `BoxSupplierOnce`.
+    ///
+    /// This method has a default implementation that wraps the
+    /// supplier in a `BoxSupplierOnce`. Custom implementations
+    /// can override this method for optimization purposes.
+    ///
+    /// # Returns
+    ///
+    /// A new `BoxSupplierOnce<T>` instance
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use prism3_function::Supplier;
+    ///
+    /// let closure = || 42;
+    /// let once = closure.into_once();
+    /// assert_eq!(once.get(), 42);
+    /// ```
+    fn into_once(self) -> BoxSupplierOnce<T>
+    where
+        Self: Sized + 'static,
+        T: 'static,
+    {
+        BoxSupplierOnce::new(move || self.get())
+    }
+
     /// Converts to `BoxSupplier` by cloning.
     ///
     /// This method clones the supplier and wraps it in a
@@ -519,26 +548,13 @@ impl<T> Supplier<T> for BoxSupplier<T> {
         (self.function)()
     }
 
-    fn into_box(self) -> BoxSupplier<T>
-    where
-        T: 'static,
-    {
-        self
-    }
-
-    fn into_rc(self) -> RcSupplier<T>
-    where
-        T: 'static,
-    {
-        RcSupplier::new(self.function)
-    }
-
-    // do NOT override BoxSupplier::to_arc() because BoxSupplier
-    // is not Send + Sync and calling BoxSupplier::to_arc() will cause a compile error
-
-    fn into_fn(self) -> impl FnMut() -> T {
-        move || (self.function)()
-    }
+    // Generates: into_box(), into_rc(), into_fn(), into_once()
+    impl_box_into_conversions!(
+        BoxSupplier<T>,
+        RcSupplier,
+        BoxSupplierOnce,
+        impl FnMut() -> T
+    );
 
     // Note: to_box, to_rc, to_arc, and to_fn cannot be implemented
     // for BoxSupplier because it does not implement Clone.

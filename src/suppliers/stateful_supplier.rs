@@ -132,7 +132,9 @@ use crate::suppliers::macros::{
     impl_supplier_common_methods,
     impl_supplier_debug_display,
 };
+use crate::macros::impl_box_into_conversions;
 use crate::transformers::transformer::Transformer;
+use crate::BoxSupplierOnce;
 
 // ==========================================================================
 // Supplier Trait
@@ -338,6 +340,33 @@ pub trait StatefulSupplier<T> {
         move || self.get()
     }
 
+    /// Converts to `BoxSupplierOnce`.
+    ///
+    /// This method has a default implementation that wraps the
+    /// supplier in a `BoxSupplierOnce`. Custom implementations
+    /// can override this method for optimization purposes.
+    ///
+    /// # Returns
+    ///
+    /// A new `BoxSupplierOnce<T>` instance
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use prism3_function::StatefulSupplier;
+    ///
+    /// let closure = || 42;
+    /// let once = closure.into_once();
+    /// assert_eq!(once.get(), 42);
+    /// ```
+    fn into_once(mut self) -> BoxSupplierOnce<T>
+    where
+        Self: Sized + 'static,
+        T: 'static,
+    {
+        BoxSupplierOnce::new(move || self.get())
+    }
+
     /// Creates a `BoxStatefulSupplier` from a cloned supplier.
     ///
     /// Uses `Clone` to obtain an owned copy and converts it into a
@@ -510,28 +539,13 @@ impl<T> StatefulSupplier<T> for BoxStatefulSupplier<T> {
         (self.function)()
     }
 
-    fn into_box(self) -> BoxStatefulSupplier<T>
-    where
-        T: 'static,
-    {
-        self
-    }
-
-    fn into_rc(self) -> RcStatefulSupplier<T>
-    where
-        T: 'static,
-    {
-        RcStatefulSupplier::new(self.function)
-    }
-
-    // into_arc cannot be implemented because the inner function may not be Send.
-    // Attempting to call this method will result in a compiler error due to missing Send bound.
-    // Use ArcStatefulSupplier::new directly with a Send closure instead.
-    // compile_error!("Cannot convert BoxStatefulSupplier to ArcStatefulSupplier: inner function may not implement Send");
-
-    fn into_fn(self) -> impl FnMut() -> T {
-        self.function
-    }
+    // Generates: into_box(), into_rc(), into_fn(), into_once()
+    impl_box_into_conversions!(
+        BoxStatefulSupplier<T>,
+        RcStatefulSupplier,
+        BoxSupplierOnce,
+        impl FnMut() -> T
+    );
 
     // NOTE: `BoxStatefulSupplier` is not `Clone`, so it cannot offer optimized
     // `to_box`, `to_rc`, `to_arc`, or `to_fn` implementations. Invoking

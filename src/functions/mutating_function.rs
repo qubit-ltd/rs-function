@@ -146,6 +146,7 @@ use crate::{
             impl_shared_function_methods,
         },
     },
+    macros::impl_box_into_conversions,
     predicates::predicate::{
         ArcPredicate,
         BoxPredicate,
@@ -663,47 +664,13 @@ impl<T, R> MutatingFunction<T, R> for BoxMutatingFunction<T, R> {
         (self.function)(t)
     }
 
-    fn into_box(self) -> BoxMutatingFunction<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        self
-    }
-
-    fn into_rc(self) -> RcMutatingFunction<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        RcMutatingFunction::new_with_optional_name(self.function, self.name)
-    }
-
-    // do NOT override MutatingFunction::into_arc() because
-    // BoxMutatingFunction is not Send + Sync and calling
-    // BoxMutatingFunction::into_arc() will cause a compile error
-
-    fn into_fn(self) -> impl Fn(&mut T) -> R
-    where
-        Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        move |t| (self.function)(t)
-    }
-
-    fn into_once(self) -> BoxMutatingFunctionOnce<T, R>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        BoxMutatingFunctionOnce::new_with_optional_name(self.function, self.name)
-    }
-
-    // do NOT override MutatingFunction::to_xxx() because
-    // BoxMutatingFunction is not Clone and calling
-    // BoxMutatingFunction::to_xxx() will cause a compile error
+    // Generates: into_box(), into_rc(), into_fn(), into_once()
+    impl_box_into_conversions!(
+        BoxMutatingFunction<T, R>,
+        RcMutatingFunction,
+        BoxMutatingFunctionOnce,
+        impl Fn(&mut T) -> R
+    );
 }
 
 // =======================================================================

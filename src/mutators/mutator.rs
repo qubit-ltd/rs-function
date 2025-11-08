@@ -213,6 +213,7 @@ use crate::mutators::macros::{
     impl_shared_conditional_mutator,
     impl_shared_mutator_methods,
 };
+use crate::macros::impl_box_into_conversions;
 use crate::mutators::mutator_once::BoxMutatorOnce;
 use crate::predicates::predicate::{
     ArcPredicate,
@@ -652,33 +653,13 @@ impl<T> Mutator<T> for BoxMutator<T> {
         (self.function)(value)
     }
 
-    fn into_box(self) -> BoxMutator<T>
-    where
-        T: 'static,
-    {
-        self
-    }
-
-    fn into_rc(self) -> RcMutator<T>
-    where
-        T: 'static,
-    {
-        RcMutator::new_with_optional_name(self.function, self.name)
-    }
-
-    // do NOT override Mutator::into_arc() because BoxMutator is not Send + Sync
-    // and calling BoxMutator::into_arc() will cause a compile error
-
-    fn into_fn(self) -> impl Fn(&mut T)
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        move |t| (self.function)(t)
-    }
-
-    // do NOT override Mutator::to_xxx() because BoxMutator is not Clone
-    // and calling BoxMutator::to_xxx() will cause a compile error
+    // Generates: into_box(), into_rc(), into_fn(), into_once()
+    impl_box_into_conversions!(
+        BoxMutator<T>,
+        RcMutator,
+        BoxMutatorOnce,
+        impl Fn(&mut T)
+    );
 }
 
 // Generate Debug and Display trait implementations
