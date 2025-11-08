@@ -22,45 +22,43 @@
 
 /// Public interface macro for Rc-based conversions.
 ///
-/// This macro automatically detects the number of generic parameters and calls
-/// the appropriate internal implementation.
+/// This macro automatically infers everything from the function signature:
+/// - Number of parameters
+/// - Parameter types
+/// - Return type
+/// - Call mode (Fn → direct, FnMut → borrow_mut)
 ///
-/// # Parameters
+/// # Syntax
 ///
-/// * `$rc_type<generics>` - The Rc wrapper type (e.g., `RcConsumer<T>`,
-///   `RcBiConsumer<T, U>`)
-/// * `$box_type` - The corresponding Box wrapper type (e.g., `BoxConsumer`)
-/// * `$once_type` - The corresponding once wrapper type (e.g.,
-///   `BoxConsumerOnce`)
-/// * `$fn_type:ty` - The complete function type (e.g., `impl Fn(&T)`,
-///   `impl Fn(&T, &U) -> R`)
+/// ```ignore
+/// impl_rc_conversions!(
+///     RcType<Generics>,           // Rc wrapper type with all generic parameters
+///     BoxType,                     // Corresponding Box wrapper type
+///     OnceType,                    // Corresponding once wrapper type
+///     Fn(args) [-> RetType]        // Fn or FnMut signature (auto-infers everything!)
+/// );
+/// ```
+///
 /// # Examples
 ///
 /// ```ignore
-/// // For Consumer types (single parameter, direct call)
-/// impl_rc_conversions!(
-///     RcConsumer<T>,
-///     BoxConsumer,
-///     BoxConsumerOnce,
-///     impl Fn(&T)
-/// );
+/// // Consumer: Fn(&T) → direct call mode
+/// impl_rc_conversions!(RcConsumer<T>, BoxConsumer, BoxConsumerOnce, Fn(t: &T));
 ///
-/// // For StatefulConsumer types (single parameter, borrow_mut call)
-/// impl_rc_conversions!(
-///     RcStatefulConsumer<T>,
-///     BoxStatefulConsumer,
-///     BoxConsumerOnce,
-///     impl FnMut(&T),
-///     borrow_mut
-/// );
+/// // StatefulConsumer: FnMut(&T) → borrow_mut call mode
+/// impl_rc_conversions!(RcStatefulConsumer<T>, BoxStatefulConsumer, BoxConsumerOnce, FnMut(t: &T));
 ///
-/// // For BiConsumer types (two parameters, direct call)
-/// impl_rc_conversions!(
-///     RcBiConsumer<T, U>,
-///     BoxBiConsumer,
-///     BoxBiConsumerOnce,
-///     impl Fn(&T, &U)
-/// );
+/// // BiConsumer: Fn(&T, &U) → direct call mode
+/// impl_rc_conversions!(RcBiConsumer<T, U>, BoxBiConsumer, BoxBiConsumerOnce, Fn(t: &T, u: &U));
+///
+/// // Function: Fn(&T) -> R → direct call mode
+/// impl_rc_conversions!(RcFunction<T, R>, BoxFunction, BoxFunctionOnce, Fn(t: &T) -> R);
+///
+/// // StatefulFunction: FnMut(&T) -> R → borrow_mut call mode
+/// impl_rc_conversions!(RcStatefulFunction<T, R>, BoxStatefulFunction, BoxFunctionOnce, FnMut(t: &T) -> R);
+///
+/// // MutatingFunction: Fn(&mut T) -> R → direct call mode
+/// impl_rc_conversions!(RcMutatingFunction<T, R>, BoxMutatingFunction, BoxMutatingFunctionOnce, Fn(input: &mut T) -> R);
 /// ```
 ///
 /// # Author
@@ -68,109 +66,178 @@
 /// Haixing Hu
 
 macro_rules! impl_rc_conversions {
-    // ==================== Internal Implementation Mode ====================
-    // Unified internal implementation, using args($($arg:ident),*) to handle
-    // arbitrary number of parameters
+    // ==================== Core Macro: Generate Single Method ====================
 
-    // Direct call version (for RcConsumer, RcFunction, etc.)
+    // Helper: Generate a single conversion method (consuming self)
     (
-        @internal
-        $rc_type:ident < $($generics:ident),* >,
-        $box_type:ident,
-        $once_type:ident,
-        $fn_type:ty,
-        direct,
-        args($($arg:ident),*)
+        @method_into
+        $method_name:ident,                              // Method name: into_box, into_once
+        $rc_type:ident < $($generics:ident),* >,        // Rc type with generics
+        $target_type:ident,                              // Target type: BoxType or OnceType
+        $call_mode:ident,                                // direct or borrow_mut
+        ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?   // Function signature
     ) => {
-        fn into_box(self) -> $box_type<$($generics),*>
+        fn $method_name(self) -> $target_type<$($generics),*>
         where
             $($generics: 'static),*
         {
-            $box_type::new_with_optional_name(
-                move |$($arg),*| (self.function)($($arg),*),
-                self.name,
+            $target_type::new_with_optional_name(
+                impl_rc_conversions!(@make_closure $call_mode, self.function, $($arg),*),
+                self.name
             )
         }
+    };
 
-        fn into_rc(self) -> $rc_type<$($generics),*>
+    // Helper: Generate a single conversion method (borrowing &self)
+    (
+        @method_to
+        $method_name:ident,                              // Method name: to_box, to_once
+        $rc_type:ident < $($generics:ident),* >,        // Rc type with generics
+        $target_type:ident,                              // Target type: BoxType or OnceType
+        $call_mode:ident,                                // direct or borrow_mut
+        ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?   // Function signature
+    ) => {
+        fn $method_name(&self) -> $target_type<$($generics),*>
         where
             $($generics: 'static),*
         {
-            self
+            let self_fn = self.function.clone();
+            let self_name = self.name.clone();
+            $target_type::new_with_optional_name(
+                impl_rc_conversions!(@make_closure $call_mode, self_fn, $($arg),*),
+                self_name
+            )
         }
+    };
 
-        fn into_fn(self) -> $fn_type
+    // Helper: Generate into_fn method (consuming self, no return type, direct)
+    (
+        @fn_method_into
+        direct,
+        ($($arg:ident : $arg_ty:ty),*)
+    ) => {
+        fn into_fn(self) -> impl Fn($($arg_ty),*)
         {
             move |$($arg),*| (self.function)($($arg),*)
         }
+    };
 
-        fn into_once(self) -> $once_type<$($generics),*>
-        where
-            $($generics: 'static),*
+    // Helper: Generate into_fn method (consuming self, with return type, direct)
+    (
+        @fn_method_into
+        direct,
+        ($($arg:ident : $arg_ty:ty),*) -> $ret:ty
+    ) => {
+        fn into_fn(self) -> impl Fn($($arg_ty),*) -> $ret
         {
-            $once_type::new_with_optional_name(
-                move |$($arg),*| (self.function)($($arg),*),
-                self.name
-            )
-        }
-
-        fn to_box(&self) -> $box_type<$($generics),*>
-        where
-            $($generics: 'static),*
-        {
-            let self_fn = self.function.clone();
-            let self_name = self.name.clone();
-            $box_type::new_with_optional_name(
-                move |$($arg),*| (self_fn)($($arg),*),
-                self_name
-            )
-        }
-
-        fn to_rc(&self) -> $rc_type<$($generics),*>
-        where
-            $($generics: 'static),*
-        {
-            self.clone()
-        }
-
-        fn to_fn(&self) -> $fn_type {
-            let self_fn = self.function.clone();
-            move |$($arg),*| (self_fn)($($arg),*)
-        }
-
-        fn to_once(&self) -> $once_type<$($generics),*>
-        where
-            $($generics: 'static),*
-        {
-            let self_fn = self.function.clone();
-            let self_name = self.name.clone();
-            $once_type::new_with_optional_name(
-                move |$($arg),*| (self_fn)($($arg),*),
-                self_name
-            )
+            move |$($arg),*| (self.function)($($arg),*)
         }
     };
 
-    // Borrow mut version (for RcStatefulConsumer, RcStatefulFunction, etc.)
+    // Helper: Generate into_fn method (consuming self, no return type, borrow_mut)
     (
-        @internal
+        @fn_method_into
+        borrow_mut,
+        ($($arg:ident : $arg_ty:ty),*)
+    ) => {
+        fn into_fn(self) -> impl FnMut($($arg_ty),*)
+        {
+            move |$($arg),*| (self.function.borrow_mut())($($arg),*)
+        }
+    };
+
+    // Helper: Generate into_fn method (consuming self, with return type, borrow_mut)
+    (
+        @fn_method_into
+        borrow_mut,
+        ($($arg:ident : $arg_ty:ty),*) -> $ret:ty
+    ) => {
+        fn into_fn(self) -> impl FnMut($($arg_ty),*) -> $ret
+        {
+            move |$($arg),*| (self.function.borrow_mut())($($arg),*)
+        }
+    };
+
+    // Helper: Generate to_fn method (borrowing &self, no return type, direct)
+    (
+        @fn_method_to
+        direct,
+        ($($arg:ident : $arg_ty:ty),*)
+    ) => {
+        fn to_fn(&self) -> impl Fn($($arg_ty),*)
+        {
+            let self_fn = self.function.clone();
+            move |$($arg),*| (self_fn)($($arg),*)
+        }
+    };
+
+    // Helper: Generate to_fn method (borrowing &self, with return type, direct)
+    (
+        @fn_method_to
+        direct,
+        ($($arg:ident : $arg_ty:ty),*) -> $ret:ty
+    ) => {
+        fn to_fn(&self) -> impl Fn($($arg_ty),*) -> $ret
+        {
+            let self_fn = self.function.clone();
+            move |$($arg),*| (self_fn)($($arg),*)
+        }
+    };
+
+    // Helper: Generate to_fn method (borrowing &self, no return type, borrow_mut)
+    (
+        @fn_method_to
+        borrow_mut,
+        ($($arg:ident : $arg_ty:ty),*)
+    ) => {
+        fn to_fn(&self) -> impl FnMut($($arg_ty),*)
+        {
+            let self_fn = self.function.clone();
+            move |$($arg),*| (self_fn.borrow_mut())($($arg),*)
+        }
+    };
+
+    // Helper: Generate to_fn method (borrowing &self, with return type, borrow_mut)
+    (
+        @fn_method_to
+        borrow_mut,
+        ($($arg:ident : $arg_ty:ty),*) -> $ret:ty
+    ) => {
+        fn to_fn(&self) -> impl FnMut($($arg_ty),*) -> $ret
+        {
+            let self_fn = self.function.clone();
+            move |$($arg),*| (self_fn.borrow_mut())($($arg),*)
+        }
+    };
+
+    // Helper: Make closure based on call mode
+    (@make_closure direct, $fn_call:expr, $($arg:ident),*) => {
+        move |$($arg),*| ($fn_call)($($arg),*)
+    };
+    (@make_closure borrow_mut, $fn_call:expr, $($arg:ident),*) => {
+        move |$($arg),*| ($fn_call.borrow_mut())($($arg),*)
+    };
+
+    // ==================== Main Implementation ====================
+
+    // Internal implementation: Generate all methods
+    (
+        @impl
         $rc_type:ident < $($generics:ident),* >,
         $box_type:ident,
         $once_type:ident,
-        $fn_type:ty,
-        borrow_mut,
-        args($($arg:ident),*)
+        $call_mode:ident,
+        ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
     ) => {
-        fn into_box(self) -> $box_type<$($generics),*>
-        where
-            $($generics: 'static),*
-        {
-            $box_type::new_with_optional_name(
-                move |$($arg),*| (self.function.borrow_mut())($($arg),*),
-                self.name,
-            )
-        }
+        // into_box: consumes self, returns Box
+        impl_rc_conversions!(
+            @method_into into_box,
+            $rc_type<$($generics),*>, $box_type,
+            $call_mode,
+            ($($arg : $arg_ty),*) $(-> $ret)?
+        );
 
+        // into_rc: consumes self, returns self (zero-cost)
         fn into_rc(self) -> $rc_type<$($generics),*>
         where
             $($generics: 'static),*
@@ -178,33 +245,30 @@ macro_rules! impl_rc_conversions {
             self
         }
 
-        fn into_fn(self) -> $fn_type
-        {
-            move |$($arg),*| (self.function.borrow_mut())($($arg),*)
-        }
+        // into_fn: consumes self, returns impl Fn/FnMut
+        impl_rc_conversions!(
+            @fn_method_into
+            $call_mode,
+            ($($arg : $arg_ty),*) $(-> $ret)?
+        );
 
-        fn into_once(self) -> $once_type<$($generics),*>
-        where
-            $($generics: 'static),*
-        {
-            $once_type::new_with_optional_name(
-                move |$($arg),*| (self.function.borrow_mut())($($arg),*),
-                self.name
-            )
-        }
+        // into_once: consumes self, returns Once
+        impl_rc_conversions!(
+            @method_into into_once,
+            $rc_type<$($generics),*>, $once_type,
+            $call_mode,
+            ($($arg : $arg_ty),*) $(-> $ret)?
+        );
 
-        fn to_box(&self) -> $box_type<$($generics),*>
-        where
-            $($generics: 'static),*
-        {
-            let self_fn = self.function.clone();
-            let self_name = self.name.clone();
-            $box_type::new_with_optional_name(
-                move |$($arg),*| (self_fn.borrow_mut())($($arg),*),
-                self_name
-            )
-        }
+        // to_box: borrows self, clones and returns Box
+        impl_rc_conversions!(
+            @method_to to_box,
+            $rc_type<$($generics),*>, $box_type,
+            $call_mode,
+            ($($arg : $arg_ty),*) $(-> $ret)?
+        );
 
+        // to_rc: borrows self, returns clone (cheap Rc clone)
         fn to_rc(&self) -> $rc_type<$($generics),*>
         where
             $($generics: 'static),*
@@ -212,136 +276,57 @@ macro_rules! impl_rc_conversions {
             self.clone()
         }
 
-        fn to_fn(&self) -> $fn_type {
-            let self_fn = self.function.clone();
-            move |$($arg),*| (self_fn.borrow_mut())($($arg),*)
-        }
+        // to_fn: borrows self, clones and returns impl Fn/FnMut
+        impl_rc_conversions!(
+            @fn_method_to
+            $call_mode,
+            ($($arg : $arg_ty),*) $(-> $ret)?
+        );
 
-        fn to_once(&self) -> $once_type<$($generics),*>
-        where
-            $($generics: 'static),*
-        {
-            let self_fn = self.function.clone();
-            let self_name = self.name.clone();
-            $once_type::new_with_optional_name(
-                move |$($arg),*| (self_fn.borrow_mut())($($arg),*),
-                self_name
-            )
-        }
+        // to_once: borrows self, clones and returns Once
+        impl_rc_conversions!(
+            @method_to to_once,
+            $rc_type<$($generics),*>, $once_type,
+            $call_mode,
+            ($($arg : $arg_ty),*) $(-> $ret)?
+        );
     };
 
-    // ==================== Public Interface Modes ====================
+    // ==================== Public Interface ====================
 
-    // Single parameter version (1 generic parameter) - default direct call
+    // Fn(...) → direct call mode (immutable, no interior mutability)
     (
-        $rc_type:ident < $t:ident >,
+        $rc_type:ident < $($generics:ident),* >,
         $box_type:ident,
         $once_type:ident,
-        $fn_type:ty
+        Fn($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
     ) => {
         impl_rc_conversions!(
-            @internal
-            $rc_type<$t>,
+            @impl
+            $rc_type<$($generics),*>,
             $box_type,
             $once_type,
-            $fn_type,
             direct,
-            args(t)
+            ($($arg : $arg_ty),*) $(-> $ret)?
         );
     };
 
-    // Single parameter version with borrow_mut
+    // FnMut(...) → borrow_mut call mode (mutable, needs RefCell/Mutex)
     (
-        $rc_type:ident < $t:ident >,
+        $rc_type:ident < $($generics:ident),* >,
         $box_type:ident,
         $once_type:ident,
-        $fn_type:ty,
-        borrow_mut
+        FnMut($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
     ) => {
         impl_rc_conversions!(
-            @internal
-            $rc_type<$t>,
+            @impl
+            $rc_type<$($generics),*>,
             $box_type,
             $once_type,
-            $fn_type,
             borrow_mut,
-            args(t)
+            ($($arg : $arg_ty),*) $(-> $ret)?
         );
     };
-
-    // Two parameter version (2 generic parameters) - default direct call
-    (
-        $rc_type:ident < $t:ident, $u:ident >,
-        $box_type:ident,
-        $once_type:ident,
-        $fn_type:ty
-    ) => {
-        impl_rc_conversions!(
-            @internal
-            $rc_type<$t, $u>,
-            $box_type,
-            $once_type,
-            $fn_type,
-            direct,
-            args(t, u)
-        );
-    };
-
-    // Two parameter version with borrow_mut
-    (
-        $rc_type:ident < $t:ident, $u:ident >,
-        $box_type:ident,
-        $once_type:ident,
-        $fn_type:ty,
-        borrow_mut
-    ) => {
-        impl_rc_conversions!(
-            @internal
-            $rc_type<$t, $u>,
-            $box_type,
-            $once_type,
-            $fn_type,
-            borrow_mut,
-            args(t, u)
-        );
-    };
-
-    // // Three parameter version (3 generic parameters) - if needed
-    // (
-    //     $rc_type:ident < $t:ident, $u:ident, $v:ident >,
-    //     $box_type:ident,
-    //     $once_type:ident,
-    //     $fn_type:ty
-    // ) => {
-    //     impl_rc_conversions!(
-    //         @internal
-    //         $rc_type<$t, $u, $v>,
-    //         $box_type,
-    //         $once_type,
-    //         $fn_type,
-    //         direct,
-    //         args(t, u, v)
-    //     );
-    // };
-
-    // // Three parameter version with borrow_mut
-    // (
-    //     $rc_type:ident < $t:ident, $u:ident, $v:ident >,
-    //     $box_type:ident,
-    //     $once_type:ident,
-    //     $fn_type:ty,
-    //     borrow_mut
-    // ) => {
-    //     impl_rc_conversions!(
-    //         @internal
-    //         $rc_type<$t, $u, $v>,
-    //         $box_type,
-    //         $once_type,
-    //         $fn_type,
-    //         borrow_mut,
-    //         args(t, u, v)
-    //     );
-    // };
 }
 
 pub(crate) use impl_rc_conversions;
