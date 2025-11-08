@@ -577,45 +577,13 @@ impl<T, U> StatefulBiConsumer<T, U> for BoxStatefulBiConsumer<T, U> {
         (self.function)(first, second)
     }
 
-    fn into_box(self) -> BoxStatefulBiConsumer<T, U>
-    where
-        T: 'static,
-        U: 'static,
-    {
-        self
-    }
-
-    fn into_rc(self) -> RcStatefulBiConsumer<T, U>
-    where
-        T: 'static,
-        U: 'static,
-    {
-        let mut func = self.function;
-        RcStatefulBiConsumer::new_with_optional_name(move |t, u| func(t, u), self.name)
-    }
-
-    // do NOT override BiConsumer::into_arc() because BoxStatefulBiConsumer is not Send + Sync
-    // and calling BoxStatefulBiConsumer::into_arc() will cause a compile error
-
-    fn into_fn(self) -> impl FnMut(&T, &U)
-    where
-        T: 'static,
-        U: 'static,
-    {
-        self.function
-    }
-
-    fn into_once(self) -> BoxBiConsumerOnce<T, U>
-    where
-        T: 'static,
-        U: 'static,
-    {
-        let mut self_fn = self.function;
-        BoxBiConsumerOnce::new_with_optional_name(move |t, u| self_fn(t, u), self.name)
-    }
-
-    // do NOT override BiConsumer::to_xxx() because BoxStatefulBiConsumer is not Clone
-    // and calling BoxStatefulBiConsumer::to_xxx() will cause a compile error
+    // Generates: into_box(), into_rc(), into_fn(), into_once()
+    impl_box_into_conversions!(
+        BoxStatefulBiConsumer<T, U>,
+        RcStatefulBiConsumer,
+        BoxBiConsumerOnce,
+        impl FnMut(&T, &U)
+    );
 }
 
 // Use macro to generate Debug and Display implementations

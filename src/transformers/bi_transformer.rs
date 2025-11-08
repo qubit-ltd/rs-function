@@ -326,39 +326,13 @@ impl<T, U, R> BiTransformer<T, U, R> for BoxBiTransformer<T, U, R> {
         (self.function)(first, second)
     }
 
-    fn into_box(self) -> BoxBiTransformer<T, U, R>
-    where
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        // Zero-cost: directly return itself
-        self
-    }
-
-    fn into_rc(self) -> RcBiTransformer<T, U, R>
-    where
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        RcBiTransformer::new(move |t, u| (self.function)(t, u))
-    }
-
-    // do NOT override BoxBiTransformer::into_arc() because BoxBiTransformer is not Send + Sync
-    // and calling BoxBiTransformer::into_arc() will cause a compile error
-
-    fn into_fn(self) -> impl Fn(T, U) -> R
-    where
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        move |t: T, u: U| (self.function)(t, u)
-    }
-
-    // do NOT override BoxBiTransformer::to_xxx() because BoxBiTransformer is not Clone
-    // and calling BoxBiTransformer::to_xxx() will cause a compile error
+    // Generates: into_box(), into_rc(), into_fn(), into_once()
+    impl_box_into_conversions!(
+        BoxBiTransformer<T, U, R>,
+        RcBiTransformer,
+        BoxBiTransformerOnce,
+        impl Fn(T, U) -> R
+    );
 }
 
 // ============================================================================

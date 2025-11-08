@@ -456,41 +456,13 @@ impl<T, U> BiConsumer<T, U> for BoxBiConsumer<T, U> {
         (self.function)(first, second)
     }
 
-    fn into_box(self) -> BoxBiConsumer<T, U>
-    where
-        T: 'static,
-        U: 'static,
-    {
-        self
-    }
-
-    fn into_rc(self) -> RcBiConsumer<T, U>
-    where
-        T: 'static,
-        U: 'static,
-    {
-        RcBiConsumer::new_with_optional_name(move |t, u| (self.function)(t, u), self.name)
-    }
-
-    // do NOT override ReadonlyConsumer::into_arc() because ArcBiConsumer is not Send + Sync
-    // and calling ArcBiConsumer::into_arc() will cause a compile error
-
-    fn into_fn(self) -> impl Fn(&T, &U)
-    where
-        T: 'static,
-        U: 'static,
-    {
-        self.function
-    }
-
-    fn into_once(self) -> BoxBiConsumerOnce<T, U>
-    where
-        T: 'static,
-        U: 'static,
-    {
-        let self_fn = self.function;
-        BoxBiConsumerOnce::new_with_optional_name(move |t, u| self_fn(t, u), self.name)
-    }
+    // Generates: into_box(), into_rc(), into_fn(), into_once()
+    impl_box_into_conversions!(
+        BoxBiConsumer<T, U>,
+        RcBiConsumer,
+        BoxBiConsumerOnce,
+        impl Fn(&T, &U)
+    );
 }
 
 // Use macro to generate Debug and Display implementations
