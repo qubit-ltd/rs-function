@@ -51,7 +51,7 @@ use crate::consumers::macros::{
     impl_shared_conditional_consumer,
     impl_shared_consumer_methods,
 };
-use crate::macros::impl_box_into_conversions;
+use crate::macros::{impl_box_into_conversions, impl_rc_conversions};
 use crate::predicates::bi_predicate::{
     ArcBiPredicate,
     BiPredicate,
@@ -703,61 +703,13 @@ impl<T, U> BiConsumer<T, U> for RcBiConsumer<T, U> {
         (self.function)(first, second)
     }
 
-    fn into_box(self) -> BoxBiConsumer<T, U>
-    where
-        T: 'static,
-        U: 'static,
-    {
-        BoxBiConsumer::new_with_optional_name(move |t, u| (self.function)(t, u), self.name)
-    }
-
-    fn into_rc(self) -> RcBiConsumer<T, U>
-    where
-        T: 'static,
-        U: 'static,
-    {
-        self
-    }
-
-    // do NOT override BiConsumer::into_arc() because RcBiConsumer is not Send + Sync
-    // and calling RcBiConsumer::into_arc() will cause a compile error
-
-    fn into_fn(self) -> impl Fn(&T, &U)
-    where
-        T: 'static,
-        U: 'static,
-    {
-        move |t, u| (self.function)(t, u)
-    }
-
-    fn to_box(&self) -> BoxBiConsumer<T, U>
-    where
-        T: 'static,
-        U: 'static,
-    {
-        let self_fn = self.function.clone();
-        BoxBiConsumer::new_with_optional_name(move |t, u| self_fn(t, u), self.name.clone())
-    }
-
-    fn to_rc(&self) -> RcBiConsumer<T, U>
-    where
-        T: 'static,
-        U: 'static,
-    {
-        self.clone()
-    }
-
-    // do NOT override BiConsumer::to_arc() because RcBiConsumer is not Send + Sync
-    // and calling RcBiConsumer::to_arc() will cause a compile error
-
-    fn to_fn(&self) -> impl Fn(&T, &U)
-    where
-        T: 'static,
-        U: 'static,
-    {
-        let self_fn = self.function.clone();
-        move |t, u| self_fn(t, u)
-    }
+    // Use macro to implement conversion methods
+    impl_rc_conversions!(
+        RcBiConsumer<T, U>,
+        BoxBiConsumer,
+        BoxBiConsumerOnce,
+        impl Fn(&T, &U)
+    );
 }
 
 // Use macro to generate Clone implementation

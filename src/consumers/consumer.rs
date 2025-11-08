@@ -51,7 +51,7 @@ use crate::consumers::macros::{
     impl_shared_conditional_consumer,
     impl_shared_consumer_methods,
 };
-use crate::macros::impl_box_into_conversions;
+use crate::macros::{impl_box_into_conversions, impl_rc_conversions};
 use crate::predicates::predicate::{
     ArcPredicate,
     BoxPredicate,
@@ -478,71 +478,13 @@ impl<T> Consumer<T> for RcConsumer<T> {
         (self.function)(value)
     }
 
-    fn into_box(self) -> BoxConsumer<T>
-    where
-        T: 'static,
-    {
-        BoxConsumer::new_with_optional_name(move |t| (self.function)(t), self.name)
-    }
-
-    fn into_rc(self) -> RcConsumer<T>
-    where
-        T: 'static,
-    {
-        self
-    }
-
-    // do NOT override Consumer::into_arc() because RcConsumer is not Send + Sync
-    // and calling RcConsumer::into_arc() will cause a compile error
-
-    fn into_fn(self) -> impl Fn(&T)
-    where
-        T: 'static,
-    {
-        move |t| (self.function)(t)
-    }
-
-    fn into_once(self) -> BoxConsumerOnce<T>
-    where
-        T: 'static,
-    {
-        BoxConsumerOnce::new_with_optional_name(move |t| (self.function)(t), self.name)
-    }
-
-    fn to_box(&self) -> BoxConsumer<T>
-    where
-        T: 'static,
-    {
-        let self_fn = self.function.clone();
-        BoxConsumer::new_with_optional_name(move |t| self_fn(t), self.name.clone())
-    }
-
-    fn to_rc(&self) -> RcConsumer<T>
-    where
-        T: 'static,
-    {
-        self.clone()
-    }
-
-    // do NOT override Consumer::to_arc() because RcConsumer is not Send + Sync
-    // and calling RcConsumer::to_arc() will cause a compile error
-
-    fn to_fn(&self) -> impl Fn(&T)
-    where
-        T: 'static,
-    {
-        let self_fn = self.function.clone();
-        move |t| self_fn(t)
-    }
-
-    fn to_once(&self) -> BoxConsumerOnce<T>
-    where
-        T: 'static,
-    {
-        let self_fn = self.function.clone();
-        let self_name = self.name.clone();
-        BoxConsumerOnce::new_with_optional_name(move |t| self_fn(t), self_name)
-    }
+    // Use macro to implement conversion methods
+    impl_rc_conversions!(
+        RcConsumer<T>,
+        BoxConsumer,
+        BoxConsumerOnce,
+        impl Fn(&T)
+    );
 }
 
 // Use macro to generate Clone implementation

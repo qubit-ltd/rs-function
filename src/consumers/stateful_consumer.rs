@@ -54,7 +54,7 @@ use crate::consumers::macros::{
     impl_shared_conditional_consumer,
     impl_shared_consumer_methods,
 };
-use crate::macros::impl_box_into_conversions;
+use crate::macros::{impl_box_into_conversions, impl_rc_conversions};
 use crate::predicates::predicate::{
     ArcPredicate,
     BoxPredicate,
@@ -683,78 +683,14 @@ impl<T> StatefulConsumer<T> for RcStatefulConsumer<T> {
         (self.function.borrow_mut())(value)
     }
 
-    fn into_box(self) -> BoxStatefulConsumer<T>
-    where
-        T: 'static,
-    {
-        BoxStatefulConsumer::new_with_optional_name(
-            move |t| self.function.borrow_mut()(t),
-            self.name,
-        )
-    }
-
-    fn into_rc(self) -> RcStatefulConsumer<T>
-    where
-        T: 'static,
-    {
-        self
-    }
-
-    //  do NOT override Consumer::into_arc() because RcStatefulConsumer is not Send + Sync
-    // and calling RcStatefulConsumer::into_arc() will cause a compile error
-
-    fn into_fn(self) -> impl FnMut(&T)
-    where
-        T: 'static,
-    {
-        move |t| self.function.borrow_mut()(t)
-    }
-
-    fn into_once(self) -> BoxConsumerOnce<T>
-    where
-        T: 'static,
-    {
-        let self_fn = self.function;
-        BoxConsumerOnce::new_with_optional_name(
-            move |t| self_fn.borrow_mut()(t),
-            self.name
-        )
-    }
-
-    fn to_box(&self) -> BoxStatefulConsumer<T>
-    where
-        T: 'static,
-    {
-        let self_fn = self.function.clone();
-        BoxStatefulConsumer::new_with_optional_name(
-            move |t| self_fn.borrow_mut()(t),
-            self.name.clone(),
-        )
-    }
-
-    fn to_rc(&self) -> RcStatefulConsumer<T>
-    where
-        T: 'static,
-    {
-        self.clone()
-    }
-
-    // do NOT override Consumer::to_arc() because RcStatefulConsumer is not Send + Sync
-    // and calling RcStatefulConsumer::to_arc() will cause a compile error
-
-    fn to_fn(&self) -> impl FnMut(&T) {
-        let self_fn = self.function.clone();
-        move |t| self_fn.borrow_mut()(t)
-    }
-
-    fn to_once(&self) -> BoxConsumerOnce<T>
-    where
-        T: 'static,
-    {
-        let self_fn = self.function.clone();
-        let self_name = self.name.clone();
-        BoxConsumerOnce::new_with_optional_name(move |t| self_fn.borrow_mut()(t), self_name)
-    }
+    // Use macro to implement conversion methods
+    impl_rc_conversions!(
+        RcStatefulConsumer<T>,
+        BoxStatefulConsumer,
+        BoxConsumerOnce,
+        impl FnMut(&T),
+        borrow_mut
+    );
 }
 
 // Use macro to generate Clone implementation

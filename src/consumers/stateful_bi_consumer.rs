@@ -53,7 +53,7 @@ use crate::consumers::macros::{
     impl_shared_conditional_consumer,
     impl_shared_consumer_methods,
 };
-use crate::macros::impl_box_into_conversions;
+use crate::macros::{impl_box_into_conversions, impl_rc_conversions};
 use crate::predicates::bi_predicate::{
     ArcBiPredicate,
     BiPredicate,
@@ -895,83 +895,14 @@ impl<T, U> StatefulBiConsumer<T, U> for RcStatefulBiConsumer<T, U> {
         (self.function.borrow_mut())(first, second)
     }
 
-    fn into_box(self) -> BoxStatefulBiConsumer<T, U>
-    where
-        T: 'static,
-        U: 'static,
-    {
-        let name = self.name;
-        let self_fn = self.function;
-        BoxStatefulBiConsumer::new_with_optional_name(move |t, u| self_fn.borrow_mut()(t, u), name)
-    }
-
-    fn into_rc(self) -> RcStatefulBiConsumer<T, U>
-    where
-        T: 'static,
-        U: 'static,
-    {
-        self
-    }
-
-    fn into_fn(self) -> impl FnMut(&T, &U)
-    where
-        T: 'static,
-        U: 'static,
-    {
-        move |t, u| self.function.borrow_mut()(t, u)
-    }
-
-    fn into_once(self) -> BoxBiConsumerOnce<T, U>
-    where
-        T: 'static,
-        U: 'static,
-    {
-        let self_fn = self.function;
-        BoxBiConsumerOnce::new_with_optional_name(move |t, u| self_fn.borrow_mut()(t, u), self.name)
-    }
-
-    fn to_box(&self) -> BoxStatefulBiConsumer<T, U>
-    where
-        T: 'static,
-        U: 'static,
-    {
-        let self_fn = self.function.clone();
-        BoxStatefulBiConsumer::new_with_optional_name(
-            move |t, u| self_fn.borrow_mut()(t, u),
-            self.name.clone()
-        )
-    }
-
-    fn to_rc(&self) -> RcStatefulBiConsumer<T, U>
-    where
-        T: 'static,
-        U: 'static,
-    {
-        self.clone()
-    }
-
-    fn to_fn(&self) -> impl FnMut(&T, &U)
-    where
-        T: 'static,
-        U: 'static,
-    {
-        let func = self.function.clone();
-        move |t: &T, u: &U| {
-            func.borrow_mut()(t, u);
-        }
-    }
-
-    fn to_once(&self) -> BoxBiConsumerOnce<T, U>
-    where
-        T: 'static,
-        U: 'static,
-    {
-        let self_fn = self.function.clone();
-        BoxBiConsumerOnce::new_with_optional_name(
-            move |t, u| self_fn.borrow_mut()(t, u),
-            self.name.clone()
-        )
-    }
+    // Use macro to implement conversion methods
+    impl_rc_conversions!(
+        RcStatefulBiConsumer<T, U>,
+        BoxStatefulBiConsumer,
+        BoxBiConsumerOnce,
+        impl FnMut(&T, &U),
+        borrow_mut
+    );
 }
 
 // Use macro to generate Clone implementation
