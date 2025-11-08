@@ -132,7 +132,7 @@ use crate::suppliers::macros::{
     impl_supplier_common_methods,
     impl_supplier_debug_display,
 };
-use crate::macros::impl_box_conversions;
+use crate::macros::{impl_box_conversions, impl_rc_conversions};
 use crate::transformers::transformer::Transformer;
 use crate::BoxSupplierOnce;
 
@@ -415,6 +415,19 @@ pub trait StatefulSupplier<T> {
         Self: Clone + Sized,
     {
         self.clone().into_fn()
+    }
+
+    /// Creates a `BoxSupplierOnce` from a cloned supplier
+    ///
+    /// Uses `Clone` to obtain an owned copy and converts it into a
+    /// `BoxSupplierOnce`. Requires `Self: Clone`. Custom implementations
+    /// can override this for better performance.
+    fn to_once(&self) -> BoxSupplierOnce<T>
+    where
+        Self: Clone + Sized + 'static,
+        T: 'static,
+    {
+        self.clone().into_once()
     }
 }
 
@@ -910,59 +923,13 @@ impl<T> StatefulSupplier<T> for RcStatefulSupplier<T> {
         (self.function.borrow_mut())()
     }
 
-    fn into_box(self) -> BoxStatefulSupplier<T>
-    where
-        T: 'static,
-    {
-        let self_fn = self.function;
-        BoxStatefulSupplier::new(move || self_fn.borrow_mut()())
-    }
-
-    fn into_rc(self) -> RcStatefulSupplier<T>
-    where
-        T: 'static,
-    {
-        self
-    }
-
-    // into_arc cannot be implemented because RcStatefulSupplier does not implement Send.
-    // Attempting to call this method will result in a compiler error due to missing Send bound.
-    // Use ArcStatefulSupplier::new directly instead.
-    // compile_error!("Cannot convert RcStatefulSupplier to ArcStatefulSupplier: RcStatefulSupplier does not implement Send");
-
-    fn into_fn(self) -> impl FnMut() -> T {
-        let function = self.function;
-        move || function.borrow_mut()()
-    }
-
-    fn to_box(&self) -> BoxStatefulSupplier<T>
-    where
-        Self: Clone + Sized + 'static,
-        T: 'static,
-    {
-        let function = Rc::clone(&self.function);
-        BoxStatefulSupplier::new(move || function.borrow_mut()())
-    }
-
-    fn to_rc(&self) -> RcStatefulSupplier<T>
-    where
-        Self: Clone + Sized + 'static,
-        T: 'static,
-    {
-        self.clone()
-    }
-
-    // NOTE: `RcStatefulSupplier` cannot be converted to `ArcStatefulSupplier` because it
-    // is not `Send`. Calling the default `to_arc` would fail compilation
-    // due to the missing `Send` bound.
-
-    fn to_fn(&self) -> impl FnMut() -> T
-    where
-        Self: Clone + Sized,
-    {
-        let function = Rc::clone(&self.function);
-        move || function.borrow_mut()()
-    }
+    // Generate all conversion methods using the unified macro
+    impl_rc_conversions!(
+        RcStatefulSupplier<T>,
+        BoxStatefulSupplier,
+        BoxSupplierOnce,
+        FnMut() -> T
+    );
 }
 
 // ==========================================================================

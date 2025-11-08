@@ -471,6 +471,22 @@ pub trait Supplier<T> {
     {
         self.clone().into_fn()
     }
+
+    /// Converts to `BoxSupplierOnce` without consuming self
+    ///
+    /// **⚠️ Requires Clone**: This method requires `Self` to implement `Clone`.
+    /// Clones the current supplier and converts the clone to a one-time supplier.
+    ///
+    /// # Returns
+    ///
+    /// Returns a `BoxSupplierOnce<T>`
+    fn to_once(&self) -> BoxSupplierOnce<T>
+    where
+        Self: Clone + 'static,
+        T: 'static,
+    {
+        self.clone().into_once()
+    }
 }
 
 // ======================================================================

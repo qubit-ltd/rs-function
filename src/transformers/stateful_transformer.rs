@@ -29,7 +29,7 @@ use std::sync::{
     Mutex,
 };
 
-use crate::macros::impl_box_conversions;
+use crate::macros::{impl_box_conversions, impl_rc_conversions};
 use crate::predicates::predicate::{
     ArcPredicate,
     BoxPredicate,
@@ -335,6 +335,20 @@ pub trait StatefulTransformer<T, R> {
     {
         self.clone().into_fn()
     }
+
+    /// Creates a `BoxTransformerOnce` from a cloned transformer
+    ///
+    /// Uses `Clone` to obtain an owned copy and converts it into a
+    /// `BoxTransformerOnce`. Requires `Self: Clone`. Custom implementations
+    /// can override this for better performance.
+    fn to_once(&self) -> BoxTransformerOnce<T, R>
+    where
+        Self: Sized + Clone + 'static,
+        T: 'static,
+        R: 'static,
+    {
+        self.clone().into_once()
+    }
 }
 
 // ============================================================================
@@ -470,48 +484,13 @@ impl<T, R> StatefulTransformer<T, R> for RcStatefulTransformer<T, R> {
         self_fn(input)
     }
 
-    fn into_box(self) -> BoxStatefulTransformer<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        BoxStatefulTransformer::new(move |x| {
-            let mut self_fn = self.function.borrow_mut();
-            self_fn(x)
-        })
-    }
-
-    fn into_rc(self) -> RcStatefulTransformer<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        // Zero-cost: directly return itself
-        self
-    }
-
-    // do NOT override StatefulTransformer::into_arc() because RcStatefulTransformer is not Send + Sync
-    // and calling RcStatefulTransformer::into_arc() will cause a compile error
-
-    fn into_fn(self) -> impl FnMut(T) -> R
-    where
-        T: 'static,
-        R: 'static,
-    {
-        // Efficient: use Rc cloning to create a closure
-        move |input: T| {
-            let mut self_fn = self.function.borrow_mut();
-            self_fn(input)
-        }
-    }
-
-    fn to_rc(&self) -> RcStatefulTransformer<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        self.clone()
-    }
+    // Generate all conversion methods using the unified macro
+    impl_rc_conversions!(
+        RcStatefulTransformer<T, R>,
+        BoxStatefulTransformer,
+        BoxTransformerOnce,
+        FnMut(input: T) -> R
+    );
 }
 
 // ============================================================================

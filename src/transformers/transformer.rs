@@ -33,7 +33,7 @@ use crate::predicates::predicate::{
     Predicate,
     RcPredicate,
 };
-use crate::macros::impl_box_conversions;
+use crate::macros::{impl_box_conversions, impl_rc_conversions};
 use crate::transformers::macros::{
     impl_box_conditional_transformer,
     impl_box_transformer_methods,
@@ -341,6 +341,23 @@ pub trait Transformer<T, R> {
     {
         self.clone().into_fn()
     }
+
+    /// Converts to `BoxTransformerOnce` without consuming self
+    ///
+    /// **⚠️ Requires Clone**: This method requires `Self` to implement `Clone`.
+    /// Clones the current transformer and converts the clone to a one-time transformer.
+    ///
+    /// # Returns
+    ///
+    /// Returns a `BoxTransformerOnce<T, R>`
+    fn to_once(&self) -> BoxTransformerOnce<T, R>
+    where
+        Self: Clone + 'static,
+        T: 'static,
+        R: 'static,
+    {
+        self.clone().into_once()
+    }
 }
 
 // ============================================================================
@@ -470,70 +487,13 @@ impl<T, R> Transformer<T, R> for RcTransformer<T, R> {
         (self.function)(input)
     }
 
-    // RcTransformer::into_box() is implemented by the default implementation
-    // of Transformer::into_box()
-
-    fn into_box(self) -> BoxTransformer<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        BoxTransformer::new(move |t| (self.function)(t))
-    }
-
-    // Override with zero-cost implementation: directly return itself
-    fn into_rc(self) -> RcTransformer<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        self
-    }
-
-    // do NOT override RcTransformer::into_arc() because RcTransformer is not Send + Sync
-    // and calling RcTransformer::into_arc() will cause a compile error
-
-    // Override with optimized implementation: wrap the Rc in a
-    // closure to avoid double indirection
-    fn into_fn(self) -> impl Fn(T) -> R
-    where
-        T: 'static,
-        R: 'static,
-    {
-        move |t| (self.function)(t)
-    }
-
-    // Override with optimized implementation: clone the Rc (cheap)
-    fn to_box(&self) -> BoxTransformer<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        let self_fn = self.function.clone();
-        BoxTransformer::new(move |t| self_fn(t))
-    }
-
-    // Override with zero-cost implementation: clone itself
-    fn to_rc(&self) -> RcTransformer<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        self.clone()
-    }
-
-    // do NOT override RcTransformer::to_arc() because RcTransformer is not Send + Sync
-    // and calling RcTransformer::to_arc() will cause a compile error
-
-    // Override with optimized implementation: clone the Rc (cheap)
-    fn to_fn(&self) -> impl Fn(T) -> R
-    where
-        T: 'static,
-        R: 'static,
-    {
-        let self_fn = self.function.clone();
-        move |t| self_fn(t)
-    }
+    // Generate all conversion methods using the unified macro
+    impl_rc_conversions!(
+        RcTransformer<T, R>,
+        BoxTransformer,
+        BoxTransformerOnce,
+        Fn(input: T) -> R
+    );
 }
 
 // ============================================================================
