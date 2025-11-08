@@ -31,6 +31,7 @@ use std::sync::{
 };
 
 use crate::{
+    functions::function_once::BoxFunctionOnce,
     functions::macros::{
         impl_box_conditional_function,
         impl_box_function_methods,
@@ -45,8 +46,11 @@ use crate::{
         impl_shared_conditional_function,
         impl_shared_function_methods,
     },
-    functions::function_once::BoxFunctionOnce,
-    macros::{impl_box_conversions, impl_rc_conversions},
+    macros::{
+        impl_arc_conversions,
+        impl_box_conversions,
+        impl_rc_conversions,
+    },
     predicates::predicate::{
         ArcPredicate,
         BoxPredicate,
@@ -596,109 +600,14 @@ impl<T, R> StatefulFunction<T, R> for ArcStatefulFunction<T, R> {
         (self.function.lock().unwrap())(t)
     }
 
-    fn into_box(self) -> BoxStatefulFunction<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        BoxStatefulFunction::new_with_optional_name(
-            move |t| self.function.lock().unwrap()(t),
-            self.name,
-        )
-    }
-
-    fn into_rc(self) -> RcStatefulFunction<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        RcStatefulFunction::new_with_optional_name(
-            move |t| self.function.lock().unwrap()(t),
-            self.name,
-        )
-    }
-
-    fn into_arc(self) -> ArcStatefulFunction<T, R>
-    where
-        T: Send + Sync + 'static,
-        R: 'static,
-    {
-        self
-    }
-
-    fn into_fn(self) -> impl FnMut(&T) -> R
-    where
-        T: 'static,
-        R: 'static,
-    {
-        move |t| (self.function.lock().unwrap())(t)
-    }
-
-    fn into_once(self) -> BoxFunctionOnce<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        BoxFunctionOnce::new_with_optional_name(
-            move |t| (self.function.lock().unwrap())(t),
-            self.name,
-        )
-    }
-
-    fn to_box(&self) -> BoxStatefulFunction<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        let self_fn = self.function.clone();
-        let self_name = self.name.clone();
-        BoxStatefulFunction::new_with_optional_name(
-            move |t| self_fn.lock().unwrap()(t),
-            self_name
-        )
-    }
-
-    fn to_rc(&self) -> RcStatefulFunction<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        let self_fn = self.function.clone();
-        let self_name = self.name.clone();
-        RcStatefulFunction::new_with_optional_name(
-            move |t| self_fn.lock().unwrap()(t),
-            self_name
-        )
-    }
-
-    fn to_arc(&self) -> ArcStatefulFunction<T, R>
-    where
-        T: Send + Sync + 'static,
-        R: Send + 'static,
-    {
-        self.clone()
-    }
-
-    fn to_fn(&self) -> impl FnMut(&T) -> R
-    where
-        T: 'static,
-        R: 'static,
-    {
-        let self_fn = self.function.clone();
-        move |t| self_fn.lock().unwrap()(t)
-    }
-
-    fn to_once(&self) -> BoxFunctionOnce<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        let self_fn = self.function.clone();
-        BoxFunctionOnce::new_with_optional_name(
-            move |t| self_fn.lock().unwrap()(t),
-            self.name.clone(),
-        )
-    }
+    // Use macro to implement conversion methods
+    impl_arc_conversions!(
+        ArcStatefulFunction<T, R>,
+        BoxStatefulFunction,
+        RcStatefulFunction,
+        BoxFunctionOnce,
+        FnMut(t: &T) -> R
+    );
 }
 
 // ============================================================================

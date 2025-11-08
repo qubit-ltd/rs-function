@@ -146,7 +146,11 @@ use crate::{
             impl_shared_function_methods,
         },
     },
-    macros::{impl_box_conversions, impl_rc_conversions},
+    macros::{
+        impl_arc_conversions,
+        impl_box_conversions,
+        impl_rc_conversions,
+    },
     predicates::predicate::{
         ArcPredicate,
         BoxPredicate,
@@ -854,96 +858,14 @@ impl<T, R> MutatingFunction<T, R> for ArcMutatingFunction<T, R> {
         (self.function)(input)
     }
 
-    fn into_box(self) -> BoxMutatingFunction<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        BoxMutatingFunction::new_with_optional_name(move |t| (self.function)(t), self.name)
-    }
-
-    fn into_rc(self) -> RcMutatingFunction<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        RcMutatingFunction::new_with_optional_name(move |t| (self.function)(t), self.name)
-    }
-
-    fn into_arc(self) -> ArcMutatingFunction<T, R>
-    where
-        T: Send + 'static,
-        R: Send + 'static,
-    {
-        self
-    }
-
-    fn into_fn(self) -> impl Fn(&mut T) -> R
-    where
-        Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        move |t| (self.function)(t)
-    }
-
-    fn to_box(&self) -> BoxMutatingFunction<T, R>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        let self_fn = self.function.clone();
-        BoxMutatingFunction::new_with_optional_name(move |t| (self_fn)(t), self.name.clone())
-    }
-
-    fn to_rc(&self) -> RcMutatingFunction<T, R>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        let self_fn = self.function.clone();
-        RcMutatingFunction::new_with_optional_name(move |t| (self_fn)(t), self.name.clone())
-    }
-
-    fn to_arc(&self) -> ArcMutatingFunction<T, R>
-    where
-        Self: Sized + 'static,
-        T: Send + 'static,
-        R: Send + 'static,
-    {
-        self.clone()
-    }
-
-    fn to_fn(&self) -> impl Fn(&mut T) -> R
-    where
-        Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        let self_fn = self.function.clone();
-        move |t| (self_fn)(t)
-    }
-
-    fn into_once(self) -> BoxMutatingFunctionOnce<T, R>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        BoxMutatingFunctionOnce::new_with_optional_name(move |t| (self.function)(t), self.name)
-    }
-
-    fn to_once(&self) -> BoxMutatingFunctionOnce<T, R>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        let self_fn = self.function.clone();
-        BoxMutatingFunctionOnce::new_with_optional_name(move |t| (self_fn)(t), self.name.clone())
-    }
+    // Use macro to implement conversion methods
+    impl_arc_conversions!(
+        ArcMutatingFunction<T, R>,
+        BoxMutatingFunction,
+        RcMutatingFunction,
+        BoxMutatingFunctionOnce,
+        Fn(input: &mut T) -> R
+    );
 }
 
 // =======================================================================
