@@ -31,6 +31,14 @@
 /// # Syntax
 ///
 /// ```ignore
+/// // 2-parameter version (no once type, for predicates and similar pure functions)
+/// impl_rc_conversions!(
+///     RcType<Generics>,           // Rc wrapper type with all generic parameters
+///     BoxType,                     // Corresponding Box wrapper type
+///     Fn(args) [-> RetType]        // Fn or FnMut signature (auto-infers everything!)
+/// );
+///
+/// // 3-parameter version (with once type, for consumers, functions, etc.)
 /// impl_rc_conversions!(
 ///     RcType<Generics>,           // Rc wrapper type with all generic parameters
 ///     BoxType,                     // Corresponding Box wrapper type
@@ -42,22 +50,28 @@
 /// # Examples
 ///
 /// ```ignore
-/// // Consumer: Fn(&T) → direct call mode
+/// // Predicate: Fn(&T) -> bool → direct call mode (no once type)
+/// impl_rc_conversions!(RcPredicate<T>, BoxPredicate, Fn(t: &T) -> bool);
+///
+/// // BiPredicate: Fn(&T, &U) -> bool → direct call mode (no once type)
+/// impl_rc_conversions!(RcBiPredicate<T, U>, BoxBiPredicate, Fn(t: &T, u: &U) -> bool);
+///
+/// // Consumer: Fn(&T) → direct call mode (with once type)
 /// impl_rc_conversions!(RcConsumer<T>, BoxConsumer, BoxConsumerOnce, Fn(t: &T));
 ///
-/// // StatefulConsumer: FnMut(&T) → borrow_mut call mode
+/// // StatefulConsumer: FnMut(&T) → borrow_mut call mode (with once type)
 /// impl_rc_conversions!(RcStatefulConsumer<T>, BoxStatefulConsumer, BoxConsumerOnce, FnMut(t: &T));
 ///
-/// // BiConsumer: Fn(&T, &U) → direct call mode
+/// // BiConsumer: Fn(&T, &U) → direct call mode (with once type)
 /// impl_rc_conversions!(RcBiConsumer<T, U>, BoxBiConsumer, BoxBiConsumerOnce, Fn(t: &T, u: &U));
 ///
-/// // Function: Fn(&T) -> R → direct call mode
+/// // Function: Fn(&T) -> R → direct call mode (with once type)
 /// impl_rc_conversions!(RcFunction<T, R>, BoxFunction, BoxFunctionOnce, Fn(t: &T) -> R);
 ///
-/// // StatefulFunction: FnMut(&T) -> R → borrow_mut call mode
+/// // StatefulFunction: FnMut(&T) -> R → borrow_mut call mode (with once type)
 /// impl_rc_conversions!(RcStatefulFunction<T, R>, BoxStatefulFunction, BoxFunctionOnce, FnMut(t: &T) -> R);
 ///
-/// // MutatingFunction: Fn(&mut T) -> R → direct call mode
+/// // MutatingFunction: Fn(&mut T) -> R → direct call mode (with once type)
 /// impl_rc_conversions!(RcMutatingFunction<T, R>, BoxMutatingFunction, BoxMutatingFunctionOnce, Fn(input: &mut T) -> R);
 /// ```
 ///
@@ -220,12 +234,11 @@ macro_rules! impl_rc_conversions {
 
     // ==================== Main Implementation ====================
 
-    // Internal implementation: Generate all methods
+    // Internal implementation: Generate common methods (shared by both variants)
     (
-        @impl
+        @impl_common
         $rc_type:ident < $($generics:ident),* >,
         $box_type:ident,
-        $once_type:ident,
         $call_mode:ident,
         ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
     ) => {
@@ -252,14 +265,6 @@ macro_rules! impl_rc_conversions {
             ($($arg : $arg_ty),*) $(-> $ret)?
         );
 
-        // into_once: consumes self, returns Once
-        impl_rc_conversions!(
-            @method_into into_once,
-            $rc_type<$($generics),*>, $once_type,
-            $call_mode,
-            ($($arg : $arg_ty),*) $(-> $ret)?
-        );
-
         // to_box: borrows self, clones and returns Box
         impl_rc_conversions!(
             @method_to to_box,
@@ -282,6 +287,33 @@ macro_rules! impl_rc_conversions {
             $call_mode,
             ($($arg : $arg_ty),*) $(-> $ret)?
         );
+    };
+
+    // Internal implementation: Generate all methods (with once type)
+    (
+        @impl
+        $rc_type:ident < $($generics:ident),* >,
+        $box_type:ident,
+        $once_type:ident,
+        $call_mode:ident,
+        ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
+    ) => {
+        // Generate common methods
+        impl_rc_conversions!(
+            @impl_common
+            $rc_type<$($generics),*>,
+            $box_type,
+            $call_mode,
+            ($($arg : $arg_ty),*) $(-> $ret)?
+        );
+
+        // into_once: consumes self, returns Once
+        impl_rc_conversions!(
+            @method_into into_once,
+            $rc_type<$($generics),*>, $once_type,
+            $call_mode,
+            ($($arg : $arg_ty),*) $(-> $ret)?
+        );
 
         // to_once: borrows self, clones and returns Once
         impl_rc_conversions!(
@@ -292,9 +324,57 @@ macro_rules! impl_rc_conversions {
         );
     };
 
+    // Internal implementation: Generate methods without once type
+    (
+        @impl_no_once
+        $rc_type:ident < $($generics:ident),* >,
+        $box_type:ident,
+        $call_mode:ident,
+        ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
+    ) => {
+        // Generate common methods only
+        impl_rc_conversions!(
+            @impl_common
+            $rc_type<$($generics),*>,
+            $box_type,
+            $call_mode,
+            ($($arg : $arg_ty),*) $(-> $ret)?
+        );
+    };
+
     // ==================== Public Interface ====================
 
-    // Fn(...) → direct call mode (immutable, no interior mutability)
+    // Fn(...) → direct call mode (immutable, no interior mutability) - no once type
+    (
+        $rc_type:ident < $($generics:ident),* >,
+        $box_type:ident,
+        Fn($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
+    ) => {
+        impl_rc_conversions!(
+            @impl_no_once
+            $rc_type<$($generics),*>,
+            $box_type,
+            direct,
+            ($($arg : $arg_ty),*) $(-> $ret)?
+        );
+    };
+
+    // FnMut(...) → borrow_mut call mode (mutable, needs RefCell/Mutex) - no once type
+    (
+        $rc_type:ident < $($generics:ident),* >,
+        $box_type:ident,
+        FnMut($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
+    ) => {
+        impl_rc_conversions!(
+            @impl_no_once
+            $rc_type<$($generics),*>,
+            $box_type,
+            borrow_mut,
+            ($($arg : $arg_ty),*) $(-> $ret)?
+        );
+    };
+
+    // Fn(...) → direct call mode (immutable, no interior mutability) - with once type
     (
         $rc_type:ident < $($generics:ident),* >,
         $box_type:ident,
@@ -311,7 +391,7 @@ macro_rules! impl_rc_conversions {
         );
     };
 
-    // FnMut(...) → borrow_mut call mode (mutable, needs RefCell/Mutex)
+    // FnMut(...) → borrow_mut call mode (mutable, needs RefCell/Mutex) - with once type
     (
         $rc_type:ident < $($generics:ident),* >,
         $box_type:ident,
