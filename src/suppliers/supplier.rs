@@ -309,7 +309,7 @@ pub trait Supplier<T> {
         ArcSupplier::new(move || self.get())
     }
 
-    /// Converts to a closure implementing `FnMut() -> T`.
+    /// Converts to a closure implementing `Fn() -> T`.
     ///
     /// This method has a default implementation that wraps the
     /// supplier in a closure. Custom implementations can override
@@ -317,7 +317,7 @@ pub trait Supplier<T> {
     ///
     /// # Returns
     ///
-    /// A closure implementing `FnMut() -> T`
+    /// A closure implementing `Fn() -> T`
     ///
     /// # Examples
     ///
@@ -325,11 +325,11 @@ pub trait Supplier<T> {
     /// use prism3_function::Supplier;
     ///
     /// let closure = || 42;
-    /// let mut fn_mut = closure.into_fn();
-    /// assert_eq!(fn_mut(), 42);
-    /// assert_eq!(fn_mut(), 42);
+    /// let fn_closure = closure.into_fn();
+    /// assert_eq!(fn_closure(), 42);
+    /// assert_eq!(fn_closure(), 42);
     /// ```
-    fn into_fn(self) -> impl FnMut() -> T
+    fn into_fn(self) -> impl Fn() -> T
     where
         Self: Sized,
     {
@@ -448,12 +448,12 @@ pub trait Supplier<T> {
     /// Converts to a closure by cloning.
     ///
     /// This method clones the supplier and wraps it in a closure
-    /// implementing `FnMut() -> T`. Requires `Self: Clone`. Custom
+    /// implementing `Fn() -> T`. Requires `Self: Clone`. Custom
     /// implementations can override this method for optimization.
     ///
     /// # Returns
     ///
-    /// A closure implementing `FnMut() -> T`
+    /// A closure implementing `Fn() -> T`
     ///
     /// # Examples
     ///
@@ -461,11 +461,11 @@ pub trait Supplier<T> {
     /// use prism3_function::Supplier;
     ///
     /// let closure = || 42;
-    /// let mut fn_mut = closure.to_fn();
-    /// assert_eq!(fn_mut(), 42);
-    /// assert_eq!(fn_mut(), 42);
+    /// let fn_closure = closure.to_fn();
+    /// assert_eq!(fn_closure(), 42);
+    /// assert_eq!(fn_closure(), 42);
     /// ```
-    fn to_fn(&self) -> impl FnMut() -> T
+    fn to_fn(&self) -> impl Fn() -> T
     where
         Self: Clone,
     {
@@ -572,7 +572,7 @@ impl<T> Supplier<T> for BoxSupplier<T> {
     impl_box_conversions!(
         BoxSupplier<T>,
         RcSupplier,
-        FnMut() -> T,
+        Fn() -> T,
         BoxSupplierOnce
     );
 }
@@ -696,7 +696,7 @@ impl<T> Supplier<T> for ArcSupplier<T> {
         self
     }
 
-    fn into_fn(self) -> impl FnMut() -> T {
+    fn into_fn(self) -> impl Fn() -> T {
         move || (self.function)()
     }
 
@@ -729,7 +729,7 @@ impl<T> Supplier<T> for ArcSupplier<T> {
         self.clone()
     }
 
-    fn to_fn(&self) -> impl FnMut() -> T
+    fn to_fn(&self) -> impl Fn() -> T
     where
         Self: Clone,
     {
@@ -870,14 +870,14 @@ where
         ArcSupplier::new(self)
     }
 
-    fn into_fn(self) -> impl FnMut() -> T
+    fn into_fn(self) -> impl Fn() -> T
     where
         Self: Sized,
     {
         self
     }
 
-    fn to_fn(&self) -> impl FnMut() -> T
+    fn to_fn(&self) -> impl Fn() -> T
     where
         Self: Clone,
     {

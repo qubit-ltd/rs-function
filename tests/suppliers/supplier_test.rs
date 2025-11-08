@@ -95,7 +95,7 @@ mod test_readonly_supplier_trait {
     fn test_into_fn() {
         // Test conversion to FnMut closure
         let closure = || 42;
-        let mut fn_mut = closure.into_fn();
+        let fn_mut = closure.into_fn();
         assert_eq!(fn_mut(), 42);
         assert_eq!(fn_mut(), 42);
     }
@@ -105,7 +105,7 @@ mod test_readonly_supplier_trait {
         // Test into_fn with captured value
         let value = 100;
         let closure = move || value * 2;
-        let mut fn_mut = closure.into_fn();
+        let fn_mut = closure.into_fn();
         assert_eq!(fn_mut(), 200);
         assert_eq!(fn_mut(), 200);
     }
@@ -114,11 +114,11 @@ mod test_readonly_supplier_trait {
     fn test_into_fn_returns_different_types() {
         // Test into_fn with different return types
         let closure_i32 = || 42i32;
-        let mut fn_mut_i32 = closure_i32.into_fn();
+        let fn_mut_i32 = closure_i32.into_fn();
         assert_eq!(fn_mut_i32(), 42i32);
 
         let closure_str = || "hello";
-        let mut fn_mut_str = closure_str.into_fn();
+        let fn_mut_str = closure_str.into_fn();
         assert_eq!(fn_mut_str(), "hello");
     }
 }
@@ -291,7 +291,7 @@ mod test_box_readonly_supplier {
         fn test_into_fn() {
             // Test conversion to FnMut closure
             let supplier = BoxSupplier::new(|| 42);
-            let mut fn_mut = supplier.into_fn();
+            let fn_mut = supplier.into_fn();
             assert_eq!(fn_mut(), 42);
             assert_eq!(fn_mut(), 42);
         }
@@ -301,7 +301,7 @@ mod test_box_readonly_supplier {
             // Test into_fn with captured value
             let value = 100;
             let supplier = BoxSupplier::new(move || value * 2);
-            let mut fn_mut = supplier.into_fn();
+            let fn_mut = supplier.into_fn();
             assert_eq!(fn_mut(), 200);
             assert_eq!(fn_mut(), 200);
         }
@@ -310,7 +310,7 @@ mod test_box_readonly_supplier {
         fn test_into_fn_with_string() {
             // Test into_fn with String type
             let supplier = BoxSupplier::new(|| String::from("hello"));
-            let mut fn_mut = supplier.into_fn();
+            let fn_mut = supplier.into_fn();
             assert_eq!(fn_mut(), "hello");
             assert_eq!(fn_mut(), "hello");
         }
@@ -556,7 +556,7 @@ mod test_arc_readonly_supplier {
         fn test_into_fn() {
             // Test conversion to FnMut closure
             let supplier = ArcSupplier::new(|| 42);
-            let mut fn_mut = supplier.into_fn();
+            let fn_mut = supplier.into_fn();
             assert_eq!(fn_mut(), 42);
             assert_eq!(fn_mut(), 42);
         }
@@ -566,7 +566,7 @@ mod test_arc_readonly_supplier {
             // Test into_fn with captured value
             let value = 100;
             let supplier = ArcSupplier::new(move || value * 2);
-            let mut fn_mut = supplier.into_fn();
+            let fn_mut = supplier.into_fn();
             assert_eq!(fn_mut(), 200);
             assert_eq!(fn_mut(), 200);
         }
@@ -575,7 +575,7 @@ mod test_arc_readonly_supplier {
         fn test_into_fn_with_string() {
             // Test into_fn with String type
             let supplier = ArcSupplier::new(|| String::from("hello"));
-            let mut fn_mut = supplier.into_fn();
+            let fn_mut = supplier.into_fn();
             assert_eq!(fn_mut(), "hello");
             assert_eq!(fn_mut(), "hello");
         }
@@ -771,7 +771,7 @@ mod test_rc_readonly_supplier {
         fn test_into_fn() {
             // Test conversion to FnMut closure
             let supplier = RcSupplier::new(|| 42);
-            let mut fn_mut = supplier.into_fn();
+            let fn_mut = supplier.into_fn();
             assert_eq!(fn_mut(), 42);
             assert_eq!(fn_mut(), 42);
         }
@@ -781,7 +781,7 @@ mod test_rc_readonly_supplier {
             // Test into_fn with captured value
             let value = 100;
             let supplier = RcSupplier::new(move || value * 2);
-            let mut fn_mut = supplier.into_fn();
+            let fn_mut = supplier.into_fn();
             assert_eq!(fn_mut(), 200);
             assert_eq!(fn_mut(), 200);
         }
@@ -790,7 +790,7 @@ mod test_rc_readonly_supplier {
         fn test_into_fn_with_string() {
             // Test into_fn with String type
             let supplier = RcSupplier::new(|| String::from("hello"));
-            let mut fn_mut = supplier.into_fn();
+            let fn_mut = supplier.into_fn();
             assert_eq!(fn_mut(), "hello");
             assert_eq!(fn_mut(), "hello");
         }
@@ -1422,7 +1422,7 @@ mod test_custom_readonly_supplier_default_impl {
         // Test that the default implementation of into_fn works
         // correctly for custom types
         let supplier = CounterSupplier::new(42);
-        let mut fn_mut = supplier.into_fn();
+        let fn_mut = supplier.into_fn();
 
         assert_eq!(fn_mut(), 42);
         assert_eq!(fn_mut(), 42);
@@ -1433,11 +1433,11 @@ mod test_custom_readonly_supplier_default_impl {
     fn test_custom_supplier_into_fn_with_different_values() {
         // Test into_fn with different values
         let supplier1 = CounterSupplier::new(100);
-        let mut fn_mut1 = supplier1.into_fn();
+        let fn_mut1 = supplier1.into_fn();
         assert_eq!(fn_mut1(), 100);
 
         let supplier2 = CounterSupplier::new(200);
-        let mut fn_mut2 = supplier2.into_fn();
+        let fn_mut2 = supplier2.into_fn();
         assert_eq!(fn_mut2(), 200);
     }
 
@@ -1445,7 +1445,7 @@ mod test_custom_readonly_supplier_default_impl {
     fn test_custom_supplier_into_fn_multiple_calls() {
         // Test that into_fn result can be called multiple times
         let supplier = CounterSupplier::new(999);
-        let mut fn_mut = supplier.into_fn();
+        let fn_mut = supplier.into_fn();
 
         for _ in 0..10 {
             assert_eq!(fn_mut(), 999);
@@ -1498,7 +1498,7 @@ mod test_custom_readonly_supplier_default_impl {
         // Test that the default implementation of to_fn works
         // correctly for custom Clone types
         let supplier = CounterSupplier::new(42);
-        let mut fn_mut = supplier.to_fn();
+        let fn_mut = supplier.to_fn();
 
         assert_eq!(fn_mut(), 42);
         assert_eq!(fn_mut(), 42);
@@ -1591,7 +1591,7 @@ mod test_to_methods {
         fn test_arc_to_fn() {
             // Test ArcSupplier::to_fn
             let arc = ArcSupplier::new(|| 42);
-            let mut fn_mut = arc.to_fn();
+            let fn_mut = arc.to_fn();
 
             assert_eq!(fn_mut(), 42);
             assert_eq!(fn_mut(), 42);
@@ -1614,7 +1614,7 @@ mod test_to_methods {
             let arc2 = arc.to_arc();
             assert_eq!(arc2.get(), "Hello");
 
-            let mut fn_mut = arc.to_fn();
+            let fn_mut = arc.to_fn();
             assert_eq!(fn_mut(), "Hello");
 
             // Original arc is still usable
@@ -1678,7 +1678,7 @@ mod test_to_methods {
         fn test_rc_to_fn() {
             // Test RcSupplier::to_fn
             let rc = RcSupplier::new(|| 42);
-            let mut fn_mut = rc.to_fn();
+            let fn_mut = rc.to_fn();
 
             assert_eq!(fn_mut(), 42);
             assert_eq!(fn_mut(), 42);
@@ -1698,7 +1698,7 @@ mod test_to_methods {
             let rc2 = rc.to_rc();
             assert_eq!(rc2.get(), "Hello");
 
-            let mut fn_mut = rc.to_fn();
+            let fn_mut = rc.to_fn();
             assert_eq!(fn_mut(), "Hello");
 
             // Original rc is still usable
@@ -1760,7 +1760,7 @@ mod test_to_methods {
         fn test_closure_to_fn() {
             // Test closure to_fn
             let closure = || 42;
-            let mut fn_mut = closure.to_fn();
+            let fn_mut = closure.to_fn();
 
             assert_eq!(fn_mut(), 42);
             assert_eq!(fn_mut(), 42);
@@ -1784,7 +1784,7 @@ mod test_to_methods {
             let arc = closure.to_arc();
             assert_eq!(arc.get(), 200);
 
-            let mut fn_mut = closure.to_fn();
+            let fn_mut = closure.to_fn();
             assert_eq!(fn_mut(), 200);
 
             // Original closure is still usable
