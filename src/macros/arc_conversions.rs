@@ -36,6 +36,7 @@
 /// # Syntax
 ///
 /// ```ignore
+/// // 4-parameter version (with once type, for consumers, functions, etc.)
 /// impl_arc_conversions!(
 ///     ArcType<Generics>,           // Arc wrapper type with all generic params
 ///     BoxType,                     // Corresponding Box wrapper type
@@ -43,32 +44,48 @@
 ///     OnceType,                    // Corresponding once wrapper type
 ///     Fn(args) [-> RetType]        // Fn or FnMut signature (auto-infers everything!)
 /// );
+///
+/// // 3-parameter version (no once type, for predicates and similar pure functions)
+/// impl_arc_conversions!(
+///     ArcType<Generics>,           // Arc wrapper type with all generic params
+///     BoxType,                     // Corresponding Box wrapper type
+///     RcType,                      // Corresponding Rc wrapper type
+///     Fn(args) [-> RetType]        // Fn or FnMut signature (auto-infers everything!)
+/// );
 /// ```
 ///
 /// # Examples
 ///
 /// ```ignore
-/// // Consumer: Fn(&T) → direct call mode
+/// // Predicate: Fn(&T) -> bool → direct call mode (no once type)
+/// impl_arc_conversions!(ArcPredicate<T>, BoxPredicate, RcPredicate,
+///                       Fn(t: &T) -> bool);
+///
+/// // BiPredicate: Fn(&T, &U) -> bool → direct call mode (no once type)
+/// impl_arc_conversions!(ArcBiPredicate<T, U>, BoxBiPredicate, RcBiPredicate,
+///                       Fn(t: &T, u: &U) -> bool);
+///
+/// // Consumer: Fn(&T) → direct call mode (with once type)
 /// impl_arc_conversions!(ArcConsumer<T>, BoxConsumer, RcConsumer,
 ///                       BoxConsumerOnce, Fn(t: &T));
 ///
-/// // StatefulConsumer: FnMut(&T) → lock_unwrap call mode
+/// // StatefulConsumer: FnMut(&T) → lock_unwrap call mode (with once type)
 /// impl_arc_conversions!(ArcStatefulConsumer<T>, BoxStatefulConsumer,
 ///                       RcStatefulConsumer, BoxConsumerOnce, FnMut(t: &T));
 ///
-/// // BiConsumer: Fn(&T, &U) → direct call mode
+/// // BiConsumer: Fn(&T, &U) → direct call mode (with once type)
 /// impl_arc_conversions!(ArcBiConsumer<T, U>, BoxBiConsumer, RcBiConsumer,
 ///                       BoxBiConsumerOnce, Fn(t: &T, u: &U));
 ///
-/// // Function: Fn(&T) -> R → direct call mode
+/// // Function: Fn(&T) -> R → direct call mode (with once type)
 /// impl_arc_conversions!(ArcFunction<T, R>, BoxFunction, RcFunction,
 ///                       BoxFunctionOnce, Fn(t: &T) -> R);
 ///
-/// // StatefulFunction: FnMut(&T) -> R → lock_unwrap call mode
+/// // StatefulFunction: FnMut(&T) -> R → lock_unwrap call mode (with once type)
 /// impl_arc_conversions!(ArcStatefulFunction<T, R>, BoxStatefulFunction,
 ///                       RcStatefulFunction, BoxFunctionOnce, FnMut(t: &T) -> R);
 ///
-/// // MutatingFunction: Fn(&mut T) -> R → direct call mode
+/// // MutatingFunction: Fn(&mut T) -> R → direct call mode (with once type)
 /// impl_arc_conversions!(ArcMutatingFunction<T, R>, BoxMutatingFunction,
 ///                       RcMutatingFunction, BoxMutatingFunctionOnce,
 ///                       Fn(input: &mut T) -> R);
@@ -408,6 +425,78 @@ macro_rules! impl_arc_conversions {
         );
     };
 
+    // Internal implementation: Generate methods without once type
+    (
+        @impl_no_once
+        $arc_type:ident < $($generics:ident),* >,
+        $box_type:ident,
+        $rc_type:ident,
+        $call_mode:ident,
+        ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
+    ) => {
+        // into_box: consumes self, returns Box
+        impl_arc_conversions!(
+            @method_into_box
+            $arc_type<$($generics),*>, $box_type,
+            $call_mode,
+            ($($arg : $arg_ty),*) $(-> $ret)?
+        );
+
+        // into_rc: consumes self, returns Rc
+        impl_arc_conversions!(
+            @method_into_rc
+            $arc_type<$($generics),*>, $rc_type,
+            $call_mode,
+            ($($arg : $arg_ty),*) $(-> $ret)?
+        );
+
+        // into_arc: consumes self, returns self (zero-cost)
+        fn into_arc(self) -> $arc_type<$($generics),*>
+        where
+            $($generics: 'static),*
+        {
+            self
+        }
+
+        // into_fn: consumes self, returns impl Fn/FnMut
+        impl_arc_conversions!(
+            @fn_method_into
+            $call_mode,
+            ($($arg : $arg_ty),*) $(-> $ret)?
+        );
+
+        // to_box: borrows self, clones and returns Box
+        impl_arc_conversions!(
+            @method_to_box
+            $arc_type<$($generics),*>, $box_type,
+            $call_mode,
+            ($($arg : $arg_ty),*) $(-> $ret)?
+        );
+
+        // to_rc: borrows self, clones and returns Rc
+        impl_arc_conversions!(
+            @method_to_rc
+            $arc_type<$($generics),*>, $rc_type,
+            $call_mode,
+            ($($arg : $arg_ty),*) $(-> $ret)?
+        );
+
+        // to_arc: borrows self, returns clone (cheap Arc clone)
+        fn to_arc(&self) -> $arc_type<$($generics),*>
+        where
+            $($generics: 'static),*
+        {
+            self.clone()
+        }
+
+        // to_fn: borrows self, clones and returns impl Fn/FnMut
+        impl_arc_conversions!(
+            @fn_method_to
+            $call_mode,
+            ($($arg : $arg_ty),*) $(-> $ret)?
+        );
+    };
+
     // ==================== Public Interface ====================
 
     // Fn(...) → direct call mode (immutable, no interior mutability)
@@ -443,6 +532,40 @@ macro_rules! impl_arc_conversions {
             $box_type,
             $rc_type,
             $once_type,
+            lock_unwrap,
+            ($($arg : $arg_ty),*) $(-> $ret)?
+        );
+    };
+
+    // Fn(...) → direct call mode (immutable, no interior mutability) - no once type
+    (
+        $arc_type:ident < $($generics:ident),* >,
+        $box_type:ident,
+        $rc_type:ident,
+        Fn($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
+    ) => {
+        impl_arc_conversions!(
+            @impl_no_once
+            $arc_type<$($generics),*>,
+            $box_type,
+            $rc_type,
+            direct,
+            ($($arg : $arg_ty),*) $(-> $ret)?
+        );
+    };
+
+    // FnMut(...) → lock_unwrap call mode (mutable, needs Mutex) - no once type
+    (
+        $arc_type:ident < $($generics:ident),* >,
+        $box_type:ident,
+        $rc_type:ident,
+        FnMut($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
+    ) => {
+        impl_arc_conversions!(
+            @impl_no_once
+            $arc_type<$($generics),*>,
+            $box_type,
+            $rc_type,
             lock_unwrap,
             ($($arg : $arg_ty),*) $(-> $ret)?
         );
