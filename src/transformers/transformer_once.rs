@@ -21,17 +21,20 @@
 //!
 //! Haixing Hu
 
-use crate::predicates::predicate::{
-    BoxPredicate,
-    Predicate,
-};
-use crate::transformers::macros::{
-    impl_box_conditional_transformer,
-    impl_box_transformer_methods,
-    impl_conditional_transformer_debug_display,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
-    impl_transformer_debug_display,
+use crate::{
+    macros::box_conversions::impl_box_once_conversions,
+    predicates::predicate::{
+        BoxPredicate,
+        Predicate,
+    },
+    transformers::macros::{
+        impl_box_conditional_transformer,
+        impl_box_transformer_methods,
+        impl_conditional_transformer_debug_display,
+        impl_transformer_common_methods,
+        impl_transformer_constant_method,
+        impl_transformer_debug_display,
+    },
 };
 
 // ============================================================================
@@ -241,27 +244,11 @@ impl<T, R> TransformerOnce<T, R> for BoxTransformerOnce<T, R> {
         (self.function)(input)
     }
 
-    fn into_box(self) -> BoxTransformerOnce<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        // Zero-cost: directly return itself
-        self
-    }
-
-    fn into_fn(self) -> impl FnOnce(T) -> R
-    where
-        T: 'static,
-        R: 'static,
-    {
-        // Zero-cost: directly return the inner function
-        self.function
-    }
-
-    // do NOT override BoxTransformer::to_box() and BoxTransformer::to_fn()
-    // because BoxTransformer is not Clone and calling BoxTransformer::to_box()
-    // or BoxTransformer::to_fn() will cause a compile error
+    impl_box_once_conversions!(
+        BoxTransformerOnce<T, R>,
+        TransformerOnce,
+        FnOnce(T) -> R
+    );
 }
 
 // ============================================================================

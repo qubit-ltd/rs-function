@@ -67,9 +67,12 @@
 //!
 //! Haixing Hu
 
-use crate::suppliers::macros::{
-    impl_supplier_common_methods,
-    impl_supplier_debug_display,
+use crate::{
+    macros::box_conversions::impl_box_once_conversions,
+    suppliers::macros::{
+        impl_supplier_common_methods,
+        impl_supplier_debug_display,
+    },
 };
 
 // ==========================================================================
@@ -299,9 +302,11 @@ pub struct BoxSupplierOnce<T> {
 
 impl<T> BoxSupplierOnce<T> {
     // Generates: new(), new_with_name(), name(), set_name(), constant()
-    impl_supplier_common_methods!(BoxSupplierOnce<T>, (FnOnce() -> T + 'static), |f| Box::new(
-        f
-    ));
+    impl_supplier_common_methods!(
+        BoxSupplierOnce<T>,
+        (FnOnce() -> T + 'static),
+        |f| Box::new(f)
+    );
 }
 
 // Generates: Debug and Display implementations for BoxSupplierOnce<T>
@@ -313,33 +318,11 @@ impl<T> SupplierOnce<T> for BoxSupplierOnce<T> {
         (self.function)()
     }
 
-    fn into_box(self) -> BoxSupplierOnce<T>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        self
-    }
-
-    fn into_fn(self) -> impl FnOnce() -> T
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        self.function
-    }
-
-    // The `to_box` method cannot be implemented for `BoxSupplierOnce`.
-    // The default implementation of `to_box` requires `Self: Clone`, but
-    // `BoxSupplierOnce` cannot be cloned because it contains a
-    // `Box<dyn FnOnce() -> T>`, which is not cloneable. Calling `to_box()` on a
-    // `BoxSupplierOnce` instance will result in a compile-time error, as it
-    // does not satisfy the `Clone` trait bound.
-
-    // The `to_fn` method cannot be implemented for `BoxSupplierOnce` for the
-    // same reason. It also requires `Self: Clone`, which `BoxSupplierOnce`
-    // does not implement. This limitation is inherent to any `FnOnce`-based
-    // supplier that takes ownership of a non-cloneable resource.
+    impl_box_once_conversions!(
+        BoxSupplierOnce<T>,
+        SupplierOnce,
+        FnOnce() -> T
+    );
 }
 
 // ==========================================================================

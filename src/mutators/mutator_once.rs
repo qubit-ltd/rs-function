@@ -139,16 +139,19 @@
 //!
 //! Haixing Hu
 
-use crate::mutators::macros::{
-    impl_box_conditional_mutator,
-    impl_box_mutator_methods,
-    impl_conditional_mutator_debug_display,
-    impl_mutator_common_methods,
-    impl_mutator_debug_display,
-};
-use crate::predicates::predicate::{
-    BoxPredicate,
-    Predicate,
+use crate::{
+    macros::box_conversions::impl_box_once_conversions,
+    mutators::macros::{
+        impl_box_conditional_mutator,
+        impl_box_mutator_methods,
+        impl_conditional_mutator_debug_display,
+        impl_mutator_common_methods,
+        impl_mutator_debug_display,
+    },
+    predicates::predicate::{
+        BoxPredicate,
+        Predicate,
+    },
 };
 
 // ============================================================================
@@ -413,22 +416,11 @@ impl<T> MutatorOnce<T> for BoxMutatorOnce<T> {
         (self.function)(value)
     }
 
-    fn into_box(self) -> BoxMutatorOnce<T>
-    where
-        T: 'static,
-    {
-        self
-    }
-
-    fn into_fn(self) -> impl FnOnce(&mut T)
-    where
-        T: 'static,
-    {
-        move |t| (self.function)(t)
-    }
-
-    // do NOT override MutatorOnce::to_xxxx() because BoxMutatorOnce is not Clone
-    // and calling BoxMutatorOnce::to_xxxx() will cause a compile error
+    impl_box_once_conversions!(
+        BoxMutatorOnce<T>,
+        MutatorOnce,
+        FnOnce(&mut T)
+    );
 }
 
 // Generate Debug and Display trait implementations

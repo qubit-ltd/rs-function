@@ -30,6 +30,7 @@ use crate::{
         impl_function_debug_display,
         impl_function_identity_method,
     },
+    macros::box_conversions::impl_box_once_conversions,
     predicates::predicate::{
         BoxPredicate,
         Predicate,
@@ -246,27 +247,11 @@ impl<T, R> FunctionOnce<T, R> for BoxFunctionOnce<T, R> {
         (self.function)(input)
     }
 
-    fn into_box(self) -> BoxFunctionOnce<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        // Zero-cost: directly return itself
-        self
-    }
-
-    fn into_fn(self) -> impl FnOnce(&T) -> R
-    where
-        T: 'static,
-        R: 'static,
-    {
-        // Zero-cost: directly return the inner function
-        self.function
-    }
-
-    // do NOT override BoxFunction::to_box() and BoxFunction::to_fn()
-    // because BoxFunction is not Clone and calling BoxFunction::to_box()
-    // or BoxFunction::to_fn() will cause a compile error
+    impl_box_once_conversions!(
+        BoxFunctionOnce<T, R>,
+        FunctionOnce,
+        FnOnce(&T) -> R
+    );
 }
 
 // ============================================================================

@@ -21,19 +21,22 @@
 //!
 //! Haixing Hu
 
-use crate::predicates::bi_predicate::{
-    BiPredicate,
-    BoxBiPredicate,
+use crate::{
+    macros::box_conversions::impl_box_once_conversions,
+    predicates::bi_predicate::{
+        BiPredicate,
+        BoxBiPredicate,
+    },
+    transformers::macros::{
+        impl_box_conditional_transformer,
+        impl_box_transformer_methods,
+        impl_conditional_transformer_debug_display,
+        impl_transformer_common_methods,
+        impl_transformer_constant_method,
+        impl_transformer_debug_display,
+    },
+    transformers::transformer_once::TransformerOnce,
 };
-use crate::transformers::macros::{
-    impl_box_conditional_transformer,
-    impl_box_transformer_methods,
-    impl_conditional_transformer_debug_display,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
-    impl_transformer_debug_display,
-};
-use crate::transformers::transformer_once::TransformerOnce;
 
 // ============================================================================
 // Core Trait
@@ -217,27 +220,11 @@ impl<T, U, R> BiTransformerOnce<T, U, R> for BoxBiTransformerOnce<T, U, R> {
         (self.function)(first, second)
     }
 
-    fn into_box(self) -> BoxBiTransformerOnce<T, U, R>
-    where
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        // Zero-cost: directly return itself
-        self
-    }
-
-    fn into_fn(self) -> impl FnOnce(T, U) -> R
-    where
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        move |t: T, u: U| self.apply(t, u)
-    }
-
-    //  do NOT override BoxBiTransformerOnce::to_xxxx() because BoxBiTransformerOnce is not Clone
-    //  and calling BoxBiTransformerOnce::to_xxxx() will cause a compile error
+    impl_box_once_conversions!(
+        BoxBiTransformerOnce<T, U, R>,
+        BiTransformerOnce,
+        FnOnce(T, U) -> R
+    );
 }
 
 // ============================================================================

@@ -47,6 +47,7 @@ use crate::{
         impl_consumer_common_methods,
         impl_consumer_debug_display,
     },
+    macros::box_conversions::impl_box_once_conversions,
     predicates::bi_predicate::{
         BiPredicate,
         BoxBiPredicate,
@@ -339,21 +340,11 @@ impl<T, U> BiConsumerOnce<T, U> for BoxBiConsumerOnce<T, U> {
         (self.function)(first, second)
     }
 
-    fn into_box(self) -> BoxBiConsumerOnce<T, U>
-    where
-        T: 'static,
-        U: 'static,
-    {
-        self
-    }
-
-    fn into_fn(self) -> impl FnOnce(&T, &U)
-    where
-        T: 'static,
-        U: 'static,
-    {
-        self.function
-    }
+    impl_box_once_conversions!(
+        BoxBiConsumerOnce<T, U>,
+        BiConsumerOnce,
+        FnOnce(&T, &U)
+    );
 }
 
 // Use macro to generate Debug and Display implementations

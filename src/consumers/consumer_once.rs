@@ -42,6 +42,7 @@ use crate::{
         impl_consumer_common_methods,
         impl_consumer_debug_display,
     },
+    macros::box_conversions::impl_box_once_conversions,
     predicates::predicate::{
         BoxPredicate,
         Predicate,
@@ -328,10 +329,18 @@ where
     T: 'static,
 {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
-    impl_consumer_common_methods!(BoxConsumerOnce<T>, (FnOnce(&T) + 'static), |f| Box::new(f));
+    impl_consumer_common_methods!(
+        BoxConsumerOnce<T>,
+        (FnOnce(&T) + 'static),
+        |f| Box::new(f)
+    );
 
     // Generates: when() and and_then() methods that consume self
-    impl_box_consumer_methods!(BoxConsumerOnce<T>, BoxConditionalConsumerOnce, ConsumerOnce);
+    impl_box_consumer_methods!(
+        BoxConsumerOnce<T>,
+        BoxConditionalConsumerOnce,
+        ConsumerOnce
+    );
 }
 
 impl<T> ConsumerOnce<T> for BoxConsumerOnce<T> {
@@ -339,19 +348,11 @@ impl<T> ConsumerOnce<T> for BoxConsumerOnce<T> {
         (self.function)(value)
     }
 
-    fn into_box(self) -> BoxConsumerOnce<T>
-    where
-        T: 'static,
-    {
-        self
-    }
-
-    fn into_fn(self) -> impl FnOnce(&T)
-    where
-        T: 'static,
-    {
-        self.function
-    }
+    impl_box_once_conversions!(
+        BoxConsumerOnce<T>,
+        ConsumerOnce,
+        FnOnce(&T)
+    );
 
     // do NOT override ConsumerOnce::to_xxxx() because BoxConsumerOnce is not Clone
     // and calling BoxConsumerOnce::to_xxxx() will cause a compile error

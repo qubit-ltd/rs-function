@@ -150,6 +150,7 @@ use crate::{
             impl_function_identity_method,
         },
     },
+    macros::box_conversions::impl_box_once_conversions,
     predicates::predicate::{
         BoxPredicate,
         Predicate,
@@ -464,21 +465,11 @@ impl<T, R> MutatingFunctionOnce<T, R> for BoxMutatingFunctionOnce<T, R> {
         (self.function)(input)
     }
 
-    fn into_box(self) -> BoxMutatingFunctionOnce<T, R>
-    where
-        T: 'static,
-        R: 'static,
-    {
-        self
-    }
-
-    fn into_fn(self) -> impl FnOnce(&mut T) -> R
-    where
-        T: 'static,
-        R: 'static,
-    {
-        move |t| (self.function)(t)
-    }
+    impl_box_once_conversions!(
+        BoxMutatingFunctionOnce<T, R>,
+        MutatingFunctionOnce,
+        FnOnce(&mut T) -> R
+    );
 }
 
 // =======================================================================
