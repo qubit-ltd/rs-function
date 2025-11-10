@@ -47,6 +47,17 @@
 /// );
 /// ```
 ///
+/// # Generated methods
+///
+/// * `into_box(self) -> BoxType` - Converts to Box-based wrapper
+/// * `into_rc(self) -> RcType` - Converts to Rc-based wrapper
+/// * `into_fn(self) -> impl FnTrait` - Converts to function pointer
+/// * `into_once(self) -> OnceType` - Converts to once wrapper
+/// * `to_box(&self) -> BoxType` - Converts to Box-based wrapper
+/// * `to_rc(&self) -> RcType` - Converts to Rc-based wrapper
+/// * `to_fn(&self) -> impl FnTrait` - Converts to function pointer
+/// * `to_once(&self) -> OnceType` - Converts to once wrapper
+///
 /// # Examples
 ///
 /// ```ignore
@@ -78,7 +89,6 @@
 /// # Author
 ///
 /// Haixing Hu
-
 macro_rules! impl_rc_conversions {
     // ==================== Core Macro: Generate Single Method ====================
 
