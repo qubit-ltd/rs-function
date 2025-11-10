@@ -323,12 +323,6 @@ where
     );
 }
 
-// Implement constant method for BoxBiFunction
-impl_function_constant_method!(BoxBiFunction<T, U, R>);
-
-// Implement Debug and Display for BoxBiFunction
-impl_function_debug_display!(BoxBiFunction<T, U, R>);
-
 // Implement BiFunction trait for BoxBiFunction
 impl<T, U, R> BiFunction<T, U, R> for BoxBiFunction<T, U, R> {
     fn apply(&self, first: &T, second: &U) -> R {
@@ -343,6 +337,12 @@ impl<T, U, R> BiFunction<T, U, R> for BoxBiFunction<T, U, R> {
         BoxBiFunctionOnce
     );
 }
+
+// Implement constant method for BoxBiFunction
+impl_function_constant_method!(BoxBiFunction<T, U, R>);
+
+// Implement Debug and Display for BoxBiFunction
+impl_function_debug_display!(BoxBiFunction<T, U, R>);
 
 // ============================================================================
 // RcBiFunction - Rc<dyn Fn(&T, &U) -> R>
@@ -390,6 +390,21 @@ where
     );
 }
 
+// Implement BiFunction trait for RcBiFunction
+impl<T, U, R> BiFunction<T, U, R> for RcBiFunction<T, U, R> {
+    fn apply(&self, first: &T, second: &U) -> R {
+        (self.function)(first, second)
+    }
+
+    // Generate into_box(), into_rc(), into_fn(), into_once(), to_box(), to_rc(), to_fn(), to_once()
+    impl_rc_conversions!(
+        RcBiFunction<T, U, R>,
+        BoxBiFunction,
+        BoxBiFunctionOnce,
+        Fn(first: &T, second: &U) -> R
+    );
+}
+
 // Implement constant method for RcBiFunction
 impl_function_constant_method!(RcBiFunction<T, U, R>);
 
@@ -398,27 +413,6 @@ impl_function_debug_display!(RcBiFunction<T, U, R>);
 
 // Implement Clone for RcBiFunction
 impl_function_clone!(RcBiFunction<T, U, R>);
-
-// Implement BiFunction trait for RcBiFunction
-impl<T, U, R> BiFunction<T, U, R> for RcBiFunction<T, U, R> {
-    fn apply(&self, first: &T, second: &U) -> R {
-        (self.function)(first, second)
-    }
-
-    // Generate all conversion methods using the unified macro
-    impl_rc_conversions!(
-        RcBiFunction<T, U, R>,
-        BoxBiFunction,
-        BoxBiFunctionOnce,
-        Fn(first: &T, second: &U) -> R
-    );
-
-    // do NOT override RcBiFunction::into_arc() because RcBiFunction is not Send + Sync
-    // and calling RcBiFunction::into_arc() will cause a compile error
-
-    // do NOT override RcBiFunction::to_arc() because RcBiFunction is not Send + Sync
-    // and calling RcBiFunction::to_arc() will cause a compile error
-}
 
 // ============================================================================
 // ArcBiFunction - Arc<dyn Fn(&T, &U) -> R + Send + Sync>

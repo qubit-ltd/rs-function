@@ -23,11 +23,7 @@
 //! Haixing Hu
 
 use crate::{
-    macros::box_conversions::impl_box_once_conversions,
-    predicates::bi_predicate::{
-        BiPredicate,
-        BoxBiPredicate,
-    },
+    functions::function_once::FunctionOnce,
     functions::macros::{
         impl_box_conditional_function,
         impl_box_function_methods,
@@ -36,7 +32,11 @@ use crate::{
         impl_function_constant_method,
         impl_function_debug_display,
     },
-    functions::function_once::FunctionOnce,
+    macros::box_conversions::impl_box_once_conversions,
+    predicates::bi_predicate::{
+        BiPredicate,
+        BoxBiPredicate,
+    },
 };
 
 // ============================================================================
@@ -196,12 +196,14 @@ where
     U: 'static,
     R: 'static,
 {
+    // Generate new(), new_with_name(), new_with_optional_name(), name(), set_name()
     impl_function_common_methods!(
         BoxBiFunctionOnce<T, U, R>,
         (FnOnce(&T, &U) -> R + 'static),
         |f| Box::new(f)
     );
 
+    // Generate when(), and_then()
     impl_box_function_methods!(
         BoxBiFunctionOnce<T, U, R>,
         BoxConditionalBiFunctionOnce,
@@ -221,6 +223,7 @@ impl<T, U, R> BiFunctionOnce<T, U, R> for BoxBiFunctionOnce<T, U, R> {
         (self.function)(first, second)
     }
 
+    // Generate into_box(), into_fn(), to_box()
     impl_box_once_conversions!(
         BoxBiFunctionOnce<T, U, R>,
         BiFunctionOnce,
@@ -290,9 +293,6 @@ where
     fn to_fn(&self) -> impl FnOnce(&T, &U) -> R
     where
         Self: Clone + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
     {
         self.clone()
     }
@@ -475,12 +475,13 @@ pub trait FnBiFunctionOnceOps<T, U, R>: FnOnce(&T, &U) -> R + Sized + 'static {
 ///
 /// Haixing Hu
 impl<T, U, R, F> FnBiFunctionOnceOps<T, U, R> for F
-  where F: FnOnce(&T, &U) -> R + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
+where
+    F: FnOnce(&T, &U) -> R + 'static,
+    T: 'static,
+    U: 'static,
+    R: 'static,
 {
-  // empty
+    // empty
 }
 
 // ============================================================================

@@ -244,25 +244,6 @@ macro_rules! impl_shared_conditional_function {
                 })
             }
         }
-
-        impl<$t, $u, $r> $else_function_trait<$t, $u, $r> for $struct_name<$t, $u, $r>
-        where
-            $t: 'static,
-            $u: 'static,
-            $r: 'static,
-        {
-            fn apply(&self, first: &$t, second: &$u) -> $r {
-                if self.predicate.test(first, second) {
-                    self.function.apply(first, second)
-                } else {
-                    // This should not happen - conditional functions should always have an else
-                    // via or_else(), but we need to return something
-                    panic!("Conditional bi-function called without or_else() alternative")
-                }
-            }
-
-            // Use trait default implementations for conversion methods
-        }
     };
 
     // Three generic parameters - BiFunction types (Arc version)
@@ -322,25 +303,6 @@ macro_rules! impl_shared_conditional_function {
                     }
                 })
             }
-        }
-
-        impl<$t, $u, $r> $else_function_trait<$t, $u, $r> for $struct_name<$t, $u, $r>
-        where
-            $t: 'static,
-            $u: 'static,
-            $r: 'static,
-        {
-            fn apply(&self, first: &$t, second: &$u) -> $r {
-                if self.predicate.test(first, second) {
-                    self.function.apply(first, second)
-                } else {
-                    // This should not happen - conditional functions should always have an else
-                    // via or_else(), but we need to return something
-                    panic!("Conditional bi-function called without or_else() alternative")
-                }
-            }
-
-            // Use trait default implementations for conversion methods
         }
     };
 
