@@ -222,9 +222,11 @@ fn test_bi_function_when_or_else() {
     let add = |x: &i32, y: &i32| *x + *y;
     let multiply = |x: &i32, y: &i32| *x * *y;
 
-    let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply);
+    let conditional = add
+        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
+        .or_else(multiply);
 
-    assert_eq!(conditional.apply(&5, &3), 8);   // add: 5 + 3 = 8
+    assert_eq!(conditional.apply(&5, &3), 8); // add: 5 + 3 = 8
     assert_eq!(conditional.apply(&-5, &3), -15); // multiply: -5 * 3 = -15
 }
 
@@ -242,11 +244,9 @@ fn test_bi_function_with_complex_types() {
 
 #[test]
 fn test_bi_function_with_option_types() {
-    let combine_options = |opt1: &Option<i32>, opt2: &Option<i32>| {
-        match (opt1, opt2) {
-            (Some(a), Some(b)) => Some(a + b),
-            _ => None,
-        }
+    let combine_options = |opt1: &Option<i32>, opt2: &Option<i32>| match (opt1, opt2) {
+        (Some(a), Some(b)) => Some(a + b),
+        _ => None,
     };
 
     let func = RcBiFunction::new(combine_options);
