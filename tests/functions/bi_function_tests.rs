@@ -224,6 +224,17 @@ fn test_rc_bi_function_debug_display() {
     assert!(display_str.starts_with("RcBiFunction"));
 }
 
+#[test]
+fn test_rc_bi_function_and_then() {
+    use prism3_function::RcFunction;
+
+    let add = RcBiFunction::new(|x: &i32, y: &i32| *x + *y);
+    let multiply_by_two = RcFunction::new(|x: &i32| *x * 2);
+
+    let chained = add.and_then(multiply_by_two);
+    assert_eq!(chained.apply(&2, &3), 10); // (2+3) * 2 = 10
+}
+
 // ============================================================================
 // ArcBiFunction Tests
 // ============================================================================
@@ -790,6 +801,17 @@ fn test_bi_function_conditional_composition() {
 // ============================================================================
 // Thread Safety Tests for ArcBiFunction
 // ============================================================================
+
+#[test]
+fn test_arc_bi_function_and_then() {
+    use prism3_function::ArcFunction;
+
+    let add = ArcBiFunction::new(|x: &i32, y: &i32| *x + *y);
+    let multiply_by_two = ArcFunction::new(|x: &i32| *x * 2);
+
+    let chained = add.and_then(multiply_by_two);
+    assert_eq!(chained.apply(&2, &3), 10); // (2+3) * 2 = 10
+}
 
 #[test]
 fn test_arc_bi_function_thread_safety() {
