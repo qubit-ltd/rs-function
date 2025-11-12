@@ -2616,7 +2616,10 @@ mod test_stateful_supplier_debug_display {
 mod test_stateful_supplier_trait_default_methods {
     use super::*;
     use prism3_function::SupplierOnce;
-    use std::sync::atomic::{AtomicUsize, Ordering};
+    use std::sync::atomic::{
+        AtomicUsize,
+        Ordering,
+    };
 
     #[test]
     fn test_custom_stateful_supplier_into_once() {

@@ -15,9 +15,9 @@ use prism3_function::{
     BiFunction,
     BiFunctionOnce,
     BoxBiFunction,
+    FnBiFunctionOps,
     RcBiFunction,
     RcBiPredicate,
-    FnBiFunctionOps,
 };
 
 // ============================================================================
@@ -382,7 +382,10 @@ fn test_box_bi_function_new_with_name() {
 
 #[test]
 fn test_box_bi_function_new_with_optional_name() {
-    let func1 = BoxBiFunction::new_with_optional_name(|x: &i32, y: &i32| *x + *y, Some("named".to_string()));
+    let func1 = BoxBiFunction::new_with_optional_name(
+        |x: &i32, y: &i32| *x + *y,
+        Some("named".to_string()),
+    );
     let func2 = BoxBiFunction::new_with_optional_name(|x: &i32, y: &i32| *x + *y, None);
 
     assert_eq!(func1.name(), Some("named"));
@@ -435,7 +438,8 @@ fn test_rc_bi_function_new_with_name() {
 
 #[test]
 fn test_rc_bi_function_new_with_optional_name() {
-    let func1 = RcBiFunction::new_with_optional_name(|x: &i32, y: &i32| *x * *y, Some("named".to_string()));
+    let func1 =
+        RcBiFunction::new_with_optional_name(|x: &i32, y: &i32| *x * *y, Some("named".to_string()));
     let func2 = RcBiFunction::new_with_optional_name(|x: &i32, y: &i32| *x * *y, None);
 
     assert_eq!(func1.name(), Some("named"));
@@ -530,7 +534,10 @@ fn test_arc_bi_function_new_with_name() {
 
 #[test]
 fn test_arc_bi_function_new_with_optional_name() {
-    let func1 = ArcBiFunction::new_with_optional_name(|x: &i32, y: &i32| *x / *y, Some("named".to_string()));
+    let func1 = ArcBiFunction::new_with_optional_name(
+        |x: &i32, y: &i32| *x / *y,
+        Some("named".to_string()),
+    );
     let func2 = ArcBiFunction::new_with_optional_name(|x: &i32, y: &i32| *x / *y, None);
 
     assert_eq!(func1.name(), Some("named"));
@@ -632,7 +639,9 @@ fn test_box_conditional_bi_function_when_or_else() {
     let add = BoxBiFunction::new(|x: &i32, y: &i32| *x + *y);
     let multiply = BoxBiFunction::new(|x: &i32, y: &i32| *x * *y);
 
-    let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply);
+    let conditional = add
+        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
+        .or_else(multiply);
     assert_eq!(conditional.apply(&3, &4), 7); // when branch: 3 + 4 = 7
     assert_eq!(conditional.apply(&-3, &4), -12); // or_else branch: -3 * 4 = -12
 }
@@ -642,7 +651,9 @@ fn test_rc_conditional_bi_function_when_or_else() {
     let add = RcBiFunction::new(|x: &i32, y: &i32| *x + *y);
     let multiply = RcBiFunction::new(|x: &i32, y: &i32| *x * *y);
 
-    let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply);
+    let conditional = add
+        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
+        .or_else(multiply);
     assert_eq!(conditional.apply(&3, &4), 7); // when branch
     assert_eq!(conditional.apply(&-3, &4), -12); // or_else branch
 }
@@ -652,7 +663,9 @@ fn test_arc_conditional_bi_function_when_or_else() {
     let add = ArcBiFunction::new(|x: &i32, y: &i32| *x + *y);
     let multiply = ArcBiFunction::new(|x: &i32, y: &i32| *x * *y);
 
-    let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply);
+    let conditional = add
+        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
+        .or_else(multiply);
     assert_eq!(conditional.apply(&3, &4), 7); // when branch
     assert_eq!(conditional.apply(&-3, &4), -12); // or_else branch
 }
@@ -684,7 +697,9 @@ fn test_rc_conditional_bi_function_clone() {
     let add = RcBiFunction::new(|x: &i32, y: &i32| *x + *y);
     let multiply = RcBiFunction::new(|x: &i32, y: &i32| *x * *y);
 
-    let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply);
+    let conditional = add
+        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
+        .or_else(multiply);
     let cloned = conditional.clone();
 
     // Test original
@@ -701,7 +716,9 @@ fn test_arc_conditional_bi_function_clone() {
     let add = ArcBiFunction::new(|x: &i32, y: &i32| *x + *y);
     let multiply = ArcBiFunction::new(|x: &i32, y: &i32| *x * *y);
 
-    let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply);
+    let conditional = add
+        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
+        .or_else(multiply);
     let cloned = conditional.clone();
 
     // Test original
@@ -790,7 +807,8 @@ fn test_bi_function_conditional_composition() {
     let square = |x: &i32| *x * *x;
 
     // If both positive, add then square; otherwise multiply then square
-    let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0)
+    let conditional = add
+        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
         .or_else(multiply)
         .and_then(square);
 
@@ -820,9 +838,7 @@ fn test_arc_bi_function_thread_safety() {
     let func = ArcBiFunction::new(|x: &i32, y: &i32| *x + *y);
     let func_clone = func.clone();
 
-    let handle = thread::spawn(move || {
-        func_clone.apply(&10, &20)
-    });
+    let handle = thread::spawn(move || func_clone.apply(&10, &20));
 
     let result = handle.join().unwrap();
     assert_eq!(result, 30);

@@ -1835,7 +1835,13 @@ fn test_arc_stateful_transformer_display_without_name() {
 mod test_stateful_transformer_trait_default_methods {
     use super::*;
     use prism3_function::TransformerOnce;
-    use std::sync::{Arc, atomic::{AtomicUsize, Ordering}};
+    use std::sync::{
+        atomic::{
+            AtomicUsize,
+            Ordering,
+        },
+        Arc,
+    };
 
     #[test]
     fn test_custom_stateful_transformer_into_once() {

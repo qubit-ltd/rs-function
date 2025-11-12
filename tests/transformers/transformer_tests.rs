@@ -2628,7 +2628,13 @@ mod transformer_once_tests {
 #[cfg(test)]
 mod test_transformer_trait_default_methods {
     use prism3_function::TransformerOnce;
-    use std::sync::{Arc, atomic::{AtomicUsize, Ordering}};
+    use std::sync::{
+        atomic::{
+            AtomicUsize,
+            Ordering,
+        },
+        Arc,
+    };
 
     #[test]
     fn test_custom_transformer_into_once() {

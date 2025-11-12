@@ -19,7 +19,6 @@ use prism3_function::{
 // Helper Functions and Data Structures
 // ============================================================================
 
-
 fn append_strings_once(x: &mut String, y: &mut String) -> usize {
     x.push_str("_modified");
     y.push_str("_changed");
@@ -55,9 +54,7 @@ fn modify_structs_once(a: &mut TestStruct, b: &mut TestStruct) -> i32 {
 fn test_bi_mutating_function_once_trait_apply() {
     // Test that BiMutatingFunctionOnce trait's apply method works correctly
     let swap_sum = |x: &mut i32, y: &mut i32| {
-        let temp = *x;
-        *x = *y;
-        *y = temp;
+        std::mem::swap(&mut *x, &mut *y);
         *x + *y
     };
 
@@ -70,9 +67,7 @@ fn test_bi_mutating_function_once_trait_apply() {
 
 #[test]
 fn test_bi_mutating_function_once_trait_apply_with_complex_types() {
-    let modify = |a: &mut TestStruct, b: &mut TestStruct| {
-        a.modify(b)
-    };
+    let modify = |a: &mut TestStruct, b: &mut TestStruct| a.modify(b);
 
     let mut s1 = TestStruct::new(10);
     let mut s2 = TestStruct::new(5);
@@ -87,9 +82,7 @@ fn test_bi_mutating_function_once_trait_apply_with_complex_types() {
 fn test_bi_mutating_function_once_trait_into_box() {
     // Test conversion from closure to BoxBiMutatingFunctionOnce
     let swap_sum = |x: &mut i32, y: &mut i32| {
-        let temp = *x;
-        *x = *y;
-        *y = temp;
+        std::mem::swap(&mut *x, &mut *y);
         *x + *y
     };
     let boxed = BiMutatingFunctionOnce::into_box(swap_sum);
@@ -105,9 +98,7 @@ fn test_bi_mutating_function_once_trait_into_box() {
 fn test_bi_mutating_function_once_trait_into_fn() {
     // Test conversion to closure
     let swap_sum = |x: &mut i32, y: &mut i32| {
-        let temp = *x;
-        *x = *y;
-        *y = temp;
+        std::mem::swap(&mut *x, &mut *y);
         *x + *y
     };
     let func = BiMutatingFunctionOnce::into_fn(swap_sum);
@@ -123,9 +114,7 @@ fn test_bi_mutating_function_once_trait_into_fn() {
 fn test_bi_mutating_function_once_trait_to_box() {
     // Test non-consuming conversion to BoxBiMutatingFunctionOnce
     let swap_sum = |x: &mut i32, y: &mut i32| {
-        let temp = *x;
-        *x = *y;
-        *y = temp;
+        std::mem::swap(&mut *x, &mut *y);
         *x + *y
     };
     let boxed = swap_sum.to_box();
@@ -146,9 +135,7 @@ fn test_bi_mutating_function_once_trait_to_box() {
 fn test_bi_mutating_function_once_trait_to_fn() {
     // Test non-consuming conversion to closure
     let swap_sum = |x: &mut i32, y: &mut i32| {
-        let temp = *x;
-        *x = *y;
-        *y = temp;
+        std::mem::swap(&mut *x, &mut *y);
         *x + *y
     };
     let func = swap_sum.to_fn();
@@ -172,9 +159,7 @@ fn test_bi_mutating_function_once_trait_to_fn() {
 #[test]
 fn test_box_bi_mutating_function_once_new() {
     let swap_sum = BoxBiMutatingFunctionOnce::new(|x: &mut i32, y: &mut i32| {
-        let temp = *x;
-        *x = *y;
-        *y = temp;
+        std::mem::swap(&mut *x, &mut *y);
         *x + *y
     });
     let mut a = 10;
@@ -189,9 +174,7 @@ fn test_box_bi_mutating_function_once_new_with_name() {
     let swap_sum = BoxBiMutatingFunctionOnce::new_with_name(
         "swap_and_sum_once",
         |x: &mut i32, y: &mut i32| {
-            let temp = *x;
-            *x = *y;
-            *y = temp;
+            std::mem::swap(&mut *x, &mut *y);
             *x + *y
         },
     );
@@ -205,28 +188,22 @@ fn test_box_bi_mutating_function_once_new_with_name() {
 fn test_box_bi_mutating_function_once_new_with_optional_name() {
     let swap_sum = BoxBiMutatingFunctionOnce::new_with_optional_name(
         |x: &mut i32, y: &mut i32| {
-            let temp = *x;
-            *x = *y;
-            *y = temp;
+            std::mem::swap(&mut *x, &mut *y);
             *x + *y
         },
         Some("test_function_once".to_string()),
     );
     assert_eq!(swap_sum.name(), Some("test_function_once"));
 
-    let no_name = BoxBiMutatingFunctionOnce::new_with_optional_name(
-        |x: &mut i32, y: &mut i32| *x + *y,
-        None,
-    );
+    let no_name =
+        BoxBiMutatingFunctionOnce::new_with_optional_name(|x: &mut i32, y: &mut i32| *x + *y, None);
     assert_eq!(no_name.name(), None);
 }
 
 #[test]
 fn test_box_bi_mutating_function_once_name_and_set_name() {
     let mut swap_sum = BoxBiMutatingFunctionOnce::new(|x: &mut i32, y: &mut i32| {
-        let temp = *x;
-        *x = *y;
-        *y = temp;
+        std::mem::swap(&mut *x, &mut *y);
         *x + *y
     });
 
@@ -250,9 +227,7 @@ fn test_box_bi_mutating_function_once_constant() {
 #[test]
 fn test_box_bi_mutating_function_once_debug_display() {
     let swap_sum = BoxBiMutatingFunctionOnce::new(|x: &mut i32, y: &mut i32| {
-        let temp = *x;
-        *x = *y;
-        *y = temp;
+        std::mem::swap(&mut *x, &mut *y);
         *x + *y
     });
 
@@ -315,9 +290,7 @@ fn test_box_bi_mutating_function_once_one_time_use() {
 #[test]
 fn test_fn_bi_mutating_function_once_ops_and_then() {
     let swap_and_sum = |x: &mut i32, y: &mut i32| {
-        let temp = *x;
-        *x = *y;
-        *y = temp;
+        std::mem::swap(&mut *x, &mut *y);
         *x + *y
     };
 
@@ -342,7 +315,11 @@ fn test_fn_bi_mutating_function_once_ops_and_then_chain() {
     };
 
     let to_string = |x: &i32| x.to_string();
-    let add_prefix = |s: &mut String| { let result = format!("Result: {}", *s); *s = String::new(); result };
+    let add_prefix = |s: &mut String| {
+        let result = format!("Result: {}", *s);
+        *s = String::new();
+        result
+    };
 
     let composed = add_and_modify.and_then(to_string).and_then(add_prefix);
 
@@ -364,9 +341,7 @@ fn test_fn_bi_mutating_function_once_ops_and_then_chain() {
 #[test]
 fn test_fn_bi_mutating_function_once_ops_when_or_else() {
     let swap_and_sum = |x: &mut i32, y: &mut i32| {
-        let temp = *x;
-        *x = *y;
-        *y = temp;
+        std::mem::swap(&mut *x, &mut *y);
         *x + *y
     };
 
@@ -375,7 +350,9 @@ fn test_fn_bi_mutating_function_once_ops_when_or_else() {
         *x
     };
 
-    let conditional = swap_and_sum.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply);
+    let conditional = swap_and_sum
+        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
+        .or_else(multiply);
 
     // Test when condition is true
     let mut a = 5;
@@ -385,7 +362,9 @@ fn test_fn_bi_mutating_function_once_ops_when_or_else() {
     assert_eq!(b, 5); // swapped from 3
 
     // Test when condition is false (negative numbers) - create separate conditional
-    let conditional_false = swap_and_sum.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply);
+    let conditional_false = swap_and_sum
+        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
+        .or_else(multiply);
     let mut c = -5;
     let mut d = 3;
     assert_eq!(conditional_false.apply(&mut c, &mut d), -15); // multiply: (-5 * 3) = -15
@@ -396,9 +375,7 @@ fn test_fn_bi_mutating_function_once_ops_when_or_else() {
 #[test]
 fn test_box_conditional_bi_mutating_function_once() {
     let swap_and_sum = BoxBiMutatingFunctionOnce::new(|x: &mut i32, y: &mut i32| {
-        let temp = *x;
-        *x = *y;
-        *y = temp;
+        std::mem::swap(&mut *x, &mut *y);
         *x + *y
     });
 
@@ -407,7 +384,9 @@ fn test_box_conditional_bi_mutating_function_once() {
         *x
     });
 
-    let conditional = swap_and_sum.when(|x: &i32, _y: &i32| *x > 0).or_else(multiply);
+    let conditional = swap_and_sum
+        .when(|x: &i32, _y: &i32| *x > 0)
+        .or_else(multiply);
 
     // Test when condition is true
     let mut a = 5;
@@ -416,14 +395,16 @@ fn test_box_conditional_bi_mutating_function_once() {
 
     // Test when condition is false - create a new conditional since BiMutatingFunctionOnce consumes self
     let conditional2 = BoxBiMutatingFunctionOnce::new(|x: &mut i32, y: &mut i32| {
-        let temp = *x;
-        *x = *y;
-        *y = temp;
+        std::mem::swap(&mut *x, &mut *y);
         *x + *y
-    }).when(|x: &i32, _y: &i32| *x > 0).or_else(BoxBiMutatingFunctionOnce::new(|x: &mut i32, y: &mut i32| {
-        *x *= *y;
-        *x
-    }));
+    })
+    .when(|x: &i32, _y: &i32| *x > 0)
+    .or_else(BoxBiMutatingFunctionOnce::new(
+        |x: &mut i32, y: &mut i32| {
+            *x *= *y;
+            *x
+        },
+    ));
     let mut c = -5;
     let mut d = 3;
     assert_eq!(conditional2.apply(&mut c, &mut d), -15); // multiply executed
@@ -434,7 +415,9 @@ fn test_conditional_bi_mutating_function_once_with_structs() {
     let modify = BoxBiMutatingFunctionOnce::new(modify_structs_once);
     let no_op = BoxBiMutatingFunctionOnce::new(|_a: &mut TestStruct, _b: &mut TestStruct| 0);
 
-    let conditional = modify.when(|a: &TestStruct, b: &TestStruct| a.value > 0 && b.value > 0).or_else(no_op);
+    let conditional = modify
+        .when(|a: &TestStruct, b: &TestStruct| a.value > 0 && b.value > 0)
+        .or_else(no_op);
 
     // Test when condition is true
     let mut s1 = TestStruct::new(10);
@@ -445,7 +428,11 @@ fn test_conditional_bi_mutating_function_once_with_structs() {
     assert_eq!(s2.value, 10);
 
     // Test when condition is false - create new conditional since BiMutatingFunctionOnce consumes self
-    let conditional2 = BoxBiMutatingFunctionOnce::new(modify_structs_once).when(|a: &TestStruct, b: &TestStruct| a.value > 0 && b.value > 0).or_else(BoxBiMutatingFunctionOnce::new(|_a: &mut TestStruct, _b: &mut TestStruct| 0));
+    let conditional2 = BoxBiMutatingFunctionOnce::new(modify_structs_once)
+        .when(|a: &TestStruct, b: &TestStruct| a.value > 0 && b.value > 0)
+        .or_else(BoxBiMutatingFunctionOnce::new(
+            |_a: &mut TestStruct, _b: &mut TestStruct| 0,
+        ));
     let mut s3 = TestStruct::new(-10);
     let mut s4 = TestStruct::new(5);
     let result2 = conditional2.apply(&mut s3, &mut s4);
@@ -515,7 +502,7 @@ fn test_bi_mutating_function_once_with_large_values() {
 #[test]
 fn test_bi_mutating_function_once_with_empty_strings() {
     let concat = |x: &mut String, y: &mut String| {
-        x.push_str(&y);
+        x.push_str(y);
         x.len()
     };
 
@@ -535,8 +522,8 @@ fn test_bi_mutating_function_once_with_empty_strings() {
 #[test]
 fn test_bi_mutating_function_once_with_unicode_strings() {
     let append = |x: &mut String, y: &mut String| {
-        x.push_str("🌟");
-        y.push_str("⭐");
+        x.push('🌟');
+        y.push('⭐');
         x.len() + y.len()
     };
 
@@ -704,11 +691,7 @@ fn test_complex_conditional_chains() {
     // Complex conditional: if x > y then add, else if x < 0 then multiply, else subtract
     let complex = add
         .when(|x: &i32, y: &i32| *x > *y)
-        .or_else(
-            multiply
-                .when(|x: &i32, _y: &i32| *x < 0)
-                .or_else(subtract)
-        );
+        .or_else(multiply.when(|x: &i32, _y: &i32| *x < 0).or_else(subtract));
 
     // Test case 1: x > y (add)
     let mut a = 10;
@@ -716,13 +699,17 @@ fn test_complex_conditional_chains() {
     assert_eq!(complex.apply(&mut a, &mut b), 15); // 10 + 5 = 15
 
     // Test case 2: x < 0 (multiply) - create new since BiMutatingFunctionOnce consumes self
-    let complex2 = add.when(|x: &i32, y: &i32| *x > *y).or_else(multiply.when(|x: &i32, _y: &i32| *x < 0).or_else(subtract));
+    let complex2 = add
+        .when(|x: &i32, y: &i32| *x > *y)
+        .or_else(multiply.when(|x: &i32, _y: &i32| *x < 0).or_else(subtract));
     let mut c = -3;
     let mut d = 4;
     assert_eq!(complex2.apply(&mut c, &mut d), -12); // -3 * 4 = -12
 
     // Test case 3: neither condition (subtract) - create new since BiMutatingFunctionOnce consumes self
-    let complex3 = add.when(|x: &i32, y: &i32| *x > *y).or_else(multiply.when(|x: &i32, _y: &i32| *x < 0).or_else(subtract));
+    let complex3 = add
+        .when(|x: &i32, y: &i32| *x > *y)
+        .or_else(multiply.when(|x: &i32, _y: &i32| *x < 0).or_else(subtract));
     let mut e = 3;
     let mut f = 5;
     assert_eq!(complex3.apply(&mut e, &mut f), -2); // 3 - 5 = -2
@@ -738,7 +725,11 @@ fn test_nested_composition() {
 
     // Create nested composition
     let inner_composed = base.and_then(|sum: &i32| *sum * 2);
-    let outer_composed = inner_composed.and_then(|doubled: &mut i32| { let result = format!("Result: {}", *doubled); *doubled = 0; result });
+    let outer_composed = inner_composed.and_then(|doubled: &mut i32| {
+        let result = format!("Result: {}", *doubled);
+        *doubled = 0;
+        result
+    });
 
     let mut a = 10;
     let mut b = 20;

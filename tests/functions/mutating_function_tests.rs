@@ -1081,7 +1081,13 @@ fn test_arc_conditional_mutating_function_debug_display() {
 mod test_mutating_function_trait_default_methods {
     use super::*;
     use prism3_function::MutatingFunctionOnce;
-    use std::sync::{Arc, atomic::{AtomicUsize, Ordering}};
+    use std::sync::{
+        atomic::{
+            AtomicUsize,
+            Ordering,
+        },
+        Arc,
+    };
 
     #[test]
     fn test_custom_mutating_function_into_once() {

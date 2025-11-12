@@ -457,7 +457,10 @@ mod test_box_conditional_mutator_once_debug_display {
 #[cfg(test)]
 mod custom_mutator_to_methods_tests {
     use super::*;
-    use std::sync::{Arc, Mutex};
+    use std::sync::{
+        Arc,
+        Mutex,
+    };
 
     /// Cloneable custom mutator for testing to_xxx() methods
     #[derive(Clone)]

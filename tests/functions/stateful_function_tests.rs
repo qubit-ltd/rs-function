@@ -1612,7 +1612,10 @@ fn test_arc_conditional_stateful_function_debug_display() {
 mod test_stateful_function_trait_default_methods {
     use super::*;
     use prism3_function::FunctionOnce;
-    use std::sync::atomic::{AtomicUsize, Ordering};
+    use std::sync::atomic::{
+        AtomicUsize,
+        Ordering,
+    };
 
     #[test]
     fn test_custom_stateful_function_into_once() {

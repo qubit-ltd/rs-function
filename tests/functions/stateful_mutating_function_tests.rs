@@ -862,7 +862,8 @@ mod test_closure {
             *current
         };
 
-        let once_func: BoxMutatingFunctionOnce<i32, i32> = StatefulMutatingFunction::to_once(&closure);
+        let once_func: BoxMutatingFunctionOnce<i32, i32> =
+            StatefulMutatingFunction::to_once(&closure);
 
         let mut value = 5;
         assert_eq!(once_func.apply(&mut value), 1);
@@ -1364,7 +1365,13 @@ fn test_arc_conditional_stateful_mutating_function_debug_display() {
 mod test_stateful_mutating_function_trait_default_methods {
     use super::*;
     use prism3_function::MutatingFunctionOnce;
-    use std::sync::{Arc, atomic::{AtomicUsize, Ordering}};
+    use std::sync::{
+        atomic::{
+            AtomicUsize,
+            Ordering,
+        },
+        Arc,
+    };
 
     #[test]
     fn test_custom_stateful_mutating_function_into_once() {
