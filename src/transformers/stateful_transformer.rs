@@ -24,10 +24,9 @@
 //! Haixing Hu
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+
+use parking_lot::Mutex;
 
 use crate::macros::{
     impl_arc_conversions,
@@ -556,7 +555,7 @@ impl_transformer_clone!(ArcStatefulTransformer<T, R>);
 
 impl<T, R> StatefulTransformer<T, R> for ArcStatefulTransformer<T, R> {
     fn apply(&mut self, input: T) -> R {
-        let mut func = self.function.lock().unwrap();
+        let mut func = self.function.lock();
         func(input)
     }
 

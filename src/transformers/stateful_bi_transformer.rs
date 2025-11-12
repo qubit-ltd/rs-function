@@ -25,10 +25,9 @@
 
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+
+use parking_lot::Mutex;
 
 use crate::macros::{
     impl_arc_conversions,
@@ -501,7 +500,7 @@ impl_transformer_clone!(ArcStatefulBiTransformer<T, U, R>);
 // Implement StatefulBiTransformer trait for ArcStatefulBiTransformer
 impl<T, U, R> StatefulBiTransformer<T, U, R> for ArcStatefulBiTransformer<T, U, R> {
     fn apply(&mut self, first: T, second: U) -> R {
-        let mut func = self.function.lock().unwrap();
+        let mut func = self.function.lock();
         func(first, second)
     }
 

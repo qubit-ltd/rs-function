@@ -122,10 +122,9 @@
 //! Haixing Hu
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+
+use parking_lot::Mutex;
 
 use crate::functions::macros::impl_function_identity_method;
 use crate::{
@@ -913,7 +912,7 @@ impl_function_identity_method!(ArcStatefulMutatingFunction<T, T>, mutating);
 // Implement StatefulMutatingFunction trait for ArcStatefulMutatingFunction<T, R>
 impl<T, R> StatefulMutatingFunction<T, R> for ArcStatefulMutatingFunction<T, R> {
     fn apply(&mut self, t: &mut T) -> R {
-        (self.function.lock().unwrap())(t)
+        (self.function.lock())(t)
     }
 
     // Use macro to implement conversion methods

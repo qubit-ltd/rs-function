@@ -119,10 +119,9 @@
 
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+
+use parking_lot::Mutex;
 
 use crate::macros::{
     impl_arc_conversions,
@@ -848,11 +847,11 @@ where
         let cache: Arc<Mutex<Option<T>>> = Arc::new(Mutex::new(None));
         ArcStatefulSupplier {
             function: Arc::new(Mutex::new(move || {
-                let mut cache_guard = cache.lock().unwrap();
+                let mut cache_guard = cache.lock();
                 if let Some(ref cached) = *cache_guard {
                     cached.clone()
                 } else {
-                    let value = self_fn.lock().unwrap()();
+                    let value = self_fn.lock()();
                     *cache_guard = Some(value.clone());
                     value
                 }
@@ -870,7 +869,7 @@ impl_supplier_clone!(ArcStatefulSupplier<T>);
 
 impl<T> StatefulSupplier<T> for ArcStatefulSupplier<T> {
     fn get(&mut self) -> T {
-        (self.function.lock().unwrap())()
+        (self.function.lock())()
     }
 
     // Use macro to implement conversion methods

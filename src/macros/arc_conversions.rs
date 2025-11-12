@@ -256,7 +256,7 @@ macro_rules! impl_arc_conversions {
     ) => {
         fn into_fn(self) -> impl FnMut($($arg_ty),*)
         {
-            move |$($arg),*| (self.function.lock().unwrap())($($arg),*)
+            move |$($arg),*| (self.function.lock())($($arg),*)
         }
     };
 
@@ -269,7 +269,7 @@ macro_rules! impl_arc_conversions {
     ) => {
         fn into_fn(self) -> impl FnMut($($arg_ty),*) -> $ret
         {
-            move |$($arg),*| (self.function.lock().unwrap())($($arg),*)
+            move |$($arg),*| (self.function.lock())($($arg),*)
         }
     };
 
@@ -308,7 +308,7 @@ macro_rules! impl_arc_conversions {
         fn to_fn(&self) -> impl FnMut($($arg_ty),*)
         {
             let self_fn = self.function.clone();
-            move |$($arg),*| (self_fn.lock().unwrap())($($arg),*)
+            move |$($arg),*| (self_fn.lock())($($arg),*)
         }
     };
 
@@ -322,7 +322,7 @@ macro_rules! impl_arc_conversions {
         fn to_fn(&self) -> impl FnMut($($arg_ty),*) -> $ret
         {
             let self_fn = self.function.clone();
-            move |$($arg),*| (self_fn.lock().unwrap())($($arg),*)
+            move |$($arg),*| (self_fn.lock())($($arg),*)
         }
     };
 
@@ -331,7 +331,7 @@ macro_rules! impl_arc_conversions {
         move |$($arg),*| ($fn_call)($($arg),*)
     };
     (@make_closure lock_unwrap, $fn_call:expr, $($arg:ident),*) => {
-        move |$($arg),*| ($fn_call.lock().unwrap())($($arg),*)
+        move |$($arg),*| ($fn_call.lock())($($arg),*)
     };
 
     // ==================== Main Implementation ====================

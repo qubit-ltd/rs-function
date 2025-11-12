@@ -25,10 +25,9 @@
 //! Haixing Hu
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+
+use parking_lot::Mutex;
 
 use crate::{
     functions::function_once::BoxFunctionOnce,
@@ -597,7 +596,7 @@ impl_function_debug_display!(ArcStatefulFunction<T, R>);
 // Implement StatefulFunction trait for ArcStatefulFunction<T, R>
 impl<T, R> StatefulFunction<T, R> for ArcStatefulFunction<T, R> {
     fn apply(&mut self, t: &T) -> R {
-        (self.function.lock().unwrap())(t)
+        (self.function.lock())(t)
     }
 
     // Use macro to implement conversion methods

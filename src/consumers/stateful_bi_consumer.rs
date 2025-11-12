@@ -36,10 +36,9 @@
 
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+
+use parking_lot::Mutex;
 
 use crate::consumers::macros::{
     impl_box_conditional_consumer,
@@ -798,7 +797,7 @@ where
 
 impl<T, U> StatefulBiConsumer<T, U> for ArcStatefulBiConsumer<T, U> {
     fn accept(&mut self, first: &T, second: &U) {
-        (self.function.lock().unwrap())(first, second)
+        (self.function.lock())(first, second)
     }
 
     // Use macro to implement conversion methods

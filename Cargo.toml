@@ -27,4 +27,5 @@ name = "prism3_function"
 doctest = false
 
 [dependencies]
+parking_lot = "0.12"
 

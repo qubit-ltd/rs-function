@@ -36,10 +36,9 @@
 
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+
+use parking_lot::Mutex;
 
 use crate::consumers::consumer_once::BoxConsumerOnce;
 use crate::consumers::macros::{
@@ -786,7 +785,7 @@ where
 
 impl<T> StatefulConsumer<T> for ArcStatefulConsumer<T> {
     fn accept(&mut self, value: &T) {
-        (self.function.lock().unwrap())(value)
+        (self.function.lock())(value)
     }
 
     // Use macro to implement conversion methods

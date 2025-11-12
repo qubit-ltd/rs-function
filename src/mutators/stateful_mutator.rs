@@ -196,10 +196,9 @@
 
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+
+use parking_lot::Mutex;
 
 use crate::macros::{
     impl_arc_conversions,
@@ -834,7 +833,7 @@ where
 
 impl<T> StatefulMutator<T> for ArcStatefulMutator<T> {
     fn apply(&mut self, value: &mut T) {
-        (self.function.lock().unwrap())(value)
+        (self.function.lock())(value)
     }
 
     // Use macro to implement conversion methods
