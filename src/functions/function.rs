@@ -731,8 +731,6 @@ impl_fn_ops_trait!(
     BoxConditionalFunction
 );
 
-
-
 // ============================================================================
 // BoxConditionalFunction - Box-based Conditional Function
 // ============================================================================

@@ -94,7 +94,6 @@
 /// # Author
 ///
 /// Haixing Hu
-
 macro_rules! impl_arc_conversions {
     // ==================== Core Macro: Generate Single Method ====================
 

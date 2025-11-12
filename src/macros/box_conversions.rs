@@ -62,7 +62,6 @@
 /// # Author
 ///
 /// Hu Haixing
-
 macro_rules! impl_box_conversions {
     // 3-parameter pattern: box_type, rc_type, fn_trait (no once_type)
     (
