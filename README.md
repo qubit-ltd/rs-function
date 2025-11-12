@@ -15,7 +15,8 @@ This crate provides a complete set of functional programming abstractions inspir
 
 ## Key Features
 
-- **Complete Functional Interface Suite**: 11 core functional abstractions with multiple variants
+- **Complete Functional Interface Suite**: 24 core functional abstractions with multiple variants
+- **High-Performance Concurrency**: Uses parking_lot Mutex for superior thread synchronization performance
 - **Multiple Ownership Models**: Box-based single ownership, Arc-based thread-safe sharing, and Rc-based single-threaded sharing
 - **Flexible API Design**: Trait-based unified interface with concrete implementations optimized for different scenarios
 - **Method Chaining**: All types support fluent API and functional composition
@@ -28,12 +29,12 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-prism3-function = "0.1.0"
+prism3-function = "0.5.0"
 ```
 
 ## Core Abstractions
 
-This crate provides 11 core functional abstractions, each with multiple implementations:
+This crate provides 24 core functional abstractions, each with multiple implementations:
 
 ### 1. Predicate - Condition Testing
 
@@ -226,7 +227,7 @@ Generates values with mutable state.
 
 **Implementations**:
 - `BoxStatefulSupplier<T>` - Single ownership
-- `ArcStatefulSupplier<T>` - Thread-safe with Mutex
+- `ArcStatefulSupplier<T>` - Thread-safe with parking_lot::Mutex
 - `RcStatefulSupplier<T>` - Single-threaded with RefCell
 
 **Example**:
@@ -287,7 +288,7 @@ Transforms a value reference with mutable state.
 
 **Implementations**:
 - `BoxStatefulFunction<T, R>` - Single ownership
-- `ArcStatefulFunction<T, R>` - Thread-safe with Mutex
+- `ArcStatefulFunction<T, R>` - Thread-safe with parking_lot::Mutex
 - `RcStatefulFunction<T, R>` - Single-threaded with RefCell
 
 ### 15. Transformer - Value Transformation by Consumption
@@ -336,7 +337,7 @@ Transforms values with mutable state by consuming input.
 
 **Implementations**:
 - `BoxStatefulTransformer<T, R>` - Single ownership
-- `ArcStatefulTransformer<T, R>` - Thread-safe with Mutex
+- `ArcStatefulTransformer<T, R>` - Thread-safe with parking_lot::Mutex
 - `RcStatefulTransformer<T, R>` - Single-threaded with RefCell
 
 ### 18. BiTransformer - Two-Value Transformation
@@ -385,7 +386,7 @@ Accepts a value reference with mutable state.
 
 **Implementations**:
 - `BoxStatefulConsumer<T>` - Single ownership
-- `ArcStatefulConsumer<T>` - Thread-safe with Mutex
+- `ArcStatefulConsumer<T>` - Thread-safe with parking_lot::Mutex
 - `RcStatefulConsumer<T>` - Single-threaded with RefCell
 
 ### 22. StatefulBiConsumer - Stateful Two-Value Observation
@@ -398,7 +399,7 @@ Accepts two value references with mutable state.
 
 **Implementations**:
 - `BoxStatefulBiConsumer<T, U>` - Single ownership
-- `ArcStatefulBiConsumer<T, U>` - Thread-safe with Mutex
+- `ArcStatefulBiConsumer<T, U>` - Thread-safe with parking_lot::Mutex
 - `RcStatefulBiConsumer<T, U>` - Single-threaded with RefCell
 
 ### 23. Comparator - Value Comparison
@@ -522,7 +523,8 @@ This crate adopts the **Trait + Multiple Implementations** pattern:
 2. **Specialized Implementations**: Multiple concrete types optimized for different scenarios
 3. **Type Preservation**: Composition methods return the same concrete type
 4. **Ownership Flexibility**: Choose between single ownership, thread-safe sharing, or single-threaded sharing
-5. **Ergonomic API**: Natural method chaining and functional composition
+5. **High-Performance Concurrency**: Uses parking_lot Mutex for superior synchronization performance
+6. **Ergonomic API**: Natural method chaining and functional composition
 
 ## Examples
 

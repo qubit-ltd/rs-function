@@ -9,11 +9,24 @@ prism3-rust-function crate.
 prism3-rust-function/
 ├── src/                    # Source code
 │   ├── consumers/          # Consumer-related abstractions
+│   │   ├── macros/         # Consumer-specific macros
+│   │   └── *.rs            # Consumer implementations
 │   ├── predicates/         # Predicate-related abstractions
+│   │   ├── macros/         # Predicate-specific macros
+│   │   └── *.rs            # Predicate implementations
 │   ├── transformers/       # Transformer-related abstractions
+│   │   ├── macros/         # Transformer-specific macros
+│   │   └── *.rs            # Transformer implementations
 │   ├── functions/          # Function-related abstractions
+│   │   ├── macros/         # Function-specific macros
+│   │   └── *.rs            # Function implementations
 │   ├── suppliers/          # Supplier-related abstractions
+│   │   ├── macros/         # Supplier-specific macros
+│   │   └── *.rs            # Supplier implementations
 │   ├── mutators/           # Mutator-related abstractions
+│   │   ├── macros/         # Mutator-specific macros
+│   │   └── *.rs            # Mutator implementations
+│   ├── macros/             # Shared macro utilities
 │   ├── comparator.rs       # Comparator abstraction (standalone)
 │   ├── tester.rs           # Tester abstraction (standalone)
 │   └── lib.rs              # Library root and re-exports
@@ -107,6 +120,30 @@ Contains mutator-related abstractions (in-place modifications):
 - `comparator.rs` - Comparator abstraction (`Fn(&T, &T) -> Ordering`)
 - `tester.rs` - Tester abstraction (`Fn() -> bool`)
 
+### Shared Macros Module (`src/macros/`)
+
+Contains shared macro utilities used across different functional abstractions:
+
+- `arc_conversions.rs` - Macros for Arc-based type conversions
+- `box_conversions.rs` - Macros for Box-based type conversions
+- `rc_conversions.rs` - Macros for Rc-based type conversions
+- `common_name_methods.rs` - Common naming utility macros
+- `common_new_methods.rs` - Common constructor macros
+- `mod.rs` - Macro module exports
+
+### Module-Specific Macros
+
+Each functional module contains its own `macros/` subdirectory with module-specific macro utilities:
+
+- Consumer macros (`src/consumers/macros/`)
+- Predicate macros (`src/predicates/macros/`)
+- Transformer macros (`src/transformers/macros/`)
+- Function macros (`src/functions/macros/`)
+- Supplier macros (`src/suppliers/macros/`)
+- Mutator macros (`src/mutators/macros/`)
+
+These macros provide common functionality like cloning, debugging, conditional operations, and type conversions specific to each abstraction type.
+
 ## Test Organization
 
 The `tests/` directory mirrors the `src/` directory structure:
@@ -183,6 +220,17 @@ Modules are grouped by:
 
 This organization makes it easy to find related abstractions and
 understand the relationships between different variants.
+
+### Performance Optimizations
+
+The crate uses `parking_lot` for high-performance mutex implementations:
+
+- **Arc-based thread-safe types** use `parking_lot::Mutex` instead of `std::sync::Mutex`
+- **Superior performance**: parking_lot provides faster lock acquisition and release
+- **Better contention handling**: Reduced CPU usage under high contention scenarios
+- **API compatibility**: Drop-in replacement with the same interface as std mutexes
+
+This choice significantly improves performance for concurrent functional programming scenarios.
 
 ## Migration Notes
 
