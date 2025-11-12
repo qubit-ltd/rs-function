@@ -31,3 +31,6 @@ doctest = false
 [dependencies]
 parking_lot = "0.12"
 
+[lints.clippy]
+type_complexity = "allow"
+
