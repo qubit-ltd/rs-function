@@ -32,7 +32,7 @@ use crate::{
         impl_function_constant_method,
         impl_function_debug_display,
     },
-    macros::box_conversions::impl_box_once_conversions,
+    macros::box_conversions::{impl_box_once_conversions, impl_closure_once_trait},
     predicates::bi_predicate::{
         BiPredicate,
         BoxBiPredicate,
@@ -235,68 +235,13 @@ impl_function_debug_display!(BoxBiFunctionOnce<T, U, R>);
 // Blanket implementation for standard FnOnce trait
 // ============================================================================
 
-/// Implement BiFunctionOnce<T, U, R> for any type that implements
-/// FnOnce(&T, &U) -> R
-///
-/// This allows once-callable closures and function pointers to be used
-/// directly with our BiFunctionOnce trait without wrapping.
-///
-/// # Examples
-///
-/// ```rust
-/// use prism3_function::BiFunctionOnce;
-///
-/// fn add(x: &i32, y: &i32) -> i32 {
-///     x + y
-/// }
-///
-/// assert_eq!(add.apply(&20, &22), 42);
-///
-/// let owned_x = 20;
-/// let owned_y = 22;
-/// let concat = |x: &i32, y: &i32| {
-///     format!("{} + {} = {}", x, y, x + y)
-/// };
-/// assert_eq!(concat.apply(&owned_x, &owned_y), "20 + 22 = 42");
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-impl<F, T, U, R> BiFunctionOnce<T, U, R> for F
-where
-    F: FnOnce(&T, &U) -> R,
-    T: 'static,
-    U: 'static,
-    R: 'static,
-{
-    fn apply(self, first: &T, second: &U) -> R {
-        self(first, second)
-    }
-
-    fn into_box(self) -> BoxBiFunctionOnce<T, U, R>
-    where
-        Self: Sized + 'static,
-    {
-        BoxBiFunctionOnce::new(self)
-    }
-
-    fn into_fn(self) -> impl FnOnce(&T, &U) -> R
-    where
-        Self: Sized + 'static,
-    {
-        move |first: &T, second: &U| -> R { self(first, second) }
-    }
-
-    // use the default implementation of to_box() from BiFunctionOnce trait
-
-    fn to_fn(&self) -> impl FnOnce(&T, &U) -> R
-    where
-        Self: Clone + 'static,
-    {
-        self.clone()
-    }
-}
+// Implement BiFunctionOnce for all FnOnce(&T, &U) -> R using macro
+impl_closure_once_trait!(
+    BiFunctionOnce<T, U, R>,
+    apply,
+    BoxBiFunctionOnce,
+    FnOnce(first: &T, second: &U) -> R
+);
 
 // ============================================================================
 // FnBiFunctionOnceOps - Extension trait for FnOnce(&T, &U) -> R bi-functions

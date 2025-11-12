@@ -30,7 +30,7 @@ use crate::{
         impl_function_debug_display,
         impl_function_identity_method,
     },
-    macros::box_conversions::impl_box_once_conversions,
+    macros::box_conversions::{impl_box_once_conversions, impl_closure_once_trait},
     predicates::predicate::{
         BoxPredicate,
         Predicate,
@@ -258,72 +258,13 @@ impl_function_debug_display!(BoxFunctionOnce<T, R>);
 // Blanket implementation for standard FnOnce trait
 // ============================================================================
 
-/// Implement FunctionOnce<T, R> for any type that implements
-/// FnOnce(&T) -> R
-///
-/// This allows once-callable closures and function pointers to be used
-/// directly with our FunctionOnce trait without wrapping.
-///
-/// # Examples
-///
-/// ```rust
-/// use prism3_function::FunctionOnce;
-///
-/// fn parse(s: String) -> i32 {
-///     s.parse().unwrap_or(0)
-/// }
-///
-/// assert_eq!(parse.apply("42".to_string()), 42);
-///
-/// let owned_value = String::from("hello");
-/// let consume = |s: String| {
-///     format!("{} world", s)
-/// };
-/// assert_eq!(consume.apply(owned_value), "hello world");
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-impl<F, T, R> FunctionOnce<T, R> for F
-where
-    F: FnOnce(&T) -> R,
-    T: 'static,
-    R: 'static,
-{
-    fn apply(self, input: &T) -> R {
-        self(input)
-    }
-
-    fn into_box(self) -> BoxFunctionOnce<T, R>
-    where
-        Self: Sized + 'static,
-    {
-        BoxFunctionOnce::new(self)
-    }
-
-    fn into_fn(self) -> impl FnOnce(&T) -> R
-    where
-        Self: Sized + 'static,
-    {
-        // Zero-cost: directly return self since F is already FnOnce(&T) -> R
-        self
-    }
-
-    fn to_box(&self) -> BoxFunctionOnce<T, R>
-    where
-        Self: Clone + Sized + 'static,
-    {
-        self.clone().into_box()
-    }
-
-    fn to_fn(&self) -> impl FnOnce(&T) -> R
-    where
-        Self: Clone + Sized + 'static,
-    {
-        self.clone()
-    }
-}
+// Implement FunctionOnce for all FnOnce(&T) -> R using macro
+impl_closure_once_trait!(
+    FunctionOnce<T, R>,
+    apply,
+    BoxFunctionOnce,
+    FnOnce(input: &T) -> R
+);
 
 // ============================================================================
 // FnFunctionOnceOps - Extension trait for FnOnce transformers

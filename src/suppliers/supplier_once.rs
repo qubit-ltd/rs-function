@@ -68,7 +68,7 @@
 //! Haixing Hu
 
 use crate::{
-    macros::box_conversions::impl_box_once_conversions,
+    macros::box_conversions::{impl_box_once_conversions, impl_closure_once_trait},
     predicates::Predicate,
     suppliers::macros::{
         impl_box_supplier_methods,
@@ -336,43 +336,10 @@ impl_supplier_debug_display!(BoxSupplierOnce<T>);
 // Implement SupplierOnce for Closures
 // ==========================================================================
 
-impl<T, F> SupplierOnce<T> for F
-where
-    F: FnOnce() -> T,
-{
-    fn get(self) -> T {
-        self()
-    }
-
-    fn into_box(self) -> BoxSupplierOnce<T>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        BoxSupplierOnce::new(self)
-    }
-
-    fn into_fn(self) -> impl FnOnce() -> T
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        self
-    }
-
-    fn to_box(&self) -> BoxSupplierOnce<T>
-    where
-        Self: Clone + Sized + 'static,
-        T: 'static,
-    {
-        BoxSupplierOnce::new(self.clone())
-    }
-
-    fn to_fn(&self) -> impl FnOnce() -> T
-    where
-        Self: Clone + Sized + 'static,
-        T: 'static,
-    {
-        self.clone()
-    }
-}
+// Implement SupplierOnce for all FnOnce() -> T using macro
+impl_closure_once_trait!(
+    SupplierOnce<T>,
+    get,
+    BoxSupplierOnce,
+    FnOnce() -> T
+);

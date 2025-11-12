@@ -34,7 +34,7 @@ use crate::{
         },
         mutating_function_once::MutatingFunctionOnce,
     },
-    macros::box_conversions::impl_box_once_conversions,
+    macros::box_conversions::{impl_box_once_conversions, impl_closure_once_trait},
     predicates::bi_predicate::{
         BiPredicate,
         BoxBiPredicate,
@@ -252,82 +252,13 @@ impl_function_debug_display!(BoxBiMutatingFunctionOnce<T, U, R>);
 // Blanket implementation for standard FnOnce trait
 // ============================================================================
 
-/// Implement BiMutatingFunctionOnce<T, U, R> for any type that implements
-/// FnOnce(&mut T, &mut U) -> R
-///
-/// This allows once-callable closures and function pointers to be used
-/// directly with our BiMutatingFunctionOnce trait without wrapping.
-///
-/// # Examples
-///
-/// ```rust
-/// use prism3_function::BiMutatingFunctionOnce;
-///
-/// fn swap_and_sum(x: &mut i32, y: &mut i32) -> i32 {
-///     let temp = *x;
-///     *x = *y;
-///     *y = temp;
-///     *x + *y
-/// }
-///
-/// let mut a = 20;
-/// let mut b = 22;
-/// assert_eq!(swap_and_sum.apply(&mut a, &mut b), 42);
-/// assert_eq!(a, 22);
-/// assert_eq!(b, 20);
-///
-/// let owned_a = 20;
-/// let owned_b = 22;
-/// let swapper = |x: &mut i32, y: &mut i32| {
-///     let temp = *x;
-///     *x = *y;
-///     *y = temp;
-///     *x + *y
-/// };
-/// let mut a = owned_a;
-/// let mut b = owned_b;
-/// assert_eq!(swapper.apply(&mut a, &mut b), 42);
-/// assert_eq!(a, 22);
-/// assert_eq!(b, 20);
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-impl<F, T, U, R> BiMutatingFunctionOnce<T, U, R> for F
-where
-    F: FnOnce(&mut T, &mut U) -> R,
-    T: 'static,
-    U: 'static,
-    R: 'static,
-{
-    fn apply(self, first: &mut T, second: &mut U) -> R {
-        self(first, second)
-    }
-
-    fn into_box(self) -> BoxBiMutatingFunctionOnce<T, U, R>
-    where
-        Self: Sized + 'static,
-    {
-        BoxBiMutatingFunctionOnce::new(self)
-    }
-
-    fn into_fn(self) -> impl FnOnce(&mut T, &mut U) -> R
-    where
-        Self: Sized + 'static,
-    {
-        move |first: &mut T, second: &mut U| -> R { self(first, second) }
-    }
-
-    // use the default implementation of to_box() from BiMutatingFunctionOnce trait
-
-    fn to_fn(&self) -> impl FnOnce(&mut T, &mut U) -> R
-    where
-        Self: Clone + 'static,
-    {
-        self.clone()
-    }
-}
+// Implement BiMutatingFunctionOnce for all FnOnce(&mut T, &mut U) -> R using macro
+impl_closure_once_trait!(
+    BiMutatingFunctionOnce<T, U, R>,
+    apply,
+    BoxBiMutatingFunctionOnce,
+    FnOnce(first: &mut T, second: &mut U) -> R
+);
 
 // ============================================================================
 // FnBiMutatingFunctionOnceOps - Extension trait for FnOnce(&mut T, &mut U) -> R bi-functions

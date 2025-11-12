@@ -140,7 +140,7 @@
 //! Haixing Hu
 
 use crate::{
-    macros::box_conversions::impl_box_once_conversions,
+    macros::box_conversions::{impl_box_once_conversions, impl_closure_once_trait},
     mutators::macros::{
         impl_box_conditional_mutator,
         impl_box_mutator_methods,
@@ -403,12 +403,19 @@ impl<T> BoxMutatorOnce<T>
 where
     T: 'static,
 {
-    impl_mutator_common_methods!(BoxMutatorOnce<T>, (FnOnce(&mut T) + 'static), |f| Box::new(
-        f
-    ));
+    // Generates: new(), new_with_name(), name(), set_name(), noop()
+    impl_mutator_common_methods!(
+        BoxMutatorOnce<T>,
+        (FnOnce(&mut T) + 'static),
+        |f| Box::new(f)
+    );
 
     // Generate box mutator methods (when, and_then, or_else, etc.)
-    impl_box_mutator_methods!(BoxMutatorOnce<T>, BoxConditionalMutatorOnce, MutatorOnce);
+    impl_box_mutator_methods!(
+        BoxMutatorOnce<T>,
+        BoxConditionalMutatorOnce,
+        MutatorOnce
+    );
 }
 
 impl<T> MutatorOnce<T> for BoxMutatorOnce<T> {
@@ -426,50 +433,13 @@ impl_mutator_debug_display!(BoxMutatorOnce<T>);
 // 3. Implement MutatorOnce trait for closures
 // ============================================================================
 
-impl<T, F> MutatorOnce<T> for F
-where
-    F: FnOnce(&mut T),
-{
-    fn apply(self, value: &mut T) {
-        self(value)
-    }
-
-    fn into_box(self) -> BoxMutatorOnce<T>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        BoxMutatorOnce::new(move |t| self(t))
-    }
-
-    fn into_fn(self) -> impl FnOnce(&mut T)
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        self
-    }
-
-    // Provide specialized non-consuming conversions for closures that
-    // implement `Clone`. Many simple closures are zero-sized and `Clone`,
-    // allowing non-consuming adapters to be cheaply produced.
-    fn to_box(&self) -> BoxMutatorOnce<T>
-    where
-        Self: Sized + Clone + 'static,
-        T: 'static,
-    {
-        let cloned = self.clone();
-        BoxMutatorOnce::new(move |t| cloned.apply(t))
-    }
-
-    fn to_fn(&self) -> impl FnOnce(&mut T)
-    where
-        Self: Sized + Clone + 'static,
-        T: 'static,
-    {
-        self.clone()
-    }
-}
+// Implement MutatorOnce for all FnOnce(&mut T) using macro
+impl_closure_once_trait!(
+    MutatorOnce<T>,
+    apply,
+    BoxMutatorOnce,
+    FnOnce(value: &mut T)
+);
 
 // ============================================================================
 // 4. Provide extension methods for closures

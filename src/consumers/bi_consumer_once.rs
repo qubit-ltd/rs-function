@@ -47,7 +47,7 @@ use crate::{
         impl_consumer_common_methods,
         impl_consumer_debug_display,
     },
-    macros::box_conversions::impl_box_once_conversions,
+    macros::box_conversions::{impl_box_once_conversions, impl_closure_once_trait},
     predicates::bi_predicate::{
         BiPredicate,
         BoxBiPredicate,
@@ -354,51 +354,13 @@ impl_consumer_debug_display!(BoxBiConsumerOnce<T, U>);
 // 3. Implement BiConsumerOnce trait for closures
 // =======================================================================
 
-/// Implements BiConsumerOnce for all FnOnce(&T, &U)
-impl<T, U, F> BiConsumerOnce<T, U> for F
-where
-    F: FnOnce(&T, &U),
-{
-    fn accept(self, first: &T, second: &U) {
-        self(first, second)
-    }
-
-    fn into_box(self) -> BoxBiConsumerOnce<T, U>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-        U: 'static,
-    {
-        BoxBiConsumerOnce::new(self)
-    }
-
-    fn into_fn(self) -> impl FnOnce(&T, &U)
-    where
-        Self: Sized + 'static,
-        T: 'static,
-        U: 'static,
-    {
-        self
-    }
-
-    fn to_box(&self) -> BoxBiConsumerOnce<T, U>
-    where
-        Self: Sized + Clone + 'static,
-        T: 'static,
-        U: 'static,
-    {
-        BoxBiConsumerOnce::new(self.clone())
-    }
-
-    fn to_fn(&self) -> impl FnOnce(&T, &U)
-    where
-        Self: Sized + Clone + 'static,
-        T: 'static,
-        U: 'static,
-    {
-        self.clone()
-    }
-}
+// Implement BiConsumerOnce for all FnOnce(&T, &U) using macro
+impl_closure_once_trait!(
+    BiConsumerOnce<T, U>,
+    accept,
+    BoxBiConsumerOnce,
+    FnOnce(first: &T, second: &U)
+);
 
 // =======================================================================
 // 4. Provide extension methods for closures

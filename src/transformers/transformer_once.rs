@@ -22,7 +22,7 @@
 //! Haixing Hu
 
 use crate::{
-    macros::box_conversions::impl_box_once_conversions,
+    macros::box_conversions::{impl_box_once_conversions, impl_closure_once_trait},
     predicates::predicate::{
         BoxPredicate,
         Predicate,
@@ -255,66 +255,13 @@ impl_transformer_debug_display!(BoxTransformerOnce<T, R>);
 // Blanket implementation for standard FnOnce trait
 // ============================================================================
 
-/// Implement TransformerOnce<T, R> for any type that implements
-/// FnOnce(T) -> R
-///
-/// This allows once-callable closures and function pointers to be used
-/// directly with our TransformerOnce trait without wrapping.
-///
-/// # Examples
-///
-/// ```rust
-/// use prism3_function::TransformerOnce;
-///
-/// fn parse(s: String) -> i32 {
-///     s.parse().unwrap_or(0)
-/// }
-///
-/// assert_eq!(parse.apply("42".to_string()), 42);
-///
-/// let owned_value = String::from("hello");
-/// let consume = |s: String| {
-///     format!("{} world", s)
-/// };
-/// assert_eq!(consume.apply(owned_value), "hello world");
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-impl<F, T, R> TransformerOnce<T, R> for F
-where
-    F: FnOnce(T) -> R,
-    T: 'static,
-    R: 'static,
-{
-    fn apply(self, input: T) -> R {
-        self(input)
-    }
-
-    fn into_box(self) -> BoxTransformerOnce<T, R>
-    where
-        Self: Sized + 'static,
-    {
-        BoxTransformerOnce::new(self)
-    }
-
-    fn into_fn(self) -> impl FnOnce(T) -> R
-    where
-        Self: Sized + 'static,
-    {
-        self
-    }
-
-    // use the default implementation of to_box() from TransformerOnce trait
-
-    fn to_fn(&self) -> impl FnOnce(T) -> R
-    where
-        Self: Clone + Sized + 'static,
-    {
-        self.clone()
-    }
-}
+// Implement TransformerOnce for all FnOnce(T) -> R using macro
+impl_closure_once_trait!(
+    TransformerOnce<T, R>,
+    apply,
+    BoxTransformerOnce,
+    FnOnce(input: T) -> R
+);
 
 // ============================================================================
 // FnTransformerOnceOps - Extension trait for FnOnce transformers

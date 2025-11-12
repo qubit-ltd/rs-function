@@ -22,7 +22,7 @@
 //! Haixing Hu
 
 use crate::{
-    macros::box_conversions::impl_box_once_conversions,
+    macros::box_conversions::{impl_box_once_conversions, impl_closure_once_trait},
     predicates::bi_predicate::{
         BiPredicate,
         BoxBiPredicate,
@@ -231,71 +231,13 @@ impl_transformer_debug_display!(BoxBiTransformerOnce<T, U, R>);
 // Blanket implementation for standard FnOnce trait
 // ============================================================================
 
-/// Implement BiTransformerOnce<T, U, R> for any type that implements
-/// FnOnce(T, U) -> R
-///
-/// This allows once-callable closures and function pointers to be used
-/// directly with our BiTransformerOnce trait without wrapping.
-///
-/// # Examples
-///
-/// ```rust
-/// use prism3_function::BiTransformerOnce;
-///
-/// fn add(x: i32, y: i32) -> i32 {
-///     x + y
-/// }
-///
-/// assert_eq!(add.apply(20, 22), 42);
-///
-/// let owned_x = String::from("hello");
-/// let owned_y = String::from("world");
-/// let concat = |x: String, y: String| {
-///     format!("{} {}", x, y)
-/// };
-/// assert_eq!(concat.apply(owned_x, owned_y), "hello world");
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-impl<F, T, U, R> BiTransformerOnce<T, U, R> for F
-where
-    F: FnOnce(T, U) -> R,
-    T: 'static,
-    U: 'static,
-    R: 'static,
-{
-    fn apply(self, first: T, second: U) -> R {
-        self(first, second)
-    }
-
-    fn into_box(self) -> BoxBiTransformerOnce<T, U, R>
-    where
-        Self: Sized + 'static,
-    {
-        BoxBiTransformerOnce::new(self)
-    }
-
-    fn into_fn(self) -> impl FnOnce(T, U) -> R
-    where
-        Self: Sized + 'static,
-    {
-        move |first: T, second: U| -> R { self(first, second) }
-    }
-
-    // use the default implementation of to_box() from BiTransformerOnce trait
-
-    fn to_fn(&self) -> impl FnOnce(T, U) -> R
-    where
-        Self: Clone + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        self.clone()
-    }
-}
+// Implement BiTransformerOnce for all FnOnce(T, U) -> R using macro
+impl_closure_once_trait!(
+    BiTransformerOnce<T, U, R>,
+    apply,
+    BoxBiTransformerOnce,
+    FnOnce(first: T, second: U) -> R
+);
 
 // ============================================================================
 // FnBiTransformerOnceOps - Extension trait for FnOnce(T, U) -> R bi-transformers

@@ -42,7 +42,7 @@ use crate::{
         impl_consumer_common_methods,
         impl_consumer_debug_display,
     },
-    macros::box_conversions::impl_box_once_conversions,
+    macros::box_conversions::{impl_box_once_conversions, impl_closure_once_trait},
     predicates::predicate::{
         BoxPredicate,
         Predicate,
@@ -350,48 +350,13 @@ impl_consumer_debug_display!(BoxConsumerOnce<T>);
 // 3. Implement ConsumerOnce trait for closures
 // ============================================================================
 
-/// Implement ConsumerOnce for all FnOnce(&T)
-impl<T, F> ConsumerOnce<T> for F
-where
-    F: FnOnce(&T),
-{
-    fn accept(self, value: &T) {
-        self(value)
-    }
-
-    fn into_box(self) -> BoxConsumerOnce<T>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        BoxConsumerOnce::new(self)
-    }
-
-    fn into_fn(self) -> impl FnOnce(&T)
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        self
-    }
-
-    fn to_box(&self) -> BoxConsumerOnce<T>
-    where
-        Self: Sized + Clone + 'static,
-        T: 'static,
-    {
-        let cloned = self.clone();
-        BoxConsumerOnce::new(cloned)
-    }
-
-    fn to_fn(&self) -> impl FnOnce(&T)
-    where
-        Self: Sized + Clone + 'static,
-        T: 'static,
-    {
-        self.clone()
-    }
-}
+// Implement ConsumerOnce for all FnOnce(&T) using macro
+impl_closure_once_trait!(
+    ConsumerOnce<T>,
+    accept,
+    BoxConsumerOnce,
+    FnOnce(value: &T)
+);
 
 // ============================================================================
 // 4. Extension methods for closures

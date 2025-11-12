@@ -150,7 +150,7 @@ use crate::{
             impl_function_identity_method,
         },
     },
-    macros::box_conversions::impl_box_once_conversions,
+    macros::box_conversions::{impl_box_once_conversions, impl_closure_once_trait},
     predicates::predicate::{
         BoxPredicate,
         Predicate,
@@ -476,54 +476,13 @@ impl_function_debug_display!(BoxMutatingFunctionOnce<T, R>);
 // 3. Implement MutatingFunctionOnce trait for closures
 // =======================================================================
 
-impl<T, R, F> MutatingFunctionOnce<T, R> for F
-where
-    F: FnOnce(&mut T) -> R,
-{
-    fn apply(self, input: &mut T) -> R {
-        self(input)
-    }
-
-    fn into_box(self) -> BoxMutatingFunctionOnce<T, R>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        BoxMutatingFunctionOnce::new(self)
-    }
-
-    fn into_fn(self) -> impl FnOnce(&mut T) -> R
-    where
-        Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        self
-    }
-
-    // Provide specialized non-consuming conversions for closures that
-    // implement `Clone`. Many simple closures are zero-sized and `Clone`,
-    // allowing non-consuming adapters to be cheaply produced.
-    fn to_box(&self) -> BoxMutatingFunctionOnce<T, R>
-    where
-        Self: Sized + Clone + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        let cloned = self.clone();
-        BoxMutatingFunctionOnce::new(move |t| cloned.apply(t))
-    }
-
-    fn to_fn(&self) -> impl FnOnce(&mut T) -> R
-    where
-        Self: Sized + Clone + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        self.clone()
-    }
-}
+// Implement MutatingFunctionOnce for all FnOnce(&mut T) -> R using macro
+impl_closure_once_trait!(
+    MutatingFunctionOnce<T, R>,
+    apply,
+    BoxMutatingFunctionOnce,
+    FnOnce(input: &mut T) -> R
+);
 
 // =======================================================================
 // 4. Provide extension methods for closures
