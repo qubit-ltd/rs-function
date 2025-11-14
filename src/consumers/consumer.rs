@@ -54,6 +54,7 @@ use crate::consumers::macros::{
 use crate::macros::{
     impl_arc_conversions,
     impl_box_conversions,
+    impl_closure_trait,
     impl_rc_conversions,
 };
 use crate::predicates::predicate::{
@@ -588,99 +589,13 @@ impl_consumer_debug_display!(ArcConsumer<T>);
 // 5. Implement Consumer trait for closures
 // ============================================================================
 
-/// Implement Consumer for all Fn(&T)
-impl<T, F> Consumer<T> for F
-where
-    F: Fn(&T),
-{
-    fn accept(&self, value: &T) {
-        self(value)
-    }
-
-    fn into_box(self) -> BoxConsumer<T>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        BoxConsumer::new(self)
-    }
-
-    fn into_rc(self) -> RcConsumer<T>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        RcConsumer::new(self)
-    }
-
-    fn into_arc(self) -> ArcConsumer<T>
-    where
-        Self: Sized + Send + Sync + 'static,
-        T: 'static,
-    {
-        ArcConsumer::new(self)
-    }
-
-    fn into_fn(self) -> impl Fn(&T)
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        self
-    }
-
-    fn into_once(self) -> BoxConsumerOnce<T>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-    {
-        BoxConsumerOnce::new(self)
-    }
-
-    fn to_box(&self) -> BoxConsumer<T>
-    where
-        Self: Clone + 'static,
-        T: 'static,
-    {
-        let self_fn = self.clone();
-        BoxConsumer::new(self_fn)
-    }
-
-    fn to_rc(&self) -> RcConsumer<T>
-    where
-        Self: Clone + 'static,
-        T: 'static,
-    {
-        let self_fn = self.clone();
-        RcConsumer::new(self_fn)
-    }
-
-    fn to_arc(&self) -> ArcConsumer<T>
-    where
-        Self: Clone + Send + Sync + 'static,
-        T: 'static,
-    {
-        let self_fn = self.clone();
-        ArcConsumer::new(self_fn)
-    }
-
-    fn to_fn(&self) -> impl Fn(&T)
-    where
-        Self: Clone + 'static,
-        T: 'static,
-    {
-        self.clone()
-    }
-
-    fn to_once(&self) -> BoxConsumerOnce<T>
-    where
-        Self: Clone + 'static,
-        T: 'static,
-    {
-        let self_fn = self.clone();
-        BoxConsumerOnce::new(self_fn)
-    }
-}
+// Implement Consumer for all Fn(&T)
+impl_closure_trait!(
+    Consumer<T>,
+    accept,
+    BoxConsumerOnce,
+    Fn(value: &T)
+);
 
 // ============================================================================
 // 6. Provide extension methods for closures

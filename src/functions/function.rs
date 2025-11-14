@@ -27,35 +27,34 @@
 use std::rc::Rc;
 use std::sync::Arc;
 
-use crate::{
-    functions::{
-        function_once::BoxFunctionOnce,
-        macros::{
-            impl_box_conditional_function,
-            impl_box_function_methods,
-            impl_conditional_function_clone,
-            impl_conditional_function_debug_display,
-            impl_fn_ops_trait,
-            impl_function_clone,
-            impl_function_common_methods,
-            impl_function_constant_method,
-            impl_function_debug_display,
-            impl_function_identity_method,
-            impl_shared_conditional_function,
-            impl_shared_function_methods,
-        },
-    },
+use crate::functions::{
+    function_once::BoxFunctionOnce,
     macros::{
-        impl_arc_conversions,
-        impl_box_conversions,
-        impl_rc_conversions,
+        impl_box_conditional_function,
+        impl_box_function_methods,
+        impl_conditional_function_clone,
+        impl_conditional_function_debug_display,
+        impl_fn_ops_trait,
+        impl_function_clone,
+        impl_function_common_methods,
+        impl_function_constant_method,
+        impl_function_debug_display,
+        impl_function_identity_method,
+        impl_shared_conditional_function,
+        impl_shared_function_methods,
     },
-    predicates::predicate::{
-        ArcPredicate,
-        BoxPredicate,
-        Predicate,
-        RcPredicate,
-    },
+};
+use crate::macros::{
+    impl_arc_conversions,
+    impl_box_conversions,
+    impl_closure_trait,
+    impl_rc_conversions,
+};
+use crate::predicates::predicate::{
+    ArcPredicate,
+    BoxPredicate,
+    Predicate,
+    RcPredicate,
 };
 
 // ============================================================================
@@ -612,111 +611,13 @@ impl<T, R> Function<T, R> for ArcFunction<T, R> {
 // Blanket implementation for standard Fn trait
 // ============================================================================
 
-/// Implement Function<T, R> for any type that implements Fn(&T) -> R
-///
-/// This allows closures and function pointers to be used directly with our
-/// Function trait without wrapping.
-///
-/// # Examples
-///
-/// ```rust
-/// use prism3_function::Function;
-///
-/// fn double(x: i32) -> i32 { x * 2 }
-///
-/// assert_eq!(double.apply(21), 42);
-///
-/// let triple = |x: i32| x * 3;
-/// assert_eq!(triple.apply(14), 42);
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-impl<F, T, R> Function<T, R> for F
-where
-    F: Fn(&T) -> R,
-    T: 'static,
-    R: 'static,
-{
-    fn apply(&self, t: &T) -> R {
-        self(t)
-    }
-
-    fn into_box(self) -> BoxFunction<T, R>
-    where
-        Self: Sized + 'static,
-    {
-        BoxFunction::new(self)
-    }
-
-    fn into_rc(self) -> RcFunction<T, R>
-    where
-        Self: Sized + 'static,
-    {
-        RcFunction::new(self)
-    }
-
-    fn into_arc(self) -> ArcFunction<T, R>
-    where
-        Self: Sized + Send + Sync + 'static,
-        T: Send + Sync + 'static,
-        R: 'static,
-    {
-        ArcFunction::new(self)
-    }
-
-    fn into_fn(self) -> impl Fn(&T) -> R
-    where
-        Self: Sized + 'static,
-    {
-        self
-    }
-
-    fn to_box(&self) -> BoxFunction<T, R>
-    where
-        Self: Clone + Sized + 'static,
-    {
-        self.clone().into_box()
-    }
-
-    fn to_rc(&self) -> RcFunction<T, R>
-    where
-        Self: Clone + Sized + 'static,
-    {
-        self.clone().into_rc()
-    }
-
-    fn to_arc(&self) -> ArcFunction<T, R>
-    where
-        Self: Clone + Sized + Send + Sync + 'static,
-        T: Send + Sync + 'static,
-        R: 'static,
-    {
-        self.clone().into_arc()
-    }
-
-    fn to_fn(&self) -> impl Fn(&T) -> R
-    where
-        Self: Clone + Sized + 'static,
-    {
-        self.clone()
-    }
-
-    fn into_once(self) -> BoxFunctionOnce<T, R>
-    where
-        Self: Sized + 'static,
-    {
-        BoxFunctionOnce::new(self)
-    }
-
-    fn to_once(&self) -> BoxFunctionOnce<T, R>
-    where
-        Self: Clone + Sized + 'static,
-    {
-        BoxFunctionOnce::new(self.clone())
-    }
-}
+// Implement Function<T, R> for any type that implements Fn(&T) -> R
+impl_closure_trait!(
+    Function<T, R>,
+    apply,
+    BoxFunctionOnce,
+    Fn(input: &T) -> R
+);
 
 // ============================================================================
 // FnFunctionOps - Extension trait for closure functions

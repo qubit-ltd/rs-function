@@ -19,22 +19,23 @@
 //! # Author
 //!
 //! Haixing Hu
-use crate::{
-    functions::macros::{
-        impl_box_conditional_function,
-        impl_box_function_methods,
-        impl_conditional_function_debug_display,
-        impl_fn_ops_trait,
-        impl_function_common_methods,
-        impl_function_constant_method,
-        impl_function_debug_display,
-        impl_function_identity_method,
-    },
-    macros::box_conversions::{impl_box_once_conversions, impl_closure_once_trait},
-    predicates::predicate::{
-        BoxPredicate,
-        Predicate,
-    },
+use crate::functions::macros::{
+    impl_box_conditional_function,
+    impl_box_function_methods,
+    impl_conditional_function_debug_display,
+    impl_fn_ops_trait,
+    impl_function_common_methods,
+    impl_function_constant_method,
+    impl_function_debug_display,
+    impl_function_identity_method,
+};
+use crate::macros::{
+    impl_box_once_conversions,
+    impl_closure_once_trait,
+};
+use crate::predicates::predicate::{
+    BoxPredicate,
+    Predicate,
 };
 
 // ============================================================================
