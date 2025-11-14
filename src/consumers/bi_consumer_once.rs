@@ -38,7 +38,6 @@
 //! # Author
 //!
 //! Haixing Hu
-
 use crate::{
     consumers::macros::{
         impl_box_conditional_consumer,
@@ -47,7 +46,10 @@ use crate::{
         impl_consumer_common_methods,
         impl_consumer_debug_display,
     },
-    macros::box_conversions::{impl_box_once_conversions, impl_closure_once_trait},
+    macros::{
+        impl_box_once_conversions,
+        impl_closure_once_trait,
+    },
     predicates::bi_predicate::{
         BiPredicate,
         BoxBiPredicate,

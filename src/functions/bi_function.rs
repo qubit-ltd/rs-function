@@ -25,38 +25,36 @@
 //! # Author
 //!
 //! Haixing Hu
-
 use std::rc::Rc;
 use std::sync::Arc;
 
-use crate::{
-    functions::{
-        bi_function_once::BoxBiFunctionOnce,
-        function::Function,
-        macros::{
-            impl_box_conditional_function,
-            impl_box_function_methods,
-            impl_conditional_function_clone,
-            impl_conditional_function_debug_display,
-            impl_function_clone,
-            impl_function_common_methods,
-            impl_function_constant_method,
-            impl_function_debug_display,
-            impl_shared_conditional_function,
-            impl_shared_function_methods,
-        },
-    },
+use crate::functions::{
+    bi_function_once::BoxBiFunctionOnce,
+    function::Function,
     macros::{
-        impl_arc_conversions,
-        impl_box_conversions,
-        impl_rc_conversions,
+        impl_box_conditional_function,
+        impl_box_function_methods,
+        impl_conditional_function_clone,
+        impl_conditional_function_debug_display,
+        impl_function_clone,
+        impl_function_common_methods,
+        impl_function_constant_method,
+        impl_function_debug_display,
+        impl_shared_conditional_function,
+        impl_shared_function_methods,
     },
-    predicates::bi_predicate::{
-        ArcBiPredicate,
-        BiPredicate,
-        BoxBiPredicate,
-        RcBiPredicate,
-    },
+};
+use crate::macros::{
+    impl_arc_conversions,
+    impl_box_conversions,
+    impl_closure_trait,
+    impl_rc_conversions,
+};
+use crate::predicates::bi_predicate::{
+    ArcBiPredicate,
+    BiPredicate,
+    BoxBiPredicate,
+    RcBiPredicate,
 };
 
 // ============================================================================
@@ -510,61 +508,12 @@ impl<T, U, R> BiFunction<T, U, R> for ArcBiFunction<T, U, R> {
 /// # Author
 ///
 /// Haixing Hu
-impl<F, T, U, R> BiFunction<T, U, R> for F
-where
-    F: Fn(&T, &U) -> R,
-    T: 'static,
-    U: 'static,
-    R: 'static,
-{
-    fn apply(&self, first: &T, second: &U) -> R {
-        self(first, second)
-    }
-
-    fn into_box(self) -> BoxBiFunction<T, U, R>
-    where
-        Self: Sized + 'static,
-    {
-        BoxBiFunction::new(self)
-    }
-
-    fn into_rc(self) -> RcBiFunction<T, U, R>
-    where
-        Self: Sized + 'static,
-    {
-        RcBiFunction::new(self)
-    }
-
-    fn into_arc(self) -> ArcBiFunction<T, U, R>
-    where
-        Self: Sized + Send + Sync + 'static,
-        T: Send + Sync + 'static,
-        U: Send + Sync + 'static,
-        R: Send + Sync + 'static,
-    {
-        ArcBiFunction::new(self)
-    }
-
-    fn into_fn(self) -> impl Fn(&T, &U) -> R
-    where
-        Self: Sized + 'static,
-    {
-        move |t: &T, u: &U| self(t, u)
-    }
-
-    // use the default implementation of to_box(), to_rc(), to_arc() from
-    // BiFunction trait
-
-    fn to_fn(&self) -> impl Fn(&T, &U) -> R
-    where
-        Self: Sized + Clone + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        self.clone()
-    }
-}
+impl_closure_trait!(
+    BiFunction<T, U, R>,
+    apply,
+    BoxBiFunctionOnce,
+    Fn(first: &T, second: &U) -> R
+);
 
 // ============================================================================
 // FnBiFunctionOps - Extension trait for Fn(&T, &U) -> R bi-functions

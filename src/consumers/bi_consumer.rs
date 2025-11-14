@@ -38,22 +38,26 @@
 use std::rc::Rc;
 use std::sync::Arc;
 
-use crate::consumers::bi_consumer_once::BoxBiConsumerOnce;
-use crate::consumers::macros::{
-    impl_box_conditional_consumer,
-    impl_box_consumer_methods,
-    impl_conditional_consumer_clone,
-    impl_conditional_consumer_conversions,
-    impl_conditional_consumer_debug_display,
-    impl_consumer_clone,
-    impl_consumer_common_methods,
-    impl_consumer_debug_display,
-    impl_shared_conditional_consumer,
-    impl_shared_consumer_methods,
+use crate::consumers::{
+    bi_consumer_once::BoxBiConsumerOnce,
+    consumer::Consumer,
+    macros::{
+        impl_box_conditional_consumer,
+        impl_box_consumer_methods,
+        impl_conditional_consumer_clone,
+        impl_conditional_consumer_conversions,
+        impl_conditional_consumer_debug_display,
+        impl_consumer_clone,
+        impl_consumer_common_methods,
+        impl_consumer_debug_display,
+        impl_shared_conditional_consumer,
+        impl_shared_consumer_methods,
+    },
 };
 use crate::macros::{
     impl_arc_conversions,
     impl_box_conversions,
+    impl_closure_trait,
     impl_rc_conversions,
 };
 use crate::predicates::bi_predicate::{
@@ -668,90 +672,13 @@ impl_consumer_debug_display!(ArcBiConsumer<T, U>);
 // 5. Implement BiConsumer trait for closures
 // =======================================================================
 
-/// Implements BiConsumer for all Fn(&T, &U)
-impl<T, U, F> BiConsumer<T, U> for F
-where
-    F: Fn(&T, &U),
-{
-    fn accept(&self, first: &T, second: &U) {
-        self(first, second)
-    }
-
-    fn into_box(self) -> BoxBiConsumer<T, U>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-        U: 'static,
-    {
-        BoxBiConsumer::new(self)
-    }
-
-    fn into_rc(self) -> RcBiConsumer<T, U>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-        U: 'static,
-    {
-        RcBiConsumer::new(self)
-    }
-
-    fn into_arc(self) -> ArcBiConsumer<T, U>
-    where
-        Self: Sized + Send + Sync + 'static,
-        T: 'static,
-        U: 'static,
-    {
-        ArcBiConsumer::new(self)
-    }
-
-    fn into_fn(self) -> impl Fn(&T, &U)
-    where
-        Self: Sized + 'static,
-        T: 'static,
-        U: 'static,
-    {
-        self
-    }
-
-    fn to_box(&self) -> BoxBiConsumer<T, U>
-    where
-        Self: Clone + 'static,
-        T: 'static,
-        U: 'static,
-    {
-        let self_fn = self.clone();
-        BoxBiConsumer::new(move |t, u| self_fn(t, u))
-    }
-
-    fn to_rc(&self) -> RcBiConsumer<T, U>
-    where
-        Self: Clone + 'static,
-        T: 'static,
-        U: 'static,
-    {
-        let self_fn = self.clone();
-        RcBiConsumer::new(move |t, u| self_fn(t, u))
-    }
-
-    fn to_arc(&self) -> ArcBiConsumer<T, U>
-    where
-        Self: Clone + Send + Sync + 'static,
-        T: 'static,
-        U: 'static,
-    {
-        let self_fn = self.clone();
-        ArcBiConsumer::new(move |t, u| self_fn(t, u))
-    }
-
-    fn to_fn(&self) -> impl Fn(&T, &U)
-    where
-        Self: Clone + 'static,
-        T: 'static,
-        U: 'static,
-    {
-        self.clone()
-    }
-}
+// Implements BiConsumer for all Fn(&T, &U)
+impl_closure_trait!(
+    BiConsumer<T, U>,
+    accept,
+    BoxBiConsumerOnce,
+    Fn(first: &T, second: &U)
+);
 
 // =======================================================================
 // 6. Provide extension methods for closures

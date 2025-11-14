@@ -21,7 +21,14 @@
 //! # Author
 //!
 //! Haixing Hu
-
+use crate::macros::{
+    impl_box_once_conversions,
+    impl_closure_once_trait,
+};
+use crate::predicates::bi_predicate::{
+    BiPredicate,
+    BoxBiPredicate,
+};
 use crate::{
     functions::function_once::FunctionOnce,
     functions::macros::{
@@ -31,11 +38,6 @@ use crate::{
         impl_function_common_methods,
         impl_function_constant_method,
         impl_function_debug_display,
-    },
-    macros::box_conversions::{impl_box_once_conversions, impl_closure_once_trait},
-    predicates::bi_predicate::{
-        BiPredicate,
-        BoxBiPredicate,
     },
 };
 
