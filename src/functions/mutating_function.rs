@@ -129,37 +129,35 @@
 use std::rc::Rc;
 use std::sync::Arc;
 
-use crate::{
-    functions::{
-        function::Function,
-        macros::{
-            impl_box_conditional_function,
-            impl_box_function_methods,
-            impl_conditional_function_clone,
-            impl_conditional_function_debug_display,
-            impl_fn_ops_trait,
-            impl_function_clone,
-            impl_function_common_methods,
-            impl_function_debug_display,
-            impl_function_identity_method,
-            impl_shared_conditional_function,
-            impl_shared_function_methods,
-        },
-    },
+use crate::functions::{
+    function::Function,
     macros::{
-        impl_arc_conversions,
-        impl_box_conversions,
-        impl_rc_conversions,
+        impl_box_conditional_function,
+        impl_box_function_methods,
+        impl_conditional_function_clone,
+        impl_conditional_function_debug_display,
+        impl_fn_ops_trait,
+        impl_function_clone,
+        impl_function_common_methods,
+        impl_function_debug_display,
+        impl_function_identity_method,
+        impl_shared_conditional_function,
+        impl_shared_function_methods,
     },
-    predicates::predicate::{
-        ArcPredicate,
-        BoxPredicate,
-        Predicate,
-        RcPredicate,
-    },
+    mutating_function_once::BoxMutatingFunctionOnce,
 };
-
-use crate::BoxMutatingFunctionOnce;
+use crate::macros::{
+    impl_arc_conversions,
+    impl_box_conversions,
+    impl_closure_trait,
+    impl_rc_conversions,
+};
+use crate::predicates::predicate::{
+    ArcPredicate,
+    BoxPredicate,
+    Predicate,
+    RcPredicate,
+};
 
 // =======================================================================
 // 1. MutatingFunction Trait - Unified Interface
@@ -872,107 +870,12 @@ impl<T, R> MutatingFunction<T, R> for ArcMutatingFunction<T, R> {
 // 6. Implement MutatingFunction trait for closures
 // =======================================================================
 
-impl<T, R, F> MutatingFunction<T, R> for F
-where
-    F: Fn(&mut T) -> R,
-{
-    fn apply(&self, input: &mut T) -> R {
-        self(input)
-    }
-
-    fn into_box(self) -> BoxMutatingFunction<T, R>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        BoxMutatingFunction::new(self)
-    }
-
-    fn into_rc(self) -> RcMutatingFunction<T, R>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        RcMutatingFunction::new(self)
-    }
-
-    fn into_arc(self) -> ArcMutatingFunction<T, R>
-    where
-        Self: Sized + Send + Sync + 'static,
-        T: Send + 'static,
-        R: Send + 'static,
-    {
-        ArcMutatingFunction::new(self)
-    }
-
-    fn into_fn(self) -> impl Fn(&mut T) -> R
-    where
-        Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        self
-    }
-
-    fn to_box(&self) -> BoxMutatingFunction<T, R>
-    where
-        Self: Sized + Clone + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        let cloned = self.clone();
-        BoxMutatingFunction::new(cloned)
-    }
-
-    fn to_rc(&self) -> RcMutatingFunction<T, R>
-    where
-        Self: Sized + Clone + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        let cloned = self.clone();
-        RcMutatingFunction::new(cloned)
-    }
-
-    fn to_arc(&self) -> ArcMutatingFunction<T, R>
-    where
-        Self: Sized + Clone + Send + Sync + 'static,
-        T: Send + 'static,
-        R: Send + 'static,
-    {
-        let cloned = self.clone();
-        ArcMutatingFunction::new(cloned)
-    }
-
-    fn to_fn(&self) -> impl Fn(&mut T) -> R
-    where
-        Self: Sized + Clone + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        self.clone()
-    }
-
-    fn into_once(self) -> BoxMutatingFunctionOnce<T, R>
-    where
-        Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        BoxMutatingFunctionOnce::new(self)
-    }
-
-    fn to_once(&self) -> BoxMutatingFunctionOnce<T, R>
-    where
-        Self: Sized + Clone + 'static,
-        T: 'static,
-        R: 'static,
-    {
-        BoxMutatingFunctionOnce::new(self.clone())
-    }
-}
+impl_closure_trait!(
+    MutatingFunction<T, R>,
+    apply,
+    BoxMutatingFunctionOnce,
+    Fn(input: &mut T) -> R
+);
 
 // =======================================================================
 // 7. Provide extension methods for closures

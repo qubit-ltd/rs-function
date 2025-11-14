@@ -28,34 +28,33 @@
 use std::rc::Rc;
 use std::sync::Arc;
 
-use crate::{
-    functions::{
-        bi_mutating_function_once::BoxBiMutatingFunctionOnce,
-        macros::{
-            impl_box_conditional_function,
-            impl_box_function_methods,
-            impl_conditional_function_clone,
-            impl_conditional_function_debug_display,
-            impl_function_clone,
-            impl_function_common_methods,
-            impl_function_constant_method,
-            impl_function_debug_display,
-            impl_shared_conditional_function,
-            impl_shared_function_methods,
-        },
-        mutating_function::MutatingFunction,
-    },
+use crate::functions::{
+    bi_mutating_function_once::BoxBiMutatingFunctionOnce,
     macros::{
-        impl_arc_conversions,
-        impl_box_conversions,
-        impl_rc_conversions,
+        impl_box_conditional_function,
+        impl_box_function_methods,
+        impl_conditional_function_clone,
+        impl_conditional_function_debug_display,
+        impl_function_clone,
+        impl_function_common_methods,
+        impl_function_constant_method,
+        impl_function_debug_display,
+        impl_shared_conditional_function,
+        impl_shared_function_methods,
     },
-    predicates::bi_predicate::{
-        ArcBiPredicate,
-        BiPredicate,
-        BoxBiPredicate,
-        RcBiPredicate,
-    },
+    mutating_function::MutatingFunction,
+};
+use crate::macros::{
+    impl_arc_conversions,
+    impl_box_conversions,
+    impl_closure_trait,
+    impl_rc_conversions,
+};
+use crate::predicates::bi_predicate::{
+    ArcBiPredicate,
+    BiPredicate,
+    BoxBiPredicate,
+    RcBiPredicate,
 };
 
 // ============================================================================
@@ -494,100 +493,13 @@ impl_function_clone!(ArcBiMutatingFunction<T, U, R>);
 // Blanket implementation for standard Fn trait
 // ============================================================================
 
-/// Implement BiMutatingFunction<T, U, R> for any type that implements Fn(&mut T, &mut U) -> R
-///
-/// This allows closures and function pointers to be used directly with our
-/// BiMutatingFunction trait without wrapping.
-///
-/// # Examples
-///
-/// ```rust
-/// use prism3_function::BiMutatingFunction;
-///
-/// fn swap_and_add(x: &mut i32, y: &mut i32) -> i32 {
-///     let temp = *x;
-///     *x = *y;
-///     *y = temp;
-///     *x + *y
-/// }
-///
-/// let mut a = 5;
-/// let mut b = 10;
-/// assert_eq!(swap_and_add.apply(&mut a, &mut b), 15);
-/// assert_eq!(a, 10);
-/// assert_eq!(b, 5);
-///
-/// let swapper = |x: &mut i32, y: &mut i32| {
-///     let temp = *x;
-///     *x = *y;
-///     *y = temp;
-///     *x + *y
-/// };
-/// let mut a = 20;
-/// let mut b = 30;
-/// assert_eq!(swapper.apply(&mut a, &mut b), 50);
-/// assert_eq!(a, 30);
-/// assert_eq!(b, 20);
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-impl<F, T, U, R> BiMutatingFunction<T, U, R> for F
-where
-    F: Fn(&mut T, &mut U) -> R,
-    T: 'static,
-    U: 'static,
-    R: 'static,
-{
-    fn apply(&self, first: &mut T, second: &mut U) -> R {
-        self(first, second)
-    }
-
-    fn into_box(self) -> BoxBiMutatingFunction<T, U, R>
-    where
-        Self: Sized + 'static,
-    {
-        BoxBiMutatingFunction::new(self)
-    }
-
-    fn into_rc(self) -> RcBiMutatingFunction<T, U, R>
-    where
-        Self: Sized + 'static,
-    {
-        RcBiMutatingFunction::new(self)
-    }
-
-    fn into_arc(self) -> ArcBiMutatingFunction<T, U, R>
-    where
-        Self: Sized + Send + Sync + 'static,
-        T: Send + Sync + 'static,
-        U: Send + Sync + 'static,
-        R: Send + Sync + 'static,
-    {
-        ArcBiMutatingFunction::new(self)
-    }
-
-    fn into_fn(self) -> impl Fn(&mut T, &mut U) -> R
-    where
-        Self: Sized + 'static,
-    {
-        move |t: &mut T, u: &mut U| self(t, u)
-    }
-
-    // use the default implementation of to_box(), to_rc(), to_arc() from
-    // BiMutatingFunction trait
-
-    fn to_fn(&self) -> impl Fn(&mut T, &mut U) -> R
-    where
-        Self: Sized + Clone + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
-    {
-        self.clone()
-    }
-}
+// Implement BiMutatingFunction<T, U, R> for any type that implements Fn(&mut T, &mut U) -> R
+impl_closure_trait!(
+    BiMutatingFunction<T, U, R>,
+    apply,
+    BoxBiMutatingFunctionOnce,
+    Fn(first: &mut T, second: &mut U) -> R
+);
 
 // ============================================================================
 // FnBiMutatingFunctionOps - Extension trait for Fn(&mut T, &mut U) -> R bi-functions
