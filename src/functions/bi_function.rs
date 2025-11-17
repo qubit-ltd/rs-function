@@ -487,27 +487,7 @@ impl<T, U, R> BiFunction<T, U, R> for ArcBiFunction<T, U, R> {
 // Blanket implementation for standard Fn trait
 // ============================================================================
 
-/// Implement BiFunction<T, U, R> for any type that implements Fn(&T, &U) -> R
-///
-/// This allows closures and function pointers to be used directly with our
-/// BiFunction trait without wrapping.
-///
-/// # Examples
-///
-/// ```rust
-/// use prism3_function::BiFunction;
-///
-/// fn add(x: &i32, y: &i32) -> i32 { *x + *y }
-///
-/// assert_eq!(add.apply(&20, &22), 42);
-///
-/// let multiply = |x: &i32, y: &i32| x * y;
-/// assert_eq!(multiply.apply(&6, &7), 42);
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
+// Implement BiFunction<T, U, R> for any type that implements Fn(&T, &U) -> R
 impl_closure_trait!(
     BiFunction<T, U, R>,
     apply,

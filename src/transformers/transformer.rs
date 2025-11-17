@@ -578,27 +578,7 @@ impl<T, R> Transformer<T, R> for ArcTransformer<T, R> {
 // Blanket implementation for standard Fn trait
 // ============================================================================
 
-/// Implement Transformer<T, R> for any type that implements Fn(T) -> R
-///
-/// This allows closures and function pointers to be used directly with our
-/// Transformer trait without wrapping.
-///
-/// # Examples
-///
-/// ```rust
-/// use prism3_function::Transformer;
-///
-/// fn double(x: i32) -> i32 { x * 2 }
-///
-/// assert_eq!(double.apply(21), 42);
-///
-/// let triple = |x: i32| x * 3;
-/// assert_eq!(triple.apply(14), 42);
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
+// Implement Transformer<T, R> for any type that implements Fn(T) -> R
 impl_closure_trait!(
     Transformer<T, R>,
     apply,

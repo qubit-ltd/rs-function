@@ -520,27 +520,7 @@ impl<T, U, R> StatefulBiTransformer<T, U, R> for ArcStatefulBiTransformer<T, U, 
 // Blanket implementation for standard Fn trait
 // ============================================================================
 
-/// Implement StatefulBiTransformer<T, U, R> for any type that implements FnMut(T, U) -> R
-///
-/// This allows closures and function pointers to be used directly with our
-/// StatefulBiTransformer trait without wrapping.
-///
-/// # Examples
-///
-/// ```rust
-/// use prism3_function::StatefulBiTransformer;
-///
-/// fn add(x: i32, y: i32) -> i32 { x + y }
-///
-/// assert_eq!(add.apply(20, 22), 42);
-///
-/// let multiply = |x: i32, y: i32| x * y;
-/// assert_eq!(multiply.apply(6, 7), 42);
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
+// Implement StatefulBiTransformer<T, U, R> for any type that implements FnMut(T, U) -> R
 impl_closure_trait!(
     StatefulBiTransformer<T, U, R>,
     apply,

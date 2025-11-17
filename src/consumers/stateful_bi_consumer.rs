@@ -811,7 +811,7 @@ impl_consumer_debug_display!(ArcStatefulBiConsumer<T, U>);
 // 5. Implement BiConsumer trait for closures
 // =======================================================================
 
-/// Implements BiConsumer for all FnMut(&T, &U)
+// Implements BiConsumer for all FnMut(&T, &U)
 impl_closure_trait!(
     StatefulBiConsumer<T, U>,
     accept,
