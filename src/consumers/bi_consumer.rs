@@ -40,7 +40,6 @@ use std::sync::Arc;
 
 use crate::consumers::{
     bi_consumer_once::BoxBiConsumerOnce,
-    consumer::Consumer,
     macros::{
         impl_box_conditional_consumer,
         impl_box_consumer_methods,

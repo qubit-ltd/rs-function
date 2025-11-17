@@ -184,4 +184,3 @@ macro_rules! impl_box_once_conversions {
 }
 
 pub(crate) use impl_box_once_conversions;
-

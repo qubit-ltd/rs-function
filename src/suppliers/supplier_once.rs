@@ -70,10 +70,7 @@ use crate::macros::{
     impl_box_once_conversions,
     impl_closure_once_trait,
 };
-use crate::predicates::predicate::{
-    BoxPredicate,
-    Predicate,
-};
+use crate::predicates::predicate::Predicate;
 use crate::suppliers::macros::{
     impl_box_supplier_methods,
     impl_supplier_common_methods,
