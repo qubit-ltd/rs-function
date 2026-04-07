@@ -9,7 +9,7 @@
 
 //! Demonstration of StatefulSupplier types usage
 
-use qubit_atomic::{
+use qubit_function::{
     ArcStatefulSupplier,
     ArcSupplier,
     BoxStatefulSupplier,

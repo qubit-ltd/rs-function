@@ -9,7 +9,7 @@
 
 //! Unit tests for MutatingFunction types (stateless Fn(&mut T) -> R)
 
-use qubit_atomic::{
+use qubit_function::{
     ArcMutatingFunction,
     BoxMutatingFunction,
     FnMutatingFunctionOps,
@@ -1080,7 +1080,7 @@ fn test_arc_conditional_mutating_function_debug_display() {
 #[cfg(test)]
 mod test_mutating_function_trait_default_methods {
     use super::*;
-    use qubit_atomic::MutatingFunctionOnce;
+    use qubit_function::MutatingFunctionOnce;
     use std::sync::{
         atomic::{
             AtomicUsize,

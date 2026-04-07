@@ -9,7 +9,7 @@
 
 //! Comprehensive tests for BiMutatingFunction trait and its implementations
 
-use qubit_atomic::{
+use qubit_function::{
     ArcBiMutatingFunction,
     ArcBiPredicate,
     BiMutatingFunction,

@@ -103,7 +103,7 @@ macro_rules! impl_box_supplier_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use qubit_atomic::suppliers::*;
+        /// use qubit_function::suppliers::*;
         ///
         /// let supplier = BoxSupplier::new(|| 10);
         /// let mapped = supplier
@@ -137,7 +137,7 @@ macro_rules! impl_box_supplier_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use qubit_atomic::suppliers::*;
+        /// use qubit_function::suppliers::*;
         ///
         /// let supplier = BoxSupplier::new(|| 42);
         /// let filtered = supplier.filter(|x| x % 2 == 0);
@@ -176,7 +176,7 @@ macro_rules! impl_box_supplier_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use qubit_atomic::suppliers::*;
+        /// use qubit_function::suppliers::*;
         ///
         /// let first = BoxSupplier::new(|| 42);
         /// let second = BoxSupplier::new(|| "hello");

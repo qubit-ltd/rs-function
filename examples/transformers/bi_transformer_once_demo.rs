@@ -8,7 +8,7 @@
  ******************************************************************************/
 //! BiTransformerOnce usage examples
 
-use qubit_atomic::{
+use qubit_function::{
     BiTransformerOnce,
     BoxBiTransformerOnce,
 };

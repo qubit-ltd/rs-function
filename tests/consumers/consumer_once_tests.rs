@@ -13,7 +13,7 @@
 /// # ConsumerOnce Tests
 ///
 /// Unit tests for the ConsumerOnce trait and its implementations.
-use qubit_atomic::{
+use qubit_function::{
     BoxConsumerOnce,
     ConsumerOnce,
     FnConsumerOnceOps,

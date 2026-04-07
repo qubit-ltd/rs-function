@@ -9,7 +9,7 @@
 
 //! Unit tests for StatefulSupplier types
 
-use qubit_atomic::{
+use qubit_function::{
     ArcStatefulSupplier,
     BoxStatefulSupplier,
     FnStatefulSupplierOps,
@@ -2615,7 +2615,7 @@ mod test_stateful_supplier_debug_display {
 #[cfg(test)]
 mod test_stateful_supplier_trait_default_methods {
     use super::*;
-    use qubit_atomic::SupplierOnce;
+    use qubit_function::SupplierOnce;
     use std::sync::atomic::{
         AtomicUsize,
         Ordering,

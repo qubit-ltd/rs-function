@@ -12,7 +12,7 @@
 //! This example demonstrates the usage of ReadonlyBiConsumer types, which
 //! neither modify their own state nor the input values.
 
-use qubit_atomic::{
+use qubit_function::{
     ArcBiConsumer,
     BiConsumer,
     BoxBiConsumer,

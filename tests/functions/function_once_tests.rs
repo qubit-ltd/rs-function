@@ -9,7 +9,7 @@
 
 //! Comprehensive tests for FunctionOnce trait and BoxFunctionOnce
 
-use qubit_atomic::{
+use qubit_function::{
     BoxFunctionOnce,
     FunctionOnce,
     Predicate,
@@ -383,7 +383,7 @@ fn test_function_once_with_complex_closure_below_threshold() {
 #[test]
 fn test_fn_function_once_ops_and_then() {
     // Test FnFunctionOnceOps::and_then for closures
-    use qubit_atomic::FnFunctionOnceOps;
+    use qubit_function::FnFunctionOnceOps;
 
     let parse = |s: &String| s.parse::<i32>().unwrap_or(0);
     let double = |x: &i32| x * 2;
@@ -394,7 +394,7 @@ fn test_fn_function_once_ops_and_then() {
 #[test]
 fn test_fn_function_once_ops_when() {
     // Test FnFunctionOnceOps::when for closures
-    use qubit_atomic::FnFunctionOnceOps;
+    use qubit_function::FnFunctionOnceOps;
 
     let double = |x: &i32| x * 2;
     let conditional = double.when(|x: &i32| *x > 0).or_else(|x: &i32| -(*x));
@@ -404,7 +404,7 @@ fn test_fn_function_once_ops_when() {
 #[test]
 fn test_fn_function_once_ops_when_negative() {
     // Test FnFunctionOnceOps::when with negative value
-    use qubit_atomic::FnFunctionOnceOps;
+    use qubit_function::FnFunctionOnceOps;
 
     let double = |x: &i32| x * 2;
     let conditional = double.when(|x: &i32| *x > 0).or_else(|x: &i32| -(*x));
@@ -453,7 +453,7 @@ fn test_function_once_with_rc() {
 
 #[cfg(test)]
 mod function_once_default_impl_tests {
-    use qubit_atomic::{
+    use qubit_function::{
         BoxFunctionOnce,
         FunctionOnce,
     };

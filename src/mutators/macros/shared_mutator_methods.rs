@@ -141,7 +141,7 @@ macro_rules! impl_shared_mutator_methods {
         /// ```rust
         /// use std::sync::Arc;
         /// use std::sync::atomic::{AtomicI32, Ordering};
-        /// use qubit_atomic::mutators::*;
+        /// use qubit_function::mutators::*;
         ///
         /// let counter = Arc::new(AtomicI32::new(0));
         /// let mutator = ArcMutator::new({
@@ -185,7 +185,7 @@ macro_rules! impl_shared_mutator_methods {
         /// ```rust
         /// use std::sync::Arc;
         /// use std::sync::atomic::{AtomicI32, Ordering};
-        /// use qubit_atomic::mutators::*;
+        /// use qubit_function::mutators::*;
         ///
         /// let counter1 = Arc::new(AtomicI32::new(0));
         /// let counter2 = Arc::new(AtomicI32::new(0));

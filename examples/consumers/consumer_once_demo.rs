@@ -10,7 +10,7 @@
 //!
 //! Demonstrates the usage of ConsumerOnce trait and its implementations.
 
-use qubit_atomic::{
+use qubit_function::{
     BoxConsumerOnce,
     ConsumerOnce,
     FnConsumerOnceOps,

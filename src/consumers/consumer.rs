@@ -96,7 +96,7 @@ use crate::predicates::predicate::{
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::{Consumer, BoxConsumer};
+/// use qubit_function::{Consumer, BoxConsumer};
 ///
 /// fn apply_consumer<C: Consumer<i32>>(consumer: &C, value: &i32) {
 ///     consumer.accept(value);
@@ -125,7 +125,7 @@ pub trait Consumer<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::{Consumer, BoxConsumer};
+    /// use qubit_function::{Consumer, BoxConsumer};
     ///
     /// let consumer = BoxConsumer::new(|x: &i32| println!("{}", x));
     /// consumer.accept(&5);
@@ -195,7 +195,7 @@ pub trait Consumer<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::{Consumer, BoxConsumer};
+    /// use qubit_function::{Consumer, BoxConsumer};
     ///
     /// let consumer = BoxConsumer::new(|x: &i32| {
     ///     println!("Value: {}", x);
@@ -364,7 +364,7 @@ pub trait Consumer<T> {
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::{Consumer, BoxConsumer};
+/// use qubit_function::{Consumer, BoxConsumer};
 ///
 /// let consumer = BoxConsumer::new(|x: &i32| {
 ///     println!("Observed value: {}", x);
@@ -437,7 +437,7 @@ impl_consumer_debug_display!(BoxConsumer<T>);
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::{Consumer, RcConsumer};
+/// use qubit_function::{Consumer, RcConsumer};
 ///
 /// let consumer = RcConsumer::new(|x: &i32| {
 ///     println!("Observed: {}", x);
@@ -526,7 +526,7 @@ impl_consumer_debug_display!(RcConsumer<T>);
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::{Consumer, ArcConsumer};
+/// use qubit_function::{Consumer, ArcConsumer};
 ///
 /// let consumer = ArcConsumer::new(|x: &i32| {
 ///     println!("Observed: {}", x);
@@ -618,7 +618,7 @@ impl_closure_trait!(
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::{Consumer, FnConsumerOps};
+/// use qubit_function::{Consumer, FnConsumerOps};
 ///
 /// let chained = (|x: &i32| {
 ///     println!("First: {}", x);
@@ -653,7 +653,7 @@ pub trait FnConsumerOps<T>: Fn(&T) + Sized {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::{Consumer, FnConsumerOps};
+    /// use qubit_function::{Consumer, FnConsumerOps};
     ///
     /// let chained = (|x: &i32| {
     ///     println!("First: {}", x);
@@ -706,7 +706,7 @@ impl<T, F> FnConsumerOps<T> for F where F: Fn(&T) {}
 /// ## Basic Conditional Execution
 ///
 /// ```rust
-/// use qubit_atomic::{Consumer, BoxConsumer};
+/// use qubit_function::{Consumer, BoxConsumer};
 ///
 /// let consumer = BoxConsumer::new(|x: &i32| {
 ///     println!("Positive: {}", x);
@@ -720,7 +720,7 @@ impl<T, F> FnConsumerOps<T> for F where F: Fn(&T) {}
 /// ## With or_else Branch
 ///
 /// ```rust
-/// use qubit_atomic::{Consumer, BoxConsumer};
+/// use qubit_function::{Consumer, BoxConsumer};
 ///
 /// let consumer = BoxConsumer::new(|x: &i32| {
 ///     println!("Positive: {}", x);
@@ -789,7 +789,7 @@ impl_conditional_consumer_debug_display!(BoxConditionalConsumer<T>);
 /// ## Basic Conditional Execution
 ///
 /// ```rust
-/// use qubit_atomic::{Consumer, RcConsumer};
+/// use qubit_function::{Consumer, RcConsumer};
 ///
 /// let consumer = RcConsumer::new(|x: &i32| {
 ///     println!("Positive: {}", x);
@@ -803,7 +803,7 @@ impl_conditional_consumer_debug_display!(BoxConditionalConsumer<T>);
 /// ## With or_else Branch
 ///
 /// ```rust
-/// use qubit_atomic::{Consumer, RcConsumer};
+/// use qubit_function::{Consumer, RcConsumer};
 ///
 /// let consumer = RcConsumer::new(|x: &i32| {
 ///     println!("Positive: {}", x);
@@ -881,7 +881,7 @@ impl_conditional_consumer_debug_display!(RcConditionalConsumer<T>);
 /// ## Basic Conditional Execution
 ///
 /// ```rust
-/// use qubit_atomic::{Consumer, ArcConsumer};
+/// use qubit_function::{Consumer, ArcConsumer};
 ///
 /// let consumer = ArcConsumer::new(|x: &i32| {
 ///     println!("Positive: {}", x);
@@ -895,7 +895,7 @@ impl_conditional_consumer_debug_display!(RcConditionalConsumer<T>);
 /// ## With or_else Branch
 ///
 /// ```rust
-/// use qubit_atomic::{Consumer, ArcConsumer};
+/// use qubit_function::{Consumer, ArcConsumer};
 ///
 /// let consumer = ArcConsumer::new(|x: &i32| {
 ///     println!("Positive: {}", x);

@@ -9,7 +9,7 @@
 
 //! Demonstrates how Predicate's into_fn/to_fn methods can be used in scenarios requiring FnMut
 
-use qubit_atomic::predicate::{
+use qubit_function::predicate::{
     ArcPredicate,
     BoxPredicate,
     Predicate,

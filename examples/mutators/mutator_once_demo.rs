@@ -10,7 +10,7 @@
 //!
 //! Demonstrates various usage scenarios of MutatorOnce
 
-use qubit_atomic::{
+use qubit_function::{
     BoxMutatorOnce,
     FnMutatorOnceOps,
     MutatorOnce,

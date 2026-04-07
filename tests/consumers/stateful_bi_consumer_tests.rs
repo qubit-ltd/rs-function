@@ -13,7 +13,7 @@
 //! implementations including BoxStatefulBiConsumer, ArcStatefulBiConsumer,
 //! RcStatefulBiConsumer, and their conditional variants.
 
-use qubit_atomic::{
+use qubit_function::{
     ArcStatefulBiConsumer,
     BiConsumerOnce,
     BoxStatefulBiConsumer,
@@ -2224,7 +2224,7 @@ fn test_custom_stateful_bi_consumer_to_fn() {
 #[cfg(test)]
 mod custom_struct_once_tests {
     use super::*;
-    use qubit_atomic::BiConsumerOnce;
+    use qubit_function::BiConsumerOnce;
     use std::sync::atomic::{
         AtomicUsize,
         Ordering,

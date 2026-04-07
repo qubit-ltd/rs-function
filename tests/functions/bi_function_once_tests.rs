@@ -9,7 +9,7 @@
 
 //! Comprehensive tests for BiFunctionOnce trait and BoxBiFunctionOnce
 
-use qubit_atomic::{
+use qubit_function::{
     ArcBiPredicate,
     BiFunctionOnce,
     BoxBiFunctionOnce,

@@ -7,7 +7,7 @@
  *
  ******************************************************************************/
 
-use qubit_atomic::{
+use qubit_function::{
     ArcStatefulBiTransformer,
     ArcStatefulTransformer,
     BoxBiPredicate,
@@ -1175,7 +1175,7 @@ mod conditional_stateful_bi_transformer_display_debug_tests {
 #[cfg(test)]
 mod stateful_bi_transformer_trait_default_methods_tests {
     use super::*;
-    use qubit_atomic::BiTransformerOnce;
+    use qubit_function::BiTransformerOnce;
 
     // Custom struct implementing StatefulBiTransformer to test default methods
     #[derive(Clone)]

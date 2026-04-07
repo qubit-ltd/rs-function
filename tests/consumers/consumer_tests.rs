@@ -9,7 +9,7 @@
 
 //! Tests for Consumer types
 
-use qubit_atomic::{
+use qubit_function::{
     ArcConsumer,
     BoxConsumer,
     Consumer,
@@ -1262,7 +1262,7 @@ mod to_xxx_methods_tests {
 #[cfg(test)]
 mod to_once_tests {
     use super::*;
-    use qubit_atomic::ConsumerOnce;
+    use qubit_function::ConsumerOnce;
     use std::sync::atomic::{
         AtomicUsize,
         Ordering,

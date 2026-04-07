@@ -7,7 +7,7 @@
  *
  ******************************************************************************/
 /// Tests for BiConsumer types
-use qubit_atomic::{
+use qubit_function::{
     ArcBiConsumer,
     BiConsumer,
     BoxBiConsumer,
@@ -1744,7 +1744,7 @@ mod to_methods_tests {
 #[cfg(test)]
 mod to_once_tests {
     use super::*;
-    use qubit_atomic::BiConsumerOnce;
+    use qubit_function::BiConsumerOnce;
     use std::sync::Mutex;
 
     #[test]

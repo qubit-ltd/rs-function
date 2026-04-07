@@ -6,7 +6,7 @@
  *    All rights reserved.
  *
  ******************************************************************************/
-use qubit_atomic::{
+use qubit_function::{
     ArcBiTransformer,
     BiTransformer,
     BoxBiTransformer,
@@ -249,7 +249,7 @@ mod rc_bi_transformer_tests {
 #[cfg(test)]
 mod box_conditional_tests {
     use super::*;
-    use qubit_atomic::BoxBiPredicate;
+    use qubit_function::BoxBiPredicate;
 
     #[test]
     fn test_when_or_else() {
@@ -278,7 +278,7 @@ mod box_conditional_tests {
 #[cfg(test)]
 mod arc_conditional_tests {
     use super::*;
-    use qubit_atomic::ArcBiPredicate;
+    use qubit_function::ArcBiPredicate;
 
     #[test]
     fn test_when_or_else() {
@@ -322,7 +322,7 @@ mod arc_conditional_tests {
 #[cfg(test)]
 mod rc_conditional_tests {
     use super::*;
-    use qubit_atomic::RcBiPredicate;
+    use qubit_function::RcBiPredicate;
 
     #[test]
     fn test_when_or_else() {
@@ -2019,7 +2019,7 @@ mod conditional_transformer_display_debug_tests {
 #[cfg(test)]
 mod custom_bi_transformer_into_tests {
     use super::*;
-    use qubit_atomic::BiTransformerOnce;
+    use qubit_function::BiTransformerOnce;
 
     /// Test custom BiTransformer that implements into_* methods by consuming self
     #[derive(Clone)]

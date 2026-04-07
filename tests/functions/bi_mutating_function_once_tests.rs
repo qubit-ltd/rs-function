@@ -9,7 +9,7 @@
 
 //! Comprehensive tests for BiMutatingFunctionOnce trait and its implementations
 
-use qubit_atomic::{
+use qubit_function::{
     BiMutatingFunctionOnce,
     BoxBiMutatingFunctionOnce,
     FnBiMutatingFunctionOnceOps,

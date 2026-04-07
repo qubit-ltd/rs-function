@@ -6,7 +6,7 @@
  *    All rights reserved.
  *
  ******************************************************************************/
-use qubit_atomic::comparator::{
+use qubit_function::comparator::{
     ArcComparator,
     BoxComparator,
     Comparator,

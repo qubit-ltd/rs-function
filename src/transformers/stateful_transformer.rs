@@ -105,7 +105,7 @@ pub trait StatefulTransformer<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::{StatefulTransformer, BoxStatefulTransformer};
+    /// use qubit_function::{StatefulTransformer, BoxStatefulTransformer};
     ///
     /// struct CustomTransformer {
     ///     multiplier: i32,
@@ -151,7 +151,7 @@ pub trait StatefulTransformer<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::{StatefulTransformer, RcStatefulTransformer};
+    /// use qubit_function::{StatefulTransformer, RcStatefulTransformer};
     ///
     /// struct CustomTransformer {
     ///     multiplier: i32,
@@ -197,7 +197,7 @@ pub trait StatefulTransformer<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::{StatefulTransformer, ArcStatefulTransformer};
+    /// use qubit_function::{StatefulTransformer, ArcStatefulTransformer};
     ///
     /// struct CustomTransformer {
     ///     multiplier: i32,
@@ -242,7 +242,7 @@ pub trait StatefulTransformer<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::{StatefulTransformer, BoxStatefulTransformer};
+    /// use qubit_function::{StatefulTransformer, BoxStatefulTransformer};
     ///
     /// let transformer = BoxStatefulTransformer::new(|x: i32| x * 2);
     /// let mut closure = transformer.into_fn();
@@ -272,7 +272,7 @@ pub trait StatefulTransformer<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::StatefulTransformer;
+    /// use qubit_function::StatefulTransformer;
     ///
     /// let closure = |x: i32| x * 2;
     /// let once = closure.into_once();
@@ -609,7 +609,7 @@ impl_closure_trait!(
 /// ## Chain composition with and_then
 ///
 /// ```rust
-/// use qubit_atomic::{StatefulTransformer, FnStatefulTransformerOps};
+/// use qubit_function::{StatefulTransformer, FnStatefulTransformerOps};
 ///
 /// let mut counter1 = 0;
 /// let transformer1 = move |x: i32| {
@@ -630,7 +630,7 @@ impl_closure_trait!(
 /// ## Reverse composition with compose
 ///
 /// ```rust
-/// use qubit_atomic::{StatefulTransformer, FnStatefulTransformerOps};
+/// use qubit_function::{StatefulTransformer, FnStatefulTransformerOps};
 ///
 /// let mut counter = 0;
 /// let transformer = move |x: i32| {
@@ -645,7 +645,7 @@ impl_closure_trait!(
 /// ## Conditional mapping with when
 ///
 /// ```rust
-/// use qubit_atomic::{StatefulTransformer, FnStatefulTransformerOps};
+/// use qubit_function::{StatefulTransformer, FnStatefulTransformerOps};
 ///
 /// let mut transformer = (|x: i32| x * 2)
 ///     .when(|x: &i32| *x > 0)
@@ -686,7 +686,7 @@ pub trait FnStatefulTransformerOps<T, R>: FnMut(T) -> R + Sized + 'static {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::{StatefulTransformer, FnStatefulTransformerOps, BoxStatefulTransformer};
+    /// use qubit_function::{StatefulTransformer, FnStatefulTransformerOps, BoxStatefulTransformer};
     ///
     /// let mut counter1 = 0;
     /// let transformer1 = move |x: i32| {
@@ -736,7 +736,7 @@ pub trait FnStatefulTransformerOps<T, R>: FnMut(T) -> R + Sized + 'static {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::{StatefulTransformer, FnStatefulTransformerOps};
+    /// use qubit_function::{StatefulTransformer, FnStatefulTransformerOps};
     ///
     /// let mut transformer = (|x: i32| x * 2)
     ///     .when(|x: &i32| *x > 0)
@@ -789,7 +789,7 @@ impl<T, R, F> FnStatefulTransformerOps<T, R> for F where F: FnMut(T) -> R + 'sta
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::{StatefulTransformer, BoxStatefulTransformer};
+/// use qubit_function::{StatefulTransformer, BoxStatefulTransformer};
 ///
 /// let mut high_count = 0;
 /// let mut low_count = 0;
@@ -850,7 +850,7 @@ impl_conditional_transformer_debug_display!(BoxConditionalStatefulTransformer<T,
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::{StatefulTransformer, RcStatefulTransformer};
+/// use qubit_function::{StatefulTransformer, RcStatefulTransformer};
 ///
 /// let mut transformer = RcStatefulTransformer::new(|x: i32| x * 2)
 ///     .when(|x: &i32| *x > 0)
@@ -910,7 +910,7 @@ impl_conditional_transformer_clone!(RcConditionalStatefulTransformer<T, R>);
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::{StatefulTransformer, ArcStatefulTransformer};
+/// use qubit_function::{StatefulTransformer, ArcStatefulTransformer};
 ///
 /// let mut transformer = ArcStatefulTransformer::new(|x: i32| x * 2)
 ///     .when(|x: &i32| *x > 0)

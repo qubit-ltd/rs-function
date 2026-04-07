@@ -1,14 +1,14 @@
 [package]
-name = "qubit-atomic"
+name = "qubit-function"
 version = "0.6.0"
 edition = "2021"
 rust-version = "1.70"
 authors = ["Haixing Hu <starfish.hu@gmail.com>"]
 license = "Apache-2.0"
-repository = "https://github.com/qubit-ltd/rust-function"
+repository = "https://github.com/qubit-ltd/qubit-function"
 description = "Common functional programming type aliases for Rust, providing Java-style functional interfaces"
-homepage = "https://github.com/qubit-ltd/rust-function"
-documentation = "https://docs.rs/qubit-atomic"
+homepage = "https://github.com/qubit-ltd/qubit-function"
+documentation = "https://docs.rs/qubit-function"
 readme = "README.md"
 keywords = ["functional", "predicate", "function", "consumer", "supplier"]
 categories = ["development-tools", "rust-patterns"]
@@ -25,7 +25,7 @@ exclude = [
 ]
 
 [lib]
-name = "qubit_atomic"
+name = "qubit_function"
 doctest = false
 
 [dependencies]

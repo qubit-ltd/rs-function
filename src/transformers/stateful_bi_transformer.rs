@@ -553,7 +553,7 @@ impl_closure_trait!(
 /// ## Chain composition with and_then
 ///
 /// ```rust
-/// use qubit_atomic::{StatefulBiTransformer, FnStatefulBiTransformerOps};
+/// use qubit_function::{StatefulBiTransformer, FnStatefulBiTransformerOps};
 ///
 /// let add = |x: i32, y: i32| x + y;
 /// let double = |x: i32| x * 2;
@@ -565,7 +565,7 @@ impl_closure_trait!(
 /// ## Conditional execution with when
 ///
 /// ```rust
-/// use qubit_atomic::{StatefulBiTransformer, FnStatefulBiTransformerOps};
+/// use qubit_function::{StatefulBiTransformer, FnStatefulBiTransformerOps};
 ///
 /// let add = |x: i32, y: i32| x + y;
 /// let multiply = |x: i32, y: i32| x * y;
@@ -613,7 +613,7 @@ pub trait FnStatefulBiTransformerOps<T, U, R>: FnMut(T, U) -> R + Sized + 'stati
     /// ## Direct value passing (ownership transfer)
     ///
     /// ```rust
-    /// use qubit_atomic::{StatefulBiTransformer, FnStatefulBiTransformerOps,
+    /// use qubit_function::{StatefulBiTransformer, FnStatefulBiTransformerOps,
     ///     BoxTransformer};
     ///
     /// let add = |x: i32, y: i32| x + y;
@@ -628,7 +628,7 @@ pub trait FnStatefulBiTransformerOps<T, U, R>: FnMut(T, U) -> R + Sized + 'stati
     /// ## Preserving original with clone
     ///
     /// ```rust
-    /// use qubit_atomic::{StatefulBiTransformer, FnStatefulBiTransformerOps,
+    /// use qubit_function::{StatefulBiTransformer, FnStatefulBiTransformerOps,
     ///     BoxTransformer};
     ///
     /// let add = |x: i32, y: i32| x + y;
@@ -680,7 +680,7 @@ pub trait FnStatefulBiTransformerOps<T, U, R>: FnMut(T, U) -> R + Sized + 'stati
     /// ## Basic usage with or_else
     ///
     /// ```rust
-    /// use qubit_atomic::{StatefulBiTransformer, FnStatefulBiTransformerOps};
+    /// use qubit_function::{StatefulBiTransformer, FnStatefulBiTransformerOps};
     ///
     /// let add = |x: i32, y: i32| x + y;
     /// let conditional = add.when(|x: &i32, y: &i32| *x > 0)
@@ -693,7 +693,7 @@ pub trait FnStatefulBiTransformerOps<T, U, R>: FnMut(T, U) -> R + Sized + 'stati
     /// ## Preserving bi-predicate with clone
     ///
     /// ```rust
-    /// use qubit_atomic::{StatefulBiTransformer, FnStatefulBiTransformerOps,
+    /// use qubit_function::{StatefulBiTransformer, FnStatefulBiTransformerOps,
     ///     RcBiPredicate};
     ///
     /// let add = |x: i32, y: i32| x + y;
@@ -735,7 +735,7 @@ pub trait FnStatefulBiTransformerOps<T, U, R>: FnMut(T, U) -> R + Sized + 'stati
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::{StatefulBiTransformer, FnStatefulBiTransformerOps};
+    /// use qubit_function::{StatefulBiTransformer, FnStatefulBiTransformerOps};
     ///
     /// let mut counter = 0;
     /// let transformer = |x: i32, y: i32| {
@@ -794,7 +794,7 @@ impl<T, U, R, F> FnStatefulBiTransformerOps<T, U, R> for F where F: FnMut(T, U) 
 /// ## Using in generic constraints
 ///
 /// ```rust
-/// use qubit_atomic::{BinaryOperator, StatefulBiTransformer};
+/// use qubit_function::{BinaryOperator, StatefulBiTransformer};
 ///
 /// fn reduce<T, O>(values: Vec<T>, initial: T, op: O) -> T
 /// where
@@ -811,7 +811,7 @@ impl<T, U, R, F> FnStatefulBiTransformerOps<T, U, R> for F where F: FnMut(T, U) 
 /// ## With concrete types
 ///
 /// ```rust
-/// use qubit_atomic::{BoxBinaryOperator, BinaryOperator, StatefulBiTransformer};
+/// use qubit_function::{BoxBinaryOperator, BinaryOperator, StatefulBiTransformer};
 ///
 /// fn create_adder() -> BoxBinaryOperator<i32> {
 ///     BoxBinaryOperator::new(|x, y| x + y)
@@ -855,7 +855,7 @@ where
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::{BoxBinaryOperator, StatefulBiTransformer};
+/// use qubit_function::{BoxBinaryOperator, StatefulBiTransformer};
 ///
 /// let add: BoxBinaryOperator<i32> = BoxBinaryOperator::new(|x, y| x + y);
 /// assert_eq!(add.apply(20, 22), 42);
@@ -875,7 +875,7 @@ pub type BoxBinaryOperator<T> = BoxStatefulBiTransformer<T, T, T>;
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::{ArcBinaryOperator, StatefulBiTransformer};
+/// use qubit_function::{ArcBinaryOperator, StatefulBiTransformer};
 ///
 /// let multiply: ArcBinaryOperator<i32> = ArcBinaryOperator::new(|x, y| x * y);
 /// let multiply_clone = multiply.clone();
@@ -897,7 +897,7 @@ pub type ArcBinaryOperator<T> = ArcStatefulBiTransformer<T, T, T>;
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::{RcBinaryOperator, StatefulBiTransformer};
+/// use qubit_function::{RcBinaryOperator, StatefulBiTransformer};
 ///
 /// let max: RcBinaryOperator<i32> = RcBinaryOperator::new(|x, y| if x > y { x } else { y });
 /// let max_clone = max.clone();
@@ -935,7 +935,7 @@ pub type RcBinaryOperator<T> = RcStatefulBiTransformer<T, T, T>;
 /// ## With or_else Branch
 ///
 /// ```rust
-/// use qubit_atomic::{StatefulBiTransformer, BoxStatefulBiTransformer};
+/// use qubit_function::{StatefulBiTransformer, BoxStatefulBiTransformer};
 ///
 /// let add = BoxStatefulBiTransformer::new(|x: i32, y: i32| x + y);
 /// let multiply = BoxStatefulBiTransformer::new(|x: i32, y: i32| x * y);
@@ -986,7 +986,7 @@ impl_conditional_transformer_debug_display!(BoxConditionalStatefulBiTransformer<
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::{StatefulBiTransformer, RcStatefulBiTransformer};
+/// use qubit_function::{StatefulBiTransformer, RcStatefulBiTransformer};
 ///
 /// let add = RcStatefulBiTransformer::new(|x: i32, y: i32| x + y);
 /// let multiply = RcStatefulBiTransformer::new(|x: i32, y: i32| x * y);
@@ -1044,7 +1044,7 @@ impl_conditional_transformer_clone!(RcConditionalStatefulBiTransformer<T, U, R>)
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::{StatefulBiTransformer, ArcStatefulBiTransformer};
+/// use qubit_function::{StatefulBiTransformer, ArcStatefulBiTransformer};
 ///
 /// let add = ArcStatefulBiTransformer::new(|x: i32, y: i32| x + y);
 /// let multiply = ArcStatefulBiTransformer::new(|x: i32, y: i32| x * y);

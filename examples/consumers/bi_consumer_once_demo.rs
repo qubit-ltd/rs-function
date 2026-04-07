@@ -12,7 +12,7 @@
 //! This example demonstrates the usage of BoxBiConsumerOnce type, which
 //! consumes itself on first call.
 
-use qubit_atomic::{
+use qubit_function::{
     BiConsumerOnce,
     BoxBiConsumerOnce,
 };

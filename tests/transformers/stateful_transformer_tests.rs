@@ -7,7 +7,7 @@
  *
  ******************************************************************************/
 
-use qubit_atomic::{
+use qubit_function::{
     ArcPredicate,
     ArcStatefulTransformer,
     BoxPredicate,
@@ -1834,7 +1834,7 @@ fn test_arc_stateful_transformer_display_without_name() {
 #[cfg(test)]
 mod test_stateful_transformer_trait_default_methods {
     use super::*;
-    use qubit_atomic::TransformerOnce;
+    use qubit_function::TransformerOnce;
     use std::sync::{
         atomic::{
             AtomicUsize,

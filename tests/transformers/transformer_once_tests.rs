@@ -7,7 +7,7 @@
  *
  ******************************************************************************/
 
-use qubit_atomic::{
+use qubit_function::{
     BoxTransformerOnce,
     TransformerOnce,
 };
@@ -99,7 +99,7 @@ mod box_transformer_once_tests {
 #[cfg(test)]
 mod conditional_tests {
     use super::*;
-    use qubit_atomic::BoxPredicate;
+    use qubit_function::BoxPredicate;
 
     #[test]
     fn test_when_or_else() {
@@ -671,7 +671,7 @@ mod custom_type_default_impl_tests {
 
 #[cfg(test)]
 mod box_transformer_transformer_once_tests {
-    use qubit_atomic::{
+    use qubit_function::{
         BoxTransformer,
         Transformer,
     };
@@ -718,7 +718,7 @@ mod box_transformer_transformer_once_tests {
 
 #[cfg(test)]
 mod rc_transformer_transformer_once_tests {
-    use qubit_atomic::{
+    use qubit_function::{
         RcTransformer,
         Transformer,
     };
@@ -775,7 +775,7 @@ mod rc_transformer_transformer_once_tests {
 
 #[cfg(test)]
 mod arc_transformer_transformer_once_tests {
-    use qubit_atomic::{
+    use qubit_function::{
         ArcTransformer,
         Transformer,
     };

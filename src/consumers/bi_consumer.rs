@@ -109,7 +109,7 @@ type ThreadSafeBiConsumerFn<T, U> = dyn Fn(&T, &U) + Send + Sync;
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::{BiConsumer, BoxBiConsumer};
+/// use qubit_function::{BiConsumer, BoxBiConsumer};
 ///
 /// fn apply_consumer<C: BiConsumer<i32, i32>>(
 ///     consumer: &C,
@@ -143,7 +143,7 @@ pub trait BiConsumer<T, U> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::{BiConsumer, BoxBiConsumer};
+    /// use qubit_function::{BiConsumer, BoxBiConsumer};
     ///
     /// let consumer = BoxBiConsumer::new(|x: &i32, y: &i32| {
     ///     println!("Values: {}, {}", x, y);
@@ -218,7 +218,7 @@ pub trait BiConsumer<T, U> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::{BiConsumer, BoxBiConsumer};
+    /// use qubit_function::{BiConsumer, BoxBiConsumer};
     ///
     /// let consumer = BoxBiConsumer::new(|x: &i32, y: &i32| {
     ///     println!("Sum: {}", x + y);
@@ -266,7 +266,7 @@ pub trait BiConsumer<T, U> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::{BiConsumer, RcBiConsumer};
+    /// use qubit_function::{BiConsumer, RcBiConsumer};
     ///
     /// let consumer = RcBiConsumer::new(|x: &i32, y: &i32| {
     ///     println!("Sum: {}", x + y);
@@ -297,7 +297,7 @@ pub trait BiConsumer<T, U> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::{BiConsumer, ArcBiConsumer};
+    /// use qubit_function::{BiConsumer, ArcBiConsumer};
     ///
     /// let consumer = ArcBiConsumer::new(|x: &i32, y: &i32| {
     ///     println!("Sum: {}", x + y);
@@ -328,7 +328,7 @@ pub trait BiConsumer<T, U> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::{BiConsumer, RcBiConsumer};
+    /// use qubit_function::{BiConsumer, RcBiConsumer};
     ///
     /// let consumer = RcBiConsumer::new(|x: &i32, y: &i32| {
     ///     println!("Sum: {}", x + y);
@@ -359,7 +359,7 @@ pub trait BiConsumer<T, U> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::{BiConsumer, RcBiConsumer};
+    /// use qubit_function::{BiConsumer, RcBiConsumer};
     ///
     /// let consumer = RcBiConsumer::new(|x: &i32, y: &i32| {
     ///     println!("Sum: {}", x + y);
@@ -422,7 +422,7 @@ pub trait BiConsumer<T, U> {
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::{BiConsumer, BoxBiConsumer};
+/// use qubit_function::{BiConsumer, BoxBiConsumer};
 ///
 /// let consumer = BoxBiConsumer::new(|x: &i32, y: &i32| {
 ///     println!("Sum: {}", x + y);
@@ -510,7 +510,7 @@ impl_consumer_debug_display!(BoxBiConsumer<T, U>);
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::{BiConsumer, RcBiConsumer};
+/// use qubit_function::{BiConsumer, RcBiConsumer};
 ///
 /// let consumer = RcBiConsumer::new(|x: &i32, y: &i32| {
 ///     println!("Sum: {}", x + y);
@@ -605,7 +605,7 @@ impl_consumer_debug_display!(RcBiConsumer<T, U>);
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::{BiConsumer, ArcBiConsumer};
+/// use qubit_function::{BiConsumer, ArcBiConsumer};
 ///
 /// let consumer = ArcBiConsumer::new(|x: &i32, y: &i32| {
 ///     println!("Sum: {}", x + y);
@@ -702,7 +702,7 @@ impl_closure_trait!(
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::{BiConsumer, FnBiConsumerOps};
+/// use qubit_function::{BiConsumer, FnBiConsumerOps};
 ///
 /// let chained = (|x: &i32, y: &i32| {
 ///     println!("First: {}, {}", x, y);
@@ -737,7 +737,7 @@ pub trait FnBiConsumerOps<T, U>: Fn(&T, &U) + Sized {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::{BiConsumer, FnBiConsumerOps};
+    /// use qubit_function::{BiConsumer, FnBiConsumerOps};
     ///
     /// let chained = (|x: &i32, y: &i32| {
     ///     println!("First: {}, {}", x, y);
@@ -793,7 +793,7 @@ impl<T, U, F> FnBiConsumerOps<T, U> for F where F: Fn(&T, &U) {}
 /// ## Basic Conditional Execution
 ///
 /// ```rust
-/// use qubit_atomic::{BiConsumer, BoxBiConsumer};
+/// use qubit_function::{BiConsumer, BoxBiConsumer};
 ///
 /// let consumer = BoxBiConsumer::new(|x: &i32, y: &i32| {
 ///     println!("Both positive: {} + {} = {}", x, y, x + y);
@@ -807,7 +807,7 @@ impl<T, U, F> FnBiConsumerOps<T, U> for F where F: Fn(&T, &U) {}
 /// ## With or_else Branch
 ///
 /// ```rust
-/// use qubit_atomic::{BiConsumer, BoxBiConsumer};
+/// use qubit_function::{BiConsumer, BoxBiConsumer};
 ///
 /// let consumer = BoxBiConsumer::new(|x: &i32, y: &i32| {
 ///     println!("Both positive: {} + {} = {}", x, y, x + y);

@@ -10,7 +10,7 @@
 //!
 //! Tests the complete functionality of MutatorOnce trait and its implementations.
 
-use qubit_atomic::{
+use qubit_function::{
     BoxMutatorOnce,
     FnMutatorOnceOps,
     MutatorOnce,

@@ -9,7 +9,7 @@
 
 //! Tests for BiConsumerOnce types
 
-use qubit_atomic::{
+use qubit_function::{
     BiConsumerOnce,
     BoxBiConsumerOnce,
     FnBiConsumerOnceOps,

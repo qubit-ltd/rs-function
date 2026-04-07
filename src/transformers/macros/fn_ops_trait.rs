@@ -161,7 +161,7 @@ macro_rules! impl_fn_ops_trait {
         /// ## Chain composition with and_then
         ///
         /// ```rust
-        /// use qubit_atomic::{Function, FnFunctionOps};
+        /// use qubit_function::{Function, FnFunctionOps};
         ///
         /// let double = |x: i32| x * 2;
         /// let to_string = |x: i32| x.to_string();
@@ -173,7 +173,7 @@ macro_rules! impl_fn_ops_trait {
         /// ## Conditional transformation with when
         ///
         /// ```rust
-        /// use qubit_atomic::{Function, FnFunctionOps};
+        /// use qubit_function::{Function, FnFunctionOps};
         ///
         /// let double = |x: i32| x * 2;
         /// let conditional = double.when(|x: &i32| *x > 0).or_else(|x: i32| -x);
@@ -219,7 +219,7 @@ macro_rules! impl_fn_ops_trait {
             /// ## Direct value passing (ownership transfer)
             ///
             /// ```rust
-            /// use qubit_atomic::{Function, FnFunctionOps, BoxFunction};
+            /// use qubit_function::{Function, FnFunctionOps, BoxFunction};
             ///
             /// let double = |x: i32| x * 2;
             /// let to_string = BoxFunction::new(|x: i32| x.to_string());
@@ -233,7 +233,7 @@ macro_rules! impl_fn_ops_trait {
             /// ## Preserving original with clone
             ///
             /// ```rust
-            /// use qubit_atomic::{Function, FnFunctionOps, BoxFunction};
+            /// use qubit_function::{Function, FnFunctionOps, BoxFunction};
             ///
             /// let double = |x: i32| x * 2;
             /// let to_string = BoxFunction::new(|x: i32| x.to_string());
@@ -286,7 +286,7 @@ macro_rules! impl_fn_ops_trait {
             /// ## Basic usage with or_else
             ///
             /// ```rust
-            /// use qubit_atomic::{Function, FnFunctionOps};
+            /// use qubit_function::{Function, FnFunctionOps};
             ///
             /// let double = |x: i32| x * 2;
             /// let conditional = double.when(|x: &i32| *x > 0).or_else(|x: i32| -x);
@@ -298,7 +298,7 @@ macro_rules! impl_fn_ops_trait {
             /// ## Preserving predicate with clone
             ///
             /// ```rust
-            /// use qubit_atomic::{Function, FnFunctionOps, BoxPredicate};
+            /// use qubit_function::{Function, FnFunctionOps, BoxPredicate};
             ///
             /// let double = |x: i32| x * 2;
             /// let is_positive = BoxPredicate::new(|x: &i32| *x > 0);

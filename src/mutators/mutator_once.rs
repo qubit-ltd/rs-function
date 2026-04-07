@@ -63,7 +63,7 @@
 //! ## Basic Usage
 //!
 //! ```rust
-//! use qubit_atomic::{BoxMutatorOnce, MutatorOnce};
+//! use qubit_function::{BoxMutatorOnce, MutatorOnce};
 //!
 //! let data = vec![1, 2, 3];
 //! let mutator = BoxMutatorOnce::new(move |x: &mut Vec<i32>| {
@@ -78,7 +78,7 @@
 //! ## Method Chaining
 //!
 //! ```rust
-//! use qubit_atomic::{BoxMutatorOnce, MutatorOnce};
+//! use qubit_function::{BoxMutatorOnce, MutatorOnce};
 //!
 //! let data1 = vec![1, 2];
 //! let data2 = vec![3, 4];
@@ -98,7 +98,7 @@
 //! ## Initialization Callback
 //!
 //! ```rust
-//! use qubit_atomic::{BoxMutatorOnce, MutatorOnce};
+//! use qubit_function::{BoxMutatorOnce, MutatorOnce};
 //!
 //! struct Initializer {
 //!     on_complete: Option<BoxMutatorOnce<Vec<i32>>>,
@@ -189,7 +189,7 @@ use crate::predicates::predicate::{
 /// ## Generic Function
 ///
 /// ```rust
-/// use qubit_atomic::{MutatorOnce, BoxMutatorOnce};
+/// use qubit_function::{MutatorOnce, BoxMutatorOnce};
 ///
 /// fn apply_once<M: MutatorOnce<Vec<i32>>>(
 ///     mutator: M,
@@ -211,7 +211,7 @@ use crate::predicates::predicate::{
 /// ## Type Conversion
 ///
 /// ```rust
-/// use qubit_atomic::MutatorOnce;
+/// use qubit_function::MutatorOnce;
 ///
 /// let data = vec![1, 2, 3];
 /// let closure = move |x: &mut Vec<i32>| x.extend(data);
@@ -235,7 +235,7 @@ pub trait MutatorOnce<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::{MutatorOnce, BoxMutatorOnce};
+    /// use qubit_function::{MutatorOnce, BoxMutatorOnce};
     ///
     /// let data = vec![1, 2, 3];
     /// let mutator = BoxMutatorOnce::new(move |x: &mut Vec<i32>| {
@@ -359,7 +359,7 @@ pub trait MutatorOnce<T> {
 /// ## Basic Usage
 ///
 /// ```rust
-/// use qubit_atomic::{MutatorOnce, BoxMutatorOnce};
+/// use qubit_function::{MutatorOnce, BoxMutatorOnce};
 ///
 /// let data = vec![1, 2, 3];
 /// let mutator = BoxMutatorOnce::new(move |x: &mut Vec<i32>| {
@@ -374,7 +374,7 @@ pub trait MutatorOnce<T> {
 /// ## Method Chaining
 ///
 /// ```rust
-/// use qubit_atomic::{MutatorOnce, BoxMutatorOnce};
+/// use qubit_function::{MutatorOnce, BoxMutatorOnce};
 ///
 /// let data1 = vec![1, 2];
 /// let data2 = vec![3, 4];
@@ -457,7 +457,7 @@ impl_closure_once_trait!(
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::{MutatorOnce, FnMutatorOnceOps};
+/// use qubit_function::{MutatorOnce, FnMutatorOnceOps};
 ///
 /// let data1 = vec![1, 2];
 /// let data2 = vec![3, 4];
@@ -497,7 +497,7 @@ pub trait FnMutatorOnceOps<T>: FnOnce(&mut T) + Sized {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::{MutatorOnce, FnMutatorOnceOps};
+    /// use qubit_function::{MutatorOnce, FnMutatorOnceOps};
     ///
     /// let data1 = vec![1, 2];
     /// let data2 = vec![3, 4];
@@ -551,7 +551,7 @@ impl<T, F> FnMutatorOnceOps<T> for F where F: FnOnce(&mut T) {}
 /// ## Basic Conditional Execution
 ///
 /// ```rust
-/// use qubit_atomic::{MutatorOnce, BoxMutatorOnce};
+/// use qubit_function::{MutatorOnce, BoxMutatorOnce};
 ///
 /// let data = vec![1, 2, 3];
 /// let mutator = BoxMutatorOnce::new(move |x: &mut Vec<i32>| {
@@ -576,7 +576,7 @@ impl<T, F> FnMutatorOnceOps<T> for F where F: FnOnce(&mut T) {}
 /// ## With or_else Branch
 ///
 /// ```rust
-/// use qubit_atomic::{MutatorOnce, BoxMutatorOnce};
+/// use qubit_function::{MutatorOnce, BoxMutatorOnce};
 ///
 /// let data1 = vec![1, 2, 3];
 /// let data2 = vec![99];

@@ -16,7 +16,7 @@
 
 #[cfg(test)]
 mod tests {
-    use qubit_atomic::{
+    use qubit_function::{
         ArcBiTransformer,
         ArcTransformer,
         BiTransformer,

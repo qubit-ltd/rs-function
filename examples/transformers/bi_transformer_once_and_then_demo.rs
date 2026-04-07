@@ -10,7 +10,7 @@
 //!
 //! Demonstrates how to use BoxBiTransformerOnce's and_then method for chained composition.
 
-use qubit_atomic::{
+use qubit_function::{
     BiTransformerOnce,
     BoxBiTransformerOnce,
 };

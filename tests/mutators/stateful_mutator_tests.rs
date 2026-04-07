@@ -9,7 +9,7 @@
 
 //! Unit tests for StatefulMutator types
 
-use qubit_atomic::{
+use qubit_function::{
     ArcStatefulMutator,
     BoxStatefulMutator,
     FnMutStatefulMutatorOps,
@@ -1900,7 +1900,7 @@ mod test_into_fn {
 #[cfg(test)]
 mod test_conditional_execution {
     use super::*;
-    use qubit_atomic::predicates::predicate::{
+    use qubit_function::predicates::predicate::{
         ArcPredicate,
         BoxPredicate,
         RcPredicate,
@@ -2926,7 +2926,7 @@ mod test_conditional_execution {
 
     #[test]
     fn test_combined_predicate_types() {
-        use qubit_atomic::predicates::predicate::FnPredicateOps;
+        use qubit_function::predicates::predicate::FnPredicateOps;
 
         // Combine predicates: x > 0 AND x < 100
         let pred = (|x: &i32| *x > 0).and(|x: &i32| *x < 100);

@@ -9,7 +9,7 @@
 
 //! Unit tests for MutatingFunctionOnce types (one-time FnOnce(&mut T) -> R)
 
-use qubit_atomic::{
+use qubit_function::{
     BoxMutatingFunctionOnce,
     FnMutatingFunctionOnceOps,
     MutatingFunctionOnce,

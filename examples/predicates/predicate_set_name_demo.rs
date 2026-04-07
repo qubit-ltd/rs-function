@@ -9,7 +9,7 @@
 
 //! Demonstrates the set_name and new_with_name methods of Predicate
 
-use qubit_atomic::predicate::{
+use qubit_function::predicate::{
     ArcPredicate,
     BoxPredicate,
     Predicate,

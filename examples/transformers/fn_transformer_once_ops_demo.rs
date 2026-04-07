@@ -11,7 +11,7 @@
 //! This example shows how to directly use and_then, compose, and when methods on FnOnce closures,
 //! without explicitly wrapping them in BoxTransformerOnce.
 
-use qubit_atomic::{
+use qubit_function::{
     FnTransformerOnceOps,
     TransformerOnce,
 };

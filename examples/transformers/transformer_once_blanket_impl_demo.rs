@@ -9,7 +9,7 @@
 
 //! Demonstrates FnOnce -> TransformerOnce blanket implementations
 
-use qubit_atomic::TransformerOnce;
+use qubit_function::TransformerOnce;
 
 fn main() {
     println!("=== Testing FnOnce -> TransformerOnce ===");

@@ -49,7 +49,7 @@
 //! ## 1. Calling in `&self` Methods
 //!
 //! ```rust
-//! use qubit_atomic::{ArcSupplier, Supplier};
+//! use qubit_function::{ArcSupplier, Supplier};
 //!
 //! struct Executor<E> {
 //!     error_supplier: ArcSupplier<E>,
@@ -66,7 +66,7 @@
 //! ## 2. High-Concurrency Lock-Free Access
 //!
 //! ```rust
-//! use qubit_atomic::{ArcSupplier, Supplier};
+//! use qubit_function::{ArcSupplier, Supplier};
 //! use std::thread;
 //!
 //! let factory = ArcSupplier::new(|| {
@@ -88,7 +88,7 @@
 //! ## 3. Fixed Factories
 //!
 //! ```rust
-//! use qubit_atomic::{BoxSupplier, Supplier};
+//! use qubit_function::{BoxSupplier, Supplier};
 //!
 //! #[derive(Clone)]
 //! struct Config {
@@ -170,7 +170,7 @@ use crate::BoxSupplierOnce;
 /// ## Using with Generic Functions
 ///
 /// ```rust
-/// use qubit_atomic::{Supplier, BoxSupplier};
+/// use qubit_function::{Supplier, BoxSupplier};
 ///
 /// fn call_twice<S: Supplier<i32>>(supplier: &S)
 ///     -> (i32, i32)
@@ -188,7 +188,7 @@ use crate::BoxSupplierOnce;
 /// ## Stateless Factory
 ///
 /// ```rust
-/// use qubit_atomic::Supplier;
+/// use qubit_function::Supplier;
 ///
 /// struct User {
 ///     name: String,
@@ -225,7 +225,7 @@ pub trait Supplier<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::{Supplier, BoxSupplier};
+    /// use qubit_function::{Supplier, BoxSupplier};
     ///
     /// let supplier = BoxSupplier::new(|| 42);
     /// assert_eq!(supplier.get(), 42);
@@ -246,7 +246,7 @@ pub trait Supplier<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::Supplier;
+    /// use qubit_function::Supplier;
     ///
     /// let closure = || 42;
     /// let boxed = closure.into_box();
@@ -273,7 +273,7 @@ pub trait Supplier<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::Supplier;
+    /// use qubit_function::Supplier;
     ///
     /// let closure = || 42;
     /// let rc = closure.into_rc();
@@ -300,7 +300,7 @@ pub trait Supplier<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::Supplier;
+    /// use qubit_function::Supplier;
     ///
     /// let closure = || 42;
     /// let arc = closure.into_arc();
@@ -327,7 +327,7 @@ pub trait Supplier<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::Supplier;
+    /// use qubit_function::Supplier;
     ///
     /// let closure = || 42;
     /// let fn_closure = closure.into_fn();
@@ -354,7 +354,7 @@ pub trait Supplier<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::Supplier;
+    /// use qubit_function::Supplier;
     ///
     /// let closure = || 42;
     /// let once = closure.into_once();
@@ -381,7 +381,7 @@ pub trait Supplier<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::Supplier;
+    /// use qubit_function::Supplier;
     ///
     /// let closure = || 42;
     /// let boxed = closure.to_box();
@@ -408,7 +408,7 @@ pub trait Supplier<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::Supplier;
+    /// use qubit_function::Supplier;
     ///
     /// let closure = || 42;
     /// let rc = closure.to_rc();
@@ -436,7 +436,7 @@ pub trait Supplier<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::Supplier;
+    /// use qubit_function::Supplier;
     ///
     /// let closure = || 42;
     /// let arc = closure.to_arc();
@@ -463,7 +463,7 @@ pub trait Supplier<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::Supplier;
+    /// use qubit_function::Supplier;
     ///
     /// let closure = || 42;
     /// let fn_closure = closure.to_fn();
@@ -511,7 +511,7 @@ pub trait Supplier<T> {
 /// original supplier is consumed and you get a new one:
 ///
 /// ```rust
-/// use qubit_atomic::{BoxSupplier, Supplier};
+/// use qubit_function::{BoxSupplier, Supplier};
 ///
 /// let supplier = BoxSupplier::new(|| 10);
 /// let mapped = supplier.map(|x| x * 2);
@@ -523,7 +523,7 @@ pub trait Supplier<T> {
 /// ## Constant Factory
 ///
 /// ```rust
-/// use qubit_atomic::{BoxSupplier, Supplier};
+/// use qubit_function::{BoxSupplier, Supplier};
 ///
 /// let factory = BoxSupplier::new(|| 42);
 /// assert_eq!(factory.get(), 42);
@@ -533,7 +533,7 @@ pub trait Supplier<T> {
 /// ## Method Chaining
 ///
 /// ```rust
-/// use qubit_atomic::{BoxSupplier, Supplier};
+/// use qubit_function::{BoxSupplier, Supplier};
 ///
 /// let pipeline = BoxSupplier::new(|| 10)
 ///     .map(|x| x * 2)
@@ -594,7 +594,7 @@ impl<T> Supplier<T> for BoxSupplier<T> {
 /// original supplier remains usable after method calls:
 ///
 /// ```rust
-/// use qubit_atomic::{ArcSupplier, Supplier};
+/// use qubit_function::{ArcSupplier, Supplier};
 ///
 /// let source = ArcSupplier::new(|| 10);
 /// let mapped = source.map(|x| x * 2);
@@ -612,7 +612,7 @@ impl<T> Supplier<T> for BoxSupplier<T> {
 /// ## Thread-safe Factory
 ///
 /// ```rust
-/// use qubit_atomic::{ArcSupplier, Supplier};
+/// use qubit_function::{ArcSupplier, Supplier};
 /// use std::thread;
 ///
 /// let factory = ArcSupplier::new(|| {
@@ -632,7 +632,7 @@ impl<T> Supplier<T> for BoxSupplier<T> {
 /// ## Reusable Transformations
 ///
 /// ```rust
-/// use qubit_atomic::{ArcSupplier, Supplier};
+/// use qubit_function::{ArcSupplier, Supplier};
 ///
 /// let base = ArcSupplier::new(|| 10);
 /// let doubled = base.map(|x| x * 2);
@@ -694,7 +694,7 @@ where
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::{ArcSupplier, Supplier};
+    /// use qubit_function::{ArcSupplier, Supplier};
     ///
     /// let supplier = ArcSupplier::constant(42);
     /// assert_eq!(supplier.get(), 42);
@@ -744,7 +744,7 @@ impl<T> Supplier<T> for ArcSupplier<T> {
 /// consuming `self`:
 ///
 /// ```rust
-/// use qubit_atomic::{RcSupplier, Supplier};
+/// use qubit_function::{RcSupplier, Supplier};
 ///
 /// let source = RcSupplier::new(|| 10);
 /// let mapped = source.map(|x| x * 2);
@@ -756,7 +756,7 @@ impl<T> Supplier<T> for ArcSupplier<T> {
 /// ## Shared Factory
 ///
 /// ```rust
-/// use qubit_atomic::{RcSupplier, Supplier};
+/// use qubit_function::{RcSupplier, Supplier};
 ///
 /// let factory = RcSupplier::new(|| {
 ///     String::from("Hello")
@@ -771,7 +771,7 @@ impl<T> Supplier<T> for ArcSupplier<T> {
 /// ## Reusable Transformations
 ///
 /// ```rust
-/// use qubit_atomic::{RcSupplier, Supplier};
+/// use qubit_function::{RcSupplier, Supplier};
 ///
 /// let base = RcSupplier::new(|| 10);
 /// let doubled = base.map(|x| x * 2);

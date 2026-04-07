@@ -10,7 +10,7 @@
 //! Unit tests for StatefulMutatingFunction types (stateful FnMut(&mut T) ->
 //! R)
 
-use qubit_atomic::{
+use qubit_function::{
     ArcStatefulMutatingFunction,
     BoxMutatingFunctionOnce,
     BoxStatefulMutatingFunction,
@@ -1364,7 +1364,7 @@ fn test_arc_conditional_stateful_mutating_function_debug_display() {
 #[cfg(test)]
 mod test_stateful_mutating_function_trait_default_methods {
     use super::*;
-    use qubit_atomic::MutatingFunctionOnce;
+    use qubit_function::MutatingFunctionOnce;
     use std::sync::{
         atomic::{
             AtomicUsize,

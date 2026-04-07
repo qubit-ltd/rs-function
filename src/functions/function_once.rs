@@ -80,7 +80,7 @@ pub trait FunctionOnce<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::FunctionOnce;
+    /// use qubit_function::FunctionOnce;
     ///
     /// let double = |x: &i32| x * 2;
     /// let boxed = double.into_box();
@@ -107,7 +107,7 @@ pub trait FunctionOnce<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::FunctionOnce;
+    /// use qubit_function::FunctionOnce;
     ///
     /// let double = |x: &i32| x * 2;
     /// let func = double.into_fn();
@@ -140,7 +140,7 @@ pub trait FunctionOnce<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::FunctionOnce;
+    /// use qubit_function::FunctionOnce;
     ///
     /// let double = |x: &i32| x * 2;
     /// let boxed = double.to_box();
@@ -173,7 +173,7 @@ pub trait FunctionOnce<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::FunctionOnce;
+    /// use qubit_function::FunctionOnce;
     ///
     /// let double = |x: &i32| x * 2;
     /// let func = double.to_fn();
@@ -306,7 +306,7 @@ impl_fn_ops_trait!(
 /// ## With or_else Branch
 ///
 /// ```rust
-/// use qubit_atomic::{FunctionOnce, BoxFunctionOnce};
+/// use qubit_function::{FunctionOnce, BoxFunctionOnce};
 ///
 /// let double = BoxFunctionOnce::new(|x: i32| x * 2);
 /// let negate = BoxFunctionOnce::new(|x: i32| -x);

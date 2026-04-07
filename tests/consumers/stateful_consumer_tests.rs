@@ -9,7 +9,7 @@
 
 //! Unit tests for StatefulConsumer types
 
-use qubit_atomic::{
+use qubit_function::{
     ArcConsumer,
     ArcStatefulConsumer,
     BoxConsumer,
@@ -1231,7 +1231,7 @@ mod test_fn_consumer_ops {
         }
 
         let consumer_fn = make_consumer(c1);
-        let mut boxed = qubit_atomic::StatefulConsumer::to_box(&consumer_fn);
+        let mut boxed = qubit_function::StatefulConsumer::to_box(&consumer_fn);
         boxed.accept(&5);
         boxed.accept(&10);
 
@@ -1310,7 +1310,7 @@ mod test_fn_consumer_ops {
         let consumer_fn2 = make_consumer(c1.clone());
 
         // Test to_fn() - first instance
-        let mut func = qubit_atomic::StatefulConsumer::to_fn(&consumer_fn1);
+        let mut func = qubit_function::StatefulConsumer::to_fn(&consumer_fn1);
         func(&5); // 5 + 10 = 15
         func(&7); // 7 + 10 = 17
 
@@ -2800,7 +2800,7 @@ mod test_closure_stateful_consumer_into_methods {
 #[cfg(test)]
 mod test_fn_stateful_consumer_ops {
     use super::*;
-    use qubit_atomic::FnStatefulConsumerOps;
+    use qubit_function::FnStatefulConsumerOps;
 
     #[test]
     fn test_closure_and_then() {
@@ -2922,7 +2922,7 @@ mod test_fn_stateful_consumer_ops {
 #[cfg(test)]
 mod custom_struct_tests {
     use super::*;
-    use qubit_atomic::ConsumerOnce;
+    use qubit_function::ConsumerOnce;
     use std::sync::atomic::{
         AtomicUsize,
         Ordering,
@@ -3025,7 +3025,7 @@ mod custom_struct_tests {
         };
 
         // Test into_once() - should consume the closure
-        let once_consumer = qubit_atomic::StatefulConsumer::into_once(closure);
+        let once_consumer = qubit_function::StatefulConsumer::into_once(closure);
         once_consumer.accept(&5);
         assert_eq!(counter.load(Ordering::SeqCst), 5);
     }
@@ -3040,7 +3040,7 @@ mod custom_struct_tests {
         };
 
         // Test to_once() - should not consume the original closure
-        let once_consumer = qubit_atomic::StatefulConsumer::to_once(&closure);
+        let once_consumer = qubit_function::StatefulConsumer::to_once(&closure);
         once_consumer.accept(&3);
         assert_eq!(counter.load(Ordering::SeqCst), 3);
 

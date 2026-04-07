@@ -7,7 +7,7 @@
  *
  ******************************************************************************/
 
-use qubit_atomic::{
+use qubit_function::{
     BoxTransformerOnce,
     FnTransformerOnceOps,
     FnTransformerOps,
@@ -152,7 +152,7 @@ mod multiple_composition_tests {
 #[cfg(test)]
 mod conditional_mapping_tests {
     use super::*;
-    use qubit_atomic::{
+    use qubit_function::{
         Predicate,
         RcPredicate,
     };

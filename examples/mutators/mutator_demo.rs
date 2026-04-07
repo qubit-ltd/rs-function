@@ -14,7 +14,7 @@
 //!
 //! Mutator is used to modify values, unlike the read-only Consumer.
 
-use qubit_atomic::{
+use qubit_function::{
     ArcMutator,
     BoxMutator,
     FnMutatorOps,

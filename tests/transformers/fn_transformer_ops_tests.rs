@@ -8,7 +8,7 @@
  ******************************************************************************/
 //! Tests for FnTransformerOps extension trait
 
-use qubit_atomic::{
+use qubit_function::{
     FnTransformerOps,
     Transformer,
 };

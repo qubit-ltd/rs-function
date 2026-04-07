@@ -8,7 +8,7 @@
  ******************************************************************************/
 //! Demonstrates how into_fn and to_fn are used with function parameters that accept closures
 
-use qubit_atomic::{
+use qubit_function::{
     ArcConsumer,
     BoxConsumer,
     Consumer,

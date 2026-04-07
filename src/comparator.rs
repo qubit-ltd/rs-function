@@ -68,7 +68,7 @@
 //! composition:
 //!
 //! ```rust
-//! use qubit_atomic::comparator::{Comparator, ArcComparator};
+//! use qubit_function::comparator::{Comparator, ArcComparator};
 //! use std::cmp::Ordering;
 //!
 //! let arc_cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
@@ -90,7 +90,7 @@
 //! `.clone()` calls:
 //!
 //! ```rust
-//! use qubit_atomic::comparator::{Comparator, ArcComparator};
+//! use qubit_function::comparator::{Comparator, ArcComparator};
 //!
 //! let cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
 //!
@@ -108,7 +108,7 @@
 //! closures:
 //!
 //! ```rust
-//! use qubit_atomic::comparator::{Comparator, FnComparatorOps};
+//! use qubit_function::comparator::{Comparator, FnComparatorOps};
 //! use std::cmp::Ordering;
 //!
 //! let cmp = (|a: &i32, b: &i32| a.cmp(b))
@@ -123,7 +123,7 @@
 //! ### Basic Comparison
 //!
 //! ```rust
-//! use qubit_atomic::comparator::{Comparator, BoxComparator};
+//! use qubit_function::comparator::{Comparator, BoxComparator};
 //! use std::cmp::Ordering;
 //!
 //! let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
@@ -133,7 +133,7 @@
 //! ### Reversed Comparison
 //!
 //! ```rust
-//! use qubit_atomic::comparator::{Comparator, BoxComparator};
+//! use qubit_function::comparator::{Comparator, BoxComparator};
 //! use std::cmp::Ordering;
 //!
 //! let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
@@ -144,7 +144,7 @@
 //! ### Chained Comparison
 //!
 //! ```rust
-//! use qubit_atomic::comparator::{Comparator, BoxComparator};
+//! use qubit_function::comparator::{Comparator, BoxComparator};
 //! use std::cmp::Ordering;
 //!
 //! #[derive(Debug)]
@@ -191,7 +191,7 @@ use std::sync::Arc;
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::comparator::{Comparator, BoxComparator};
+/// use qubit_function::comparator::{Comparator, BoxComparator};
 /// use std::cmp::Ordering;
 ///
 /// let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
@@ -217,7 +217,7 @@ pub trait Comparator<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::comparator::{Comparator, BoxComparator};
+    /// use qubit_function::comparator::{Comparator, BoxComparator};
     /// use std::cmp::Ordering;
     ///
     /// let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
@@ -236,7 +236,7 @@ pub trait Comparator<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::comparator::{Comparator, BoxComparator};
+    /// use qubit_function::comparator::{Comparator, BoxComparator};
     ///
     /// let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
     /// let boxed = cmp.into_box();
@@ -258,7 +258,7 @@ pub trait Comparator<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::comparator::{Comparator, ArcComparator};
+    /// use qubit_function::comparator::{Comparator, ArcComparator};
     ///
     /// let cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
     /// let arc = cmp.into_arc();
@@ -280,7 +280,7 @@ pub trait Comparator<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::comparator::{Comparator, RcComparator};
+    /// use qubit_function::comparator::{Comparator, RcComparator};
     ///
     /// let cmp = RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
     /// let rc = cmp.into_rc();
@@ -306,7 +306,7 @@ pub trait Comparator<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::comparator::{Comparator, BoxComparator};
+    /// use qubit_function::comparator::{Comparator, BoxComparator};
     /// use std::cmp::Ordering;
     ///
     /// let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
@@ -331,7 +331,7 @@ pub trait Comparator<T> {
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::comparator::Comparator;
+/// use qubit_function::comparator::Comparator;
 /// use std::cmp::Ordering;
 ///
 /// let cmp = |a: &i32, b: &i32| a.cmp(b);
@@ -359,7 +359,7 @@ where
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::comparator::{Comparator, BoxComparator};
+/// use qubit_function::comparator::{Comparator, BoxComparator};
 /// use std::cmp::Ordering;
 ///
 /// let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
@@ -387,7 +387,7 @@ impl<T: 'static> BoxComparator<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::comparator::BoxComparator;
+    /// use qubit_function::comparator::BoxComparator;
     ///
     /// let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
     /// ```
@@ -409,7 +409,7 @@ impl<T: 'static> BoxComparator<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::comparator::{Comparator, BoxComparator};
+    /// use qubit_function::comparator::{Comparator, BoxComparator};
     /// use std::cmp::Ordering;
     ///
     /// let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
@@ -441,7 +441,7 @@ impl<T: 'static> BoxComparator<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::comparator::{Comparator, BoxComparator};
+    /// use qubit_function::comparator::{Comparator, BoxComparator};
     /// use std::cmp::Ordering;
     ///
     /// #[derive(Debug)]
@@ -486,7 +486,7 @@ impl<T: 'static> BoxComparator<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::comparator::{Comparator, BoxComparator};
+    /// use qubit_function::comparator::{Comparator, BoxComparator};
     /// use std::cmp::Ordering;
     ///
     /// #[derive(Debug)]
@@ -517,7 +517,7 @@ impl<T: 'static> BoxComparator<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::comparator::{Comparator, BoxComparator};
+    /// use qubit_function::comparator::{Comparator, BoxComparator};
     /// use std::cmp::Ordering;
     ///
     /// let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
@@ -548,7 +548,7 @@ impl<T> Comparator<T> for BoxComparator<T> {
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::comparator::{Comparator, ArcComparator};
+/// use qubit_function::comparator::{Comparator, ArcComparator};
 /// use std::cmp::Ordering;
 ///
 /// let cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
@@ -579,7 +579,7 @@ impl<T: 'static> ArcComparator<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::comparator::ArcComparator;
+    /// use qubit_function::comparator::ArcComparator;
     ///
     /// let cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
     /// ```
@@ -601,7 +601,7 @@ impl<T: 'static> ArcComparator<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::comparator::{Comparator, ArcComparator};
+    /// use qubit_function::comparator::{Comparator, ArcComparator};
     /// use std::cmp::Ordering;
     ///
     /// let cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
@@ -628,7 +628,7 @@ impl<T: 'static> ArcComparator<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::comparator::{Comparator, ArcComparator};
+    /// use qubit_function::comparator::{Comparator, ArcComparator};
     /// use std::cmp::Ordering;
     ///
     /// let cmp1 = ArcComparator::new(|a: &i32, b: &i32| {
@@ -661,7 +661,7 @@ impl<T: 'static> ArcComparator<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::comparator::{Comparator, ArcComparator};
+    /// use qubit_function::comparator::{Comparator, ArcComparator};
     /// use std::cmp::Ordering;
     ///
     /// #[derive(Debug)]
@@ -692,7 +692,7 @@ impl<T: 'static> ArcComparator<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::comparator::{Comparator, ArcComparator};
+    /// use qubit_function::comparator::{Comparator, ArcComparator};
     /// use std::cmp::Ordering;
     ///
     /// let cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
@@ -723,7 +723,7 @@ impl<T> Comparator<T> for ArcComparator<T> {
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::comparator::{Comparator, RcComparator};
+/// use qubit_function::comparator::{Comparator, RcComparator};
 /// use std::cmp::Ordering;
 ///
 /// let cmp = RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
@@ -754,7 +754,7 @@ impl<T: 'static> RcComparator<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::comparator::RcComparator;
+    /// use qubit_function::comparator::RcComparator;
     ///
     /// let cmp = RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
     /// ```
@@ -776,7 +776,7 @@ impl<T: 'static> RcComparator<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::comparator::{Comparator, RcComparator};
+    /// use qubit_function::comparator::{Comparator, RcComparator};
     /// use std::cmp::Ordering;
     ///
     /// let cmp = RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
@@ -803,7 +803,7 @@ impl<T: 'static> RcComparator<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::comparator::{Comparator, RcComparator};
+    /// use qubit_function::comparator::{Comparator, RcComparator};
     /// use std::cmp::Ordering;
     ///
     /// let cmp1 = RcComparator::new(|a: &i32, b: &i32| {
@@ -836,7 +836,7 @@ impl<T: 'static> RcComparator<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::comparator::{Comparator, RcComparator};
+    /// use qubit_function::comparator::{Comparator, RcComparator};
     /// use std::cmp::Ordering;
     ///
     /// #[derive(Debug)]
@@ -867,7 +867,7 @@ impl<T: 'static> RcComparator<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::comparator::{Comparator, RcComparator};
+    /// use qubit_function::comparator::{Comparator, RcComparator};
     /// use std::cmp::Ordering;
     ///
     /// let cmp = RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
@@ -895,7 +895,7 @@ impl<T> Comparator<T> for RcComparator<T> {
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::comparator::{Comparator, FnComparatorOps};
+/// use qubit_function::comparator::{Comparator, FnComparatorOps};
 /// use std::cmp::Ordering;
 ///
 /// let cmp = (|a: &i32, b: &i32| a.cmp(b))
@@ -918,7 +918,7 @@ pub trait FnComparatorOps<T>: Fn(&T, &T) -> Ordering + Sized {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::comparator::{Comparator, FnComparatorOps};
+    /// use qubit_function::comparator::{Comparator, FnComparatorOps};
     /// use std::cmp::Ordering;
     ///
     /// let rev = (|a: &i32, b: &i32| a.cmp(b)).reversed();
@@ -946,7 +946,7 @@ pub trait FnComparatorOps<T>: Fn(&T, &T) -> Ordering + Sized {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::comparator::{Comparator, FnComparatorOps,
+    /// use qubit_function::comparator::{Comparator, FnComparatorOps,
     ///                                   BoxComparator};
     /// use std::cmp::Ordering;
     ///

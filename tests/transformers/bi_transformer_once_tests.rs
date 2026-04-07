@@ -8,7 +8,7 @@
  ******************************************************************************/
 //! Tests for BiTransformerOnce trait and implementations
 
-use qubit_atomic::{
+use qubit_function::{
     BiTransformerOnce,
     BoxBiTransformerOnce,
 };

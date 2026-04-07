@@ -13,7 +13,7 @@
  * This example showcases how to use the StatefulSupplier trait with closures,
  * including mapping, filtering, and memoization.
  */
-use qubit_atomic::{
+use qubit_function::{
     FnStatefulSupplierOps,
     StatefulSupplier,
 };

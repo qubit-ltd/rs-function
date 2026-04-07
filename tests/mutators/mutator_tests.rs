@@ -9,7 +9,7 @@
 
 //! Unit tests for Mutator types (stateless Fn(&mut T))
 
-use qubit_atomic::{
+use qubit_function::{
     ArcMutator,
     BoxMutator,
     FnMutatorOps,

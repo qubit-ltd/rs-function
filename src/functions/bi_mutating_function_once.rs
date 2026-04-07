@@ -122,7 +122,7 @@ pub trait BiMutatingFunctionOnce<T, U, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::BiMutatingFunctionOnce;
+    /// use qubit_function::BiMutatingFunctionOnce;
     ///
     /// let swap_and_sum = |x: &mut i32, y: &mut i32| {
     ///     let temp = *x;
@@ -157,7 +157,7 @@ pub trait BiMutatingFunctionOnce<T, U, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::BiMutatingFunctionOnce;
+    /// use qubit_function::BiMutatingFunctionOnce;
     ///
     /// let swap_and_sum = |x: &mut i32, y: &mut i32| {
     ///     let temp = *x;
@@ -285,7 +285,7 @@ impl_closure_once_trait!(
 /// ## Chain composition with and_then
 ///
 /// ```rust
-/// use qubit_atomic::{BiMutatingFunctionOnce, FnBiMutatingFunctionOnceOps};
+/// use qubit_function::{BiMutatingFunctionOnce, FnBiMutatingFunctionOnceOps};
 ///
 /// let swap_and_sum = |x: &mut i32, y: &mut i32| {
 ///     let temp = *x;
@@ -304,7 +304,7 @@ impl_closure_once_trait!(
 /// ## Conditional execution with when
 ///
 /// ```rust
-/// use qubit_atomic::{BiMutatingFunctionOnce, FnBiMutatingFunctionOnceOps};
+/// use qubit_function::{BiMutatingFunctionOnce, FnBiMutatingFunctionOnceOps};
 ///
 /// let swap_and_sum = |x: &mut i32, y: &mut i32| {
 ///     let temp = *x;
@@ -364,7 +364,7 @@ pub trait FnBiMutatingFunctionOnceOps<T, U, R>:
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::{BiMutatingFunctionOnce, FnBiMutatingFunctionOnceOps,
+    /// use qubit_function::{BiMutatingFunctionOnce, FnBiMutatingFunctionOnceOps,
     ///     BoxFunction};
     ///
     /// let swap_and_sum = |x: &mut i32, y: &mut i32| {
@@ -421,7 +421,7 @@ pub trait FnBiMutatingFunctionOnceOps<T, U, R>:
     /// ## Basic usage with or_else
     ///
     /// ```rust
-    /// use qubit_atomic::{BiMutatingFunctionOnce, FnBiMutatingFunctionOnceOps};
+    /// use qubit_function::{BiMutatingFunctionOnce, FnBiMutatingFunctionOnceOps};
     ///
     /// let swap_and_sum = |x: &mut i32, y: &mut i32| {
     ///     let temp = *x;
@@ -444,7 +444,7 @@ pub trait FnBiMutatingFunctionOnceOps<T, U, R>:
     /// ## Preserving bi-predicate with clone
     ///
     /// ```rust
-    /// use qubit_atomic::{BiMutatingFunctionOnce, FnBiMutatingFunctionOnceOps,
+    /// use qubit_function::{BiMutatingFunctionOnce, FnBiMutatingFunctionOnceOps,
     ///     RcBiPredicate};
     ///
     /// let swap_and_sum = |x: &mut i32, y: &mut i32| {

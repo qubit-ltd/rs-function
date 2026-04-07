@@ -72,7 +72,7 @@
 //! ## Basic Usage
 //!
 //! ```rust
-//! use qubit_atomic::{BoxStatefulMutatingFunction,
+//! use qubit_function::{BoxStatefulMutatingFunction,
 //!                       StatefulMutatingFunction};
 //!
 //! // Counter that increments value and tracks calls
@@ -95,7 +95,7 @@
 //! ## Accumulator Pattern
 //!
 //! ```rust
-//! use qubit_atomic::{BoxStatefulMutatingFunction,
+//! use qubit_function::{BoxStatefulMutatingFunction,
 //!                       StatefulMutatingFunction};
 //!
 //! // Accumulate sum while doubling values
@@ -198,7 +198,7 @@ use crate::predicates::predicate::{
 /// ## Generic Function
 ///
 /// ```rust
-/// use qubit_atomic::{StatefulMutatingFunction,
+/// use qubit_function::{StatefulMutatingFunction,
 ///                       BoxStatefulMutatingFunction};
 ///
 /// fn apply_and_log<F: StatefulMutatingFunction<i32, i32>>(
@@ -225,7 +225,7 @@ use crate::predicates::predicate::{
 /// ## Type Conversion
 ///
 /// ```rust
-/// use qubit_atomic::StatefulMutatingFunction;
+/// use qubit_function::StatefulMutatingFunction;
 ///
 /// let mut count = 0;
 /// let closure = move |x: &mut i32| {
@@ -261,7 +261,7 @@ pub trait StatefulMutatingFunction<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::{StatefulMutatingFunction,
+    /// use qubit_function::{StatefulMutatingFunction,
     ///                       BoxStatefulMutatingFunction};
     ///
     /// let mut counter = {
@@ -303,7 +303,7 @@ pub trait StatefulMutatingFunction<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::StatefulMutatingFunction;
+    /// use qubit_function::StatefulMutatingFunction;
     ///
     /// let mut count = 0;
     /// let closure = move |x: &mut i32| {
@@ -343,7 +343,7 @@ pub trait StatefulMutatingFunction<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::StatefulMutatingFunction;
+    /// use qubit_function::StatefulMutatingFunction;
     ///
     /// let mut count = 0;
     /// let closure = move |x: &mut i32| {
@@ -383,7 +383,7 @@ pub trait StatefulMutatingFunction<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::StatefulMutatingFunction;
+    /// use qubit_function::StatefulMutatingFunction;
     ///
     /// let mut count = 0;
     /// let closure = move |x: &mut i32| {
@@ -423,7 +423,7 @@ pub trait StatefulMutatingFunction<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::{StatefulMutatingFunction,
+    /// use qubit_function::{StatefulMutatingFunction,
     ///                       BoxStatefulMutatingFunction};
     ///
     /// let func = {
@@ -543,7 +543,7 @@ pub trait StatefulMutatingFunction<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::{StatefulMutatingFunctionOnce,
+    /// use qubit_function::{StatefulMutatingFunctionOnce,
     ///                       StatefulMutatingFunction,
     ///                       BoxStatefulMutatingFunction};
     ///
@@ -580,7 +580,7 @@ pub trait StatefulMutatingFunction<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_atomic::{StatefulMutatingFunctionOnce,
+    /// use qubit_function::{StatefulMutatingFunctionOnce,
     ///                       StatefulMutatingFunction,
     ///                       BoxStatefulMutatingFunction};
     ///
@@ -655,7 +655,7 @@ type RcStatefulMutatingFunctionFn<T, R> = Rc<RefCell<dyn FnMut(&mut T) -> R>>;
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::{StatefulMutatingFunction,
+/// use qubit_function::{StatefulMutatingFunction,
 ///                       BoxStatefulMutatingFunction};
 ///
 /// let mut counter = {
@@ -751,7 +751,7 @@ impl<T, R> StatefulMutatingFunction<T, R> for BoxStatefulMutatingFunction<T, R> 
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::{StatefulMutatingFunction,
+/// use qubit_function::{StatefulMutatingFunction,
 ///                       RcStatefulMutatingFunction};
 ///
 /// let counter = {
@@ -851,7 +851,7 @@ impl<T, R> StatefulMutatingFunction<T, R> for RcStatefulMutatingFunction<T, R> {
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::{StatefulMutatingFunction,
+/// use qubit_function::{StatefulMutatingFunction,
 ///                       ArcStatefulMutatingFunction};
 ///
 /// let counter = {
@@ -1066,7 +1066,7 @@ impl_fn_ops_trait!(
 /// ## With or_else Branch
 ///
 /// ```rust
-/// use qubit_atomic::{StatefulMutatingFunction, BoxStatefulMutatingFunction};
+/// use qubit_function::{StatefulMutatingFunction, BoxStatefulMutatingFunction};
 ///
 /// let double = BoxStatefulMutatingFunction::new(|x: &mut i32| x * 2);
 /// let negate = BoxStatefulMutatingFunction::new(|x: &mut i32| -x);
@@ -1117,7 +1117,7 @@ impl_conditional_function_debug_display!(BoxConditionalStatefulMutatingFunction<
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::{StatefulMutatingFunction, RcStatefulMutatingFunction};
+/// use qubit_function::{StatefulMutatingFunction, RcStatefulMutatingFunction};
 ///
 /// let double = RcStatefulMutatingFunction::new(|x: &mut i32| x * 2);
 /// let identity = RcStatefulMutatingFunction::<i32, i32>::identity();
@@ -1174,7 +1174,7 @@ impl_conditional_function_debug_display!(RcConditionalStatefulMutatingFunction<T
 /// # Examples
 ///
 /// ```rust
-/// use qubit_atomic::{StatefulMutatingFunction, ArcStatefulMutatingFunction};
+/// use qubit_function::{StatefulMutatingFunction, ArcStatefulMutatingFunction};
 ///
 /// let double = ArcStatefulMutatingFunction::new(|x: &mut i32| x * 2);
 /// let identity = ArcStatefulMutatingFunction::<i32, i32>::identity();

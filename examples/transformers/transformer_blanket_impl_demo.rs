@@ -9,7 +9,7 @@
 
 //! Demonstrates blanket implementations for Fn -> Transformer
 
-use qubit_atomic::Transformer;
+use qubit_function::Transformer;
 
 fn main() {
     println!("=== Testing Fn -> Transformer ===");

@@ -9,7 +9,7 @@
 
 //! Comprehensive tests for BiFunction trait and its implementations
 
-use qubit_atomic::{
+use qubit_function::{
     ArcBiFunction,
     ArcBiPredicate,
     BiFunction,
@@ -226,7 +226,7 @@ fn test_rc_bi_function_debug_display() {
 
 #[test]
 fn test_rc_bi_function_and_then() {
-    use qubit_atomic::RcFunction;
+    use qubit_function::RcFunction;
 
     let add = RcBiFunction::new(|x: &i32, y: &i32| *x + *y);
     let multiply_by_two = RcFunction::new(|x: &i32| *x * 2);
@@ -303,7 +303,7 @@ fn test_bi_function_conversions() {
 
 #[test]
 fn test_bi_function_and_then() {
-    use qubit_atomic::FnBiFunctionOps;
+    use qubit_function::FnBiFunctionOps;
 
     let add = |x: &i32, y: &i32| *x + *y;
     let double = |x: &i32| *x * 2;
@@ -314,7 +314,7 @@ fn test_bi_function_and_then() {
 
 #[test]
 fn test_bi_function_when_or_else() {
-    use qubit_atomic::FnBiFunctionOps;
+    use qubit_function::FnBiFunctionOps;
 
     let add = |x: &i32, y: &i32| *x + *y;
     let multiply = |x: &i32, y: &i32| *x * *y;
@@ -822,7 +822,7 @@ fn test_bi_function_conditional_composition() {
 
 #[test]
 fn test_arc_bi_function_and_then() {
-    use qubit_atomic::ArcFunction;
+    use qubit_function::ArcFunction;
 
     let add = ArcBiFunction::new(|x: &i32, y: &i32| *x + *y);
     let multiply_by_two = ArcFunction::new(|x: &i32| *x * 2);

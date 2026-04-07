@@ -14,7 +14,7 @@
 //!
 //! Haixing Hu
 
-use qubit_atomic::{
+use qubit_function::{
     ArcBiTransformer,
     BiTransformer,
     BoxBiTransformer,

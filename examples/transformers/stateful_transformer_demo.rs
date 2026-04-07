@@ -12,7 +12,7 @@
 //! This example shows how to use BoxStatefulTransformer, RcStatefulTransformer, and ArcStatefulTransformer
 //! for stateful value transformation.
 
-use qubit_atomic::{
+use qubit_function::{
     ArcStatefulTransformer,
     BoxStatefulTransformer,
     FnStatefulTransformerOps,

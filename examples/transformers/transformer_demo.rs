@@ -7,7 +7,7 @@
  *
  ******************************************************************************/
 
-use qubit_atomic::{
+use qubit_function::{
     ArcTransformer,
     BoxTransformer,
     RcTransformer,

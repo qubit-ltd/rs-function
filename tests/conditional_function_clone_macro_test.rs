@@ -18,7 +18,7 @@
 //!
 //! This file focuses on testing the three-parameter version (BiFunction types).
 
-use qubit_atomic::*;
+use qubit_function::*;
 
 /// Test the three-parameter version of impl_conditional_function_clone macro
 ///

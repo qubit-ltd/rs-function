@@ -15,7 +15,7 @@
 //! Consumer is used to consume (read) values without modifying the original value.
 //! If you need to modify values, please refer to mutator_demo.rs
 
-use qubit_atomic::{
+use qubit_function::{
     ArcConsumer,
     BoxConsumer,
     BoxStatefulConsumer,

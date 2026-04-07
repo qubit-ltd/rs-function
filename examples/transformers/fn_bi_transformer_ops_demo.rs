@@ -11,7 +11,7 @@
 //!
 //! Demonstrates how to use the `FnBiTransformerOps` trait to provide `and_then` and `when` methods for closures.
 
-use qubit_atomic::{
+use qubit_function::{
     BiTransformer,
     FnBiTransformerOps,
 };

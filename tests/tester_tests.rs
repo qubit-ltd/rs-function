@@ -10,7 +10,7 @@
 
 #[cfg(test)]
 mod tests {
-    use qubit_atomic::{
+    use qubit_function::{
         ArcTester,
         BoxTester,
         FnTesterOps,

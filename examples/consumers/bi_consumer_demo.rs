@@ -12,7 +12,7 @@
 //! This example demonstrates the usage of BiConsumer types after
 //! refactoring to use &T, &U semantics (not modifying input values).
 
-use qubit_atomic::{
+use qubit_function::{
     ArcBiConsumer,
     BiConsumer,
     BoxBiConsumer,

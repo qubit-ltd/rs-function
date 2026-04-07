@@ -9,7 +9,7 @@
 
 //! Unit tests for SupplierOnce types
 
-use qubit_atomic::{
+use qubit_function::{
     BoxSupplierOnce,
     SupplierOnce,
 };

@@ -115,7 +115,7 @@ macro_rules! impl_shared_supplier_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use qubit_atomic::{$struct_name, $supplier_trait};
+        /// use qubit_function::{$struct_name, $supplier_trait};
         ///
         /// let source = $struct_name::new(|| 10);
         /// let mapped = source.map(|x| x * 2);
@@ -148,7 +148,7 @@ macro_rules! impl_shared_supplier_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use qubit_atomic::{$struct_name, $supplier_trait};
+        /// use qubit_function::{$struct_name, $supplier_trait};
         ///
         /// let source = $struct_name::new(|| 42);
         /// let filtered = source.filter(|x| x % 2 == 0);
@@ -184,7 +184,7 @@ macro_rules! impl_shared_supplier_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use qubit_atomic::{$struct_name, $supplier_trait};
+        /// use qubit_function::{$struct_name, $supplier_trait};
         ///
         /// let first = $struct_name::new(|| 42);
         /// let second = $struct_name::new(|| "hello");
@@ -227,7 +227,7 @@ macro_rules! impl_shared_supplier_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use qubit_atomic::{$struct_name, $supplier_trait};
+        /// use qubit_function::{$struct_name, $supplier_trait};
         ///
         /// let source = $struct_name::new(|| 10);
         /// let mapped = source.map(|x| x * 2);
@@ -260,7 +260,7 @@ macro_rules! impl_shared_supplier_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use qubit_atomic::{$struct_name, $supplier_trait};
+        /// use qubit_function::{$struct_name, $supplier_trait};
         ///
         /// let source = $struct_name::new(|| 42);
         /// let filtered = source.filter(|x| x % 2 == 0);
@@ -296,7 +296,7 @@ macro_rules! impl_shared_supplier_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use qubit_atomic::{$struct_name, $supplier_trait};
+        /// use qubit_function::{$struct_name, $supplier_trait};
         ///
         /// let first = $struct_name::new(|| 42);
         /// let second = $struct_name::new(|| "hello");
