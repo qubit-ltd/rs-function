@@ -1,4 +1,4 @@
-# Qubit Atomic
+# Qubit Function
 
 [![CircleCI](https://circleci.com/gh/qubit-ltd/qubit-function.svg?style=shield)](https://circleci.com/gh/qubit-ltd/qubit-function)
 [![Coverage Status](https://coveralls.io/repos/github/qubit-ltd/qubit-function/badge.svg?branch=main)](https://coveralls.io/github/qubit-ltd/qubit-function?branch=main)

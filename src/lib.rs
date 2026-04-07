@@ -6,7 +6,7 @@
  *    All rights reserved.
  *
  ******************************************************************************/
-//! # Qubit Atomic
+//! # Qubit Function
 //!
 //! Provides functional programming abstractions for Rust, including:
 //!

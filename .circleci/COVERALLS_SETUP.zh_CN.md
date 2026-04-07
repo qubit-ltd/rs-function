@@ -85,7 +85,7 @@ git push
 **在 README 中的位置**：
 
 ```markdown
-# Qubit Atomic Core
+# Qubit Function
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Rust](https://img.shields.io/badge/rust-1.70+-blue.svg?logo=rust)](https://www.rust-lang.org)
