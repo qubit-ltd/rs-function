@@ -9,7 +9,7 @@
 ### 1. CircleCI Configuration
 
 ```
-qubit-function/
+rust-function/
 ├── .circleci/
 │   ├── config.yml                # Main CircleCI configuration (generic)
 │   ├── README.md                 # Full documentation (English)
@@ -202,8 +202,8 @@ If build is abnormally slow or failing:
 Need help?
 
 - 📧 Email: starfish.hu@gmail.com
-- 🐛 Issues: https://github.com/qubit-ltd/qubit-function/issues
-- 💬 Discussions: https://github.com/qubit-ltd/qubit-function/discussions
+- 🐛 Issues: https://github.com/qubit-ltd/rust-function/issues
+- 💬 Discussions: https://github.com/qubit-ltd/rust-function/discussions
 
 ## 🔗 Related Links
 

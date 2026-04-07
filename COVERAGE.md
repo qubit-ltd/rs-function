@@ -117,14 +117,14 @@ jobs:
 
       - name: Generate coverage
         run: |
-          cd qubit-function
+          cd rust-function
           cargo llvm-cov --lcov --output-path lcov.info
 
       - name: Upload to Codecov
         uses: codecov/codecov-action@v3
         with:
-          files: qubit-function/lcov.info
-          flags: qubit-function
+          files: rust-function/lcov.info
+          flags: rust-function
 ```
 
 ## Common Issues

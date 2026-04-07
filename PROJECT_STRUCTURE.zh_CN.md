@@ -5,7 +5,7 @@
 ## 目录布局
 
 ```
-qubit-function/
+rust-function/
 ├── src/                    # 源代码
 │   ├── consumers/          # Consumer 相关抽象
 │   │   ├── macros/         # Consumer 专用宏

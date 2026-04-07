@@ -9,7 +9,7 @@
 ### 1. CircleCI Configuration
 
 ```
-qubit-function/
+rust-function/
 ├── .circleci/
 │   ├── config.yml                # Main CircleCI configuration (generic)
 │   ├── README.md                 # Full documentation (English)
@@ -59,7 +59,7 @@ qubit-function/
 
 访问 [CircleCI](https://circleci.com/) 并：
 1. 使用 GitHub 账号登录
-2. 选择 `qubit-ltd/qubit-function` 项目
+2. 选择 `qubit-ltd/rust-function` 项目
 3. 点击 "Set Up Project"
 4. CircleCI 会自动检测配置并开始构建
 
@@ -68,7 +68,7 @@ qubit-function/
 在提交前测试配置：
 
 ```bash
-cd qubit-function
+cd rust-function
 
 # 运行完整检查
 ./ci-check.sh
@@ -79,10 +79,10 @@ cd qubit-function
 
 ### 3. 添加状态徽章（推荐）
 
-在 `qubit-function/README.md` 中添加：
+在 `rust-function/README.md` 中添加：
 
 ```markdown
-[![CircleCI](https://circleci.com/gh/qubit-ltd/qubit-function.svg?style=svg)](https://circleci.com/gh/qubit-ltd/qubit-function)
+[![CircleCI](https://circleci.com/gh/qubit-ltd/rust-function.svg?style=svg)](https://circleci.com/gh/qubit-ltd/rust-function)
 ```
 
 ### 4. 配置通知（可选）
@@ -143,7 +143,7 @@ cargo test
 
 **在线查看**：
 ```
-https://app.circleci.com/pipelines/github/qubit-ltd/qubit-function
+https://app.circleci.com/pipelines/github/qubit-ltd/rust-function
 ```
 
 **Pull Request**：
@@ -203,8 +203,8 @@ git commit -m "docs: 更新文档 [ci skip]"
 遇到问题？
 
 - 📧 邮件：starfish.hu@gmail.com
-- 🐛 Issue：https://github.com/qubit-ltd/qubit-function/issues
-- 💬 讨论：https://github.com/qubit-ltd/qubit-function/discussions
+- 🐛 Issue：https://github.com/qubit-ltd/rust-function/issues
+- 💬 讨论：https://github.com/qubit-ltd/rust-function/discussions
 
 ## 🔗 相关链接
 
@@ -217,7 +217,7 @@ git commit -m "docs: 更新文档 [ci skip]"
 ---
 
 **配置完成日期**：2025-10-13
-**项目**：qubit-function
+**项目**：rust-function
 **配置版本**：v1.0
 
 ✅ 配置已完成，可以开始使用 CircleCI 进行持续集成！
