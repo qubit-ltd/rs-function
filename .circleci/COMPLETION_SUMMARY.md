@@ -8,7 +8,7 @@
 ### 1. ✅ Made Configuration Generic
 
 **Changes**:
-- Removed all hardcoded `rust-function` references
+- Removed all hardcoded `qubit-function` references
 - All paths are now relative to project root
 - Package name auto-detected from `Cargo.toml`
 - Works from any Rust project directory
@@ -21,9 +21,9 @@
 ### 2. ✅ Moved Configuration Location
 
 **From**: `/rust-common/.circleci/`
-**To**: `/rust-common/rust-function/.circleci/`
+**To**: `/rust-common/qubit-function/.circleci/`
 
-**Reason**: Configuration is specific to the `rust-function` project, not the workspace root.
+**Reason**: Configuration is specific to the `qubit-function` project, not the workspace root.
 
 ### 3. ✅ Internationalized All Content
 
@@ -50,7 +50,7 @@ All documents now have both English (default) and Chinese versions:
 - ❌ `/rust-common/CIRCLECI_SETUP.md` (moved to new location)
 
 **Kept**:
-- ✅ `/rust-common/rust-function/.circleci/` (new location)
+- ✅ `/rust-common/qubit-function/.circleci/` (new location)
 - ✅ All documentation files (English + Chinese)
 
 ### 5. ✅ Coverage Integration
@@ -64,7 +64,7 @@ All documents now have both English (default) and Chinese versions:
 ## 📁 Final File Structure
 
 ```
-rust-function/
+qubit-function/
 ├── .circleci/
 │   ├── config.yml                # Main configuration (generic, English)
 │   ├── README.md                 # Full docs (English) ⭐
@@ -116,7 +116,7 @@ rust-function/
 
 ## 🚀 How to Use
 
-### For This Project (rust-function)
+### For This Project (qubit-function)
 
 Configuration is ready to use:
 
@@ -132,10 +132,10 @@ Copy to another project:
 
 ```bash
 # Copy entire .circleci directory
-cp -r rust-function/.circleci /path/to/other-rust-project/
+cp -r qubit-function/.circleci /path/to/other-rust-project/
 
 # Copy ci-check script
-cp rust-function/ci-check.sh /path/to/other-rust-project/
+cp qubit-function/ci-check.sh /path/to/other-rust-project/
 
 # Done! No configuration changes needed
 ```
@@ -186,9 +186,9 @@ See:
 
 **Before**:
 ```yaml
-- cd rust-function
+- cd qubit-function
 - cargo build
-- checksum "rust-function/Cargo.lock"
+- checksum "qubit-function/Cargo.lock"
 ```
 
 **After**:

@@ -31,8 +31,8 @@
 在项目的 `README.md` 中添加：
 
 ```markdown
-[![CircleCI](https://circleci.com/gh/qubit-ltd/rust-function.svg?style=svg)](https://circleci.com/gh/qubit-ltd/rust-function)
-[![Coverage Status](https://coveralls.io/repos/github/qubit-ltd/rust-function/badge.svg?branch=main)](https://coveralls.io/github/qubit-ltd/rust-function?branch=main)
+[![CircleCI](https://circleci.com/gh/qubit-ltd/qubit-function.svg?style=svg)](https://circleci.com/gh/qubit-ltd/qubit-function)
+[![Coverage Status](https://coveralls.io/repos/github/qubit-ltd/qubit-function/badge.svg?branch=main)](https://coveralls.io/github/qubit-ltd/qubit-function?branch=main)
 ```
 
 ### 4. 本地测试（3 分钟）
@@ -40,7 +40,7 @@
 在提交前运行本地检查：
 
 ```bash
-cd rust-function
+cd qubit-function
 ./ci-check.sh
 ```
 
@@ -69,7 +69,7 @@ cd rust-function
 
 ```bash
 # 快速检查（推荐）
-cd rust-function
+cd qubit-function
 ./ci-check.sh
 
 # 或分步检查
@@ -80,7 +80,7 @@ cargo test             # 运行测试
 
 ### 查看构建状态
 
-- 在线查看：https://app.circleci.com/pipelines/github/qubit-ltd/rust-function
+- 在线查看：https://app.circleci.com/pipelines/github/qubit-ltd/qubit-function
 - PR 页面会显示检查状态
 - 失败时会收到邮件通知（如已配置）
 
@@ -162,8 +162,8 @@ git commit -m "docs: 更新文档 [ci skip]"
 ## 🔗 重要链接
 
 - 📖 [完整文档](README.zh_CN.md)
-- 🏠 [CircleCI 仪表板](https://app.circleci.com/pipelines/github/qubit-ltd/rust-function)
-- 📚 [项目文档](https://github.com/qubit-ltd/rust-function)
+- 🏠 [CircleCI 仪表板](https://app.circleci.com/pipelines/github/qubit-ltd/qubit-function)
+- 📚 [项目文档](https://github.com/qubit-ltd/qubit-function)
 
 ## 💡 最佳实践
 
@@ -176,8 +176,8 @@ git commit -m "docs: 更新文档 [ci skip]"
 ## 🆘 需要帮助？
 
 - 📧 starfish.hu@gmail.com
-- 🐛 [提交 Issue](https://github.com/qubit-ltd/rust-function/issues)
-- 💬 [讨论区](https://github.com/qubit-ltd/rust-function/discussions)
+- 🐛 [提交 Issue](https://github.com/qubit-ltd/qubit-function/issues)
+- 💬 [讨论区](https://github.com/qubit-ltd/qubit-function/discussions)
 
 ---
 
