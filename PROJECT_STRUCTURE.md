@@ -1,12 +1,12 @@
 # Project Structure
 
 This document describes the directory structure and organization of the
-qubit-atomic crate.
+qubit-function crate.
 
 ## Directory Layout
 
 ```
-rust-function/
+qubit-function/
 ├── src/                    # Source code
 │   ├── consumers/          # Consumer-related abstractions
 │   │   ├── macros/         # Consumer-specific macros
@@ -179,14 +179,14 @@ Users can import types in two ways:
 
 1. **Direct from root** (recommended, backward compatible):
    ```rust
-   use qubit_atomic::{Consumer, Predicate, Transformer};
+   use qubit_function::{Consumer, Predicate, Transformer};
    ```
 
 2. **From specific modules** (explicit):
    ```rust
-   use qubit_atomic::consumers::Consumer;
-   use qubit_atomic::predicates::Predicate;
-   use qubit_atomic::transformers::Transformer;
+   use qubit_function::consumers::Consumer;
+   use qubit_function::predicates::Predicate;
+   use qubit_function::transformers::Transformer;
    ```
 
 Both styles are supported through re-exports in `lib.rs`.

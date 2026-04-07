@@ -2,7 +2,7 @@
 
 ## 📋 项目信息
 
-- **模块**: `rust-function/src/consumers/`
+- **模块**: `qubit-function/src/consumers/`
 - **重构时间**: 2025年
 - **负责人**: Haixing Hu
 - **状态**: 第一阶段已完成 ✅

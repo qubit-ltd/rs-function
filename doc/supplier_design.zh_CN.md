@@ -1136,7 +1136,7 @@ impl<T> BoxSupplierOnce<T> {
 
 ### 为什么选择方案三？
 
-**`qubit-atomic` 采用方案三**，原因如下：
+**`qubit-function` 采用方案三**，原因如下：
 
 1. **统一的 trait 抽象**
    - 提供 `Supplier<T>` 和 `SupplierOnce<T>` trait

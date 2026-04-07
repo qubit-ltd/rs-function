@@ -1010,7 +1010,7 @@ let result = lazy.compute();
 
 ### 6.4 Final Conclusion
 
-For a library project like `qubit-atomic`:
+For a library project like `qubit-function`:
 
 1. **Adopt Trait + multiple implementations approach**: Unified interface, flexible implementation
 2. **Provide Transformer and TransformerOnce**: Cover repeatable calls and one-time use scenarios

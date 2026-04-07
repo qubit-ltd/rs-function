@@ -528,7 +528,7 @@ cached.test(&5);  // No need for mut
 
 ### 6.3 Final Conclusion
 
-For a library project like `qubit-atomic`:
+For a library project like `qubit-function`:
 
 1. **Adopt Approach 3**: Trait + Multiple implementations
 2. **Simplify to single Predicate trait**: Remove Mut and Once variants

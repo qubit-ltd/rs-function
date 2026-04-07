@@ -1136,7 +1136,7 @@ impl<T> BoxSupplierOnce<T> {
 
 ### Why Choose Approach Three?
 
-**`qubit-atomic` adopts Approach Three** for the following reasons:
+**`qubit-function` adopts Approach Three** for the following reasons:
 
 1. **Unified trait abstraction**
    - Provide `Supplier<T>` and `SupplierOnce<T>` traits

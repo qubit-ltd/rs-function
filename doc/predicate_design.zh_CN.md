@@ -528,7 +528,7 @@ cached.test(&5);  // 不需要 mut
 
 ### 6.3 最终结论
 
-对于 `qubit-atomic` 这样的库项目：
+对于 `qubit-function` 这样的库项目：
 
 1. **采用方案三**：Trait + 多种实现
 2. **简化为单一 Predicate trait**：移除 Mut 和 Once 变体

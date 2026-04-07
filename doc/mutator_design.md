@@ -387,7 +387,7 @@ where
 ### Basic Usage
 
 ```rust
-use qubit_atomic::{Mutator, BoxMutator};
+use qubit_function::{Mutator, BoxMutator};
 
 // Simple modification
 let mut mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
@@ -406,7 +406,7 @@ assert_eq!(value, 20);  // (5 * 2) + 10
 ### Conditional Modification
 
 ```rust
-use qubit_atomic::{Mutator, BoxMutator};
+use qubit_function::{Mutator, BoxMutator};
 
 // Simple condition
 let mut conditional = BoxMutator::new(|x: &mut i32| *x *= 2)
@@ -437,7 +437,7 @@ assert_eq!(negative, -6);  // else branch
 ### Shared Usage
 
 ```rust
-use qubit_atomic::{Mutator, ArcMutator, RcMutator};
+use qubit_function::{Mutator, ArcMutator, RcMutator};
 
 // ArcMutator: thread-safe sharing
 let mutator = ArcMutator::new(|x: &mut i32| *x *= 2);
@@ -461,7 +461,7 @@ assert_eq!(value, 10);
 ### Generic Programming
 
 ```rust
-use qubit_atomic::Mutator;
+use qubit_function::Mutator;
 
 fn apply_mutator<M: Mutator<i32>>(
     mutator: &mut M,
@@ -568,7 +568,7 @@ impl<T> BoxMutatorOnce<T> {
 
 ### Why Design Mutator This Way?
 
-**`qubit-atomic` adopts the current approach** for the following reasons:
+**`qubit-function` adopts the current approach** for the following reasons:
 
 1. **Clear Semantics**
    - Mutator focuses on modifying input values
