@@ -1,8 +1,8 @@
-# Prism3 Function
+# Qubit Atomic
 
-[![CircleCI](https://circleci.com/gh/3-prism/prism3-rust-function.svg?style=shield)](https://circleci.com/gh/3-prism/prism3-rust-function)
-[![Coverage Status](https://coveralls.io/repos/github/3-prism/prism3-rust-function/badge.svg?branch=main)](https://coveralls.io/github/3-prism/prism3-rust-function?branch=main)
-[![Crates.io](https://img.shields.io/crates/v/prism3-function.svg?color=blue)](https://crates.io/crates/prism3-function)
+[![CircleCI](https://circleci.com/gh/qubit-ltd/rust-function.svg?style=shield)](https://circleci.com/gh/qubit-ltd/rust-function)
+[![Coverage Status](https://coveralls.io/repos/github/qubit-ltd/rust-function/badge.svg?branch=main)](https://coveralls.io/github/qubit-ltd/rust-function?branch=main)
+[![Crates.io](https://img.shields.io/crates/v/qubit-atomic.svg?color=blue)](https://crates.io/crates/qubit-atomic)
 [![Rust](https://img.shields.io/badge/rust-1.70+-blue.svg?logo=rust)](https://www.rust-lang.org)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![English Document](https://img.shields.io/badge/Document-English-blue.svg)](README.md)
@@ -29,7 +29,7 @@
 
 ```toml
 [dependencies]
-prism3-function = "0.5.0"
+qubit-atomic = "0.6.0"
 ```
 
 ## 核心抽象
@@ -51,7 +51,7 @@ prism3-function = "0.5.0"
 
 **示例**:
 ```rust
-use prism3_function::{Predicate, ArcPredicate};
+use qubit_atomic::{Predicate, ArcPredicate};
 
 let is_even = ArcPredicate::new(|x: &i32| x % 2 == 0);
 let is_positive = ArcPredicate::new(|x: &i32| *x > 0);
@@ -76,7 +76,7 @@ assert!(!combined.test(&-2));
 
 **示例**:
 ```rust
-use prism3_function::{BiPredicate, BoxBiPredicate};
+use qubit_atomic::{BiPredicate, BoxBiPredicate};
 
 let sum_positive = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
 assert!(sum_positive.test(&3, &4));
@@ -98,7 +98,7 @@ assert!(!sum_positive.test(&-5, &2));
 
 **示例**:
 ```rust
-use prism3_function::{Consumer, BoxConsumer};
+use qubit_atomic::{Consumer, BoxConsumer};
 
 let logger = BoxConsumer::new(|x: &i32| {
     println!("值: {}", x);
@@ -132,7 +132,7 @@ logger.accept(&42);
 
 **示例**:
 ```rust
-use prism3_function::{BiConsumer, BoxBiConsumer};
+use qubit_atomic::{BiConsumer, BoxBiConsumer};
 
 let sum_logger = BoxBiConsumer::new(|x: &i32, y: &i32| {
     println!("和: {}", x + y);
@@ -166,7 +166,7 @@ sum_logger.accept(&10, &20);
 
 **示例**:
 ```rust
-use prism3_function::{Mutator, BoxMutator};
+use qubit_atomic::{Mutator, BoxMutator};
 
 let mut doubler = BoxMutator::new(|x: &mut i32| *x *= 2);
 let mut value = 10;
@@ -200,7 +200,7 @@ assert_eq!(value, 20);
 
 **示例**:
 ```rust
-use prism3_function::{Supplier, BoxSupplier};
+use qubit_atomic::{Supplier, BoxSupplier};
 
 let factory = BoxSupplier::new(|| String::from("你好"));
 assert_eq!(factory.get(), "你好");
@@ -232,7 +232,7 @@ assert_eq!(factory.get(), "你好");
 
 **示例**:
 ```rust
-use prism3_function::{StatefulSupplier, BoxStatefulSupplier};
+use qubit_atomic::{StatefulSupplier, BoxStatefulSupplier};
 
 let mut counter = {
     let mut count = 0;
@@ -261,7 +261,7 @@ assert_eq!(counter.get(), 2);
 
 **示例**:
 ```rust
-use prism3_function::{Function, BoxFunction};
+use qubit_atomic::{Function, BoxFunction};
 
 let to_string = BoxFunction::new(|x: &i32| format!("值: {}", x));
 assert_eq!(to_string.apply(&42), "值: 42");
@@ -308,7 +308,7 @@ assert_eq!(to_string.apply(&42), "值: 42");
 
 **示例**:
 ```rust
-use prism3_function::{Transformer, BoxTransformer};
+use qubit_atomic::{Transformer, BoxTransformer};
 
 let parse = BoxTransformer::new(|s: String| s.parse::<i32>().unwrap_or(0));
 assert_eq!(parse.transform("42".to_string()), 42);
@@ -357,7 +357,7 @@ assert_eq!(parse.transform("42".to_string()), 42);
 
 **示例**:
 ```rust
-use prism3_function::{BiTransformer, BoxBiTransformer};
+use qubit_atomic::{BiTransformer, BoxBiTransformer};
 
 let add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
 assert_eq!(add.transform(10, 20), 30);
@@ -417,7 +417,7 @@ assert_eq!(add.transform(10, 20), 30);
 
 **示例**:
 ```rust
-use prism3_function::{Comparator, BoxComparator};
+use qubit_atomic::{Comparator, BoxComparator};
 use std::cmp::Ordering;
 
 let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
@@ -439,7 +439,7 @@ assert_eq!(cmp.compare(&5, &3), Ordering::Greater);
 
 **示例**:
 ```rust
-use prism3_function::{Tester, BoxTester};
+use qubit_atomic::{Tester, BoxTester};
 use std::sync::{Arc, atomic::{AtomicBool, Ordering}};
 
 let flag = Arc::new(AtomicBool::new(true));

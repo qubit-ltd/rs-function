@@ -716,7 +716,7 @@ pub struct RcMutator<T> { func: Rc<RefCell<dyn FnMut(&mut T)>> }
 
 ### Why Choose Approach Three?
 
-**`prism3-rust-function` adopts approach three** for the following reasons:
+**`qubit-atomic` adopts approach three** for the following reasons:
 
 1. **Unified trait abstraction**
    - Provides `Consumer<T>` and `ReadonlyConsumer<T>` traits
@@ -790,12 +790,12 @@ This design provides users with the most flexible, powerful, and clear API, maki
 **Migration Guide**:
 ```rust
 // Old code
-use prism3_function::{ConsumerMut, BoxConsumerMut};
+use qubit_atomic::{ConsumerMut, BoxConsumerMut};
 let mut consumer = BoxConsumerMut::new(|x: &mut i32| *x *= 2);
 consumer.accept_once(&mut value);
 
 // New code
-use prism3_function::{Mutator, BoxMutator};
+use qubit_atomic::{Mutator, BoxMutator};
 let mut mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
 mutator.apply(&mut value);
 ```

@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -526,7 +526,7 @@ impl_closure_trait!(
 /// ## Chain composition with and_then
 ///
 /// ```rust
-/// use prism3_function::{BiMutatingFunction, FnBiMutatingFunctionOps};
+/// use qubit_atomic::{BiMutatingFunction, FnBiMutatingFunctionOps};
 ///
 /// let swap_and_sum = |x: &mut i32, y: &mut i32| {
 ///     let temp = *x;
@@ -545,7 +545,7 @@ impl_closure_trait!(
 /// ## Conditional execution with when
 ///
 /// ```rust
-/// use prism3_function::{BiMutatingFunction, FnBiMutatingFunctionOps};
+/// use qubit_atomic::{BiMutatingFunction, FnBiMutatingFunctionOps};
 ///
 /// let swap_and_sum = |x: &mut i32, y: &mut i32| {
 ///     let temp = *x;
@@ -606,7 +606,7 @@ pub trait FnBiMutatingFunctionOps<T, U, R>: Fn(&mut T, &mut U) -> R + Sized + 's
     /// ## Direct value passing (ownership transfer)
     ///
     /// ```rust
-    /// use prism3_function::{BiMutatingFunction, FnBiMutatingFunctionOps,
+    /// use qubit_atomic::{BiMutatingFunction, FnBiMutatingFunctionOps,
     ///     BoxFunction};
     ///
     /// let swap = |x: &mut i32, y: &mut i32| {
@@ -628,7 +628,7 @@ pub trait FnBiMutatingFunctionOps<T, U, R>: Fn(&mut T, &mut U) -> R + Sized + 's
     /// ## Preserving original with clone
     ///
     /// ```rust
-    /// use prism3_function::{BiMutatingFunction, FnBiMutatingFunctionOps,
+    /// use qubit_atomic::{BiMutatingFunction, FnBiMutatingFunctionOps,
     ///     BoxFunction};
     ///
     /// let swap = |x: &mut i32, y: &mut i32| {
@@ -687,7 +687,7 @@ pub trait FnBiMutatingFunctionOps<T, U, R>: Fn(&mut T, &mut U) -> R + Sized + 's
     /// ## Basic usage with or_else
     ///
     /// ```rust
-    /// use prism3_function::{BiMutatingFunction, FnBiMutatingFunctionOps};
+    /// use qubit_atomic::{BiMutatingFunction, FnBiMutatingFunctionOps};
     ///
     /// let swap_and_sum = |x: &mut i32, y: &mut i32| {
     ///     let temp = *x;
@@ -710,7 +710,7 @@ pub trait FnBiMutatingFunctionOps<T, U, R>: Fn(&mut T, &mut U) -> R + Sized + 's
     /// ## Preserving bi-predicate with clone
     ///
     /// ```rust
-    /// use prism3_function::{BiMutatingFunction, FnBiMutatingFunctionOps,
+    /// use qubit_atomic::{BiMutatingFunction, FnBiMutatingFunctionOps,
     ///     RcBiPredicate};
     ///
     /// let swap_and_sum = |x: &mut i32, y: &mut i32| {
@@ -769,7 +769,7 @@ impl<T, U, R, F> FnBiMutatingFunctionOps<T, U, R> for F where F: Fn(&mut T, &mut
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{BoxBinaryMutatingFunction, BiMutatingFunction};
+/// use qubit_atomic::{BoxBinaryMutatingFunction, BiMutatingFunction};
 ///
 /// let swap_and_sum: BoxBinaryMutatingFunction<i32, i32> = BoxBinaryMutatingFunction::new(|x, y| {
 ///     let temp = *x;
@@ -798,7 +798,7 @@ pub type BoxBinaryMutatingFunction<T, R> = BoxBiMutatingFunction<T, T, R>;
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{ArcBinaryMutatingFunction, BiMutatingFunction};
+/// use qubit_atomic::{ArcBinaryMutatingFunction, BiMutatingFunction};
 ///
 /// let swap_and_sum: ArcBinaryMutatingFunction<i32, i32> = ArcBinaryMutatingFunction::new(|x, y| {
 ///     let temp = *x;
@@ -827,7 +827,7 @@ pub type ArcBinaryMutatingFunction<T, R> = ArcBiMutatingFunction<T, T, R>;
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{RcBinaryMutatingFunction, BiMutatingFunction};
+/// use qubit_atomic::{RcBinaryMutatingFunction, BiMutatingFunction};
 ///
 /// let swap_and_sum: RcBinaryMutatingFunction<i32, i32> = RcBinaryMutatingFunction::new(|x, y| {
 ///     let temp = *x;

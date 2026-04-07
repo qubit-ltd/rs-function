@@ -1,20 +1,12 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
  ******************************************************************************/
-
-/**
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
- *
- *    All rights reserved.
- *
- ******************************************************************************/
-use prism3_function::{
+use qubit_atomic::{
     ArcBiTransformer,
     BiTransformer,
     BoxBiTransformer,
@@ -257,7 +249,7 @@ mod rc_bi_transformer_tests {
 #[cfg(test)]
 mod box_conditional_tests {
     use super::*;
-    use prism3_function::BoxBiPredicate;
+    use qubit_atomic::BoxBiPredicate;
 
     #[test]
     fn test_when_or_else() {
@@ -286,7 +278,7 @@ mod box_conditional_tests {
 #[cfg(test)]
 mod arc_conditional_tests {
     use super::*;
-    use prism3_function::ArcBiPredicate;
+    use qubit_atomic::ArcBiPredicate;
 
     #[test]
     fn test_when_or_else() {
@@ -330,7 +322,7 @@ mod arc_conditional_tests {
 #[cfg(test)]
 mod rc_conditional_tests {
     use super::*;
-    use prism3_function::RcBiPredicate;
+    use qubit_atomic::RcBiPredicate;
 
     #[test]
     fn test_when_or_else() {
@@ -2027,7 +2019,7 @@ mod conditional_transformer_display_debug_tests {
 #[cfg(test)]
 mod custom_bi_transformer_into_tests {
     use super::*;
-    use prism3_function::BiTransformerOnce;
+    use qubit_atomic::BiTransformerOnce;
 
     /// Test custom BiTransformer that implements into_* methods by consuming self
     #[derive(Clone)]

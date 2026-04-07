@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -134,7 +134,7 @@ macro_rules! impl_box_function_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use prism3_function::{BoxFunction, Function};
+        /// use qubit_atomic::{BoxFunction, Function};
         ///
         /// let double = BoxFunction::new(|x: i32| x * 2);
         /// let conditional = double.when(|value: &i32| *value > 0);
@@ -167,7 +167,7 @@ macro_rules! impl_box_function_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use prism3_function::{BoxFunction, Function};
+        /// use qubit_atomic::{BoxFunction, Function};
         ///
         /// let double = BoxFunction::new(|x: i32| x * 2);
         /// let to_string = BoxFunction::new(|x: i32| x.to_string());
@@ -211,7 +211,7 @@ macro_rules! impl_box_function_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use prism3_function::{BoxBiFunction, BiFunction};
+        /// use qubit_atomic::{BoxBiFunction, BiFunction};
         ///
         /// let add = BoxBiFunction::new(|x: i32, y: i32| x + y);
         /// let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
@@ -244,7 +244,7 @@ macro_rules! impl_box_function_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use prism3_function::{BoxBiFunction, BoxFunction};
+        /// use qubit_atomic::{BoxBiFunction, BoxFunction};
         ///
         /// let add = BoxBiFunction::new(|x: i32, y: i32| x + y);
         /// let multiply_by_two = BoxFunction::new(|z: i32| z * 2);

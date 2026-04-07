@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -13,7 +13,7 @@
 //! implementations including BoxStatefulBiConsumer, ArcStatefulBiConsumer,
 //! RcStatefulBiConsumer, and their conditional variants.
 
-use prism3_function::{
+use qubit_atomic::{
     ArcStatefulBiConsumer,
     BiConsumerOnce,
     BoxStatefulBiConsumer,
@@ -2224,7 +2224,7 @@ fn test_custom_stateful_bi_consumer_to_fn() {
 #[cfg(test)]
 mod custom_struct_once_tests {
     use super::*;
-    use prism3_function::BiConsumerOnce;
+    use qubit_atomic::BiConsumerOnce;
     use std::sync::atomic::{
         AtomicUsize,
         Ordering,

@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -18,7 +18,7 @@ use std::sync::{
     Mutex,
 };
 
-use prism3_function::{
+use qubit_atomic::{
     ArcPredicate,
     ArcStatefulFunction,
     BoxPredicate,
@@ -1021,7 +1021,7 @@ fn test_stateful_function_toggle() {
 #[test]
 fn test_fn_stateful_function_ops_and_then() {
     // Test FnStatefulFunctionOps::and_then for closures
-    use prism3_function::FnStatefulFunctionOps;
+    use qubit_atomic::FnStatefulFunctionOps;
 
     let mut counter1 = 0;
     let func1 = move |x: &i32| {
@@ -1042,7 +1042,7 @@ fn test_fn_stateful_function_ops_and_then() {
 #[test]
 fn test_fn_stateful_function_ops_when() {
     // Test FnStatefulFunctionOps::when for closures
-    use prism3_function::FnStatefulFunctionOps;
+    use qubit_atomic::FnStatefulFunctionOps;
 
     let counter = Rc::new(RefCell::new(0));
     let counter_clone = Rc::clone(&counter);
@@ -1611,7 +1611,7 @@ fn test_arc_conditional_stateful_function_debug_display() {
 #[cfg(test)]
 mod test_stateful_function_trait_default_methods {
     use super::*;
-    use prism3_function::FunctionOnce;
+    use qubit_atomic::FunctionOnce;
     use std::sync::atomic::{
         AtomicUsize,
         Ordering,

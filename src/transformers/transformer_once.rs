@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -80,7 +80,7 @@ pub trait TransformerOnce<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::TransformerOnce;
+    /// use qubit_atomic::TransformerOnce;
     ///
     /// let double = |x: i32| x * 2;
     /// let boxed = double.into_box();
@@ -107,7 +107,7 @@ pub trait TransformerOnce<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::TransformerOnce;
+    /// use qubit_atomic::TransformerOnce;
     ///
     /// let double = |x: i32| x * 2;
     /// let func = double.into_fn();
@@ -140,7 +140,7 @@ pub trait TransformerOnce<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::TransformerOnce;
+    /// use qubit_atomic::TransformerOnce;
     ///
     /// let double = |x: i32| x * 2;
     /// let boxed = double.to_box();
@@ -173,7 +173,7 @@ pub trait TransformerOnce<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::TransformerOnce;
+    /// use qubit_atomic::TransformerOnce;
     ///
     /// let double = |x: i32| x * 2;
     /// let func = double.to_fn();
@@ -289,7 +289,7 @@ impl_closure_once_trait!(
 /// ## Chain composition with and_then
 ///
 /// ```rust
-/// use prism3_function::{TransformerOnce, FnTransformerOnceOps};
+/// use qubit_atomic::{TransformerOnce, FnTransformerOnceOps};
 ///
 /// let parse = |s: String| s.parse::<i32>().unwrap_or(0);
 /// let double = |x: i32| x * 2;
@@ -301,7 +301,7 @@ impl_closure_once_trait!(
 /// ## Reverse composition with compose
 ///
 /// ```rust
-/// use prism3_function::{TransformerOnce, FnTransformerOnceOps};
+/// use qubit_atomic::{TransformerOnce, FnTransformerOnceOps};
 ///
 /// let double = |x: i32| x * 2;
 /// let to_string = |x: i32| x.to_string();
@@ -313,7 +313,7 @@ impl_closure_once_trait!(
 /// ## Conditional transformation with when
 ///
 /// ```rust
-/// use prism3_function::{TransformerOnce, FnTransformerOnceOps};
+/// use qubit_atomic::{TransformerOnce, FnTransformerOnceOps};
 ///
 /// let double = |x: i32| x * 2;
 /// let conditional = double.when(|x: &i32| *x > 0).or_else(|x: i32| -x);
@@ -354,7 +354,7 @@ pub trait FnTransformerOnceOps<T, R>: FnOnce(T) -> R + Sized + 'static {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{TransformerOnce, FnTransformerOnceOps,
+    /// use qubit_atomic::{TransformerOnce, FnTransformerOnceOps,
     ///     BoxTransformerOnce};
     ///
     /// let parse = |s: String| s.parse::<i32>().unwrap_or(0);
@@ -405,7 +405,7 @@ pub trait FnTransformerOnceOps<T, R>: FnOnce(T) -> R + Sized + 'static {
     /// ## Basic usage with or_else
     ///
     /// ```rust
-    /// use prism3_function::{TransformerOnce, FnTransformerOnceOps};
+    /// use qubit_atomic::{TransformerOnce, FnTransformerOnceOps};
     ///
     /// let double = |x: i32| x * 2;
     /// let conditional = double.when(|x: &i32| *x > 0).or_else(|x: i32| -x);
@@ -416,7 +416,7 @@ pub trait FnTransformerOnceOps<T, R>: FnOnce(T) -> R + Sized + 'static {
     /// ## Preserving predicate with clone
     ///
     /// ```rust
-    /// use prism3_function::{TransformerOnce, FnTransformerOnceOps,
+    /// use qubit_atomic::{TransformerOnce, FnTransformerOnceOps,
     ///     RcPredicate};
     ///
     /// let double = |x: i32| x * 2;
@@ -477,7 +477,7 @@ impl<T, R, F> FnTransformerOnceOps<T, R> for F where F: FnOnce(T) -> R + 'static
 /// ## Using in generic constraints
 ///
 /// ```rust
-/// use prism3_function::{UnaryOperatorOnce, TransformerOnce};
+/// use qubit_atomic::{UnaryOperatorOnce, TransformerOnce};
 ///
 /// fn apply<T, O>(value: T, op: O) -> T
 /// where
@@ -524,7 +524,7 @@ where
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{BoxUnaryOperatorOnce, TransformerOnce};
+/// use qubit_atomic::{BoxUnaryOperatorOnce, TransformerOnce};
 ///
 /// let increment: BoxUnaryOperatorOnce<i32> = BoxUnaryOperatorOnce::new(|x| x + 1);
 /// assert_eq!(increment.apply(41), 42);
@@ -561,7 +561,7 @@ pub type BoxUnaryOperatorOnce<T> = BoxTransformerOnce<T, T>;
 /// ## With or_else Branch
 ///
 /// ```rust
-/// use prism3_function::{TransformerOnce, BoxTransformerOnce};
+/// use qubit_atomic::{TransformerOnce, BoxTransformerOnce};
 ///
 /// let double = BoxTransformerOnce::new(|x: i32| x * 2);
 /// let negate = BoxTransformerOnce::new(|x: i32| -x);

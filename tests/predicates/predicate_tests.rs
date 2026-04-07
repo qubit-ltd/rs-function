@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -9,7 +9,7 @@
 
 //! Unit tests for the predicate module.
 
-use prism3_function::predicates::predicate::{
+use qubit_atomic::predicates::predicate::{
     ArcPredicate,
     BoxPredicate,
     FnPredicateOps,

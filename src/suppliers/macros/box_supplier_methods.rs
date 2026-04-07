@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -103,7 +103,7 @@ macro_rules! impl_box_supplier_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use prism3_rust_function::suppliers::*;
+        /// use qubit_atomic::suppliers::*;
         ///
         /// let supplier = BoxSupplier::new(|| 10);
         /// let mapped = supplier
@@ -137,7 +137,7 @@ macro_rules! impl_box_supplier_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use prism3_rust_function::suppliers::*;
+        /// use qubit_atomic::suppliers::*;
         ///
         /// let supplier = BoxSupplier::new(|| 42);
         /// let filtered = supplier.filter(|x| x % 2 == 0);
@@ -176,7 +176,7 @@ macro_rules! impl_box_supplier_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use prism3_rust_function::suppliers::*;
+        /// use qubit_atomic::suppliers::*;
         ///
         /// let first = BoxSupplier::new(|| 42);
         /// let second = BoxSupplier::new(|| "hello");

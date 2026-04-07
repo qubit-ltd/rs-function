@@ -1,13 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
  ******************************************************************************/
 /// Tests for BiConsumer types
-use prism3_function::{
+use qubit_atomic::{
     ArcBiConsumer,
     BiConsumer,
     BoxBiConsumer,
@@ -1744,7 +1744,7 @@ mod to_methods_tests {
 #[cfg(test)]
 mod to_once_tests {
     use super::*;
-    use prism3_function::BiConsumerOnce;
+    use qubit_atomic::BiConsumerOnce;
     use std::sync::Mutex;
 
     #[test]

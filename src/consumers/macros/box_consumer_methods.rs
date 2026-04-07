@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -132,7 +132,7 @@ macro_rules! impl_box_consumer_methods {
         /// ```rust
         /// use std::sync::Arc;
         /// use std::sync::atomic::{AtomicI32, Ordering};
-        /// use prism3_rust_function::consumers::*;
+        /// use qubit_atomic::consumers::*;
         ///
         /// let counter = Arc::new(AtomicI32::new(0));
         /// let consumer = BoxConsumer::new({
@@ -174,7 +174,7 @@ macro_rules! impl_box_consumer_methods {
         /// ```rust
         /// use std::sync::Arc;
         /// use std::sync::atomic::{AtomicI32, Ordering};
-        /// use prism3_rust_function::consumers::*;
+        /// use qubit_atomic::consumers::*;
         ///
         /// let counter1 = Arc::new(AtomicI32::new(0));
         /// let counter2 = Arc::new(AtomicI32::new(0));
@@ -236,7 +236,7 @@ macro_rules! impl_box_consumer_methods {
         /// ```rust
         /// use std::sync::Arc;
         /// use std::sync::atomic::{AtomicI32, Ordering};
-        /// use prism3_rust_function::consumers::*;
+        /// use qubit_atomic::consumers::*;
         ///
         /// let counter = Arc::new(AtomicI32::new(0));
         /// let bi_consumer = BoxBiConsumer::new({
@@ -280,7 +280,7 @@ macro_rules! impl_box_consumer_methods {
         /// ```rust
         /// use std::sync::Arc;
         /// use std::sync::atomic::{AtomicI32, Ordering};
-        /// use prism3_rust_function::consumers::*;
+        /// use qubit_atomic::consumers::*;
         ///
         /// let counter1 = Arc::new(AtomicI32::new(0));
         /// let counter2 = Arc::new(AtomicI32::new(0));

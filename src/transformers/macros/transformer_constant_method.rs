@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -51,7 +51,7 @@
 //!     /// # Examples
 //!     ///
 //!     /// ```rust
-//!     /// use prism3_function::{BoxTransformer, Transformer};
+//!     /// use qubit_atomic::{BoxTransformer, Transformer};
 //!     ///
 //!     /// let constant = BoxTransformer::constant("hello");
 //!     /// assert_eq!(constant.apply(123), "hello");
@@ -109,7 +109,7 @@ macro_rules! impl_transformer_constant_method {
             ///
             /// # Examples
             ///
-            #[doc = concat!("/// ```rust\n/// use prism3_function::{", stringify!($struct_name), ", Transformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123), \"hello\");\n/// ```")]
+            #[doc = concat!("/// ```rust\n/// use qubit_atomic::{", stringify!($struct_name), ", Transformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123), \"hello\");\n/// ```")]
             pub fn constant(value: $r) -> $struct_name<$t, $r> {
                 $struct_name::new(move |_| value.clone())
             }
@@ -127,7 +127,7 @@ macro_rules! impl_transformer_constant_method {
             ///
             /// # Examples
             ///
-            #[doc = concat!("/// ```rust\n/// use prism3_function::{", stringify!($struct_name), ", Transformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123), \"hello\");\n/// ```")]
+            #[doc = concat!("/// ```rust\n/// use qubit_atomic::{", stringify!($struct_name), ", Transformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123), \"hello\");\n/// ```")]
             pub fn constant(value: $r) -> $struct_name<$t, $r>
             where
                 $r: Send + Sync,
@@ -149,7 +149,7 @@ macro_rules! impl_transformer_constant_method {
             ///
             /// # Examples
             ///
-            #[doc = concat!("/// ```rust\n/// use prism3_function::{", stringify!($struct_name), ", BiTransformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123, 456), \"hello\");\n/// ```")]
+            #[doc = concat!("/// ```rust\n/// use qubit_atomic::{", stringify!($struct_name), ", BiTransformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123, 456), \"hello\");\n/// ```")]
             pub fn constant(value: $r) -> $struct_name<$t, $u, $r> {
                 $struct_name::new(move |_, _| value.clone())
             }
@@ -168,7 +168,7 @@ macro_rules! impl_transformer_constant_method {
             ///
             /// # Examples
             ///
-            #[doc = concat!("/// ```rust\n/// use prism3_function::{", stringify!($struct_name), ", BiTransformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123, 456), \"hello\");\n/// ```")]
+            #[doc = concat!("/// ```rust\n/// use qubit_atomic::{", stringify!($struct_name), ", BiTransformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123, 456), \"hello\");\n/// ```")]
             pub fn constant(value: $r) -> $struct_name<$t, $u, $r>
             where
                 $r: Send + Sync,
@@ -189,7 +189,7 @@ macro_rules! impl_transformer_constant_method {
             ///
             /// # Examples
             ///
-            #[doc = concat!("/// ```rust\n/// use prism3_function::{", stringify!($struct_name), ", StatefulTransformer};\n///\n/// let mut constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123), \"hello\");\n/// ```")]
+            #[doc = concat!("/// ```rust\n/// use qubit_atomic::{", stringify!($struct_name), ", StatefulTransformer};\n///\n/// let mut constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123), \"hello\");\n/// ```")]
             pub fn constant(value: $r) -> $struct_name<$t, $r> {
                 $struct_name::new(move |_| value.clone())
             }
@@ -207,7 +207,7 @@ macro_rules! impl_transformer_constant_method {
             ///
             /// # Examples
             ///
-            #[doc = concat!("/// ```rust\n/// use prism3_function::{", stringify!($struct_name), ", StatefulTransformer};\n///\n/// let mut constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123), \"hello\");\n/// ```")]
+            #[doc = concat!("/// ```rust\n/// use qubit_atomic::{", stringify!($struct_name), ", StatefulTransformer};\n///\n/// let mut constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123), \"hello\");\n/// ```")]
             pub fn constant(value: $r) -> $struct_name<$t, $r> {
                 $struct_name::new(move |_| value.clone())
             }
@@ -226,7 +226,7 @@ macro_rules! impl_transformer_constant_method {
             ///
             /// # Examples
             ///
-            #[doc = concat!("/// ```rust\n/// use prism3_function::{", stringify!($struct_name), ", StatefulBiTransformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123, 456), \"hello\");\n/// ```")]
+            #[doc = concat!("/// ```rust\n/// use qubit_atomic::{", stringify!($struct_name), ", StatefulBiTransformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123, 456), \"hello\");\n/// ```")]
             pub fn constant(value: $r) -> $struct_name<$t, $u, $r> {
                 $struct_name::new(move |_, _| value.clone())
             }
@@ -245,7 +245,7 @@ macro_rules! impl_transformer_constant_method {
             ///
             /// # Examples
             ///
-            #[doc = concat!("/// ```rust\n/// use prism3_function::{", stringify!($struct_name), ", StatefulBiTransformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123, 456), \"hello\");\n/// ```")]
+            #[doc = concat!("/// ```rust\n/// use qubit_atomic::{", stringify!($struct_name), ", StatefulBiTransformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123, 456), \"hello\");\n/// ```")]
             pub fn constant(value: $r) -> $struct_name<$t, $u, $r> {
                 $struct_name::new(move |_, _| value.clone())
             }

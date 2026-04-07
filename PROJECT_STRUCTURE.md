@@ -1,12 +1,12 @@
 # Project Structure
 
 This document describes the directory structure and organization of the
-prism3-rust-function crate.
+qubit-atomic crate.
 
 ## Directory Layout
 
 ```
-prism3-rust-function/
+rust-function/
 ├── src/                    # Source code
 │   ├── consumers/          # Consumer-related abstractions
 │   │   ├── macros/         # Consumer-specific macros
@@ -179,14 +179,14 @@ Users can import types in two ways:
 
 1. **Direct from root** (recommended, backward compatible):
    ```rust
-   use prism3_function::{Consumer, Predicate, Transformer};
+   use qubit_atomic::{Consumer, Predicate, Transformer};
    ```
 
 2. **From specific modules** (explicit):
    ```rust
-   use prism3_function::consumers::Consumer;
-   use prism3_function::predicates::Predicate;
-   use prism3_function::transformers::Transformer;
+   use qubit_atomic::consumers::Consumer;
+   use qubit_atomic::predicates::Predicate;
+   use qubit_atomic::transformers::Transformer;
    ```
 
 Both styles are supported through re-exports in `lib.rs`.

@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -57,7 +57,7 @@
 //! ## Basic State Checking
 //!
 //! ```rust
-//! use prism3_function::{BoxTester, Tester};
+//! use qubit_atomic::{BoxTester, Tester};
 //! use std::sync::{Arc, atomic::{AtomicUsize, Ordering}};
 //!
 //! // State managed externally
@@ -82,7 +82,7 @@
 //! ## Logical Combination
 //!
 //! ```rust
-//! use prism3_function::{BoxTester, Tester};
+//! use qubit_atomic::{BoxTester, Tester};
 //! use std::sync::{Arc, atomic::{AtomicUsize, AtomicBool, Ordering}};
 //!
 //! // Simulate microservice health check scenario
@@ -141,7 +141,7 @@
 //! ## Thread-Safe Sharing
 //!
 //! ```rust
-//! use prism3_function::{ArcTester, Tester};
+//! use qubit_atomic::{ArcTester, Tester};
 //! use std::thread;
 //!
 //! let shared = ArcTester::new(|| true);
@@ -194,7 +194,7 @@ use std::sync::Arc;
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{BoxTester, Tester};
+/// use qubit_atomic::{BoxTester, Tester};
 /// use std::sync::{Arc, atomic::{AtomicBool, Ordering}};
 ///
 /// // State managed externally
@@ -228,7 +228,7 @@ pub trait Tester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{BoxTester, Tester};
+    /// use qubit_atomic::{BoxTester, Tester};
     ///
     /// let tester = BoxTester::new(|| true);
     /// assert!(tester.test());
@@ -244,7 +244,7 @@ pub trait Tester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{Tester, BoxTester};
+    /// use qubit_atomic::{Tester, BoxTester};
     ///
     /// let closure = || true;
     /// let boxed: BoxTester = closure.into_box();
@@ -267,7 +267,7 @@ pub trait Tester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{Tester, RcTester};
+    /// use qubit_atomic::{Tester, RcTester};
     ///
     /// let closure = || true;
     /// let rc: RcTester = closure.into_rc();
@@ -290,7 +290,7 @@ pub trait Tester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{Tester, ArcTester};
+    /// use qubit_atomic::{Tester, ArcTester};
     ///
     /// let closure = || true;
     /// let arc: ArcTester = closure.into_arc();
@@ -313,7 +313,7 @@ pub trait Tester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::Tester;
+    /// use qubit_atomic::Tester;
     ///
     /// let closure = || true;
     /// let func = closure.into_fn();
@@ -335,7 +335,7 @@ pub trait Tester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{Tester, BoxTester, ArcTester};
+    /// use qubit_atomic::{Tester, BoxTester, ArcTester};
     ///
     /// let arc = ArcTester::new(|| true);
     /// let boxed: BoxTester = arc.to_box();
@@ -357,7 +357,7 @@ pub trait Tester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{Tester, RcTester, ArcTester};
+    /// use qubit_atomic::{Tester, RcTester, ArcTester};
     ///
     /// let arc = ArcTester::new(|| true);
     /// let rc: RcTester = arc.to_rc();
@@ -379,7 +379,7 @@ pub trait Tester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{Tester, ArcTester, RcTester};
+    /// use qubit_atomic::{Tester, ArcTester, RcTester};
     ///
     /// let rc = RcTester::new(|| true);
     /// // Note: This will panic for RcTester as it's not Send + Sync
@@ -401,7 +401,7 @@ pub trait Tester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{Tester, ArcTester};
+    /// use qubit_atomic::{Tester, ArcTester};
     ///
     /// let arc = ArcTester::new(|| true);
     /// let func = arc.to_fn();
@@ -443,7 +443,7 @@ pub trait Tester {
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{BoxTester, Tester};
+/// use qubit_atomic::{BoxTester, Tester};
 /// use std::sync::{Arc, atomic::{AtomicUsize, Ordering}};
 ///
 /// // State managed externally
@@ -494,7 +494,7 @@ impl BoxTester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::BoxTester;
+    /// use qubit_atomic::BoxTester;
     ///
     /// let tester = BoxTester::new(|| true);
     /// ```
@@ -528,7 +528,7 @@ impl BoxTester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{BoxTester, Tester};
+    /// use qubit_atomic::{BoxTester, Tester};
     /// use std::sync::{Arc, atomic::{AtomicUsize, AtomicBool, Ordering}};
     ///
     /// // Simulate service status
@@ -592,7 +592,7 @@ impl BoxTester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{BoxTester, Tester};
+    /// use qubit_atomic::{BoxTester, Tester};
     /// use std::sync::{Arc, atomic::{AtomicUsize, AtomicBool, Ordering}};
     ///
     /// // Simulate service status
@@ -652,7 +652,7 @@ impl BoxTester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{BoxTester, Tester};
+    /// use qubit_atomic::{BoxTester, Tester};
     /// use std::sync::{Arc, atomic::{AtomicUsize, Ordering}};
     ///
     /// // Simulate resource usage
@@ -704,7 +704,7 @@ impl BoxTester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{BoxTester, Tester};
+    /// use qubit_atomic::{BoxTester, Tester};
     /// use std::sync::{Arc, atomic::{AtomicBool, Ordering}};
     ///
     /// let flag1 = Arc::new(AtomicBool::new(true));
@@ -756,7 +756,7 @@ impl BoxTester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{BoxTester, Tester};
+    /// use qubit_atomic::{BoxTester, Tester};
     /// use std::sync::{Arc, atomic::{AtomicBool, Ordering}};
     ///
     /// let flag1 = Arc::new(AtomicBool::new(true));
@@ -813,7 +813,7 @@ impl BoxTester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{BoxTester, Tester};
+    /// use qubit_atomic::{BoxTester, Tester};
     /// use std::sync::{Arc, atomic::{AtomicBool, Ordering}};
     ///
     /// let flag1 = Arc::new(AtomicBool::new(false));
@@ -904,7 +904,7 @@ impl Tester for BoxTester {
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{ArcTester, Tester};
+/// use qubit_atomic::{ArcTester, Tester};
 /// use std::sync::{Arc, atomic::{AtomicUsize, Ordering}};
 /// use std::thread;
 ///
@@ -951,7 +951,7 @@ impl ArcTester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::ArcTester;
+    /// use qubit_atomic::ArcTester;
     ///
     /// let tester = ArcTester::new(|| true);
     /// ```
@@ -980,7 +980,7 @@ impl ArcTester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{ArcTester, Tester};
+    /// use qubit_atomic::{ArcTester, Tester};
     /// use std::sync::{Arc, atomic::{AtomicUsize, AtomicBool, Ordering}};
     /// use std::thread;
     ///
@@ -1047,7 +1047,7 @@ impl ArcTester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{ArcTester, Tester};
+    /// use qubit_atomic::{ArcTester, Tester};
     /// use std::sync::{Arc, atomic::{AtomicUsize, AtomicBool, Ordering}};
     /// use std::thread;
     ///
@@ -1126,7 +1126,7 @@ impl ArcTester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{ArcTester, Tester};
+    /// use qubit_atomic::{ArcTester, Tester};
     /// use std::sync::{Arc, atomic::{AtomicUsize, Ordering}};
     /// use std::thread;
     ///
@@ -1190,7 +1190,7 @@ impl ArcTester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{ArcTester, Tester};
+    /// use qubit_atomic::{ArcTester, Tester};
     /// use std::sync::{Arc, atomic::{AtomicBool, Ordering}};
     /// use std::thread;
     ///
@@ -1245,7 +1245,7 @@ impl ArcTester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{ArcTester, Tester};
+    /// use qubit_atomic::{ArcTester, Tester};
     /// use std::sync::{Arc, atomic::{AtomicBool, Ordering}};
     /// use std::thread;
     ///
@@ -1305,7 +1305,7 @@ impl ArcTester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{ArcTester, Tester};
+    /// use qubit_atomic::{ArcTester, Tester};
     /// use std::sync::{Arc, atomic::{AtomicBool, Ordering}};
     /// use std::thread;
     ///
@@ -1436,7 +1436,7 @@ impl Clone for ArcTester {
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{RcTester, Tester};
+/// use qubit_atomic::{RcTester, Tester};
 ///
 /// let shared = RcTester::new(|| true);
 ///
@@ -1473,7 +1473,7 @@ impl RcTester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::RcTester;
+    /// use qubit_atomic::RcTester;
     ///
     /// let tester = RcTester::new(|| true);
     /// ```
@@ -1502,7 +1502,7 @@ impl RcTester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{RcTester, Tester};
+    /// use qubit_atomic::{RcTester, Tester};
     ///
     /// let first = RcTester::new(|| true);
     /// let second = RcTester::new(|| true);
@@ -1533,7 +1533,7 @@ impl RcTester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{RcTester, Tester};
+    /// use qubit_atomic::{RcTester, Tester};
     ///
     /// let first = RcTester::new(|| false);
     /// let second = RcTester::new(|| true);
@@ -1561,7 +1561,7 @@ impl RcTester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{RcTester, Tester};
+    /// use qubit_atomic::{RcTester, Tester};
     ///
     /// let original = RcTester::new(|| true);
     /// let negated = original.not();
@@ -1591,7 +1591,7 @@ impl RcTester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{RcTester, Tester};
+    /// use qubit_atomic::{RcTester, Tester};
     ///
     /// let first = RcTester::new(|| true);
     /// let second = RcTester::new(|| true);
@@ -1628,7 +1628,7 @@ impl RcTester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{RcTester, Tester};
+    /// use qubit_atomic::{RcTester, Tester};
     ///
     /// let first = RcTester::new(|| true);
     /// let second = RcTester::new(|| false);
@@ -1665,7 +1665,7 @@ impl RcTester {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{RcTester, Tester};
+    /// use qubit_atomic::{RcTester, Tester};
     ///
     /// let first = RcTester::new(|| false);
     /// let second = RcTester::new(|| false);
@@ -1828,7 +1828,7 @@ where
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{FnTesterOps, Tester};
+/// use qubit_atomic::{FnTesterOps, Tester};
 ///
 /// let is_ready = || true;
 /// let is_available = || true;
@@ -1862,7 +1862,7 @@ pub trait FnTesterOps: Sized + Fn() -> bool + 'static {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{FnTesterOps, Tester};
+    /// use qubit_atomic::{FnTesterOps, Tester};
     ///
     /// let is_ready = || true;
     /// let is_available = || true;
@@ -1898,7 +1898,7 @@ pub trait FnTesterOps: Sized + Fn() -> bool + 'static {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{FnTesterOps, Tester};
+    /// use qubit_atomic::{FnTesterOps, Tester};
     ///
     /// let is_ready = || false;
     /// let is_fallback = || true;
@@ -1922,7 +1922,7 @@ pub trait FnTesterOps: Sized + Fn() -> bool + 'static {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{FnTesterOps, Tester};
+    /// use qubit_atomic::{FnTesterOps, Tester};
     ///
     /// let is_ready = || false;
     /// let not_ready = is_ready.not();
@@ -1953,7 +1953,7 @@ pub trait FnTesterOps: Sized + Fn() -> bool + 'static {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{FnTesterOps, Tester};
+    /// use qubit_atomic::{FnTesterOps, Tester};
     ///
     /// let is_ready = || true;
     /// let is_available = || true;
@@ -1988,7 +1988,7 @@ pub trait FnTesterOps: Sized + Fn() -> bool + 'static {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{FnTesterOps, Tester};
+    /// use qubit_atomic::{FnTesterOps, Tester};
     ///
     /// let is_ready = || true;
     /// let is_available = || false;
@@ -2024,7 +2024,7 @@ pub trait FnTesterOps: Sized + Fn() -> bool + 'static {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{FnTesterOps, Tester};
+    /// use qubit_atomic::{FnTesterOps, Tester};
     ///
     /// let is_ready = || false;
     /// let is_available = || false;

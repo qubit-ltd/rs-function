@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -94,7 +94,7 @@ type BiConsumerOnceFn<T, U> = dyn FnOnce(&T, &U);
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{BiConsumerOnce, BoxBiConsumerOnce};
+/// use qubit_atomic::{BiConsumerOnce, BoxBiConsumerOnce};
 /// use std::sync::{Arc, Mutex};
 ///
 /// fn apply_consumer<C: BiConsumerOnce<i32, i32>>(
@@ -132,7 +132,7 @@ pub trait BiConsumerOnce<T, U> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{BiConsumerOnce, BoxBiConsumerOnce};
+    /// use qubit_atomic::{BiConsumerOnce, BoxBiConsumerOnce};
     ///
     /// let consumer = BoxBiConsumerOnce::new(|x: &i32, y: &i32| {
     ///     println!("Sum: {}", x + y);
@@ -153,7 +153,7 @@ pub trait BiConsumerOnce<T, U> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::BiConsumerOnce;
+    /// use qubit_atomic::BiConsumerOnce;
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -207,7 +207,7 @@ pub trait BiConsumerOnce<T, U> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::BiConsumerOnce;
+    /// use qubit_atomic::BiConsumerOnce;
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -241,7 +241,7 @@ pub trait BiConsumerOnce<T, U> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::BiConsumerOnce;
+    /// use qubit_atomic::BiConsumerOnce;
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -299,7 +299,7 @@ pub trait BiConsumerOnce<T, U> {
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{BiConsumerOnce, BoxBiConsumerOnce};
+/// use qubit_atomic::{BiConsumerOnce, BoxBiConsumerOnce};
 ///
 /// let consumer = BoxBiConsumerOnce::new(|x: &i32, y: &i32| {
 ///     println!("Sum: {}", x + y);
@@ -387,7 +387,7 @@ impl_closure_once_trait!(
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{BiConsumerOnce, FnBiConsumerOnceOps};
+/// use qubit_atomic::{BiConsumerOnce, FnBiConsumerOnceOps};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -433,7 +433,7 @@ pub trait FnBiConsumerOnceOps<T, U>: FnOnce(&T, &U) + Sized {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{BiConsumerOnce, FnBiConsumerOnceOps};
+    /// use qubit_atomic::{BiConsumerOnce, FnBiConsumerOnceOps};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -493,7 +493,7 @@ impl<T, U, F> FnBiConsumerOnceOps<T, U> for F where F: FnOnce(&T, &U) {}
 /// ## Basic Conditional Execution
 ///
 /// ```rust
-/// use prism3_function::{BiConsumerOnce, BoxBiConsumerOnce};
+/// use qubit_atomic::{BiConsumerOnce, BoxBiConsumerOnce};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -510,7 +510,7 @@ impl<T, U, F> FnBiConsumerOnceOps<T, U> for F where F: FnOnce(&T, &U) {}
 /// ## With or_else Branch
 ///
 /// ```rust
-/// use prism3_function::{BiConsumerOnce, BoxBiConsumerOnce};
+/// use qubit_atomic::{BiConsumerOnce, BoxBiConsumerOnce};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));

@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -100,7 +100,7 @@ use crate::predicates::bi_predicate::{
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{BiConsumer, BoxStatefulBiConsumer, ArcStatefulBiConsumer};
+/// use qubit_atomic::{BiConsumer, BoxStatefulBiConsumer, ArcStatefulBiConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
 /// fn apply_bi_consumer<C: StatefulBiConsumer<i32, i32>>(
@@ -140,7 +140,7 @@ pub trait StatefulBiConsumer<T, U> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{BiConsumer, BoxStatefulBiConsumer};
+    /// use qubit_atomic::{BiConsumer, BoxStatefulBiConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -176,7 +176,7 @@ pub trait StatefulBiConsumer<T, U> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::BiConsumer;
+    /// use qubit_atomic::BiConsumer;
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -249,7 +249,7 @@ pub trait StatefulBiConsumer<T, U> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{BiConsumer, BoxStatefulBiConsumer};
+    /// use qubit_atomic::{BiConsumer, BoxStatefulBiConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -313,7 +313,7 @@ pub trait StatefulBiConsumer<T, U> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{BiConsumer, ArcStatefulBiConsumer};
+    /// use qubit_atomic::{BiConsumer, ArcStatefulBiConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -357,7 +357,7 @@ pub trait StatefulBiConsumer<T, U> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{BiConsumer, ArcStatefulBiConsumer};
+    /// use qubit_atomic::{BiConsumer, ArcStatefulBiConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -402,7 +402,7 @@ pub trait StatefulBiConsumer<T, U> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{BiConsumer, RcStatefulBiConsumer};
+    /// use qubit_atomic::{BiConsumer, RcStatefulBiConsumer};
     /// use std::rc::Rc;
     /// use std::cell::RefCell;
     ///
@@ -447,7 +447,7 @@ pub trait StatefulBiConsumer<T, U> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{BiConsumer, BoxStatefulBiConsumer};
+    /// use qubit_atomic::{BiConsumer, BoxStatefulBiConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -526,7 +526,7 @@ pub trait StatefulBiConsumer<T, U> {
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{BiConsumer, BoxStatefulBiConsumer};
+/// use qubit_atomic::{BiConsumer, BoxStatefulBiConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -635,7 +635,7 @@ impl_consumer_debug_display!(BoxStatefulBiConsumer<T, U>);
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{BiConsumer, RcStatefulBiConsumer};
+/// use qubit_atomic::{BiConsumer, RcStatefulBiConsumer};
 /// use std::rc::Rc;
 /// use std::cell::RefCell;
 ///
@@ -742,7 +742,7 @@ impl_consumer_debug_display!(RcStatefulBiConsumer<T, U>);
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{BiConsumer, ArcStatefulBiConsumer};
+/// use qubit_atomic::{BiConsumer, ArcStatefulBiConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -848,7 +848,7 @@ impl_closure_trait!(
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{BiConsumer, FnStatefulBiConsumerOps};
+/// use qubit_atomic::{BiConsumer, FnStatefulBiConsumerOps};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -896,7 +896,7 @@ pub trait FnStatefulBiConsumerOps<T, U>: FnMut(&T, &U) + Sized {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{BiConsumer, FnStatefulBiConsumerOps};
+    /// use qubit_atomic::{BiConsumer, FnStatefulBiConsumerOps};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -954,7 +954,7 @@ impl<T, U, F> FnStatefulBiConsumerOps<T, U> for F where F: FnMut(&T, &U) {}
 /// ## Basic Conditional Execution
 ///
 /// ```rust
-/// use prism3_function::{BiConsumer, BoxStatefulBiConsumer};
+/// use qubit_atomic::{BiConsumer, BoxStatefulBiConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -974,7 +974,7 @@ impl<T, U, F> FnStatefulBiConsumerOps<T, U> for F where F: FnMut(&T, &U) {}
 /// ## With or_else Branch
 ///
 /// ```rust
-/// use prism3_function::{BiConsumer, BoxStatefulBiConsumer};
+/// use qubit_atomic::{BiConsumer, BoxStatefulBiConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -1054,7 +1054,7 @@ impl_conditional_consumer_debug_display!(BoxConditionalStatefulBiConsumer<T, U>)
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{BiConsumer, ArcStatefulBiConsumer};
+/// use qubit_atomic::{BiConsumer, ArcStatefulBiConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -1136,7 +1136,7 @@ impl_conditional_consumer_debug_display!(ArcConditionalStatefulBiConsumer<T, U>)
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{BiConsumer, RcStatefulBiConsumer};
+/// use qubit_atomic::{BiConsumer, RcStatefulBiConsumer};
 /// use std::rc::Rc;
 /// use std::cell::RefCell;
 ///

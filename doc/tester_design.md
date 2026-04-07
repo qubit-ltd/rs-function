@@ -708,7 +708,7 @@ Generation/Consumption abstractions (using &mut self):
 ### 1. Health Check
 
 ```rust
-use prism3_rust_function::tester::{BoxTester, Tester};
+use qubit_atomic::tester::{BoxTester, Tester};
 
 struct HealthChecker {
     database: Arc<Database>,
@@ -740,7 +740,7 @@ if health_test.test() {
 ### 2. Condition Waiting
 
 ```rust
-use prism3_rust_function::tester::{ArcTester, Tester};
+use qubit_atomic::tester::{ArcTester, Tester};
 use std::sync::{Arc, atomic::{AtomicBool, Ordering}};
 use std::time::{Duration, Instant};
 
@@ -780,7 +780,7 @@ if wait_until(&tester, Duration::from_secs(5)) {
 ### 3. Retry Limits
 
 ```rust
-use prism3_rust_function::tester::{BoxTester, Tester};
+use qubit_atomic::tester::{BoxTester, Tester};
 
 fn retry_with_limit<F>(task: F, max_attempts: usize) -> Result<(), Error>
 where
@@ -810,7 +810,7 @@ retry_with_limit(|| {
 ### 4. Caching Test Results
 
 ```rust
-use prism3_rust_function::tester::{BoxTester, Tester};
+use qubit_atomic::tester::{BoxTester, Tester};
 use std::time::{Duration, Instant};
 
 struct CachedChecker {
@@ -859,7 +859,7 @@ for _ in 0..10 {
 ### 5. Logical Composition
 
 ```rust
-use prism3_rust_function::tester::{BoxTester, Tester};
+use qubit_atomic::tester::{BoxTester, Tester};
 
 let db_alive = BoxTester::new(|| check_database());
 let cache_ready = BoxTester::new(|| check_cache());
@@ -890,7 +890,7 @@ let can_serve = any_db_alive.and(not_maintenance);
 ### 6. Multi-threaded Shared Checking
 
 ```rust
-use prism3_rust_function::tester::{ArcTester, Tester};
+use qubit_atomic::tester::{ArcTester, Tester};
 use std::sync::{Arc, atomic::{AtomicBool, Ordering}};
 
 let shutdown = Arc::new(AtomicBool::new(false));
@@ -920,7 +920,7 @@ shutdown.store(true, Ordering::Release);
 ### 7. Precondition Checking
 
 ```rust
-use prism3_rust_function::tester::{BoxTester, Tester};
+use qubit_atomic::tester::{BoxTester, Tester};
 
 struct Executor {
     precondition: BoxTester,
@@ -968,7 +968,7 @@ executor.execute(|| {
 ### 8. State Change Detection
 
 ```rust
-use prism3_rust_function::tester::BoxTester;
+use qubit_atomic::tester::BoxTester;
 
 struct ChangeDetector {
     last_value: i32,

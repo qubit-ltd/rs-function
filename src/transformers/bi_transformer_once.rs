@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -120,7 +120,7 @@ pub trait BiTransformerOnce<T, U, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::BiTransformerOnce;
+    /// use qubit_atomic::BiTransformerOnce;
     ///
     /// let add = |x: i32, y: i32| x + y;
     /// let func = add.to_fn();
@@ -148,7 +148,7 @@ pub trait BiTransformerOnce<T, U, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::BiTransformerOnce;
+    /// use qubit_atomic::BiTransformerOnce;
     ///
     /// let add = |x: i32, y: i32| x + y;
     /// let func = add.to_fn();
@@ -266,7 +266,7 @@ impl_closure_once_trait!(
 /// ## Chain composition with and_then
 ///
 /// ```rust
-/// use prism3_function::{BiTransformerOnce, FnBiTransformerOnceOps};
+/// use qubit_atomic::{BiTransformerOnce, FnBiTransformerOnceOps};
 ///
 /// let add = |x: i32, y: i32| x + y;
 /// let double = |x: i32| x * 2;
@@ -278,7 +278,7 @@ impl_closure_once_trait!(
 /// ## Conditional execution with when
 ///
 /// ```rust
-/// use prism3_function::{BiTransformerOnce, FnBiTransformerOnceOps};
+/// use qubit_atomic::{BiTransformerOnce, FnBiTransformerOnceOps};
 ///
 /// let add = |x: i32, y: i32| x + y;
 /// let multiply = |x: i32, y: i32| x * y;
@@ -319,7 +319,7 @@ pub trait FnBiTransformerOnceOps<T, U, R>: FnOnce(T, U) -> R + Sized + 'static {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{BiTransformerOnce, FnBiTransformerOnceOps,
+    /// use qubit_atomic::{BiTransformerOnce, FnBiTransformerOnceOps,
     ///     BoxTransformerOnce};
     ///
     /// let add = |x: i32, y: i32| x + y;
@@ -369,7 +369,7 @@ pub trait FnBiTransformerOnceOps<T, U, R>: FnOnce(T, U) -> R + Sized + 'static {
     /// ## Basic usage with or_else
     ///
     /// ```rust
-    /// use prism3_function::{BiTransformerOnce, FnBiTransformerOnceOps};
+    /// use qubit_atomic::{BiTransformerOnce, FnBiTransformerOnceOps};
     ///
     /// let add = |x: i32, y: i32| x + y;
     /// let multiply = |x: i32, y: i32| x * y;
@@ -382,7 +382,7 @@ pub trait FnBiTransformerOnceOps<T, U, R>: FnOnce(T, U) -> R + Sized + 'static {
     /// ## Preserving bi-predicate with clone
     ///
     /// ```rust
-    /// use prism3_function::{BiTransformerOnce, FnBiTransformerOnceOps,
+    /// use qubit_atomic::{BiTransformerOnce, FnBiTransformerOnceOps,
     ///     RcBiPredicate};
     ///
     /// let add = |x: i32, y: i32| x + y;
@@ -445,7 +445,7 @@ impl<T, U, R, F> FnBiTransformerOnceOps<T, U, R> for F where F: FnOnce(T, U) -> 
 /// ## Using in generic constraints
 ///
 /// ```rust
-/// use prism3_function::{BinaryOperatorOnce, BiTransformerOnce};
+/// use qubit_atomic::{BinaryOperatorOnce, BiTransformerOnce};
 ///
 /// fn combine<T, O>(a: T, b: T, op: O) -> T
 /// where
@@ -492,7 +492,7 @@ where
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{BoxBinaryOperatorOnce, BiTransformerOnce};
+/// use qubit_atomic::{BoxBinaryOperatorOnce, BiTransformerOnce};
 ///
 /// let add: BoxBinaryOperatorOnce<i32> = BoxBinaryOperatorOnce::new(|x, y| x + y);
 /// assert_eq!(add.apply(20, 22), 42);
@@ -528,7 +528,7 @@ pub type BoxBinaryOperatorOnce<T> = BoxBiTransformerOnce<T, T, T>;
 /// ## With or_else Branch
 ///
 /// ```rust
-/// use prism3_function::{BiTransformerOnce, BoxBiTransformerOnce};
+/// use qubit_atomic::{BiTransformerOnce, BoxBiTransformerOnce};
 ///
 /// let add = BoxBiTransformerOnce::new(|x: i32, y: i32| x + y);
 /// let multiply = BoxBiTransformerOnce::new(|x: i32, y: i32| x * y);

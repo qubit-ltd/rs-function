@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -12,7 +12,7 @@
 //! This example demonstrates the usage of BiConsumer types after
 //! refactoring to use &T, &U semantics (not modifying input values).
 
-use prism3_function::{
+use qubit_atomic::{
     ArcBiConsumer,
     BiConsumer,
     BoxBiConsumer,

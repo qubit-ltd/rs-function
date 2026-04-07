@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -9,7 +9,7 @@
 
 //! Comprehensive tests for Function trait and its implementations
 
-use prism3_function::{
+use qubit_atomic::{
     ArcFunction,
     ArcPredicate,
     BoxFunction,
@@ -705,7 +705,7 @@ fn test_conditional_function_edge_cases() {
 #[test]
 fn test_fn_function_ops_and_then() {
     // Test FnFunctionOps::and_then for closures
-    use prism3_function::FnFunctionOps;
+    use qubit_atomic::FnFunctionOps;
 
     let double = |x: &i32| x * 2;
     let to_string = |x: &i32| x.to_string();
@@ -716,7 +716,7 @@ fn test_fn_function_ops_and_then() {
 #[test]
 fn test_fn_function_ops_when() {
     // Test FnFunctionOps::when for closures
-    use prism3_function::FnFunctionOps;
+    use qubit_atomic::FnFunctionOps;
 
     let double = |x: &i32| x * 2;
     let conditional = double.when(|x: &i32| *x > 0).or_else(|x: &i32| -(*x));
@@ -752,7 +752,7 @@ fn test_closure_function_to_once() {
 
 #[cfg(test)]
 mod function_default_impl_tests {
-    use prism3_function::{
+    use qubit_atomic::{
         ArcFunction,
         BoxFunction,
         Function,

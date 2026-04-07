@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -107,7 +107,7 @@ pub trait StatefulFunction<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{StatefulFunction, BoxStatefulFunction};
+    /// use qubit_atomic::{StatefulFunction, BoxStatefulFunction};
     ///
     /// struct CustomStatefulFunction {
     ///     multiplier: i32,
@@ -152,7 +152,7 @@ pub trait StatefulFunction<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{StatefulFunction, RcStatefulFunction};
+    /// use qubit_atomic::{StatefulFunction, RcStatefulFunction};
     ///
     /// struct CustomStatefulFunction {
     ///     multiplier: i32,
@@ -197,7 +197,7 @@ pub trait StatefulFunction<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{StatefulFunction, ArcStatefulFunction};
+    /// use qubit_atomic::{StatefulFunction, ArcStatefulFunction};
     ///
     /// struct CustomStatefulFunction {
     ///     multiplier: i32,
@@ -241,7 +241,7 @@ pub trait StatefulFunction<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{StatefulFunction, BoxStatefulFunction};
+    /// use qubit_atomic::{StatefulFunction, BoxStatefulFunction};
     ///
     /// let function = BoxStatefulFunction::new(|x: i32| x * 2);
     /// let mut closure = function.into_fn();
@@ -273,7 +273,7 @@ pub trait StatefulFunction<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{StatefulFunctionOnce, StatefulFunction,
+    /// use qubit_atomic::{StatefulFunctionOnce, StatefulFunction,
     ///                       BoxStatefulFunction};
     ///
     /// fn takes_once<F: StatefulFunctionOnce<i32, i32>>(func: F, value: &i32) {
@@ -359,7 +359,7 @@ pub trait StatefulFunction<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{StatefulFunctionOnce, StatefulFunction,
+    /// use qubit_atomic::{StatefulFunctionOnce, StatefulFunction,
     ///                       BoxStatefulFunction};
     ///
     /// fn takes_once<F: StatefulFunctionOnce<i32, i32>>(func: F, value: &i32) {
@@ -621,7 +621,7 @@ impl<T, R> StatefulFunction<T, R> for ArcStatefulFunction<T, R> {
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::StatefulFunction;
+/// use qubit_atomic::StatefulFunction;
 ///
 /// let mut counter = 0;
 /// let mut function = |x: i32| {
@@ -758,7 +758,7 @@ impl_fn_ops_trait!(
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{StatefulFunction, BoxStatefulFunction};
+/// use qubit_atomic::{StatefulFunction, BoxStatefulFunction};
 ///
 /// let mut high_count = 0;
 /// let mut low_count = 0;
@@ -819,7 +819,7 @@ impl_conditional_function_debug_display!(BoxConditionalStatefulFunction<T, R>);
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{StatefulFunction, RcStatefulFunction};
+/// use qubit_atomic::{StatefulFunction, RcStatefulFunction};
 ///
 /// let mut function = RcStatefulFunction::new(|x: i32| x * 2)
 ///     .when(|x: &i32| *x > 0)
@@ -878,7 +878,7 @@ impl_conditional_function_debug_display!(RcConditionalStatefulFunction<T, R>);
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{StatefulFunction, ArcStatefulFunction};
+/// use qubit_atomic::{StatefulFunction, ArcStatefulFunction};
 ///
 /// let mut function = ArcStatefulFunction::new(|x: i32| x * 2)
 ///     .when(|x: &i32| *x > 0)

@@ -305,7 +305,7 @@ let handles: Vec<_> = (0..1000)
 
 ##### Scenario 3: Real Project Usage
 
-Already using this pattern in the `prism3-rust-concurrent` project:
+Already using this pattern in related Rust concurrent library projects:
 
 ```rust
 // double_checked_executor_design.zh_CN.md line 132
@@ -1136,7 +1136,7 @@ impl<T> BoxSupplierOnce<T> {
 
 ### Why Choose Approach Three?
 
-**`prism3-rust-function` adopts Approach Three** for the following reasons:
+**`qubit-atomic` adopts Approach Three** for the following reasons:
 
 1. **Unified trait abstraction**
    - Provide `Supplier<T>` and `SupplierOnce<T>` traits

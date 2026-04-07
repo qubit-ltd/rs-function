@@ -117,14 +117,14 @@ jobs:
 
       - name: Generate coverage
         run: |
-          cd prism3-retry
+          cd rust-function
           cargo llvm-cov --lcov --output-path lcov.info
 
       - name: Upload to Codecov
         uses: codecov/codecov-action@v3
         with:
-          files: prism3-retry/lcov.info
-          flags: prism3-retry
+          files: rust-function/lcov.info
+          flags: rust-function
 ```
 
 ## 常见问题

@@ -716,7 +716,7 @@ pub struct RcMutator<T> { func: Rc<RefCell<dyn FnMut(&mut T)>> }
 
 ### 为什么选择方案三？
 
-**`prism3-rust-function` 采用方案三**，原因如下：
+**`qubit-atomic` 采用方案三**，原因如下：
 
 1. **统一的 trait 抽象**
    - 提供 `Consumer<T>` 和 `ReadonlyConsumer<T>` trait
@@ -790,12 +790,12 @@ pub struct RcMutator<T> { func: Rc<RefCell<dyn FnMut(&mut T)>> }
 **迁移指南**：
 ```rust
 // 旧代码
-use prism3_function::{ConsumerMut, BoxConsumerMut};
+use qubit_atomic::{ConsumerMut, BoxConsumerMut};
 let mut consumer = BoxConsumerMut::new(|x: &mut i32| *x *= 2);
 consumer.accept_once(&mut value);
 
 // 新代码
-use prism3_function::{Mutator, BoxMutator};
+use qubit_atomic::{Mutator, BoxMutator};
 let mut mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
 mutator.apply(&mut value);
 ```

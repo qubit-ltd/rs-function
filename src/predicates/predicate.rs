@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -51,7 +51,7 @@
 //! ### Basic Usage with Closures
 //!
 //! ```rust
-//! use prism3_function::predicate::Predicate;
+//! use qubit_atomic::predicate::Predicate;
 //!
 //! let is_positive = |x: &i32| *x > 0;
 //! assert!(is_positive.test(&5));
@@ -61,7 +61,7 @@
 //! ### BoxPredicate - Single Ownership
 //!
 //! ```rust
-//! use prism3_function::predicate::{Predicate, BoxPredicate};
+//! use qubit_atomic::predicate::{Predicate, BoxPredicate};
 //!
 //! let pred = BoxPredicate::new(|x: &i32| *x > 0)
 //!     .and(BoxPredicate::new(|x| x % 2 == 0));
@@ -74,7 +74,7 @@
 //! `FnPredicateOps` extension trait, returning `BoxPredicate`:
 //!
 //! ```rust
-//! use prism3_function::predicate::{Predicate, FnPredicateOps, BoxPredicate};
+//! use qubit_atomic::predicate::{Predicate, FnPredicateOps, BoxPredicate};
 //!
 //! // Compose closures directly - result is BoxPredicate
 //! let is_positive = |x: &i32| *x > 0;
@@ -107,7 +107,7 @@
 //! Build complex predicates by mixing closures and predicate types:
 //!
 //! ```rust
-//! use prism3_function::predicate::{Predicate, BoxPredicate, FnPredicateOps};
+//! use qubit_atomic::predicate::{Predicate, BoxPredicate, FnPredicateOps};
 //!
 //! // Start with a closure, compose with BoxPredicate
 //! let in_range = (|x: &i32| *x >= 0)
@@ -125,7 +125,7 @@
 //! ### RcPredicate - Single-threaded Reuse
 //!
 //! ```rust
-//! use prism3_function::predicate::{Predicate, RcPredicate};
+//! use qubit_atomic::predicate::{Predicate, RcPredicate};
 //!
 //! let pred = RcPredicate::new(|x: &i32| *x > 0);
 //! let combined1 = pred.and(RcPredicate::new(|x| x % 2 == 0));
@@ -138,7 +138,7 @@
 //! ### ArcPredicate - Thread-safe Sharing
 //!
 //! ```rust
-//! use prism3_function::predicate::{Predicate, ArcPredicate};
+//! use qubit_atomic::predicate::{Predicate, ArcPredicate};
 //! use std::thread;
 //!
 //! let pred = ArcPredicate::new(|x: &i32| *x > 0);
@@ -155,7 +155,7 @@
 //! ### Stateful Predicates with Interior Mutability
 //!
 //! ```rust
-//! use prism3_function::predicate::{Predicate, BoxPredicate};
+//! use qubit_atomic::predicate::{Predicate, BoxPredicate};
 //! use std::cell::Cell;
 //!
 //! let count = Cell::new(0);
@@ -236,7 +236,7 @@ use crate::predicates::macros::{
 /// ### Basic Usage
 ///
 /// ```rust
-/// use prism3_function::predicate::Predicate;
+/// use qubit_atomic::predicate::Predicate;
 ///
 /// let is_positive = |x: &i32| *x > 0;
 /// assert!(is_positive.test(&5));
@@ -246,7 +246,7 @@ use crate::predicates::macros::{
 /// ### Type Conversion
 ///
 /// ```rust
-/// use prism3_function::predicate::{Predicate, BoxPredicate};
+/// use qubit_atomic::predicate::{Predicate, BoxPredicate};
 ///
 /// let closure = |x: &i32| *x > 0;
 /// let boxed: BoxPredicate<i32> = closure.into_box();
@@ -256,7 +256,7 @@ use crate::predicates::macros::{
 /// ### Stateful Predicate with Interior Mutability
 ///
 /// ```rust
-/// use prism3_function::predicate::{Predicate, BoxPredicate};
+/// use qubit_atomic::predicate::{Predicate, BoxPredicate};
 /// use std::cell::Cell;
 ///
 /// let count = Cell::new(0);
@@ -361,7 +361,7 @@ pub trait Predicate<T> {
     /// ## Using with `Iterator::filter` (requires `FnMut`)
     ///
     /// ```rust
-    /// use prism3_function::predicate::{Predicate, BoxPredicate};
+    /// use qubit_atomic::predicate::{Predicate, BoxPredicate};
     ///
     /// let pred = BoxPredicate::new(|x: &i32| *x > 0);
     ///
@@ -376,7 +376,7 @@ pub trait Predicate<T> {
     /// ## Using with `Vec::retain` (requires `FnMut`)
     ///
     /// ```rust
-    /// use prism3_function::predicate::{Predicate, BoxPredicate};
+    /// use qubit_atomic::predicate::{Predicate, BoxPredicate};
     ///
     /// let pred = BoxPredicate::new(|x: &i32| *x % 2 == 0);
     /// let mut numbers = vec![1, 2, 3, 4, 5, 6];
@@ -473,7 +473,7 @@ pub trait Predicate<T> {
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::predicate::{Predicate, BoxPredicate};
+/// use qubit_atomic::predicate::{Predicate, BoxPredicate};
 ///
 /// let pred = BoxPredicate::new(|x: &i32| *x > 0);
 /// assert!(pred.test(&5));
@@ -525,7 +525,7 @@ impl<T: 'static> Predicate<T> for BoxPredicate<T> {
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::predicate::{Predicate, RcPredicate};
+/// use qubit_atomic::predicate::{Predicate, RcPredicate};
 ///
 /// let pred = RcPredicate::new(|x: &i32| *x > 0);
 /// assert!(pred.test(&5));
@@ -580,7 +580,7 @@ impl<T: 'static> Predicate<T> for RcPredicate<T> {
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::predicate::{Predicate, ArcPredicate};
+/// use qubit_atomic::predicate::{Predicate, ArcPredicate};
 ///
 /// let pred = ArcPredicate::new(|x: &i32| *x > 0);
 /// assert!(pred.test(&5));
@@ -653,7 +653,7 @@ impl_closure_trait!(
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::predicate::{Predicate, FnPredicateOps};
+/// use qubit_atomic::predicate::{Predicate, FnPredicateOps};
 ///
 /// let is_positive = |x: &i32| *x > 0;
 /// let is_even = |x: &i32| x % 2 == 0;
@@ -688,7 +688,7 @@ pub trait FnPredicateOps<T>: Fn(&T) -> bool + Sized + 'static {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::predicate::{Predicate, FnPredicateOps};
+    /// use qubit_atomic::predicate::{Predicate, FnPredicateOps};
     ///
     /// let is_positive = |x: &i32| *x > 0;
     /// let is_even = |x: &i32| x % 2 == 0;
@@ -726,7 +726,7 @@ pub trait FnPredicateOps<T>: Fn(&T) -> bool + Sized + 'static {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::predicate::{Predicate, FnPredicateOps};
+    /// use qubit_atomic::predicate::{Predicate, FnPredicateOps};
     ///
     /// let is_negative = |x: &i32| *x < 0;
     /// let is_large = |x: &i32| *x > 100;
@@ -778,7 +778,7 @@ pub trait FnPredicateOps<T>: Fn(&T) -> bool + Sized + 'static {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::predicate::{Predicate, FnPredicateOps};
+    /// use qubit_atomic::predicate::{Predicate, FnPredicateOps};
     ///
     /// let is_positive = |x: &i32| *x > 0;
     /// let is_even = |x: &i32| x % 2 == 0;
@@ -815,7 +815,7 @@ pub trait FnPredicateOps<T>: Fn(&T) -> bool + Sized + 'static {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::predicate::{Predicate, FnPredicateOps};
+    /// use qubit_atomic::predicate::{Predicate, FnPredicateOps};
     ///
     /// let is_positive = |x: &i32| *x > 0;
     /// let is_even = |x: &i32| x % 2 == 0;
@@ -854,7 +854,7 @@ pub trait FnPredicateOps<T>: Fn(&T) -> bool + Sized + 'static {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::predicate::{Predicate, FnPredicateOps};
+    /// use qubit_atomic::predicate::{Predicate, FnPredicateOps};
     ///
     /// let is_positive = |x: &i32| *x > 0;
     /// let is_even = |x: &i32| x % 2 == 0;

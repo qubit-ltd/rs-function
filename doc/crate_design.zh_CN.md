@@ -1,8 +1,8 @@
-# Prism3 Rust Function 库接口汇总报告
+# Qubit Atomic 库接口汇总报告
 
 ## 📋 概述
 
-`prism3-rust-function` 是一个功能强大的 Rust 函数式编程抽象库,提供了类似 Java 函数式接口的 Rust 实现。该库包含 **24 个核心模块**,涵盖了函数式编程的各个方面。
+`qubit-atomic` 是一个功能强大的 Rust 函数式编程抽象库,提供了类似 Java 函数式接口的 Rust 实现。该库包含 **24 个核心模块**,涵盖了函数式编程的各个方面。
 
 ## 🎯 核心设计理念
 
@@ -844,7 +844,7 @@ let conditional = BoxMutator::new(|x: &mut i32| *x *= 2)
 为闭包提供扩展方法,无需显式包装:
 
 ```rust
-use prism3_function::FnPredicateOps;
+use qubit_atomic::FnPredicateOps;
 
 let pred = (|x: &i32| *x > 0)
     .and(|x: &i32| x % 2 == 0);  // 直接在闭包上调用
@@ -971,7 +971,7 @@ process(&(|x: i32| x.to_string()), 42);  // 闭包也可以
 ### 4. 使用扩展 Trait
 
 ```rust
-use prism3_function::FnPredicateOps;
+use qubit_atomic::FnPredicateOps;
 
 // ✅ 推荐: 使用扩展方法
 let pred = (|x: &i32| *x > 0).and(|x: &i32| x % 2 == 0);
@@ -983,7 +983,7 @@ let pred = BoxPredicate::new(|x: &i32| *x > 0)
 
 ## 📝 总结
 
-`prism3-rust-function` 库提供了一套完整、类型安全、高性能的函数式编程抽象:
+`qubit-atomic` 库提供了一套完整、类型安全、高性能的函数式编程抽象:
 
 ✅ **24 个核心接口**,覆盖所有函数式编程场景
 ✅ **统一的设计模式**,易学易用

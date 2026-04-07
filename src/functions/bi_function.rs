@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -520,7 +520,7 @@ impl_closure_trait!(
 /// ## Chain composition with and_then
 ///
 /// ```rust
-/// use prism3_function::{BiFunction, FnBiFunctionOps};
+/// use qubit_atomic::{BiFunction, FnBiFunctionOps};
 ///
 /// let add = |x: &i32, y: &i32| *x + *y;
 /// let double = |x: i32| x * 2;
@@ -532,7 +532,7 @@ impl_closure_trait!(
 /// ## Conditional execution with when
 ///
 /// ```rust
-/// use prism3_function::{BiFunction, FnBiFunctionOps};
+/// use qubit_atomic::{BiFunction, FnBiFunctionOps};
 ///
 /// let add = |x: &i32, y: &i32| *x + *y;
 /// let multiply = |x: &i32, y: &i32| *x * *y;
@@ -580,7 +580,7 @@ pub trait FnBiFunctionOps<T, U, R>: Fn(&T, &U) -> R + Sized + 'static {
     /// ## Direct value passing (ownership transfer)
     ///
     /// ```rust
-    /// use prism3_function::{BiFunction, FnBiFunctionOps,
+    /// use qubit_atomic::{BiFunction, FnBiFunctionOps,
     ///     BoxFunction};
     ///
     /// let add = |x: &i32, y: &i32| *x + *y;
@@ -595,7 +595,7 @@ pub trait FnBiFunctionOps<T, U, R>: Fn(&T, &U) -> R + Sized + 'static {
     /// ## Preserving original with clone
     ///
     /// ```rust
-    /// use prism3_function::{BiFunction, FnBiFunctionOps,
+    /// use qubit_atomic::{BiFunction, FnBiFunctionOps,
     ///     BoxFunction};
     ///
     /// let add = |x: &i32, y: &i32| *x + *y;
@@ -647,7 +647,7 @@ pub trait FnBiFunctionOps<T, U, R>: Fn(&T, &U) -> R + Sized + 'static {
     /// ## Basic usage with or_else
     ///
     /// ```rust
-    /// use prism3_function::{BiFunction, FnBiFunctionOps};
+    /// use qubit_atomic::{BiFunction, FnBiFunctionOps};
     ///
     /// let add = |x: &i32, y: &i32| *x + *y;
     /// let conditional = add.when(|x: &i32, y: &i32| *x > 0)
@@ -660,7 +660,7 @@ pub trait FnBiFunctionOps<T, U, R>: Fn(&T, &U) -> R + Sized + 'static {
     /// ## Preserving bi-predicate with clone
     ///
     /// ```rust
-    /// use prism3_function::{BiFunction, FnBiFunctionOps,
+    /// use qubit_atomic::{BiFunction, FnBiFunctionOps,
     ///     RcBiPredicate};
     ///
     /// let add = |x: &i32, y: &i32| *x + *y;
@@ -710,7 +710,7 @@ impl<T, U, R, F> FnBiFunctionOps<T, U, R> for F where F: Fn(&T, &U) -> R + 'stat
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{BoxBinaryFunction, BiFunction};
+/// use qubit_atomic::{BoxBinaryFunction, BiFunction};
 ///
 /// let add: BoxBinaryFunction<i32, i32> = BoxBinaryFunction::new(|x, y| *x + *y);
 /// assert_eq!(add.apply(&20, &22), 42);
@@ -730,7 +730,7 @@ pub type BoxBinaryFunction<T, R> = BoxBiFunction<T, T, R>;
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{ArcBinaryFunction, BiFunction};
+/// use qubit_atomic::{ArcBinaryFunction, BiFunction};
 ///
 /// let multiply: ArcBinaryFunction<i32, i32> = ArcBinaryFunction::new(|x, y| *x * *y);
 /// let multiply_clone = multiply.clone();
@@ -752,7 +752,7 @@ pub type ArcBinaryFunction<T, R> = ArcBiFunction<T, T, R>;
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{RcBinaryFunction, BiFunction};
+/// use qubit_atomic::{RcBinaryFunction, BiFunction};
 ///
 /// let max: RcBinaryFunction<i32, i32> = RcBinaryFunction::new(|x, y| if x > y { *x } else { *y });
 /// let max_clone = max.clone();
@@ -790,7 +790,7 @@ pub type RcBinaryFunction<T, R> = RcBiFunction<T, T, R>;
 /// ## With or_else Branch
 ///
 /// ```rust
-/// use prism3_function::{BiFunction, BoxBiFunction};
+/// use qubit_atomic::{BiFunction, BoxBiFunction};
 ///
 /// let add = BoxBiFunction::new(|x: &i32, y: &i32| *x + *y);
 /// let multiply = BoxBiFunction::new(|x: &i32, y: &i32| *x * *y);
@@ -841,7 +841,7 @@ impl_conditional_function_debug_display!(BoxConditionalBiFunction<T, U, R>);
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{BiFunction, RcBiFunction};
+/// use qubit_atomic::{BiFunction, RcBiFunction};
 ///
 /// let add = RcBiFunction::new(|x: &i32, y: &i32| *x + *y);
 /// let multiply = RcBiFunction::new(|x: &i32, y: &i32| *x * *y);
@@ -899,7 +899,7 @@ impl_conditional_function_clone!(RcConditionalBiFunction<T, U, R>);
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{BiFunction, ArcBiFunction};
+/// use qubit_atomic::{BiFunction, ArcBiFunction};
 ///
 /// let add = ArcBiFunction::new(|x: &i32, y: &i32| *x + *y);
 /// let multiply = ArcBiFunction::new(|x: &i32, y: &i32| *x * *y);

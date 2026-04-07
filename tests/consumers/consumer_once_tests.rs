@@ -1,19 +1,19 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
  ******************************************************************************/
 /// Copyright (c) 2025.
-/// 3-Prism Co. Ltd.
+/// Haixing Hu, Qubit Co. Ltd.
 ///
 /// All rights reserved.
 /// # ConsumerOnce Tests
 ///
 /// Unit tests for the ConsumerOnce trait and its implementations.
-use prism3_function::{
+use qubit_atomic::{
     BoxConsumerOnce,
     ConsumerOnce,
     FnConsumerOnceOps,

@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -121,7 +121,7 @@ pub trait BiFunctionOnce<T, U, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::BiFunctionOnce;
+    /// use qubit_atomic::BiFunctionOnce;
     ///
     /// let add = |x: &i32, y: &i32| *x + *y;
     /// let func = add.to_box();
@@ -149,7 +149,7 @@ pub trait BiFunctionOnce<T, U, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::BiFunctionOnce;
+    /// use qubit_atomic::BiFunctionOnce;
     ///
     /// let add = |x: &i32, y: &i32| *x + *y;
     /// let func = add.to_fn();
@@ -270,7 +270,7 @@ impl_closure_once_trait!(
 /// ## Chain composition with and_then
 ///
 /// ```rust
-/// use prism3_function::{BiFunctionOnce, FnBiFunctionOnceOps};
+/// use qubit_atomic::{BiFunctionOnce, FnBiFunctionOnceOps};
 ///
 /// let add = |x: &i32, y: &i32| *x + *y;
 /// let double = |x: i32| x * 2;
@@ -282,7 +282,7 @@ impl_closure_once_trait!(
 /// ## Conditional execution with when
 ///
 /// ```rust
-/// use prism3_function::{BiFunctionOnce, FnBiFunctionOnceOps};
+/// use qubit_atomic::{BiFunctionOnce, FnBiFunctionOnceOps};
 ///
 /// let add = |x: &i32, y: &i32| *x + *y;
 /// let multiply = |x: &i32, y: &i32| *x * *y;
@@ -323,7 +323,7 @@ pub trait FnBiFunctionOnceOps<T, U, R>: FnOnce(&T, &U) -> R + Sized + 'static {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{BiFunctionOnce, FnBiFunctionOnceOps,
+    /// use qubit_atomic::{BiFunctionOnce, FnBiFunctionOnceOps,
     ///     BoxFunctionOnce};
     ///
     /// let add = |x: &i32, y: &i32| *x + *y;
@@ -373,7 +373,7 @@ pub trait FnBiFunctionOnceOps<T, U, R>: FnOnce(&T, &U) -> R + Sized + 'static {
     /// ## Basic usage with or_else
     ///
     /// ```rust
-    /// use prism3_function::{BiFunctionOnce, FnBiFunctionOnceOps};
+    /// use qubit_atomic::{BiFunctionOnce, FnBiFunctionOnceOps};
     ///
     /// let add = |x: &i32, y: &i32| *x + *y;
     /// let multiply = |x: &i32, y: &i32| *x * *y;
@@ -386,7 +386,7 @@ pub trait FnBiFunctionOnceOps<T, U, R>: FnOnce(&T, &U) -> R + Sized + 'static {
     /// ## Preserving bi-predicate with clone
     ///
     /// ```rust
-    /// use prism3_function::{BiFunctionOnce, FnBiFunctionOnceOps,
+    /// use qubit_atomic::{BiFunctionOnce, FnBiFunctionOnceOps,
     ///     RcBiPredicate};
     ///
     /// let add = |x: &i32, y: &i32| *x + *y;
@@ -456,7 +456,7 @@ where
 /// ## With or_else Branch
 ///
 /// ```rust
-/// use prism3_function::{BiFunctionOnce, BoxBiFunctionOnce};
+/// use qubit_atomic::{BiFunctionOnce, BoxBiFunctionOnce};
 ///
 /// let add = BoxBiFunctionOnce::new(|x: &i32, y: &i32| *x + *y);
 /// let multiply = BoxBiFunctionOnce::new(|x: &i32, y: &i32| *x * *y);

@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -9,7 +9,7 @@
 
 //! Comprehensive tests for BiFunction trait and its implementations
 
-use prism3_function::{
+use qubit_atomic::{
     ArcBiFunction,
     ArcBiPredicate,
     BiFunction,
@@ -226,7 +226,7 @@ fn test_rc_bi_function_debug_display() {
 
 #[test]
 fn test_rc_bi_function_and_then() {
-    use prism3_function::RcFunction;
+    use qubit_atomic::RcFunction;
 
     let add = RcBiFunction::new(|x: &i32, y: &i32| *x + *y);
     let multiply_by_two = RcFunction::new(|x: &i32| *x * 2);
@@ -303,7 +303,7 @@ fn test_bi_function_conversions() {
 
 #[test]
 fn test_bi_function_and_then() {
-    use prism3_function::FnBiFunctionOps;
+    use qubit_atomic::FnBiFunctionOps;
 
     let add = |x: &i32, y: &i32| *x + *y;
     let double = |x: &i32| *x * 2;
@@ -314,7 +314,7 @@ fn test_bi_function_and_then() {
 
 #[test]
 fn test_bi_function_when_or_else() {
-    use prism3_function::FnBiFunctionOps;
+    use qubit_atomic::FnBiFunctionOps;
 
     let add = |x: &i32, y: &i32| *x + *y;
     let multiply = |x: &i32, y: &i32| *x * *y;
@@ -822,7 +822,7 @@ fn test_bi_function_conditional_composition() {
 
 #[test]
 fn test_arc_bi_function_and_then() {
-    use prism3_function::ArcFunction;
+    use qubit_atomic::ArcFunction;
 
     let add = ArcBiFunction::new(|x: &i32, y: &i32| *x + *y);
     let multiply_by_two = ArcFunction::new(|x: &i32| *x * 2);

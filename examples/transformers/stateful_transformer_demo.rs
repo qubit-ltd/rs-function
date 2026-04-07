@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -12,7 +12,7 @@
 //! This example shows how to use BoxStatefulTransformer, RcStatefulTransformer, and ArcStatefulTransformer
 //! for stateful value transformation.
 
-use prism3_function::{
+use qubit_atomic::{
     ArcStatefulTransformer,
     BoxStatefulTransformer,
     FnStatefulTransformerOps,

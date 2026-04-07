@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -14,7 +14,7 @@
 //!
 //! Mutator is used to modify values, unlike the read-only Consumer.
 
-use prism3_function::{
+use qubit_atomic::{
     ArcMutator,
     BoxMutator,
     FnMutatorOps,

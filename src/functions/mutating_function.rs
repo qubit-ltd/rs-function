@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -70,7 +70,7 @@
 //! ## Basic Usage
 //!
 //! ```rust
-//! use prism3_function::{BoxMutatingFunction, MutatingFunction};
+//! use qubit_atomic::{BoxMutatingFunction, MutatingFunction};
 //!
 //! // Increment counter and return new value
 //! let incrementer = BoxMutatingFunction::new(|x: &mut i32| {
@@ -87,7 +87,7 @@
 //! ## Method Chaining
 //!
 //! ```rust
-//! use prism3_function::{BoxMutatingFunction, MutatingFunction};
+//! use qubit_atomic::{BoxMutatingFunction, MutatingFunction};
 //!
 //! let chained = BoxMutatingFunction::new(|x: &mut i32| {
 //!     *x *= 2;
@@ -107,7 +107,7 @@
 //! ## Cache Update Pattern
 //!
 //! ```rust
-//! use prism3_function::{BoxMutatingFunction, MutatingFunction};
+//! use qubit_atomic::{BoxMutatingFunction, MutatingFunction};
 //! use std::collections::HashMap;
 //!
 //! let updater = BoxMutatingFunction::new(
@@ -200,7 +200,7 @@ use crate::predicates::predicate::{
 /// ## Generic Function
 ///
 /// ```rust
-/// use prism3_function::{MutatingFunction, BoxMutatingFunction};
+/// use qubit_atomic::{MutatingFunction, BoxMutatingFunction};
 ///
 /// fn apply_and_log<F: MutatingFunction<i32, i32>>(
 ///     func: &F,
@@ -222,7 +222,7 @@ use crate::predicates::predicate::{
 /// ## Type Conversion
 ///
 /// ```rust
-/// use prism3_function::MutatingFunction;
+/// use qubit_atomic::MutatingFunction;
 ///
 /// let closure = |x: &mut i32| {
 ///     *x *= 2;
@@ -255,7 +255,7 @@ pub trait MutatingFunction<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{MutatingFunction, BoxMutatingFunction};
+    /// use qubit_atomic::{MutatingFunction, BoxMutatingFunction};
     ///
     /// let func = BoxMutatingFunction::new(|x: &mut i32| {
     ///     let old = *x;
@@ -290,7 +290,7 @@ pub trait MutatingFunction<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::MutatingFunction;
+    /// use qubit_atomic::MutatingFunction;
     ///
     /// let closure = |x: &mut i32| {
     ///     *x *= 2;
@@ -327,7 +327,7 @@ pub trait MutatingFunction<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::MutatingFunction;
+    /// use qubit_atomic::MutatingFunction;
     ///
     /// let closure = |x: &mut i32| {
     ///     *x *= 2;
@@ -365,7 +365,7 @@ pub trait MutatingFunction<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::MutatingFunction;
+    /// use qubit_atomic::MutatingFunction;
     ///
     /// let closure = |x: &mut i32| {
     ///     *x *= 2;
@@ -403,7 +403,7 @@ pub trait MutatingFunction<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{MutatingFunction, BoxMutatingFunction};
+    /// use qubit_atomic::{MutatingFunction, BoxMutatingFunction};
     ///
     /// let func = BoxMutatingFunction::new(|x: &mut i32| {
     ///     *x *= 2;
@@ -438,7 +438,7 @@ pub trait MutatingFunction<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{MutatingFunctionOnce, MutatingFunction,
+    /// use qubit_atomic::{MutatingFunctionOnce, MutatingFunction,
     ///                       BoxMutatingFunction};
     ///
     /// fn takes_once<F: MutatingFunctionOnce<i32, i32>>(func: F, value: &mut i32) {
@@ -551,7 +551,7 @@ pub trait MutatingFunction<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{MutatingFunctionOnce, MutatingFunction,
+    /// use qubit_atomic::{MutatingFunctionOnce, MutatingFunction,
     ///                       BoxMutatingFunction};
     ///
     /// fn takes_once<F: MutatingFunctionOnce<i32, i32>>(func: F, value: &mut i32) {
@@ -615,7 +615,7 @@ pub trait MutatingFunction<T, R> {
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{MutatingFunction, BoxMutatingFunction};
+/// use qubit_atomic::{MutatingFunction, BoxMutatingFunction};
 ///
 /// let func = BoxMutatingFunction::new(|x: &mut i32| {
 ///     *x *= 2;
@@ -705,7 +705,7 @@ impl<T, R> MutatingFunction<T, R> for BoxMutatingFunction<T, R> {
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{MutatingFunction, RcMutatingFunction};
+/// use qubit_atomic::{MutatingFunction, RcMutatingFunction};
 ///
 /// let func = RcMutatingFunction::new(|x: &mut i32| {
 ///     *x *= 2;
@@ -800,7 +800,7 @@ impl<T, R> MutatingFunction<T, R> for RcMutatingFunction<T, R> {
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{MutatingFunction, ArcMutatingFunction};
+/// use qubit_atomic::{MutatingFunction, ArcMutatingFunction};
 ///
 /// let func = ArcMutatingFunction::new(|x: &mut i32| {
 ///     *x *= 2;
@@ -914,7 +914,7 @@ impl_fn_ops_trait!(
 /// ## With or_else Branch
 ///
 /// ```rust
-/// use prism3_function::{MutatingFunction, BoxMutatingFunction};
+/// use qubit_atomic::{MutatingFunction, BoxMutatingFunction};
 ///
 /// let double = BoxMutatingFunction::new(|x: &mut i32| x * 2);
 /// let negate = BoxMutatingFunction::new(|x: &mut i32| -x);
@@ -965,7 +965,7 @@ impl_conditional_function_debug_display!(BoxConditionalMutatingFunction<T, R>);
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{MutatingFunction, RcMutatingFunction};
+/// use qubit_atomic::{MutatingFunction, RcMutatingFunction};
 ///
 /// let double = RcMutatingFunction::new(|x: &mut i32| x * 2);
 /// let identity = RcMutatingFunction::<i32, i32>::identity();
@@ -1022,7 +1022,7 @@ impl_conditional_function_debug_display!(RcConditionalMutatingFunction<T, R>);
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{MutatingFunction, ArcMutatingFunction};
+/// use qubit_atomic::{MutatingFunction, ArcMutatingFunction};
 ///
 /// let double = ArcMutatingFunction::new(|x: &mut i32| x * 2);
 /// let identity = ArcMutatingFunction::<i32, i32>::identity();

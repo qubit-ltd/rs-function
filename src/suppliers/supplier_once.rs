@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -40,7 +40,7 @@
 //! ## Lazy Initialization
 //!
 //! ```rust
-//! use prism3_function::{BoxSupplierOnce, SupplierOnce};
+//! use qubit_atomic::{BoxSupplierOnce, SupplierOnce};
 //!
 //! let once = BoxSupplierOnce::new(|| {
 //!     println!("Expensive initialization");
@@ -54,7 +54,7 @@
 //! ## Moving Captured Values
 //!
 //! ```rust
-//! use prism3_function::{BoxSupplierOnce, SupplierOnce};
+//! use qubit_atomic::{BoxSupplierOnce, SupplierOnce};
 //!
 //! let resource = String::from("data");
 //! let once = BoxSupplierOnce::new(move || resource);
@@ -109,7 +109,7 @@ use crate::transformers::transformer::Transformer;
 /// ## Lazy Initialization
 ///
 /// ```rust
-/// use prism3_function::{BoxSupplierOnce, SupplierOnce};
+/// use qubit_atomic::{BoxSupplierOnce, SupplierOnce};
 ///
 /// let once = BoxSupplierOnce::new(|| {
 ///     println!("Expensive computation");
@@ -124,7 +124,7 @@ use crate::transformers::transformer::Transformer;
 /// ## Resource Consumption
 ///
 /// ```rust
-/// use prism3_function::{BoxSupplierOnce, SupplierOnce};
+/// use qubit_atomic::{BoxSupplierOnce, SupplierOnce};
 ///
 /// let resource = String::from("data");
 /// let once = BoxSupplierOnce::new(move || {
@@ -152,7 +152,7 @@ pub trait SupplierOnce<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{BoxSupplierOnce, SupplierOnce};
+    /// use qubit_atomic::{BoxSupplierOnce, SupplierOnce};
     ///
     /// let once = BoxSupplierOnce::new(|| 42);
     /// assert_eq!(once.get(), 42);
@@ -169,7 +169,7 @@ pub trait SupplierOnce<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::SupplierOnce;
+    /// use qubit_atomic::SupplierOnce;
     ///
     /// let closure = || 42;
     /// let boxed = closure.into_box();
@@ -196,7 +196,7 @@ pub trait SupplierOnce<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::SupplierOnce;
+    /// use qubit_atomic::SupplierOnce;
     ///
     /// let closure = || 42;
     /// let fn_once = closure.into_fn();
@@ -272,7 +272,7 @@ pub trait SupplierOnce<T> {
 /// ## Lazy Initialization
 ///
 /// ```rust
-/// use prism3_function::{BoxSupplierOnce, SupplierOnce};
+/// use qubit_atomic::{BoxSupplierOnce, SupplierOnce};
 ///
 /// let once = BoxSupplierOnce::new(|| {
 ///     println!("Expensive initialization");
@@ -286,7 +286,7 @@ pub trait SupplierOnce<T> {
 /// ## Moving Captured Values
 ///
 /// ```rust
-/// use prism3_function::{BoxSupplierOnce, SupplierOnce};
+/// use qubit_atomic::{BoxSupplierOnce, SupplierOnce};
 ///
 /// let resource = String::from("data");
 /// let once = BoxSupplierOnce::new(move || resource);

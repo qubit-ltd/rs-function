@@ -1,14 +1,14 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
  ******************************************************************************/
 //! Demonstrates how into_fn and to_fn are used with function parameters that accept closures
 
-use prism3_function::{
+use qubit_atomic::{
     ArcConsumer,
     BoxConsumer,
     Consumer,

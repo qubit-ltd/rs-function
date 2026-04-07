@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -13,7 +13,7 @@
 
 #[cfg(test)]
 mod box_transformer_tests {
-    use prism3_function::{
+    use qubit_atomic::{
         BoxTransformer,
         Transformer,
     };
@@ -97,7 +97,7 @@ mod box_transformer_tests {
 
 #[cfg(test)]
 mod arc_transformer_tests {
-    use prism3_function::{
+    use qubit_atomic::{
         ArcTransformer,
         Transformer,
     };
@@ -184,7 +184,7 @@ mod arc_transformer_tests {
 
 #[cfg(test)]
 mod rc_transformer_tests {
-    use prism3_function::{
+    use qubit_atomic::{
         RcTransformer,
         Transformer,
     };
@@ -269,7 +269,7 @@ mod rc_transformer_tests {
 
 #[cfg(test)]
 mod box_conditional_tests {
-    use prism3_function::{
+    use qubit_atomic::{
         FnTransformerOps,
         Transformer,
     };
@@ -298,7 +298,7 @@ mod box_conditional_tests {
 
 #[cfg(test)]
 mod arc_conditional_tests {
-    use prism3_function::{
+    use qubit_atomic::{
         FnTransformerOps,
         Transformer,
     };
@@ -335,7 +335,7 @@ mod arc_conditional_tests {
 
 #[cfg(test)]
 mod rc_conditional_tests {
-    use prism3_function::{
+    use qubit_atomic::{
         FnTransformerOps,
         Transformer,
     };
@@ -376,7 +376,7 @@ mod rc_conditional_tests {
 
 #[cfg(test)]
 mod conversion_tests {
-    use prism3_function::{
+    use qubit_atomic::{
         ArcTransformer,
         BoxTransformer,
         RcTransformer,
@@ -468,7 +468,7 @@ mod conversion_tests {
 
 #[cfg(test)]
 mod to_conversion_tests {
-    use prism3_function::{
+    use qubit_atomic::{
         ArcTransformer,
         RcTransformer,
         Transformer,
@@ -723,7 +723,7 @@ mod to_conversion_tests {
 
 #[cfg(test)]
 mod trait_usage_tests {
-    use prism3_function::{
+    use qubit_atomic::{
         BoxTransformer,
         Transformer,
     };
@@ -765,7 +765,7 @@ mod trait_usage_tests {
 
 #[cfg(test)]
 mod complex_composition_tests {
-    use prism3_function::{
+    use qubit_atomic::{
         ArcTransformer,
         BoxTransformer,
         RcTransformer,
@@ -822,7 +822,7 @@ mod complex_composition_tests {
 
 #[cfg(test)]
 mod edge_cases_tests {
-    use prism3_function::{
+    use qubit_atomic::{
         ArcTransformer,
         BoxTransformer,
         Transformer,
@@ -883,7 +883,7 @@ mod edge_cases_tests {
 
 #[cfg(test)]
 mod default_implementation_tests {
-    use prism3_function::{
+    use qubit_atomic::{
         BoxTransformer,
         Transformer,
     };
@@ -1022,7 +1022,7 @@ mod default_implementation_tests {
 
 #[cfg(test)]
 mod specialized_into_fn_tests {
-    use prism3_function::{
+    use qubit_atomic::{
         ArcTransformer,
         BoxTransformer,
         RcTransformer,
@@ -1231,7 +1231,7 @@ mod specialized_into_fn_tests {
 
 #[cfg(test)]
 mod type_conversion_tests {
-    use prism3_function::{
+    use qubit_atomic::{
         ArcTransformer,
         BoxTransformer,
         RcTransformer,
@@ -1331,7 +1331,7 @@ mod type_conversion_tests {
 
 #[cfg(test)]
 mod transformer_default_to_methods_tests {
-    use prism3_function::{
+    use qubit_atomic::{
         ArcTransformer,
         RcTransformer,
         Transformer,
@@ -1724,7 +1724,7 @@ mod transformer_default_to_methods_tests {
 
 #[cfg(test)]
 mod custom_transformer_to_methods_tests {
-    use prism3_function::{
+    use qubit_atomic::{
         ArcTransformer,
         BoxTransformer,
         RcTransformer,
@@ -2146,7 +2146,7 @@ mod custom_transformer_to_methods_tests {
 
 #[cfg(test)]
 mod transformer_once_tests {
-    use prism3_function::{
+    use qubit_atomic::{
         ArcTransformer,
         BoxTransformer,
         RcTransformer,
@@ -2627,7 +2627,7 @@ mod transformer_once_tests {
 
 #[cfg(test)]
 mod test_transformer_trait_default_methods {
-    use prism3_function::TransformerOnce;
+    use qubit_atomic::TransformerOnce;
     use std::sync::{
         atomic::{
             AtomicUsize,
@@ -2638,7 +2638,7 @@ mod test_transformer_trait_default_methods {
 
     #[test]
     fn test_custom_transformer_into_once() {
-        use prism3_function::Transformer;
+        use qubit_atomic::Transformer;
 
         let counter = Arc::new(AtomicUsize::new(0));
 
@@ -2666,7 +2666,7 @@ mod test_transformer_trait_default_methods {
 
     #[test]
     fn test_custom_transformer_to_once() {
-        use prism3_function::Transformer;
+        use qubit_atomic::Transformer;
 
         let counter = Arc::new(AtomicUsize::new(0));
 

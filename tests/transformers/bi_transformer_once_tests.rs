@@ -1,14 +1,14 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
  ******************************************************************************/
 //! Tests for BiTransformerOnce trait and implementations
 
-use prism3_function::{
+use qubit_atomic::{
     BiTransformerOnce,
     BoxBiTransformerOnce,
 };

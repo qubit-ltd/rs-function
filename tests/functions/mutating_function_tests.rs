@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -9,7 +9,7 @@
 
 //! Unit tests for MutatingFunction types (stateless Fn(&mut T) -> R)
 
-use prism3_function::{
+use qubit_atomic::{
     ArcMutatingFunction,
     BoxMutatingFunction,
     FnMutatingFunctionOps,
@@ -1080,7 +1080,7 @@ fn test_arc_conditional_mutating_function_debug_display() {
 #[cfg(test)]
 mod test_mutating_function_trait_default_methods {
     use super::*;
-    use prism3_function::MutatingFunctionOnce;
+    use qubit_atomic::MutatingFunctionOnce;
     use std::sync::{
         atomic::{
             AtomicUsize,

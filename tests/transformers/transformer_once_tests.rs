@@ -1,13 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
  ******************************************************************************/
 
-use prism3_function::{
+use qubit_atomic::{
     BoxTransformerOnce,
     TransformerOnce,
 };
@@ -99,7 +99,7 @@ mod box_transformer_once_tests {
 #[cfg(test)]
 mod conditional_tests {
     use super::*;
-    use prism3_function::BoxPredicate;
+    use qubit_atomic::BoxPredicate;
 
     #[test]
     fn test_when_or_else() {
@@ -671,7 +671,7 @@ mod custom_type_default_impl_tests {
 
 #[cfg(test)]
 mod box_transformer_transformer_once_tests {
-    use prism3_function::{
+    use qubit_atomic::{
         BoxTransformer,
         Transformer,
     };
@@ -718,7 +718,7 @@ mod box_transformer_transformer_once_tests {
 
 #[cfg(test)]
 mod rc_transformer_transformer_once_tests {
-    use prism3_function::{
+    use qubit_atomic::{
         RcTransformer,
         Transformer,
     };
@@ -775,7 +775,7 @@ mod rc_transformer_transformer_once_tests {
 
 #[cfg(test)]
 mod arc_transformer_transformer_once_tests {
-    use prism3_function::{
+    use qubit_atomic::{
         ArcTransformer,
         Transformer,
     };

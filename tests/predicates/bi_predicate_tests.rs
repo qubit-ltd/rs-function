@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -9,7 +9,7 @@
 
 #[cfg(test)]
 mod tests {
-    use prism3_function::predicates::bi_predicate::{
+    use qubit_atomic::predicates::bi_predicate::{
         ArcBiPredicate,
         BiPredicate,
         BoxBiPredicate,
@@ -1908,7 +1908,7 @@ mod tests {
 
 #[cfg(test)]
 mod to_fn_tests {
-    use prism3_function::predicates::bi_predicate::{
+    use qubit_atomic::predicates::bi_predicate::{
         ArcBiPredicate,
         BiPredicate,
         RcBiPredicate,

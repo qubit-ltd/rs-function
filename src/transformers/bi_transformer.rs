@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -501,7 +501,7 @@ impl<T, U, R> BiTransformer<T, U, R> for ArcBiTransformer<T, U, R> {
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::BiTransformer;
+/// use qubit_atomic::BiTransformer;
 ///
 /// fn add(x: i32, y: i32) -> i32 { x + y }
 ///
@@ -595,7 +595,7 @@ where
 /// ## Chain composition with and_then
 ///
 /// ```rust
-/// use prism3_function::{BiTransformer, FnBiTransformerOps};
+/// use qubit_atomic::{BiTransformer, FnBiTransformerOps};
 ///
 /// let add = |x: i32, y: i32| x + y;
 /// let double = |x: i32| x * 2;
@@ -607,7 +607,7 @@ where
 /// ## Conditional execution with when
 ///
 /// ```rust
-/// use prism3_function::{BiTransformer, FnBiTransformerOps};
+/// use qubit_atomic::{BiTransformer, FnBiTransformerOps};
 ///
 /// let add = |x: i32, y: i32| x + y;
 /// let multiply = |x: i32, y: i32| x * y;
@@ -655,7 +655,7 @@ pub trait FnBiTransformerOps<T, U, R>: Fn(T, U) -> R + Sized + 'static {
     /// ## Direct value passing (ownership transfer)
     ///
     /// ```rust
-    /// use prism3_function::{BiTransformer, FnBiTransformerOps,
+    /// use qubit_atomic::{BiTransformer, FnBiTransformerOps,
     ///     BoxTransformer};
     ///
     /// let add = |x: i32, y: i32| x + y;
@@ -670,7 +670,7 @@ pub trait FnBiTransformerOps<T, U, R>: Fn(T, U) -> R + Sized + 'static {
     /// ## Preserving original with clone
     ///
     /// ```rust
-    /// use prism3_function::{BiTransformer, FnBiTransformerOps,
+    /// use qubit_atomic::{BiTransformer, FnBiTransformerOps,
     ///     BoxTransformer};
     ///
     /// let add = |x: i32, y: i32| x + y;
@@ -722,7 +722,7 @@ pub trait FnBiTransformerOps<T, U, R>: Fn(T, U) -> R + Sized + 'static {
     /// ## Basic usage with or_else
     ///
     /// ```rust
-    /// use prism3_function::{BiTransformer, FnBiTransformerOps};
+    /// use qubit_atomic::{BiTransformer, FnBiTransformerOps};
     ///
     /// let add = |x: i32, y: i32| x + y;
     /// let conditional = add.when(|x: &i32, y: &i32| *x > 0)
@@ -735,7 +735,7 @@ pub trait FnBiTransformerOps<T, U, R>: Fn(T, U) -> R + Sized + 'static {
     /// ## Preserving bi-predicate with clone
     ///
     /// ```rust
-    /// use prism3_function::{BiTransformer, FnBiTransformerOps,
+    /// use qubit_atomic::{BiTransformer, FnBiTransformerOps,
     ///     RcBiPredicate};
     ///
     /// let add = |x: i32, y: i32| x + y;
@@ -797,7 +797,7 @@ impl<T, U, R, F> FnBiTransformerOps<T, U, R> for F where F: Fn(T, U) -> R + 'sta
 /// ## Using in generic constraints
 ///
 /// ```rust
-/// use prism3_function::{BinaryOperator, BiTransformer};
+/// use qubit_atomic::{BinaryOperator, BiTransformer};
 ///
 /// fn reduce<T, O>(values: Vec<T>, initial: T, op: O) -> T
 /// where
@@ -814,7 +814,7 @@ impl<T, U, R, F> FnBiTransformerOps<T, U, R> for F where F: Fn(T, U) -> R + 'sta
 /// ## With concrete types
 ///
 /// ```rust
-/// use prism3_function::{BoxBinaryOperator, BinaryOperator, BiTransformer};
+/// use qubit_atomic::{BoxBinaryOperator, BinaryOperator, BiTransformer};
 ///
 /// fn create_adder() -> BoxBinaryOperator<i32> {
 ///     BoxBinaryOperator::new(|x, y| x + y)
@@ -858,7 +858,7 @@ where
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{BoxBinaryOperator, BiTransformer};
+/// use qubit_atomic::{BoxBinaryOperator, BiTransformer};
 ///
 /// let add: BoxBinaryOperator<i32> = BoxBinaryOperator::new(|x, y| x + y);
 /// assert_eq!(add.apply(20, 22), 42);
@@ -878,7 +878,7 @@ pub type BoxBinaryOperator<T> = BoxBiTransformer<T, T, T>;
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{ArcBinaryOperator, BiTransformer};
+/// use qubit_atomic::{ArcBinaryOperator, BiTransformer};
 ///
 /// let multiply: ArcBinaryOperator<i32> = ArcBinaryOperator::new(|x, y| x * y);
 /// let multiply_clone = multiply.clone();
@@ -900,7 +900,7 @@ pub type ArcBinaryOperator<T> = ArcBiTransformer<T, T, T>;
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{RcBinaryOperator, BiTransformer};
+/// use qubit_atomic::{RcBinaryOperator, BiTransformer};
 ///
 /// let max: RcBinaryOperator<i32> = RcBinaryOperator::new(|x, y| if x > y { x } else { y });
 /// let max_clone = max.clone();
@@ -938,7 +938,7 @@ pub type RcBinaryOperator<T> = RcBiTransformer<T, T, T>;
 /// ## With or_else Branch
 ///
 /// ```rust
-/// use prism3_function::{BiTransformer, BoxBiTransformer};
+/// use qubit_atomic::{BiTransformer, BoxBiTransformer};
 ///
 /// let add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
 /// let multiply = BoxBiTransformer::new(|x: i32, y: i32| x * y);
@@ -989,7 +989,7 @@ impl_conditional_transformer_debug_display!(BoxConditionalBiTransformer<T, U, R>
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{BiTransformer, RcBiTransformer};
+/// use qubit_atomic::{BiTransformer, RcBiTransformer};
 ///
 /// let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
 /// let multiply = RcBiTransformer::new(|x: i32, y: i32| x * y);
@@ -1047,7 +1047,7 @@ impl_conditional_transformer_clone!(RcConditionalBiTransformer<T, U, R>);
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{BiTransformer, ArcBiTransformer};
+/// use qubit_atomic::{BiTransformer, ArcBiTransformer};
 ///
 /// let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
 /// let multiply = ArcBiTransformer::new(|x: i32, y: i32| x * y);

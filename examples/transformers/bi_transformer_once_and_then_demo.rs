@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -10,7 +10,7 @@
 //!
 //! Demonstrates how to use BoxBiTransformerOnce's and_then method for chained composition.
 
-use prism3_function::{
+use qubit_atomic::{
     BiTransformerOnce,
     BoxBiTransformerOnce,
 };

@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -72,7 +72,7 @@
 //! ## Basic Usage
 //!
 //! ```rust
-//! use prism3_function::{BoxMutatingFunctionOnce, MutatingFunctionOnce};
+//! use qubit_atomic::{BoxMutatingFunctionOnce, MutatingFunctionOnce};
 //!
 //! let data = vec![1, 2, 3];
 //! let func = BoxMutatingFunctionOnce::new(move |x: &mut Vec<i32>| {
@@ -90,7 +90,7 @@
 //! ## Method Chaining
 //!
 //! ```rust
-//! use prism3_function::{BoxMutatingFunctionOnce, MutatingFunctionOnce};
+//! use qubit_atomic::{BoxMutatingFunctionOnce, MutatingFunctionOnce};
 //!
 //! let data1 = vec![1, 2];
 //! let data2 = vec![3, 4];
@@ -113,7 +113,7 @@
 //! ## Validation Pattern
 //!
 //! ```rust
-//! use prism3_function::{BoxMutatingFunctionOnce, MutatingFunctionOnce};
+//! use qubit_atomic::{BoxMutatingFunctionOnce, MutatingFunctionOnce};
 //!
 //! struct Data {
 //!     value: i32,
@@ -196,7 +196,7 @@ use crate::predicates::predicate::{
 /// ## Generic Function
 ///
 /// ```rust
-/// use prism3_function::{MutatingFunctionOnce, BoxMutatingFunctionOnce};
+/// use qubit_atomic::{MutatingFunctionOnce, BoxMutatingFunctionOnce};
 ///
 /// fn apply<F: MutatingFunctionOnce<Vec<i32>, usize>>(
 ///     func: F,
@@ -221,7 +221,7 @@ use crate::predicates::predicate::{
 /// ## Type Conversion
 ///
 /// ```rust
-/// use prism3_function::MutatingFunctionOnce;
+/// use qubit_atomic::MutatingFunctionOnce;
 ///
 /// let data = vec![1, 2, 3];
 /// let closure = move |x: &mut Vec<i32>| {
@@ -253,7 +253,7 @@ pub trait MutatingFunctionOnce<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{MutatingFunctionOnce,
+    /// use qubit_atomic::{MutatingFunctionOnce,
     ///                       BoxMutatingFunctionOnce};
     ///
     /// let data = vec![1, 2, 3];
@@ -389,7 +389,7 @@ pub trait MutatingFunctionOnce<T, R> {
 /// ## Basic Usage
 ///
 /// ```rust
-/// use prism3_function::{MutatingFunctionOnce, BoxMutatingFunctionOnce};
+/// use qubit_atomic::{MutatingFunctionOnce, BoxMutatingFunctionOnce};
 ///
 /// let data = vec![1, 2, 3];
 /// let func = BoxMutatingFunctionOnce::new(move |x: &mut Vec<i32>| {
@@ -407,7 +407,7 @@ pub trait MutatingFunctionOnce<T, R> {
 /// ## Method Chaining
 ///
 /// ```rust
-/// use prism3_function::{MutatingFunctionOnce, BoxMutatingFunctionOnce};
+/// use qubit_atomic::{MutatingFunctionOnce, BoxMutatingFunctionOnce};
 ///
 /// let data1 = vec![1, 2];
 /// let data2 = vec![3, 4];
@@ -524,7 +524,7 @@ impl_fn_ops_trait!(
 /// ## With or_else Branch
 ///
 /// ```rust
-/// use prism3_function::{MutatingFunctionOnce, BoxMutatingFunctionOnce};
+/// use qubit_atomic::{MutatingFunctionOnce, BoxMutatingFunctionOnce};
 ///
 /// let double = BoxMutatingFunctionOnce::new(|x: &mut i32| x * 2);
 /// let negate = BoxMutatingFunctionOnce::new(|x: &mut i32| -x);

@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -97,7 +97,7 @@ use crate::predicates::predicate::{
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{Consumer, BoxStatefulConsumer, ArcStatefulConsumer};
+/// use qubit_atomic::{Consumer, BoxStatefulConsumer, ArcStatefulConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
 /// fn apply_consumer<C: StatefulConsumer<i32>>(consumer: &mut C, value: &i32) {
@@ -131,7 +131,7 @@ pub trait StatefulConsumer<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{Consumer, BoxStatefulConsumer};
+    /// use qubit_atomic::{Consumer, BoxStatefulConsumer};
     ///
     /// let mut consumer = BoxStatefulConsumer::new(|x: &i32| println!("{}", x));
     /// let value = 5;
@@ -162,7 +162,7 @@ pub trait StatefulConsumer<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::Consumer;
+    /// use qubit_atomic::Consumer;
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -232,7 +232,7 @@ pub trait StatefulConsumer<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{Consumer, BoxStatefulConsumer};
+    /// use qubit_atomic::{Consumer, BoxStatefulConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -305,7 +305,7 @@ pub trait StatefulConsumer<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{Consumer, ArcStatefulConsumer};
+    /// use qubit_atomic::{Consumer, ArcStatefulConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -347,7 +347,7 @@ pub trait StatefulConsumer<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{Consumer, ArcStatefulConsumer};
+    /// use qubit_atomic::{Consumer, ArcStatefulConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -390,7 +390,7 @@ pub trait StatefulConsumer<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{Consumer, RcStatefulConsumer};
+    /// use qubit_atomic::{Consumer, RcStatefulConsumer};
     /// use std::rc::Rc;
     /// use std::cell::RefCell;
     ///
@@ -434,7 +434,7 @@ pub trait StatefulConsumer<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{Consumer, BoxStatefulConsumer};
+    /// use qubit_atomic::{Consumer, BoxStatefulConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -522,7 +522,7 @@ pub trait StatefulConsumer<T> {
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{Consumer, BoxStatefulConsumer};
+/// use qubit_atomic::{Consumer, BoxStatefulConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -626,7 +626,7 @@ impl_consumer_debug_display!(BoxStatefulConsumer<T>);
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{Consumer, RcStatefulConsumer};
+/// use qubit_atomic::{Consumer, RcStatefulConsumer};
 /// use std::rc::Rc;
 /// use std::cell::RefCell;
 ///
@@ -729,7 +729,7 @@ impl_consumer_debug_display!(RcStatefulConsumer<T>);
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{Consumer, ArcStatefulConsumer};
+/// use qubit_atomic::{Consumer, ArcStatefulConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -831,7 +831,7 @@ impl_closure_trait!(
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{Consumer, FnStatefulConsumerOps};
+/// use qubit_atomic::{Consumer, FnStatefulConsumerOps};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -881,7 +881,7 @@ pub trait FnStatefulConsumerOps<T>: FnMut(&T) + Sized {
     /// ## Direct value passing (ownership transfer)
     ///
     /// ```rust
-    /// use prism3_function::{Consumer, FnStatefulConsumerOps, BoxStatefulConsumer};
+    /// use qubit_atomic::{Consumer, FnStatefulConsumerOps, BoxStatefulConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -904,7 +904,7 @@ pub trait FnStatefulConsumerOps<T>: FnMut(&T) + Sized {
     /// ## Preserving original with clone
     ///
     /// ```rust
-    /// use prism3_function::{Consumer, FnStatefulConsumerOps, BoxStatefulConsumer};
+    /// use qubit_atomic::{Consumer, FnStatefulConsumerOps, BoxStatefulConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -968,7 +968,7 @@ impl<T, F> FnStatefulConsumerOps<T> for F where F: FnMut(&T) {}
 /// ## Basic Conditional Execution
 ///
 /// ```rust
-/// use prism3_function::{Consumer, BoxStatefulConsumer};
+/// use qubit_atomic::{Consumer, BoxStatefulConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -988,7 +988,7 @@ impl<T, F> FnStatefulConsumerOps<T> for F where F: FnMut(&T) {}
 /// ## With or_else Branch
 ///
 /// ```rust
-/// use prism3_function::{Consumer, BoxStatefulConsumer};
+/// use qubit_atomic::{Consumer, BoxStatefulConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -1064,7 +1064,7 @@ impl_conditional_consumer_debug_display!(BoxConditionalStatefulConsumer<T>);
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{Consumer, ArcStatefulConsumer};
+/// use qubit_atomic::{Consumer, ArcStatefulConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -1142,7 +1142,7 @@ impl_conditional_consumer_debug_display!(ArcConditionalStatefulConsumer<T>);
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{Consumer, RcStatefulConsumer};
+/// use qubit_atomic::{Consumer, RcStatefulConsumer};
 /// use std::rc::Rc;
 /// use std::cell::RefCell;
 ///

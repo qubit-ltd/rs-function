@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -9,7 +9,7 @@
 
 //! Demonstrates the set_name and new_with_name methods of Predicate
 
-use prism3_function::predicate::{
+use qubit_atomic::predicate::{
     ArcPredicate,
     BoxPredicate,
     Predicate,

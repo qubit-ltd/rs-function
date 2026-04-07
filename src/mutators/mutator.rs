@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -78,7 +78,7 @@
 //! ## Basic Usage
 //!
 //! ```rust
-//! use prism3_function::{BoxMutator, ArcMutator, RcMutator, Mutator};
+//! use qubit_atomic::{BoxMutator, ArcMutator, RcMutator, Mutator};
 //!
 //! // BoxMutator: Single ownership, consumes self
 //! let mut mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
@@ -106,7 +106,7 @@
 //! ## Method Chaining
 //!
 //! ```rust
-//! use prism3_function::{Mutator, BoxMutator, ArcMutator};
+//! use qubit_atomic::{Mutator, BoxMutator, ArcMutator};
 //!
 //! // BoxMutator: Consumes self
 //! let mut chained = BoxMutator::new(|x: &mut i32| *x *= 2)
@@ -127,7 +127,7 @@
 //! All closures automatically implement the `Mutator` trait:
 //!
 //! ```rust
-//! use prism3_function::{Mutator, FnMutatorOps};
+//! use qubit_atomic::{Mutator, FnMutatorOps};
 //!
 //! // Closures can use .apply() directly
 //! let mut closure = |x: &mut i32| *x *= 2;
@@ -146,7 +146,7 @@
 //! ## Type Conversions
 //!
 //! ```rust
-//! use prism3_function::Mutator;
+//! use qubit_atomic::Mutator;
 //!
 //! // Convert closure to concrete type
 //! let closure = |x: &mut i32| *x *= 2;
@@ -166,7 +166,7 @@
 //! branch to create if-then-else logic:
 //!
 //! ```rust
-//! use prism3_function::{Mutator, BoxMutator};
+//! use qubit_atomic::{Mutator, BoxMutator};
 //!
 //! // Simple conditional (if-then)
 //! let mut conditional = BoxMutator::new(|x: &mut i32| *x *= 2)
@@ -271,7 +271,7 @@ type RcMutatorFn<T> = Rc<dyn Fn(&mut T)>;
 /// ## Generic Mutator Function
 ///
 /// ```rust
-/// use prism3_function::{Mutator, BoxMutator, ArcMutator};
+/// use qubit_atomic::{Mutator, BoxMutator, ArcMutator};
 ///
 /// fn apply_mutator<M: Mutator<i32>>(
 ///     mutator: &mut M,
@@ -296,7 +296,7 @@ type RcMutatorFn<T> = Rc<dyn Fn(&mut T)>;
 /// ## Type Conversion
 ///
 /// ```rust
-/// use prism3_function::Mutator;
+/// use qubit_atomic::Mutator;
 ///
 /// let closure = |x: &mut i32| *x *= 2;
 ///
@@ -322,7 +322,7 @@ pub trait Mutator<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{Mutator, BoxMutator};
+    /// use qubit_atomic::{Mutator, BoxMutator};
     ///
     /// let mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
     /// let mut value = 5;
@@ -351,7 +351,7 @@ pub trait Mutator<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::Mutator;
+    /// use qubit_atomic::Mutator;
     ///
     /// let closure = |x: &mut i32| *x *= 2;
     /// let mut boxed = closure.into_box();
@@ -385,7 +385,7 @@ pub trait Mutator<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::Mutator;
+    /// use qubit_atomic::Mutator;
     ///
     /// let closure = |x: &mut i32| *x *= 2;
     /// let mut rc = closure.into_rc();
@@ -419,7 +419,7 @@ pub trait Mutator<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::Mutator;
+    /// use qubit_atomic::Mutator;
     ///
     /// let closure = |x: &mut i32| *x *= 2;
     /// let mut arc = closure.into_arc();
@@ -453,7 +453,7 @@ pub trait Mutator<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{Mutator, BoxMutator};
+    /// use qubit_atomic::{Mutator, BoxMutator};
     ///
     /// let mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
     /// let mut values = vec![1, 2, 3, 4, 5];
@@ -487,7 +487,7 @@ pub trait Mutator<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{Mutator, BoxMutator, BoxMutatorOnce};
+    /// use qubit_atomic::{Mutator, BoxMutator, BoxMutatorOnce};
     ///
     /// let mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
     /// let once_mutator = mutator.into_once();
@@ -627,7 +627,7 @@ pub trait Mutator<T> {
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{Mutator, BoxMutator};
+/// use qubit_atomic::{Mutator, BoxMutator};
 ///
 /// let mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
 /// let mut value = 5;
@@ -694,7 +694,7 @@ impl_mutator_debug_display!(BoxMutator<T>);
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{Mutator, RcMutator};
+/// use qubit_atomic::{Mutator, RcMutator};
 ///
 /// let mutator = RcMutator::new(|x: &mut i32| *x *= 2);
 /// let clone = mutator.clone();
@@ -776,7 +776,7 @@ impl_mutator_debug_display!(RcMutator<T>);
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{Mutator, ArcMutator};
+/// use qubit_atomic::{Mutator, ArcMutator};
 ///
 /// let mutator = ArcMutator::new(|x: &mut i32| *x *= 2);
 /// let clone = mutator.clone();
@@ -867,7 +867,7 @@ impl_closure_trait!(
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{Mutator, FnMutatorOps};
+/// use qubit_atomic::{Mutator, FnMutatorOps};
 ///
 /// let chained = (|x: &mut i32| *x *= 2)
 ///     .and_then(|x: &mut i32| *x += 10);
@@ -905,7 +905,7 @@ pub trait FnMutatorOps<T>: Fn(&mut T) + Sized {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{Mutator, FnMutatorOps};
+    /// use qubit_atomic::{Mutator, FnMutatorOps};
     ///
     /// let chained = (|x: &mut i32| *x *= 2)
     ///     .and_then(|x: &mut i32| *x += 10);
@@ -956,7 +956,7 @@ impl<T, F> FnMutatorOps<T> for F where F: Fn(&mut T) {}
 /// ## Basic Conditional Execution
 ///
 /// ```rust
-/// use prism3_function::{Mutator, BoxMutator};
+/// use qubit_atomic::{Mutator, BoxMutator};
 ///
 /// let mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
 /// let mut conditional = mutator.when(|x: &i32| *x > 0);
@@ -973,7 +973,7 @@ impl<T, F> FnMutatorOps<T> for F where F: Fn(&mut T) {}
 /// ## With or_else Branch
 ///
 /// ```rust
-/// use prism3_function::{Mutator, BoxMutator};
+/// use qubit_atomic::{Mutator, BoxMutator};
 ///
 /// let mut mutator = BoxMutator::new(|x: &mut i32| *x *= 2)
 ///     .when(|x: &i32| *x > 0)
@@ -1039,7 +1039,7 @@ impl_conditional_mutator_debug_display!(BoxConditionalMutator<T>);
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{Mutator, RcMutator};
+/// use qubit_atomic::{Mutator, RcMutator};
 ///
 /// let conditional = RcMutator::new(|x: &mut i32| *x *= 2)
 ///     .when(|x: &i32| *x > 0);
@@ -1112,7 +1112,7 @@ impl_conditional_mutator_debug_display!(RcConditionalMutator<T>);
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{Mutator, ArcMutator};
+/// use qubit_atomic::{Mutator, ArcMutator};
 ///
 /// let conditional = ArcMutator::new(|x: &mut i32| *x *= 2)
 ///     .when(|x: &i32| *x > 0);

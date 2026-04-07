@@ -52,7 +52,7 @@
 **示例**:
 
 ```rust
-use prism3_function::{MutatingFunction, BoxMutatingFunction};
+use qubit_atomic::{MutatingFunction, BoxMutatingFunction};
 
 // 递增并返回新值
 let incrementer = BoxMutatingFunction::new(|x: &mut i32| {
@@ -84,7 +84,7 @@ assert_eq!(cache.get("key"), Some(&42));
 **方法链式调用**:
 
 ```rust
-use prism3_function::{MutatingFunction, BoxMutatingFunction};
+use qubit_atomic::{MutatingFunction, BoxMutatingFunction};
 
 let chained = BoxMutatingFunction::new(|x: &mut i32| {
     *x *= 2;
@@ -125,7 +125,7 @@ assert_eq!(result, 20);
 **示例**:
 
 ```rust
-use prism3_function::{StatefulMutatingFunction,
+use qubit_atomic::{StatefulMutatingFunction,
                       BoxStatefulMutatingFunction};
 
 // 计数器：递增值并跟踪调用次数
@@ -166,7 +166,7 @@ assert_eq!(value2, 6);
 **线程安全示例**:
 
 ```rust
-use prism3_function::{StatefulMutatingFunction,
+use qubit_atomic::{StatefulMutatingFunction,
                       ArcStatefulMutatingFunction};
 use std::thread;
 
@@ -218,7 +218,7 @@ assert_eq!(result, 1);
 **示例**:
 
 ```rust
-use prism3_function::{MutatingFunctionOnce, BoxMutatingFunctionOnce};
+use qubit_atomic::{MutatingFunctionOnce, BoxMutatingFunctionOnce};
 
 // 资源转移模式
 let data = vec![1, 2, 3];
@@ -256,7 +256,7 @@ assert!(result.is_err());
 **方法链式调用**:
 
 ```rust
-use prism3_function::{MutatingFunctionOnce, BoxMutatingFunctionOnce};
+use qubit_atomic::{MutatingFunctionOnce, BoxMutatingFunctionOnce};
 
 let data1 = vec![1, 2];
 let data2 = vec![3, 4];

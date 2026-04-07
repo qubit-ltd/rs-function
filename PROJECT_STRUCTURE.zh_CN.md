@@ -1,11 +1,11 @@
 # 项目结构
 
-本文档描述 prism3-rust-function crate 的目录结构和组织方式。
+本文档描述 qubit-atomic crate 的目录结构和组织方式。
 
 ## 目录布局
 
 ```
-prism3-rust-function/
+rust-function/
 ├── src/                    # 源代码
 │   ├── consumers/          # Consumer 相关抽象
 │   │   ├── macros/         # Consumer 专用宏
@@ -176,14 +176,14 @@ use crate::transformers::transformer::Transformer;
 
 1. **从根直接导入**（推荐，向后兼容）：
    ```rust
-   use prism3_function::{Consumer, Predicate, Transformer};
+   use qubit_atomic::{Consumer, Predicate, Transformer};
    ```
 
 2. **从特定模块导入**（显式）：
    ```rust
-   use prism3_function::consumers::Consumer;
-   use prism3_function::predicates::Predicate;
-   use prism3_function::transformers::Transformer;
+   use qubit_atomic::consumers::Consumer;
+   use qubit_atomic::predicates::Predicate;
+   use qubit_atomic::transformers::Transformer;
    ```
 
 两种风格都通过 `lib.rs` 中的重导出得到支持。

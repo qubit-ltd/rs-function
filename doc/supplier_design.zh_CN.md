@@ -305,7 +305,7 @@ let handles: Vec<_> = (0..1000)
 
 ##### 场景 3：真实项目中的使用
 
-在 `prism3-rust-concurrent` 项目中已经在使用这种模式：
+在相关的 Rust 并发库项目中已经在使用这种模式：
 
 ```rust
 // double_checked_executor_design.zh_CN.md 第 132 行
@@ -1136,7 +1136,7 @@ impl<T> BoxSupplierOnce<T> {
 
 ### 为什么选择方案三？
 
-**`prism3-rust-function` 采用方案三**，原因如下：
+**`qubit-atomic` 采用方案三**，原因如下：
 
 1. **统一的 trait 抽象**
    - 提供 `Supplier<T>` 和 `SupplierOnce<T>` trait

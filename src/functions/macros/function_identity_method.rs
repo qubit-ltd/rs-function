@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -42,7 +42,7 @@
 //!     /// # Examples
 //!     ///
 //!     /// ```rust
-//!     /// use prism3_function::{$struct_name, Function};
+//!     /// use qubit_atomic::{$struct_name, Function};
 //!     ///
 //!     /// let identity = $struct_name::<i32, i32>::identity();
 //!     /// assert_eq!(identity.apply(&42), 42);
@@ -65,7 +65,7 @@
 //!     /// # Examples
 //!     ///
 //!     /// ```rust
-//!     /// use prism3_function::{$struct_name, BiFunction};
+//!     /// use qubit_atomic::{$struct_name, BiFunction};
 //!     ///
 //!     /// let identity = $struct_name::<i32, String, i32>::identity();
 //!     /// assert_eq!(identity.apply(&42, &"test".to_string()), 42);
@@ -115,7 +115,7 @@ macro_rules! impl_function_identity_method {
             /// Creates an identity function
             ///
             /// # Examples
-            #[doc = concat!("/// ```rust\n/// use prism3_function::", stringify!($struct_name), ";\n///\n/// let identity = ", stringify!($struct_name), "::<i32, i32>::identity();\n/// assert_eq!(identity.apply(&42), 42);\n/// ```")]
+            #[doc = concat!("/// ```rust\n/// use qubit_atomic::", stringify!($struct_name), ";\n///\n/// let identity = ", stringify!($struct_name), "::<i32, i32>::identity();\n/// assert_eq!(identity.apply(&42), 42);\n/// ```")]
             pub fn identity() -> $struct_name<$t, $t> {
                 $struct_name::new(|x: &$t| x.clone())
             }
@@ -132,7 +132,7 @@ macro_rules! impl_function_identity_method {
             /// Creates an identity function
             ///
             /// # Examples
-            #[doc = concat!("/// ```rust\n/// use prism3_function::", stringify!($struct_name), ";\n///\n/// let mut identity = ", stringify!($struct_name), "::<i32, i32>::identity();\n/// let mut value = 42;\n/// assert_eq!(identity.apply(&mut value), 42);\n/// ```")]
+            #[doc = concat!("/// ```rust\n/// use qubit_atomic::", stringify!($struct_name), ";\n///\n/// let mut identity = ", stringify!($struct_name), "::<i32, i32>::identity();\n/// let mut value = 42;\n/// assert_eq!(identity.apply(&mut value), 42);\n/// ```")]
             pub fn identity() -> $struct_name<$t, $t> {
                 $struct_name::new(|x: &mut $t| x.clone())
             }

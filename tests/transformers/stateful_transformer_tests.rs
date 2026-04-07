@@ -1,13 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
  ******************************************************************************/
 
-use prism3_function::{
+use qubit_atomic::{
     ArcPredicate,
     ArcStatefulTransformer,
     BoxPredicate,
@@ -1834,7 +1834,7 @@ fn test_arc_stateful_transformer_display_without_name() {
 #[cfg(test)]
 mod test_stateful_transformer_trait_default_methods {
     use super::*;
-    use prism3_function::TransformerOnce;
+    use qubit_atomic::TransformerOnce;
     use std::sync::{
         atomic::{
             AtomicUsize,

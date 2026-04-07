@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -152,7 +152,7 @@ macro_rules! impl_shared_function_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use prism3_function::{ArcFunction, Function};
+        /// use qubit_atomic::{ArcFunction, Function};
         /// use std::sync::Arc;
         ///
         /// let double = ArcFunction::new(|x: i32| x * 2);
@@ -186,7 +186,7 @@ macro_rules! impl_shared_function_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use prism3_function::{ArcFunction, Function};
+        /// use qubit_atomic::{ArcFunction, Function};
         /// use std::sync::Arc;
         ///
         /// let double = ArcFunction::new(|x: i32| x * 2);
@@ -233,7 +233,7 @@ macro_rules! impl_shared_function_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use prism3_function::{ArcBiFunction, BiFunction};
+        /// use qubit_atomic::{ArcBiFunction, BiFunction};
         /// use std::sync::Arc;
         ///
         /// let add = ArcBiFunction::new(|x: i32, y: i32| x + y);
@@ -267,7 +267,7 @@ macro_rules! impl_shared_function_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use prism3_function::{ArcBiFunction, BiFunction};
+        /// use qubit_atomic::{ArcBiFunction, BiFunction};
         /// use std::sync::Arc;
         ///
         /// let add = ArcBiFunction::new(|x: i32, y: i32| x + y);

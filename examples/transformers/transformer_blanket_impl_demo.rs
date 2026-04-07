@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -9,7 +9,7 @@
 
 //! Demonstrates blanket implementations for Fn -> Transformer
 
-use prism3_function::Transformer;
+use qubit_atomic::Transformer;
 
 fn main() {
     println!("=== Testing Fn -> Transformer ===");

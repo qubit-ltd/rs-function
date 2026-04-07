@@ -1,13 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
  ******************************************************************************/
 
-use prism3_function::{
+use qubit_atomic::{
     ArcStatefulBiTransformer,
     ArcStatefulTransformer,
     BoxBiPredicate,
@@ -1175,7 +1175,7 @@ mod conditional_stateful_bi_transformer_display_debug_tests {
 #[cfg(test)]
 mod stateful_bi_transformer_trait_default_methods_tests {
     use super::*;
-    use prism3_function::BiTransformerOnce;
+    use qubit_atomic::BiTransformerOnce;
 
     // Custom struct implementing StatefulBiTransformer to test default methods
     #[derive(Clone)]

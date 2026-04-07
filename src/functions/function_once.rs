@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -80,7 +80,7 @@ pub trait FunctionOnce<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::FunctionOnce;
+    /// use qubit_atomic::FunctionOnce;
     ///
     /// let double = |x: &i32| x * 2;
     /// let boxed = double.into_box();
@@ -107,7 +107,7 @@ pub trait FunctionOnce<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::FunctionOnce;
+    /// use qubit_atomic::FunctionOnce;
     ///
     /// let double = |x: &i32| x * 2;
     /// let func = double.into_fn();
@@ -140,7 +140,7 @@ pub trait FunctionOnce<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::FunctionOnce;
+    /// use qubit_atomic::FunctionOnce;
     ///
     /// let double = |x: &i32| x * 2;
     /// let boxed = double.to_box();
@@ -173,7 +173,7 @@ pub trait FunctionOnce<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::FunctionOnce;
+    /// use qubit_atomic::FunctionOnce;
     ///
     /// let double = |x: &i32| x * 2;
     /// let func = double.to_fn();
@@ -306,7 +306,7 @@ impl_fn_ops_trait!(
 /// ## With or_else Branch
 ///
 /// ```rust
-/// use prism3_function::{FunctionOnce, BoxFunctionOnce};
+/// use qubit_atomic::{FunctionOnce, BoxFunctionOnce};
 ///
 /// let double = BoxFunctionOnce::new(|x: i32| x * 2);
 /// let negate = BoxFunctionOnce::new(|x: i32| -x);

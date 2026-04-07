@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -9,7 +9,7 @@
 
 //! Tests for Consumer types
 
-use prism3_function::{
+use qubit_atomic::{
     ArcConsumer,
     BoxConsumer,
     Consumer,
@@ -1262,7 +1262,7 @@ mod to_xxx_methods_tests {
 #[cfg(test)]
 mod to_once_tests {
     use super::*;
-    use prism3_function::ConsumerOnce;
+    use qubit_atomic::ConsumerOnce;
     use std::sync::atomic::{
         AtomicUsize,
         Ordering,

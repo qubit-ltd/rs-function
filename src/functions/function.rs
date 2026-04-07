@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -229,7 +229,7 @@ pub trait Function<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{ArcFunction, Function};
+    /// use qubit_atomic::{ArcFunction, Function};
     ///
     /// let double = ArcFunction::new(|x: i32| x * 2);
     /// let boxed = double.to_box();
@@ -265,7 +265,7 @@ pub trait Function<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{ArcFunction, Function};
+    /// use qubit_atomic::{ArcFunction, Function};
     ///
     /// let double = ArcFunction::new(|x: i32| x * 2);
     /// let rc = double.to_rc();
@@ -301,7 +301,7 @@ pub trait Function<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{ArcFunction, Function};
+    /// use qubit_atomic::{ArcFunction, Function};
     ///
     /// let double = ArcFunction::new(|x: i32| x * 2);
     /// let arc = double.to_arc();
@@ -337,7 +337,7 @@ pub trait Function<T, R> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{ArcFunction, Function};
+    /// use qubit_atomic::{ArcFunction, Function};
     ///
     /// let double = ArcFunction::new(|x: i32| x * 2);
     /// let closure = double.to_fn();
@@ -656,7 +656,7 @@ impl_fn_ops_trait!(
 /// ## With or_else Branch
 ///
 /// ```rust
-/// use prism3_function::{Function, BoxFunction};
+/// use qubit_atomic::{Function, BoxFunction};
 ///
 /// let double = BoxFunction::new(|x: i32| x * 2);
 /// let negate = BoxFunction::new(|x: i32| -x);
@@ -707,7 +707,7 @@ impl_conditional_function_debug_display!(BoxConditionalFunction<T, R>);
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{Function, RcFunction};
+/// use qubit_atomic::{Function, RcFunction};
 ///
 /// let double = RcFunction::new(|x: i32| x * 2);
 /// let identity = RcFunction::<i32, i32>::identity();
@@ -764,7 +764,7 @@ impl_conditional_function_debug_display!(RcConditionalFunction<T, R>);
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{Function, ArcFunction};
+/// use qubit_atomic::{Function, ArcFunction};
 ///
 /// let double = ArcFunction::new(|x: i32| x * 2);
 /// let identity = ArcFunction::<i32, i32>::identity();

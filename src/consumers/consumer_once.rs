@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -77,7 +77,7 @@ use crate::predicates::predicate::{
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{ConsumerOnce, BoxConsumerOnce};
+/// use qubit_atomic::{ConsumerOnce, BoxConsumerOnce};
 /// use std::sync::{Arc, Mutex};
 ///
 /// fn apply_consumer<C: ConsumerOnce<i32>>(consumer: C, value: &i32) {
@@ -110,7 +110,7 @@ pub trait ConsumerOnce<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{ConsumerOnce, BoxConsumerOnce};
+    /// use qubit_atomic::{ConsumerOnce, BoxConsumerOnce};
     ///
     /// let consumer = BoxConsumerOnce::new(|x: &i32| println!("{}", x));
     /// consumer.accept(&5);
@@ -134,7 +134,7 @@ pub trait ConsumerOnce<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::ConsumerOnce;
+    /// use qubit_atomic::ConsumerOnce;
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -174,7 +174,7 @@ pub trait ConsumerOnce<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::ConsumerOnce;
+    /// use qubit_atomic::ConsumerOnce;
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -213,7 +213,7 @@ pub trait ConsumerOnce<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::ConsumerOnce;
+    /// use qubit_atomic::ConsumerOnce;
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -252,7 +252,7 @@ pub trait ConsumerOnce<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::ConsumerOnce;
+    /// use qubit_atomic::ConsumerOnce;
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -308,7 +308,7 @@ pub trait ConsumerOnce<T> {
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{ConsumerOnce, BoxConsumerOnce};
+/// use qubit_atomic::{ConsumerOnce, BoxConsumerOnce};
 ///
 /// let consumer = BoxConsumerOnce::new(|x: &i32| {
 ///     println!("Value: {}", x);
@@ -378,7 +378,7 @@ impl_closure_once_trait!(
 /// # Examples
 ///
 /// ```rust
-/// use prism3_function::{ConsumerOnce, FnConsumerOnceOps};
+/// use qubit_atomic::{ConsumerOnce, FnConsumerOnceOps};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -423,7 +423,7 @@ pub trait FnConsumerOnceOps<T>: FnOnce(&T) + Sized {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{ConsumerOnce, FnConsumerOnceOps};
+    /// use qubit_atomic::{ConsumerOnce, FnConsumerOnceOps};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -480,7 +480,7 @@ impl<T, F> FnConsumerOnceOps<T> for F where F: FnOnce(&T) {}
 /// ## Basic Conditional Execution
 ///
 /// ```rust
-/// use prism3_function::{ConsumerOnce, BoxConsumerOnce};
+/// use qubit_atomic::{ConsumerOnce, BoxConsumerOnce};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -497,7 +497,7 @@ impl<T, F> FnConsumerOnceOps<T> for F where F: FnOnce(&T) {}
 /// ## With or_else Branch
 ///
 /// ```rust
-/// use prism3_function::{ConsumerOnce, BoxConsumerOnce};
+/// use qubit_atomic::{ConsumerOnce, BoxConsumerOnce};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));

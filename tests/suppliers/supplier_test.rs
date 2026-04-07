@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -9,7 +9,7 @@
 
 //! Unit tests for Supplier types
 
-use prism3_function::{
+use qubit_atomic::{
     ArcSupplier,
     ArcTransformer,
     BoxSupplier,
@@ -1973,7 +1973,7 @@ mod test_supplier_debug_display {
 #[cfg(test)]
 mod test_supplier_trait_default_methods {
     use super::*;
-    use prism3_function::SupplierOnce;
+    use qubit_atomic::SupplierOnce;
     use std::sync::atomic::{
         AtomicUsize,
         Ordering,

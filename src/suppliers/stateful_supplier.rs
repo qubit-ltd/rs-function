@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -59,7 +59,7 @@
 //! ## Basic Counter
 //!
 //! ```rust
-//! use prism3_function::{BoxStatefulSupplier, Supplier};
+//! use qubit_atomic::{BoxStatefulSupplier, Supplier};
 //!
 //! let mut counter = 0;
 //! let mut supplier = BoxStatefulSupplier::new(move || {
@@ -75,7 +75,7 @@
 //! ## Method Chaining
 //!
 //! ```rust
-//! use prism3_function::{BoxStatefulSupplier, Supplier};
+//! use qubit_atomic::{BoxStatefulSupplier, Supplier};
 //!
 //! let mut pipeline = BoxStatefulSupplier::new(|| 10)
 //!     .map(|x| x * 2)
@@ -87,7 +87,7 @@
 //! ## Thread-safe Sharing
 //!
 //! ```rust
-//! use prism3_function::{ArcStatefulSupplier, Supplier};
+//! use qubit_atomic::{ArcStatefulSupplier, Supplier};
 //! use std::sync::{Arc, Mutex};
 //! use std::thread;
 //!
@@ -171,7 +171,7 @@ use crate::transformers::transformer::Transformer;
 /// ## Using with Generic Functions
 ///
 /// ```rust
-/// use prism3_function::{Supplier, BoxStatefulSupplier};
+/// use qubit_atomic::{Supplier, BoxStatefulSupplier};
 ///
 /// fn call_twice<S: StatefulSupplier<i32>>(supplier: &mut S) -> (i32, i32) {
 ///     (supplier.get(), supplier.get())
@@ -187,7 +187,7 @@ use crate::transformers::transformer::Transformer;
 /// ## Stateful Supplier
 ///
 /// ```rust
-/// use prism3_function::Supplier;
+/// use qubit_atomic::Supplier;
 ///
 /// let mut counter = 0;
 /// let mut stateful = || {
@@ -216,7 +216,7 @@ pub trait StatefulSupplier<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{Supplier, BoxStatefulSupplier};
+    /// use qubit_atomic::{Supplier, BoxStatefulSupplier};
     ///
     /// let mut supplier = BoxStatefulSupplier::new(|| 42);
     /// assert_eq!(supplier.get(), 42);
@@ -236,7 +236,7 @@ pub trait StatefulSupplier<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::Supplier;
+    /// use qubit_atomic::Supplier;
     ///
     /// let closure = || 42;
     /// let mut boxed = closure.into_box();
@@ -263,7 +263,7 @@ pub trait StatefulSupplier<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::Supplier;
+    /// use qubit_atomic::Supplier;
     ///
     /// let closure = || 42;
     /// let mut rc = closure.into_rc();
@@ -290,7 +290,7 @@ pub trait StatefulSupplier<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::Supplier;
+    /// use qubit_atomic::Supplier;
     ///
     /// let closure = || 42;
     /// let mut arc = closure.into_arc();
@@ -317,7 +317,7 @@ pub trait StatefulSupplier<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{Supplier, BoxStatefulSupplier};
+    /// use qubit_atomic::{Supplier, BoxStatefulSupplier};
     ///
     /// let supplier = BoxStatefulSupplier::new(|| 42);
     /// let mut closure = supplier.into_fn();
@@ -328,7 +328,7 @@ pub trait StatefulSupplier<T> {
     /// ## Using with functions that expect FnMut
     ///
     /// ```rust
-    /// use prism3_function::{Supplier, BoxStatefulSupplier};
+    /// use qubit_atomic::{Supplier, BoxStatefulSupplier};
     ///
     /// fn call_fn_twice<F: FnMut() -> i32>(mut f: F) -> (i32, i32) {
     ///     (f(), f())
@@ -358,7 +358,7 @@ pub trait StatefulSupplier<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::StatefulSupplier;
+    /// use qubit_atomic::StatefulSupplier;
     ///
     /// let closure = || 42;
     /// let once = closure.into_once();
@@ -453,7 +453,7 @@ pub trait StatefulSupplier<T> {
 /// one:
 ///
 /// ```rust
-/// use prism3_function::{BoxStatefulSupplier, Supplier};
+/// use qubit_atomic::{BoxStatefulSupplier, Supplier};
 ///
 /// let supplier = BoxStatefulSupplier::new(|| 10);
 /// let mapped = supplier.map(|x| x * 2);
@@ -465,7 +465,7 @@ pub trait StatefulSupplier<T> {
 /// ## Counter
 ///
 /// ```rust
-/// use prism3_function::{BoxStatefulSupplier, Supplier};
+/// use qubit_atomic::{BoxStatefulSupplier, Supplier};
 ///
 /// let mut counter = 0;
 /// let mut supplier = BoxStatefulSupplier::new(move || {
@@ -480,7 +480,7 @@ pub trait StatefulSupplier<T> {
 /// ## Method Chaining
 ///
 /// ```rust
-/// use prism3_function::{BoxStatefulSupplier, Supplier};
+/// use qubit_atomic::{BoxStatefulSupplier, Supplier};
 ///
 /// let mut pipeline = BoxStatefulSupplier::new(|| 10)
 ///     .map(|x| x * 2)
@@ -521,7 +521,7 @@ where
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{BoxStatefulSupplier, Supplier};
+    /// use qubit_atomic::{BoxStatefulSupplier, Supplier};
     ///
     /// let mut call_count = 0;
     /// let mut memoized = BoxStatefulSupplier::new(move || {
@@ -581,7 +581,7 @@ impl<T> StatefulSupplier<T> for BoxStatefulSupplier<T> {
 /// `self`:
 ///
 /// ```rust
-/// use prism3_function::{RcStatefulSupplier, Supplier};
+/// use qubit_atomic::{RcStatefulSupplier, Supplier};
 ///
 /// let source = RcStatefulSupplier::new(|| 10);
 /// let mapped = source.map(|x| x * 2);
@@ -593,7 +593,7 @@ impl<T> StatefulSupplier<T> for BoxStatefulSupplier<T> {
 /// ## Shared Counter
 ///
 /// ```rust
-/// use prism3_function::{RcStatefulSupplier, Supplier};
+/// use qubit_atomic::{RcStatefulSupplier, Supplier};
 /// use std::rc::Rc;
 /// use std::cell::RefCell;
 ///
@@ -615,7 +615,7 @@ impl<T> StatefulSupplier<T> for BoxStatefulSupplier<T> {
 /// ## Reusable Transformations
 ///
 /// ```rust
-/// use prism3_function::{RcStatefulSupplier, Supplier};
+/// use qubit_atomic::{RcStatefulSupplier, Supplier};
 ///
 /// let base = RcStatefulSupplier::new(|| 10);
 /// let doubled = base.map(|x| x * 2);
@@ -664,7 +664,7 @@ where
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{RcStatefulSupplier, Supplier};
+    /// use qubit_atomic::{RcStatefulSupplier, Supplier};
     /// use std::rc::Rc;
     /// use std::cell::RefCell;
     ///
@@ -739,7 +739,7 @@ impl<T> StatefulSupplier<T> for RcStatefulSupplier<T> {
 /// supplier remains usable after method calls:
 ///
 /// ```rust
-/// use prism3_function::{ArcStatefulSupplier, Supplier};
+/// use qubit_atomic::{ArcStatefulSupplier, Supplier};
 ///
 /// let source = ArcStatefulSupplier::new(|| 10);
 /// let mapped = source.map(|x| x * 2);
@@ -751,7 +751,7 @@ impl<T> StatefulSupplier<T> for RcStatefulSupplier<T> {
 /// ## Thread-safe Counter
 ///
 /// ```rust
-/// use prism3_function::{ArcStatefulSupplier, Supplier};
+/// use qubit_atomic::{ArcStatefulSupplier, Supplier};
 /// use std::sync::{Arc, Mutex};
 /// use std::thread;
 ///
@@ -778,7 +778,7 @@ impl<T> StatefulSupplier<T> for RcStatefulSupplier<T> {
 /// ## Reusable Transformations
 ///
 /// ```rust
-/// use prism3_function::{ArcStatefulSupplier, Supplier};
+/// use qubit_atomic::{ArcStatefulSupplier, Supplier};
 ///
 /// let base = ArcStatefulSupplier::new(|| 10);
 /// let doubled = base.map(|x| x * 2);
@@ -843,7 +843,7 @@ where
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{ArcStatefulSupplier, StatefulSupplier};
+    /// use qubit_atomic::{ArcStatefulSupplier, StatefulSupplier};
     ///
     /// let mut supplier = ArcStatefulSupplier::constant(42);
     /// assert_eq!(supplier.get(), 42);
@@ -868,7 +868,7 @@ where
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{ArcStatefulSupplier, StatefulSupplier};
+    /// use qubit_atomic::{ArcStatefulSupplier, StatefulSupplier};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let call_count = Arc::new(Mutex::new(0));
@@ -965,7 +965,7 @@ impl_closure_trait!(
 /// ## Map transformation
 ///
 /// ```rust
-/// use prism3_function::{Supplier, FnStatefulSupplierOps};
+/// use qubit_atomic::{Supplier, FnStatefulSupplierOps};
 ///
 /// let mut counter = 0;
 /// let mut mapped = (move || {
@@ -980,7 +980,7 @@ impl_closure_trait!(
 /// ## Filter values
 ///
 /// ```rust
-/// use prism3_function::{Supplier, FnStatefulSupplierOps};
+/// use qubit_atomic::{Supplier, FnStatefulSupplierOps};
 ///
 /// let mut counter = 0;
 /// let mut filtered = (move || {
@@ -995,7 +995,7 @@ impl_closure_trait!(
 /// ## Combine with zip
 ///
 /// ```rust
-/// use prism3_function::{Supplier, FnStatefulSupplierOps, BoxStatefulSupplier};
+/// use qubit_atomic::{Supplier, FnStatefulSupplierOps, BoxStatefulSupplier};
 ///
 /// let first = || 42;
 /// let second = BoxStatefulSupplier::new(|| "hello");
@@ -1024,7 +1024,7 @@ pub trait FnStatefulSupplierOps<T>: FnMut() -> T + Sized + 'static {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{Supplier, FnStatefulSupplierOps};
+    /// use qubit_atomic::{Supplier, FnStatefulSupplierOps};
     ///
     /// let mut mapped = (|| 10)
     ///     .map(|x| x * 2)
@@ -1056,7 +1056,7 @@ pub trait FnStatefulSupplierOps<T>: FnMut() -> T + Sized + 'static {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{Supplier, FnStatefulSupplierOps};
+    /// use qubit_atomic::{Supplier, FnStatefulSupplierOps};
     ///
     /// let mut counter = 0;
     /// let mut filtered = (move || {
@@ -1092,7 +1092,7 @@ pub trait FnStatefulSupplierOps<T>: FnMut() -> T + Sized + 'static {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{Supplier, FnStatefulSupplierOps, BoxStatefulSupplier};
+    /// use qubit_atomic::{Supplier, FnStatefulSupplierOps, BoxStatefulSupplier};
     ///
     /// let first = || 42;
     /// let second = BoxStatefulSupplier::new(|| "hello");
@@ -1121,7 +1121,7 @@ pub trait FnStatefulSupplierOps<T>: FnMut() -> T + Sized + 'static {
     /// # Examples
     ///
     /// ```rust
-    /// use prism3_function::{Supplier, FnStatefulSupplierOps};
+    /// use qubit_atomic::{Supplier, FnStatefulSupplierOps};
     ///
     /// let mut call_count = 0;
     /// let mut memoized = (move || {

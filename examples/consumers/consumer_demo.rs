@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -15,7 +15,7 @@
 //! Consumer is used to consume (read) values without modifying the original value.
 //! If you need to modify values, please refer to mutator_demo.rs
 
-use prism3_function::{
+use qubit_atomic::{
     ArcConsumer,
     BoxConsumer,
     BoxStatefulConsumer,

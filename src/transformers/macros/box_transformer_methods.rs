@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025.
- *    3-Prism Co. Ltd.
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
  *
  *    All rights reserved.
  *
@@ -143,7 +143,7 @@ macro_rules! impl_box_transformer_methods {
         /// ```rust
         /// use std::sync::Arc;
         /// use std::sync::atomic::{AtomicI32, Ordering};
-        /// use prism3_rust_function::transformers::*;
+        /// use qubit_atomic::transformers::*;
         ///
         /// let transformer = BoxTransformer::new({
         ///     |value: &i32| value * 2
@@ -179,7 +179,7 @@ macro_rules! impl_box_transformer_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use prism3_rust_function::transformers::*;
+        /// use qubit_atomic::transformers::*;
         ///
         /// let transformer1 = BoxTransformer::new({
         ///     |value: &i32| value + 1
@@ -228,7 +228,7 @@ macro_rules! impl_box_transformer_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use prism3_rust_function::transformers::*;
+        /// use qubit_atomic::transformers::*;
         ///
         /// let bi_transformer = BoxBiTransformer::new({
         ///     |key: &String, value: &i32| format!("{}: {}", key, value)
@@ -264,7 +264,7 @@ macro_rules! impl_box_transformer_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use prism3_rust_function::transformers::*;
+        /// use qubit_atomic::transformers::*;
         ///
         /// let bi_transformer1 = BoxBiTransformer::new({
         ///     |key: &String, value: &i32| (key.clone(), *value + 1)

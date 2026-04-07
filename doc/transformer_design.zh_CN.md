@@ -1010,7 +1010,7 @@ let result = lazy.compute();
 
 ### 6.4 最终结论
 
-对于 `prism3-rust-function` 这样的库项目：
+对于 `qubit-atomic` 这样的库项目：
 
 1. **采用 Trait + 多种实现方案**：统一接口，灵活实现
 2. **提供 Transformer 和 TransformerOnce**：覆盖可重复调用和一次性使用场景
