@@ -36,7 +36,7 @@ qubit-function = "0.7.0"
 
 This crate provides 24 core functional abstractions, each with multiple implementations:
 
-### 1. Predicate - Condition Testing
+### 1. Predicate - Single-Argument Predicate
 
 Tests whether a value satisfies a condition, returning `bool`.
 
@@ -61,7 +61,7 @@ assert!(combined.test(&4));
 assert!(!combined.test(&-2));
 ```
 
-### 2. BiPredicate - Two-Value Condition Testing
+### 2. BiPredicate - Two-Argument Predicate
 
 Tests whether two values satisfy a condition, returning `bool`.
 
@@ -83,9 +83,10 @@ assert!(sum_positive.test(&3, &4));
 assert!(!sum_positive.test(&-5, &2));
 ```
 
-### 3. Consumer - Value Observation
+### 3. Consumer - Read-Only Consumer
 
-Accepts a value reference and performs operations without returning a result.
+Accepts a value reference and performs side effects without returning a
+result.
 
 **Trait**: `Consumer<T>`
 **Core Method**: `accept(&self, value: &T)`
@@ -106,20 +107,21 @@ let logger = BoxConsumer::new(|x: &i32| {
 logger.accept(&42);
 ```
 
-### 4. ConsumerOnce - One-Time Value Observation
+### 4. ConsumerOnce - Single-Use Read-Only Consumer
 
-Accepts a value reference and performs operations once.
+Accepts a value reference and performs side effects once.
 
 **Trait**: `ConsumerOnce<T>`
-**Core Method**: `accept_once(self, value: &T)`
+**Core Method**: `accept(self, value: &T)`
 **Closure Equivalent**: `FnOnce(&T)`
 
 **Implementations**:
 - `BoxConsumerOnce<T>` - Single ownership, one-time use
 
-### 5. BiConsumer - Two-Value Observation
+### 5. BiConsumer - Two-Argument Read-Only Consumer
 
-Accepts two value references and performs operations without returning a result.
+Accepts two value references and performs side effects without returning a
+result.
 
 **Trait**: `BiConsumer<T, U>`
 **Core Method**: `accept(&self, first: &T, second: &U)`
@@ -140,24 +142,24 @@ let sum_logger = BoxBiConsumer::new(|x: &i32, y: &i32| {
 sum_logger.accept(&10, &20);
 ```
 
-### 6. BiConsumerOnce - One-Time Two-Value Observation
+### 6. BiConsumerOnce - Single-Use Two-Argument Read-Only Consumer
 
-Accepts two value references and performs operations once.
+Accepts two value references and performs side effects once.
 
 **Trait**: `BiConsumerOnce<T, U>`
-**Core Method**: `accept_once(self, first: &T, second: &U)`
+**Core Method**: `accept(self, first: &T, second: &U)`
 **Closure Equivalent**: `FnOnce(&T, &U)`
 
 **Implementations**:
 - `BoxBiConsumerOnce<T, U>` - Single ownership, one-time use
 
-### 7. Mutator - In-Place Value Modification
+### 7. Mutator - Stateless In-Place Mutator
 
-Modifies values in-place by accepting mutable references.
+Modifies the target value in place via `&mut T` with no return value. The mutator itself is **stateless** and is invoked with `&self` (equivalent to `Fn(&mut T)`).
 
 **Trait**: `Mutator<T>`
-**Core Method**: `mutate(&mut self, value: &mut T)`
-**Closure Equivalent**: `FnMut(&mut T)`
+**Core Method**: `apply(&self, value: &mut T)`
+**Closure Equivalent**: `Fn(&mut T)`
 
 **Implementations**:
 - `BoxMutator<T>` - Single ownership
@@ -170,13 +172,13 @@ use qubit_function::{Mutator, BoxMutator};
 
 let mut doubler = BoxMutator::new(|x: &mut i32| *x *= 2);
 let mut value = 10;
-doubler.mutate(&mut value);
+doubler.apply(&mut value);
 assert_eq!(value, 20);
 ```
 
-### 8. MutatorOnce - One-Time In-Place Modification
+### 8. MutatorOnce - Single-Use In-Place Mutator
 
-Modifies a value in-place once.
+May be invoked once to mutate the target in place via `&mut T` (equivalent to `FnOnce(&mut T)`).
 
 **Trait**: `MutatorOnce<T>`
 **Core Method**: `apply(self, value: &mut T)`
@@ -185,9 +187,11 @@ Modifies a value in-place once.
 **Implementations**:
 - `BoxMutatorOnce<T>` - Single ownership, one-time use
 
-### 9. Supplier - Value Generation
+### 9. Supplier - Stateless Value Supplier
 
-Generates values without input parameters.
+Returns a value of type `T` on each `get` call with no input. The
+supplier itself is **stateless** and uses `&self` (equivalent to
+`Fn() -> T`).
 
 **Trait**: `Supplier<T>`
 **Core Method**: `get(&self) -> T`
@@ -206,9 +210,10 @@ let factory = BoxSupplier::new(|| String::from("Hello"));
 assert_eq!(factory.get(), "Hello");
 ```
 
-### 10. SupplierOnce - One-Time Value Generation
+### 10. SupplierOnce - Single-Use Value Supplier
 
-Generates a value once without input parameters.
+May invoke `get` only once to return a single `T` (equivalent to
+`FnOnce() -> T`).
 
 **Trait**: `SupplierOnce<T>`
 **Core Method**: `get(self) -> T`
@@ -217,9 +222,9 @@ Generates a value once without input parameters.
 **Implementations**:
 - `BoxSupplierOnce<T>` - Single ownership, one-time use
 
-### 11. StatefulSupplier - Stateful Value Generation
+### 11. StatefulSupplier - Stateful Value Supplier
 
-Generates values with mutable state.
+Supplies a `T` using mutable internal state; successive `get` calls may differ (equivalent to `FnMut() -> T`).
 
 **Trait**: `StatefulSupplier<T>`
 **Core Method**: `get(&mut self) -> T`
@@ -246,9 +251,9 @@ assert_eq!(counter.get(), 1);
 assert_eq!(counter.get(), 2);
 ```
 
-### 12. Function - Reference Transformation
+### 12. Function - Borrowed-Input Function
 
-Transforms a value reference to produce a result without consuming the input.
+Computes a result from a borrowed input without consuming the input.
 
 **Trait**: `Function<T, R>`
 **Core Method**: `apply(&self, input: &T) -> R`
@@ -267,20 +272,21 @@ let to_string = BoxFunction::new(|x: &i32| format!("Value: {}", x));
 assert_eq!(to_string.apply(&42), "Value: 42");
 ```
 
-### 13. FunctionOnce - One-Time Reference Transformation
+### 13. FunctionOnce - Single-Use Borrowed-Input Function
 
-Transforms a value reference once to produce a result.
+Computes a result from a borrowed input once.
 
 **Trait**: `FunctionOnce<T, R>`
-**Core Method**: `apply_once(self, input: &T) -> R`
+**Core Method**: `apply(self, input: &T) -> R`
 **Closure Equivalent**: `FnOnce(&T) -> R`
 
 **Implementations**:
 - `BoxFunctionOnce<T, R>` - Single ownership, one-time use
 
-### 14. StatefulFunction - Stateful Reference Transformation
+### 14. StatefulFunction - Stateful Borrowed-Input Function
 
-Transforms a value reference with mutable state.
+Computes a result from a borrowed input while allowing mutable internal
+state.
 
 **Trait**: `StatefulFunction<T, R>`
 **Core Method**: `apply(&mut self, input: &T) -> R`
@@ -291,12 +297,13 @@ Transforms a value reference with mutable state.
 - `ArcStatefulFunction<T, R>` - Thread-safe with parking_lot::Mutex
 - `RcStatefulFunction<T, R>` - Single-threaded with RefCell
 
-### 15. Transformer - Value Transformation by Consumption
+### 15. Transformer - Value Transformer
 
-Transforms values from type `T` to type `R` by consuming input.
+Consumes an input value of type `T` and transforms it into a value of
+type `R`.
 
 **Trait**: `Transformer<T, R>`
-**Core Method**: `transform(&self, input: T) -> R`
+**Core Method**: `apply(&self, input: T) -> R`
 **Closure Equivalent**: `Fn(T) -> R`
 
 **Implementations**:
@@ -311,15 +318,15 @@ Transforms values from type `T` to type `R` by consuming input.
 use qubit_function::{Transformer, BoxTransformer};
 
 let parse = BoxTransformer::new(|s: String| s.parse::<i32>().unwrap_or(0));
-assert_eq!(parse.transform("42".to_string()), 42);
+assert_eq!(parse.apply("42".to_string()), 42);
 ```
 
-### 16. TransformerOnce - One-Time Value Transformation
+### 16. TransformerOnce - Single-Use Value Transformer
 
-Transforms a value once by consuming both the transformer and input.
+Consumes an input value once and transforms it into a value of type `R`.
 
 **Trait**: `TransformerOnce<T, R>`
-**Core Method**: `transform_once(self, input: T) -> R`
+**Core Method**: `apply(self, input: T) -> R`
 **Closure Equivalent**: `FnOnce(T) -> R`
 
 **Implementations**:
@@ -327,12 +334,13 @@ Transforms a value once by consuming both the transformer and input.
 
 **Type Alias**: `UnaryOperatorOnce<T>` = `TransformerOnce<T, T>`
 
-### 17. StatefulTransformer - Stateful Value Transformation
+### 17. StatefulTransformer - Stateful Value Transformer
 
-Transforms values with mutable state by consuming input.
+Consumes an input value and transforms it into a value of type `R`
+while allowing mutable internal state.
 
 **Trait**: `StatefulTransformer<T, R>`
-**Core Method**: `transform(&mut self, input: T) -> R`
+**Core Method**: `apply(&mut self, input: T) -> R`
 **Closure Equivalent**: `FnMut(T) -> R`
 
 **Implementations**:
@@ -340,12 +348,12 @@ Transforms values with mutable state by consuming input.
 - `ArcStatefulTransformer<T, R>` - Thread-safe with parking_lot::Mutex
 - `RcStatefulTransformer<T, R>` - Single-threaded with RefCell
 
-### 18. BiTransformer - Two-Value Transformation
+### 18. BiTransformer - Two-Argument Value Transformer
 
-Transforms two input values to produce a result by consuming inputs.
+Consumes two input values and transforms them into a result.
 
 **Trait**: `BiTransformer<T, U, R>`
-**Core Method**: `transform(&self, first: T, second: U) -> R`
+**Core Method**: `apply(&self, first: T, second: U) -> R`
 **Closure Equivalent**: `Fn(T, U) -> R`
 
 **Implementations**:
@@ -360,15 +368,29 @@ Transforms two input values to produce a result by consuming inputs.
 use qubit_function::{BiTransformer, BoxBiTransformer};
 
 let add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
-assert_eq!(add.transform(10, 20), 30);
+assert_eq!(add.apply(10, 20), 30);
 ```
 
-### 20. BiTransformerOnce - One-Time Two-Value Transformation
+### 19. StatefulBiTransformer - Stateful Two-Argument Value Transformer
 
-Transforms two values once by consuming everything.
+Consumes two input values and transforms them into a result while
+allowing mutable internal state.
+
+**Trait**: `StatefulBiTransformer<T, U, R>`
+**Core Method**: `apply(&mut self, first: T, second: U) -> R`
+**Closure Equivalent**: `FnMut(T, U) -> R`
+
+**Implementations**:
+- `BoxStatefulBiTransformer<T, U, R>` - Single ownership
+- `ArcStatefulBiTransformer<T, U, R>` - Thread-safe with parking_lot::Mutex
+- `RcStatefulBiTransformer<T, U, R>` - Single-threaded with RefCell
+
+### 20. BiTransformerOnce - Single-Use Two-Argument Value Transformer
+
+Consumes two input values once and transforms them into a result.
 
 **Trait**: `BiTransformerOnce<T, U, R>`
-**Core Method**: `transform_once(self, first: T, second: U) -> R`
+**Core Method**: `apply(self, first: T, second: U) -> R`
 **Closure Equivalent**: `FnOnce(T, U) -> R`
 
 **Implementations**:
@@ -376,9 +398,10 @@ Transforms two values once by consuming everything.
 
 **Type Alias**: `BinaryOperatorOnce<T>` = `BiTransformerOnce<T, T, T>`
 
-### 21. StatefulConsumer - Stateful Value Observation
+### 21. StatefulConsumer - Stateful Consumer
 
-Accepts a value reference with mutable state.
+Accepts a value reference and performs side effects while allowing
+mutable internal state.
 
 **Trait**: `StatefulConsumer<T>`
 **Core Method**: `accept(&mut self, value: &T)`
@@ -389,9 +412,10 @@ Accepts a value reference with mutable state.
 - `ArcStatefulConsumer<T>` - Thread-safe with parking_lot::Mutex
 - `RcStatefulConsumer<T>` - Single-threaded with RefCell
 
-### 22. StatefulBiConsumer - Stateful Two-Value Observation
+### 22. StatefulBiConsumer - Stateful Two-Argument Consumer
 
-Accepts two value references with mutable state.
+Accepts two value references and performs side effects while allowing
+mutable internal state.
 
 **Trait**: `StatefulBiConsumer<T, U>`
 **Core Method**: `accept(&mut self, first: &T, second: &U)`
@@ -402,7 +426,7 @@ Accepts two value references with mutable state.
 - `ArcStatefulBiConsumer<T, U>` - Thread-safe with parking_lot::Mutex
 - `RcStatefulBiConsumer<T, U>` - Single-threaded with RefCell
 
-### 23. Comparator - Value Comparison
+### 23. Comparator - Ordering Comparator
 
 Compares two values and returns an `Ordering`.
 
@@ -424,9 +448,9 @@ let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
 assert_eq!(cmp.compare(&5, &3), Ordering::Greater);
 ```
 
-### 24. Tester - Condition Testing Without Input
+### 24. Tester - Zero-Argument Condition Checker
 
-Tests whether a state or condition holds without accepting input.
+Checks whether a condition or state holds without taking input.
 
 **Trait**: `Tester`
 **Core Method**: `test(&self) -> bool`
@@ -458,24 +482,25 @@ assert!(!tester.test());
 | `Predicate<T>` | `test(&self, value: &T) -> bool` | `Fn(&T) -> bool` |
 | `BiPredicate<T, U>` | `test(&self, first: &T, second: &U) -> bool` | `Fn(&T, &U) -> bool` |
 | `Consumer<T>` | `accept(&self, value: &T)` | `Fn(&T)` |
-| `ConsumerOnce<T>` | `accept_once(self, value: &T)` | `FnOnce(&T)` |
+| `ConsumerOnce<T>` | `accept(self, value: &T)` | `FnOnce(&T)` |
 | `StatefulConsumer<T>` | `accept(&mut self, value: &T)` | `FnMut(&T)` |
 | `BiConsumer<T, U>` | `accept(&self, first: &T, second: &U)` | `Fn(&T, &U)` |
-| `BiConsumerOnce<T, U>` | `accept_once(self, first: &T, second: &U)` | `FnOnce(&T, &U)` |
+| `BiConsumerOnce<T, U>` | `accept(self, first: &T, second: &U)` | `FnOnce(&T, &U)` |
 | `StatefulBiConsumer<T, U>` | `accept(&mut self, first: &T, second: &U)` | `FnMut(&T, &U)` |
-| `Mutator<T>` | `mutate(&mut self, value: &mut T)` | `FnMut(&mut T)` |
+| `Mutator<T>` | `apply(&self, value: &mut T)` | `Fn(&mut T)` |
 | `MutatorOnce<T>` | `apply(self, value: &mut T)` | `FnOnce(&mut T)` |
 | `Supplier<T>` | `get(&self) -> T` | `Fn() -> T` |
 | `SupplierOnce<T>` | `get(self) -> T` | `FnOnce() -> T` |
 | `StatefulSupplier<T>` | `get(&mut self) -> T` | `FnMut() -> T` |
 | `Function<T, R>` | `apply(&self, input: &T) -> R` | `Fn(&T) -> R` |
-| `FunctionOnce<T, R>` | `apply_once(self, input: &T) -> R` | `FnOnce(&T) -> R` |
+| `FunctionOnce<T, R>` | `apply(self, input: &T) -> R` | `FnOnce(&T) -> R` |
 | `StatefulFunction<T, R>` | `apply(&mut self, input: &T) -> R` | `FnMut(&T) -> R` |
-| `Transformer<T, R>` | `transform(&self, input: T) -> R` | `Fn(T) -> R` |
-| `TransformerOnce<T, R>` | `transform_once(self, input: T) -> R` | `FnOnce(T) -> R` |
-| `StatefulTransformer<T, R>` | `transform(&mut self, input: T) -> R` | `FnMut(T) -> R` |
-| `BiTransformer<T, U, R>` | `transform(&self, first: T, second: U) -> R` | `Fn(T, U) -> R` |
-| `BiTransformerOnce<T, U, R>` | `transform_once(self, first: T, second: U) -> R` | `FnOnce(T, U) -> R` |
+| `Transformer<T, R>` | `apply(&self, input: T) -> R` | `Fn(T) -> R` |
+| `TransformerOnce<T, R>` | `apply(self, input: T) -> R` | `FnOnce(T) -> R` |
+| `StatefulTransformer<T, R>` | `apply(&mut self, input: T) -> R` | `FnMut(T) -> R` |
+| `BiTransformer<T, U, R>` | `apply(&self, first: T, second: U) -> R` | `Fn(T, U) -> R` |
+| `StatefulBiTransformer<T, U, R>` | `apply(&mut self, first: T, second: U) -> R` | `FnMut(T, U) -> R` |
+| `BiTransformerOnce<T, U, R>` | `apply(self, first: T, second: U) -> R` | `FnOnce(T, U) -> R` |
 | `Comparator<T>` | `compare(&self, a: &T, b: &T) -> Ordering` | `Fn(&T, &T) -> Ordering` |
 | `Tester` | `test(&self) -> bool` | `Fn() -> bool` |
 
@@ -505,6 +530,7 @@ Each trait has multiple implementations based on ownership model:
 | TransformerOnce | BoxTransformerOnce | - | - |
 | StatefulTransformer | BoxStatefulTransformer | ArcStatefulTransformer | RcStatefulTransformer |
 | BiTransformer | BoxBiTransformer | ArcBiTransformer | RcBiTransformer |
+| StatefulBiTransformer | BoxStatefulBiTransformer | ArcStatefulBiTransformer | RcStatefulBiTransformer |
 | BiTransformerOnce | BoxBiTransformerOnce | - | - |
 | Comparator | BoxComparator | ArcComparator | RcComparator |
 | Tester | BoxTester | ArcTester | RcTester |

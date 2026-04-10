@@ -2,7 +2,9 @@
 
 ## 📋 概述
 
-`qubit-function` 是一个功能强大的 Rust 函数式编程抽象库,提供了类似 Java 函数式接口的 Rust 实现。该库包含 **24 个核心模块**,涵盖了函数式编程的各个方面。
+`qubit-function` 是一个功能强大的 Rust 函数式编程抽象库,提供了类似
+Java 函数式接口的 Rust 实现。该库包含 **24 个核心接口**,涵盖了函数式
+编程的各个方面。
 
 ## 🎯 核心设计理念
 
@@ -33,34 +35,36 @@
 | 接口名称 | 功能描述 | 签名 | 输入类型 | 输出类型 | 自身状态 |
 |---------|---------|------|---------|---------|---------|
 | **Transformer** | 值转换器 | `Fn(T) -> R` | `T` | `R` | 无状态 |
-| **TransformerOnce** | 一次性转换器 | `FnOnce(T) -> R` | `T` | `R` | 无状态 |
-| **StatefulTransformer** | 有状态转换器 | `FnMut(T) -> R` | `T` | `R` | 有状态 |
-| **Function** | 引用函数 | `Fn(&T) -> R` | `&T` | `R` | 无状态 |
-| **FunctionOnce** | 一次性引用函数 | `FnOnce(&T) -> R` | `&T` | `R` | 无状态 |
-| **StatefulFunction** | 有状态函数 | `FnMut(&T) -> R` | `&T` | `R` | 有状态 |
+| **TransformerOnce** | 一次性值转换器 | `FnOnce(T) -> R` | `T` | `R` | 无状态 |
+| **StatefulTransformer** | 有状态值转换器 | `FnMut(T) -> R` | `T` | `R` | 有状态 |
+| **Function** | 借用输入函数 | `Fn(&T) -> R` | `&T` | `R` | 无状态 |
+| **FunctionOnce** | 一次性借用输入函数 | `FnOnce(&T) -> R` | `&T` | `R` | 无状态 |
+| **StatefulFunction** | 有状态借用输入函数 | `FnMut(&T) -> R` | `&T` | `R` | 有状态 |
 | **Consumer** | 只读消费者 | `Fn(&T)` | `&T` | 无 | 无状态 |
-| **ConsumerOnce** | 一次性消费者 | `FnOnce(&T)` | `&T` | 无 | 无状态 |
+| **ConsumerOnce** | 一次性只读消费者 | `FnOnce(&T)` | `&T` | 无 | 无状态 |
 | **StatefulConsumer** | 有状态消费者 | `FnMut(&T)` | `&T` | 无 | 有状态 |
-| **Mutator** | 可变修改器 | `FnMut(&mut T)` | `&mut T` | 无 | 无状态 |
-| **MutatorOnce** | 一次性修改器 | `FnOnce(&mut T)` | `&mut T` | 无 | 无状态 |
+| **Mutator** | 无状态原地修改器 | `Fn(&mut T)` | `&mut T` | 无 | 无状态 |
+| **MutatorOnce** | 一次性原地修改器 | `FnOnce(&mut T)` | `&mut T` | 无 | 无状态 |
 | **Predicate** | 单参数谓词 | `Fn(&T) -> bool` | `&T` | `bool` | 无状态 |
 | **BiPredicate** | 双参数谓词 | `Fn(&T, &U) -> bool` | `&T, &U` | `bool` | 无状态 |
-| **Supplier** | 只读供给者 | `Fn() -> T` | 无 | `T` | 无状态 |
-| **SupplierOnce** | 一次性供给者 | `FnOnce() -> T` | 无 | `T` | 无状态 |
-| **StatefulSupplier** | 有状态供给者 | `FnMut() -> T` | 无 | `T` | 有状态 |
-| **BiTransformer** | 双参数转换器 | `Fn(T, U) -> R` | `T, U` | `R` | 无状态 |
-| **BiTransformerOnce** | 一次性双参数转换器 | `FnOnce(T, U) -> R` | `T, U` | `R` | 无状态 |
+| **Supplier** | 无状态值提供者 | `Fn() -> T` | 无 | `T` | 无状态 |
+| **SupplierOnce** | 一次性值提供者 | `FnOnce() -> T` | 无 | `T` | 无状态 |
+| **StatefulSupplier** | 有状态值提供者 | `FnMut() -> T` | 无 | `T` | 有状态 |
+| **BiTransformer** | 双参数值转换器 | `Fn(T, U) -> R` | `T, U` | `R` | 无状态 |
+| **StatefulBiTransformer** | 有状态双参数值转换器 | `FnMut(T, U) -> R` | `T, U` | `R` | 有状态 |
+| **BiTransformerOnce** | 一次性双参数值转换器 | `FnOnce(T, U) -> R` | `T, U` | `R` | 无状态 |
 | **BiConsumer** | 双参数只读消费者 | `Fn(&T, &U)` | `&T, &U` | 无 | 无状态 |
-| **BiConsumerOnce** | 一次性双参数消费者 | `FnOnce(&T, &U)` | `&T, &U` | 无 | 无状态 |
+| **BiConsumerOnce** | 一次性双参数只读消费者 | `FnOnce(&T, &U)` | `&T, &U` | 无 | 无状态 |
 | **StatefulBiConsumer** | 有状态双参数消费者 | `FnMut(&T, &U)` | `&T, &U` | 无 | 有状态 |
-| **Tester** | 测试器 | `Fn() -> bool` | 无 | `bool` | 无状态 |
-| **Comparator** | 比较器 | `Fn(&T, &T) -> Ordering` | `&T, &T` | `Ordering` | 无状态 |
+| **Tester** | 无参条件判定器 | `Fn() -> bool` | 无 | `bool` | 无状态 |
+| **Comparator** | 排序比较器 | `Fn(&T, &T) -> Ordering` | `&T, &T` | `Ordering` | 无状态 |
 
 ### 一、转换器家族 (Transformer Family)
 
-转换器家族包含所有将输入转换为输出的接口，按状态管理和调用次数分为三个子类：
+转换器家族包含所有消耗输入值并产生输出值的接口，按输入参数个数、
+状态管理和调用次数分为多个子类：
 
-#### 1. Transformer - 无状态转换器
+#### 1. Transformer - 值转换器
 
 **签名**: `Fn(T) -> R` (消耗输入,产生输出)
 
@@ -97,7 +101,7 @@ pub trait Transformer<T, R> {
 
 ---
 
-#### 2. TransformerOnce - 一次性转换器
+#### 2. TransformerOnce - 一次性值转换器
 
 **签名**: `FnOnce(T) -> R` (只能调用一次)
 
@@ -123,7 +127,7 @@ pub trait TransformerOnce<T, R> {
 
 ---
 
-#### 3. StatefulTransformer - 有状态转换器
+#### 3. StatefulTransformer - 有状态值转换器
 
 **签名**: `FnMut(T) -> R` (可变自身,消耗输入)
 
@@ -155,7 +159,7 @@ pub trait StatefulTransformer<T, R> {
 
 ---
 
-#### 4. BiTransformer - 双参数转换器
+#### 4. BiTransformer - 双参数值转换器
 
 **签名**: `Fn(T, U) -> R` (消耗两个输入,产生输出)
 
@@ -187,7 +191,30 @@ pub trait BiTransformer<T, U, R> {
 
 ---
 
-#### 5. BiTransformerOnce - 一次性双参数转换器
+#### 5. StatefulBiTransformer - 有状态双参数值转换器
+
+**签名**: `FnMut(T, U) -> R` (可变自身,消耗两个输入)
+
+**核心 Trait**:
+```rust
+pub trait StatefulBiTransformer<T, U, R> {
+    fn apply(&mut self, first: T, second: U) -> R;
+}
+```
+
+**实现类型**:
+- `BoxStatefulBiTransformer<T, U, R>`
+- `RcStatefulBiTransformer<T, U, R>`
+- `ArcStatefulBiTransformer<T, U, R>`
+
+**使用场景**:
+- 带状态的双输入转换
+- 需要累积上下文的二元运算
+- 可复用的双输入转换管道
+
+---
+
+#### 6. BiTransformerOnce - 一次性双参数值转换器
 
 **签名**: `FnOnce(T, U) -> R`
 
@@ -207,9 +234,10 @@ pub trait BiTransformerOnce<T, U, R> {
 
 ### 二、函数家族 (Function Family)
 
-函数家族包含所有借用输入并产生输出的接口，按状态管理分为两个子类：
+函数家族包含所有基于借用输入计算输出的接口，按状态管理和调用次数
+分为多个子类：
 
-#### 6. Function - 无状态函数
+#### 7. Function - 借用输入函数
 
 **签名**: `Fn(&T) -> R` (借用输入,产生输出)
 
@@ -246,7 +274,7 @@ pub trait Function<T, R> {
 
 ---
 
-#### 7. FunctionOnce - 一次性函数
+#### 8. FunctionOnce - 一次性借用输入函数
 
 **签名**: `FnOnce(&T) -> R`
 
@@ -262,7 +290,7 @@ pub trait FunctionOnce<T, R> {
 
 ---
 
-#### 8. StatefulFunction - 有状态函数
+#### 9. StatefulFunction - 有状态借用输入函数
 
 **签名**: `FnMut(&T) -> R` (可变自身,借用输入)
 
@@ -286,9 +314,10 @@ pub trait StatefulFunction<T, R> {
 
 ### 三、消费者家族 (Consumer Family)
 
-消费者家族包含所有消费输入但不产生输出的接口，按状态管理分为三个子类：
+消费者家族包含所有借用输入且不产生输出的接口，按输入参数个数、
+状态管理和调用次数分为多个子类：
 
-#### 9. Consumer - 无状态消费者
+#### 10. Consumer - 只读消费者
 
 **签名**: `Fn(&T)` (借用输入,无返回值)
 
@@ -315,7 +344,7 @@ pub trait Consumer<T> {
 
 ---
 
-#### 10. ConsumerOnce - 一次性消费者
+#### 11. ConsumerOnce - 一次性只读消费者
 
 **签名**: `FnOnce(&T)`
 
@@ -331,7 +360,7 @@ pub trait ConsumerOnce<T> {
 
 ---
 
-#### 11. StatefulConsumer - 有状态消费者
+#### 12. StatefulConsumer - 有状态消费者
 
 **签名**: `FnMut(&T)` (可变自身,借用输入,无返回值)
 
@@ -358,7 +387,7 @@ pub trait StatefulConsumer<T> {
 
 ---
 
-#### 12. BiConsumer - 双参数消费者
+#### 13. BiConsumer - 双参数只读消费者
 
 **签名**: `Fn(&T, &U)` (借用两个输入,无返回值)
 
@@ -385,7 +414,7 @@ pub trait BiConsumer<T, U> {
 
 ---
 
-#### 13. BiConsumerOnce - 一次性双参数消费者
+#### 14. BiConsumerOnce - 一次性双参数只读消费者
 
 **签名**: `FnOnce(&T, &U)`
 
@@ -401,7 +430,7 @@ pub trait BiConsumerOnce<T, U> {
 
 ---
 
-#### 14. StatefulBiConsumer - 有状态双参数消费者
+#### 15. StatefulBiConsumer - 有状态双参数消费者
 
 **签名**: `FnMut(&T, &U)` (可变自身,借用两个输入)
 
@@ -423,28 +452,28 @@ pub trait StatefulBiConsumer<T, U> {
 
 修改器家族包含所有修改输入但不产生输出的接口：
 
-#### 15. Mutator - 可变修改器
+#### 16. Mutator - 无状态原地修改器
 
-**签名**: `FnMut(&mut T)` (可变借用输入,无返回值)
+**签名**: `Fn(&mut T)` (可变借用输入,无返回值)
 
 **核心 Trait**:
 ```rust
 pub trait Mutator<T> {
-    fn mutate(&mut self, value: &mut T);
+    fn apply(&self, value: &mut T);
 }
 ```
 
 **实现类型**:
-- `BoxMutator<T>`
-- `RcMutator<T>`: 使用 `RefCell` 实现内部可变性
-- `ArcMutator<T>`: 使用 `Mutex` 实现线程安全
+- `BoxMutator<T>`: 单一所有权
+- `RcMutator<T>`: 单线程共享
+- `ArcMutator<T>`: 线程安全共享
 
 **条件执行**:
 - `ConditionalMutator`
 - `BoxConditionalMutator`, `RcConditionalMutator`, `ArcConditionalMutator`
 
 **核心方法**:
-- `mutate(value: &mut T)`: 执行修改
+- `apply(value: &mut T)`: 执行修改
 - `and_then()`: 链式组合
 - `when()`: 条件执行
 - `or_else()`: 条件分支
@@ -460,14 +489,14 @@ pub trait Mutator<T> {
 
 ---
 
-#### 16. MutatorOnce - 一次性修改器
+#### 17. MutatorOnce - 一次性原地修改器
 
 **签名**: `FnOnce(&mut T)`
 
 **核心 Trait**:
 ```rust
 pub trait MutatorOnce<T> {
-    fn mutate(self, value: &mut T);
+    fn apply(self, value: &mut T);
 }
 ```
 
@@ -484,7 +513,7 @@ pub trait MutatorOnce<T> {
 
 谓词家族包含所有返回布尔值的接口：
 
-#### 17. Predicate - 单参数谓词
+#### 18. Predicate - 单参数谓词
 
 **签名**: `Fn(&T) -> bool` (借用输入,返回布尔值)
 
@@ -518,7 +547,7 @@ pub trait Predicate<T> {
 
 ---
 
-#### 18. BiPredicate - 双参数谓词
+#### 19. BiPredicate - 双参数谓词
 
 **签名**: `Fn(&T, &U) -> bool` (借用两个输入,返回布尔值)
 
@@ -547,11 +576,12 @@ pub trait BiPredicate<T, U> {
 
 ---
 
-### 六、供给者家族 (Supplier Family)
+### 六、值提供者家族 (Supplier Family)
 
-供给者家族包含所有不接收输入但产生输出的接口，按状态管理分为三个子类：
+值提供者家族包含所有不接收输入但返回值的接口，按状态管理和调用次数
+分为多个子类：
 
-#### 19. Supplier - 无状态供给者
+#### 20. Supplier - 无状态值提供者
 
 **签名**: `Fn() -> T` (无输入,产生输出)
 
@@ -582,7 +612,7 @@ pub trait Supplier<T> {
 
 ---
 
-#### 20. SupplierOnce - 一次性供给者
+#### 21. SupplierOnce - 一次性值提供者
 
 **签名**: `FnOnce() -> T`
 
@@ -598,7 +628,7 @@ pub trait SupplierOnce<T> {
 
 ---
 
-#### 21. StatefulSupplier - 有状态供给者
+#### 22. StatefulSupplier - 有状态值提供者
 
 **签名**: `FnMut() -> T` (可变自身,无输入)
 
@@ -629,7 +659,7 @@ pub trait StatefulSupplier<T> {
 
 特殊接口包含具有特殊用途的接口：
 
-#### 22. Tester - 测试器
+#### 23. Tester - 无参条件判定器
 
 **签名**: `Fn() -> bool` (无输入,返回布尔值)
 
@@ -658,7 +688,7 @@ pub trait Tester {
 
 ---
 
-#### 23. Comparator - 比较器
+#### 24. Comparator - 排序比较器
 
 **签名**: `Fn(&T, &T) -> Ordering` (借用两个相同类型,返回排序结果)
 
@@ -697,7 +727,8 @@ graph TB
         T2[TransformerOnce<T,R>]
         T3[StatefulTransformer<T,R>]
         T4[BiTransformer<T,U,R>]
-        T5[BiTransformerOnce<T,U,R>]
+        T5[StatefulBiTransformer<T,U,R>]
+        T6[BiTransformerOnce<T,U,R>]
         T1 -.特化.-> U1[UnaryOperator<T>]
         T4 -.特化.-> B1[BinaryOperator<T>]
     end
@@ -727,7 +758,7 @@ graph TB
         P2[BiPredicate<T,U>]
     end
 
-    subgraph "供给者家族 Supplier Family"
+    subgraph "值提供者家族 Supplier Family"
         S1[Supplier<T>]
         S2[SupplierOnce<T>]
         S3[StatefulSupplier<T>]
@@ -742,7 +773,8 @@ graph TB
     T1 -.一次性版本.-> T2
     T1 -.有状态版本.-> T3
     T1 -.双参数版本.-> T4
-    T4 -.一次性版本.-> T5
+    T4 -.有状态版本.-> T5
+    T4 -.一次性版本.-> T6
 
     F1 -.一次性版本.-> F2
     F1 -.有状态版本.-> F3
@@ -1004,4 +1036,3 @@ let pred = BoxPredicate::new(|x: &i32| *x > 0)
 ## 作者
 
 胡海星
-

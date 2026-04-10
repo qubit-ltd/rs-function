@@ -2,13 +2,13 @@
 
 ## 概述
 
-本文档分析 Rust 中实现 Supplier（供应者）类型的设计方案，阐明核心语义和设计决策。
+本文档分析 Rust 中实现 Supplier（值提供者）类型的设计方案，阐明核心语义和设计决策。
 
 ## 什么是 Supplier？
 
 ### Supplier 的本质语义
 
-在函数式编程中，**Supplier（供应者）**的核心语义是：
+在函数式编程中，**Supplier（值提供者）**的核心语义是：
 
 > **生成并提供一个值，不接受输入参数。可能每次生成新值（如工厂），也可能返回固定值（如常量）。**
 
@@ -122,7 +122,7 @@ let ref2 = supplier.get();  // ref1 和 ref2 互相干扰！
 #### 推荐方案：只支持返回所有权 `T`
 
 ```rust
-/// 供应者 - 生成并返回值
+/// 值提供者 - 生成并返回值
 pub trait Supplier<T> {
     fn get(&mut self) -> T;  // 返回所有权
 }
@@ -332,7 +332,7 @@ pub struct DoubleCheckedExecutor<R, E> {
 基于以上分析，**应该提供 ReadonlySupplier**：
 
 ```rust
-/// 只读供应者：生成值但不修改自身状态
+/// 只读值提供者：生成值但不修改自身状态
 pub trait ReadonlySupplier<T> {
     fn get(&self) -> T;  // 注意是 &self，不是 &mut self
 }
@@ -402,8 +402,8 @@ impl<T> Clone for ArcReadonlySupplier<T> {
 | 嵌入在只读结构中 | `ReadonlySupplier` (Fn) | 结构体可以保持 `&self` API |
 
 **结论**：
-- ✅ **提供 `Supplier<T>` (使用 `&mut self`)**：用于有状态的供应者
-- ✅ **提供 `ReadonlySupplier<T>` (使用 `&self`)**：用于无状态的供应者
+- ✅ **提供 `Supplier<T>` (使用 `&mut self`)**：用于有状态的值提供者
+- ✅ **提供 `ReadonlySupplier<T>` (使用 `&self`)**：用于无状态的值提供者
 - 两者形成互补，覆盖不同的使用场景
 
 ### 3. SupplierOnce 的价值
@@ -759,7 +759,7 @@ impl<T> Supplier<T> for BoxSupplier<T> {
 }
 
 // ============================================================================
-// 4. BoxSupplierOnce - 一次性供应者
+// 4. BoxSupplierOnce - 一次性值提供者
 // ============================================================================
 
 pub struct BoxSupplierOnce<T> {
@@ -1003,19 +1003,19 @@ use_supplier(&mut arc_sup);
 ```rust
 // === Supplier 系列（生成值）===
 
-/// 供应者：生成并返回值（可修改状态）
+/// 值提供者：生成并返回值（可修改状态）
 pub trait Supplier<T> {
     /// 获取值（可以多次调用，可修改自身状态）
     fn get(&mut self) -> T;
 }
 
-/// 只读供应者：生成并返回值（不修改状态）
+/// 只读值提供者：生成并返回值（不修改状态）
 pub trait ReadonlySupplier<T> {
     /// 获取值（可以多次调用，不修改自身状态）
     fn get(&self) -> T;
 }
 
-/// 一次性供应者：生成并返回值，只能调用一次
+/// 一次性值提供者：生成并返回值，只能调用一次
 pub trait SupplierOnce<T> {
     /// 获取值（消耗 self，只能调用一次）
     fn get(self) -> T;
@@ -1023,15 +1023,15 @@ pub trait SupplierOnce<T> {
 ```
 
 **当前实现状态**：
-- ✅ `Supplier` - 需要实现（有状态供应者，使用 `&mut self`）
-- ✅ `SupplierOnce` - 需要实现（一次性供应者）
-- ✅ `ReadonlySupplier` - **需要实现**（无状态供应者，使用 `&self`，无锁性能）
+- ✅ `Supplier` - 需要实现（有状态值提供者，使用 `&mut self`）
+- ✅ `SupplierOnce` - 需要实现（一次性值提供者）
+- ✅ `ReadonlySupplier` - **需要实现**（无状态值提供者，使用 `&self`，无锁性能）
 
 ### 具体实现
 
 ```rust
 // ============================================================================
-// Supplier - 有状态供应者（可修改状态）
+// Supplier - 有状态值提供者（可修改状态）
 // ============================================================================
 
 // Box 实现（单一所有权）
@@ -1050,7 +1050,7 @@ pub struct RcSupplier<T> {
 }
 
 // ============================================================================
-// ReadonlySupplier - 只读供应者（不修改状态）
+// ReadonlySupplier - 只读值提供者（不修改状态）
 // ============================================================================
 
 // Box 实现（单一所有权）
@@ -1069,7 +1069,7 @@ pub struct RcReadonlySupplier<T> {
 }
 
 // ============================================================================
-// SupplierOnce - 一次性供应者
+// SupplierOnce - 一次性值提供者
 // ============================================================================
 
 pub struct BoxSupplierOnce<T> {
@@ -1100,7 +1100,7 @@ pub struct BoxSupplierOnce<T> {
 
 ```rust
 impl<T> BoxSupplier<T> {
-    /// 创建常量供应者（每次返回相同值的克隆）
+    /// 创建常量值提供者（每次返回相同值的克隆）
     pub fn constant(value: T) -> Self
     where
         T: Clone + 'static;
@@ -1115,7 +1115,7 @@ impl<T> BoxSupplier<T> {
         })
     }
 
-    /// 映射供应者的输出
+    /// 映射值提供者的输出
     pub fn map<R, F>(self, mapper: F) -> BoxSupplier<R>
     where
         F: FnMut(T) -> R + 'static,
@@ -1123,7 +1123,7 @@ impl<T> BoxSupplier<T> {
 }
 
 impl<T> BoxSupplierOnce<T> {
-    /// 创建延迟初始化供应者
+    /// 创建延迟初始化值提供者
     pub fn lazy<F>(f: F) -> Self
     where
         F: FnOnce() -> T + 'static;
@@ -1287,7 +1287,7 @@ fn random_range_supplier(min: i32, max: i32) -> BoxSupplier<i32> {
 }
 ```
 
-### 5. 多线程共享供应者（有状态）
+### 5. 多线程共享值提供者（有状态）
 
 ```rust
 use std::sync::atomic::{AtomicU64, Ordering};
@@ -1308,7 +1308,7 @@ let handles: Vec<_> = (0..10)
     .collect();
 ```
 
-### 6. 多线程共享供应者（无状态，推荐）
+### 6. 多线程共享值提供者（无状态，推荐）
 
 ```rust
 // 错误工厂 - 不需要修改状态
@@ -1342,7 +1342,7 @@ pub struct DoubleCheckedExecutor<R, E> {
     /// 测试条件
     tester: ArcTester,
 
-    /// 错误供应者（无状态）
+    /// 错误值提供者（无状态）
     error_supplier: Option<ArcReadonlySupplier<E>>,
 }
 

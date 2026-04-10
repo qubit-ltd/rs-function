@@ -7,7 +7,7 @@
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![English Document](https://img.shields.io/badge/Document-English-blue.svg)](README.md)
 
-为 Rust 提供全面的函数式编程抽象,实现类似 Java 的函数式接口,并适配 Rust 的所有权模型。
+为 Rust 提供全面的函数式编程抽象,提供与 Java 风格相近的函数式接口,并适配 Rust 的所有权模型。
 
 ## 概述
 
@@ -19,7 +19,7 @@
 - **高性能并发**: 使用 parking_lot Mutex 提供卓越的线程同步性能
 - **多种所有权模型**: 基于 Box 的单一所有权、基于 Arc 的线程安全共享、基于 Rc 的单线程共享
 - **灵活的 API 设计**: 基于 trait 的统一接口,针对不同场景优化的具体实现
-- **方法链式调用**: 所有类型都支持流式 API 和函数组合
+- **方法链式调用**: 所有类型都支持流畅 API(链式调用)和函数组合
 - **线程安全选项**: 在线程安全(Arc)和高效单线程(Rc)实现之间选择
 - **零成本抽象**: 高效的实现,最小的运行时开销
 
@@ -36,9 +36,9 @@ qubit-function = "0.7.0"
 
 本 crate 提供 24 种核心函数式抽象,每种都有多个实现:
 
-### 1. Predicate - 条件测试
+### 1. Predicate - 单参数谓词
 
-测试值是否满足条件,返回 `bool`。
+判断一个值是否满足条件,返回 `bool`。
 
 **Trait**: `Predicate<T>`
 **核心方法**: `test(&self, value: &T) -> bool`
@@ -61,9 +61,9 @@ assert!(combined.test(&4));
 assert!(!combined.test(&-2));
 ```
 
-### 2. BiPredicate - 双值条件测试
+### 2. BiPredicate - 双参数谓词
 
-测试两个值是否满足条件,返回 `bool`。
+判断两个值是否满足条件,返回 `bool`。
 
 **Trait**: `BiPredicate<T, U>`
 **核心方法**: `test(&self, first: &T, second: &U) -> bool`
@@ -83,9 +83,9 @@ assert!(sum_positive.test(&3, &4));
 assert!(!sum_positive.test(&-5, &2));
 ```
 
-### 3. Consumer - 值观察
+### 3. Consumer - 只读消费者
 
-接受值引用并执行操作,不返回结果。
+接受值引用并执行带副作用的操作,不返回结果。
 
 **Trait**: `Consumer<T>`
 **核心方法**: `accept(&self, value: &T)`
@@ -106,20 +106,20 @@ let logger = BoxConsumer::new(|x: &i32| {
 logger.accept(&42);
 ```
 
-### 4. ConsumerOnce - 一次性值观察
+### 4. ConsumerOnce - 一次性只读消费者
 
-接受值引用并执行一次操作。
+接受值引用并执行一次带副作用的操作。
 
 **Trait**: `ConsumerOnce<T>`
-**核心方法**: `accept_once(self, value: &T)`
+**核心方法**: `accept(self, value: &T)`
 **等价闭包**: `FnOnce(&T)`
 
 **实现类型**:
 - `BoxConsumerOnce<T>` - 单一所有权,一次性使用
 
-### 5. BiConsumer - 双值观察
+### 5. BiConsumer - 双参数只读消费者
 
-接受两个值引用并执行操作,不返回结果。
+接受两个值引用并执行带副作用的操作,不返回结果。
 
 **Trait**: `BiConsumer<T, U>`
 **核心方法**: `accept(&self, first: &T, second: &U)`
@@ -140,24 +140,25 @@ let sum_logger = BoxBiConsumer::new(|x: &i32, y: &i32| {
 sum_logger.accept(&10, &20);
 ```
 
-### 6. BiConsumerOnce - 一次性双值观察
+### 6. BiConsumerOnce - 一次性双参数只读消费者
 
-接受两个值引用并执行一次操作。
+接受两个值引用并执行一次带副作用的操作。
 
 **Trait**: `BiConsumerOnce<T, U>`
-**核心方法**: `accept_once(self, first: &T, second: &U)`
+**核心方法**: `accept(self, first: &T, second: &U)`
 **等价闭包**: `FnOnce(&T, &U)`
 
 **实现类型**:
 - `BoxBiConsumerOnce<T, U>` - 单一所有权,一次性使用
 
-### 7. Mutator - 就地值修改
+### 7. Mutator - 无状态原地修改器
 
-通过接受可变引用就地修改值。
+通过可变引用**原地**修改目标值,无返回值; 修改器自身无状态,
+以 `&self` 调用(对应 `Fn(&mut T)`)。
 
 **Trait**: `Mutator<T>`
-**核心方法**: `mutate(&mut self, value: &mut T)`
-**等价闭包**: `FnMut(&mut T)`
+**核心方法**: `apply(&self, value: &mut T)`
+**等价闭包**: `Fn(&mut T)`
 
 **实现类型**:
 - `BoxMutator<T>` - 单一所有权
@@ -170,13 +171,13 @@ use qubit_function::{Mutator, BoxMutator};
 
 let mut doubler = BoxMutator::new(|x: &mut i32| *x *= 2);
 let mut value = 10;
-doubler.mutate(&mut value);
+doubler.apply(&mut value);
 assert_eq!(value, 20);
 ```
 
-### 8. MutatorOnce - 一次性就地修改
+### 8. MutatorOnce - 一次性原地修改器
 
-就地修改值一次。
+仅可调用一次,通过可变引用原地修改目标值(对应 `FnOnce(&mut T)`)。
 
 **Trait**: `MutatorOnce<T>`
 **核心方法**: `apply(self, value: &mut T)`
@@ -185,9 +186,10 @@ assert_eq!(value, 20);
 **实现类型**:
 - `BoxMutatorOnce<T>` - 单一所有权,一次性使用
 
-### 9. Supplier - 值生成
+### 9. Supplier - 无状态值提供者
 
-无需输入参数即可生成值。
+无参数,每次调用 `get` 都返回一个 `T`; 值提供者自身无状态,以
+`&self` 调用(对应 `Fn() -> T`)。
 
 **Trait**: `Supplier<T>`
 **核心方法**: `get(&self) -> T`
@@ -206,9 +208,9 @@ let factory = BoxSupplier::new(|| String::from("你好"));
 assert_eq!(factory.get(), "你好");
 ```
 
-### 10. SupplierOnce - 一次性值生成
+### 10. SupplierOnce - 一次性值提供者
 
-无需输入参数生成一次值。
+无参数,仅能调用一次 `get` 以返回一个 `T`(对应 `FnOnce() -> T`)。
 
 **Trait**: `SupplierOnce<T>`
 **核心方法**: `get(self) -> T`
@@ -217,9 +219,10 @@ assert_eq!(factory.get(), "你好");
 **实现类型**:
 - `BoxSupplierOnce<T>` - 单一所有权,一次性使用
 
-### 11. StatefulSupplier - 有状态值生成
+### 11. StatefulSupplier - 有状态值提供者
 
-使用可变状态生成值。
+在可变内部状态下返回 `T`; 多次 `get` 的结果可以不同(对应
+`FnMut() -> T`)。
 
 **Trait**: `StatefulSupplier<T>`
 **核心方法**: `get(&mut self) -> T`
@@ -246,9 +249,9 @@ assert_eq!(counter.get(), 1);
 assert_eq!(counter.get(), 2);
 ```
 
-### 12. Function - 引用转换
+### 12. Function - 借用输入函数
 
-转换值引用以产生结果,不消耗输入。
+基于借用输入计算结果,不消耗输入。
 
 **Trait**: `Function<T, R>`
 **核心方法**: `apply(&self, input: &T) -> R`
@@ -267,20 +270,20 @@ let to_string = BoxFunction::new(|x: &i32| format!("值: {}", x));
 assert_eq!(to_string.apply(&42), "值: 42");
 ```
 
-### 13. FunctionOnce - 一次性引用转换
+### 13. FunctionOnce - 一次性借用输入函数
 
-转换值引用一次以产生结果。
+基于借用输入计算一次结果。
 
 **Trait**: `FunctionOnce<T, R>`
-**核心方法**: `apply_once(self, input: &T) -> R`
+**核心方法**: `apply(self, input: &T) -> R`
 **等价闭包**: `FnOnce(&T) -> R`
 
 **实现类型**:
 - `BoxFunctionOnce<T, R>` - 单一所有权,一次性使用
 
-### 14. StatefulFunction - 有状态引用转换
+### 14. StatefulFunction - 有状态借用输入函数
 
-使用可变状态转换值引用。
+基于借用输入计算结果,并允许修改内部状态。
 
 **Trait**: `StatefulFunction<T, R>`
 **核心方法**: `apply(&mut self, input: &T) -> R`
@@ -291,12 +294,12 @@ assert_eq!(to_string.apply(&42), "值: 42");
 - `ArcStatefulFunction<T, R>` - 线程安全(使用 parking_lot::Mutex)
 - `RcStatefulFunction<T, R>` - 单线程(使用 RefCell)
 
-### 15. Transformer - 消耗式值转换
+### 15. Transformer - 值转换器
 
-通过消耗输入将类型 `T` 的值转换为类型 `R`。
+取得输入值的所有权,并将类型 `T` 的值转换为类型 `R` 的值。
 
 **Trait**: `Transformer<T, R>`
-**核心方法**: `transform(&self, input: T) -> R`
+**核心方法**: `apply(&self, input: T) -> R`
 **等价闭包**: `Fn(T) -> R`
 
 **实现类型**:
@@ -311,15 +314,15 @@ assert_eq!(to_string.apply(&42), "值: 42");
 use qubit_function::{Transformer, BoxTransformer};
 
 let parse = BoxTransformer::new(|s: String| s.parse::<i32>().unwrap_or(0));
-assert_eq!(parse.transform("42".to_string()), 42);
+assert_eq!(parse.apply("42".to_string()), 42);
 ```
 
-### 16. TransformerOnce - 一次性值转换
+### 16. TransformerOnce - 一次性值转换器
 
-通过消耗转换器和输入转换值一次。
+一次性取得输入值的所有权,并将其转换为类型 `R` 的值。
 
 **Trait**: `TransformerOnce<T, R>`
-**核心方法**: `transform_once(self, input: T) -> R`
+**核心方法**: `apply(self, input: T) -> R`
 **等价闭包**: `FnOnce(T) -> R`
 
 **实现类型**:
@@ -327,12 +330,12 @@ assert_eq!(parse.transform("42".to_string()), 42);
 
 **类型别名**: `UnaryOperatorOnce<T>` = `TransformerOnce<T, T>`
 
-### 17. StatefulTransformer - 有状态值转换
+### 17. StatefulTransformer - 有状态值转换器
 
-使用可变状态通过消耗输入转换值。
+取得输入值的所有权并完成转换,同时允许修改内部状态。
 
 **Trait**: `StatefulTransformer<T, R>`
-**核心方法**: `transform(&mut self, input: T) -> R`
+**核心方法**: `apply(&mut self, input: T) -> R`
 **等价闭包**: `FnMut(T) -> R`
 
 **实现类型**:
@@ -340,12 +343,12 @@ assert_eq!(parse.transform("42".to_string()), 42);
 - `ArcStatefulTransformer<T, R>` - 线程安全(使用 parking_lot::Mutex)
 - `RcStatefulTransformer<T, R>` - 单线程(使用 RefCell)
 
-### 18. BiTransformer - 双值转换
+### 18. BiTransformer - 双参数值转换器
 
-通过消耗输入转换两个输入值以产生结果。
+取得两个输入值的所有权,并将其转换为结果。
 
 **Trait**: `BiTransformer<T, U, R>`
-**核心方法**: `transform(&self, first: T, second: U) -> R`
+**核心方法**: `apply(&self, first: T, second: U) -> R`
 **等价闭包**: `Fn(T, U) -> R`
 
 **实现类型**:
@@ -360,15 +363,28 @@ assert_eq!(parse.transform("42".to_string()), 42);
 use qubit_function::{BiTransformer, BoxBiTransformer};
 
 let add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
-assert_eq!(add.transform(10, 20), 30);
+assert_eq!(add.apply(10, 20), 30);
 ```
 
-### 20. BiTransformerOnce - 一次性双值转换
+### 19. StatefulBiTransformer - 有状态双参数值转换器
 
-通过消耗所有内容转换两个值一次。
+取得两个输入值的所有权并完成转换,同时允许修改内部状态。
+
+**Trait**: `StatefulBiTransformer<T, U, R>`
+**核心方法**: `apply(&mut self, first: T, second: U) -> R`
+**等价闭包**: `FnMut(T, U) -> R`
+
+**实现类型**:
+- `BoxStatefulBiTransformer<T, U, R>` - 单一所有权
+- `ArcStatefulBiTransformer<T, U, R>` - 线程安全(使用 parking_lot::Mutex)
+- `RcStatefulBiTransformer<T, U, R>` - 单线程(使用 RefCell)
+
+### 20. BiTransformerOnce - 一次性双参数值转换器
+
+一次性取得两个输入值的所有权,并将其转换为结果。
 
 **Trait**: `BiTransformerOnce<T, U, R>`
-**核心方法**: `transform_once(self, first: T, second: U) -> R`
+**核心方法**: `apply(self, first: T, second: U) -> R`
 **等价闭包**: `FnOnce(T, U) -> R`
 
 **实现类型**:
@@ -376,9 +392,9 @@ assert_eq!(add.transform(10, 20), 30);
 
 **类型别名**: `BinaryOperatorOnce<T>` = `BiTransformerOnce<T, T, T>`
 
-### 21. StatefulConsumer - 有状态值观察
+### 21. StatefulConsumer - 有状态消费者
 
-使用可变状态接受值引用。
+接受值引用并执行带副作用的操作,同时允许修改内部状态。
 
 **Trait**: `StatefulConsumer<T>`
 **核心方法**: `accept(&mut self, value: &T)`
@@ -389,9 +405,9 @@ assert_eq!(add.transform(10, 20), 30);
 - `ArcStatefulConsumer<T>` - 线程安全(使用 parking_lot::Mutex)
 - `RcStatefulConsumer<T>` - 单线程(使用 RefCell)
 
-### 22. StatefulBiConsumer - 有状态双值观察
+### 22. StatefulBiConsumer - 有状态双参数消费者
 
-使用可变状态接受两个值引用。
+接受两个值引用并执行带副作用的操作,同时允许修改内部状态。
 
 **Trait**: `StatefulBiConsumer<T, U>`
 **核心方法**: `accept(&mut self, first: &T, second: &U)`
@@ -402,7 +418,7 @@ assert_eq!(add.transform(10, 20), 30);
 - `ArcStatefulBiConsumer<T, U>` - 线程安全(使用 parking_lot::Mutex)
 - `RcStatefulBiConsumer<T, U>` - 单线程(使用 RefCell)
 
-### 23. Comparator - 值比较
+### 23. Comparator - 排序比较器
 
 比较两个值并返回 `Ordering`。
 
@@ -424,9 +440,9 @@ let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
 assert_eq!(cmp.compare(&5, &3), Ordering::Greater);
 ```
 
-### 24. Tester - 无输入条件测试
+### 24. Tester - 无参条件判定器
 
-测试状态或条件是否成立,不接受输入。
+在不接收参数的前提下,判断某一状态或条件是否成立。
 
 **Trait**: `Tester`
 **核心方法**: `test(&self) -> bool`
@@ -458,24 +474,25 @@ assert!(!tester.test());
 | `Predicate<T>` | `test(&self, value: &T) -> bool` | `Fn(&T) -> bool` |
 | `BiPredicate<T, U>` | `test(&self, first: &T, second: &U) -> bool` | `Fn(&T, &U) -> bool` |
 | `Consumer<T>` | `accept(&self, value: &T)` | `Fn(&T)` |
-| `ConsumerOnce<T>` | `accept_once(self, value: &T)` | `FnOnce(&T)` |
+| `ConsumerOnce<T>` | `accept(self, value: &T)` | `FnOnce(&T)` |
 | `StatefulConsumer<T>` | `accept(&mut self, value: &T)` | `FnMut(&T)` |
 | `BiConsumer<T, U>` | `accept(&self, first: &T, second: &U)` | `Fn(&T, &U)` |
-| `BiConsumerOnce<T, U>` | `accept_once(self, first: &T, second: &U)` | `FnOnce(&T, &U)` |
+| `BiConsumerOnce<T, U>` | `accept(self, first: &T, second: &U)` | `FnOnce(&T, &U)` |
 | `StatefulBiConsumer<T, U>` | `accept(&mut self, first: &T, second: &U)` | `FnMut(&T, &U)` |
-| `Mutator<T>` | `mutate(&mut self, value: &mut T)` | `FnMut(&mut T)` |
+| `Mutator<T>` | `apply(&self, value: &mut T)` | `Fn(&mut T)` |
 | `MutatorOnce<T>` | `apply(self, value: &mut T)` | `FnOnce(&mut T)` |
 | `Supplier<T>` | `get(&self) -> T` | `Fn() -> T` |
 | `SupplierOnce<T>` | `get(self) -> T` | `FnOnce() -> T` |
 | `StatefulSupplier<T>` | `get(&mut self) -> T` | `FnMut() -> T` |
 | `Function<T, R>` | `apply(&self, input: &T) -> R` | `Fn(&T) -> R` |
-| `FunctionOnce<T, R>` | `apply_once(self, input: &T) -> R` | `FnOnce(&T) -> R` |
+| `FunctionOnce<T, R>` | `apply(self, input: &T) -> R` | `FnOnce(&T) -> R` |
 | `StatefulFunction<T, R>` | `apply(&mut self, input: &T) -> R` | `FnMut(&T) -> R` |
-| `Transformer<T, R>` | `transform(&self, input: T) -> R` | `Fn(T) -> R` |
-| `TransformerOnce<T, R>` | `transform_once(self, input: T) -> R` | `FnOnce(T) -> R` |
-| `StatefulTransformer<T, R>` | `transform(&mut self, input: T) -> R` | `FnMut(T) -> R` |
-| `BiTransformer<T, U, R>` | `transform(&self, first: T, second: U) -> R` | `Fn(T, U) -> R` |
-| `BiTransformerOnce<T, U, R>` | `transform_once(self, first: T, second: U) -> R` | `FnOnce(T, U) -> R` |
+| `Transformer<T, R>` | `apply(&self, input: T) -> R` | `Fn(T) -> R` |
+| `TransformerOnce<T, R>` | `apply(self, input: T) -> R` | `FnOnce(T) -> R` |
+| `StatefulTransformer<T, R>` | `apply(&mut self, input: T) -> R` | `FnMut(T) -> R` |
+| `BiTransformer<T, U, R>` | `apply(&self, first: T, second: U) -> R` | `Fn(T, U) -> R` |
+| `StatefulBiTransformer<T, U, R>` | `apply(&mut self, first: T, second: U) -> R` | `FnMut(T, U) -> R` |
+| `BiTransformerOnce<T, U, R>` | `apply(self, first: T, second: U) -> R` | `FnOnce(T, U) -> R` |
 | `Comparator<T>` | `compare(&self, a: &T, b: &T) -> Ordering` | `Fn(&T, &T) -> Ordering` |
 | `Tester` | `test(&self) -> bool` | `Fn() -> bool` |
 
@@ -505,6 +522,7 @@ assert!(!tester.test());
 | TransformerOnce | BoxTransformerOnce | - | - |
 | StatefulTransformer | BoxStatefulTransformer | ArcStatefulTransformer | RcStatefulTransformer |
 | BiTransformer | BoxBiTransformer | ArcBiTransformer | RcBiTransformer |
+| StatefulBiTransformer | BoxStatefulBiTransformer | ArcStatefulBiTransformer | RcStatefulBiTransformer |
 | BiTransformerOnce | BoxBiTransformerOnce | - | - |
 | Comparator | BoxComparator | ArcComparator | RcComparator |
 | Tester | BoxTester | ArcTester | RcTester |
@@ -524,7 +542,7 @@ assert!(!tester.test());
 3. **类型保持**: 组合方法返回相同的具体类型
 4. **所有权灵活性**: 在单一所有权、线程安全共享或单线程共享之间选择
 5. **高性能并发**: 使用 parking_lot Mutex 提供卓越的同步性能
-6. **人体工学 API**: 自然的方法链式调用和函数组合
+6. **易用 API**: 自然的方法链式调用和函数组合
 
 ## 示例
 
