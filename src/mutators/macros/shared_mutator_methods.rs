@@ -157,6 +157,7 @@ macro_rules! impl_shared_mutator_methods {
         /// let mut val2 = -1;
         /// conditional.apply(&mut val2); // not executed, val2 remains -1
         /// ```
+        #[inline]
         pub fn when<P>(&self, predicate: P) -> $return_type<$t>
         where
             P: Predicate<$t> + $($extra_bounds)+,
@@ -210,6 +211,7 @@ macro_rules! impl_shared_mutator_methods {
         /// // val = 2 (0 + 1 + 1)
         /// ```
         #[allow(unused_mut)]
+        #[inline]
         pub fn and_then<M>(&self, mut after: M) -> $struct_name<$t>
         where
             $t: 'static,

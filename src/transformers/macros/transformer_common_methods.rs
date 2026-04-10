@@ -144,6 +144,7 @@ macro_rules! impl_transformer_common_methods {
         /// # Returns
         ///
         /// Returns a new transformer instance that returns the input unchanged.
+        #[inline]
         pub fn identity() -> $struct_name<$t, $t> {
             $struct_name::<$t, $t>::new(|t| t)
         }

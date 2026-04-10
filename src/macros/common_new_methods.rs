@@ -48,6 +48,7 @@ macro_rules! impl_common_new_methods {
         #[doc = concat!("Creates a new ", $type_desc, ".")]
         ///
         #[doc = concat!("Wraps the provided closure in the appropriate smart pointer type for this ", $type_desc, " implementation.")]
+        #[inline]
         pub fn new<F>($f: F) -> Self
         where
             F: $($fn_trait_with_bounds)+,
@@ -62,6 +63,7 @@ macro_rules! impl_common_new_methods {
         ///
         /// Wraps the provided closure and assigns it a name, which is
         /// useful for debugging and logging purposes.
+        #[inline]
         pub fn new_with_name<F>(name: &str, $f: F) -> Self
         where
             F: $($fn_trait_with_bounds)+,
@@ -75,6 +77,7 @@ macro_rules! impl_common_new_methods {
         #[doc = concat!("Creates a new named ", $type_desc, " with an optional name.")]
         ///
         /// Wraps the provided closure and assigns it an optional name.
+        #[inline]
         pub fn new_with_optional_name<F>($f: F, name: Option<String>) -> Self
         where
             F: $($fn_trait_with_bounds)+,

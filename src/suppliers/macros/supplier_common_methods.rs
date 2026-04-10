@@ -135,6 +135,7 @@ macro_rules! impl_supplier_common_methods {
         /// # Returns
         ///
         /// Returns a new supplier instance that returns the constant value.
+        #[inline]
         pub fn constant(value: $t) -> Self
         where
             $t: Clone + 'static,

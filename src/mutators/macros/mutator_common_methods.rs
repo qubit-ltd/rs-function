@@ -129,6 +129,7 @@ macro_rules! impl_mutator_common_methods {
         /// # Returns
         ///
         /// Returns a new mutator instance that performs no operation.
+        #[inline]
         pub fn noop() -> Self {
             Self::new(|_| {})
         }

@@ -125,6 +125,7 @@ macro_rules! impl_predicate_common_methods {
         /// # Returns
         ///
         #[doc = concat!("A new `", stringify!($struct_name), "` that always returns `true`.")]
+        #[inline]
         pub fn always_true() -> Self {
             Self::new_with_name(ALWAYS_TRUE_NAME, |_| true)
         }
@@ -134,6 +135,7 @@ macro_rules! impl_predicate_common_methods {
         /// # Returns
         ///
         #[doc = concat!("A new `", stringify!($struct_name), "` that always returns `false`.")]
+        #[inline]
         pub fn always_false() -> Self {
             Self::new_with_name(ALWAYS_FALSE_NAME, |_| false)
         }
@@ -157,6 +159,7 @@ macro_rules! impl_predicate_common_methods {
         /// # Returns
         ///
         #[doc = concat!("A new `", stringify!($struct_name), "` that always returns `true`.")]
+        #[inline]
         pub fn always_true() -> Self {
             Self::new_with_name(ALWAYS_TRUE_NAME, |_, _| true)
         }
@@ -166,6 +169,7 @@ macro_rules! impl_predicate_common_methods {
         /// # Returns
         ///
         #[doc = concat!("A new `", stringify!($struct_name), "` that always returns `false`.")]
+        #[inline]
         pub fn always_false() -> Self {
             Self::new_with_name(ALWAYS_FALSE_NAME, |_, _| false)
         }

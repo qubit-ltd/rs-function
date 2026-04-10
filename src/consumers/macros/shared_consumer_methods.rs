@@ -158,6 +158,7 @@ macro_rules! impl_shared_consumer_methods {
         /// conditional.accept(&5);  // prints: 5
         /// conditional.accept(&-5); // prints nothing
         /// ```
+        #[inline]
         pub fn when<P>(&self, predicate: P) -> $return_type<$t>
         where
             P: Predicate<$t> + $($extra_bounds)+,
@@ -194,6 +195,7 @@ macro_rules! impl_shared_consumer_methods {
         /// chained.accept(&5);  // prints: first: 5 second: 5
         /// ```
         #[allow(unused_mut)]
+        #[inline]
         pub fn and_then<C>(&self, mut after: C) -> $struct_name<$t>
         where
             $t: 'static,
@@ -240,6 +242,7 @@ macro_rules! impl_shared_consumer_methods {
         /// conditional.accept(&5, &3);  // prints: 8
         /// conditional.accept(&-5, &3); // prints nothing
         /// ```
+        #[inline]
         pub fn when<P>(&self, predicate: P) -> $return_type<$t, $u>
         where
             P: BiPredicate<$t, $u> + $($extra_bounds)+,
@@ -276,6 +279,7 @@ macro_rules! impl_shared_consumer_methods {
         /// chained.accept(&5, &3);  // prints: first: 8 second: 15
         /// ```
         #[allow(unused_mut)]
+        #[inline]
         pub fn and_then<C>(&self, mut after: C) -> $struct_name<$t, $u>
         where
             $t: 'static,

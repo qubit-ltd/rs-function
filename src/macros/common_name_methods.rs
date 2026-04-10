@@ -40,6 +40,7 @@ macro_rules! impl_common_name_methods {
         /// # Returns
         ///
         /// Returns `Some(&str)` if a name was set, `None` otherwise.
+        #[inline]
         pub fn name(&self) -> Option<&str> {
             self.name.as_deref()
         }
@@ -49,6 +50,7 @@ macro_rules! impl_common_name_methods {
         /// # Parameters
         ///
         #[doc = concat!("* `name` - The name to set for this ", $type_desc)]
+        #[inline]
         pub fn set_name(&mut self, name: &str) {
             self.name = Some(name.to_string());
         }

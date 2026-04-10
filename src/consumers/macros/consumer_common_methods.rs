@@ -140,6 +140,7 @@ macro_rules! impl_consumer_common_methods {
         /// # Returns
         ///
         /// Returns a new consumer instance that performs no operation.
+        #[inline]
         pub fn noop() -> Self {
             Self::new(|_| {})
         }
@@ -166,6 +167,7 @@ macro_rules! impl_consumer_common_methods {
         /// # Returns
         ///
         /// Returns a new bi-consumer instance that performs no operation.
+        #[inline]
         pub fn noop() -> Self {
             Self::new(|_, _| {})
         }

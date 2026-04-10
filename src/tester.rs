@@ -249,6 +249,7 @@ pub trait Tester {
     /// let closure = || true;
     /// let boxed: BoxTester = closure.into_box();
     /// ```
+    #[inline]
     fn into_box(self) -> BoxTester
     where
         Self: Sized + 'static,
@@ -272,6 +273,7 @@ pub trait Tester {
     /// let closure = || true;
     /// let rc: RcTester = closure.into_rc();
     /// ```
+    #[inline]
     fn into_rc(self) -> RcTester
     where
         Self: Sized + 'static,
@@ -295,6 +297,7 @@ pub trait Tester {
     /// let closure = || true;
     /// let arc: ArcTester = closure.into_arc();
     /// ```
+    #[inline]
     fn into_arc(self) -> ArcTester
     where
         Self: Sized + Send + Sync + 'static,
@@ -319,6 +322,7 @@ pub trait Tester {
     /// let func = closure.into_fn();
     /// assert!(func());
     /// ```
+    #[inline]
     fn into_fn(self) -> impl Fn() -> bool
     where
         Self: Sized + 'static,
@@ -341,6 +345,7 @@ pub trait Tester {
     /// let boxed: BoxTester = arc.to_box();
     /// // arc is still available
     /// ```
+    #[inline]
     fn to_box(&self) -> BoxTester
     where
         Self: Clone + 'static,
@@ -363,6 +368,7 @@ pub trait Tester {
     /// let rc: RcTester = arc.to_rc();
     /// // arc is still available
     /// ```
+    #[inline]
     fn to_rc(&self) -> RcTester
     where
         Self: Clone + 'static,
@@ -385,6 +391,7 @@ pub trait Tester {
     /// // Note: This will panic for RcTester as it's not Send + Sync
     /// // let arc: ArcTester = rc.to_arc();
     /// ```
+    #[inline]
     fn to_arc(&self) -> ArcTester
     where
         Self: Clone + Send + Sync + 'static,
@@ -408,6 +415,7 @@ pub trait Tester {
     /// // arc is still available
     /// assert!(func());
     /// ```
+    #[inline]
     fn to_fn(&self) -> impl Fn() -> bool
     where
         Self: Clone + 'static,
@@ -498,6 +506,7 @@ impl BoxTester {
     ///
     /// let tester = BoxTester::new(|| true);
     /// ```
+    #[inline]
     pub fn new<F>(f: F) -> Self
     where
         F: Fn() -> bool + 'static,
@@ -562,6 +571,7 @@ impl BoxTester {
     /// is_available.store(false, Ordering::Relaxed);
     /// assert!(!service_ok.test());
     /// ```
+    #[inline]
     pub fn and<T>(self, next: T) -> BoxTester
     where
         T: Tester + 'static,
@@ -631,6 +641,7 @@ impl BoxTester {
     /// request_count.store(150, Ordering::Relaxed);
     /// assert!(!can_serve.test());
     /// ```
+    #[inline]
     pub fn or<T>(self, next: T) -> BoxTester
     where
         T: Tester + 'static,
@@ -679,6 +690,7 @@ impl BoxTester {
     /// assert!(memory_critical.test());
     /// ```
     #[allow(clippy::should_implement_trait)]
+    #[inline]
     pub fn not(self) -> BoxTester {
         let self_fn = self.function;
         BoxTester::new(move || !self_fn())
@@ -727,6 +739,7 @@ impl BoxTester {
     /// flag1.store(false, Ordering::Relaxed);
     /// assert!(nand.test());
     /// ```
+    #[inline]
     pub fn nand<T>(self, next: T) -> BoxTester
     where
         T: Tester + 'static,
@@ -784,6 +797,7 @@ impl BoxTester {
     /// flag2.store(false, Ordering::Relaxed);
     /// assert!(!xor.test());
     /// ```
+    #[inline]
     pub fn xor<T>(self, next: T) -> BoxTester
     where
         T: Tester + 'static,
@@ -836,6 +850,7 @@ impl BoxTester {
     /// flag1.store(true, Ordering::Relaxed);
     /// assert!(!nor.test());
     /// ```
+    #[inline]
     pub fn nor<T>(self, next: T) -> BoxTester
     where
         T: Tester + 'static,
@@ -847,14 +862,17 @@ impl BoxTester {
 }
 
 impl Tester for BoxTester {
+    #[inline]
     fn test(&self) -> bool {
         (self.function)()
     }
 
+    #[inline]
     fn into_box(self) -> BoxTester {
         self
     }
 
+    #[inline]
     fn into_rc(self) -> RcTester {
         let func = self.function;
         RcTester {
@@ -867,6 +885,7 @@ impl Tester for BoxTester {
     // in a compile error due to the Send + Sync trait bounds not being
     // satisfied. The default Tester trait implementation will be used.
 
+    #[inline]
     fn into_fn(self) -> impl Fn() -> bool {
         self.function
     }
@@ -955,6 +974,7 @@ impl ArcTester {
     ///
     /// let tester = ArcTester::new(|| true);
     /// ```
+    #[inline]
     pub fn new<F>(f: F) -> Self
     where
         F: Fn() -> bool + Send + Sync + 'static,
@@ -1023,6 +1043,7 @@ impl ArcTester {
     /// is_pool_healthy.store(false, Ordering::Relaxed);
     /// assert!(!pool_ready.test());
     /// ```
+    #[inline]
     pub fn and(&self, next: &ArcTester) -> ArcTester {
         let self_fn = Arc::clone(&self.function);
         let next_fn = Arc::clone(&next.function);
@@ -1105,6 +1126,7 @@ impl ArcTester {
     /// emergency_mode.store(false, Ordering::Relaxed);
     /// assert!(!should_route_here.test());
     /// ```
+    #[inline]
     pub fn or(&self, next: &ArcTester) -> ArcTester {
         let self_fn = Arc::clone(&self.function);
         let next_fn = Arc::clone(&next.function);
@@ -1167,6 +1189,7 @@ impl ArcTester {
     /// assert!(queue_full.test());
     /// ```
     #[allow(clippy::should_implement_trait)]
+    #[inline]
     pub fn not(&self) -> ArcTester {
         let func = Arc::clone(&self.function);
         ArcTester {
@@ -1221,6 +1244,7 @@ impl ArcTester {
     /// assert!(!tester1.test());
     /// assert!(tester2.test());
     /// ```
+    #[inline]
     pub fn nand(&self, next: &ArcTester) -> ArcTester {
         let self_fn = Arc::clone(&self.function);
         let next_fn = Arc::clone(&next.function);
@@ -1281,6 +1305,7 @@ impl ArcTester {
     /// assert!(!tester1.test());
     /// assert!(!tester2.test());
     /// ```
+    #[inline]
     pub fn xor(&self, next: &ArcTester) -> ArcTester {
         let self_fn = Arc::clone(&self.function);
         let next_fn = Arc::clone(&next.function);
@@ -1336,6 +1361,7 @@ impl ArcTester {
     /// assert!(tester1.test());
     /// assert!(!tester2.test());
     /// ```
+    #[inline]
     pub fn nor(&self, next: &ArcTester) -> ArcTester {
         let self_fn = Arc::clone(&self.function);
         let next_fn = Arc::clone(&next.function);
@@ -1346,10 +1372,12 @@ impl ArcTester {
 }
 
 impl Tester for ArcTester {
+    #[inline]
     fn test(&self) -> bool {
         (self.function)()
     }
 
+    #[inline]
     fn into_box(self) -> BoxTester {
         let func = self.function;
         BoxTester {
@@ -1357,6 +1385,7 @@ impl Tester for ArcTester {
         }
     }
 
+    #[inline]
     fn into_rc(self) -> RcTester {
         let func = self.function;
         RcTester {
@@ -1364,14 +1393,17 @@ impl Tester for ArcTester {
         }
     }
 
+    #[inline]
     fn into_arc(self) -> ArcTester {
         self
     }
 
+    #[inline]
     fn into_fn(self) -> impl Fn() -> bool {
         move || (self.function)()
     }
 
+    #[inline]
     fn to_box(&self) -> BoxTester {
         let self_fn = self.function.clone();
         BoxTester {
@@ -1379,6 +1411,7 @@ impl Tester for ArcTester {
         }
     }
 
+    #[inline]
     fn to_rc(&self) -> RcTester {
         let self_fn = self.function.clone();
         RcTester {
@@ -1386,10 +1419,12 @@ impl Tester for ArcTester {
         }
     }
 
+    #[inline]
     fn to_arc(&self) -> ArcTester {
         self.clone()
     }
 
+    #[inline]
     fn to_fn(&self) -> impl Fn() -> bool {
         let self_fn = self.function.clone();
         move || self_fn()
@@ -1402,6 +1437,7 @@ impl Clone for ArcTester {
     /// The cloned instance shares the same underlying function with
     /// the original, allowing multiple references to the same test
     /// logic.
+    #[inline]
     fn clone(&self) -> Self {
         Self {
             function: Arc::clone(&self.function),
@@ -1477,6 +1513,7 @@ impl RcTester {
     ///
     /// let tester = RcTester::new(|| true);
     /// ```
+    #[inline]
     pub fn new<F>(f: F) -> Self
     where
         F: Fn() -> bool + 'static,
@@ -1509,6 +1546,7 @@ impl RcTester {
     /// let combined = first.and(&second);
     /// // first and second are still available
     /// ```
+    #[inline]
     pub fn and(&self, next: &RcTester) -> RcTester {
         let self_fn = Rc::clone(&self.function);
         let next_fn = Rc::clone(&next.function);
@@ -1540,6 +1578,7 @@ impl RcTester {
     /// let combined = first.or(&second);
     /// // first and second are still available
     /// ```
+    #[inline]
     pub fn or(&self, next: &RcTester) -> RcTester {
         let self_fn = Rc::clone(&self.function);
         let next_fn = Rc::clone(&next.function);
@@ -1568,6 +1607,7 @@ impl RcTester {
     /// // original is still available
     /// ```
     #[allow(clippy::should_implement_trait)]
+    #[inline]
     pub fn not(&self) -> RcTester {
         let self_fn = Rc::clone(&self.function);
         RcTester {
@@ -1604,6 +1644,7 @@ impl RcTester {
     /// assert!(first.test());
     /// assert!(second.test());
     /// ```
+    #[inline]
     pub fn nand(&self, next: &RcTester) -> RcTester {
         let self_fn = Rc::clone(&self.function);
         let next_fn = Rc::clone(&next.function);
@@ -1641,6 +1682,7 @@ impl RcTester {
     /// assert!(first.test());
     /// assert!(!second.test());
     /// ```
+    #[inline]
     pub fn xor(&self, next: &RcTester) -> RcTester {
         let self_fn = Rc::clone(&self.function);
         let next_fn = Rc::clone(&next.function);
@@ -1678,6 +1720,7 @@ impl RcTester {
     /// assert!(!first.test());
     /// assert!(!second.test());
     /// ```
+    #[inline]
     pub fn nor(&self, next: &RcTester) -> RcTester {
         let self_fn = Rc::clone(&self.function);
         let next_fn = Rc::clone(&next.function);
@@ -1688,16 +1731,19 @@ impl RcTester {
 }
 
 impl Tester for RcTester {
+    #[inline]
     fn test(&self) -> bool {
         (self.function)()
     }
 
+    #[inline]
     fn into_box(self) -> BoxTester {
         BoxTester {
             function: Box::new(move || (self.function)()),
         }
     }
 
+    #[inline]
     fn into_rc(self) -> RcTester {
         self
     }
@@ -1707,10 +1753,12 @@ impl Tester for RcTester {
     // compile error due to the Send + Sync trait bounds not being
     // satisfied. The default Tester trait implementation will be used.
 
+    #[inline]
     fn into_fn(self) -> impl Fn() -> bool {
         move || (self.function)()
     }
 
+    #[inline]
     fn to_box(&self) -> BoxTester {
         let self_fn = self.function.clone();
         BoxTester {
@@ -1718,6 +1766,7 @@ impl Tester for RcTester {
         }
     }
 
+    #[inline]
     fn to_rc(&self) -> RcTester {
         self.clone()
     }
@@ -1727,6 +1776,7 @@ impl Tester for RcTester {
     // error due to the Send + Sync trait bounds not being satisfied. The
     // default Tester trait implementation will be used.
 
+    #[inline]
     fn to_fn(&self) -> impl Fn() -> bool {
         let self_fn = self.function.clone();
         move || self_fn()
@@ -1739,6 +1789,7 @@ impl Clone for RcTester {
     /// The cloned instance shares the same underlying function with
     /// the original, allowing multiple references to the same test
     /// logic.
+    #[inline]
     fn clone(&self) -> Self {
         Self {
             function: Rc::clone(&self.function),
@@ -1754,10 +1805,12 @@ impl<F> Tester for F
 where
     F: Fn() -> bool,
 {
+    #[inline]
     fn test(&self) -> bool {
         self()
     }
 
+    #[inline]
     fn into_box(self) -> BoxTester
     where
         Self: Sized + 'static,
@@ -1765,6 +1818,7 @@ where
         BoxTester::new(self)
     }
 
+    #[inline]
     fn into_rc(self) -> RcTester
     where
         Self: Sized + 'static,
@@ -1772,6 +1826,7 @@ where
         RcTester::new(self)
     }
 
+    #[inline]
     fn into_arc(self) -> ArcTester
     where
         Self: Sized + Send + Sync + 'static,
@@ -1779,6 +1834,7 @@ where
         ArcTester::new(self)
     }
 
+    #[inline]
     fn into_fn(self) -> impl Fn() -> bool
     where
         Self: Sized + 'static,
@@ -1786,6 +1842,7 @@ where
         self
     }
 
+    #[inline]
     fn to_box(&self) -> BoxTester
     where
         Self: Clone + Sized + 'static,
@@ -1793,6 +1850,7 @@ where
         self.clone().into_box()
     }
 
+    #[inline]
     fn to_rc(&self) -> RcTester
     where
         Self: Clone + Sized + 'static,
@@ -1800,6 +1858,7 @@ where
         self.clone().into_rc()
     }
 
+    #[inline]
     fn to_arc(&self) -> ArcTester
     where
         Self: Clone + Sized + Send + Sync + 'static,
@@ -1807,6 +1866,7 @@ where
         self.clone().into_arc()
     }
 
+    #[inline]
     fn to_fn(&self) -> impl Fn() -> bool
     where
         Self: Clone + Sized,
@@ -1870,6 +1930,7 @@ pub trait FnTesterOps: Sized + Fn() -> bool + 'static {
     /// let combined = is_ready.and(is_available);
     /// assert!(combined.test());
     /// ```
+    #[inline]
     fn and<T>(self, other: T) -> BoxTester
     where
         T: Tester + 'static,
@@ -1906,6 +1967,7 @@ pub trait FnTesterOps: Sized + Fn() -> bool + 'static {
     /// let combined = is_ready.or(is_fallback);
     /// assert!(combined.test());
     /// ```
+    #[inline]
     fn or<T>(self, other: T) -> BoxTester
     where
         T: Tester + 'static,
@@ -1928,6 +1990,7 @@ pub trait FnTesterOps: Sized + Fn() -> bool + 'static {
     /// let not_ready = is_ready.not();
     /// assert!(not_ready.test());
     /// ```
+    #[inline]
     fn not(self) -> BoxTester {
         BoxTester::new(move || !self.test())
     }
@@ -1961,6 +2024,7 @@ pub trait FnTesterOps: Sized + Fn() -> bool + 'static {
     /// let nand = is_ready.nand(is_available);
     /// assert!(!nand.test());  // !(true && true) = false
     /// ```
+    #[inline]
     fn nand<T>(self, other: T) -> BoxTester
     where
         T: Tester + 'static,
@@ -1996,6 +2060,7 @@ pub trait FnTesterOps: Sized + Fn() -> bool + 'static {
     /// let xor = is_ready.xor(is_available);
     /// assert!(xor.test());  // true ^ false = true
     /// ```
+    #[inline]
     fn xor<T>(self, other: T) -> BoxTester
     where
         T: Tester + 'static,
@@ -2032,6 +2097,7 @@ pub trait FnTesterOps: Sized + Fn() -> bool + 'static {
     /// let nor = is_ready.nor(is_available);
     /// assert!(nor.test());  // !(false || false) = true
     /// ```
+    #[inline]
     fn nor<T>(self, other: T) -> BoxTester
     where
         T: Tester + 'static,

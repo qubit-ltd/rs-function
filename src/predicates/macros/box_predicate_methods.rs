@@ -81,6 +81,7 @@ macro_rules! impl_box_predicate_methods {
         /// # Returns
         ///
         /// A new predicate representing the logical AND.
+        #[inline]
         pub fn and<P>(self, other: P) -> $struct_name<$t>
         where
             P: $trait_name<$t> + 'static,
@@ -101,6 +102,7 @@ macro_rules! impl_box_predicate_methods {
         /// # Returns
         ///
         /// A new predicate representing the logical OR.
+        #[inline]
         pub fn or<P>(self, other: P) -> $struct_name<$t>
         where
             P: $trait_name<$t> + 'static,
@@ -118,6 +120,7 @@ macro_rules! impl_box_predicate_methods {
         ///
         /// A new predicate representing the logical negation.
         #[allow(clippy::should_implement_trait)]
+        #[inline]
         pub fn not(self) -> $struct_name<$t>
         where
             $t: 'static,
@@ -140,6 +143,7 @@ macro_rules! impl_box_predicate_methods {
         /// # Returns
         ///
         /// A new predicate representing the logical NAND.
+        #[inline]
         pub fn nand<P>(self, other: P) -> $struct_name<$t>
         where
             P: $trait_name<$t> + 'static,
@@ -162,6 +166,7 @@ macro_rules! impl_box_predicate_methods {
         /// # Returns
         ///
         /// A new predicate representing the logical XOR.
+        #[inline]
         pub fn xor<P>(self, other: P) -> $struct_name<$t>
         where
             P: $trait_name<$t> + 'static,
@@ -185,6 +190,7 @@ macro_rules! impl_box_predicate_methods {
         /// # Returns
         ///
         /// A new predicate representing the logical NOR.
+        #[inline]
         pub fn nor<P>(self, other: P) -> $struct_name<$t>
         where
             P: $trait_name<$t> + 'static,
@@ -208,6 +214,7 @@ macro_rules! impl_box_predicate_methods {
         /// # Returns
         ///
         /// A new bi-predicate representing the logical AND.
+        #[inline]
         pub fn and<P>(self, other: P) -> $struct_name<$t, $u>
         where
             P: $trait_name<$t, $u> + 'static,
@@ -229,6 +236,7 @@ macro_rules! impl_box_predicate_methods {
         /// # Returns
         ///
         /// A new bi-predicate representing the logical OR.
+        #[inline]
         pub fn or<P>(self, other: P) -> $struct_name<$t, $u>
         where
             P: $trait_name<$t, $u> + 'static,
@@ -247,6 +255,7 @@ macro_rules! impl_box_predicate_methods {
         ///
         /// A new bi-predicate representing the logical negation.
         #[allow(clippy::should_implement_trait)]
+        #[inline]
         pub fn not(self) -> $struct_name<$t, $u>
         where
             $t: 'static,
@@ -270,6 +279,7 @@ macro_rules! impl_box_predicate_methods {
         /// # Returns
         ///
         /// A new bi-predicate representing the logical NAND.
+        #[inline]
         pub fn nand<P>(self, other: P) -> $struct_name<$t, $u>
         where
             P: $trait_name<$t, $u> + 'static,
@@ -294,6 +304,7 @@ macro_rules! impl_box_predicate_methods {
         /// # Returns
         ///
         /// A new bi-predicate representing the logical XOR.
+        #[inline]
         pub fn xor<P>(self, other: P) -> $struct_name<$t, $u>
         where
             P: $trait_name<$t, $u> + 'static,
@@ -318,6 +329,7 @@ macro_rules! impl_box_predicate_methods {
         /// # Returns
         ///
         /// A new bi-predicate representing the logical NOR.
+        #[inline]
         pub fn nor<P>(self, other: P) -> $struct_name<$t, $u>
         where
             P: $trait_name<$t, $u> + 'static,

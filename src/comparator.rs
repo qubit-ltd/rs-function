@@ -241,6 +241,7 @@ pub trait Comparator<T> {
     /// let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
     /// let boxed = cmp.into_box();
     /// ```
+    #[inline]
     fn into_box(self) -> BoxComparator<T>
     where
         Self: Sized + 'static,
@@ -263,6 +264,7 @@ pub trait Comparator<T> {
     /// let cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
     /// let arc = cmp.into_arc();
     /// ```
+    #[inline]
     fn into_arc(self) -> ArcComparator<T>
     where
         Self: Sized + Send + Sync + 'static,
@@ -285,6 +287,7 @@ pub trait Comparator<T> {
     /// let cmp = RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
     /// let rc = cmp.into_rc();
     /// ```
+    #[inline]
     fn into_rc(self) -> RcComparator<T>
     where
         Self: Sized + 'static,
@@ -313,6 +316,7 @@ pub trait Comparator<T> {
     /// let func = cmp.into_fn();
     /// assert_eq!(func(&5, &3), Ordering::Greater);
     /// ```
+    #[inline]
     fn into_fn(self) -> impl Fn(&T, &T) -> Ordering
     where
         Self: Sized + 'static,
@@ -341,6 +345,7 @@ impl<T, F> Comparator<T> for F
 where
     F: Fn(&T, &T) -> Ordering,
 {
+    #[inline]
     fn compare(&self, a: &T, b: &T) -> Ordering {
         self(a, b)
     }
@@ -391,6 +396,7 @@ impl<T: 'static> BoxComparator<T> {
     ///
     /// let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
     /// ```
+    #[inline]
     pub fn new<F>(f: F) -> Self
     where
         F: Fn(&T, &T) -> Ordering + 'static,
@@ -416,6 +422,7 @@ impl<T: 'static> BoxComparator<T> {
     /// let rev = cmp.reversed();
     /// assert_eq!(rev.compare(&5, &3), Ordering::Less);
     /// ```
+    #[inline]
     pub fn reversed(self) -> Self {
         BoxComparator::new(move |a, b| (self.function)(b, a))
     }
@@ -465,6 +472,7 @@ impl<T: 'static> BoxComparator<T> {
     /// assert_eq!(cmp.compare(&p1, &p2), Ordering::Greater);
     /// // by_age.compare(&p1, &p2); // Would not compile - moved
     /// ```
+    #[inline]
     pub fn then_comparing(self, other: Self) -> Self {
         BoxComparator::new(move |a, b| match (self.function)(a, b) {
             Ordering::Equal => (other.function)(a, b),
@@ -500,6 +508,7 @@ impl<T: 'static> BoxComparator<T> {
     /// let p2 = Person { name: "Bob".to_string(), age: 25 };
     /// assert_eq!(by_age.compare(&p1, &p2), Ordering::Greater);
     /// ```
+    #[inline]
     pub fn comparing<K, F>(key_fn: F) -> Self
     where
         K: Ord,
@@ -524,12 +533,14 @@ impl<T: 'static> BoxComparator<T> {
     /// let func = cmp.into_fn();
     /// assert_eq!(func(&5, &3), Ordering::Greater);
     /// ```
+    #[inline]
     pub fn into_fn(self) -> impl Fn(&T, &T) -> Ordering {
         move |a: &T, b: &T| (self.function)(a, b)
     }
 }
 
 impl<T> Comparator<T> for BoxComparator<T> {
+    #[inline]
     fn compare(&self, a: &T, b: &T) -> Ordering {
         (self.function)(a, b)
     }
@@ -583,6 +594,7 @@ impl<T: 'static> ArcComparator<T> {
     ///
     /// let cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
     /// ```
+    #[inline]
     pub fn new<F>(f: F) -> Self
     where
         F: Fn(&T, &T) -> Ordering + Send + Sync + 'static,
@@ -609,6 +621,7 @@ impl<T: 'static> ArcComparator<T> {
     /// assert_eq!(rev.compare(&5, &3), Ordering::Less);
     /// assert_eq!(cmp.compare(&5, &3), Ordering::Greater); // cmp still works
     /// ```
+    #[inline]
     pub fn reversed(&self) -> Self {
         let self_fn = self.function.clone();
         ArcComparator::new(move |a, b| self_fn(b, a))
@@ -638,6 +651,7 @@ impl<T: 'static> ArcComparator<T> {
     /// let chained = cmp1.then_comparing(&cmp2);
     /// assert_eq!(chained.compare(&4, &2), Ordering::Greater);
     /// ```
+    #[inline]
     pub fn then_comparing(&self, other: &Self) -> Self {
         let first = self.function.clone();
         let second = other.function.clone();
@@ -675,6 +689,7 @@ impl<T: 'static> ArcComparator<T> {
     /// let p2 = Person { name: "Bob".to_string(), age: 25 };
     /// assert_eq!(by_age.compare(&p1, &p2), Ordering::Greater);
     /// ```
+    #[inline]
     pub fn comparing<K, F>(key_fn: F) -> Self
     where
         K: Ord,
@@ -699,12 +714,14 @@ impl<T: 'static> ArcComparator<T> {
     /// let func = cmp.into_fn();
     /// assert_eq!(func(&5, &3), Ordering::Greater);
     /// ```
+    #[inline]
     pub fn into_fn(self) -> impl Fn(&T, &T) -> Ordering {
         move |a: &T, b: &T| (self.function)(a, b)
     }
 }
 
 impl<T> Comparator<T> for ArcComparator<T> {
+    #[inline]
     fn compare(&self, a: &T, b: &T) -> Ordering {
         (self.function)(a, b)
     }
@@ -758,6 +775,7 @@ impl<T: 'static> RcComparator<T> {
     ///
     /// let cmp = RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
     /// ```
+    #[inline]
     pub fn new<F>(f: F) -> Self
     where
         F: Fn(&T, &T) -> Ordering + 'static,
@@ -784,6 +802,7 @@ impl<T: 'static> RcComparator<T> {
     /// assert_eq!(rev.compare(&5, &3), Ordering::Less);
     /// assert_eq!(cmp.compare(&5, &3), Ordering::Greater); // cmp still works
     /// ```
+    #[inline]
     pub fn reversed(&self) -> Self {
         let self_fn = self.function.clone();
         RcComparator::new(move |a, b| self_fn(b, a))
@@ -813,6 +832,7 @@ impl<T: 'static> RcComparator<T> {
     /// let chained = cmp1.then_comparing(&cmp2);
     /// assert_eq!(chained.compare(&4, &2), Ordering::Greater);
     /// ```
+    #[inline]
     pub fn then_comparing(&self, other: &Self) -> Self {
         let first = self.function.clone();
         let second = other.function.clone();
@@ -850,6 +870,7 @@ impl<T: 'static> RcComparator<T> {
     /// let p2 = Person { name: "Bob".to_string(), age: 25 };
     /// assert_eq!(by_age.compare(&p1, &p2), Ordering::Greater);
     /// ```
+    #[inline]
     pub fn comparing<K, F>(key_fn: F) -> Self
     where
         K: Ord,
@@ -874,12 +895,14 @@ impl<T: 'static> RcComparator<T> {
     /// let func = cmp.into_fn();
     /// assert_eq!(func(&5, &3), Ordering::Greater);
     /// ```
+    #[inline]
     pub fn into_fn(self) -> impl Fn(&T, &T) -> Ordering {
         move |a: &T, b: &T| (self.function)(a, b)
     }
 }
 
 impl<T> Comparator<T> for RcComparator<T> {
+    #[inline]
     fn compare(&self, a: &T, b: &T) -> Ordering {
         (self.function)(a, b)
     }
@@ -924,6 +947,7 @@ pub trait FnComparatorOps<T>: Fn(&T, &T) -> Ordering + Sized {
     /// let rev = (|a: &i32, b: &i32| a.cmp(b)).reversed();
     /// assert_eq!(rev.compare(&5, &3), Ordering::Less);
     /// ```
+    #[inline]
     fn reversed(self) -> BoxComparator<T>
     where
         Self: 'static,
@@ -954,6 +978,7 @@ pub trait FnComparatorOps<T>: Fn(&T, &T) -> Ordering + Sized {
     ///     .then_comparing(BoxComparator::new(|a, b| a.cmp(b)));
     /// assert_eq!(cmp.compare(&4, &2), Ordering::Greater);
     /// ```
+    #[inline]
     fn then_comparing(self, other: BoxComparator<T>) -> BoxComparator<T>
     where
         Self: 'static,

@@ -125,6 +125,7 @@ macro_rules! impl_function_constant_method {
             /// # Examples
             ///
             #[doc = concat!("/// ```rust\n/// use qubit_function::{", stringify!($struct_name), ", Function};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123), \"hello\");\n/// ```")]
+            #[inline]
             pub fn constant(value: $r) -> $struct_name<$t, $r> {
                 $struct_name::new(move |_| value.clone())
             }
@@ -144,6 +145,7 @@ macro_rules! impl_function_constant_method {
             /// # Examples
             ///
             #[doc = concat!("/// ```rust\n/// use qubit_function::{", stringify!($struct_name), ", BiFunction};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123, \"test\"), \"hello\");\n/// ```")]
+            #[inline]
             pub fn constant(value: $r) -> $struct_name<$t, $u, $r> {
                 $struct_name::new(move |_, _| value.clone())
             }
@@ -163,6 +165,7 @@ macro_rules! impl_function_constant_method {
             /// # Examples
             ///
             #[doc = concat!("/// ```rust\n/// use qubit_function::{", stringify!($struct_name), ", BiFunction};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123, \"test\"), \"hello\");\n/// ```")]
+            #[inline]
             pub fn constant(value: $r) -> $struct_name<$t, $u, $r> {
                 $struct_name::new(move |_, _| value.clone())
             }

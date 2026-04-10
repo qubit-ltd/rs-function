@@ -160,6 +160,7 @@ macro_rules! impl_shared_function_methods {
         /// assert_eq!(conditional.or_else(|_| 0).apply(5), 10);  // executed
         /// assert_eq!(conditional.or_else(|_| 0).apply(-3), 0);  // not executed
         /// ```
+        #[inline]
         pub fn when<P>(&self, predicate: P) -> $conditional_type<$t, $r>
         where
             P: Predicate<$t> + $($extra_bounds)+,
@@ -196,6 +197,7 @@ macro_rules! impl_shared_function_methods {
         /// assert_eq!(chained.apply(5), "10".to_string());
         /// ```
         #[allow(unused_mut)]
+        #[inline]
         pub fn and_then<S, F>(&self, mut after: F) -> $struct_name<$t, S>
         where
             S: 'static,
@@ -241,6 +243,7 @@ macro_rules! impl_shared_function_methods {
         /// assert_eq!(conditional.or_else(|_, _| 0).apply(2, 3), 5);  // executed
         /// assert_eq!(conditional.or_else(|_, _| 0).apply(-1, 3), 0); // not executed
         /// ```
+        #[inline]
         pub fn when<P>(&self, predicate: P) -> $conditional_type<$t, $u, $r>
         where
             P: BiPredicate<$t, $u> + $($extra_bounds)+,
@@ -277,6 +280,7 @@ macro_rules! impl_shared_function_methods {
         /// assert_eq!(chained.apply(2, 3), 10); // (2+3) * 2 = 10
         /// ```
         #[allow(unused_mut)]
+        #[inline]
         pub fn and_then<S, F>(&self, mut after: F) -> $struct_name<$t, $u, S>
         where
             S: 'static,

@@ -68,6 +68,7 @@ macro_rules! impl_box_conversions {
         $rc_type:ident,
         $fn_trait:path
     ) => {
+        #[inline]
         fn into_box(self) -> $box_type<$($generics),*>
         where
             $($generics: 'static),*
@@ -75,6 +76,7 @@ macro_rules! impl_box_conversions {
             self
         }
 
+        #[inline]
         fn into_rc(self) -> $rc_type<$($generics),*>
         where
             $($generics: 'static),*
@@ -82,6 +84,7 @@ macro_rules! impl_box_conversions {
             $rc_type::new_with_optional_name(self.function, self.name)
         }
 
+        #[inline]
         fn into_fn(self) -> impl $fn_trait
         {
             self.function
@@ -103,6 +106,7 @@ macro_rules! impl_box_conversions {
             $fn_trait
         );
 
+        #[inline]
         fn into_once(self) -> $once_type<$($generics),*>
         where
             $($generics: 'static),*
@@ -167,6 +171,7 @@ macro_rules! impl_box_once_conversions {
         $trait_name:ident,
         $fn_trait:path
     ) => {
+        #[inline]
         fn into_box(self) -> $box_type<$($generics),*>
         where
             $($generics: 'static),*
@@ -174,6 +179,7 @@ macro_rules! impl_box_once_conversions {
             self
         }
 
+        #[inline]
         fn into_fn(self) -> impl $fn_trait
         where
             $($generics: 'static),*

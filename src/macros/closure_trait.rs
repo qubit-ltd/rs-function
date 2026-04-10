@@ -72,6 +72,7 @@ macro_rules! impl_closure_trait {
 
   // Fn trait: into_once 方法
   (@into_once_fn_method $once_type:ident, ($($generics:ident),*)) => {
+      #[inline]
       fn into_once(self) -> $once_type<$($generics),*>
       where
           Self: Sized + 'static,
@@ -83,6 +84,7 @@ macro_rules! impl_closure_trait {
 
   // FnMut trait: into_once 方法
   (@into_once_fnmut_method $once_type:ident, ($($generics:ident),*), ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?) => {
+      #[inline]
       fn into_once(mut self) -> $once_type<$($generics),*>
       where
           Self: Sized + 'static,
@@ -96,6 +98,7 @@ macro_rules! impl_closure_trait {
 
   // Fn trait: to_once 方法
   (@to_once_fn_method $once_type:ident, ($($generics:ident),*)) => {
+      #[inline]
       fn to_once(&self) -> $once_type<$($generics),*>
       where
           Self: Clone + Sized + 'static,
@@ -107,6 +110,7 @@ macro_rules! impl_closure_trait {
 
   // FnMut trait: to_once 方法
   (@to_once_fnmut_method $once_type:ident, ($($generics:ident),*), ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?) => {
+      #[inline]
       fn to_once(&self) -> $once_type<$($generics),*>
       where
           Self: Clone + Sized + 'static,
@@ -127,12 +131,14 @@ macro_rules! impl_closure_trait {
       ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
   ) => {
       // 核心方法：直接调用闭包
+      #[inline]
       fn $method_name(&self, $($arg: $arg_ty),*) $(-> $ret)? {
           self($($arg),*)
       }
 
       // ===== 转换方法：使用 paste 自动推导类型名 =====
 
+      #[inline]
       fn into_box(self) -> paste::paste! { [<Box $trait_name>] < $($generics),* > }
       where
           Self: Sized + 'static,
@@ -140,6 +146,7 @@ macro_rules! impl_closure_trait {
           paste::paste! { [<Box $trait_name>]::new(self) }
       }
 
+      #[inline]
       fn into_rc(self) -> paste::paste! { [<Rc $trait_name>] < $($generics),* > }
       where
           Self: Sized + 'static,
@@ -147,6 +154,7 @@ macro_rules! impl_closure_trait {
           paste::paste! { [<Rc $trait_name>]::new(self) }
       }
 
+      #[inline]
       fn into_fn(self) -> impl $closure_trait
       where
           Self: Sized + 'static,
@@ -155,6 +163,7 @@ macro_rules! impl_closure_trait {
       }
 
       // into_arc: Fn trait 需要 Send + Sync
+      #[inline]
       fn into_arc(self) -> paste::paste! { [<Arc $trait_name>] < $($generics),* > }
       where
           Self: Sized + Send + Sync + 'static,
@@ -165,6 +174,7 @@ macro_rules! impl_closure_trait {
 
       // ===== to_* 方法：克隆版本 =====
 
+      #[inline]
       fn to_box(&self) -> paste::paste! { [<Box $trait_name>] < $($generics),* > }
       where
           Self: Clone + Sized + 'static,
@@ -172,6 +182,7 @@ macro_rules! impl_closure_trait {
           paste::paste! { [<Box $trait_name>]::new(self.clone()) }
       }
 
+      #[inline]
       fn to_rc(&self) -> paste::paste! { [<Rc $trait_name>] < $($generics),* > }
       where
           Self: Clone + Sized + 'static,
@@ -179,6 +190,7 @@ macro_rules! impl_closure_trait {
           paste::paste! { [<Rc $trait_name>]::new(self.clone()) }
       }
 
+      #[inline]
       fn to_fn(&self) -> impl $closure_trait
       where
           Self: Clone + Sized + 'static,
@@ -187,6 +199,7 @@ macro_rules! impl_closure_trait {
       }
 
       // to_arc: Fn trait 需要 Send + Sync
+      #[inline]
       fn to_arc(&self) -> paste::paste! { [<Arc $trait_name>] < $($generics),* > }
       where
           Self: Clone + Sized + Send + Sync + 'static,
@@ -206,12 +219,14 @@ macro_rules! impl_closure_trait {
       ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
   ) => {
       // 核心方法：直接调用闭包
+      #[inline]
       fn $method_name(&mut self, $($arg: $arg_ty),*) $(-> $ret)? {
           self($($arg),*)
       }
 
       // ===== 转换方法：使用 paste 自动推导类型名 =====
 
+      #[inline]
       fn into_box(self) -> paste::paste! { [<Box $trait_name>] < $($generics),* > }
       where
           Self: Sized + 'static,
@@ -219,6 +234,7 @@ macro_rules! impl_closure_trait {
           paste::paste! { [<Box $trait_name>]::new(self) }
       }
 
+      #[inline]
       fn into_rc(self) -> paste::paste! { [<Rc $trait_name>] < $($generics),* > }
       where
           Self: Sized + 'static,
@@ -226,6 +242,7 @@ macro_rules! impl_closure_trait {
           paste::paste! { [<Rc $trait_name>]::new(self) }
       }
 
+      #[inline]
       fn into_fn(self) -> impl $closure_trait
       where
           Self: Sized + 'static,
@@ -234,6 +251,7 @@ macro_rules! impl_closure_trait {
       }
 
       // into_arc: FnMut trait 只需要 Send
+      #[inline]
       fn into_arc(self) -> paste::paste! { [<Arc $trait_name>] < $($generics),* > }
       where
           Self: Sized + Send + 'static,
@@ -244,6 +262,7 @@ macro_rules! impl_closure_trait {
 
       // ===== to_* 方法：克隆版本 =====
 
+      #[inline]
       fn to_box(&self) -> paste::paste! { [<Box $trait_name>] < $($generics),* > }
       where
           Self: Clone + Sized + 'static,
@@ -251,6 +270,7 @@ macro_rules! impl_closure_trait {
           paste::paste! { [<Box $trait_name>]::new(self.clone()) }
       }
 
+      #[inline]
       fn to_rc(&self) -> paste::paste! { [<Rc $trait_name>] < $($generics),* > }
       where
           Self: Clone + Sized + 'static,
@@ -258,6 +278,7 @@ macro_rules! impl_closure_trait {
           paste::paste! { [<Rc $trait_name>]::new(self.clone()) }
       }
 
+      #[inline]
       fn to_fn(&self) -> impl $closure_trait
       where
           Self: Clone + Sized + 'static,
@@ -266,6 +287,7 @@ macro_rules! impl_closure_trait {
       }
 
       // to_arc: FnMut trait 只需要 Send
+      #[inline]
       fn to_arc(&self) -> paste::paste! { [<Arc $trait_name>] < $($generics),* > }
       where
           Self: Clone + Sized + Send + 'static,

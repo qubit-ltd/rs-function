@@ -123,6 +123,7 @@ macro_rules! impl_shared_supplier_methods {
         /// assert_eq!(mapped.get(), 20);
         /// ```
         #[allow(unused_mut)]
+        #[inline]
         pub fn map<U, M>(&self, mapper: M) -> $struct_name<U>
         where
             M: Transformer<$t, U> + Send + Sync + 'static,
@@ -156,6 +157,7 @@ macro_rules! impl_shared_supplier_methods {
         /// assert_eq!(filtered.get(), Some(42));
         /// ```
         #[allow(unused_mut)]
+        #[inline]
         pub fn filter<P>(&self, predicate: P) -> $struct_name<Option<$t>>
         where
             P: Predicate<$t> + Send + Sync + 'static,
@@ -194,6 +196,7 @@ macro_rules! impl_shared_supplier_methods {
         /// assert_eq!(zipped.get(), (42, "hello"));
         /// ```
         #[allow(unused_mut)]
+        #[inline]
         pub fn zip<U, S>(&self, mut other: S) -> $struct_name<($t, U)>
         where
             S: $supplier_trait<U> + Send + Sync + 'static,
@@ -235,6 +238,7 @@ macro_rules! impl_shared_supplier_methods {
         /// assert_eq!(mapped.get(), 20);
         /// ```
         #[allow(unused_mut)]
+        #[inline]
         pub fn map<U, M>(&self, mapper: M) -> $struct_name<U>
         where
             M: Transformer<$t, U> + $($extra_bounds)+,
@@ -268,6 +272,7 @@ macro_rules! impl_shared_supplier_methods {
         /// assert_eq!(filtered.get(), Some(42));
         /// ```
         #[allow(unused_mut)]
+        #[inline]
         pub fn filter<P>(&self, predicate: P) -> $struct_name<Option<$t>>
         where
             P: Predicate<$t> + $($extra_bounds)+,
@@ -306,6 +311,7 @@ macro_rules! impl_shared_supplier_methods {
         /// assert_eq!(zipped.get(), (42, "hello"));
         /// ```
         #[allow(unused_mut)]
+        #[inline]
         pub fn zip<U, S>(&self, mut other: S) -> $struct_name<($t, U)>
         where
             S: $supplier_trait<U> + $($extra_bounds)+,

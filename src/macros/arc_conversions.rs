@@ -114,6 +114,7 @@ macro_rules! impl_arc_conversions {
         $call_mode:ident,
         ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
     ) => {
+        #[inline]
         fn into_box(self) -> $box_type<$($generics),*>
         where
             $($generics: 'static),*
@@ -134,6 +135,7 @@ macro_rules! impl_arc_conversions {
         $call_mode:ident,
         ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
     ) => {
+        #[inline]
         fn into_rc(self) -> $rc_type<$($generics),*>
         where
             $($generics: 'static),*
@@ -154,6 +156,7 @@ macro_rules! impl_arc_conversions {
         $call_mode:ident,
         ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
     ) => {
+        #[inline]
         fn into_once(self) -> $once_type<$($generics),*>
         where
             $($generics: 'static),*
@@ -174,6 +177,7 @@ macro_rules! impl_arc_conversions {
         $call_mode:ident,
         ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
     ) => {
+        #[inline]
         fn to_box(&self) -> $box_type<$($generics),*>
         where
             $($generics: 'static),*
@@ -196,6 +200,7 @@ macro_rules! impl_arc_conversions {
         $call_mode:ident,
         ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
     ) => {
+        #[inline]
         fn to_rc(&self) -> $rc_type<$($generics),*>
         where
             $($generics: 'static),*
@@ -218,6 +223,7 @@ macro_rules! impl_arc_conversions {
         $call_mode:ident,
         ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
     ) => {
+        #[inline]
         fn to_once(&self) -> $once_type<$($generics),*>
         where
             $($generics: 'static),*
@@ -238,6 +244,7 @@ macro_rules! impl_arc_conversions {
         direct,
         ($($arg:ident : $arg_ty:ty),*)
     ) => {
+        #[inline]
         fn into_fn(self) -> impl Fn($($arg_ty),*)
         {
             move |$($arg),*| (self.function)($($arg),*)
@@ -250,6 +257,7 @@ macro_rules! impl_arc_conversions {
         direct,
         ($($arg:ident : $arg_ty:ty),*) -> $ret:ty
     ) => {
+        #[inline]
         fn into_fn(self) -> impl Fn($($arg_ty),*) -> $ret
         {
             move |$($arg),*| (self.function)($($arg),*)
@@ -262,6 +270,7 @@ macro_rules! impl_arc_conversions {
         lock_unwrap,
         ($($arg:ident : $arg_ty:ty),*)
     ) => {
+        #[inline]
         fn into_fn(self) -> impl FnMut($($arg_ty),*)
         {
             move |$($arg),*| (self.function.lock())($($arg),*)
@@ -275,6 +284,7 @@ macro_rules! impl_arc_conversions {
         lock_unwrap,
         ($($arg:ident : $arg_ty:ty),*) -> $ret:ty
     ) => {
+        #[inline]
         fn into_fn(self) -> impl FnMut($($arg_ty),*) -> $ret
         {
             move |$($arg),*| (self.function.lock())($($arg),*)
@@ -287,6 +297,7 @@ macro_rules! impl_arc_conversions {
         direct,
         ($($arg:ident : $arg_ty:ty),*)
     ) => {
+        #[inline]
         fn to_fn(&self) -> impl Fn($($arg_ty),*)
         {
             let self_fn = self.function.clone();
@@ -300,6 +311,7 @@ macro_rules! impl_arc_conversions {
         direct,
         ($($arg:ident : $arg_ty:ty),*) -> $ret:ty
     ) => {
+        #[inline]
         fn to_fn(&self) -> impl Fn($($arg_ty),*) -> $ret
         {
             let self_fn = self.function.clone();
@@ -313,6 +325,7 @@ macro_rules! impl_arc_conversions {
         lock_unwrap,
         ($($arg:ident : $arg_ty:ty),*)
     ) => {
+        #[inline]
         fn to_fn(&self) -> impl FnMut($($arg_ty),*)
         {
             let self_fn = self.function.clone();
@@ -327,6 +340,7 @@ macro_rules! impl_arc_conversions {
         lock_unwrap,
         ($($arg:ident : $arg_ty:ty),*) -> $ret:ty
     ) => {
+        #[inline]
         fn to_fn(&self) -> impl FnMut($($arg_ty),*) -> $ret
         {
             let self_fn = self.function.clone();
@@ -371,6 +385,7 @@ macro_rules! impl_arc_conversions {
         );
 
         // into_arc: consumes self, returns self (zero-cost)
+        #[inline]
         fn into_arc(self) -> $arc_type<$($generics),*>
         where
             $($generics: 'static),*
@@ -410,6 +425,7 @@ macro_rules! impl_arc_conversions {
         );
 
         // to_arc: borrows self, returns clone (cheap Arc clone)
+        #[inline]
         fn to_arc(&self) -> $arc_type<$($generics),*>
         where
             $($generics: 'static),*
@@ -459,6 +475,7 @@ macro_rules! impl_arc_conversions {
         );
 
         // into_arc: consumes self, returns self (zero-cost)
+        #[inline]
         fn into_arc(self) -> $arc_type<$($generics),*>
         where
             $($generics: 'static),*
@@ -490,6 +507,7 @@ macro_rules! impl_arc_conversions {
         );
 
         // to_arc: borrows self, returns clone (cheap Arc clone)
+        #[inline]
         fn to_arc(&self) -> $arc_type<$($generics),*>
         where
             $($generics: 'static),*

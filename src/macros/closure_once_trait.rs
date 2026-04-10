@@ -108,11 +108,13 @@ macro_rules! impl_closure_once_trait {
           F: FnOnce($($arg_ty),*) $(-> $ret)?,
       {
           // Core method: Direct closure call
+          #[inline]
           fn $method_name(self, $($arg : $arg_ty),*) $(-> $ret)? {
               self($($arg),*)
           }
 
           // into_box: Convert to Box type
+          #[inline]
           fn into_box(self) -> $box_type<$($generics),*>
           where
               Self: Sized + 'static,
@@ -122,6 +124,7 @@ macro_rules! impl_closure_once_trait {
           }
 
           // into_fn: Convert to closure (always return self directly since F is already FnOnce)
+          #[inline]
           fn into_fn(self) -> impl FnOnce($($arg_ty),*) $(-> $ret)?
           where
               Self: Sized + 'static,

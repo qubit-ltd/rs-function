@@ -246,6 +246,7 @@ macro_rules! impl_fn_ops_trait {
             /// assert_eq!(to_string.apply(5), "5");
             /// ```
             #[allow(unused_mut)]
+            #[inline]
             fn and_then<S, F>(mut self, mut after: F) -> $box_type<T, S>
             where
                 S: 'static,
@@ -312,6 +313,7 @@ macro_rules! impl_fn_ops_trait {
             /// // Original predicate still usable
             /// assert!(is_positive.test(&3));
             /// ```
+            #[inline]
             fn when<P>(self, predicate: P) -> $conditional_type<T, R>
             where
                 P: Predicate<T> + 'static,

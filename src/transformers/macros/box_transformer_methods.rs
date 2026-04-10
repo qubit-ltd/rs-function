@@ -153,6 +153,7 @@ macro_rules! impl_box_transformer_methods {
         /// assert_eq!(conditional.transform(&5), 10);  // transformed
         /// assert_eq!(conditional.transform(&-1), -1); // identity (unchanged)
         /// ```
+        #[inline]
         pub fn when<P>(self, predicate: P) -> $conditional_type<$t, $r>
         where
             P: Predicate<$t> + 'static,
@@ -193,6 +194,7 @@ macro_rules! impl_box_transformer_methods {
         /// assert_eq!(chained.transform(&5), 12); // (5 + 1) * 2 = 12
         /// ```
         #[allow(unused_mut)]
+        #[inline]
         pub fn and_then<S, F>(self, mut after: F) -> $struct_name<$t, S>
         where
             S: 'static,
@@ -238,6 +240,7 @@ macro_rules! impl_box_transformer_methods {
         /// assert_eq!(conditional.transform(&"test".to_string(), &5), "test: 5".to_string());  // transformed
         /// assert_eq!(conditional.transform(&"test".to_string(), &-1), "test".to_string());    // identity (key unchanged)
         /// ```
+        #[inline]
         pub fn when<P>(self, predicate: P) -> $conditional_type<$t, $u, $r>
         where
             P: BiPredicate<$t, $u> + 'static,
@@ -279,6 +282,7 @@ macro_rules! impl_box_transformer_methods {
         /// assert_eq!(result, "test: 6"); // (value + 1) = 6
         /// ```
         #[allow(unused_mut)]
+        #[inline]
         pub fn and_then<S, F>(self, mut after: F) -> $struct_name<$t, $u, S>
         where
             S: 'static,

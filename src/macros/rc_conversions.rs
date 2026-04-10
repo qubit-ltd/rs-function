@@ -101,6 +101,7 @@ macro_rules! impl_rc_conversions {
         $call_mode:ident,                                // direct or borrow_mut
         ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?   // Function signature
     ) => {
+        #[inline]
         fn $method_name(self) -> $target_type<$($generics),*>
         where
             $($generics: 'static),*
@@ -121,6 +122,7 @@ macro_rules! impl_rc_conversions {
         $call_mode:ident,                                // direct or borrow_mut
         ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?   // Function signature
     ) => {
+        #[inline]
         fn $method_name(&self) -> $target_type<$($generics),*>
         where
             $($generics: 'static),*
@@ -140,6 +142,7 @@ macro_rules! impl_rc_conversions {
         direct,
         ($($arg:ident : $arg_ty:ty),*)
     ) => {
+        #[inline]
         fn into_fn(self) -> impl Fn($($arg_ty),*)
         {
             move |$($arg),*| (self.function)($($arg),*)
@@ -152,6 +155,7 @@ macro_rules! impl_rc_conversions {
         direct,
         ($($arg:ident : $arg_ty:ty),*) -> $ret:ty
     ) => {
+        #[inline]
         fn into_fn(self) -> impl Fn($($arg_ty),*) -> $ret
         {
             move |$($arg),*| (self.function)($($arg),*)
@@ -164,6 +168,7 @@ macro_rules! impl_rc_conversions {
         borrow_mut,
         ($($arg:ident : $arg_ty:ty),*)
     ) => {
+        #[inline]
         fn into_fn(self) -> impl FnMut($($arg_ty),*)
         {
             move |$($arg),*| (self.function.borrow_mut())($($arg),*)
@@ -176,6 +181,7 @@ macro_rules! impl_rc_conversions {
         borrow_mut,
         ($($arg:ident : $arg_ty:ty),*) -> $ret:ty
     ) => {
+        #[inline]
         fn into_fn(self) -> impl FnMut($($arg_ty),*) -> $ret
         {
             move |$($arg),*| (self.function.borrow_mut())($($arg),*)
@@ -188,6 +194,7 @@ macro_rules! impl_rc_conversions {
         direct,
         ($($arg:ident : $arg_ty:ty),*)
     ) => {
+        #[inline]
         fn to_fn(&self) -> impl Fn($($arg_ty),*)
         {
             let self_fn = self.function.clone();
@@ -201,6 +208,7 @@ macro_rules! impl_rc_conversions {
         direct,
         ($($arg:ident : $arg_ty:ty),*) -> $ret:ty
     ) => {
+        #[inline]
         fn to_fn(&self) -> impl Fn($($arg_ty),*) -> $ret
         {
             let self_fn = self.function.clone();
@@ -214,6 +222,7 @@ macro_rules! impl_rc_conversions {
         borrow_mut,
         ($($arg:ident : $arg_ty:ty),*)
     ) => {
+        #[inline]
         fn to_fn(&self) -> impl FnMut($($arg_ty),*)
         {
             let self_fn = self.function.clone();
@@ -227,6 +236,7 @@ macro_rules! impl_rc_conversions {
         borrow_mut,
         ($($arg:ident : $arg_ty:ty),*) -> $ret:ty
     ) => {
+        #[inline]
         fn to_fn(&self) -> impl FnMut($($arg_ty),*) -> $ret
         {
             let self_fn = self.function.clone();
@@ -261,6 +271,7 @@ macro_rules! impl_rc_conversions {
         );
 
         // into_rc: consumes self, returns self (zero-cost)
+        #[inline]
         fn into_rc(self) -> $rc_type<$($generics),*>
         where
             $($generics: 'static),*
@@ -284,6 +295,7 @@ macro_rules! impl_rc_conversions {
         );
 
         // to_rc: borrows self, returns clone (cheap Rc clone)
+        #[inline]
         fn to_rc(&self) -> $rc_type<$($generics),*>
         where
             $($generics: 'static),*
