@@ -1,13 +1,13 @@
 [package]
 name = "qubit-function"
-version = "0.7.2"
+version = "0.7.3"
 edition = "2021"
 rust-version = "1.70"
 authors = ["Haixing Hu <starfish.hu@gmail.com>"]
 license = "Apache-2.0"
-repository = "https://github.com/qubit-ltd/rust-function"
+repository = "https://github.com/qubit-ltd/rs-function"
 description = "Common functional programming type aliases for Rust, providing Java-style functional interfaces"
-homepage = "https://github.com/qubit-ltd/rust-function"
+homepage = "https://github.com/qubit-ltd/rs-function"
 documentation = "https://docs.rs/qubit-function"
 readme = "README.md"
 keywords = ["functional", "predicate", "function", "consumer", "supplier"]
