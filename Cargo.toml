@@ -19,6 +19,7 @@ exclude = [
     "PROJECT_STRUCTURE.md",
     "PROJECT_STRUCTURE.zh_CN.md",
     ".circleci/*",
+    "align-ci.sh",
     "ci-check.sh",
     ".llvm-cov.toml",
     ".cargo-audit.toml.example",
