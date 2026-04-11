@@ -5,7 +5,7 @@
 ## 目录布局
 
 ```
-rust-function/
+rs-function/
 ├── src/                    # 源代码
 │   ├── consumers/          # Consumer 相关抽象
 │   │   ├── macros/         # Consumer 专用宏

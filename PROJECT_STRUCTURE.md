@@ -6,7 +6,7 @@ qubit-function crate.
 ## Directory Layout
 
 ```
-rust-function/
+rs-function/
 ├── src/                    # Source code
 │   ├── consumers/          # Consumer-related abstractions
 │   │   ├── macros/         # Consumer-specific macros
