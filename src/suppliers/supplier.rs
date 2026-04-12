@@ -550,10 +550,7 @@ pub struct BoxSupplier<T> {
     name: Option<String>,
 }
 
-impl<T> BoxSupplier<T>
-where
-    T: 'static,
-{
+impl<T> BoxSupplier<T> {
     // Generates: new(), new_with_name(), name(), set_name(), constant()
     impl_supplier_common_methods!(BoxSupplier<T>, (Fn() -> T + 'static), |f| Box::new(f));
 
@@ -652,10 +649,7 @@ pub struct ArcSupplier<T> {
     name: Option<String>,
 }
 
-impl<T> ArcSupplier<T>
-where
-    T: 'static,
-{
+impl<T> ArcSupplier<T> {
     // Generates: new(), new_with_name(), name(), set_name()
     // Note: constant() is NOT generated here, implemented separately below
     crate::macros::impl_common_new_methods!(
@@ -790,10 +784,7 @@ pub struct RcSupplier<T> {
     name: Option<String>,
 }
 
-impl<T> RcSupplier<T>
-where
-    T: 'static,
-{
+impl<T> RcSupplier<T> {
     // Generates: new(), new_with_name(), name(), set_name(), constant()
     impl_supplier_common_methods!(RcSupplier<T>, (Fn() -> T + 'static), |f| Rc::new(f));
 

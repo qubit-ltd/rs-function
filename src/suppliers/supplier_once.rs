@@ -303,10 +303,7 @@ pub struct BoxSupplierOnce<T> {
     name: Option<String>,
 }
 
-impl<T> BoxSupplierOnce<T>
-where
-    T: 'static,
-{
+impl<T> BoxSupplierOnce<T> {
     // Generates: new(), new_with_name(), name(), set_name(), constant()
     impl_supplier_common_methods!(BoxSupplierOnce<T>, (FnOnce() -> T + 'static), |f| Box::new(
         f

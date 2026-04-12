@@ -384,11 +384,7 @@ pub struct BoxStatefulTransformer<T, R> {
     name: Option<String>,
 }
 
-impl<T, R> BoxStatefulTransformer<T, R>
-where
-    T: 'static,
-    R: 'static,
-{
+impl<T, R> BoxStatefulTransformer<T, R> {
     impl_transformer_common_methods!(
         BoxStatefulTransformer<T, R>,
         (FnMut(T) -> R + 'static),
@@ -454,11 +450,7 @@ pub struct RcStatefulTransformer<T, R> {
 }
 
 // Implement RcStatefulTransformer
-impl<T, R> RcStatefulTransformer<T, R>
-where
-    T: 'static,
-    R: 'static,
-{
+impl<T, R> RcStatefulTransformer<T, R> {
     impl_transformer_common_methods!(
         RcStatefulTransformer<T, R>,
         (FnMut(T) -> R + 'static),
@@ -527,11 +519,7 @@ pub struct ArcStatefulTransformer<T, R> {
     name: Option<String>,
 }
 
-impl<T, R> ArcStatefulTransformer<T, R>
-where
-    T: 'static,
-    R: 'static,
-{
+impl<T, R> ArcStatefulTransformer<T, R> {
     impl_transformer_common_methods!(
         ArcStatefulTransformer<T, R>,
         (FnMut(T) -> R + Send + 'static),

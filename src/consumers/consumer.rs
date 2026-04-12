@@ -380,10 +380,7 @@ pub struct BoxConsumer<T> {
     name: Option<String>,
 }
 
-impl<T> BoxConsumer<T>
-where
-    T: 'static,
-{
+impl<T> BoxConsumer<T> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
     impl_consumer_common_methods!(BoxConsumer<T>, (Fn(&T) + 'static), |f| Box::new(f));
 
@@ -391,7 +388,7 @@ where
     impl_box_consumer_methods!(BoxConsumer<T>, BoxConditionalConsumer, Consumer);
 }
 
-impl<T: 'static> Consumer<T> for BoxConsumer<T> {
+impl<T> Consumer<T> for BoxConsumer<T> {
     fn accept(&self, value: &T) {
         (self.function)(value)
     }
@@ -456,10 +453,7 @@ pub struct RcConsumer<T> {
     name: Option<String>,
 }
 
-impl<T> RcConsumer<T>
-where
-    T: 'static,
-{
+impl<T> RcConsumer<T> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
     impl_consumer_common_methods!(RcConsumer<T>, (Fn(&T) + 'static), |f| Rc::new(f));
 
@@ -545,10 +539,7 @@ pub struct ArcConsumer<T> {
     name: Option<String>,
 }
 
-impl<T> ArcConsumer<T>
-where
-    T: 'static,
-{
+impl<T> ArcConsumer<T> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
     impl_consumer_common_methods!(ArcConsumer<T>, (Fn(&T) + Send + Sync + 'static), |f| {
         Arc::new(f)
@@ -746,10 +737,7 @@ pub struct BoxConditionalConsumer<T> {
 impl_box_conditional_consumer!(BoxConditionalConsumer<T>, BoxConsumer, Consumer);
 
 // Consumer trait implementation
-impl<T> Consumer<T> for BoxConditionalConsumer<T>
-where
-    T: 'static,
-{
+impl<T> Consumer<T> for BoxConditionalConsumer<T> {
     fn accept(&self, value: &T) {
         if self.predicate.test(value) {
             self.consumer.accept(value);
@@ -835,10 +823,7 @@ impl_shared_conditional_consumer!(
 );
 
 // Hand-written Consumer trait implementation
-impl<T> Consumer<T> for RcConditionalConsumer<T>
-where
-    T: 'static,
-{
+impl<T> Consumer<T> for RcConditionalConsumer<T> {
     fn accept(&self, value: &T) {
         if self.predicate.test(value) {
             self.consumer.accept(value);
@@ -927,10 +912,7 @@ impl_shared_conditional_consumer!(
 );
 
 // Hand-written Consumer trait implementation
-impl<T> Consumer<T> for ArcConditionalConsumer<T>
-where
-    T: 'static,
-{
+impl<T> Consumer<T> for ArcConditionalConsumer<T> {
     fn accept(&self, value: &T) {
         if self.predicate.test(value) {
             self.consumer.accept(value);

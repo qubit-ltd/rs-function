@@ -399,10 +399,7 @@ pub struct BoxMutatorOnce<T> {
     name: Option<String>,
 }
 
-impl<T> BoxMutatorOnce<T>
-where
-    T: 'static,
-{
+impl<T> BoxMutatorOnce<T> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
     impl_mutator_common_methods!(BoxMutatorOnce<T>, (FnOnce(&mut T) + 'static), |f| Box::new(
         f
@@ -618,17 +615,17 @@ pub struct BoxConditionalMutatorOnce<T> {
 // Generate and_then and or_else methods using macro
 impl_box_conditional_mutator!(BoxConditionalMutatorOnce<T>, BoxMutatorOnce, MutatorOnce);
 
-impl<T> MutatorOnce<T> for BoxConditionalMutatorOnce<T>
-where
-    T: 'static,
-{
+impl<T> MutatorOnce<T> for BoxConditionalMutatorOnce<T> {
     fn apply(self, value: &mut T) {
         if self.predicate.test(value) {
             self.mutator.apply(value);
         }
     }
 
-    fn into_box(self) -> BoxMutatorOnce<T> {
+    fn into_box(self) -> BoxMutatorOnce<T>
+    where
+        T: 'static,
+    {
         let pred = self.predicate;
         let mutator = self.mutator;
         BoxMutatorOnce::new(move |t| {

@@ -510,7 +510,7 @@ pub struct RcBiPredicate<T, U> {
     name: Option<String>,
 }
 
-impl<T: 'static, U: 'static> RcBiPredicate<T, U> {
+impl<T, U> RcBiPredicate<T, U> {
     // Generates: new(), new_with_name(), name(), set_name(), always_true(), always_false()
     impl_predicate_common_methods!(
         RcBiPredicate<T, U>,
@@ -576,7 +576,7 @@ pub struct ArcBiPredicate<T, U> {
     name: Option<String>,
 }
 
-impl<T: 'static, U: 'static> ArcBiPredicate<T, U> {
+impl<T, U> ArcBiPredicate<T, U> {
     // Generates: new(), new_with_name(), name(), set_name(), always_true(), always_false()
     impl_predicate_common_methods!(
         ArcBiPredicate<T, U>,
@@ -598,7 +598,7 @@ impl_predicate_clone!(ArcBiPredicate<T, U>);
 impl_predicate_debug_display!(ArcBiPredicate<T, U>);
 
 // Implements BiPredicate trait for ArcBiPredicate<T, U>
-impl<T: 'static, U: 'static> BiPredicate<T, U> for ArcBiPredicate<T, U> {
+impl<T, U> BiPredicate<T, U> for ArcBiPredicate<T, U> {
     fn test(&self, first: &T, second: &U) -> bool {
         (self.function)(first, second)
     }

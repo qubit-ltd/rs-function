@@ -191,12 +191,7 @@ pub struct BoxBiTransformerOnce<T, U, R> {
 }
 
 // Implement BoxBiTransformerOnce
-impl<T, U, R> BoxBiTransformerOnce<T, U, R>
-where
-    T: 'static,
-    U: 'static,
-    R: 'static,
-{
+impl<T, U, R> BoxBiTransformerOnce<T, U, R> {
     impl_transformer_common_methods!(
         BoxBiTransformerOnce<T, U, R>,
         (FnOnce(T, U) -> R + 'static),

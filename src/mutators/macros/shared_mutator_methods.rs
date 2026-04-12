@@ -160,6 +160,7 @@ macro_rules! impl_shared_mutator_methods {
         #[inline]
         pub fn when<P>(&self, predicate: P) -> $return_type<$t>
         where
+            $t: 'static,
             P: Predicate<$t> + $($extra_bounds)+,
         {
             $return_type {

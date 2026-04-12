@@ -393,11 +393,7 @@ pub struct BoxTransformer<T, R> {
 }
 
 // Implement BoxTransformer
-impl<T, R> BoxTransformer<T, R>
-where
-    T: 'static,
-    R: 'static,
-{
+impl<T, R> BoxTransformer<T, R> {
     impl_transformer_common_methods!(
         BoxTransformer<T, R>,
         (Fn(T) -> R + 'static),
@@ -459,11 +455,7 @@ pub struct RcTransformer<T, R> {
 }
 
 // Implement RcTransformer
-impl<T, R> RcTransformer<T, R>
-where
-    T: 'static,
-    R: 'static,
-{
+impl<T, R> RcTransformer<T, R> {
     impl_transformer_common_methods!(
         RcTransformer<T, R>,
         (Fn(T) -> R + 'static),
@@ -529,11 +521,7 @@ pub struct ArcTransformer<T, R> {
 }
 
 // Implement ArcTransformer
-impl<T, R> ArcTransformer<T, R>
-where
-    T: 'static,
-    R: 'static,
-{
+impl<T, R> ArcTransformer<T, R> {
     impl_transformer_common_methods!(
         ArcTransformer<T, R>,
         (Fn(T) -> R + Send + Sync + 'static),

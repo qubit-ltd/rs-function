@@ -491,7 +491,7 @@ pub struct BoxPredicate<T> {
     name: Option<String>,
 }
 
-impl<T: 'static> BoxPredicate<T> {
+impl<T> BoxPredicate<T> {
     // Generates: new(), new_with_name(), name(), set_name(), always_true(), always_false()
     impl_predicate_common_methods!(BoxPredicate<T>, (Fn(&T) -> bool + 'static), |f| Box::new(f));
 
@@ -503,7 +503,7 @@ impl<T: 'static> BoxPredicate<T> {
 impl_predicate_debug_display!(BoxPredicate<T>);
 
 // Implements Predicate trait for BoxPredicate<T>
-impl<T: 'static> Predicate<T> for BoxPredicate<T> {
+impl<T> Predicate<T> for BoxPredicate<T> {
     fn test(&self, value: &T) -> bool {
         (self.function)(value)
     }
@@ -543,7 +543,7 @@ pub struct RcPredicate<T> {
     name: Option<String>,
 }
 
-impl<T: 'static> RcPredicate<T> {
+impl<T> RcPredicate<T> {
     // Generates: new(), new_with_name(), name(), set_name(), always_true(), always_false()
     impl_predicate_common_methods!(RcPredicate<T>, (Fn(&T) -> bool + 'static), |f| Rc::new(f));
 
@@ -558,7 +558,7 @@ impl_predicate_clone!(RcPredicate<T>);
 impl_predicate_debug_display!(RcPredicate<T>);
 
 // Implements Predicate trait for RcPredicate<T>
-impl<T: 'static> Predicate<T> for RcPredicate<T> {
+impl<T> Predicate<T> for RcPredicate<T> {
     fn test(&self, value: &T) -> bool {
         (self.function)(value)
     }
@@ -604,7 +604,7 @@ pub struct ArcPredicate<T> {
     name: Option<String>,
 }
 
-impl<T: 'static> ArcPredicate<T> {
+impl<T> ArcPredicate<T> {
     // Generates: new(), new_with_name(), name(), set_name(), always_true(), always_false()
     impl_predicate_common_methods!(
         ArcPredicate<T>,
@@ -623,7 +623,7 @@ impl_predicate_clone!(ArcPredicate<T>);
 impl_predicate_debug_display!(ArcPredicate<T>);
 
 // Implements Predicate trait for ArcPredicate<T>
-impl<T: 'static> Predicate<T> for ArcPredicate<T> {
+impl<T> Predicate<T> for ArcPredicate<T> {
     fn test(&self, value: &T) -> bool {
         (self.function)(value)
     }

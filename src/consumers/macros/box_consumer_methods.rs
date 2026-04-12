@@ -148,6 +148,7 @@ macro_rules! impl_box_consumer_methods {
         /// ```
         pub fn when<P>(self, predicate: P) -> $conditional_type<$t>
         where
+            $t: 'static,
             P: Predicate<$t> + 'static,
         {
             $conditional_type {
@@ -254,6 +255,8 @@ macro_rules! impl_box_consumer_methods {
         /// ```
         pub fn when<P>(self, predicate: P) -> $conditional_type<$t, $u>
         where
+            $t: 'static,
+            $u: 'static,
             P: BiPredicate<$t, $u> + 'static,
         {
             $conditional_type {

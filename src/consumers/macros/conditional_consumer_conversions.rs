@@ -162,7 +162,10 @@ macro_rules! impl_conditional_consumer_conversions {
         $fn_trait:ident
     ) => {
         #[allow(unused_mut)]
-        fn into_box(self) -> $box_type<$t> {
+        fn into_box(self) -> $box_type<$t>
+        where
+            $t: 'static,
+        {
             let pred = self.predicate;
             let mut consumer = self.consumer;
             $box_type::new(move |t| {
@@ -173,7 +176,10 @@ macro_rules! impl_conditional_consumer_conversions {
         }
 
         #[allow(unused_mut)]
-        fn into_rc(self) -> $rc_type<$t> {
+        fn into_rc(self) -> $rc_type<$t>
+        where
+            $t: 'static,
+        {
             let pred = self.predicate.into_rc();
             let mut consumer = self.consumer.into_rc();
             $rc_type::new(move |t| {
@@ -202,7 +208,11 @@ macro_rules! impl_conditional_consumer_conversions {
         $fn_trait:ident
     ) => {
         #[allow(unused_mut)]
-        fn into_box(self) -> $box_type<$t, $u> {
+        fn into_box(self) -> $box_type<$t, $u>
+        where
+            $t: 'static,
+            $u: 'static,
+        {
             let pred = self.predicate;
             let mut consumer = self.consumer;
             $box_type::new(move |t, u| {
@@ -213,7 +223,11 @@ macro_rules! impl_conditional_consumer_conversions {
         }
 
         #[allow(unused_mut)]
-        fn into_rc(self) -> $rc_type<$t, $u> {
+        fn into_rc(self) -> $rc_type<$t, $u>
+        where
+            $t: 'static,
+            $u: 'static,
+        {
             let pred = self.predicate.into_rc();
             let mut consumer = self.consumer.into_rc();
             $rc_type::new_with_optional_name(

@@ -146,10 +146,7 @@ macro_rules! impl_shared_conditional_consumer {
         $predicate_conversion:ident,
         $($extra_bounds:tt)+
     ) => {
-        impl<$t> $struct_name<$t>
-        where
-            $t: 'static,
-        {
+        impl<$t> $struct_name<$t> {
             /// Chains another consumer in sequence
             ///
             /// Combines the current conditional consumer with another consumer
@@ -199,6 +196,7 @@ macro_rules! impl_shared_conditional_consumer {
             #[allow(unused_mut)]
             pub fn and_then<C>(&self, mut next: C) -> $consumer_type<$t>
             where
+                $t: 'static,
                 C: $consumer_trait<$t> + $($extra_bounds)+,
             {
                 let first_predicate = self.predicate.clone();
@@ -226,6 +224,7 @@ macro_rules! impl_shared_conditional_consumer {
             #[allow(unused_mut)]
             pub fn or_else<C>(&self, mut else_consumer: C) -> $consumer_type<$t>
             where
+                $t: 'static,
                 C: $consumer_trait<$t> + $($extra_bounds)+,
             {
                 let predicate = self.predicate.clone();
@@ -249,11 +248,7 @@ macro_rules! impl_shared_conditional_consumer {
         $predicate_conversion:ident,
         $($extra_bounds:tt)+
     ) => {
-        impl<$t, $u> $struct_name<$t, $u>
-        where
-            $t: 'static,
-            $u: 'static,
-        {
+        impl<$t, $u> $struct_name<$t, $u> {
             /// Chains another bi-consumer in sequence
             ///
             /// Combines the current conditional bi-consumer with another
@@ -306,6 +301,8 @@ macro_rules! impl_shared_conditional_consumer {
             #[allow(unused_mut)]
             pub fn and_then<C>(&self, mut next: C) -> $consumer_type<$t, $u>
             where
+                $t: 'static,
+                $u: 'static,
                 C: $consumer_trait<$t, $u> + $($extra_bounds)+,
             {
                 let first_predicate = self.predicate.clone();
@@ -333,6 +330,8 @@ macro_rules! impl_shared_conditional_consumer {
             #[allow(unused_mut)]
             pub fn or_else<C>(&self, mut else_consumer: C) -> $consumer_type<$t, $u>
             where
+                $t: 'static,
+                $u: 'static,
                 C: $consumer_trait<$t, $u> + $($extra_bounds)+,
             {
                 let predicate = self.predicate.clone();

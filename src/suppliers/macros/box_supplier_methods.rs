@@ -114,6 +114,7 @@ macro_rules! impl_box_supplier_methods {
         #[allow(unused_mut)]
         pub fn map<U, M>(self, mapper: M) -> $struct_name<U>
         where
+            $t: 'static,
             M: Transformer<$t, U> + 'static,
             U: 'static,
         {
@@ -147,6 +148,7 @@ macro_rules! impl_box_supplier_methods {
         #[allow(unused_mut)]
         pub fn filter<P>(self, predicate: P) -> $struct_name<Option<$t>>
         where
+            $t: 'static,
             P: Predicate<$t> + 'static,
         {
             let mut self_fn = self.function;
@@ -187,6 +189,7 @@ macro_rules! impl_box_supplier_methods {
         #[allow(unused_mut)]
         pub fn zip<U, S>(self, mut other: S) -> $struct_name<($t, U)>
         where
+            $t: 'static,
             S: $supplier_trait<U> + 'static,
             U: 'static,
         {

@@ -546,11 +546,7 @@ pub struct BoxStatefulBiConsumer<T, U> {
     name: Option<String>,
 }
 
-impl<T, U> BoxStatefulBiConsumer<T, U>
-where
-    T: 'static,
-    U: 'static,
-{
+impl<T, U> BoxStatefulBiConsumer<T, U> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
     impl_consumer_common_methods!(
         BoxStatefulBiConsumer<T, U>,
@@ -658,11 +654,7 @@ pub struct RcStatefulBiConsumer<T, U> {
     name: Option<String>,
 }
 
-impl<T, U> RcStatefulBiConsumer<T, U>
-where
-    T: 'static,
-    U: 'static,
-{
+impl<T, U> RcStatefulBiConsumer<T, U> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
     impl_consumer_common_methods!(
         RcStatefulBiConsumer<T, U>,
@@ -764,11 +756,7 @@ pub struct ArcStatefulBiConsumer<T, U> {
     name: Option<String>,
 }
 
-impl<T, U> ArcStatefulBiConsumer<T, U>
-where
-    T: 'static,
-    U: 'static,
-{
+impl<T, U> ArcStatefulBiConsumer<T, U> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
     impl_consumer_common_methods!(
         ArcStatefulBiConsumer<T, U>,
@@ -1009,11 +997,7 @@ impl_box_conditional_consumer!(
     StatefulBiConsumer
 );
 
-impl<T, U> StatefulBiConsumer<T, U> for BoxConditionalStatefulBiConsumer<T, U>
-where
-    T: 'static,
-    U: 'static,
-{
+impl<T, U> StatefulBiConsumer<T, U> for BoxConditionalStatefulBiConsumer<T, U> {
     fn accept(&mut self, first: &T, second: &U) {
         if self.predicate.test(first, second) {
             self.consumer.accept(first, second);
@@ -1171,11 +1155,7 @@ impl_shared_conditional_consumer!(
     'static
 );
 
-impl<T, U> StatefulBiConsumer<T, U> for RcConditionalStatefulBiConsumer<T, U>
-where
-    T: 'static,
-    U: 'static,
-{
+impl<T, U> StatefulBiConsumer<T, U> for RcConditionalStatefulBiConsumer<T, U> {
     fn accept(&mut self, first: &T, second: &U) {
         if self.predicate.test(first, second) {
             self.consumer.accept(first, second);

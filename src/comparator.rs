@@ -378,7 +378,7 @@ pub struct BoxComparator<T> {
     function: Box<dyn Fn(&T, &T) -> Ordering>,
 }
 
-impl<T: 'static> BoxComparator<T> {
+impl<T> BoxComparator<T> {
     /// Creates a new `BoxComparator` from a closure.
     ///
     /// # Parameters
@@ -423,7 +423,10 @@ impl<T: 'static> BoxComparator<T> {
     /// assert_eq!(rev.compare(&5, &3), Ordering::Less);
     /// ```
     #[inline]
-    pub fn reversed(self) -> Self {
+    pub fn reversed(self) -> Self
+    where
+        T: 'static,
+    {
         BoxComparator::new(move |a, b| (self.function)(b, a))
     }
 
@@ -473,7 +476,10 @@ impl<T: 'static> BoxComparator<T> {
     /// // by_age.compare(&p1, &p2); // Would not compile - moved
     /// ```
     #[inline]
-    pub fn then_comparing(self, other: Self) -> Self {
+    pub fn then_comparing(self, other: Self) -> Self
+    where
+        T: 'static,
+    {
         BoxComparator::new(move |a, b| match (self.function)(a, b) {
             Ordering::Equal => (other.function)(a, b),
             ord => ord,
@@ -576,7 +582,7 @@ pub struct ArcComparator<T> {
     function: Arc<dyn Fn(&T, &T) -> Ordering + Send + Sync>,
 }
 
-impl<T: 'static> ArcComparator<T> {
+impl<T> ArcComparator<T> {
     /// Creates a new `ArcComparator` from a closure.
     ///
     /// # Parameters
@@ -622,7 +628,10 @@ impl<T: 'static> ArcComparator<T> {
     /// assert_eq!(cmp.compare(&5, &3), Ordering::Greater); // cmp still works
     /// ```
     #[inline]
-    pub fn reversed(&self) -> Self {
+    pub fn reversed(&self) -> Self
+    where
+        T: 'static,
+    {
         let self_fn = self.function.clone();
         ArcComparator::new(move |a, b| self_fn(b, a))
     }
@@ -652,7 +661,10 @@ impl<T: 'static> ArcComparator<T> {
     /// assert_eq!(chained.compare(&4, &2), Ordering::Greater);
     /// ```
     #[inline]
-    pub fn then_comparing(&self, other: &Self) -> Self {
+    pub fn then_comparing(&self, other: &Self) -> Self
+    where
+        T: 'static,
+    {
         let first = self.function.clone();
         let second = other.function.clone();
         ArcComparator::new(move |a, b| match first(a, b) {
@@ -757,7 +769,7 @@ pub struct RcComparator<T> {
     function: Rc<dyn Fn(&T, &T) -> Ordering>,
 }
 
-impl<T: 'static> RcComparator<T> {
+impl<T> RcComparator<T> {
     /// Creates a new `RcComparator` from a closure.
     ///
     /// # Parameters
@@ -803,7 +815,10 @@ impl<T: 'static> RcComparator<T> {
     /// assert_eq!(cmp.compare(&5, &3), Ordering::Greater); // cmp still works
     /// ```
     #[inline]
-    pub fn reversed(&self) -> Self {
+    pub fn reversed(&self) -> Self
+    where
+        T: 'static,
+    {
         let self_fn = self.function.clone();
         RcComparator::new(move |a, b| self_fn(b, a))
     }
@@ -833,7 +848,10 @@ impl<T: 'static> RcComparator<T> {
     /// assert_eq!(chained.compare(&4, &2), Ordering::Greater);
     /// ```
     #[inline]
-    pub fn then_comparing(&self, other: &Self) -> Self {
+    pub fn then_comparing(&self, other: &Self) -> Self
+    where
+        T: 'static,
+    {
         let first = self.function.clone();
         let second = other.function.clone();
         RcComparator::new(move |a, b| match first(a, b) {

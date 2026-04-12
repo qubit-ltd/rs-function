@@ -306,12 +306,7 @@ pub struct BoxStatefulBiTransformer<T, U, R> {
     name: Option<String>,
 }
 
-impl<T, U, R> BoxStatefulBiTransformer<T, U, R>
-where
-    T: 'static,
-    U: 'static,
-    R: 'static,
-{
+impl<T, U, R> BoxStatefulBiTransformer<T, U, R> {
     impl_transformer_common_methods!(
         BoxStatefulBiTransformer<T, U, R>,
         (FnMut(T, U) -> R + 'static),
@@ -397,12 +392,7 @@ pub struct RcStatefulBiTransformer<T, U, R> {
     name: Option<String>,
 }
 
-impl<T, U, R> RcStatefulBiTransformer<T, U, R>
-where
-    T: 'static,
-    U: 'static,
-    R: 'static,
-{
+impl<T, U, R> RcStatefulBiTransformer<T, U, R> {
     impl_transformer_common_methods!(
         RcStatefulBiTransformer<T, U, R>,
         (FnMut(T, U) -> R + 'static),
@@ -469,12 +459,7 @@ pub struct ArcStatefulBiTransformer<T, U, R> {
     name: Option<String>,
 }
 
-impl<T, U, R> ArcStatefulBiTransformer<T, U, R>
-where
-    T: 'static,
-    U: 'static,
-    R: 'static,
-{
+impl<T, U, R> ArcStatefulBiTransformer<T, U, R> {
     impl_transformer_common_methods!(
         ArcStatefulBiTransformer<T, U, R>,
         (FnMut(T, U) -> R + Send + 'static),

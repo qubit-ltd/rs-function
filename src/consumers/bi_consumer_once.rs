@@ -317,11 +317,7 @@ pub struct BoxBiConsumerOnce<T, U> {
 
 // All methods require T: 'static and U: 'static because
 // Box<dyn FnOnce(&T, &U)> requires it
-impl<T, U> BoxBiConsumerOnce<T, U>
-where
-    T: 'static,
-    U: 'static,
-{
+impl<T, U> BoxBiConsumerOnce<T, U> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
     impl_consumer_common_methods!(
         BoxBiConsumerOnce<T, U>,
@@ -542,18 +538,18 @@ impl_box_conditional_consumer!(
     BiConsumerOnce
 );
 
-impl<T, U> BiConsumerOnce<T, U> for BoxConditionalBiConsumerOnce<T, U>
-where
-    T: 'static,
-    U: 'static,
-{
+impl<T, U> BiConsumerOnce<T, U> for BoxConditionalBiConsumerOnce<T, U> {
     fn accept(self, first: &T, second: &U) {
         if self.predicate.test(first, second) {
             self.consumer.accept(first, second);
         }
     }
 
-    fn into_box(self) -> BoxBiConsumerOnce<T, U> {
+    fn into_box(self) -> BoxBiConsumerOnce<T, U>
+    where
+        T: 'static,
+        U: 'static,
+    {
         let pred = self.predicate;
         let consumer = self.consumer;
         BoxBiConsumerOnce::new(move |t, u| {

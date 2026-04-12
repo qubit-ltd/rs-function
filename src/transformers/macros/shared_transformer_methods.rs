@@ -147,6 +147,8 @@ macro_rules! impl_shared_transformer_methods {
         #[inline]
         pub fn when<P>(&self, predicate: P) -> $conditional_type<$t, $r>
         where
+            $t: 'static,
+            $r: 'static,
             P: Predicate<$t> + $($extra_bounds)+,
         {
             $conditional_type {
@@ -159,6 +161,8 @@ macro_rules! impl_shared_transformer_methods {
         #[inline]
         pub fn and_then<S, F>(&self, mut after: F) -> $struct_name<$t, S>
         where
+            $t: 'static,
+            $r: 'static,
             S: 'static,
             F: $chained_transformer_trait<$r, S> + $($extra_bounds)+,
         {
@@ -181,6 +185,9 @@ macro_rules! impl_shared_transformer_methods {
         #[inline]
         pub fn when<P>(&self, predicate: P) -> $conditional_type<$t, $u, $r>
         where
+            $t: 'static,
+            $u: 'static,
+            $r: 'static,
             P: BiPredicate<$t, $u> + $($extra_bounds)+,
         {
             $conditional_type {
@@ -193,6 +200,9 @@ macro_rules! impl_shared_transformer_methods {
         #[inline]
         pub fn and_then<S, F>(&self, mut after: F) -> $struct_name<$t, $u, S>
         where
+            $t: 'static,
+            $u: 'static,
+            $r: 'static,
             S: 'static,
             F: $chained_transformer_trait<$r, S> + $($extra_bounds)+,
         {

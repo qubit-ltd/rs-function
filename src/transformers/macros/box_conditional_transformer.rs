@@ -93,11 +93,7 @@ macro_rules! impl_box_conditional_transformer {
         $transformer_type:ident,
         $transformer_trait:ident
     ) => {
-        impl<$t, $r> $struct_name<$t, $r>
-        where
-            $t: 'static,
-            $r: 'static,
-        {
+        impl<$t, $r> $struct_name<$t, $r> {
             /// Adds an else branch
             ///
             /// Executes the original transformer when the condition is satisfied,
@@ -113,6 +109,8 @@ macro_rules! impl_box_conditional_transformer {
             #[allow(unused_mut)]
             pub fn or_else<F>(self, mut else_transformer: F) -> $transformer_type<$t, $r>
             where
+                $t: 'static,
+                $r: 'static,
                 F: $transformer_trait<$t, $r> + 'static,
             {
                 let predicate = self.predicate;
@@ -134,12 +132,7 @@ macro_rules! impl_box_conditional_transformer {
         $transformer_type:ident,
         $transformer_trait:ident
     ) => {
-        impl<$t, $u, $r> $struct_name<$t, $u, $r>
-        where
-            $t: 'static,
-            $u: 'static,
-            $r: 'static,
-        {
+        impl<$t, $u, $r> $struct_name<$t, $u, $r> {
             /// Adds an else branch
             ///
             /// Executes the original transformer when the condition is satisfied,
@@ -155,6 +148,9 @@ macro_rules! impl_box_conditional_transformer {
             #[allow(unused_mut)]
             pub fn or_else<F>(self, mut else_transformer: F) -> $transformer_type<$t, $u, $r>
             where
+                $t: 'static,
+                $u: 'static,
+                $r: 'static,
                 F: $transformer_trait<$t, $u, $r> + 'static,
             {
                 let predicate = self.predicate;

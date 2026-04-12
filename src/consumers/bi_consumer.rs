@@ -438,11 +438,7 @@ pub struct BoxBiConsumer<T, U> {
     name: Option<String>,
 }
 
-impl<T, U> BoxBiConsumer<T, U>
-where
-    T: 'static,
-    U: 'static,
-{
+impl<T, U> BoxBiConsumer<T, U> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
     impl_consumer_common_methods!(
         BoxBiConsumer<T, U>,
@@ -529,11 +525,7 @@ pub struct RcBiConsumer<T, U> {
     name: Option<String>,
 }
 
-impl<T, U> RcBiConsumer<T, U>
-where
-    T: 'static,
-    U: 'static,
-{
+impl<T, U> RcBiConsumer<T, U> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
     impl_consumer_common_methods!(
         RcBiConsumer<T, U>,
@@ -624,11 +616,7 @@ pub struct ArcBiConsumer<T, U> {
     name: Option<String>,
 }
 
-impl<T, U> ArcBiConsumer<T, U>
-where
-    T: 'static,
-    U: 'static,
-{
+impl<T, U> ArcBiConsumer<T, U> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
     impl_consumer_common_methods!(
         ArcBiConsumer<T, U>,
@@ -837,11 +825,7 @@ impl_box_conditional_consumer!(
 );
 
 // Hand-written BiConsumer trait implementation
-impl<T, U> BiConsumer<T, U> for BoxConditionalBiConsumer<T, U>
-where
-    T: 'static,
-    U: 'static,
-{
+impl<T, U> BiConsumer<T, U> for BoxConditionalBiConsumer<T, U> {
     fn accept(&self, first: &T, second: &U) {
         if self.predicate.test(first, second) {
             self.consumer.accept(first, second);
@@ -894,11 +878,7 @@ impl_shared_conditional_consumer!(
 );
 
 // Hand-written BiConsumer trait implementation
-impl<T, U> BiConsumer<T, U> for ArcConditionalBiConsumer<T, U>
-where
-    T: 'static,
-    U: 'static,
-{
+impl<T, U> BiConsumer<T, U> for ArcConditionalBiConsumer<T, U> {
     fn accept(&self, first: &T, second: &U) {
         if self.predicate.test(first, second) {
             self.consumer.accept(first, second);
@@ -954,11 +934,7 @@ impl_shared_conditional_consumer!(
 );
 
 // Hand-written BiConsumer trait implementation
-impl<T, U> BiConsumer<T, U> for RcConditionalBiConsumer<T, U>
-where
-    T: 'static,
-    U: 'static,
-{
+impl<T, U> BiConsumer<T, U> for RcConditionalBiConsumer<T, U> {
     fn accept(&self, first: &T, second: &U) {
         if self.predicate.test(first, second) {
             self.consumer.accept(first, second);

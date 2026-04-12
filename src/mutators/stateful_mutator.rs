@@ -645,10 +645,7 @@ pub struct BoxStatefulMutator<T> {
     name: Option<String>,
 }
 
-impl<T> BoxStatefulMutator<T>
-where
-    T: 'static,
-{
+impl<T> BoxStatefulMutator<T> {
     impl_mutator_common_methods!(BoxStatefulMutator<T>, (FnMut(&mut T) + 'static), |f| {
         Box::new(f)
     });
@@ -726,10 +723,7 @@ pub struct RcStatefulMutator<T> {
     name: Option<String>,
 }
 
-impl<T> RcStatefulMutator<T>
-where
-    T: 'static,
-{
+impl<T> RcStatefulMutator<T> {
     impl_mutator_common_methods!(
         RcStatefulMutator<T>,
         (FnMut(&mut T) + 'static),
@@ -813,10 +807,7 @@ pub struct ArcStatefulMutator<T> {
     name: Option<String>,
 }
 
-impl<T> ArcStatefulMutator<T>
-where
-    T: 'static,
-{
+impl<T> ArcStatefulMutator<T> {
     impl_mutator_common_methods!(
         ArcStatefulMutator<T>,
         (FnMut(&mut T) + Send + 'static),
@@ -1026,10 +1017,7 @@ impl_box_conditional_mutator!(
     StatefulMutator
 );
 
-impl<T> StatefulMutator<T> for BoxConditionalStatefulMutator<T>
-where
-    T: 'static,
-{
+impl<T> StatefulMutator<T> for BoxConditionalStatefulMutator<T> {
     fn apply(&mut self, value: &mut T) {
         if self.predicate.test(value) {
             self.mutator.apply(value);
@@ -1096,10 +1084,7 @@ impl_shared_conditional_mutator!(
     'static
 );
 
-impl<T> StatefulMutator<T> for RcConditionalStatefulMutator<T>
-where
-    T: 'static,
-{
+impl<T> StatefulMutator<T> for RcConditionalStatefulMutator<T> {
     fn apply(&mut self, value: &mut T) {
         if self.predicate.test(value) {
             self.mutator.apply(value);

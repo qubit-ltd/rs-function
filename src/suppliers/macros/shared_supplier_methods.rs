@@ -126,6 +126,7 @@ macro_rules! impl_shared_supplier_methods {
         #[inline]
         pub fn map<U, M>(&self, mapper: M) -> $struct_name<U>
         where
+            $t: 'static,
             M: Transformer<$t, U> + Send + Sync + 'static,
             U: 'static,
         {
@@ -160,6 +161,7 @@ macro_rules! impl_shared_supplier_methods {
         #[inline]
         pub fn filter<P>(&self, predicate: P) -> $struct_name<Option<$t>>
         where
+            $t: 'static,
             P: Predicate<$t> + Send + Sync + 'static,
         {
             let mut self_cloned = self.clone();
@@ -199,6 +201,7 @@ macro_rules! impl_shared_supplier_methods {
         #[inline]
         pub fn zip<U, S>(&self, mut other: S) -> $struct_name<($t, U)>
         where
+            $t: 'static,
             S: $supplier_trait<U> + Send + Sync + 'static,
             U: 'static,
         {
@@ -241,6 +244,7 @@ macro_rules! impl_shared_supplier_methods {
         #[inline]
         pub fn map<U, M>(&self, mapper: M) -> $struct_name<U>
         where
+            $t: 'static,
             M: Transformer<$t, U> + $($extra_bounds)+,
             U: $($extra_bounds)+,
         {
@@ -275,6 +279,7 @@ macro_rules! impl_shared_supplier_methods {
         #[inline]
         pub fn filter<P>(&self, predicate: P) -> $struct_name<Option<$t>>
         where
+            $t: 'static,
             P: Predicate<$t> + $($extra_bounds)+,
         {
             let mut self_cloned = self.clone();
@@ -314,6 +319,7 @@ macro_rules! impl_shared_supplier_methods {
         #[inline]
         pub fn zip<U, S>(&self, mut other: S) -> $struct_name<($t, U)>
         where
+            $t: 'static,
             S: $supplier_trait<U> + $($extra_bounds)+,
             U: $($extra_bounds)+,
         {

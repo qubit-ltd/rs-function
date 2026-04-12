@@ -84,10 +84,7 @@ macro_rules! impl_box_conditional_mutator {
         $mutator_type:ident,
         $mutator_trait:ident
     ) => {
-        impl<$t> $struct_name<$t>
-        where
-            $t: 'static,
-        {
+        impl<$t> $struct_name<$t> {
             /// Chains another mutator in sequence
             ///
             /// Combines the current conditional mutator with another mutator
@@ -138,6 +135,7 @@ macro_rules! impl_box_conditional_mutator {
             #[allow(unused_mut)]
             pub fn and_then<M>(self, mut next: M) -> $mutator_type<$t>
             where
+                $t: 'static,
                 M: $mutator_trait<$t> + 'static,
             {
                 let first_predicate = self.predicate;
@@ -165,6 +163,7 @@ macro_rules! impl_box_conditional_mutator {
             #[allow(unused_mut)]
             pub fn or_else<M>(self, mut else_mutator: M) -> $mutator_type<$t>
             where
+                $t: 'static,
                 M: $mutator_trait<$t> + 'static,
             {
                 let predicate = self.predicate;

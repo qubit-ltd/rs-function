@@ -643,10 +643,7 @@ pub struct BoxMutator<T> {
     name: Option<String>,
 }
 
-impl<T> BoxMutator<T>
-where
-    T: 'static,
-{
+impl<T> BoxMutator<T> {
     // Generate common mutator methods (new, new_with_name, name, set_name, noop)
     impl_mutator_common_methods!(BoxMutator<T>, (Fn(&mut T) + 'static), |f| Box::new(f));
 
@@ -712,10 +709,7 @@ pub struct RcMutator<T> {
     name: Option<String>,
 }
 
-impl<T> RcMutator<T>
-where
-    T: 'static,
-{
+impl<T> RcMutator<T> {
     // Generate common mutator methods (new, new_with_name, name, set_name, noop)
     impl_mutator_common_methods!(RcMutator<T>, (Fn(&mut T) + 'static), |f| Rc::new(f));
 
@@ -794,10 +788,7 @@ pub struct ArcMutator<T> {
     name: Option<String>,
 }
 
-impl<T> ArcMutator<T>
-where
-    T: 'static,
-{
+impl<T> ArcMutator<T> {
     // Generate common mutator methods (new, new_with_name, name, set_name, noop)
     impl_mutator_common_methods!(ArcMutator<T>, (Fn(&mut T) + Send + Sync + 'static), |f| {
         Arc::new(f)
@@ -999,10 +990,7 @@ pub struct BoxConditionalMutator<T> {
 // Generate box conditional mutator methods (and_then, or_else)
 impl_box_conditional_mutator!(BoxConditionalMutator<T>, BoxMutator, Mutator);
 
-impl<T> Mutator<T> for BoxConditionalMutator<T>
-where
-    T: 'static,
-{
+impl<T> Mutator<T> for BoxConditionalMutator<T> {
     fn apply(&self, value: &mut T) {
         if self.predicate.test(value) {
             self.mutator.apply(value);
@@ -1069,10 +1057,7 @@ impl_shared_conditional_mutator!(
     'static
 );
 
-impl<T> Mutator<T> for RcConditionalMutator<T>
-where
-    T: 'static,
-{
+impl<T> Mutator<T> for RcConditionalMutator<T> {
     fn apply(&self, value: &mut T) {
         if self.predicate.test(value) {
             self.mutator.apply(value);

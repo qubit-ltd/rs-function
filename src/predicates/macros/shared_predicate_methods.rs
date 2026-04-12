@@ -122,6 +122,7 @@ macro_rules! impl_shared_predicate_methods {
         #[inline]
         pub fn and<P>(&self, other: P) -> $struct_name<$t>
         where
+            $t: 'static,
             P: $predicate_trait_name<$t> + $($predicate_extra_bounds)+
         {
             let self_fn = self.function.clone();
@@ -143,6 +144,7 @@ macro_rules! impl_shared_predicate_methods {
         #[inline]
         pub fn or<P>(&self, other: P) -> $struct_name<$t>
         where
+            $t: 'static,
             P: $predicate_trait_name<$t> + $($predicate_extra_bounds)+
         {
             let self_fn = self.function.clone();
@@ -160,6 +162,8 @@ macro_rules! impl_shared_predicate_methods {
         #[allow(clippy::should_implement_trait)]
         #[inline]
         pub fn not(&self) -> $struct_name<$t>
+        where
+            $t: 'static,
         {
             let self_fn = self.function.clone();
             $struct_name::new(move |x| !(self_fn(x)))
@@ -183,6 +187,7 @@ macro_rules! impl_shared_predicate_methods {
         #[inline]
         pub fn nand<P>(&self, other: P) -> $struct_name<$t>
         where
+            $t: 'static,
             P: $predicate_trait_name<$t> + $($predicate_extra_bounds)+
         {
             let self_fn = self.function.clone();
@@ -206,6 +211,7 @@ macro_rules! impl_shared_predicate_methods {
         #[inline]
         pub fn xor<P>(&self, other: P) -> $struct_name<$t>
         where
+            $t: 'static,
             P: $predicate_trait_name<$t> + $($predicate_extra_bounds)+
         {
             let self_fn = self.function.clone();
@@ -230,6 +236,7 @@ macro_rules! impl_shared_predicate_methods {
         #[inline]
         pub fn nor<P>(&self, other: P) -> $struct_name<$t>
         where
+            $t: 'static,
             P: $predicate_trait_name<$t> + $($predicate_extra_bounds)+
         {
             let self_fn = self.function.clone();
@@ -259,6 +266,8 @@ macro_rules! impl_shared_predicate_methods {
         #[inline]
         pub fn and<P>(&self, other: P) -> $struct_name<$t, $u>
         where
+            $t: 'static,
+            $u: 'static,
             P: $predicate_trait_name<$t, $u> + $($predicate_extra_bounds)+
         {
             let self_fn = self.function.clone();
@@ -280,6 +289,8 @@ macro_rules! impl_shared_predicate_methods {
         #[inline]
         pub fn or<P>(&self, other: P) -> $struct_name<$t, $u>
         where
+            $t: 'static,
+            $u: 'static,
             P: $predicate_trait_name<$t, $u> + $($predicate_extra_bounds)+
         {
             let self_fn = self.function.clone();
@@ -297,6 +308,9 @@ macro_rules! impl_shared_predicate_methods {
         #[allow(clippy::should_implement_trait)]
         #[inline]
         pub fn not(&self) -> $struct_name<$t, $u>
+        where
+            $t: 'static,
+            $u: 'static,
         {
             let self_fn = self.function.clone();
             $struct_name::new(move |x, y| !(self_fn(x, y)))
@@ -320,6 +334,8 @@ macro_rules! impl_shared_predicate_methods {
         #[inline]
         pub fn nand<P>(&self, other: P) -> $struct_name<$t, $u>
         where
+            $t: 'static,
+            $u: 'static,
             P: $predicate_trait_name<$t, $u> + $($predicate_extra_bounds)+
         {
             let self_fn = self.function.clone();
@@ -344,6 +360,8 @@ macro_rules! impl_shared_predicate_methods {
         #[inline]
         pub fn xor<P>(&self, other: P) -> $struct_name<$t, $u>
         where
+            $t: 'static,
+            $u: 'static,
             P: $predicate_trait_name<$t, $u> + $($predicate_extra_bounds)+
         {
             let self_fn = self.function.clone();
@@ -368,6 +386,8 @@ macro_rules! impl_shared_predicate_methods {
         #[inline]
         pub fn nor<P>(&self, other: P) -> $struct_name<$t, $u>
         where
+            $t: 'static,
+            $u: 'static,
             P: $predicate_trait_name<$t, $u> + $($predicate_extra_bounds)+
         {
             let self_fn = self.function.clone();

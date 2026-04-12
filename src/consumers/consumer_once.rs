@@ -325,10 +325,7 @@ pub struct BoxConsumerOnce<T> {
 }
 
 // All methods require T: 'static because Box<dyn FnOnce(&T)> requires it
-impl<T> BoxConsumerOnce<T>
-where
-    T: 'static,
-{
+impl<T> BoxConsumerOnce<T> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
     impl_consumer_common_methods!(BoxConsumerOnce<T>, (FnOnce(&T) + 'static), |f| Box::new(f));
 
@@ -526,17 +523,17 @@ pub struct BoxConditionalConsumerOnce<T> {
 // Generate and_then and or_else methods using macro
 impl_box_conditional_consumer!(BoxConditionalConsumerOnce<T>, BoxConsumerOnce, ConsumerOnce);
 
-impl<T> ConsumerOnce<T> for BoxConditionalConsumerOnce<T>
-where
-    T: 'static,
-{
+impl<T> ConsumerOnce<T> for BoxConditionalConsumerOnce<T> {
     fn accept(self, value: &T) {
         if self.predicate.test(value) {
             self.consumer.accept(value);
         }
     }
 
-    fn into_box(self) -> BoxConsumerOnce<T> {
+    fn into_box(self) -> BoxConsumerOnce<T>
+    where
+        T: 'static,
+    {
         let pred = self.predicate;
         let consumer = self.consumer;
         BoxConsumerOnce::new(move |t| {

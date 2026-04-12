@@ -300,12 +300,7 @@ pub struct BoxBiTransformer<T, U, R> {
 }
 
 // Implement BoxBiTransformer
-impl<T, U, R> BoxBiTransformer<T, U, R>
-where
-    T: 'static,
-    U: 'static,
-    R: 'static,
-{
+impl<T, U, R> BoxBiTransformer<T, U, R> {
     impl_transformer_common_methods!(
         BoxBiTransformer<T, U, R>,
         (Fn(T, U) -> R + 'static),
@@ -366,12 +361,7 @@ pub struct RcBiTransformer<T, U, R> {
     name: Option<String>,
 }
 
-impl<T, U, R> RcBiTransformer<T, U, R>
-where
-    T: 'static,
-    U: 'static,
-    R: 'static,
-{
+impl<T, U, R> RcBiTransformer<T, U, R> {
     impl_transformer_common_methods!(
         RcBiTransformer<T, U, R>,
         (Fn(T, U) -> R + 'static),
@@ -443,12 +433,7 @@ pub struct ArcBiTransformer<T, U, R> {
     name: Option<String>,
 }
 
-impl<T, U, R> ArcBiTransformer<T, U, R>
-where
-    T: 'static,
-    U: 'static,
-    R: 'static,
-{
+impl<T, U, R> ArcBiTransformer<T, U, R> {
     impl_transformer_common_methods!(
         ArcBiTransformer<T, U, R>,
         (Fn(T, U) -> R + Send + Sync + 'static),

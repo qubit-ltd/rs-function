@@ -542,10 +542,7 @@ pub struct BoxStatefulConsumer<T> {
     name: Option<String>,
 }
 
-impl<T> BoxStatefulConsumer<T>
-where
-    T: 'static,
-{
+impl<T> BoxStatefulConsumer<T> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
     impl_consumer_common_methods!(BoxStatefulConsumer<T>, (FnMut(&T) + 'static), |f| Box::new(
         f
@@ -649,10 +646,7 @@ pub struct RcStatefulConsumer<T> {
     name: Option<String>,
 }
 
-impl<T> RcStatefulConsumer<T>
-where
-    T: 'static,
-{
+impl<T> RcStatefulConsumer<T> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
     impl_consumer_common_methods!(RcStatefulConsumer<T>, (FnMut(&T) + 'static), |f| Rc::new(
         RefCell::new(f)
@@ -751,10 +745,7 @@ pub struct ArcStatefulConsumer<T> {
     name: Option<String>,
 }
 
-impl<T> ArcStatefulConsumer<T>
-where
-    T: 'static,
-{
+impl<T> ArcStatefulConsumer<T> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
     impl_consumer_common_methods!(ArcStatefulConsumer<T>, (FnMut(&T) + Send + 'static), |f| {
         Arc::new(Mutex::new(f))
@@ -1024,10 +1015,7 @@ impl_box_conditional_consumer!(
     StatefulConsumer
 );
 
-impl<T> StatefulConsumer<T> for BoxConditionalStatefulConsumer<T>
-where
-    T: 'static,
-{
+impl<T> StatefulConsumer<T> for BoxConditionalStatefulConsumer<T> {
     fn accept(&mut self, value: &T) {
         if self.predicate.test(value) {
             self.consumer.accept(value);
@@ -1178,10 +1166,7 @@ impl_shared_conditional_consumer!(
     'static
 );
 
-impl<T> StatefulConsumer<T> for RcConditionalStatefulConsumer<T>
-where
-    T: 'static,
-{
+impl<T> StatefulConsumer<T> for RcConditionalStatefulConsumer<T> {
     fn accept(&mut self, value: &T) {
         if self.predicate.test(value) {
             self.consumer.accept(value);
