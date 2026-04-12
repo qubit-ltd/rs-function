@@ -207,12 +207,7 @@ pub struct BoxBiMutatingFunctionOnce<T, U, R> {
 }
 
 // Implement BoxBiMutatingFunctionOnce
-impl<T, U, R> BoxBiMutatingFunctionOnce<T, U, R>
-where
-    T: 'static,
-    U: 'static,
-    R: 'static,
-{
+impl<T, U, R> BoxBiMutatingFunctionOnce<T, U, R> {
     // Generate new(), new_with_name(), new_with_optional_name(), name(), set_name()
     impl_function_common_methods!(
         BoxBiMutatingFunctionOnce<T, U, R>,
@@ -491,9 +486,6 @@ pub trait FnBiMutatingFunctionOnceOps<T, U, R>:
 impl<T, U, R, F> FnBiMutatingFunctionOnceOps<T, U, R> for F
 where
     F: FnOnce(&mut T, &mut U) -> R + 'static,
-    T: 'static,
-    U: 'static,
-    R: 'static,
 {
     // empty
 }

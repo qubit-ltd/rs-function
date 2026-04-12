@@ -108,6 +108,32 @@ mod test_box_mutating_function_once {
     }
 
     #[test]
+    fn test_new_allows_non_static_t() {
+        fn run<'a>(value: &'a str) -> usize {
+            let func: BoxMutatingFunctionOnce<&'a str, usize> =
+                BoxMutatingFunctionOnce::new(|x: &mut &'a str| x.len());
+            let mut input = value;
+            func.apply(&mut input)
+        }
+
+        let text = String::from("hello");
+        assert_eq!(run(text.as_str()), 5);
+    }
+
+    #[test]
+    fn test_new_allows_non_static_r() {
+        fn run<'a>(value: &'a str) -> &'a str {
+            let func: BoxMutatingFunctionOnce<&'a str, &'a str> =
+                BoxMutatingFunctionOnce::new(|x: &mut &'a str| *x);
+            let mut input = value;
+            func.apply(&mut input)
+        }
+
+        let text = String::from("qubit");
+        assert_eq!(run(text.as_str()), "qubit");
+    }
+
+    #[test]
     fn test_with_string() {
         let data = String::from(" world");
         let func = BoxMutatingFunctionOnce::new(move |x: &mut String| {

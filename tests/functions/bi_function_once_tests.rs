@@ -91,6 +91,42 @@ fn test_box_bi_function_once_new() {
 }
 
 #[test]
+fn test_box_bi_function_once_new_allows_non_static_t() {
+    fn run<'a>(value: &'a str) -> usize {
+        let func: BoxBiFunctionOnce<&'a str, i32, usize> =
+            BoxBiFunctionOnce::new(|x: &&'a str, y: &i32| x.len() + (*y as usize));
+        func.apply(&value, &3)
+    }
+
+    let text = String::from("hello");
+    assert_eq!(run(text.as_str()), 8);
+}
+
+#[test]
+fn test_box_bi_function_once_new_allows_non_static_u() {
+    fn run<'a>(value: &'a str) -> usize {
+        let func: BoxBiFunctionOnce<i32, &'a str, usize> =
+            BoxBiFunctionOnce::new(|x: &i32, y: &&'a str| (*x as usize) + y.len());
+        func.apply(&3, &value)
+    }
+
+    let text = String::from("world");
+    assert_eq!(run(text.as_str()), 8);
+}
+
+#[test]
+fn test_box_bi_function_once_new_allows_non_static_r() {
+    fn run<'a>(value: &'a str) -> &'a str {
+        let func: BoxBiFunctionOnce<&'a str, i32, &'a str> =
+            BoxBiFunctionOnce::new(|x: &&'a str, _y: &i32| *x);
+        func.apply(&value, &0)
+    }
+
+    let text = String::from("qubit");
+    assert_eq!(run(text.as_str()), "qubit");
+}
+
+#[test]
 fn test_box_bi_function_once_new_with_name() {
     // Test creating BoxBiFunctionOnce with name
     let add = BoxBiFunctionOnce::new_with_name("adder", |x: &i32, y: &i32| *x + *y);

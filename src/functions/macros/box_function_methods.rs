@@ -144,6 +144,8 @@ macro_rules! impl_box_function_methods {
         #[inline]
         pub fn when<P>(self, predicate: P) -> $conditional_type<$t, $r>
         where
+            $t: 'static,
+            $r: 'static,
             P: Predicate<$t> + 'static,
         {
             $conditional_type {
@@ -180,6 +182,8 @@ macro_rules! impl_box_function_methods {
         #[inline]
         pub fn and_then<S, F>(self, mut after: F) -> $struct_name<$t, S>
         where
+            $t: 'static,
+            $r: 'static,
             S: 'static,
             F: $chained_function_trait<$r, S> + 'static,
         {
@@ -223,6 +227,9 @@ macro_rules! impl_box_function_methods {
         #[inline]
         pub fn when<P>(self, predicate: P) -> $conditional_type<$t, $u, $r>
         where
+            $t: 'static,
+            $u: 'static,
+            $r: 'static,
             P: BiPredicate<$t, $u> + 'static,
         {
             $conditional_type {
@@ -259,6 +266,9 @@ macro_rules! impl_box_function_methods {
         #[inline]
         pub fn and_then<S, F>(self, mut after: F) -> $struct_name<$t, $u, S>
         where
+            $t: 'static,
+            $u: 'static,
+            $r: 'static,
             S: 'static,
             F: $chained_function_trait<$r, S> + 'static,
         {

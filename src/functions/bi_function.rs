@@ -302,12 +302,7 @@ pub struct BoxBiFunction<T, U, R> {
 }
 
 // Implement BoxBiFunction
-impl<T, U, R> BoxBiFunction<T, U, R>
-where
-    T: 'static,
-    U: 'static,
-    R: 'static,
-{
+impl<T, U, R> BoxBiFunction<T, U, R> {
     impl_function_common_methods!(
         BoxBiFunction<T, U, R>,
         (Fn(&T, &U) -> R + 'static),
@@ -367,18 +362,12 @@ pub struct RcBiFunction<T, U, R> {
     name: Option<String>,
 }
 
-impl<T, U, R> RcBiFunction<T, U, R>
-where
-    T: 'static,
-    U: 'static,
-    R: 'static,
-{
+impl<T, U, R> RcBiFunction<T, U, R> {
     impl_function_common_methods!(
         RcBiFunction<T, U, R>,
         (Fn(&T, &U) -> R + 'static),
         |f| Rc::new(f)
     );
-
     impl_shared_function_methods!(
         RcBiFunction<T, U, R>,
         RcConditionalBiFunction,
@@ -437,18 +426,12 @@ pub struct ArcBiFunction<T, U, R> {
     name: Option<String>,
 }
 
-impl<T, U, R> ArcBiFunction<T, U, R>
-where
-    T: 'static,
-    U: 'static,
-    R: 'static,
-{
+impl<T, U, R> ArcBiFunction<T, U, R> {
     impl_function_common_methods!(
         ArcBiFunction<T, U, R>,
         (Fn(&T, &U) -> R + Send + Sync + 'static),
         |f| Arc::new(f)
     );
-
     impl_shared_function_methods!(
         ArcBiFunction<T, U, R>,
         ArcConditionalBiFunction,

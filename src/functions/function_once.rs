@@ -214,11 +214,7 @@ pub struct BoxFunctionOnce<T, R> {
     name: Option<String>,
 }
 
-impl<T, R> BoxFunctionOnce<T, R>
-where
-    T: 'static,
-    R: 'static,
-{
+impl<T, R> BoxFunctionOnce<T, R> {
     // Generates: new(), new_with_name(), new_with_optional_name(), name(), set_name()
     impl_function_common_methods!(
         BoxFunctionOnce<T, R>,

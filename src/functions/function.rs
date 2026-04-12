@@ -412,11 +412,7 @@ pub struct BoxFunction<T, R> {
     name: Option<String>,
 }
 
-impl<T, R> BoxFunction<T, R>
-where
-    T: 'static,
-    R: 'static,
-{
+impl<T, R> BoxFunction<T, R> {
     // Generates: new(), new_with_name(), new_with_optional_name(), name(), set_name()
     impl_function_common_methods!(
         BoxFunction<T, R>,
@@ -482,11 +478,7 @@ pub struct RcFunction<T, R> {
     name: Option<String>,
 }
 
-impl<T, R> RcFunction<T, R>
-where
-    T: 'static,
-    R: 'static,
-{
+impl<T, R> RcFunction<T, R> {
     // Generates: new(), new_with_name(), new_with_optional_name(), name(), set_name()
     impl_function_common_methods!(
         RcFunction<T, R>,
@@ -557,11 +549,7 @@ pub struct ArcFunction<T, R> {
     name: Option<String>,
 }
 
-impl<T, R> ArcFunction<T, R>
-where
-    T: 'static,
-    R: 'static,
-{
+impl<T, R> ArcFunction<T, R> {
     // Generates: new(), new_with_name(), new_with_optional_name(), name(), set_name()
     impl_function_common_methods!(
         ArcFunction<T, R>,

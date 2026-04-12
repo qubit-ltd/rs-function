@@ -170,6 +170,48 @@ fn test_box_bi_mutating_function_once_new() {
 }
 
 #[test]
+fn test_box_bi_mutating_function_once_new_allows_non_static_t() {
+    fn run<'a>(value: &'a str) -> usize {
+        let func: BoxBiMutatingFunctionOnce<&'a str, i32, usize> =
+            BoxBiMutatingFunctionOnce::new(|x: &mut &'a str, y: &mut i32| x.len() + (*y as usize));
+        let mut first = value;
+        let mut second = 3;
+        func.apply(&mut first, &mut second)
+    }
+
+    let text = String::from("hello");
+    assert_eq!(run(text.as_str()), 8);
+}
+
+#[test]
+fn test_box_bi_mutating_function_once_new_allows_non_static_u() {
+    fn run<'a>(value: &'a str) -> usize {
+        let func: BoxBiMutatingFunctionOnce<i32, &'a str, usize> =
+            BoxBiMutatingFunctionOnce::new(|x: &mut i32, y: &mut &'a str| (*x as usize) + y.len());
+        let mut first = 3;
+        let mut second = value;
+        func.apply(&mut first, &mut second)
+    }
+
+    let text = String::from("world");
+    assert_eq!(run(text.as_str()), 8);
+}
+
+#[test]
+fn test_box_bi_mutating_function_once_new_allows_non_static_r() {
+    fn run<'a>(value: &'a str) -> &'a str {
+        let func: BoxBiMutatingFunctionOnce<&'a str, i32, &'a str> =
+            BoxBiMutatingFunctionOnce::new(|x: &mut &'a str, _y: &mut i32| *x);
+        let mut first = value;
+        let mut second = 0;
+        func.apply(&mut first, &mut second)
+    }
+
+    let text = String::from("qubit");
+    assert_eq!(run(text.as_str()), "qubit");
+}
+
+#[test]
 fn test_box_bi_mutating_function_once_new_with_name() {
     let swap_sum = BoxBiMutatingFunctionOnce::new_with_name(
         "swap_and_sum_once",

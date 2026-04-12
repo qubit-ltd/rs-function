@@ -435,11 +435,7 @@ pub struct BoxMutatingFunctionOnce<T, R> {
     name: Option<String>,
 }
 
-impl<T, R> BoxMutatingFunctionOnce<T, R>
-where
-    T: 'static,
-    R: 'static,
-{
+impl<T, R> BoxMutatingFunctionOnce<T, R> {
     // Generates: new(), new_with_name(), new_with_optional_name(), name(), set_name()
     impl_function_common_methods!(
         BoxMutatingFunctionOnce<T, R>,

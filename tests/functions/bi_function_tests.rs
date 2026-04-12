@@ -167,6 +167,42 @@ fn test_box_bi_function_new() {
 }
 
 #[test]
+fn test_box_bi_function_new_allows_non_static_t() {
+    fn run<'a>(value: &'a str) -> usize {
+        let func: BoxBiFunction<&'a str, i32, usize> =
+            BoxBiFunction::new(|x: &&'a str, y: &i32| x.len() + (*y as usize));
+        func.apply(&value, &3)
+    }
+
+    let text = String::from("hello");
+    assert_eq!(run(text.as_str()), 8);
+}
+
+#[test]
+fn test_box_bi_function_new_allows_non_static_u() {
+    fn run<'a>(value: &'a str) -> usize {
+        let func: BoxBiFunction<i32, &'a str, usize> =
+            BoxBiFunction::new(|x: &i32, y: &&'a str| (*x as usize) + y.len());
+        func.apply(&3, &value)
+    }
+
+    let text = String::from("world");
+    assert_eq!(run(text.as_str()), 8);
+}
+
+#[test]
+fn test_box_bi_function_new_allows_non_static_r() {
+    fn run<'a>(value: &'a str) -> &'a str {
+        let func: BoxBiFunction<&'a str, i32, &'a str> =
+            BoxBiFunction::new(|x: &&'a str, _y: &i32| *x);
+        func.apply(&value, &0)
+    }
+
+    let text = String::from("qubit");
+    assert_eq!(run(text.as_str()), "qubit");
+}
+
+#[test]
 fn test_box_bi_function_constant() {
     let constant = BoxBiFunction::constant(42);
     assert_eq!(constant.apply(&1, &2), 42);
@@ -199,6 +235,42 @@ fn test_box_bi_function_debug_display() {
 fn test_rc_bi_function_new() {
     let multiply = RcBiFunction::new(|x: &i32, y: &i32| *x * *y);
     assert_eq!(multiply.apply(&6, &7), 42);
+}
+
+#[test]
+fn test_rc_bi_function_new_allows_non_static_t() {
+    fn run<'a>(value: &'a str) -> usize {
+        let func: RcBiFunction<&'a str, i32, usize> =
+            RcBiFunction::new(|x: &&'a str, y: &i32| x.len() + (*y as usize));
+        func.apply(&value, &3)
+    }
+
+    let text = String::from("hello");
+    assert_eq!(run(text.as_str()), 8);
+}
+
+#[test]
+fn test_rc_bi_function_new_allows_non_static_u() {
+    fn run<'a>(value: &'a str) -> usize {
+        let func: RcBiFunction<i32, &'a str, usize> =
+            RcBiFunction::new(|x: &i32, y: &&'a str| (*x as usize) + y.len());
+        func.apply(&3, &value)
+    }
+
+    let text = String::from("world");
+    assert_eq!(run(text.as_str()), 8);
+}
+
+#[test]
+fn test_rc_bi_function_new_allows_non_static_r() {
+    fn run<'a>(value: &'a str) -> &'a str {
+        let func: RcBiFunction<&'a str, i32, &'a str> =
+            RcBiFunction::new(|x: &&'a str, _y: &i32| *x);
+        func.apply(&value, &0)
+    }
+
+    let text = String::from("qubit");
+    assert_eq!(run(text.as_str()), "qubit");
 }
 
 #[test]
@@ -243,6 +315,42 @@ fn test_rc_bi_function_and_then() {
 fn test_arc_bi_function_new() {
     let divide = ArcBiFunction::new(|x: &i32, y: &i32| *x / *y);
     assert_eq!(divide.apply(&42, &2), 21);
+}
+
+#[test]
+fn test_arc_bi_function_new_allows_non_static_t() {
+    fn run<'a>(value: &'a str) -> usize {
+        let func: ArcBiFunction<&'a str, i32, usize> =
+            ArcBiFunction::new(|x: &&'a str, y: &i32| x.len() + (*y as usize));
+        func.apply(&value, &3)
+    }
+
+    let text = String::from("hello");
+    assert_eq!(run(text.as_str()), 8);
+}
+
+#[test]
+fn test_arc_bi_function_new_allows_non_static_u() {
+    fn run<'a>(value: &'a str) -> usize {
+        let func: ArcBiFunction<i32, &'a str, usize> =
+            ArcBiFunction::new(|x: &i32, y: &&'a str| (*x as usize) + y.len());
+        func.apply(&3, &value)
+    }
+
+    let text = String::from("world");
+    assert_eq!(run(text.as_str()), 8);
+}
+
+#[test]
+fn test_arc_bi_function_new_allows_non_static_r() {
+    fn run<'a>(value: &'a str) -> &'a str {
+        let func: ArcBiFunction<&'a str, i32, &'a str> =
+            ArcBiFunction::new(|x: &&'a str, _y: &i32| *x);
+        func.apply(&value, &0)
+    }
+
+    let text = String::from("qubit");
+    assert_eq!(run(text.as_str()), "qubit");
 }
 
 #[test]

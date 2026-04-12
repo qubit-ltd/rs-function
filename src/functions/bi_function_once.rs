@@ -192,12 +192,7 @@ pub struct BoxBiFunctionOnce<T, U, R> {
 }
 
 // Implement BoxBiFunctionOnce
-impl<T, U, R> BoxBiFunctionOnce<T, U, R>
-where
-    T: 'static,
-    U: 'static,
-    R: 'static,
-{
+impl<T, U, R> BoxBiFunctionOnce<T, U, R> {
     // Generate new(), new_with_name(), new_with_optional_name(), name(), set_name()
     impl_function_common_methods!(
         BoxBiFunctionOnce<T, U, R>,
@@ -424,9 +419,6 @@ pub trait FnBiFunctionOnceOps<T, U, R>: FnOnce(&T, &U) -> R + Sized + 'static {
 impl<T, U, R, F> FnBiFunctionOnceOps<T, U, R> for F
 where
     F: FnOnce(&T, &U) -> R + 'static,
-    T: 'static,
-    U: 'static,
-    R: 'static,
 {
     // empty
 }

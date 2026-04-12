@@ -106,6 +106,61 @@ fn test_function_trait_to_fn() {
     assert_eq!(double.apply(&10), 20);
 }
 
+#[test]
+fn test_box_function_new_allows_non_static_t() {
+    fn run<'a>(value: &'a str) -> usize {
+        let func: BoxFunction<&'a str, usize> = BoxFunction::new(|x: &&'a str| x.len());
+        func.apply(&value)
+    }
+
+    let text = String::from("hello");
+    assert_eq!(run(text.as_str()), 5);
+}
+
+#[test]
+fn test_box_function_new_allows_non_static_r() {
+    fn run<'a>(value: &'a str) -> &'a str {
+        let func: BoxFunction<&'a str, &'a str> = BoxFunction::new(|x: &&'a str| *x);
+        func.apply(&value)
+    }
+
+    let text = String::from("qubit");
+    assert_eq!(run(text.as_str()), "qubit");
+}
+
+#[test]
+fn test_rc_function_new_allows_non_static_t() {
+    fn run<'a>(value: &'a str) -> usize {
+        let func: RcFunction<&'a str, usize> = RcFunction::new(|x: &&'a str| x.len());
+        func.apply(&value)
+    }
+
+    let text = String::from("hello");
+    assert_eq!(run(text.as_str()), 5);
+}
+
+#[test]
+fn test_arc_function_new_allows_non_static_t() {
+    fn run<'a>(value: &'a str) -> usize {
+        let func: ArcFunction<&'a str, usize> = ArcFunction::new(|x: &&'a str| x.len() + 1);
+        func.apply(&value)
+    }
+
+    let text = String::from("hello");
+    assert_eq!(run(text.as_str()), 6);
+}
+
+#[test]
+fn test_rc_function_new_allows_non_static_r() {
+    fn run<'a>(value: &'a str) -> &'a str {
+        let func: RcFunction<&'a str, &'a str> = RcFunction::new(|x: &&'a str| *x);
+        func.apply(&value)
+    }
+
+    let text = String::from("qubit");
+    assert_eq!(run(text.as_str()), "qubit");
+}
+
 // ============================================================================
 // BoxFunction Tests - Constructor and Basic Operations
 // ============================================================================
