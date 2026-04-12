@@ -320,9 +320,7 @@ impl_closure_once_trait!(
 /// # Author
 ///
 /// Haixing Hu
-pub trait FnBiMutatingFunctionOnceOps<T, U, R>:
-    FnOnce(&mut T, &mut U) -> R + Sized
-{
+pub trait FnBiMutatingFunctionOnceOps<T, U, R>: FnOnce(&mut T, &mut U) -> R + Sized {
     /// Chain composition - applies self first, then after
     ///
     /// Creates a new bi-mutating-function that applies this bi-mutating-function first,

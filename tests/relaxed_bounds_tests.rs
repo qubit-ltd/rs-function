@@ -12,12 +12,12 @@ use qubit_function::{
     ArcPredicate,
     ArcSupplier,
     ArcTransformer,
-    BinaryOperator,
-    BinaryOperatorOnce,
     BiConsumer,
     BiConsumerOnce,
     BiTransformer,
     BiTransformerOnce,
+    BinaryOperator,
+    BinaryOperatorOnce,
     BoxBiConsumer,
     BoxBiConsumerOnce,
     BoxConsumer,
@@ -31,10 +31,10 @@ use qubit_function::{
     BoxTransformerOnce,
     Consumer,
     ConsumerOnce,
-    FnBiFunctionOps,
     FnBiFunctionOnceOps,
-    FnBiMutatingFunctionOps,
+    FnBiFunctionOps,
     FnBiMutatingFunctionOnceOps,
+    FnBiMutatingFunctionOps,
     FnBiPredicateOps,
     FnBiTransformerOnceOps,
     FnBiTransformerOps,
@@ -42,9 +42,9 @@ use qubit_function::{
     FnStatefulBiTransformerOps,
     FnStatefulSupplierOps,
     FnStatefulTransformerOps,
+    FnTesterOps,
     FnTransformerOnceOps,
     FnTransformerOps,
-    FnTesterOps,
     Mutator,
     MutatorOnce,
     Predicate,
@@ -340,7 +340,8 @@ fn test_fn_ops_traits_allow_non_static_closure_implementations() {
     let stateful_function = |value: &Borrowed<'_>| *value.value;
     assert_stateful_function_impl(&a, stateful_function);
 
-    let bi_transformer_with_borrow = |left: Borrowed<'_>, right: Borrowed<'_>| *left.value + *right.value;
+    let bi_transformer_with_borrow =
+        |left: Borrowed<'_>, right: Borrowed<'_>| *left.value + *right.value;
     assert_bi_transformer_impl(&a, bi_transformer_with_borrow);
 
     assert_unary_operator_impl(&a, BorrowedUnaryOp);
