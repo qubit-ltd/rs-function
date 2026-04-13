@@ -116,7 +116,7 @@ macro_rules! impl_function_identity_method {
             #[inline]
             pub fn identity() -> $struct_name<$t, $t>
             where
-                $t: Clone + 'static,
+                $t: Clone,
             {
                 $struct_name::new(|x: &$t| x.clone())
             }
@@ -134,7 +134,7 @@ macro_rules! impl_function_identity_method {
             #[inline]
             pub fn identity() -> $struct_name<$t, $t>
             where
-                $t: Clone + 'static,
+                $t: Clone,
             {
                 $struct_name::new(|x: &mut $t| x.clone())
             }

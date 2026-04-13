@@ -124,7 +124,6 @@ macro_rules! impl_function_constant_method {
             #[inline]
             pub fn constant(value: $r) -> $struct_name<$t, $r>
             where
-                $t: 'static,
                 $r: Clone + $($extra_bounds)+,
             {
                 $struct_name::new(move |_| value.clone())
