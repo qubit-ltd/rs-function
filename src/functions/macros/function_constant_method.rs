@@ -143,8 +143,6 @@ macro_rules! impl_function_constant_method {
             #[inline]
             pub fn constant(value: $r) -> $struct_name<$t, $u, $r>
             where
-                $t: 'static,
-                $u: 'static,
                 $r: Clone + 'static,
             {
                 $struct_name::new(move |_, _| value.clone())
@@ -163,8 +161,6 @@ macro_rules! impl_function_constant_method {
             #[inline]
             pub fn constant(value: $r) -> $struct_name<$t, $u, $r>
             where
-                $t: 'static,
-                $u: 'static,
                 $r: Clone + $($extra_bounds)+,
             {
                 $struct_name::new(move |_, _| value.clone())
