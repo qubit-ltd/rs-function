@@ -117,7 +117,7 @@ macro_rules! impl_arc_conversions {
         #[inline]
         fn into_box(self) -> $box_type<$($generics),*>
         where
-            $($generics: 'static),*
+            Self: 'static,
         {
             $box_type::new_with_optional_name(
                 impl_arc_conversions!(@make_closure $call_mode, self.function,
@@ -138,7 +138,7 @@ macro_rules! impl_arc_conversions {
         #[inline]
         fn into_rc(self) -> $rc_type<$($generics),*>
         where
-            $($generics: 'static),*
+            Self: 'static,
         {
             $rc_type::new_with_optional_name(
                 impl_arc_conversions!(@make_closure $call_mode, self.function,
@@ -159,7 +159,7 @@ macro_rules! impl_arc_conversions {
         #[inline]
         fn into_once(self) -> $once_type<$($generics),*>
         where
-            $($generics: 'static),*
+            Self: 'static,
         {
             $once_type::new_with_optional_name(
                 impl_arc_conversions!(@make_closure $call_mode, self.function,
@@ -180,7 +180,7 @@ macro_rules! impl_arc_conversions {
         #[inline]
         fn to_box(&self) -> $box_type<$($generics),*>
         where
-            $($generics: 'static),*
+            Self: 'static,
         {
             let self_fn = self.function.clone();
             let self_name = self.name.clone();
@@ -203,7 +203,7 @@ macro_rules! impl_arc_conversions {
         #[inline]
         fn to_rc(&self) -> $rc_type<$($generics),*>
         where
-            $($generics: 'static),*
+            Self: 'static,
         {
             let self_fn = self.function.clone();
             let self_name = self.name.clone();
@@ -226,7 +226,7 @@ macro_rules! impl_arc_conversions {
         #[inline]
         fn to_once(&self) -> $once_type<$($generics),*>
         where
-            $($generics: 'static),*
+            Self: 'static,
         {
             let self_fn = self.function.clone();
             let self_name = self.name.clone();

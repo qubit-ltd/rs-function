@@ -77,7 +77,7 @@ macro_rules! impl_box_conversions {
         #[inline]
         fn into_rc(self) -> $rc_type<$($generics),*>
         where
-            $($generics: 'static),*
+            Self: 'static,
         {
             $rc_type::new_with_optional_name(self.function, self.name)
         }
@@ -107,7 +107,7 @@ macro_rules! impl_box_conversions {
         #[inline]
         fn into_once(self) -> $once_type<$($generics),*>
         where
-            $($generics: 'static),*
+            Self: 'static,
         {
             $once_type::new_with_optional_name(self.function, self.name)
         }

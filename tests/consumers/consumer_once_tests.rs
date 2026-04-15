@@ -18,10 +18,40 @@ use qubit_function::{
     ConsumerOnce,
     FnConsumerOnceOps,
 };
+use std::rc::Rc;
 use std::sync::{
     Arc,
     Mutex,
 };
+
+#[test]
+fn test_consumer_once_default_conversions_allow_relaxed_generic_types() {
+    #[derive(Debug)]
+    struct BorrowedRc<'a> {
+        value: Rc<&'a str>,
+    }
+
+    #[derive(Clone, Debug)]
+    struct BorrowedRcConsumerOnce;
+
+    impl<'a> ConsumerOnce<BorrowedRc<'a>> for BorrowedRcConsumerOnce {
+        fn accept(self, value: &BorrowedRc<'a>) {
+            assert_eq!(*value.value, "left");
+        }
+    }
+
+    let text = String::from("left");
+    let value = BorrowedRc {
+        value: Rc::new(text.as_str()),
+    };
+    let consumer = BorrowedRcConsumerOnce;
+
+    consumer.clone().into_box().accept(&value);
+    consumer.clone().into_fn()(&value);
+
+    consumer.to_box().accept(&value);
+    consumer.to_fn()(&value);
+}
 
 // ============================================================================
 // BoxConsumerOnce Tests

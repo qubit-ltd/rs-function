@@ -143,7 +143,6 @@ pub trait Consumer<T> {
     fn into_box(self) -> BoxConsumer<T>
     where
         Self: Sized + 'static,
-        T: 'static,
     {
         BoxConsumer::new(move |t| self.accept(t))
     }
@@ -159,7 +158,6 @@ pub trait Consumer<T> {
     fn into_rc(self) -> RcConsumer<T>
     where
         Self: Sized + 'static,
-        T: 'static,
     {
         RcConsumer::new(move |t| self.accept(t))
     }
@@ -175,7 +173,6 @@ pub trait Consumer<T> {
     fn into_arc(self) -> ArcConsumer<T>
     where
         Self: Sized + Send + Sync + 'static,
-        T: 'static,
     {
         ArcConsumer::new(move |t| self.accept(t))
     }
@@ -235,7 +232,6 @@ pub trait Consumer<T> {
     fn into_once(self) -> BoxConsumerOnce<T>
     where
         Self: Sized + 'static,
-        T: 'static,
     {
         BoxConsumerOnce::new(move |t| self.accept(t))
     }
@@ -252,7 +248,6 @@ pub trait Consumer<T> {
     fn to_box(&self) -> BoxConsumer<T>
     where
         Self: Clone + 'static,
-        T: 'static,
     {
         self.clone().into_box()
     }
@@ -269,7 +264,6 @@ pub trait Consumer<T> {
     fn to_rc(&self) -> RcConsumer<T>
     where
         Self: Clone + 'static,
-        T: 'static,
     {
         self.clone().into_rc()
     }
@@ -286,7 +280,6 @@ pub trait Consumer<T> {
     fn to_arc(&self) -> ArcConsumer<T>
     where
         Self: Clone + Send + Sync + 'static,
-        T: 'static,
     {
         self.clone().into_arc()
     }
@@ -330,7 +323,6 @@ pub trait Consumer<T> {
     fn to_once(&self) -> BoxConsumerOnce<T>
     where
         Self: Clone + 'static,
-        T: 'static,
     {
         self.clone().into_once()
     }

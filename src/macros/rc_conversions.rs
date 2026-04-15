@@ -104,7 +104,7 @@ macro_rules! impl_rc_conversions {
         #[inline]
         fn $method_name(self) -> $target_type<$($generics),*>
         where
-            $($generics: 'static),*
+            Self: 'static,
         {
             $target_type::new_with_optional_name(
                 impl_rc_conversions!(@make_closure $call_mode, self.function, $($arg),*),
@@ -125,7 +125,7 @@ macro_rules! impl_rc_conversions {
         #[inline]
         fn $method_name(&self) -> $target_type<$($generics),*>
         where
-            $($generics: 'static),*
+            Self: 'static,
         {
             let self_fn = self.function.clone();
             let self_name = self.name.clone();

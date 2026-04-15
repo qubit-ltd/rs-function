@@ -149,7 +149,6 @@ pub trait ConsumerOnce<T> {
     fn into_box(self) -> BoxConsumerOnce<T>
     where
         Self: Sized + 'static,
-        T: 'static,
     {
         BoxConsumerOnce::new(move |t| self.accept(t))
     }
@@ -227,7 +226,6 @@ pub trait ConsumerOnce<T> {
     fn to_box(&self) -> BoxConsumerOnce<T>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
     {
         self.clone().into_box()
     }
@@ -530,7 +528,7 @@ impl<T> ConsumerOnce<T> for BoxConditionalConsumerOnce<T> {
 
     fn into_box(self) -> BoxConsumerOnce<T>
     where
-        T: 'static,
+        Self: 'static,
     {
         let pred = self.predicate;
         let consumer = self.consumer;

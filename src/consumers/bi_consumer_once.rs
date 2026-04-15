@@ -168,8 +168,6 @@ pub trait BiConsumerOnce<T, U> {
     fn into_box(self) -> BoxBiConsumerOnce<T, U>
     where
         Self: Sized + 'static,
-        T: 'static,
-        U: 'static,
     {
         BoxBiConsumerOnce::new(move |t, u| self.accept(t, u))
     }
@@ -220,8 +218,6 @@ pub trait BiConsumerOnce<T, U> {
     fn to_box(&self) -> BoxBiConsumerOnce<T, U>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        U: 'static,
     {
         self.clone().into_box()
     }
@@ -543,8 +539,7 @@ impl<T, U> BiConsumerOnce<T, U> for BoxConditionalBiConsumerOnce<T, U> {
 
     fn into_box(self) -> BoxBiConsumerOnce<T, U>
     where
-        T: 'static,
-        U: 'static,
+        Self: 'static,
     {
         let pred = self.predicate;
         let consumer = self.consumer;

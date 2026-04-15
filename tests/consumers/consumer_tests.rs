@@ -19,6 +19,41 @@ use qubit_function::{
 use std::rc::Rc;
 use std::sync::Arc;
 
+#[test]
+fn test_consumer_default_conversions_allow_relaxed_generic_types() {
+    #[derive(Debug)]
+    struct BorrowedRc<'a> {
+        value: Rc<&'a str>,
+    }
+
+    #[derive(Clone, Debug)]
+    struct BorrowedRcConsumer;
+
+    impl<'a> Consumer<BorrowedRc<'a>> for BorrowedRcConsumer {
+        fn accept(&self, value: &BorrowedRc<'a>) {
+            assert_eq!(*value.value, "left");
+        }
+    }
+
+    let text = String::from("left");
+    let value = BorrowedRc {
+        value: Rc::new(text.as_str()),
+    };
+    let consumer = BorrowedRcConsumer;
+
+    consumer.clone().into_box().accept(&value);
+    consumer.clone().into_rc().accept(&value);
+    consumer.clone().into_arc().accept(&value);
+    qubit_function::ConsumerOnce::accept(consumer.clone().into_once(), &value);
+    consumer.clone().into_fn()(&value);
+
+    consumer.to_box().accept(&value);
+    consumer.to_rc().accept(&value);
+    consumer.to_arc().accept(&value);
+    qubit_function::ConsumerOnce::accept(consumer.to_once(), &value);
+    consumer.to_fn()(&value);
+}
+
 #[cfg(test)]
 mod box_readonly_consumer_tests {
     use super::*;

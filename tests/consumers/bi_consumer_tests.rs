@@ -18,6 +18,46 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
 
+#[test]
+fn test_bi_consumer_default_conversions_allow_relaxed_generic_types() {
+    #[derive(Debug)]
+    struct BorrowedRc<'a> {
+        value: Rc<&'a str>,
+    }
+
+    #[derive(Clone, Debug)]
+    struct BorrowedRcBiConsumer;
+
+    impl<'a> BiConsumer<BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcBiConsumer {
+        fn accept(&self, first: &BorrowedRc<'a>, second: &BorrowedRc<'a>) {
+            assert_eq!(*first.value, "left");
+            assert_eq!(*second.value, "right");
+        }
+    }
+
+    let left = String::from("left");
+    let right = String::from("right");
+    let first = BorrowedRc {
+        value: Rc::new(left.as_str()),
+    };
+    let second = BorrowedRc {
+        value: Rc::new(right.as_str()),
+    };
+    let consumer = BorrowedRcBiConsumer;
+
+    consumer.clone().into_box().accept(&first, &second);
+    consumer.clone().into_rc().accept(&first, &second);
+    consumer.clone().into_arc().accept(&first, &second);
+    qubit_function::BiConsumerOnce::accept(consumer.clone().into_once(), &first, &second);
+    consumer.clone().into_fn()(&first, &second);
+
+    consumer.to_box().accept(&first, &second);
+    consumer.to_rc().accept(&first, &second);
+    consumer.to_arc().accept(&first, &second);
+    qubit_function::BiConsumerOnce::accept(consumer.to_once(), &first, &second);
+    consumer.to_fn()(&first, &second);
+}
+
 #[cfg(test)]
 mod box_readonly_bi_consumer_tests {
     use super::*;

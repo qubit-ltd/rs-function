@@ -163,8 +163,6 @@ pub trait BiConsumer<T, U> {
     fn into_box(self) -> BoxBiConsumer<T, U>
     where
         Self: Sized + 'static,
-        T: 'static,
-        U: 'static,
     {
         BoxBiConsumer::new(move |t, u| self.accept(t, u))
     }
@@ -180,8 +178,6 @@ pub trait BiConsumer<T, U> {
     fn into_rc(self) -> RcBiConsumer<T, U>
     where
         Self: Sized + 'static,
-        T: 'static,
-        U: 'static,
     {
         RcBiConsumer::new(move |t, u| self.accept(t, u))
     }
@@ -197,8 +193,6 @@ pub trait BiConsumer<T, U> {
     fn into_arc(self) -> ArcBiConsumer<T, U>
     where
         Self: Sized + Send + Sync + 'static,
-        T: 'static,
-        U: 'static,
     {
         ArcBiConsumer::new(move |t, u| self.accept(t, u))
     }
@@ -246,8 +240,6 @@ pub trait BiConsumer<T, U> {
     fn into_once(self) -> BoxBiConsumerOnce<T, U>
     where
         Self: Sized + 'static,
-        T: 'static,
-        U: 'static,
     {
         BoxBiConsumerOnce::new(move |t, u| self.accept(t, u))
     }
@@ -277,8 +269,6 @@ pub trait BiConsumer<T, U> {
     fn to_box(&self) -> BoxBiConsumer<T, U>
     where
         Self: Clone + 'static,
-        T: 'static,
-        U: 'static,
     {
         self.clone().into_box()
     }
@@ -308,8 +298,6 @@ pub trait BiConsumer<T, U> {
     fn to_rc(&self) -> RcBiConsumer<T, U>
     where
         Self: Clone + 'static,
-        T: 'static,
-        U: 'static,
     {
         self.clone().into_rc()
     }
@@ -339,8 +327,6 @@ pub trait BiConsumer<T, U> {
     fn to_arc(&self) -> ArcBiConsumer<T, U>
     where
         Self: Clone + Send + Sync + 'static,
-        T: 'static,
-        U: 'static,
     {
         self.clone().into_arc()
     }
@@ -385,8 +371,6 @@ pub trait BiConsumer<T, U> {
     fn to_once(&self) -> BoxBiConsumerOnce<T, U>
     where
         Self: Clone + 'static,
-        T: 'static,
-        U: 'static,
     {
         self.clone().into_once()
     }

@@ -164,7 +164,7 @@ macro_rules! impl_conditional_consumer_conversions {
         #[allow(unused_mut)]
         fn into_box(self) -> $box_type<$t>
         where
-            $t: 'static,
+            Self: 'static,
         {
             let pred = self.predicate;
             let mut consumer = self.consumer;
@@ -178,7 +178,7 @@ macro_rules! impl_conditional_consumer_conversions {
         #[allow(unused_mut)]
         fn into_rc(self) -> $rc_type<$t>
         where
-            $t: 'static,
+            Self: 'static,
         {
             let pred = self.predicate.into_rc();
             let mut consumer = self.consumer.into_rc();
@@ -210,8 +210,7 @@ macro_rules! impl_conditional_consumer_conversions {
         #[allow(unused_mut)]
         fn into_box(self) -> $box_type<$t, $u>
         where
-            $t: 'static,
-            $u: 'static,
+            Self: 'static,
         {
             let pred = self.predicate;
             let mut consumer = self.consumer;
@@ -225,8 +224,7 @@ macro_rules! impl_conditional_consumer_conversions {
         #[allow(unused_mut)]
         fn into_rc(self) -> $rc_type<$t, $u>
         where
-            $t: 'static,
-            $u: 'static,
+            Self: 'static,
         {
             let pred = self.predicate.into_rc();
             let mut consumer = self.consumer.into_rc();
