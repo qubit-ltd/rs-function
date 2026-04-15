@@ -18,12 +18,57 @@ use qubit_function::{
     RcTransformer,
     Supplier,
 };
+use std::rc::Rc;
 use std::sync::Arc;
 use std::thread;
 
 // ======================================================================
 // Supplier Trait Tests (for closures)
 // ======================================================================
+
+#[test]
+fn test_supplier_default_conversions_allow_relaxed_generic_types() {
+    #[derive(Debug)]
+    struct BorrowedRc<'a> {
+        value: Rc<&'a str>,
+    }
+
+    #[derive(Clone, Debug)]
+    struct BorrowedRcSupplier;
+
+    impl<'a> Supplier<BorrowedRc<'a>> for BorrowedRcSupplier {
+        fn get(&self) -> BorrowedRc<'a> {
+            BorrowedRc {
+                value: Rc::new("left"),
+            }
+        }
+    }
+
+    fn assert_left(value: BorrowedRc<'_>) {
+        assert_eq!(*value.value, "left");
+    }
+
+    fn exercise<'a>(_marker: &'a str) {
+        let supplier = BorrowedRcSupplier;
+
+        assert_left(supplier.clone().into_box().get());
+        assert_left(supplier.clone().into_rc().get());
+        assert_left(supplier.clone().into_arc().get());
+        assert_left(qubit_function::SupplierOnce::get(
+            supplier.clone().into_once(),
+        ));
+        assert_left(supplier.clone().into_fn()());
+
+        assert_left(supplier.to_box().get());
+        assert_left(supplier.to_rc().get());
+        assert_left(supplier.to_arc().get());
+        assert_left(qubit_function::SupplierOnce::get(supplier.to_once()));
+        assert_left(supplier.to_fn()());
+    }
+
+    let marker = String::from("marker");
+    exercise(marker.as_str());
+}
 
 #[cfg(test)]
 mod test_readonly_supplier_trait {

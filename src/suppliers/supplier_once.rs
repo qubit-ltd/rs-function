@@ -178,7 +178,6 @@ pub trait SupplierOnce<T> {
     fn into_box(self) -> BoxSupplierOnce<T>
     where
         Self: Sized + 'static,
-        T: 'static,
     {
         BoxSupplierOnce::new(move || self.get())
     }
@@ -227,7 +226,6 @@ pub trait SupplierOnce<T> {
     fn to_box(&self) -> BoxSupplierOnce<T>
     where
         Self: Clone + Sized + 'static,
-        T: 'static,
     {
         self.clone().into_box()
     }

@@ -16,7 +16,10 @@ use qubit_function::{
     RcStatefulSupplier,
     StatefulSupplier,
 };
-use std::cell::RefCell;
+use std::cell::{
+    Cell,
+    RefCell,
+};
 use std::rc::Rc;
 use std::sync::{
     Arc,
@@ -27,6 +30,65 @@ use std::thread;
 // ==========================================================================
 // StatefulSupplier Trait Tests (for closures)
 // ==========================================================================
+
+#[test]
+fn test_stateful_supplier_default_conversions_allow_relaxed_generic_types() {
+    #[derive(Debug)]
+    struct BorrowedRc<'a> {
+        value: Rc<&'a str>,
+    }
+
+    #[derive(Debug)]
+    struct BorrowedRcStatefulSupplier {
+        count: Cell<usize>,
+    }
+
+    impl Clone for BorrowedRcStatefulSupplier {
+        fn clone(&self) -> Self {
+            Self {
+                count: Cell::new(self.count.get()),
+            }
+        }
+    }
+
+    impl<'a> StatefulSupplier<BorrowedRc<'a>> for BorrowedRcStatefulSupplier {
+        fn get(&mut self) -> BorrowedRc<'a> {
+            self.count.set(self.count.get() + 1);
+            BorrowedRc {
+                value: Rc::new("left"),
+            }
+        }
+    }
+
+    fn assert_left(value: BorrowedRc<'_>) {
+        assert_eq!(*value.value, "left");
+    }
+
+    fn exercise<'a>(_marker: &'a str) {
+        let supplier = BorrowedRcStatefulSupplier {
+            count: Cell::new(0),
+        };
+
+        assert_left(supplier.clone().into_box().get());
+        assert_left(supplier.clone().into_rc().get());
+        assert_left(supplier.clone().into_arc().get());
+        assert_left(qubit_function::SupplierOnce::get(
+            supplier.clone().into_once(),
+        ));
+        let mut into_fn = supplier.clone().into_fn();
+        assert_left(into_fn());
+
+        assert_left(supplier.to_box().get());
+        assert_left(supplier.to_rc().get());
+        assert_left(supplier.to_arc().get());
+        assert_left(qubit_function::SupplierOnce::get(supplier.to_once()));
+        let mut to_fn = supplier.to_fn();
+        assert_left(to_fn());
+    }
+
+    let marker = String::from("marker");
+    exercise(marker.as_str());
+}
 
 #[cfg(test)]
 mod test_stateful_supplier_trait {

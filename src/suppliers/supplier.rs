@@ -255,7 +255,6 @@ pub trait Supplier<T> {
     fn into_box(self) -> BoxSupplier<T>
     where
         Self: Sized + 'static,
-        T: 'static,
     {
         BoxSupplier::new(move || self.get())
     }
@@ -282,7 +281,6 @@ pub trait Supplier<T> {
     fn into_rc(self) -> RcSupplier<T>
     where
         Self: Sized + 'static,
-        T: 'static,
     {
         RcSupplier::new(move || self.get())
     }
@@ -309,7 +307,6 @@ pub trait Supplier<T> {
     fn into_arc(self) -> ArcSupplier<T>
     where
         Self: Sized + Send + Sync + 'static,
-        T: 'static,
     {
         ArcSupplier::new(move || self.get())
     }
@@ -363,7 +360,6 @@ pub trait Supplier<T> {
     fn into_once(self) -> BoxSupplierOnce<T>
     where
         Self: Sized + 'static,
-        T: 'static,
     {
         BoxSupplierOnce::new(move || self.get())
     }
@@ -390,7 +386,6 @@ pub trait Supplier<T> {
     fn to_box(&self) -> BoxSupplier<T>
     where
         Self: Clone + 'static,
-        T: 'static,
     {
         self.clone().into_box()
     }
@@ -417,7 +412,6 @@ pub trait Supplier<T> {
     fn to_rc(&self) -> RcSupplier<T>
     where
         Self: Clone + 'static,
-        T: 'static,
     {
         self.clone().into_rc()
     }
@@ -445,7 +439,6 @@ pub trait Supplier<T> {
     fn to_arc(&self) -> ArcSupplier<T>
     where
         Self: Clone + Send + Sync + 'static,
-        T: 'static,
     {
         self.clone().into_arc()
     }
@@ -488,7 +481,6 @@ pub trait Supplier<T> {
     fn to_once(&self) -> BoxSupplierOnce<T>
     where
         Self: Clone + 'static,
-        T: 'static,
     {
         self.clone().into_once()
     }
