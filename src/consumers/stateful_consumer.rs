@@ -177,7 +177,6 @@ pub trait StatefulConsumer<T> {
     fn into_box(self) -> BoxStatefulConsumer<T>
     where
         Self: Sized + 'static,
-        T: 'static,
     {
         let mut consumer = self;
         BoxStatefulConsumer::new(move |t| consumer.accept(t))
@@ -194,7 +193,6 @@ pub trait StatefulConsumer<T> {
     fn into_rc(self) -> RcStatefulConsumer<T>
     where
         Self: Sized + 'static,
-        T: 'static,
     {
         let mut consumer = self;
         RcStatefulConsumer::new(move |t| consumer.accept(t))
@@ -211,7 +209,6 @@ pub trait StatefulConsumer<T> {
     fn into_arc(self) -> ArcStatefulConsumer<T>
     where
         Self: Sized + Send + 'static,
-        T: 'static,
     {
         let mut consumer = self;
         ArcStatefulConsumer::new(move |t| consumer.accept(t))
@@ -277,7 +274,6 @@ pub trait StatefulConsumer<T> {
     fn into_once(self) -> BoxConsumerOnce<T>
     where
         Self: Sized + 'static,
-        T: 'static,
     {
         BoxConsumerOnce::new(move |t| {
             let mut consumer = self;
@@ -322,7 +318,6 @@ pub trait StatefulConsumer<T> {
     fn to_box(&self) -> BoxStatefulConsumer<T>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
     {
         self.clone().into_box()
     }
@@ -364,7 +359,6 @@ pub trait StatefulConsumer<T> {
     fn to_rc(&self) -> RcStatefulConsumer<T>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
     {
         self.clone().into_rc()
     }
@@ -408,7 +402,6 @@ pub trait StatefulConsumer<T> {
     fn to_arc(&self) -> ArcStatefulConsumer<T>
     where
         Self: Sized + Clone + Send + 'static,
-        T: 'static,
     {
         self.clone().into_arc()
     }
@@ -478,7 +471,6 @@ pub trait StatefulConsumer<T> {
     fn to_once(&self) -> BoxConsumerOnce<T>
     where
         Self: Clone + 'static,
-        T: 'static,
     {
         self.clone().into_once()
     }

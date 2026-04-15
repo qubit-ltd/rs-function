@@ -21,7 +21,10 @@ use qubit_function::{
     RcStatefulBiConsumer,
     StatefulBiConsumer,
 };
-use std::cell::RefCell;
+use std::cell::{
+    Cell,
+    RefCell,
+};
 use std::rc::Rc;
 use std::sync::{
     Arc,
@@ -31,6 +34,63 @@ use std::sync::{
 // ============================================================================
 // BoxStatefulBiConsumer Tests
 // ============================================================================
+
+#[test]
+fn test_stateful_bi_consumer_default_conversions_allow_relaxed_generic_types() {
+    #[derive(Debug)]
+    struct BorrowedRc<'a> {
+        value: Rc<&'a str>,
+    }
+
+    #[derive(Debug)]
+    struct BorrowedRcStatefulBiConsumer {
+        count: Cell<usize>,
+    }
+
+    impl Clone for BorrowedRcStatefulBiConsumer {
+        fn clone(&self) -> Self {
+            Self {
+                count: Cell::new(self.count.get()),
+            }
+        }
+    }
+
+    impl<'a> StatefulBiConsumer<BorrowedRc<'a>, BorrowedRc<'a>>
+        for BorrowedRcStatefulBiConsumer
+    {
+        fn accept(&mut self, first: &BorrowedRc<'a>, second: &BorrowedRc<'a>) {
+            self.count.set(self.count.get() + 1);
+            assert_eq!(*first.value, "left");
+            assert_eq!(*second.value, "right");
+        }
+    }
+
+    let left = String::from("left");
+    let right = String::from("right");
+    let first = BorrowedRc {
+        value: Rc::new(left.as_str()),
+    };
+    let second = BorrowedRc {
+        value: Rc::new(right.as_str()),
+    };
+    let consumer = BorrowedRcStatefulBiConsumer {
+        count: Cell::new(0),
+    };
+
+    consumer.clone().into_box().accept(&first, &second);
+    consumer.clone().into_rc().accept(&first, &second);
+    consumer.clone().into_arc().accept(&first, &second);
+    consumer.clone().into_once().accept(&first, &second);
+    let mut into_fn = consumer.clone().into_fn();
+    into_fn(&first, &second);
+
+    consumer.to_box().accept(&first, &second);
+    consumer.to_rc().accept(&first, &second);
+    consumer.to_arc().accept(&first, &second);
+    consumer.to_once().accept(&first, &second);
+    let mut to_fn = consumer.to_fn();
+    to_fn(&first, &second);
+}
 
 #[cfg(test)]
 mod box_stateful_bi_consumer_tests {

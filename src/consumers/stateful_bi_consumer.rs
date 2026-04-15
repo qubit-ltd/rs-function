@@ -191,8 +191,6 @@ pub trait StatefulBiConsumer<T, U> {
     fn into_box(self) -> BoxStatefulBiConsumer<T, U>
     where
         Self: Sized + 'static,
-        T: 'static,
-        U: 'static,
     {
         let mut consumer = self;
         BoxStatefulBiConsumer::new(move |t, u| consumer.accept(t, u))
@@ -209,8 +207,6 @@ pub trait StatefulBiConsumer<T, U> {
     fn into_rc(self) -> RcStatefulBiConsumer<T, U>
     where
         Self: Sized + 'static,
-        T: 'static,
-        U: 'static,
     {
         let mut consumer = self;
         RcStatefulBiConsumer::new(move |t, u| consumer.accept(t, u))
@@ -227,8 +223,6 @@ pub trait StatefulBiConsumer<T, U> {
     fn into_arc(self) -> ArcStatefulBiConsumer<T, U>
     where
         Self: Sized + Send + 'static,
-        T: 'static,
-        U: 'static,
     {
         let mut consumer = self;
         ArcStatefulBiConsumer::new(move |t, u| consumer.accept(t, u))
@@ -282,8 +276,6 @@ pub trait StatefulBiConsumer<T, U> {
     fn into_once(self) -> BoxBiConsumerOnce<T, U>
     where
         Self: Sized + 'static,
-        T: 'static,
-        U: 'static,
     {
         BoxBiConsumerOnce::new(move |t, u| {
             let mut consumer = self;
@@ -329,8 +321,6 @@ pub trait StatefulBiConsumer<T, U> {
     fn to_box(&self) -> BoxStatefulBiConsumer<T, U>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        U: 'static,
     {
         self.clone().into_box()
     }
@@ -373,8 +363,6 @@ pub trait StatefulBiConsumer<T, U> {
     fn to_rc(&self) -> RcStatefulBiConsumer<T, U>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        U: 'static,
     {
         self.clone().into_rc()
     }
@@ -419,8 +407,6 @@ pub trait StatefulBiConsumer<T, U> {
     fn to_arc(&self) -> ArcStatefulBiConsumer<T, U>
     where
         Self: Sized + Clone + Send + 'static,
-        T: 'static,
-        U: 'static,
     {
         self.clone().into_arc()
     }
@@ -478,8 +464,6 @@ pub trait StatefulBiConsumer<T, U> {
     fn to_once(&self) -> BoxBiConsumerOnce<T, U>
     where
         Self: Clone + 'static,
-        T: 'static,
-        U: 'static,
     {
         self.clone().into_once()
     }

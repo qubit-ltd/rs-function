@@ -21,7 +21,10 @@ use qubit_function::{
     RcStatefulConsumer,
     StatefulConsumer,
 };
-use std::cell::RefCell;
+use std::cell::{
+    Cell,
+    RefCell,
+};
 use std::rc::Rc;
 use std::sync::{
     Arc,
@@ -31,6 +34,56 @@ use std::sync::{
 // ============================================================================
 // BoxConsumer Tests
 // ============================================================================
+
+#[test]
+fn test_stateful_consumer_default_conversions_allow_relaxed_generic_types() {
+    #[derive(Debug)]
+    struct BorrowedRc<'a> {
+        value: Rc<&'a str>,
+    }
+
+    #[derive(Debug)]
+    struct BorrowedRcStatefulConsumer {
+        count: Cell<usize>,
+    }
+
+    impl Clone for BorrowedRcStatefulConsumer {
+        fn clone(&self) -> Self {
+            Self {
+                count: Cell::new(self.count.get()),
+            }
+        }
+    }
+
+    impl<'a> StatefulConsumer<BorrowedRc<'a>> for BorrowedRcStatefulConsumer {
+        fn accept(&mut self, value: &BorrowedRc<'a>) {
+            self.count.set(self.count.get() + 1);
+            assert_eq!(*value.value, "left");
+        }
+    }
+
+    let text = String::from("left");
+    let value = BorrowedRc {
+        value: Rc::new(text.as_str()),
+    };
+    let consumer = BorrowedRcStatefulConsumer {
+        count: Cell::new(0),
+    };
+
+    consumer.clone().into_box().accept(&value);
+    consumer.clone().into_rc().accept(&value);
+    consumer.clone().into_arc().accept(&value);
+    consumer.clone().into_once().accept(&value);
+    let mut into_fn = consumer.clone().into_fn();
+    into_fn(&value);
+
+    consumer.to_box().accept(&value);
+    consumer.to_rc().accept(&value);
+    consumer.to_arc().accept(&value);
+    consumer.to_once().accept(&value);
+    let mut to_fn = consumer.to_fn();
+    to_fn(&value);
+}
 
 #[cfg(test)]
 mod test_box_consumer {
