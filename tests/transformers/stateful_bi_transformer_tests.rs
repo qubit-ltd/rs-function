@@ -7,6 +7,9 @@
  *
  ******************************************************************************/
 
+use std::cell::Cell;
+use std::rc::Rc;
+
 use qubit_function::{
     ArcStatefulBiTransformer,
     ArcStatefulTransformer,
@@ -18,6 +21,75 @@ use qubit_function::{
     RcStatefulTransformer,
     StatefulBiTransformer,
 };
+
+#[test]
+fn test_stateful_bi_transformer_default_conversions_allow_relaxed_generic_types() {
+    #[derive(Clone, Debug, Eq, PartialEq)]
+    struct BorrowedRc<'a> {
+        value: Rc<&'a str>,
+    }
+
+    #[derive(Debug)]
+    struct BorrowedRcStatefulBiTransformer {
+        count: Cell<usize>,
+    }
+
+    impl Clone for BorrowedRcStatefulBiTransformer {
+        fn clone(&self) -> Self {
+            Self {
+                count: Cell::new(self.count.get()),
+            }
+        }
+    }
+
+    impl<'a> StatefulBiTransformer<BorrowedRc<'a>, BorrowedRc<'a>, BorrowedRc<'a>>
+        for BorrowedRcStatefulBiTransformer
+    {
+        fn apply(&mut self, first: BorrowedRc<'a>, second: BorrowedRc<'a>) -> BorrowedRc<'a> {
+            self.count.set(self.count.get() + 1);
+            assert_eq!(*second.value, "right");
+            first
+        }
+    }
+
+    fn assert_left(value: BorrowedRc<'_>) {
+        assert_eq!(*value.value, "left");
+    }
+
+    let left = String::from("left");
+    let right = String::from("right");
+    let first = || BorrowedRc {
+        value: Rc::new(left.as_str()),
+    };
+    let second = || BorrowedRc {
+        value: Rc::new(right.as_str()),
+    };
+    let transformer = BorrowedRcStatefulBiTransformer {
+        count: Cell::new(0),
+    };
+
+    assert_left(transformer.clone().into_box().apply(first(), second()));
+    assert_left(transformer.clone().into_rc().apply(first(), second()));
+    assert_left(transformer.clone().into_arc().apply(first(), second()));
+    assert_left(qubit_function::BiTransformerOnce::apply(
+        transformer.clone().into_once(),
+        first(),
+        second(),
+    ));
+    let mut into_fn = transformer.clone().into_fn();
+    assert_left(into_fn(first(), second()));
+
+    assert_left(transformer.to_box().apply(first(), second()));
+    assert_left(transformer.to_rc().apply(first(), second()));
+    assert_left(transformer.to_arc().apply(first(), second()));
+    assert_left(qubit_function::BiTransformerOnce::apply(
+        transformer.to_once(),
+        first(),
+        second(),
+    ));
+    let mut to_fn = transformer.to_fn();
+    assert_left(to_fn(first(), second()));
+}
 
 // ============================================================================
 // BoxStatefulBiTransformer Tests

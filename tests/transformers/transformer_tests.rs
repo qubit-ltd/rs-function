@@ -7,6 +7,56 @@
  *
  ******************************************************************************/
 
+use qubit_function::{
+    Transformer,
+};
+use std::rc::Rc;
+
+#[test]
+fn test_transformer_default_conversions_allow_relaxed_generic_types() {
+    #[derive(Clone, Debug, Eq, PartialEq)]
+    struct BorrowedRc<'a> {
+        value: Rc<&'a str>,
+    }
+
+    #[derive(Clone, Debug)]
+    struct BorrowedRcTransformer;
+
+    impl<'a> Transformer<BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcTransformer {
+        fn apply(&self, value: BorrowedRc<'a>) -> BorrowedRc<'a> {
+            value
+        }
+    }
+
+    fn assert_left(value: BorrowedRc<'_>) {
+        assert_eq!(*value.value, "left");
+    }
+
+    let text = String::from("left");
+    let value = || BorrowedRc {
+        value: Rc::new(text.as_str()),
+    };
+    let transformer = BorrowedRcTransformer;
+
+    assert_left(transformer.clone().into_box().apply(value()));
+    assert_left(transformer.clone().into_rc().apply(value()));
+    assert_left(transformer.clone().into_arc().apply(value()));
+    assert_left(qubit_function::TransformerOnce::apply(
+        transformer.clone().into_once(),
+        value(),
+    ));
+    assert_left(transformer.clone().into_fn()(value()));
+
+    assert_left(transformer.to_box().apply(value()));
+    assert_left(transformer.to_rc().apply(value()));
+    assert_left(transformer.to_arc().apply(value()));
+    assert_left(qubit_function::TransformerOnce::apply(
+        transformer.to_once(),
+        value(),
+    ));
+    assert_left(transformer.to_fn()(value()));
+}
+
 // ============================================================================
 // BoxTransformer Tests - Immutable, single ownership
 // ============================================================================

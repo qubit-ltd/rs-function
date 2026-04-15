@@ -102,9 +102,6 @@ pub trait BiTransformer<T, U, R> {
     fn into_box(self) -> BoxBiTransformer<T, U, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
     {
         BoxBiTransformer::new(move |x, y| self.apply(x, y))
     }
@@ -126,9 +123,6 @@ pub trait BiTransformer<T, U, R> {
     fn into_rc(self) -> RcBiTransformer<T, U, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
     {
         RcBiTransformer::new(move |x, y| self.apply(x, y))
     }
@@ -150,9 +144,6 @@ pub trait BiTransformer<T, U, R> {
     fn into_arc(self) -> ArcBiTransformer<T, U, R>
     where
         Self: Sized + Send + Sync + 'static,
-        T: Send + Sync + 'static,
-        U: Send + Sync + 'static,
-        R: Send + Sync + 'static,
     {
         ArcBiTransformer::new(move |x, y| self.apply(x, y))
     }
@@ -191,9 +182,6 @@ pub trait BiTransformer<T, U, R> {
     fn into_once(self) -> BoxBiTransformerOnce<T, U, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
     {
         BoxBiTransformerOnce::new(move |t, u| self.apply(t, u))
     }
@@ -204,9 +192,6 @@ pub trait BiTransformer<T, U, R> {
     fn to_box(&self) -> BoxBiTransformer<T, U, R>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
     {
         self.clone().into_box()
     }
@@ -217,9 +202,6 @@ pub trait BiTransformer<T, U, R> {
     fn to_rc(&self) -> RcBiTransformer<T, U, R>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
     {
         self.clone().into_rc()
     }
@@ -230,9 +212,6 @@ pub trait BiTransformer<T, U, R> {
     fn to_arc(&self) -> ArcBiTransformer<T, U, R>
     where
         Self: Sized + Clone + Send + Sync + 'static,
-        T: Send + Sync + 'static,
-        U: Send + Sync + 'static,
-        R: Send + Sync + 'static,
     {
         self.clone().into_arc()
     }
@@ -259,9 +238,6 @@ pub trait BiTransformer<T, U, R> {
     fn to_once(&self) -> BoxBiTransformerOnce<T, U, R>
     where
         Self: Clone + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
     {
         self.clone().into_once()
     }
@@ -518,9 +494,6 @@ where
     fn into_arc(self) -> ArcBiTransformer<T, U, R>
     where
         Self: Sized + Send + Sync + 'static,
-        T: Send + Sync + 'static,
-        U: Send + Sync + 'static,
-        R: Send + Sync + 'static,
     {
         ArcBiTransformer::new(self)
     }

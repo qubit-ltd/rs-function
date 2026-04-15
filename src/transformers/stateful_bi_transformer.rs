@@ -105,9 +105,6 @@ pub trait StatefulBiTransformer<T, U, R> {
     fn into_box(self) -> BoxStatefulBiTransformer<T, U, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
     {
         let mut trans = self;
         BoxStatefulBiTransformer::new(move |x, y| trans.apply(x, y))
@@ -130,9 +127,6 @@ pub trait StatefulBiTransformer<T, U, R> {
     fn into_rc(self) -> RcStatefulBiTransformer<T, U, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
     {
         let mut trans = self;
         RcStatefulBiTransformer::new(move |x, y| trans.apply(x, y))
@@ -155,9 +149,6 @@ pub trait StatefulBiTransformer<T, U, R> {
     fn into_arc(self) -> ArcStatefulBiTransformer<T, U, R>
     where
         Self: Sized + Send + 'static,
-        T: Send + Sync + 'static,
-        U: Send + Sync + 'static,
-        R: Send + 'static,
     {
         let mut trans = self;
         ArcStatefulBiTransformer::new(move |x, y| trans.apply(x, y))
@@ -202,9 +193,6 @@ pub trait StatefulBiTransformer<T, U, R> {
     fn into_once(self) -> BoxBiTransformerOnce<T, U, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
     {
         let mut trans = self;
         BoxBiTransformerOnce::new(move |t, u| trans.apply(t, u))
@@ -216,9 +204,6 @@ pub trait StatefulBiTransformer<T, U, R> {
     fn to_box(&self) -> BoxStatefulBiTransformer<T, U, R>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
     {
         self.clone().into_box()
     }
@@ -229,9 +214,6 @@ pub trait StatefulBiTransformer<T, U, R> {
     fn to_rc(&self) -> RcStatefulBiTransformer<T, U, R>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
     {
         self.clone().into_rc()
     }
@@ -241,10 +223,7 @@ pub trait StatefulBiTransformer<T, U, R> {
     /// Default implementation clones `self` and delegates to `into_arc`.
     fn to_arc(&self) -> ArcStatefulBiTransformer<T, U, R>
     where
-        Self: Sized + Clone + Send + Sync + 'static,
-        T: Send + Sync + 'static,
-        U: Send + Sync + 'static,
-        R: Send + Sync + 'static,
+        Self: Sized + Clone + Send + 'static,
     {
         self.clone().into_arc()
     }
@@ -266,9 +245,6 @@ pub trait StatefulBiTransformer<T, U, R> {
     fn to_once(&self) -> BoxBiTransformerOnce<T, U, R>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
     {
         self.clone().into_once()
     }
@@ -326,10 +302,6 @@ impl<T, U, R> StatefulBiTransformer<T, U, R> for BoxStatefulBiTransformer<T, U, 
     }
 
     fn into_box(self) -> BoxStatefulBiTransformer<T, U, R>
-    where
-        T: 'static,
-        U: 'static,
-        R: 'static,
     {
         // Zero-cost: directly return itself
         self
@@ -337,9 +309,7 @@ impl<T, U, R> StatefulBiTransformer<T, U, R> for BoxStatefulBiTransformer<T, U, 
 
     fn into_rc(self) -> RcStatefulBiTransformer<T, U, R>
     where
-        T: 'static,
-        U: 'static,
-        R: 'static,
+        Self: 'static,
     {
         RcStatefulBiTransformer::new(self.function)
     }

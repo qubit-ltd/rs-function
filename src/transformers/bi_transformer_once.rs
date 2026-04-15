@@ -83,9 +83,6 @@ pub trait BiTransformerOnce<T, U, R> {
     fn into_box(self) -> BoxBiTransformerOnce<T, U, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
     {
         BoxBiTransformerOnce::new(move |t: T, u: U| self.apply(t, u))
     }
@@ -126,9 +123,6 @@ pub trait BiTransformerOnce<T, U, R> {
     fn to_box(&self) -> BoxBiTransformerOnce<T, U, R>
     where
         Self: Clone + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
     {
         self.clone().into_box()
     }

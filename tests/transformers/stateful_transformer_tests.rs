@@ -7,6 +7,9 @@
  *
  ******************************************************************************/
 
+use std::cell::Cell;
+use std::rc::Rc;
+
 use qubit_function::{
     ArcPredicate,
     ArcStatefulTransformer,
@@ -18,6 +21,68 @@ use qubit_function::{
     RcStatefulTransformer,
     StatefulTransformer,
 };
+
+#[test]
+fn test_stateful_transformer_default_conversions_allow_relaxed_generic_types() {
+    #[derive(Clone, Debug, Eq, PartialEq)]
+    struct BorrowedRc<'a> {
+        value: Rc<&'a str>,
+    }
+
+    #[derive(Debug)]
+    struct BorrowedRcStatefulTransformer {
+        count: Cell<usize>,
+    }
+
+    impl Clone for BorrowedRcStatefulTransformer {
+        fn clone(&self) -> Self {
+            Self {
+                count: Cell::new(self.count.get()),
+            }
+        }
+    }
+
+    impl<'a> StatefulTransformer<BorrowedRc<'a>, BorrowedRc<'a>>
+        for BorrowedRcStatefulTransformer
+    {
+        fn apply(&mut self, value: BorrowedRc<'a>) -> BorrowedRc<'a> {
+            self.count.set(self.count.get() + 1);
+            value
+        }
+    }
+
+    fn assert_left(value: BorrowedRc<'_>) {
+        assert_eq!(*value.value, "left");
+    }
+
+    let text = String::from("left");
+    let value = || BorrowedRc {
+        value: Rc::new(text.as_str()),
+    };
+    let transformer = BorrowedRcStatefulTransformer {
+        count: Cell::new(0),
+    };
+
+    assert_left(transformer.clone().into_box().apply(value()));
+    assert_left(transformer.clone().into_rc().apply(value()));
+    assert_left(transformer.clone().into_arc().apply(value()));
+    assert_left(qubit_function::TransformerOnce::apply(
+        transformer.clone().into_once(),
+        value(),
+    ));
+    let mut into_fn = transformer.clone().into_fn();
+    assert_left(into_fn(value()));
+
+    assert_left(transformer.to_box().apply(value()));
+    assert_left(transformer.to_rc().apply(value()));
+    assert_left(transformer.to_arc().apply(value()));
+    assert_left(qubit_function::TransformerOnce::apply(
+        transformer.to_once(),
+        value(),
+    ));
+    let mut to_fn = transformer.to_fn();
+    assert_left(to_fn(value()));
+}
 
 // ============================================================================
 // BoxStatefulTransformer Tests

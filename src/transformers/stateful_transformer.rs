@@ -126,8 +126,6 @@ pub trait StatefulTransformer<T, R> {
     fn into_box(self) -> BoxStatefulTransformer<T, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
         let mut transformer = self;
         BoxStatefulTransformer::new(move |t| transformer.apply(t))
@@ -172,8 +170,6 @@ pub trait StatefulTransformer<T, R> {
     fn into_rc(self) -> RcStatefulTransformer<T, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
         let mut transformer = self;
         RcStatefulTransformer::new(move |t| transformer.apply(t))
@@ -218,8 +214,6 @@ pub trait StatefulTransformer<T, R> {
     fn into_arc(self) -> ArcStatefulTransformer<T, R>
     where
         Self: Sized + Send + 'static,
-        T: Send + Sync + 'static,
-        R: Send + 'static,
     {
         let mut transformer = self;
         ArcStatefulTransformer::new(move |t| transformer.apply(t))
@@ -279,8 +273,6 @@ pub trait StatefulTransformer<T, R> {
     fn into_once(self) -> BoxTransformerOnce<T, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
         let mut transformer = self;
         BoxTransformerOnce::new(move |t| transformer.apply(t))
@@ -294,8 +286,6 @@ pub trait StatefulTransformer<T, R> {
     fn to_box(&self) -> BoxStatefulTransformer<T, R>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
         self.clone().into_box()
     }
@@ -307,8 +297,6 @@ pub trait StatefulTransformer<T, R> {
     fn to_rc(&self) -> RcStatefulTransformer<T, R>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
         self.clone().into_rc()
     }
@@ -320,9 +308,7 @@ pub trait StatefulTransformer<T, R> {
     /// threads.
     fn to_arc(&self) -> ArcStatefulTransformer<T, R>
     where
-        Self: Sized + Clone + Send + Sync + 'static,
-        T: Send + Sync + 'static,
-        R: Send + 'static,
+        Self: Sized + Clone + Send + 'static,
     {
         self.clone().into_arc()
     }
@@ -346,8 +332,6 @@ pub trait StatefulTransformer<T, R> {
     fn to_once(&self) -> BoxTransformerOnce<T, R>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
         self.clone().into_once()
     }

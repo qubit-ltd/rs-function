@@ -11,6 +11,39 @@ use qubit_function::{
     BoxTransformerOnce,
     TransformerOnce,
 };
+use std::rc::Rc;
+
+#[test]
+fn test_transformer_once_default_conversions_allow_relaxed_generic_types() {
+    #[derive(Clone, Debug, Eq, PartialEq)]
+    struct BorrowedRc<'a> {
+        value: Rc<&'a str>,
+    }
+
+    #[derive(Clone, Debug)]
+    struct BorrowedRcTransformerOnce;
+
+    impl<'a> TransformerOnce<BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcTransformerOnce {
+        fn apply(self, value: BorrowedRc<'a>) -> BorrowedRc<'a> {
+            value
+        }
+    }
+
+    fn assert_left(value: BorrowedRc<'_>) {
+        assert_eq!(*value.value, "left");
+    }
+
+    let text = String::from("left");
+    let value = || BorrowedRc {
+        value: Rc::new(text.as_str()),
+    };
+    let transformer = BorrowedRcTransformerOnce;
+
+    assert_left(transformer.clone().into_box().apply(value()));
+    assert_left(transformer.clone().into_fn()(value()));
+    assert_left(transformer.to_box().apply(value()));
+    assert_left(transformer.to_fn()(value()));
+}
 
 // ============================================================================
 // BoxTransformerOnce Tests - Consuming, single ownership

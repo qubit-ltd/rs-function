@@ -12,7 +12,62 @@ use qubit_function::{
     BoxBiTransformer,
     RcBiTransformer,
 };
+use std::rc::Rc;
 use std::thread;
+
+#[test]
+fn test_bi_transformer_default_conversions_allow_relaxed_generic_types() {
+    #[derive(Clone, Debug, Eq, PartialEq)]
+    struct BorrowedRc<'a> {
+        value: Rc<&'a str>,
+    }
+
+    #[derive(Clone, Debug)]
+    struct BorrowedRcBiTransformer;
+
+    impl<'a> BiTransformer<BorrowedRc<'a>, BorrowedRc<'a>, BorrowedRc<'a>>
+        for BorrowedRcBiTransformer
+    {
+        fn apply(&self, first: BorrowedRc<'a>, second: BorrowedRc<'a>) -> BorrowedRc<'a> {
+            assert_eq!(*second.value, "right");
+            first
+        }
+    }
+
+    fn assert_left(value: BorrowedRc<'_>) {
+        assert_eq!(*value.value, "left");
+    }
+
+    let left = String::from("left");
+    let right = String::from("right");
+    let first = || BorrowedRc {
+        value: Rc::new(left.as_str()),
+    };
+    let second = || BorrowedRc {
+        value: Rc::new(right.as_str()),
+    };
+    let transformer = BorrowedRcBiTransformer;
+
+    assert_left(transformer.clone().into_box().apply(first(), second()));
+    assert_left(transformer.clone().into_rc().apply(first(), second()));
+    assert_left(transformer.clone().into_arc().apply(first(), second()));
+    assert_left(qubit_function::BiTransformerOnce::apply(
+        transformer.clone().into_once(),
+        first(),
+        second(),
+    ));
+    assert_left(transformer.clone().into_fn()(first(), second()));
+
+    assert_left(transformer.to_box().apply(first(), second()));
+    assert_left(transformer.to_rc().apply(first(), second()));
+    assert_left(transformer.to_arc().apply(first(), second()));
+    assert_left(qubit_function::BiTransformerOnce::apply(
+        transformer.to_once(),
+        first(),
+        second(),
+    ));
+    assert_left(transformer.to_fn()(first(), second()));
+}
 
 // ============================================================================
 // BoxBiTransformer Tests - Immutable, single ownership

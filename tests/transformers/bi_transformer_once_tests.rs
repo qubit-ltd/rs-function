@@ -12,6 +12,7 @@ use qubit_function::{
     BiTransformerOnce,
     BoxBiTransformerOnce,
 };
+use std::rc::Rc;
 
 // ============================================================================
 // Tests for BiTransformerOnce trait
@@ -20,6 +21,49 @@ use qubit_function::{
 #[cfg(test)]
 mod trait_tests {
     use super::*;
+
+    #[test]
+    fn test_default_conversions_allow_relaxed_generic_types() {
+        #[derive(Clone, Debug, Eq, PartialEq)]
+        struct BorrowedRc<'a> {
+            value: Rc<&'a str>,
+        }
+
+        #[derive(Clone, Debug)]
+        struct BorrowedRcBiTransformerOnce;
+
+        impl<'a> BiTransformerOnce<BorrowedRc<'a>, BorrowedRc<'a>, BorrowedRc<'a>>
+            for BorrowedRcBiTransformerOnce
+        {
+            fn apply(
+                self,
+                first: BorrowedRc<'a>,
+                second: BorrowedRc<'a>,
+            ) -> BorrowedRc<'a> {
+                assert_eq!(*second.value, "right");
+                first
+            }
+        }
+
+        fn assert_left(value: BorrowedRc<'_>) {
+            assert_eq!(*value.value, "left");
+        }
+
+        let left = String::from("left");
+        let right = String::from("right");
+        let first = || BorrowedRc {
+            value: Rc::new(left.as_str()),
+        };
+        let second = || BorrowedRc {
+            value: Rc::new(right.as_str()),
+        };
+        let transformer = BorrowedRcBiTransformerOnce;
+
+        assert_left(transformer.clone().into_box().apply(first(), second()));
+        assert_left(transformer.clone().into_fn()(first(), second()));
+        assert_left(transformer.to_box().apply(first(), second()));
+        assert_left(transformer.to_fn()(first(), second()));
+    }
 
     #[test]
     fn test_blanket_impl_with_closure() {

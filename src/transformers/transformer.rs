@@ -101,8 +101,6 @@ pub trait Transformer<T, R> {
     fn into_box(self) -> BoxTransformer<T, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
         BoxTransformer::new(move |x| self.apply(x))
     }
@@ -124,8 +122,6 @@ pub trait Transformer<T, R> {
     fn into_rc(self) -> RcTransformer<T, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
         RcTransformer::new(move |x| self.apply(x))
     }
@@ -147,8 +143,6 @@ pub trait Transformer<T, R> {
     fn into_arc(self) -> ArcTransformer<T, R>
     where
         Self: Sized + Send + Sync + 'static,
-        T: Send + Sync + 'static,
-        R: Send + Sync + 'static,
     {
         ArcTransformer::new(move |x| self.apply(x))
     }
@@ -196,8 +190,6 @@ pub trait Transformer<T, R> {
     fn into_once(self) -> BoxTransformerOnce<T, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
         BoxTransformerOnce::new(move |t| self.apply(t))
     }
@@ -232,8 +224,6 @@ pub trait Transformer<T, R> {
     fn to_box(&self) -> BoxTransformer<T, R>
     where
         Self: Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
         self.clone().into_box()
     }
@@ -268,8 +258,6 @@ pub trait Transformer<T, R> {
     fn to_rc(&self) -> RcTransformer<T, R>
     where
         Self: Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
         self.clone().into_rc()
     }
@@ -304,8 +292,6 @@ pub trait Transformer<T, R> {
     fn to_arc(&self) -> ArcTransformer<T, R>
     where
         Self: Clone + Send + Sync + 'static,
-        T: Send + Sync + 'static,
-        R: Send + Sync + 'static,
     {
         self.clone().into_arc()
     }
@@ -355,8 +341,6 @@ pub trait Transformer<T, R> {
     fn to_once(&self) -> BoxTransformerOnce<T, R>
     where
         Self: Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
         self.clone().into_once()
     }
