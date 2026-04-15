@@ -1,6 +1,6 @@
 [package]
 name = "qubit-function"
-version = "0.8.1"
+version = "0.8.2"
 edition = "2021"
 rust-version = "1.70"
 authors = ["Haixing Hu <starfish.hu@gmail.com>"]
@@ -31,7 +31,7 @@ doctest = false
 
 [dependencies]
 parking_lot = "0.12"
-paste = { package = "pastey", version = "0.2.1" }
+paste = { package = "pastey", version = "0.2" }
 
 [lints.clippy]
 type_complexity = "allow"
