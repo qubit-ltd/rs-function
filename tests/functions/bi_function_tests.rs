@@ -19,6 +19,7 @@ use qubit_function::{
     RcBiFunction,
     RcBiPredicate,
 };
+use std::rc::Rc;
 
 // ============================================================================
 // BiFunction Trait Tests - Core Functionality
@@ -71,6 +72,49 @@ fn test_bi_function_trait_into_once() {
     let add = |x: &i32, y: &i32| *x + *y;
     let once = add.into_once();
     assert_eq!(once.apply(&20, &22), 42);
+}
+
+#[test]
+fn test_bi_function_default_conversions_allow_relaxed_generic_types() {
+    #[derive(Clone, Debug, Eq, PartialEq)]
+    struct BorrowedRc<'a> {
+        value: Rc<&'a str>,
+    }
+
+    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+    struct BorrowedRcSelector;
+
+    impl<'a> BiFunction<BorrowedRc<'a>, BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcSelector {
+        fn apply(&self, first: &BorrowedRc<'a>, _second: &BorrowedRc<'a>) -> BorrowedRc<'a> {
+            first.clone()
+        }
+    }
+
+    fn assert_left(value: BorrowedRc<'_>) {
+        assert_eq!(*value.value, "left");
+    }
+
+    let left_text = String::from("left");
+    let right_text = String::from("right");
+    let left = BorrowedRc {
+        value: Rc::new(left_text.as_str()),
+    };
+    let right = BorrowedRc {
+        value: Rc::new(right_text.as_str()),
+    };
+    let selector = BorrowedRcSelector;
+
+    assert_left(selector.into_box().apply(&left, &right));
+    assert_left(selector.into_rc().apply(&left, &right));
+    assert_left(selector.into_arc().apply(&left, &right));
+    assert_left(selector.into_once().apply(&left, &right));
+    assert_left(selector.into_fn()(&left, &right));
+
+    assert_left(selector.to_box().apply(&left, &right));
+    assert_left(selector.to_rc().apply(&left, &right));
+    assert_left(selector.to_arc().apply(&left, &right));
+    assert_left(selector.to_once().apply(&left, &right));
+    assert_left(selector.to_fn()(&left, &right));
 }
 
 // ============================================================================

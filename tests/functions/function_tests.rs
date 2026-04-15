@@ -20,6 +20,7 @@ use qubit_function::{
     RcFunction,
     RcPredicate,
 };
+use std::rc::Rc;
 
 // ============================================================================
 // Function Trait Tests - Core Functionality
@@ -104,6 +105,45 @@ fn test_function_trait_to_fn() {
     assert_eq!(func(&21), 42);
     // Original closure still usable
     assert_eq!(double.apply(&10), 20);
+}
+
+#[test]
+fn test_function_default_conversions_allow_relaxed_generic_types() {
+    #[derive(Clone, Debug, Eq, PartialEq)]
+    struct BorrowedRc<'a> {
+        value: Rc<&'a str>,
+    }
+
+    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+    struct BorrowedRcIdentity;
+
+    impl<'a> Function<BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcIdentity {
+        fn apply(&self, value: &BorrowedRc<'a>) -> BorrowedRc<'a> {
+            value.clone()
+        }
+    }
+
+    fn assert_left(value: BorrowedRc<'_>) {
+        assert_eq!(*value.value, "left");
+    }
+
+    let text = String::from("left");
+    let value = BorrowedRc {
+        value: Rc::new(text.as_str()),
+    };
+    let identity = BorrowedRcIdentity;
+
+    assert_left(identity.into_box().apply(&value));
+    assert_left(identity.into_rc().apply(&value));
+    assert_left(identity.into_arc().apply(&value));
+    assert_left(identity.into_once().apply(&value));
+    assert_left(identity.into_fn()(&value));
+
+    assert_left(identity.to_box().apply(&value));
+    assert_left(identity.to_rc().apply(&value));
+    assert_left(identity.to_arc().apply(&value));
+    assert_left(identity.to_once().apply(&value));
+    assert_left(identity.to_fn()(&value));
 }
 
 #[test]
