@@ -12,6 +12,8 @@ use qubit_function::{
     ArcPredicate,
     ArcSupplier,
     ArcTransformer,
+    BiFunction,
+    BiFunctionOnce,
     BiConsumer,
     BiConsumerOnce,
     BiTransformer,
@@ -100,6 +102,20 @@ impl<'a> BiTransformerOnce<Borrowed<'a>, Borrowed<'a>, Borrowed<'a>> for Borrowe
     }
 }
 
+#[derive(Clone, Debug, Eq, PartialEq)]
+struct BorrowedRc<'a> {
+    value: Rc<&'a str>,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+struct BorrowedRcSelector;
+
+impl<'a> BiFunction<BorrowedRc<'a>, BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcSelector {
+    fn apply(&self, first: &BorrowedRc<'a>, _second: &BorrowedRc<'a>) -> BorrowedRc<'a> {
+        first.clone()
+    }
+}
+
 #[test]
 fn test_consumers_allow_non_static_generic_on_new() {
     let n = 7;
@@ -136,6 +152,35 @@ fn test_consumers_allow_non_static_generic_on_new() {
     assert_eq!(*box_sum.borrow(), 7);
     assert_eq!(*rc_sum.borrow(), 7);
     assert_eq!(*arc_sum.lock().expect("lock should succeed"), 7);
+}
+
+#[test]
+fn test_bi_function_default_conversions_allow_relaxed_generic_types() {
+    let left_text = String::from("left");
+    let right_text = String::from("right");
+    let left = BorrowedRc {
+        value: Rc::new(left_text.as_str()),
+    };
+    let right = BorrowedRc {
+        value: Rc::new(right_text.as_str()),
+    };
+    let selector = BorrowedRcSelector;
+
+    assert_borrowed_rc_left(selector.into_box().apply(&left, &right));
+    assert_borrowed_rc_left(selector.into_rc().apply(&left, &right));
+    assert_borrowed_rc_left(selector.into_arc().apply(&left, &right));
+    assert_borrowed_rc_left(selector.into_once().apply(&left, &right));
+    assert_borrowed_rc_left(selector.into_fn()(&left, &right));
+
+    assert_borrowed_rc_left(selector.to_box().apply(&left, &right));
+    assert_borrowed_rc_left(selector.to_rc().apply(&left, &right));
+    assert_borrowed_rc_left(selector.to_arc().apply(&left, &right));
+    assert_borrowed_rc_left(selector.to_once().apply(&left, &right));
+    assert_borrowed_rc_left(selector.to_fn()(&left, &right));
+}
+
+fn assert_borrowed_rc_left(value: BorrowedRc<'_>) {
+    assert_eq!(*value.value, "left");
 }
 
 #[test]

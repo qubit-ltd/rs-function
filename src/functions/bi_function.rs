@@ -106,9 +106,6 @@ pub trait BiFunction<T, U, R> {
     fn into_box(self) -> BoxBiFunction<T, U, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
     {
         BoxBiFunction::new(move |t, u| self.apply(t, u))
     }
@@ -130,9 +127,6 @@ pub trait BiFunction<T, U, R> {
     fn into_rc(self) -> RcBiFunction<T, U, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
     {
         RcBiFunction::new(move |t, u| self.apply(t, u))
     }
@@ -154,9 +148,6 @@ pub trait BiFunction<T, U, R> {
     fn into_arc(self) -> ArcBiFunction<T, U, R>
     where
         Self: Sized + Send + Sync + 'static,
-        T: Send + Sync + 'static,
-        U: Send + Sync + 'static,
-        R: Send + Sync + 'static,
     {
         ArcBiFunction::new(move |t, u| self.apply(t, u))
     }
@@ -195,9 +186,6 @@ pub trait BiFunction<T, U, R> {
     fn into_once(self) -> BoxBiFunctionOnce<T, U, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
     {
         BoxBiFunctionOnce::new(move |t, u| self.apply(t, u))
     }
@@ -208,9 +196,6 @@ pub trait BiFunction<T, U, R> {
     fn to_box(&self) -> BoxBiFunction<T, U, R>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
     {
         self.clone().into_box()
     }
@@ -221,9 +206,6 @@ pub trait BiFunction<T, U, R> {
     fn to_rc(&self) -> RcBiFunction<T, U, R>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
     {
         self.clone().into_rc()
     }
@@ -234,9 +216,6 @@ pub trait BiFunction<T, U, R> {
     fn to_arc(&self) -> ArcBiFunction<T, U, R>
     where
         Self: Sized + Clone + Send + Sync + 'static,
-        T: Send + Sync + 'static,
-        U: Send + Sync + 'static,
-        R: Send + Sync + 'static,
     {
         self.clone().into_arc()
     }
@@ -263,9 +242,6 @@ pub trait BiFunction<T, U, R> {
     fn to_once(&self) -> BoxBiFunctionOnce<T, U, R>
     where
         Self: Clone + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
     {
         self.clone().into_once()
     }
