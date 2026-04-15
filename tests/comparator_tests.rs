@@ -14,6 +14,47 @@ use qubit_function::comparator::{
     RcComparator,
 };
 use std::cmp::Ordering;
+use std::rc::Rc;
+
+#[test]
+fn test_comparator_default_conversions_allow_relaxed_generic_types() {
+    #[derive(Clone, Debug)]
+    struct BorrowedRc<'a> {
+        value: Rc<&'a str>,
+    }
+
+    #[derive(Clone, Debug)]
+    struct BorrowedRcComparator;
+
+    impl<'a> Comparator<BorrowedRc<'a>> for BorrowedRcComparator {
+        fn compare(&self, first: &BorrowedRc<'a>, second: &BorrowedRc<'a>) -> Ordering {
+            first.value.cmp(&second.value)
+        }
+    }
+
+    let left_text = String::from("left");
+    let right_text = String::from("right");
+    let left = BorrowedRc {
+        value: Rc::new(left_text.as_str()),
+    };
+    let right = BorrowedRc {
+        value: Rc::new(right_text.as_str()),
+    };
+    let comparator = BorrowedRcComparator;
+
+    assert_eq!(
+        comparator.clone().into_box().compare(&left, &right),
+        Ordering::Less
+    );
+    assert_eq!(
+        comparator.clone().into_rc().compare(&left, &right),
+        Ordering::Less
+    );
+    assert_eq!(
+        comparator.into_arc().compare(&left, &right),
+        Ordering::Less
+    );
+}
 
 #[cfg(test)]
 mod box_comparator_tests {

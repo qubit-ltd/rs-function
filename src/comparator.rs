@@ -245,7 +245,6 @@ pub trait Comparator<T> {
     fn into_box(self) -> BoxComparator<T>
     where
         Self: Sized + 'static,
-        T: 'static,
     {
         BoxComparator::new(move |a, b| self.compare(a, b))
     }
@@ -268,7 +267,6 @@ pub trait Comparator<T> {
     fn into_arc(self) -> ArcComparator<T>
     where
         Self: Sized + Send + Sync + 'static,
-        T: 'static,
     {
         ArcComparator::new(move |a, b| self.compare(a, b))
     }
@@ -291,7 +289,6 @@ pub trait Comparator<T> {
     fn into_rc(self) -> RcComparator<T>
     where
         Self: Sized + 'static,
-        T: 'static,
     {
         RcComparator::new(move |a, b| self.compare(a, b))
     }
