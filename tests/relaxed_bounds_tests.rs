@@ -47,6 +47,8 @@ use qubit_function::{
     FnTesterOps,
     FnTransformerOnceOps,
     FnTransformerOps,
+    Function,
+    FunctionOnce,
     Mutator,
     MutatorOnce,
     Predicate,
@@ -110,6 +112,15 @@ struct BorrowedRc<'a> {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 struct BorrowedRcSelector;
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+struct BorrowedRcIdentity;
+
+impl<'a> Function<BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcIdentity {
+    fn apply(&self, value: &BorrowedRc<'a>) -> BorrowedRc<'a> {
+        value.clone()
+    }
+}
+
 impl<'a> BiFunction<BorrowedRc<'a>, BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcSelector {
     fn apply(&self, first: &BorrowedRc<'a>, _second: &BorrowedRc<'a>) -> BorrowedRc<'a> {
         first.clone()
@@ -152,6 +163,27 @@ fn test_consumers_allow_non_static_generic_on_new() {
     assert_eq!(*box_sum.borrow(), 7);
     assert_eq!(*rc_sum.borrow(), 7);
     assert_eq!(*arc_sum.lock().expect("lock should succeed"), 7);
+}
+
+#[test]
+fn test_function_default_conversions_allow_relaxed_generic_types() {
+    let text = String::from("left");
+    let value = BorrowedRc {
+        value: Rc::new(text.as_str()),
+    };
+    let identity = BorrowedRcIdentity;
+
+    assert_borrowed_rc_left(identity.into_box().apply(&value));
+    assert_borrowed_rc_left(identity.into_rc().apply(&value));
+    assert_borrowed_rc_left(identity.into_arc().apply(&value));
+    assert_borrowed_rc_left(identity.into_once().apply(&value));
+    assert_borrowed_rc_left(identity.into_fn()(&value));
+
+    assert_borrowed_rc_left(identity.to_box().apply(&value));
+    assert_borrowed_rc_left(identity.to_rc().apply(&value));
+    assert_borrowed_rc_left(identity.to_arc().apply(&value));
+    assert_borrowed_rc_left(identity.to_once().apply(&value));
+    assert_borrowed_rc_left(identity.to_fn()(&value));
 }
 
 #[test]

@@ -104,8 +104,6 @@ pub trait Function<T, R> {
     fn into_box(self) -> BoxFunction<T, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
         BoxFunction::new(move |t| self.apply(t))
     }
@@ -127,8 +125,6 @@ pub trait Function<T, R> {
     fn into_rc(self) -> RcFunction<T, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
         RcFunction::new(move |t| self.apply(t))
     }
@@ -150,8 +146,6 @@ pub trait Function<T, R> {
     fn into_arc(self) -> ArcFunction<T, R>
     where
         Self: Sized + Send + Sync + 'static,
-        T: Send + Sync + 'static,
-        R: 'static,
     {
         ArcFunction::new(move |t| self.apply(t))
     }
@@ -203,8 +197,6 @@ pub trait Function<T, R> {
     fn into_once(self) -> BoxFunctionOnce<T, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
         BoxFunctionOnce::new(move |t| self.apply(t))
     }
@@ -239,8 +231,6 @@ pub trait Function<T, R> {
     fn to_box(&self) -> BoxFunction<T, R>
     where
         Self: Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
         self.clone().into_box()
     }
@@ -275,8 +265,6 @@ pub trait Function<T, R> {
     fn to_rc(&self) -> RcFunction<T, R>
     where
         Self: Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
         self.clone().into_rc()
     }
@@ -311,8 +299,6 @@ pub trait Function<T, R> {
     fn to_arc(&self) -> ArcFunction<T, R>
     where
         Self: Clone + Send + Sync + 'static,
-        T: Send + Sync + 'static,
-        R: Send + Sync + 'static,
     {
         self.clone().into_arc()
     }
@@ -375,8 +361,6 @@ pub trait Function<T, R> {
     fn to_once(&self) -> BoxFunctionOnce<T, R>
     where
         Self: Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
         self.clone().into_once()
     }
