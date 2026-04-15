@@ -11,7 +11,10 @@
 
 #![allow(unused_assignments)]
 
-use std::cell::RefCell;
+use std::cell::{
+    Cell,
+    RefCell,
+};
 use std::rc::Rc;
 use std::sync::{
     Arc,
@@ -32,6 +35,58 @@ use qubit_function::{
 // ============================================================================
 // StatefulFunction Trait Tests - Core Functionality
 // ============================================================================
+
+#[test]
+fn test_stateful_function_default_conversions_allow_relaxed_generic_types() {
+    #[derive(Clone, Debug, Eq, PartialEq)]
+    struct BorrowedRc<'a> {
+        value: Rc<&'a str>,
+    }
+
+    #[derive(Debug)]
+    struct BorrowedRcStatefulFunction {
+        count: Cell<usize>,
+    }
+
+    impl Clone for BorrowedRcStatefulFunction {
+        fn clone(&self) -> Self {
+            Self {
+                count: Cell::new(self.count.get()),
+            }
+        }
+    }
+
+    impl<'a> StatefulFunction<BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcStatefulFunction {
+        fn apply(&mut self, value: &BorrowedRc<'a>) -> BorrowedRc<'a> {
+            self.count.set(self.count.get() + 1);
+            value.clone()
+        }
+    }
+
+    fn assert_left(value: BorrowedRc<'_>) {
+        assert_eq!(*value.value, "left");
+    }
+
+    let text = String::from("left");
+    let value = BorrowedRc {
+        value: Rc::new(text.as_str()),
+    };
+    let function = BorrowedRcStatefulFunction {
+        count: Cell::new(0),
+    };
+
+    assert_left(function.clone().into_box().apply(&value));
+    assert_left(function.clone().into_rc().apply(&value));
+    assert_left(function.clone().into_arc().apply(&value));
+    assert_left(function.clone().into_once().apply(&value));
+    assert_left(function.clone().into_fn()(&value));
+
+    assert_left(function.to_box().apply(&value));
+    assert_left(function.to_rc().apply(&value));
+    assert_left(function.to_arc().apply(&value));
+    assert_left(function.to_once().apply(&value));
+    assert_left(function.to_fn()(&value));
+}
 
 #[test]
 fn test_stateful_function_trait_apply() {

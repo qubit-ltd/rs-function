@@ -128,8 +128,6 @@ pub trait StatefulFunction<T, R> {
     fn into_box(mut self) -> BoxStatefulFunction<T, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
         BoxStatefulFunction::new(move |t| self.apply(t))
     }
@@ -173,8 +171,6 @@ pub trait StatefulFunction<T, R> {
     fn into_rc(mut self) -> RcStatefulFunction<T, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
         RcStatefulFunction::new(move |t| self.apply(t))
     }
@@ -217,9 +213,7 @@ pub trait StatefulFunction<T, R> {
     /// ```
     fn into_arc(mut self) -> ArcStatefulFunction<T, R>
     where
-        Self: Sized + Send + Sync + 'static,
-        T: Send + Sync + 'static,
-        R: 'static,
+        Self: Sized + Send + 'static,
     {
         ArcStatefulFunction::new(move |t| self.apply(t))
     }
@@ -285,8 +279,6 @@ pub trait StatefulFunction<T, R> {
     fn into_once(mut self) -> BoxFunctionOnce<T, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
         BoxFunctionOnce::new(move |t| self.apply(t))
     }
@@ -299,8 +291,6 @@ pub trait StatefulFunction<T, R> {
     fn to_box(&self) -> BoxStatefulFunction<T, R>
     where
         Self: Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
         self.clone().into_box()
     }
@@ -312,8 +302,6 @@ pub trait StatefulFunction<T, R> {
     fn to_rc(&self) -> RcStatefulFunction<T, R>
     where
         Self: Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
         self.clone().into_rc()
     }
@@ -325,9 +313,7 @@ pub trait StatefulFunction<T, R> {
     /// threads.
     fn to_arc(&self) -> ArcStatefulFunction<T, R>
     where
-        Self: Clone + Send + Sync + 'static,
-        T: Send + Sync + 'static,
-        R: Send + 'static,
+        Self: Clone + Send + 'static,
     {
         self.clone().into_arc()
     }
@@ -369,8 +355,6 @@ pub trait StatefulFunction<T, R> {
     fn to_once(&self) -> BoxFunctionOnce<T, R>
     where
         Self: Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
         self.clone().into_once()
     }
@@ -631,8 +615,6 @@ where
     fn into_box(self) -> BoxStatefulFunction<T, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
         BoxStatefulFunction::new(self)
     }
@@ -640,8 +622,6 @@ where
     fn into_rc(self) -> RcStatefulFunction<T, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
         RcStatefulFunction::new(self)
     }
@@ -649,8 +629,6 @@ where
     fn into_arc(self) -> ArcStatefulFunction<T, R>
     where
         Self: Sized + Send + 'static,
-        T: Send + Sync + 'static,
-        R: 'static,
     {
         ArcStatefulFunction::new(self)
     }
@@ -665,8 +643,6 @@ where
     fn to_box(&self) -> BoxStatefulFunction<T, R>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
         self.clone().into_box()
     }
@@ -674,17 +650,13 @@ where
     fn to_rc(&self) -> RcStatefulFunction<T, R>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
         self.clone().into_rc()
     }
 
     fn to_arc(&self) -> ArcStatefulFunction<T, R>
     where
-        Self: Sized + Clone + Send + Sync + 'static,
-        T: Send + Sync + 'static,
-        R: 'static,
+        Self: Sized + Clone + Send + 'static,
     {
         self.clone().into_arc()
     }
@@ -699,8 +671,6 @@ where
     fn into_once(self) -> BoxFunctionOnce<T, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
         BoxFunctionOnce::new(self)
     }
@@ -708,8 +678,6 @@ where
     fn to_once(&self) -> BoxFunctionOnce<T, R>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
         BoxFunctionOnce::new(self.clone())
     }

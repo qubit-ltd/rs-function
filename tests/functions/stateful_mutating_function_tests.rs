@@ -19,12 +19,71 @@ use qubit_function::{
     RcStatefulMutatingFunction,
     StatefulMutatingFunction,
 };
-use std::cell::RefCell;
+use std::cell::{
+    Cell,
+    RefCell,
+};
 use std::rc::Rc;
 
 // ============================================================================
 // StatefulMutatingFunction Default Implementation Tests
 // ============================================================================
+
+#[test]
+fn test_stateful_mutating_function_default_conversions_allow_relaxed_generic_types() {
+    #[derive(Clone, Debug, Eq, PartialEq)]
+    struct BorrowedRc<'a> {
+        value: Rc<&'a str>,
+    }
+
+    #[derive(Debug)]
+    struct BorrowedRcStatefulMutatingFunction {
+        count: Cell<usize>,
+    }
+
+    impl Clone for BorrowedRcStatefulMutatingFunction {
+        fn clone(&self) -> Self {
+            Self {
+                count: Cell::new(self.count.get()),
+            }
+        }
+    }
+
+    impl<'a> StatefulMutatingFunction<BorrowedRc<'a>, BorrowedRc<'a>>
+        for BorrowedRcStatefulMutatingFunction
+    {
+        fn apply(&mut self, value: &mut BorrowedRc<'a>) -> BorrowedRc<'a> {
+            self.count.set(self.count.get() + 1);
+            value.clone()
+        }
+    }
+
+    fn assert_left(value: BorrowedRc<'_>) {
+        assert_eq!(*value.value, "left");
+    }
+
+    let text = String::from("left");
+    let mut value = BorrowedRc {
+        value: Rc::new(text.as_str()),
+    };
+    let function = BorrowedRcStatefulMutatingFunction {
+        count: Cell::new(0),
+    };
+
+    assert_left(function.clone().into_box().apply(&mut value));
+    assert_left(function.clone().into_rc().apply(&mut value));
+    assert_left(function.clone().into_arc().apply(&mut value));
+    assert_left(function.clone().into_once().apply(&mut value));
+    let mut into_fn = function.clone().into_fn();
+    assert_left(into_fn(&mut value));
+
+    assert_left(function.to_box().apply(&mut value));
+    assert_left(function.to_rc().apply(&mut value));
+    assert_left(function.to_arc().apply(&mut value));
+    assert_left(function.to_once().apply(&mut value));
+    let mut to_fn = function.to_fn();
+    assert_left(to_fn(&mut value));
+}
 
 /// Test struct that implements StatefulMutatingFunction to test default methods
 struct TestStatefulMutatingFunction {

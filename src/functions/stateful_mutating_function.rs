@@ -318,8 +318,6 @@ pub trait StatefulMutatingFunction<T, R> {
     fn into_box(mut self) -> BoxStatefulMutatingFunction<T, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
         BoxStatefulMutatingFunction::new(move |t| self.apply(t))
     }
@@ -358,8 +356,6 @@ pub trait StatefulMutatingFunction<T, R> {
     fn into_rc(mut self) -> RcStatefulMutatingFunction<T, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
         RcStatefulMutatingFunction::new(move |t| self.apply(t))
     }
@@ -398,8 +394,6 @@ pub trait StatefulMutatingFunction<T, R> {
     fn into_arc(mut self) -> ArcStatefulMutatingFunction<T, R>
     where
         Self: Sized + Send + 'static,
-        T: Send + 'static,
-        R: Send + 'static,
     {
         ArcStatefulMutatingFunction::new(move |t| self.apply(t))
     }
@@ -459,8 +453,6 @@ pub trait StatefulMutatingFunction<T, R> {
     fn to_box(&self) -> BoxStatefulMutatingFunction<T, R>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
         self.clone().into_box()
     }
@@ -479,8 +471,6 @@ pub trait StatefulMutatingFunction<T, R> {
     fn to_rc(&self) -> RcStatefulMutatingFunction<T, R>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
         self.clone().into_rc()
     }
@@ -500,8 +490,6 @@ pub trait StatefulMutatingFunction<T, R> {
     fn to_arc(&self) -> ArcStatefulMutatingFunction<T, R>
     where
         Self: Sized + Clone + Send + 'static,
-        T: Send + 'static,
-        R: Send + 'static,
     {
         self.clone().into_arc()
     }
@@ -558,8 +546,6 @@ pub trait StatefulMutatingFunction<T, R> {
     fn into_once(mut self) -> BoxMutatingFunctionOnce<T, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
         BoxMutatingFunctionOnce::new(move |t| self.apply(t))
     }
@@ -595,8 +581,6 @@ pub trait StatefulMutatingFunction<T, R> {
     fn to_once(&self) -> BoxMutatingFunctionOnce<T, R>
     where
         Self: Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
         self.clone().into_once()
     }
@@ -922,8 +906,6 @@ where
     fn into_box(self) -> BoxStatefulMutatingFunction<T, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
         BoxStatefulMutatingFunction::new(self)
     }
@@ -931,8 +913,6 @@ where
     fn into_rc(self) -> RcStatefulMutatingFunction<T, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
         RcStatefulMutatingFunction::new(self)
     }
@@ -940,8 +920,6 @@ where
     fn into_arc(self) -> ArcStatefulMutatingFunction<T, R>
     where
         Self: Sized + Send + 'static,
-        T: Send + 'static,
-        R: Send + 'static,
     {
         ArcStatefulMutatingFunction::new(self)
     }
@@ -956,8 +934,6 @@ where
     fn to_box(&self) -> BoxStatefulMutatingFunction<T, R>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
         let cloned = self.clone();
         BoxStatefulMutatingFunction::new(cloned)
@@ -966,8 +942,6 @@ where
     fn to_rc(&self) -> RcStatefulMutatingFunction<T, R>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
         let cloned = self.clone();
         RcStatefulMutatingFunction::new(cloned)
@@ -976,8 +950,6 @@ where
     fn to_arc(&self) -> ArcStatefulMutatingFunction<T, R>
     where
         Self: Sized + Clone + Send + 'static,
-        T: Send + 'static,
-        R: Send + 'static,
     {
         let cloned = self.clone();
         ArcStatefulMutatingFunction::new(cloned)
@@ -993,8 +965,6 @@ where
     fn into_once(self) -> BoxMutatingFunctionOnce<T, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
         BoxMutatingFunctionOnce::new(self)
     }
@@ -1002,8 +972,6 @@ where
     fn to_once(&self) -> BoxMutatingFunctionOnce<T, R>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
         BoxMutatingFunctionOnce::new(self.clone())
     }
