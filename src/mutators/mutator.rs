@@ -362,7 +362,6 @@ pub trait Mutator<T> {
     fn into_box(self) -> BoxMutator<T>
     where
         Self: Sized + 'static,
-        T: 'static,
     {
         BoxMutator::new(move |t| self.apply(t))
     }
@@ -396,7 +395,6 @@ pub trait Mutator<T> {
     fn into_rc(self) -> RcMutator<T>
     where
         Self: Sized + 'static,
-        T: 'static,
     {
         RcMutator::new(move |t| self.apply(t))
     }
@@ -430,7 +428,6 @@ pub trait Mutator<T> {
     fn into_arc(self) -> ArcMutator<T>
     where
         Self: Sized + Send + Sync + 'static,
-        T: Send + 'static,
     {
         ArcMutator::new(move |t| self.apply(t))
     }
@@ -497,7 +494,6 @@ pub trait Mutator<T> {
     fn into_once(self) -> BoxMutatorOnce<T>
     where
         Self: Sized + 'static,
-        T: 'static,
     {
         BoxMutatorOnce::new(move |t| self.apply(t))
     }
@@ -514,7 +510,6 @@ pub trait Mutator<T> {
     fn to_box(&self) -> BoxMutator<T>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
     {
         self.clone().into_box()
     }
@@ -531,7 +526,6 @@ pub trait Mutator<T> {
     fn to_rc(&self) -> RcMutator<T>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
     {
         self.clone().into_rc()
     }
@@ -548,7 +542,6 @@ pub trait Mutator<T> {
     fn to_arc(&self) -> ArcMutator<T>
     where
         Self: Sized + Clone + Send + Sync + 'static,
-        T: Send + 'static,
     {
         self.clone().into_arc()
     }
@@ -582,7 +575,6 @@ pub trait Mutator<T> {
     fn to_once(&self) -> BoxMutatorOnce<T>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
     {
         self.clone().into_once()
     }

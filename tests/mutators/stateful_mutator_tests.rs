@@ -17,10 +17,62 @@ use qubit_function::{
     RcStatefulMutator,
     StatefulMutator,
 };
+use std::cell::Cell;
+use std::rc::Rc;
 
 // ============================================================================
 // BoxStatefulMutator Tests
 // ============================================================================
+
+#[test]
+fn test_stateful_mutator_default_conversions_allow_relaxed_generic_types() {
+    #[derive(Debug)]
+    struct BorrowedRc<'a> {
+        value: Rc<&'a str>,
+    }
+
+    #[derive(Debug)]
+    struct BorrowedRcStatefulMutator {
+        count: Cell<usize>,
+    }
+
+    impl Clone for BorrowedRcStatefulMutator {
+        fn clone(&self) -> Self {
+            Self {
+                count: Cell::new(self.count.get()),
+            }
+        }
+    }
+
+    impl<'a> StatefulMutator<BorrowedRc<'a>> for BorrowedRcStatefulMutator {
+        fn apply(&mut self, value: &mut BorrowedRc<'a>) {
+            self.count.set(self.count.get() + 1);
+            assert_eq!(*value.value, "left");
+        }
+    }
+
+    let text = String::from("left");
+    let mut value = BorrowedRc {
+        value: Rc::new(text.as_str()),
+    };
+    let mutator = BorrowedRcStatefulMutator {
+        count: Cell::new(0),
+    };
+
+    mutator.clone().into_box().apply(&mut value);
+    mutator.clone().into_rc().apply(&mut value);
+    mutator.clone().into_arc().apply(&mut value);
+    mutator.clone().into_once().apply(&mut value);
+    let mut into_fn = mutator.clone().into_fn();
+    into_fn(&mut value);
+
+    mutator.to_box().apply(&mut value);
+    mutator.to_rc().apply(&mut value);
+    mutator.to_arc().apply(&mut value);
+    mutator.to_once().apply(&mut value);
+    let mut to_fn = mutator.to_fn();
+    to_fn(&mut value);
+}
 
 #[cfg(test)]
 mod test_box_mutator {

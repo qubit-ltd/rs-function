@@ -264,7 +264,6 @@ pub trait MutatorOnce<T> {
     fn into_box(self) -> BoxMutatorOnce<T>
     where
         Self: Sized + 'static,
-        T: 'static,
     {
         BoxMutatorOnce::new(move |t| self.apply(t))
     }
@@ -292,7 +291,6 @@ pub trait MutatorOnce<T> {
     fn to_box(&self) -> BoxMutatorOnce<T>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
     {
         self.clone().into_box()
     }

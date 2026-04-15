@@ -363,7 +363,6 @@ pub trait StatefulMutator<T> {
     fn into_box(mut self) -> BoxStatefulMutator<T>
     where
         Self: Sized + 'static,
-        T: 'static,
     {
         BoxStatefulMutator::new(move |t| self.apply(t))
     }
@@ -397,7 +396,6 @@ pub trait StatefulMutator<T> {
     fn into_rc(mut self) -> RcStatefulMutator<T>
     where
         Self: Sized + 'static,
-        T: 'static,
     {
         RcStatefulMutator::new(move |t| self.apply(t))
     }
@@ -431,7 +429,6 @@ pub trait StatefulMutator<T> {
     fn into_arc(mut self) -> ArcStatefulMutator<T>
     where
         Self: Sized + Send + 'static,
-        T: Send + 'static,
     {
         ArcStatefulMutator::new(move |t| self.apply(t))
     }
@@ -480,7 +477,6 @@ pub trait StatefulMutator<T> {
     fn to_box(&self) -> BoxStatefulMutator<T>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
     {
         self.clone().into_box()
     }
@@ -497,7 +493,6 @@ pub trait StatefulMutator<T> {
     fn to_rc(&self) -> RcStatefulMutator<T>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
     {
         self.clone().into_rc()
     }
@@ -514,7 +509,6 @@ pub trait StatefulMutator<T> {
     fn to_arc(&self) -> ArcStatefulMutator<T>
     where
         Self: Sized + Clone + Send + 'static,
-        T: Send + 'static,
     {
         self.clone().into_arc()
     }
@@ -567,7 +561,6 @@ pub trait StatefulMutator<T> {
     fn into_once(mut self) -> BoxMutatorOnce<T>
     where
         Self: Sized + 'static,
-        T: 'static,
     {
         BoxMutatorOnce::new(move |t| self.apply(t))
     }
@@ -584,7 +577,6 @@ pub trait StatefulMutator<T> {
     fn to_once(&self) -> BoxMutatorOnce<T>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
     {
         self.clone().into_once()
     }

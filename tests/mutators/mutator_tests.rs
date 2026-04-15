@@ -17,10 +17,46 @@ use qubit_function::{
     MutatorOnce,
     RcMutator,
 };
+use std::rc::Rc;
 
 // ============================================================================
 // Mutator Default Implementation Tests
 // ============================================================================
+
+#[test]
+fn test_mutator_default_conversions_allow_relaxed_generic_types() {
+    #[derive(Debug)]
+    struct BorrowedRc<'a> {
+        value: Rc<&'a str>,
+    }
+
+    #[derive(Clone, Debug)]
+    struct BorrowedRcMutator;
+
+    impl<'a> Mutator<BorrowedRc<'a>> for BorrowedRcMutator {
+        fn apply(&self, value: &mut BorrowedRc<'a>) {
+            assert_eq!(*value.value, "left");
+        }
+    }
+
+    let text = String::from("left");
+    let mut value = BorrowedRc {
+        value: Rc::new(text.as_str()),
+    };
+    let mutator = BorrowedRcMutator;
+
+    mutator.clone().into_box().apply(&mut value);
+    mutator.clone().into_rc().apply(&mut value);
+    mutator.clone().into_arc().apply(&mut value);
+    mutator.clone().into_once().apply(&mut value);
+    mutator.clone().into_fn()(&mut value);
+
+    mutator.to_box().apply(&mut value);
+    mutator.to_rc().apply(&mut value);
+    mutator.to_arc().apply(&mut value);
+    mutator.to_once().apply(&mut value);
+    mutator.to_fn()(&mut value);
+}
 
 /// Test struct that implements Mutator to test default methods
 struct TestMutator {

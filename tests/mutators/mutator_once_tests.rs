@@ -15,6 +15,36 @@ use qubit_function::{
     FnMutatorOnceOps,
     MutatorOnce,
 };
+use std::rc::Rc;
+
+#[test]
+fn test_mutator_once_default_conversions_allow_relaxed_generic_types() {
+    #[derive(Debug)]
+    struct BorrowedRc<'a> {
+        value: Rc<&'a str>,
+    }
+
+    #[derive(Clone, Debug)]
+    struct BorrowedRcMutatorOnce;
+
+    impl<'a> MutatorOnce<BorrowedRc<'a>> for BorrowedRcMutatorOnce {
+        fn apply(self, value: &mut BorrowedRc<'a>) {
+            assert_eq!(*value.value, "left");
+        }
+    }
+
+    let text = String::from("left");
+    let mut value = BorrowedRc {
+        value: Rc::new(text.as_str()),
+    };
+    let mutator = BorrowedRcMutatorOnce;
+
+    mutator.clone().into_box().apply(&mut value);
+    mutator.clone().into_fn()(&mut value);
+
+    mutator.to_box().apply(&mut value);
+    mutator.to_fn()(&mut value);
+}
 
 // Test closures specialization and default behaviors
 #[test]

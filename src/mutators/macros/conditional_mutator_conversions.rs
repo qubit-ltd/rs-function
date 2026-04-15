@@ -164,7 +164,7 @@ macro_rules! impl_conditional_mutator_conversions {
         #[allow(unused_mut)]
         fn into_box(self) -> $box_type<$t>
         where
-            $t: 'static,
+            Self: 'static,
         {
             let pred = self.predicate;
             let mut mutator = self.mutator;
@@ -178,7 +178,7 @@ macro_rules! impl_conditional_mutator_conversions {
         #[allow(unused_mut)]
         fn into_rc(self) -> $rc_type<$t>
         where
-            $t: 'static,
+            Self: 'static,
         {
             let pred = self.predicate.into_rc();
             let mut mutator = self.mutator.into_rc();
