@@ -295,8 +295,6 @@ pub trait BiPredicate<T, U> {
     fn into_box(self) -> BoxBiPredicate<T, U>
     where
         Self: Sized + 'static,
-        T: 'static,
-        U: 'static,
     {
         BoxBiPredicate::new(move |first, second| self.test(first, second))
     }
@@ -316,8 +314,6 @@ pub trait BiPredicate<T, U> {
     fn into_rc(self) -> RcBiPredicate<T, U>
     where
         Self: Sized + 'static,
-        T: 'static,
-        U: 'static,
     {
         RcBiPredicate::new(move |first, second| self.test(first, second))
     }
@@ -338,8 +334,6 @@ pub trait BiPredicate<T, U> {
     fn into_arc(self) -> ArcBiPredicate<T, U>
     where
         Self: Sized + Send + Sync + 'static,
-        T: 'static,
-        U: 'static,
     {
         ArcBiPredicate::new(move |first, second| self.test(first, second))
     }
@@ -391,8 +385,6 @@ pub trait BiPredicate<T, U> {
     fn to_box(&self) -> BoxBiPredicate<T, U>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        U: 'static,
     {
         self.clone().into_box()
     }
@@ -400,8 +392,6 @@ pub trait BiPredicate<T, U> {
     fn to_rc(&self) -> RcBiPredicate<T, U>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        U: 'static,
     {
         self.clone().into_rc()
     }
@@ -409,8 +399,6 @@ pub trait BiPredicate<T, U> {
     fn to_arc(&self) -> ArcBiPredicate<T, U>
     where
         Self: Sized + Clone + Send + Sync + 'static,
-        T: 'static,
-        U: 'static,
     {
         self.clone().into_arc()
     }

@@ -297,7 +297,6 @@ pub trait Predicate<T> {
     fn into_box(self) -> BoxPredicate<T>
     where
         Self: Sized + 'static,
-        T: 'static,
     {
         BoxPredicate::new(move |value: &T| self.test(value))
     }
@@ -314,7 +313,6 @@ pub trait Predicate<T> {
     fn into_rc(self) -> RcPredicate<T>
     where
         Self: Sized + 'static,
-        T: 'static,
     {
         RcPredicate::new(move |value: &T| self.test(value))
     }
@@ -331,7 +329,6 @@ pub trait Predicate<T> {
     fn into_arc(self) -> ArcPredicate<T>
     where
         Self: Sized + Send + Sync + 'static,
-        T: 'static,
     {
         ArcPredicate::new(move |value: &T| self.test(value))
     }
@@ -401,7 +398,6 @@ pub trait Predicate<T> {
     fn to_box(&self) -> BoxPredicate<T>
     where
         Self: Clone + Sized + 'static,
-        T: 'static,
     {
         self.clone().into_box()
     }
@@ -417,7 +413,6 @@ pub trait Predicate<T> {
     fn to_rc(&self) -> RcPredicate<T>
     where
         Self: Clone + Sized + 'static,
-        T: 'static,
     {
         self.clone().into_rc()
     }
@@ -433,7 +428,6 @@ pub trait Predicate<T> {
     fn to_arc(&self) -> ArcPredicate<T>
     where
         Self: Clone + Sized + Send + Sync + 'static,
-        T: 'static,
     {
         self.clone().into_arc()
     }

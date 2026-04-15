@@ -16,11 +16,51 @@ mod tests {
         FnBiPredicateOps,
         RcBiPredicate,
     };
+    use std::rc::Rc;
     use std::thread;
 
     // ========================================================================
     // BiPredicate Trait Tests - Test closure and function pointer implementations
     // ========================================================================
+
+    #[test]
+    fn test_bi_predicate_default_conversions_allow_relaxed_generic_types() {
+        #[derive(Debug)]
+        struct BorrowedRc<'a> {
+            value: Rc<&'a str>,
+        }
+
+        #[derive(Clone, Debug)]
+        struct BorrowedRcBiPredicate;
+
+        impl<'a> BiPredicate<BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcBiPredicate {
+            fn test(&self, first: &BorrowedRc<'a>, second: &BorrowedRc<'a>) -> bool {
+                assert_eq!(*first.value, "left");
+                assert_eq!(*second.value, "right");
+                true
+            }
+        }
+
+        let left = String::from("left");
+        let right = String::from("right");
+        let first = BorrowedRc {
+            value: Rc::new(left.as_str()),
+        };
+        let second = BorrowedRc {
+            value: Rc::new(right.as_str()),
+        };
+        let predicate = BorrowedRcBiPredicate;
+
+        assert!(predicate.clone().into_box().test(&first, &second));
+        assert!(predicate.clone().into_rc().test(&first, &second));
+        assert!(predicate.clone().into_arc().test(&first, &second));
+        assert!(predicate.clone().into_fn()(&first, &second));
+
+        assert!(predicate.to_box().test(&first, &second));
+        assert!(predicate.to_rc().test(&first, &second));
+        assert!(predicate.to_arc().test(&first, &second));
+        assert!(predicate.to_fn()(&first, &second));
+    }
 
     mod bi_predicate_trait_tests {
         use super::*;

@@ -17,10 +17,45 @@ use qubit_function::predicates::predicate::{
     RcPredicate,
 };
 use std::cell::RefCell;
+use std::rc::Rc;
 use std::sync::{
     Arc,
     Mutex,
 };
+
+#[test]
+fn test_predicate_default_conversions_allow_relaxed_generic_types() {
+    #[derive(Debug)]
+    struct BorrowedRc<'a> {
+        value: Rc<&'a str>,
+    }
+
+    #[derive(Clone, Debug)]
+    struct BorrowedRcPredicate;
+
+    impl<'a> Predicate<BorrowedRc<'a>> for BorrowedRcPredicate {
+        fn test(&self, value: &BorrowedRc<'a>) -> bool {
+            assert_eq!(*value.value, "left");
+            true
+        }
+    }
+
+    let text = String::from("left");
+    let value = BorrowedRc {
+        value: Rc::new(text.as_str()),
+    };
+    let predicate = BorrowedRcPredicate;
+
+    assert!(predicate.clone().into_box().test(&value));
+    assert!(predicate.clone().into_rc().test(&value));
+    assert!(predicate.clone().into_arc().test(&value));
+    assert!(predicate.clone().into_fn()(&value));
+
+    assert!(predicate.to_box().test(&value));
+    assert!(predicate.to_rc().test(&value));
+    assert!(predicate.to_arc().test(&value));
+    assert!(predicate.to_fn()(&value));
+}
 
 #[cfg(test)]
 mod closure_predicate_tests {
