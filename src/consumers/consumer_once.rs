@@ -526,19 +526,6 @@ impl<T> ConsumerOnce<T> for BoxConditionalConsumerOnce<T> {
         }
     }
 
-    fn into_box(self) -> BoxConsumerOnce<T>
-    where
-        Self: 'static,
-    {
-        let pred = self.predicate;
-        let consumer = self.consumer;
-        BoxConsumerOnce::new(move |t| {
-            if pred.test(t) {
-                consumer.accept(t);
-            }
-        })
-    }
-
     fn into_fn(self) -> impl FnOnce(&T) {
         let pred = self.predicate;
         let consumer = self.consumer;

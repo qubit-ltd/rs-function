@@ -301,8 +301,7 @@ impl<T, U, R> StatefulBiTransformer<T, U, R> for BoxStatefulBiTransformer<T, U, 
         (self.function)(first, second)
     }
 
-    fn into_box(self) -> BoxStatefulBiTransformer<T, U, R>
-    {
+    fn into_box(self) -> BoxStatefulBiTransformer<T, U, R> {
         // Zero-cost: directly return itself
         self
     }

@@ -537,19 +537,6 @@ impl<T, U> BiConsumerOnce<T, U> for BoxConditionalBiConsumerOnce<T, U> {
         }
     }
 
-    fn into_box(self) -> BoxBiConsumerOnce<T, U>
-    where
-        Self: 'static,
-    {
-        let pred = self.predicate;
-        let consumer = self.consumer;
-        BoxBiConsumerOnce::new(move |t, u| {
-            if pred.test(t, u) {
-                consumer.accept(t, u);
-            }
-        })
-    }
-
     fn into_fn(self) -> impl FnOnce(&T, &U) {
         let pred = self.predicate;
         let consumer = self.consumer;

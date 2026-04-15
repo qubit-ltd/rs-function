@@ -618,19 +618,6 @@ impl<T> MutatorOnce<T> for BoxConditionalMutatorOnce<T> {
         }
     }
 
-    fn into_box(self) -> BoxMutatorOnce<T>
-    where
-        T: 'static,
-    {
-        let pred = self.predicate;
-        let mutator = self.mutator;
-        BoxMutatorOnce::new(move |t| {
-            if pred.test(t) {
-                mutator.apply(t);
-            }
-        })
-    }
-
     fn into_fn(self) -> impl FnOnce(&mut T) {
         let pred = self.predicate;
         let mutator = self.mutator;
