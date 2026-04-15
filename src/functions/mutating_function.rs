@@ -303,8 +303,6 @@ pub trait MutatingFunction<T, R> {
     fn into_box(self) -> BoxMutatingFunction<T, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
         BoxMutatingFunction::new(move |t| self.apply(t))
     }
@@ -340,8 +338,6 @@ pub trait MutatingFunction<T, R> {
     fn into_rc(self) -> RcMutatingFunction<T, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
         RcMutatingFunction::new(move |t| self.apply(t))
     }
@@ -378,8 +374,6 @@ pub trait MutatingFunction<T, R> {
     fn into_arc(self) -> ArcMutatingFunction<T, R>
     where
         Self: Sized + Send + Sync + 'static,
-        T: Send + 'static,
-        R: Send + 'static,
     {
         ArcMutatingFunction::new(move |t| self.apply(t))
     }
@@ -454,8 +448,6 @@ pub trait MutatingFunction<T, R> {
     fn into_once(self) -> BoxMutatingFunctionOnce<T, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
         BoxMutatingFunctionOnce::new(move |t| self.apply(t))
     }
@@ -473,8 +465,6 @@ pub trait MutatingFunction<T, R> {
     fn to_box(&self) -> BoxMutatingFunction<T, R>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
         self.clone().into_box()
     }
@@ -492,8 +482,6 @@ pub trait MutatingFunction<T, R> {
     fn to_rc(&self) -> RcMutatingFunction<T, R>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
         self.clone().into_rc()
     }
@@ -512,8 +500,6 @@ pub trait MutatingFunction<T, R> {
     fn to_arc(&self) -> ArcMutatingFunction<T, R>
     where
         Self: Sized + Clone + Send + Sync + 'static,
-        T: Send + 'static,
-        R: Send + 'static,
     {
         self.clone().into_arc()
     }
@@ -565,8 +551,6 @@ pub trait MutatingFunction<T, R> {
     fn to_once(&self) -> BoxMutatingFunctionOnce<T, R>
     where
         Self: Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
         self.clone().into_once()
     }

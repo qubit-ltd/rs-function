@@ -19,6 +19,7 @@ use qubit_function::{
     RcBiMutatingFunction,
     RcBiPredicate,
 };
+use std::rc::Rc;
 
 // ============================================================================
 // Helper Functions and Data Structures
@@ -54,6 +55,55 @@ fn modify_structs(a: &mut TestStruct, b: &mut TestStruct) -> i32 {
 // ============================================================================
 // BiMutatingFunction Trait Tests - Core Functionality
 // ============================================================================
+
+#[test]
+fn test_bi_mutating_function_default_conversions_allow_relaxed_generic_types() {
+    #[derive(Clone, Debug, Eq, PartialEq)]
+    struct BorrowedRc<'a> {
+        value: Rc<&'a str>,
+    }
+
+    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+    struct BorrowedRcSelector;
+
+    impl<'a> BiMutatingFunction<BorrowedRc<'a>, BorrowedRc<'a>, BorrowedRc<'a>>
+        for BorrowedRcSelector
+    {
+        fn apply(
+            &self,
+            first: &mut BorrowedRc<'a>,
+            _second: &mut BorrowedRc<'a>,
+        ) -> BorrowedRc<'a> {
+            first.clone()
+        }
+    }
+
+    fn assert_left(value: BorrowedRc<'_>) {
+        assert_eq!(*value.value, "left");
+    }
+
+    let left_text = String::from("left");
+    let right_text = String::from("right");
+    let mut left = BorrowedRc {
+        value: Rc::new(left_text.as_str()),
+    };
+    let mut right = BorrowedRc {
+        value: Rc::new(right_text.as_str()),
+    };
+    let selector = BorrowedRcSelector;
+
+    assert_left(selector.into_box().apply(&mut left, &mut right));
+    assert_left(selector.into_rc().apply(&mut left, &mut right));
+    assert_left(selector.into_arc().apply(&mut left, &mut right));
+    assert_left(selector.into_once().apply(&mut left, &mut right));
+    assert_left(selector.into_fn()(&mut left, &mut right));
+
+    assert_left(selector.to_box().apply(&mut left, &mut right));
+    assert_left(selector.to_rc().apply(&mut left, &mut right));
+    assert_left(selector.to_arc().apply(&mut left, &mut right));
+    assert_left(selector.to_once().apply(&mut left, &mut right));
+    assert_left(selector.to_fn()(&mut left, &mut right));
+}
 
 #[test]
 fn test_bi_mutating_function_trait_apply() {

@@ -14,6 +14,7 @@ use qubit_function::{
     FnMutatingFunctionOnceOps,
     MutatingFunctionOnce,
 };
+use std::rc::Rc;
 
 // ============================================================================
 // MutatingFunctionOnce Default Implementation Tests
@@ -81,6 +82,38 @@ mod test_mutating_function_once_default_impl {
         let mut value = 4;
         assert_eq!(closure(&mut value), 4);
         assert_eq!(value, 12);
+    }
+
+    #[test]
+    fn test_default_conversions_allow_relaxed_generic_types() {
+        #[derive(Clone, Debug, Eq, PartialEq)]
+        struct BorrowedRc<'a> {
+            value: Rc<&'a str>,
+        }
+
+        #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+        struct BorrowedRcMutatorOnce;
+
+        impl<'a> MutatingFunctionOnce<BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcMutatorOnce {
+            fn apply(self, value: &mut BorrowedRc<'a>) -> BorrowedRc<'a> {
+                value.clone()
+            }
+        }
+
+        fn assert_left(value: BorrowedRc<'_>) {
+            assert_eq!(*value.value, "left");
+        }
+
+        let text = String::from("left");
+        let mut value = BorrowedRc {
+            value: Rc::new(text.as_str()),
+        };
+        let mutator = BorrowedRcMutatorOnce;
+
+        assert_left(mutator.into_box().apply(&mut value));
+        assert_left(mutator.into_fn()(&mut value));
+        assert_left(mutator.to_box().apply(&mut value));
+        assert_left(mutator.to_fn()(&mut value));
     }
 }
 

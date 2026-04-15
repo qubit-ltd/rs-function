@@ -287,8 +287,6 @@ pub trait MutatingFunctionOnce<T, R> {
     fn into_box(self) -> BoxMutatingFunctionOnce<T, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
         BoxMutatingFunctionOnce::new(move |t| self.apply(t))
     }
@@ -317,8 +315,6 @@ pub trait MutatingFunctionOnce<T, R> {
     fn to_box(&self) -> BoxMutatingFunctionOnce<T, R>
     where
         Self: Sized + Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
         self.clone().into_box()
     }

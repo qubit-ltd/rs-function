@@ -14,6 +14,7 @@ use qubit_function::{
     BoxBiMutatingFunctionOnce,
     FnBiMutatingFunctionOnceOps,
 };
+use std::rc::Rc;
 
 // ============================================================================
 // Helper Functions and Data Structures
@@ -49,6 +50,48 @@ fn modify_structs_once(a: &mut TestStruct, b: &mut TestStruct) -> i32 {
 // ============================================================================
 // BiMutatingFunctionOnce Trait Tests - Core Functionality
 // ============================================================================
+
+#[test]
+fn test_bi_mutating_function_once_default_conversions_allow_relaxed_generic_types() {
+    #[derive(Clone, Debug, Eq, PartialEq)]
+    struct BorrowedRc<'a> {
+        value: Rc<&'a str>,
+    }
+
+    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+    struct BorrowedRcSelectorOnce;
+
+    impl<'a> BiMutatingFunctionOnce<BorrowedRc<'a>, BorrowedRc<'a>, BorrowedRc<'a>>
+        for BorrowedRcSelectorOnce
+    {
+        fn apply(
+            self,
+            first: &mut BorrowedRc<'a>,
+            _second: &mut BorrowedRc<'a>,
+        ) -> BorrowedRc<'a> {
+            first.clone()
+        }
+    }
+
+    fn assert_left(value: BorrowedRc<'_>) {
+        assert_eq!(*value.value, "left");
+    }
+
+    let left_text = String::from("left");
+    let right_text = String::from("right");
+    let mut left = BorrowedRc {
+        value: Rc::new(left_text.as_str()),
+    };
+    let mut right = BorrowedRc {
+        value: Rc::new(right_text.as_str()),
+    };
+    let selector = BorrowedRcSelectorOnce;
+
+    assert_left(selector.into_box().apply(&mut left, &mut right));
+    assert_left(selector.into_fn()(&mut left, &mut right));
+    assert_left(selector.to_box().apply(&mut left, &mut right));
+    assert_left(selector.to_fn()(&mut left, &mut right));
+}
 
 #[test]
 fn test_bi_mutating_function_once_trait_apply() {

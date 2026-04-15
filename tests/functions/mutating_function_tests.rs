@@ -17,10 +17,50 @@ use qubit_function::{
     MutatingFunctionOnce,
     RcMutatingFunction,
 };
+use std::rc::Rc;
 
 // ============================================================================
 // BoxMutatingFunction Tests
 // ============================================================================
+
+#[test]
+fn test_mutating_function_default_conversions_allow_relaxed_generic_types() {
+    #[derive(Clone, Debug, Eq, PartialEq)]
+    struct BorrowedRc<'a> {
+        value: Rc<&'a str>,
+    }
+
+    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
+    struct BorrowedRcMutator;
+
+    impl<'a> MutatingFunction<BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcMutator {
+        fn apply(&self, value: &mut BorrowedRc<'a>) -> BorrowedRc<'a> {
+            value.clone()
+        }
+    }
+
+    fn assert_left(value: BorrowedRc<'_>) {
+        assert_eq!(*value.value, "left");
+    }
+
+    let text = String::from("left");
+    let mut value = BorrowedRc {
+        value: Rc::new(text.as_str()),
+    };
+    let mutator = BorrowedRcMutator;
+
+    assert_left(mutator.into_box().apply(&mut value));
+    assert_left(mutator.into_rc().apply(&mut value));
+    assert_left(mutator.into_arc().apply(&mut value));
+    assert_left(mutator.into_once().apply(&mut value));
+    assert_left(mutator.into_fn()(&mut value));
+
+    assert_left(mutator.to_box().apply(&mut value));
+    assert_left(mutator.to_rc().apply(&mut value));
+    assert_left(mutator.to_arc().apply(&mut value));
+    assert_left(mutator.to_once().apply(&mut value));
+    assert_left(mutator.to_fn()(&mut value));
+}
 
 #[cfg(test)]
 mod test_box_mutating_function {
