@@ -17,7 +17,6 @@ use qubit_function::predicates::predicate::{
     RcPredicate,
 };
 use std::cell::RefCell;
-use std::rc::Rc;
 use std::sync::{
     Arc,
     Mutex,
@@ -27,7 +26,7 @@ use std::sync::{
 fn test_predicate_default_conversions_allow_relaxed_generic_types() {
     #[derive(Debug)]
     struct BorrowedRc<'a> {
-        value: Rc<&'a str>,
+        value: &'a str,
     }
 
     #[derive(Clone, Debug)]
@@ -35,14 +34,14 @@ fn test_predicate_default_conversions_allow_relaxed_generic_types() {
 
     impl<'a> Predicate<BorrowedRc<'a>> for BorrowedRcPredicate {
         fn test(&self, value: &BorrowedRc<'a>) -> bool {
-            assert_eq!(*value.value, "left");
+            assert_eq!(value.value, "left");
             true
         }
     }
 
     let text = String::from("left");
     let value = BorrowedRc {
-        value: Rc::new(text.as_str()),
+        value: text.as_str(),
     };
     let predicate = BorrowedRcPredicate;
 

@@ -39,7 +39,7 @@ use std::sync::{
 fn test_stateful_consumer_default_conversions_allow_relaxed_generic_types() {
     #[derive(Debug)]
     struct BorrowedRc<'a> {
-        value: Rc<&'a str>,
+        value: &'a str,
     }
 
     #[derive(Debug)]
@@ -58,13 +58,13 @@ fn test_stateful_consumer_default_conversions_allow_relaxed_generic_types() {
     impl<'a> StatefulConsumer<BorrowedRc<'a>> for BorrowedRcStatefulConsumer {
         fn accept(&mut self, value: &BorrowedRc<'a>) {
             self.count.set(self.count.get() + 1);
-            assert_eq!(*value.value, "left");
+            assert_eq!(value.value, "left");
         }
     }
 
     let text = String::from("left");
     let value = BorrowedRc {
-        value: Rc::new(text.as_str()),
+        value: text.as_str(),
     };
     let consumer = BorrowedRcStatefulConsumer {
         count: Cell::new(0),

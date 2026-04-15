@@ -18,7 +18,6 @@ use qubit_function::{
     StatefulMutator,
 };
 use std::cell::Cell;
-use std::rc::Rc;
 
 // ============================================================================
 // BoxStatefulMutator Tests
@@ -28,7 +27,7 @@ use std::rc::Rc;
 fn test_stateful_mutator_default_conversions_allow_relaxed_generic_types() {
     #[derive(Debug)]
     struct BorrowedRc<'a> {
-        value: Rc<&'a str>,
+        value: &'a str,
     }
 
     #[derive(Debug)]
@@ -47,13 +46,13 @@ fn test_stateful_mutator_default_conversions_allow_relaxed_generic_types() {
     impl<'a> StatefulMutator<BorrowedRc<'a>> for BorrowedRcStatefulMutator {
         fn apply(&mut self, value: &mut BorrowedRc<'a>) {
             self.count.set(self.count.get() + 1);
-            assert_eq!(*value.value, "left");
+            assert_eq!(value.value, "left");
         }
     }
 
     let text = String::from("left");
     let mut value = BorrowedRc {
-        value: Rc::new(text.as_str()),
+        value: text.as_str(),
     };
     let mutator = BorrowedRcStatefulMutator {
         count: Cell::new(0),

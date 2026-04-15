@@ -16,7 +16,6 @@ mod tests {
         FnBiPredicateOps,
         RcBiPredicate,
     };
-    use std::rc::Rc;
     use std::thread;
 
     // ========================================================================
@@ -27,7 +26,7 @@ mod tests {
     fn test_bi_predicate_default_conversions_allow_relaxed_generic_types() {
         #[derive(Debug)]
         struct BorrowedRc<'a> {
-            value: Rc<&'a str>,
+            value: &'a str,
         }
 
         #[derive(Clone, Debug)]
@@ -35,8 +34,8 @@ mod tests {
 
         impl<'a> BiPredicate<BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcBiPredicate {
             fn test(&self, first: &BorrowedRc<'a>, second: &BorrowedRc<'a>) -> bool {
-                assert_eq!(*first.value, "left");
-                assert_eq!(*second.value, "right");
+                assert_eq!(first.value, "left");
+                assert_eq!(second.value, "right");
                 true
             }
         }
@@ -44,10 +43,10 @@ mod tests {
         let left = String::from("left");
         let right = String::from("right");
         let first = BorrowedRc {
-            value: Rc::new(left.as_str()),
+            value: left.as_str(),
         };
         let second = BorrowedRc {
-            value: Rc::new(right.as_str()),
+            value: right.as_str(),
         };
         let predicate = BorrowedRcBiPredicate;
 

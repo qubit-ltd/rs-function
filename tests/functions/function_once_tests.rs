@@ -15,7 +15,6 @@ use qubit_function::{
     Predicate,
     RcPredicate,
 };
-use std::rc::Rc;
 
 // ============================================================================
 // FunctionOnce Trait Tests - Core Functionality
@@ -76,7 +75,7 @@ fn test_function_once_trait_to_fn() {
 fn test_function_once_default_conversions_allow_relaxed_generic_types() {
     #[derive(Clone, Debug, Eq, PartialEq)]
     struct BorrowedRc<'a> {
-        value: Rc<&'a str>,
+        value: &'a str,
     }
 
     #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -89,12 +88,12 @@ fn test_function_once_default_conversions_allow_relaxed_generic_types() {
     }
 
     fn assert_left(value: BorrowedRc<'_>) {
-        assert_eq!(*value.value, "left");
+        assert_eq!(value.value, "left");
     }
 
     let text = String::from("left");
     let value = BorrowedRc {
-        value: Rc::new(text.as_str()),
+        value: text.as_str(),
     };
     let identity = BorrowedRcIdentityOnce;
 

@@ -23,7 +23,7 @@ use std::sync::Arc;
 fn test_consumer_default_conversions_allow_relaxed_generic_types() {
     #[derive(Debug)]
     struct BorrowedRc<'a> {
-        value: Rc<&'a str>,
+        value: &'a str,
     }
 
     #[derive(Clone, Debug)]
@@ -31,13 +31,13 @@ fn test_consumer_default_conversions_allow_relaxed_generic_types() {
 
     impl<'a> Consumer<BorrowedRc<'a>> for BorrowedRcConsumer {
         fn accept(&self, value: &BorrowedRc<'a>) {
-            assert_eq!(*value.value, "left");
+            assert_eq!(value.value, "left");
         }
     }
 
     let text = String::from("left");
     let value = BorrowedRc {
-        value: Rc::new(text.as_str()),
+        value: text.as_str(),
     };
     let consumer = BorrowedRcConsumer;
 

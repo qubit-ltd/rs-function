@@ -14,7 +14,6 @@ use qubit_function::{
     BoxBiConsumerOnce,
     FnBiConsumerOnceOps,
 };
-use std::rc::Rc;
 use std::sync::{
     Arc,
     Mutex,
@@ -24,7 +23,7 @@ use std::sync::{
 fn test_bi_consumer_once_default_conversions_allow_relaxed_generic_types() {
     #[derive(Debug)]
     struct BorrowedRc<'a> {
-        value: Rc<&'a str>,
+        value: &'a str,
     }
 
     #[derive(Clone, Debug)]
@@ -32,18 +31,18 @@ fn test_bi_consumer_once_default_conversions_allow_relaxed_generic_types() {
 
     impl<'a> BiConsumerOnce<BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcBiConsumerOnce {
         fn accept(self, first: &BorrowedRc<'a>, second: &BorrowedRc<'a>) {
-            assert_eq!(*first.value, "left");
-            assert_eq!(*second.value, "right");
+            assert_eq!(first.value, "left");
+            assert_eq!(second.value, "right");
         }
     }
 
     let left = String::from("left");
     let right = String::from("right");
     let first = BorrowedRc {
-        value: Rc::new(left.as_str()),
+        value: left.as_str(),
     };
     let second = BorrowedRc {
-        value: Rc::new(right.as_str()),
+        value: right.as_str(),
     };
     let consumer = BorrowedRcBiConsumerOnce;
 

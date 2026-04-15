@@ -35,7 +35,7 @@ use std::thread;
 fn test_stateful_supplier_default_conversions_allow_relaxed_generic_types() {
     #[derive(Debug)]
     struct BorrowedRc<'a> {
-        value: Rc<&'a str>,
+        value: &'a str,
     }
 
     #[derive(Debug)]
@@ -54,17 +54,15 @@ fn test_stateful_supplier_default_conversions_allow_relaxed_generic_types() {
     impl<'a> StatefulSupplier<BorrowedRc<'a>> for BorrowedRcStatefulSupplier {
         fn get(&mut self) -> BorrowedRc<'a> {
             self.count.set(self.count.get() + 1);
-            BorrowedRc {
-                value: Rc::new("left"),
-            }
+            BorrowedRc { value: "left" }
         }
     }
 
     fn assert_left(value: BorrowedRc<'_>) {
-        assert_eq!(*value.value, "left");
+        assert_eq!(value.value, "left");
     }
 
-    fn exercise<'a>(_marker: &'a str) {
+    fn exercise(_marker: &str) {
         let supplier = BorrowedRcStatefulSupplier {
             count: Cell::new(0),
         };

@@ -40,7 +40,7 @@ use qubit_function::{
 fn test_stateful_function_default_conversions_allow_relaxed_generic_types() {
     #[derive(Clone, Debug, Eq, PartialEq)]
     struct BorrowedRc<'a> {
-        value: Rc<&'a str>,
+        value: &'a str,
     }
 
     #[derive(Debug)]
@@ -64,12 +64,12 @@ fn test_stateful_function_default_conversions_allow_relaxed_generic_types() {
     }
 
     fn assert_left(value: BorrowedRc<'_>) {
-        assert_eq!(*value.value, "left");
+        assert_eq!(value.value, "left");
     }
 
     let text = String::from("left");
     let value = BorrowedRc {
-        value: Rc::new(text.as_str()),
+        value: text.as_str(),
     };
     let function = BorrowedRcStatefulFunction {
         count: Cell::new(0),

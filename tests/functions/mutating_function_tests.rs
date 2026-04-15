@@ -17,7 +17,6 @@ use qubit_function::{
     MutatingFunctionOnce,
     RcMutatingFunction,
 };
-use std::rc::Rc;
 
 // ============================================================================
 // BoxMutatingFunction Tests
@@ -27,7 +26,7 @@ use std::rc::Rc;
 fn test_mutating_function_default_conversions_allow_relaxed_generic_types() {
     #[derive(Clone, Debug, Eq, PartialEq)]
     struct BorrowedRc<'a> {
-        value: Rc<&'a str>,
+        value: &'a str,
     }
 
     #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -40,12 +39,12 @@ fn test_mutating_function_default_conversions_allow_relaxed_generic_types() {
     }
 
     fn assert_left(value: BorrowedRc<'_>) {
-        assert_eq!(*value.value, "left");
+        assert_eq!(value.value, "left");
     }
 
     let text = String::from("left");
     let mut value = BorrowedRc {
-        value: Rc::new(text.as_str()),
+        value: text.as_str(),
     };
     let mutator = BorrowedRcMutator;
 

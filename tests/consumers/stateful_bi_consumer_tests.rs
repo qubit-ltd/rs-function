@@ -39,7 +39,7 @@ use std::sync::{
 fn test_stateful_bi_consumer_default_conversions_allow_relaxed_generic_types() {
     #[derive(Debug)]
     struct BorrowedRc<'a> {
-        value: Rc<&'a str>,
+        value: &'a str,
     }
 
     #[derive(Debug)]
@@ -55,23 +55,21 @@ fn test_stateful_bi_consumer_default_conversions_allow_relaxed_generic_types() {
         }
     }
 
-    impl<'a> StatefulBiConsumer<BorrowedRc<'a>, BorrowedRc<'a>>
-        for BorrowedRcStatefulBiConsumer
-    {
+    impl<'a> StatefulBiConsumer<BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcStatefulBiConsumer {
         fn accept(&mut self, first: &BorrowedRc<'a>, second: &BorrowedRc<'a>) {
             self.count.set(self.count.get() + 1);
-            assert_eq!(*first.value, "left");
-            assert_eq!(*second.value, "right");
+            assert_eq!(first.value, "left");
+            assert_eq!(second.value, "right");
         }
     }
 
     let left = String::from("left");
     let right = String::from("right");
     let first = BorrowedRc {
-        value: Rc::new(left.as_str()),
+        value: left.as_str(),
     };
     let second = BorrowedRc {
-        value: Rc::new(right.as_str()),
+        value: right.as_str(),
     };
     let consumer = BorrowedRcStatefulBiConsumer {
         count: Cell::new(0),

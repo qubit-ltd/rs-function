@@ -13,7 +13,6 @@ use qubit_function::{
     BoxSupplierOnce,
     SupplierOnce,
 };
-use std::rc::Rc;
 
 // ==========================================================================
 // SupplierOnce Trait Tests (for closures)
@@ -23,7 +22,7 @@ use std::rc::Rc;
 fn test_supplier_once_default_conversions_allow_relaxed_generic_types() {
     #[derive(Debug)]
     struct BorrowedRc<'a> {
-        value: Rc<&'a str>,
+        value: &'a str,
     }
 
     #[derive(Clone, Debug)]
@@ -31,17 +30,15 @@ fn test_supplier_once_default_conversions_allow_relaxed_generic_types() {
 
     impl<'a> SupplierOnce<BorrowedRc<'a>> for BorrowedRcSupplierOnce {
         fn get(self) -> BorrowedRc<'a> {
-            BorrowedRc {
-                value: Rc::new("left"),
-            }
+            BorrowedRc { value: "left" }
         }
     }
 
     fn assert_left(value: BorrowedRc<'_>) {
-        assert_eq!(*value.value, "left");
+        assert_eq!(value.value, "left");
     }
 
-    fn exercise<'a>(_marker: &'a str) {
+    fn exercise(_marker: &str) {
         let supplier = BorrowedRcSupplierOnce;
 
         assert_left(supplier.clone().into_box().get());

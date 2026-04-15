@@ -18,7 +18,6 @@ use qubit_function::{
     RcTransformer,
     Supplier,
 };
-use std::rc::Rc;
 use std::sync::Arc;
 use std::thread;
 
@@ -30,7 +29,7 @@ use std::thread;
 fn test_supplier_default_conversions_allow_relaxed_generic_types() {
     #[derive(Debug)]
     struct BorrowedRc<'a> {
-        value: Rc<&'a str>,
+        value: &'a str,
     }
 
     #[derive(Clone, Debug)]
@@ -38,17 +37,15 @@ fn test_supplier_default_conversions_allow_relaxed_generic_types() {
 
     impl<'a> Supplier<BorrowedRc<'a>> for BorrowedRcSupplier {
         fn get(&self) -> BorrowedRc<'a> {
-            BorrowedRc {
-                value: Rc::new("left"),
-            }
+            BorrowedRc { value: "left" }
         }
     }
 
     fn assert_left(value: BorrowedRc<'_>) {
-        assert_eq!(*value.value, "left");
+        assert_eq!(value.value, "left");
     }
 
-    fn exercise<'a>(_marker: &'a str) {
+    fn exercise(_marker: &str) {
         let supplier = BorrowedRcSupplier;
 
         assert_left(supplier.clone().into_box().get());

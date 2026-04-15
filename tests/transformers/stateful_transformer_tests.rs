@@ -8,7 +8,6 @@
  ******************************************************************************/
 
 use std::cell::Cell;
-use std::rc::Rc;
 
 use qubit_function::{
     ArcPredicate,
@@ -26,7 +25,7 @@ use qubit_function::{
 fn test_stateful_transformer_default_conversions_allow_relaxed_generic_types() {
     #[derive(Clone, Debug, Eq, PartialEq)]
     struct BorrowedRc<'a> {
-        value: Rc<&'a str>,
+        value: &'a str,
     }
 
     #[derive(Debug)]
@@ -42,9 +41,7 @@ fn test_stateful_transformer_default_conversions_allow_relaxed_generic_types() {
         }
     }
 
-    impl<'a> StatefulTransformer<BorrowedRc<'a>, BorrowedRc<'a>>
-        for BorrowedRcStatefulTransformer
-    {
+    impl<'a> StatefulTransformer<BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcStatefulTransformer {
         fn apply(&mut self, value: BorrowedRc<'a>) -> BorrowedRc<'a> {
             self.count.set(self.count.get() + 1);
             value
@@ -52,12 +49,12 @@ fn test_stateful_transformer_default_conversions_allow_relaxed_generic_types() {
     }
 
     fn assert_left(value: BorrowedRc<'_>) {
-        assert_eq!(*value.value, "left");
+        assert_eq!(value.value, "left");
     }
 
     let text = String::from("left");
     let value = || BorrowedRc {
-        value: Rc::new(text.as_str()),
+        value: text.as_str(),
     };
     let transformer = BorrowedRcStatefulTransformer {
         count: Cell::new(0),

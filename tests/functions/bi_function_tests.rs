@@ -19,7 +19,6 @@ use qubit_function::{
     RcBiFunction,
     RcBiPredicate,
 };
-use std::rc::Rc;
 
 // ============================================================================
 // BiFunction Trait Tests - Core Functionality
@@ -78,7 +77,7 @@ fn test_bi_function_trait_into_once() {
 fn test_bi_function_default_conversions_allow_relaxed_generic_types() {
     #[derive(Clone, Debug, Eq, PartialEq)]
     struct BorrowedRc<'a> {
-        value: Rc<&'a str>,
+        value: &'a str,
     }
 
     #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -91,16 +90,16 @@ fn test_bi_function_default_conversions_allow_relaxed_generic_types() {
     }
 
     fn assert_left(value: BorrowedRc<'_>) {
-        assert_eq!(*value.value, "left");
+        assert_eq!(value.value, "left");
     }
 
     let left_text = String::from("left");
     let right_text = String::from("right");
     let left = BorrowedRc {
-        value: Rc::new(left_text.as_str()),
+        value: left_text.as_str(),
     };
     let right = BorrowedRc {
-        value: Rc::new(right_text.as_str()),
+        value: right_text.as_str(),
     };
     let selector = BorrowedRcSelector;
 

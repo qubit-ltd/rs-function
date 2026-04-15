@@ -7,9 +7,6 @@
  *
  ******************************************************************************/
 
-use std::cell::Cell;
-use std::rc::Rc;
-
 use qubit_function::{
     ArcStatefulBiTransformer,
     ArcStatefulTransformer,
@@ -21,12 +18,13 @@ use qubit_function::{
     RcStatefulTransformer,
     StatefulBiTransformer,
 };
+use std::cell::Cell;
 
 #[test]
 fn test_stateful_bi_transformer_default_conversions_allow_relaxed_generic_types() {
     #[derive(Clone, Debug, Eq, PartialEq)]
     struct BorrowedRc<'a> {
-        value: Rc<&'a str>,
+        value: &'a str,
     }
 
     #[derive(Debug)]
@@ -47,22 +45,22 @@ fn test_stateful_bi_transformer_default_conversions_allow_relaxed_generic_types(
     {
         fn apply(&mut self, first: BorrowedRc<'a>, second: BorrowedRc<'a>) -> BorrowedRc<'a> {
             self.count.set(self.count.get() + 1);
-            assert_eq!(*second.value, "right");
+            assert_eq!(second.value, "right");
             first
         }
     }
 
     fn assert_left(value: BorrowedRc<'_>) {
-        assert_eq!(*value.value, "left");
+        assert_eq!(value.value, "left");
     }
 
     let left = String::from("left");
     let right = String::from("right");
     let first = || BorrowedRc {
-        value: Rc::new(left.as_str()),
+        value: left.as_str(),
     };
     let second = || BorrowedRc {
-        value: Rc::new(right.as_str()),
+        value: right.as_str(),
     };
     let transformer = BorrowedRcStatefulBiTransformer {
         count: Cell::new(0),
