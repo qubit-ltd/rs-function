@@ -84,9 +84,6 @@ pub trait BiFunctionOnce<T, U, R> {
     fn into_box(self) -> BoxBiFunctionOnce<T, U, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
     {
         BoxBiFunctionOnce::new(move |t: &T, u: &U| self.apply(t, u))
     }
@@ -127,9 +124,6 @@ pub trait BiFunctionOnce<T, U, R> {
     fn to_box(&self) -> BoxBiFunctionOnce<T, U, R>
     where
         Self: Clone + 'static,
-        T: 'static,
-        U: 'static,
-        R: 'static,
     {
         self.clone().into_box()
     }

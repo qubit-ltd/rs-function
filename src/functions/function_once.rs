@@ -89,8 +89,6 @@ pub trait FunctionOnce<T, R> {
     fn into_box(self) -> BoxFunctionOnce<T, R>
     where
         Self: Sized + 'static,
-        T: 'static,
-        R: 'static,
     {
         BoxFunctionOnce::new(move |input: &T| self.apply(input))
     }
@@ -147,8 +145,6 @@ pub trait FunctionOnce<T, R> {
     fn to_box(&self) -> BoxFunctionOnce<T, R>
     where
         Self: Clone + 'static,
-        T: 'static,
-        R: 'static,
     {
         self.clone().into_box()
     }
