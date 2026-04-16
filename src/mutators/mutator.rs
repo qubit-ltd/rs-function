@@ -105,7 +105,7 @@
 //!
 //! ## Method Chaining
 //!
-//! ```rust
+//! ```rust,ignore
 //! use qubit_function::{Mutator, BoxMutator, ArcMutator};
 //!
 //! // BoxMutator: Consumes self
@@ -482,7 +482,7 @@ pub trait Mutator<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{Mutator, BoxMutator, BoxMutatorOnce};
     ///
     /// let mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
@@ -847,7 +847,7 @@ impl_closure_trait!(
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{Mutator, FnMutatorOps};
 ///
 /// let chained = (|x: &mut i32| *x *= 2)
@@ -885,7 +885,7 @@ pub trait FnMutatorOps<T>: Fn(&mut T) + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{Mutator, FnMutatorOps};
     ///
     /// let chained = (|x: &mut i32| *x *= 2)

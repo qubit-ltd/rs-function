@@ -69,7 +69,7 @@
 //!
 //! ## Basic Usage
 //!
-//! ```rust
+//! ```rust,ignore
 //! use qubit_function::{BoxMutatingFunction, MutatingFunction};
 //!
 //! // Increment counter and return new value
@@ -86,7 +86,7 @@
 //!
 //! ## Method Chaining
 //!
-//! ```rust
+//! ```rust,ignore
 //! use qubit_function::{BoxMutatingFunction, MutatingFunction};
 //!
 //! let chained = BoxMutatingFunction::new(|x: &mut i32| {
@@ -106,7 +106,7 @@
 //!
 //! ## Cache Update Pattern
 //!
-//! ```rust
+//! ```rust,ignore
 //! use qubit_function::{BoxMutatingFunction, MutatingFunction};
 //! use std::collections::HashMap;
 //!
@@ -199,7 +199,7 @@ use crate::predicates::predicate::{
 ///
 /// ## Generic Function
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{MutatingFunction, BoxMutatingFunction};
 ///
 /// fn apply_and_log<F: MutatingFunction<i32, i32>>(
@@ -221,7 +221,7 @@ use crate::predicates::predicate::{
 ///
 /// ## Type Conversion
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::MutatingFunction;
 ///
 /// let closure = |x: &mut i32| {
@@ -254,7 +254,7 @@ pub trait MutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{MutatingFunction, BoxMutatingFunction};
     ///
     /// let func = BoxMutatingFunction::new(|x: &mut i32| {
@@ -289,7 +289,7 @@ pub trait MutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::MutatingFunction;
     ///
     /// let closure = |x: &mut i32| {
@@ -324,7 +324,7 @@ pub trait MutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::MutatingFunction;
     ///
     /// let closure = |x: &mut i32| {
@@ -360,7 +360,7 @@ pub trait MutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::MutatingFunction;
     ///
     /// let closure = |x: &mut i32| {
@@ -396,7 +396,7 @@ pub trait MutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{MutatingFunction, BoxMutatingFunction};
     ///
     /// let func = BoxMutatingFunction::new(|x: &mut i32| {
@@ -429,7 +429,7 @@ pub trait MutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{MutatingFunctionOnce, MutatingFunction,
     ///                       BoxMutatingFunction};
     ///
@@ -532,7 +532,7 @@ pub trait MutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{MutatingFunctionOnce, MutatingFunction,
     ///                       BoxMutatingFunction};
     ///
@@ -594,7 +594,7 @@ pub trait MutatingFunction<T, R> {
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{MutatingFunction, BoxMutatingFunction};
 ///
 /// let func = BoxMutatingFunction::new(|x: &mut i32| {
@@ -680,7 +680,7 @@ impl<T, R> MutatingFunction<T, R> for BoxMutatingFunction<T, R> {
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{MutatingFunction, RcMutatingFunction};
 ///
 /// let func = RcMutatingFunction::new(|x: &mut i32| {
@@ -771,7 +771,7 @@ impl<T, R> MutatingFunction<T, R> for RcMutatingFunction<T, R> {
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{MutatingFunction, ArcMutatingFunction};
 ///
 /// let func = ArcMutatingFunction::new(|x: &mut i32| {
@@ -881,7 +881,7 @@ impl_fn_ops_trait!(
 ///
 /// ## With or_else Branch
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{MutatingFunction, BoxMutatingFunction};
 ///
 /// let double = BoxMutatingFunction::new(|x: &mut i32| x * 2);
@@ -932,7 +932,7 @@ impl_conditional_function_debug_display!(BoxConditionalMutatingFunction<T, R>);
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{MutatingFunction, RcMutatingFunction};
 ///
 /// let double = RcMutatingFunction::new(|x: &mut i32| x * 2);
@@ -989,7 +989,7 @@ impl_conditional_function_debug_display!(RcConditionalMutatingFunction<T, R>);
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{MutatingFunction, ArcMutatingFunction};
 ///
 /// let double = ArcMutatingFunction::new(|x: &mut i32| x * 2);

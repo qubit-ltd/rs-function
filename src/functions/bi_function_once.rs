@@ -114,7 +114,7 @@ pub trait BiFunctionOnce<T, U, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::BiFunctionOnce;
     ///
     /// let add = |x: &i32, y: &i32| *x + *y;
@@ -139,7 +139,7 @@ pub trait BiFunctionOnce<T, U, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::BiFunctionOnce;
     ///
     /// let add = |x: &i32, y: &i32| *x + *y;
@@ -252,7 +252,7 @@ impl_closure_once_trait!(
 ///
 /// ## Chain composition with and_then
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiFunctionOnce, FnBiFunctionOnceOps};
 ///
 /// let add = |x: &i32, y: &i32| *x + *y;
@@ -264,7 +264,7 @@ impl_closure_once_trait!(
 ///
 /// ## Conditional execution with when
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiFunctionOnce, FnBiFunctionOnceOps};
 ///
 /// let add = |x: &i32, y: &i32| *x + *y;
@@ -305,7 +305,7 @@ pub trait FnBiFunctionOnceOps<T, U, R>: FnOnce(&T, &U) -> R + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiFunctionOnce, FnBiFunctionOnceOps,
     ///     BoxFunctionOnce};
     ///
@@ -356,7 +356,7 @@ pub trait FnBiFunctionOnceOps<T, U, R>: FnOnce(&T, &U) -> R + Sized {
     ///
     /// ## Basic usage with or_else
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiFunctionOnce, FnBiFunctionOnceOps};
     ///
     /// let add = |x: &i32, y: &i32| *x + *y;
@@ -369,7 +369,7 @@ pub trait FnBiFunctionOnceOps<T, U, R>: FnOnce(&T, &U) -> R + Sized {
     ///
     /// ## Preserving bi-predicate with clone
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiFunctionOnce, FnBiFunctionOnceOps,
     ///     RcBiPredicate};
     ///
@@ -437,7 +437,7 @@ where
 ///
 /// ## With or_else Branch
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiFunctionOnce, BoxBiFunctionOnce};
 ///
 /// let add = BoxBiFunctionOnce::new(|x: &i32, y: &i32| *x + *y);

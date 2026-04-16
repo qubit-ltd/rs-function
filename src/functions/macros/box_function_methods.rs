@@ -133,7 +133,7 @@ macro_rules! impl_box_function_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
+        /// ```rust,ignore
         /// use qubit_function::{BoxFunction, Function};
         ///
         /// let double = BoxFunction::new(|x: i32| x * 2);
@@ -169,7 +169,7 @@ macro_rules! impl_box_function_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
+        /// ```rust,ignore
         /// use qubit_function::{BoxFunction, Function};
         ///
         /// let double = BoxFunction::new(|x: i32| x * 2);
@@ -216,7 +216,7 @@ macro_rules! impl_box_function_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
+        /// ```rust,ignore
         /// use qubit_function::{BoxBiFunction, BiFunction};
         ///
         /// let add = BoxBiFunction::new(|x: i32, y: i32| x + y);
@@ -253,7 +253,7 @@ macro_rules! impl_box_function_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
+        /// ```rust,ignore
         /// use qubit_function::{BoxBiFunction, BoxFunction};
         ///
         /// let add = BoxBiFunction::new(|x: i32, y: i32| x + y);

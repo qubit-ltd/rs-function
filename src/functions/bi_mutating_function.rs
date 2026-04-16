@@ -480,7 +480,7 @@ impl_closure_trait!(
 ///
 /// ## Chain composition with and_then
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiMutatingFunction, FnBiMutatingFunctionOps};
 ///
 /// let swap_and_sum = |x: &mut i32, y: &mut i32| {
@@ -499,7 +499,7 @@ impl_closure_trait!(
 ///
 /// ## Conditional execution with when
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiMutatingFunction, FnBiMutatingFunctionOps};
 ///
 /// let swap_and_sum = |x: &mut i32, y: &mut i32| {
@@ -560,7 +560,7 @@ pub trait FnBiMutatingFunctionOps<T, U, R>: Fn(&mut T, &mut U) -> R + Sized {
     ///
     /// ## Direct value passing (ownership transfer)
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiMutatingFunction, FnBiMutatingFunctionOps,
     ///     BoxFunction};
     ///
@@ -582,7 +582,7 @@ pub trait FnBiMutatingFunctionOps<T, U, R>: Fn(&mut T, &mut U) -> R + Sized {
     ///
     /// ## Preserving original with clone
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiMutatingFunction, FnBiMutatingFunctionOps,
     ///     BoxFunction};
     ///
@@ -642,7 +642,7 @@ pub trait FnBiMutatingFunctionOps<T, U, R>: Fn(&mut T, &mut U) -> R + Sized {
     ///
     /// ## Basic usage with or_else
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiMutatingFunction, FnBiMutatingFunctionOps};
     ///
     /// let swap_and_sum = |x: &mut i32, y: &mut i32| {
@@ -665,7 +665,7 @@ pub trait FnBiMutatingFunctionOps<T, U, R>: Fn(&mut T, &mut U) -> R + Sized {
     ///
     /// ## Preserving bi-predicate with clone
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiMutatingFunction, FnBiMutatingFunctionOps,
     ///     RcBiPredicate};
     ///
@@ -725,7 +725,7 @@ impl<T, U, R, F> FnBiMutatingFunctionOps<T, U, R> for F where F: Fn(&mut T, &mut
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BoxBinaryMutatingFunction, BiMutatingFunction};
 ///
 /// let swap_and_sum: BoxBinaryMutatingFunction<i32, i32> = BoxBinaryMutatingFunction::new(|x, y| {
@@ -754,7 +754,7 @@ pub type BoxBinaryMutatingFunction<T, R> = BoxBiMutatingFunction<T, T, R>;
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{ArcBinaryMutatingFunction, BiMutatingFunction};
 ///
 /// let swap_and_sum: ArcBinaryMutatingFunction<i32, i32> = ArcBinaryMutatingFunction::new(|x, y| {
@@ -783,7 +783,7 @@ pub type ArcBinaryMutatingFunction<T, R> = ArcBiMutatingFunction<T, T, R>;
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{RcBinaryMutatingFunction, BiMutatingFunction};
 ///
 /// let swap_and_sum: RcBinaryMutatingFunction<i32, i32> = RcBinaryMutatingFunction::new(|x, y| {

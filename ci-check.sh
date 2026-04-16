@@ -45,7 +45,7 @@ echo "🚀 Starting local CI checks..."
 echo ""
 
 # Check 1: Code formatting
-print_step "1/6 Checking code format (cargo +nightly fmt)..."
+print_step "1/7 Checking code format (cargo +nightly fmt)..."
 
 # Check if nightly toolchain is installed
 if ! rustup toolchain list | grep -q nightly; then
@@ -67,7 +67,7 @@ fi
 echo ""
 
 # Check 2: Clippy linting
-print_step "2/6 Running Clippy checks (cargo +nightly clippy)..."
+print_step "2/7 Running Clippy checks (cargo +nightly clippy)..."
 if cargo +nightly clippy --all-targets --all-features -- -D warnings 2>&1 | tee /tmp/clippy-output.txt | grep -q "warning\|error"; then
     print_error "Clippy found issues"
     cat /tmp/clippy-output.txt
@@ -81,7 +81,7 @@ fi
 echo ""
 
 # Check 3: Build project
-print_step "3/6 Building project (cargo build)..."
+print_step "3/7 Building project (cargo build)..."
 if cargo build --verbose > /dev/null 2>&1; then
     print_success "Debug build succeeded"
 else
@@ -100,7 +100,7 @@ fi
 echo ""
 
 # Check 4: Run tests
-print_step "4/6 Running tests (cargo test)..."
+print_step "4/7 Running tests (cargo test)..."
 if cargo test --verbose; then
     print_success "All tests passed"
 else
@@ -109,8 +109,18 @@ else
 fi
 echo ""
 
-# Check 5: Code coverage
-print_step "5/6 Generating code coverage report..."
+# Check 5: Run doc tests
+print_step "5/7 Running doc tests (cargo test --doc)..."
+if cargo test --doc --verbose; then
+    print_success "Doc tests passed"
+else
+    print_error "Doc tests failed"
+    exit 1
+fi
+echo ""
+
+# Check 6: Code coverage
+print_step "6/7 Generating code coverage report..."
 if command -v cargo-llvm-cov &> /dev/null; then
     PACKAGE_NAME=$(grep "^name = " Cargo.toml | head -n 1 | sed 's/name = "\(.*\)"/\1/')
 
@@ -141,8 +151,8 @@ else
 fi
 echo ""
 
-# Check 6: Security audit
-print_step "6/6 Running security audit (cargo audit)..."
+# Check 7: Security audit
+print_step "7/7 Running security audit (cargo audit)..."
 if command -v cargo-audit &> /dev/null; then
     if cargo audit; then
         print_success "Security audit passed, no known vulnerabilities found"
@@ -173,4 +183,3 @@ echo ""
 
 # Clean up temporary files
 rm -f /tmp/clippy-output.txt
-

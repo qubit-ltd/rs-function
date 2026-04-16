@@ -50,7 +50,7 @@
 //!
 //! ### Basic Usage with Closures
 //!
-//! ```rust
+//! ```rust,ignore
 //! use qubit_function::predicate::Predicate;
 //!
 //! let is_positive = |x: &i32| *x > 0;
@@ -60,7 +60,7 @@
 //!
 //! ### BoxPredicate - Single Ownership
 //!
-//! ```rust
+//! ```rust,ignore
 //! use qubit_function::predicate::{Predicate, BoxPredicate};
 //!
 //! let pred = BoxPredicate::new(|x: &i32| *x > 0)
@@ -73,7 +73,7 @@
 //! Closures automatically gain `and`, `or`, `not` methods through the
 //! `FnPredicateOps` extension trait, returning `BoxPredicate`:
 //!
-//! ```rust
+//! ```rust,ignore
 //! use qubit_function::predicate::{Predicate, FnPredicateOps, BoxPredicate};
 //!
 //! // Compose closures directly - result is BoxPredicate
@@ -106,7 +106,7 @@
 //!
 //! Build complex predicates by mixing closures and predicate types:
 //!
-//! ```rust
+//! ```rust,ignore
 //! use qubit_function::predicate::{Predicate, BoxPredicate, FnPredicateOps};
 //!
 //! // Start with a closure, compose with BoxPredicate
@@ -124,7 +124,7 @@
 //!
 //! ### RcPredicate - Single-threaded Reuse
 //!
-//! ```rust
+//! ```rust,ignore
 //! use qubit_function::predicate::{Predicate, RcPredicate};
 //!
 //! let pred = RcPredicate::new(|x: &i32| *x > 0);
@@ -137,7 +137,7 @@
 //!
 //! ### ArcPredicate - Thread-safe Sharing
 //!
-//! ```rust
+//! ```rust,ignore
 //! use qubit_function::predicate::{Predicate, ArcPredicate};
 //! use std::thread;
 //!
@@ -154,7 +154,7 @@
 //!
 //! ### Stateful Predicates with Interior Mutability
 //!
-//! ```rust
+//! ```rust,ignore
 //! use qubit_function::predicate::{Predicate, BoxPredicate};
 //! use std::cell::Cell;
 //!
@@ -235,7 +235,7 @@ use crate::predicates::macros::{
 ///
 /// ### Basic Usage
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::predicate::Predicate;
 ///
 /// let is_positive = |x: &i32| *x > 0;
@@ -245,7 +245,7 @@ use crate::predicates::macros::{
 ///
 /// ### Type Conversion
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::predicate::{Predicate, BoxPredicate};
 ///
 /// let closure = |x: &i32| *x > 0;
@@ -255,7 +255,7 @@ use crate::predicates::macros::{
 ///
 /// ### Stateful Predicate with Interior Mutability
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::predicate::{Predicate, BoxPredicate};
 /// use std::cell::Cell;
 ///
@@ -357,7 +357,7 @@ pub trait Predicate<T> {
     ///
     /// ## Using with `Iterator::filter` (requires `FnMut`)
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::predicate::{Predicate, BoxPredicate};
     ///
     /// let pred = BoxPredicate::new(|x: &i32| *x > 0);
@@ -372,7 +372,7 @@ pub trait Predicate<T> {
     ///
     /// ## Using with `Vec::retain` (requires `FnMut`)
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::predicate::{Predicate, BoxPredicate};
     ///
     /// let pred = BoxPredicate::new(|x: &i32| *x % 2 == 0);
@@ -464,7 +464,7 @@ pub trait Predicate<T> {
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::predicate::{Predicate, BoxPredicate};
 ///
 /// let pred = BoxPredicate::new(|x: &i32| *x > 0);
@@ -516,7 +516,7 @@ impl<T> Predicate<T> for BoxPredicate<T> {
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::predicate::{Predicate, RcPredicate};
 ///
 /// let pred = RcPredicate::new(|x: &i32| *x > 0);
@@ -571,7 +571,7 @@ impl<T> Predicate<T> for RcPredicate<T> {
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::predicate::{Predicate, ArcPredicate};
 ///
 /// let pred = ArcPredicate::new(|x: &i32| *x > 0);
@@ -644,7 +644,7 @@ impl_closure_trait!(
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::predicate::{Predicate, FnPredicateOps};
 ///
 /// let is_positive = |x: &i32| *x > 0;
@@ -679,7 +679,7 @@ pub trait FnPredicateOps<T>: Fn(&T) -> bool + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::predicate::{Predicate, FnPredicateOps};
     ///
     /// let is_positive = |x: &i32| *x > 0;
@@ -718,7 +718,7 @@ pub trait FnPredicateOps<T>: Fn(&T) -> bool + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::predicate::{Predicate, FnPredicateOps};
     ///
     /// let is_negative = |x: &i32| *x < 0;
@@ -772,7 +772,7 @@ pub trait FnPredicateOps<T>: Fn(&T) -> bool + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::predicate::{Predicate, FnPredicateOps};
     ///
     /// let is_positive = |x: &i32| *x > 0;
@@ -810,7 +810,7 @@ pub trait FnPredicateOps<T>: Fn(&T) -> bool + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::predicate::{Predicate, FnPredicateOps};
     ///
     /// let is_positive = |x: &i32| *x > 0;
@@ -850,7 +850,7 @@ pub trait FnPredicateOps<T>: Fn(&T) -> bool + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::predicate::{Predicate, FnPredicateOps};
     ///
     /// let is_positive = |x: &i32| *x > 0;

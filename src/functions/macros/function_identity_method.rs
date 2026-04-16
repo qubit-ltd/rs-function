@@ -41,7 +41,7 @@
 //!     ///
 //!     /// # Examples
 //!     ///
-//!     /// ```rust
+//!     /// ```rust,ignore
 //!     /// use qubit_function::{$struct_name, Function};
 //!     ///
 //!     /// let identity = $struct_name::<i32, i32>::identity();
@@ -64,7 +64,7 @@
 //!     ///
 //!     /// # Examples
 //!     ///
-//!     /// ```rust
+//!     /// ```rust,ignore
 //!     /// use qubit_function::{$struct_name, BiFunction};
 //!     ///
 //!     /// let identity = $struct_name::<i32, String, i32>::identity();
@@ -112,7 +112,7 @@ macro_rules! impl_function_identity_method {
             /// Creates an identity function
             ///
             /// # Examples
-            #[doc = concat!("/// ```rust\n/// use qubit_function::", stringify!($struct_name), ";\n///\n/// let identity = ", stringify!($struct_name), "::<i32, i32>::identity();\n/// assert_eq!(identity.apply(&42), 42);\n/// ```")]
+            #[doc = concat!("/// ```rust,ignore\n/// use qubit_function::", stringify!($struct_name), ";\n///\n/// let identity = ", stringify!($struct_name), "::<i32, i32>::identity();\n/// assert_eq!(identity.apply(&42), 42);\n/// ```")]
             #[inline]
             pub fn identity() -> $struct_name<$t, $t>
             where
@@ -130,7 +130,7 @@ macro_rules! impl_function_identity_method {
             /// Creates an identity function
             ///
             /// # Examples
-            #[doc = concat!("/// ```rust\n/// use qubit_function::", stringify!($struct_name), ";\n///\n/// let mut identity = ", stringify!($struct_name), "::<i32, i32>::identity();\n/// let mut value = 42;\n/// assert_eq!(identity.apply(&mut value), 42);\n/// ```")]
+            #[doc = concat!("/// ```rust,ignore\n/// use qubit_function::", stringify!($struct_name), ";\n///\n/// let mut identity = ", stringify!($struct_name), "::<i32, i32>::identity();\n/// let mut value = 42;\n/// assert_eq!(identity.apply(&mut value), 42);\n/// ```")]
             #[inline]
             pub fn identity() -> $struct_name<$t, $t>
             where

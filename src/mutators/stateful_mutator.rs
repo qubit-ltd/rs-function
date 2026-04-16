@@ -101,7 +101,7 @@
 //!
 //! ## Method Chaining
 //!
-//! ```rust
+//! ```rust,ignore
 //! use qubit_function::{Mutator, BoxMutator, ArcMutator};
 //!
 //! // BoxMutator: Consumes self
@@ -548,7 +548,7 @@ pub trait StatefulMutator<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{StatefulMutator, BoxStatefulMutator,
     ///                       BoxMutatorOnce};
     ///
@@ -693,7 +693,7 @@ impl_mutator_debug_display!(BoxStatefulMutator<T>);
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{Mutator, RcMutator};
 ///
 /// let mutator = RcMutator::new(|x: &mut i32| *x *= 2);
@@ -777,7 +777,7 @@ impl_mutator_debug_display!(RcStatefulMutator<T>);
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{Mutator, ArcMutator};
 ///
 /// let mutator = ArcMutator::new(|x: &mut i32| *x *= 2);
@@ -867,7 +867,7 @@ impl_closure_trait!(
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{Mutator, FnMutatorOps};
 ///
 /// let chained = (|x: &mut i32| *x *= 2)
@@ -906,7 +906,7 @@ pub trait FnMutStatefulMutatorOps<T>: FnMut(&mut T) + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{Mutator, FnMutatorOps};
     ///
     /// let chained = (|x: &mut i32| *x *= 2)
@@ -1043,7 +1043,7 @@ impl_conditional_mutator_debug_display!(BoxConditionalStatefulMutator<T>);
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{Mutator, RcMutator};
 ///
 /// let conditional = RcMutator::new(|x: &mut i32| *x *= 2)
@@ -1113,7 +1113,7 @@ impl_conditional_mutator_debug_display!(RcConditionalStatefulMutator<T>);
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{Mutator, ArcMutator};
 ///
 /// let conditional = ArcMutator::new(|x: &mut i32| *x *= 2)

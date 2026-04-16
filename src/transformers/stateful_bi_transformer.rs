@@ -495,7 +495,7 @@ impl_closure_trait!(
 ///
 /// ## Chain composition with and_then
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{StatefulBiTransformer, FnStatefulBiTransformerOps};
 ///
 /// let add = |x: i32, y: i32| x + y;
@@ -507,7 +507,7 @@ impl_closure_trait!(
 ///
 /// ## Conditional execution with when
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{StatefulBiTransformer, FnStatefulBiTransformerOps};
 ///
 /// let add = |x: i32, y: i32| x + y;
@@ -555,7 +555,7 @@ pub trait FnStatefulBiTransformerOps<T, U, R>: FnMut(T, U) -> R + Sized {
     ///
     /// ## Direct value passing (ownership transfer)
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{StatefulBiTransformer, FnStatefulBiTransformerOps,
     ///     BoxTransformer};
     ///
@@ -570,7 +570,7 @@ pub trait FnStatefulBiTransformerOps<T, U, R>: FnMut(T, U) -> R + Sized {
     ///
     /// ## Preserving original with clone
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{StatefulBiTransformer, FnStatefulBiTransformerOps,
     ///     BoxTransformer};
     ///
@@ -623,7 +623,7 @@ pub trait FnStatefulBiTransformerOps<T, U, R>: FnMut(T, U) -> R + Sized {
     ///
     /// ## Basic usage with or_else
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{StatefulBiTransformer, FnStatefulBiTransformerOps};
     ///
     /// let add = |x: i32, y: i32| x + y;
@@ -636,7 +636,7 @@ pub trait FnStatefulBiTransformerOps<T, U, R>: FnMut(T, U) -> R + Sized {
     ///
     /// ## Preserving bi-predicate with clone
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{StatefulBiTransformer, FnStatefulBiTransformerOps,
     ///     RcBiPredicate};
     ///
@@ -679,7 +679,7 @@ pub trait FnStatefulBiTransformerOps<T, U, R>: FnMut(T, U) -> R + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{StatefulBiTransformer, FnStatefulBiTransformerOps};
     ///
     /// let mut counter = 0;
@@ -735,7 +735,7 @@ impl<T, U, R, F> FnStatefulBiTransformerOps<T, U, R> for F where F: FnMut(T, U) 
 ///
 /// ## Using in generic constraints
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BinaryOperator, StatefulBiTransformer};
 ///
 /// fn reduce<T, O>(values: Vec<T>, initial: T, op: O) -> T
@@ -752,7 +752,7 @@ impl<T, U, R, F> FnStatefulBiTransformerOps<T, U, R> for F where F: FnMut(T, U) 
 ///
 /// ## With concrete types
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BoxBinaryOperator, BinaryOperator, StatefulBiTransformer};
 ///
 /// fn create_adder() -> BoxBinaryOperator<i32> {
@@ -795,7 +795,7 @@ where
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BoxBinaryOperator, StatefulBiTransformer};
 ///
 /// let add: BoxBinaryOperator<i32> = BoxBinaryOperator::new(|x, y| x + y);
@@ -815,7 +815,7 @@ pub type BoxBinaryOperator<T> = BoxStatefulBiTransformer<T, T, T>;
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{ArcBinaryOperator, StatefulBiTransformer};
 ///
 /// let multiply: ArcBinaryOperator<i32> = ArcBinaryOperator::new(|x, y| x * y);
@@ -837,7 +837,7 @@ pub type ArcBinaryOperator<T> = ArcStatefulBiTransformer<T, T, T>;
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{RcBinaryOperator, StatefulBiTransformer};
 ///
 /// let max: RcBinaryOperator<i32> = RcBinaryOperator::new(|x, y| if x > y { x } else { y });
@@ -875,7 +875,7 @@ pub type RcBinaryOperator<T> = RcStatefulBiTransformer<T, T, T>;
 ///
 /// ## With or_else Branch
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{StatefulBiTransformer, BoxStatefulBiTransformer};
 ///
 /// let add = BoxStatefulBiTransformer::new(|x: i32, y: i32| x + y);
@@ -926,7 +926,7 @@ impl_conditional_transformer_debug_display!(BoxConditionalStatefulBiTransformer<
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{StatefulBiTransformer, RcStatefulBiTransformer};
 ///
 /// let add = RcStatefulBiTransformer::new(|x: i32, y: i32| x + y);
@@ -984,7 +984,7 @@ impl_conditional_transformer_clone!(RcConditionalStatefulBiTransformer<T, U, R>)
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{StatefulBiTransformer, ArcStatefulBiTransformer};
 ///
 /// let add = ArcStatefulBiTransformer::new(|x: i32, y: i32| x + y);

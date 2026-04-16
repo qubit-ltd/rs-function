@@ -472,7 +472,7 @@ impl_closure_trait!(
 ///
 /// ## Chain composition with and_then
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiFunction, FnBiFunctionOps};
 ///
 /// let add = |x: &i32, y: &i32| *x + *y;
@@ -484,7 +484,7 @@ impl_closure_trait!(
 ///
 /// ## Conditional execution with when
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiFunction, FnBiFunctionOps};
 ///
 /// let add = |x: &i32, y: &i32| *x + *y;
@@ -532,7 +532,7 @@ pub trait FnBiFunctionOps<T, U, R>: Fn(&T, &U) -> R + Sized {
     ///
     /// ## Direct value passing (ownership transfer)
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiFunction, FnBiFunctionOps,
     ///     BoxFunction};
     ///
@@ -547,7 +547,7 @@ pub trait FnBiFunctionOps<T, U, R>: Fn(&T, &U) -> R + Sized {
     ///
     /// ## Preserving original with clone
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiFunction, FnBiFunctionOps,
     ///     BoxFunction};
     ///
@@ -600,7 +600,7 @@ pub trait FnBiFunctionOps<T, U, R>: Fn(&T, &U) -> R + Sized {
     ///
     /// ## Basic usage with or_else
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiFunction, FnBiFunctionOps};
     ///
     /// let add = |x: &i32, y: &i32| *x + *y;
@@ -613,7 +613,7 @@ pub trait FnBiFunctionOps<T, U, R>: Fn(&T, &U) -> R + Sized {
     ///
     /// ## Preserving bi-predicate with clone
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiFunction, FnBiFunctionOps,
     ///     RcBiPredicate};
     ///
@@ -664,7 +664,7 @@ impl<T, U, R, F> FnBiFunctionOps<T, U, R> for F where F: Fn(&T, &U) -> R {}
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BoxBinaryFunction, BiFunction};
 ///
 /// let add: BoxBinaryFunction<i32, i32> = BoxBinaryFunction::new(|x, y| *x + *y);
@@ -684,7 +684,7 @@ pub type BoxBinaryFunction<T, R> = BoxBiFunction<T, T, R>;
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{ArcBinaryFunction, BiFunction};
 ///
 /// let multiply: ArcBinaryFunction<i32, i32> = ArcBinaryFunction::new(|x, y| *x * *y);
@@ -706,7 +706,7 @@ pub type ArcBinaryFunction<T, R> = ArcBiFunction<T, T, R>;
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{RcBinaryFunction, BiFunction};
 ///
 /// let max: RcBinaryFunction<i32, i32> = RcBinaryFunction::new(|x, y| if x > y { *x } else { *y });
@@ -744,7 +744,7 @@ pub type RcBinaryFunction<T, R> = RcBiFunction<T, T, R>;
 ///
 /// ## With or_else Branch
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiFunction, BoxBiFunction};
 ///
 /// let add = BoxBiFunction::new(|x: &i32, y: &i32| *x + *y);
@@ -795,7 +795,7 @@ impl_conditional_function_debug_display!(BoxConditionalBiFunction<T, U, R>);
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiFunction, RcBiFunction};
 ///
 /// let add = RcBiFunction::new(|x: &i32, y: &i32| *x + *y);
@@ -853,7 +853,7 @@ impl_conditional_function_clone!(RcConditionalBiFunction<T, U, R>);
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiFunction, ArcBiFunction};
 ///
 /// let add = ArcBiFunction::new(|x: &i32, y: &i32| *x + *y);

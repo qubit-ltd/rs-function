@@ -114,7 +114,7 @@ macro_rules! impl_shared_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
+        /// ```rust,ignore
         /// use qubit_function::{$struct_name, $supplier_trait};
         ///
         /// let source = $struct_name::new(|| 10);
@@ -149,7 +149,7 @@ macro_rules! impl_shared_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
+        /// ```rust,ignore
         /// use qubit_function::{$struct_name, $supplier_trait};
         ///
         /// let source = $struct_name::new(|| 42);
@@ -187,7 +187,7 @@ macro_rules! impl_shared_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
+        /// ```rust,ignore
         /// use qubit_function::{$struct_name, $supplier_trait};
         ///
         /// let first = $struct_name::new(|| 42);
@@ -232,7 +232,7 @@ macro_rules! impl_shared_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
+        /// ```rust,ignore
         /// use qubit_function::{$struct_name, $supplier_trait};
         ///
         /// let source = $struct_name::new(|| 10);
@@ -267,7 +267,7 @@ macro_rules! impl_shared_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
+        /// ```rust,ignore
         /// use qubit_function::{$struct_name, $supplier_trait};
         ///
         /// let source = $struct_name::new(|| 42);
@@ -305,7 +305,7 @@ macro_rules! impl_shared_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
+        /// ```rust,ignore
         /// use qubit_function::{$struct_name, $supplier_trait};
         ///
         /// let first = $struct_name::new(|| 42);

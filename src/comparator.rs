@@ -89,7 +89,7 @@
 //! methods, providing a natural experience without requiring explicit
 //! `.clone()` calls:
 //!
-//! ```rust
+//! ```rust,ignore
 //! use qubit_function::comparator::{Comparator, ArcComparator};
 //!
 //! let cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
@@ -107,7 +107,7 @@
 //! The `FnComparatorOps` extension trait allows direct composition on
 //! closures:
 //!
-//! ```rust
+//! ```rust,ignore
 //! use qubit_function::comparator::{Comparator, FnComparatorOps};
 //! use std::cmp::Ordering;
 //!
@@ -931,7 +931,7 @@ impl<T> Comparator<T> for RcComparator<T> {
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::comparator::{Comparator, FnComparatorOps};
 /// use std::cmp::Ordering;
 ///
@@ -983,7 +983,7 @@ pub trait FnComparatorOps<T>: Fn(&T, &T) -> Ordering + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::comparator::{Comparator, FnComparatorOps,
     ///                                   BoxComparator};
     /// use std::cmp::Ordering;

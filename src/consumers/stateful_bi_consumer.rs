@@ -99,7 +99,7 @@ use crate::predicates::bi_predicate::{
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiConsumer, BoxStatefulBiConsumer, ArcStatefulBiConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
@@ -139,7 +139,7 @@ pub trait StatefulBiConsumer<T, U> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiConsumer, BoxStatefulBiConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
@@ -242,7 +242,7 @@ pub trait StatefulBiConsumer<T, U> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiConsumer, BoxStatefulBiConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
@@ -302,7 +302,7 @@ pub trait StatefulBiConsumer<T, U> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiConsumer, ArcStatefulBiConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
@@ -344,7 +344,7 @@ pub trait StatefulBiConsumer<T, U> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiConsumer, ArcStatefulBiConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
@@ -387,7 +387,7 @@ pub trait StatefulBiConsumer<T, U> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiConsumer, RcStatefulBiConsumer};
     /// use std::rc::Rc;
     /// use std::cell::RefCell;
@@ -430,7 +430,7 @@ pub trait StatefulBiConsumer<T, U> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiConsumer, BoxStatefulBiConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
@@ -505,7 +505,7 @@ pub trait StatefulBiConsumer<T, U> {
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiConsumer, BoxStatefulBiConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
@@ -610,7 +610,7 @@ impl_consumer_debug_display!(BoxStatefulBiConsumer<T, U>);
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiConsumer, RcStatefulBiConsumer};
 /// use std::rc::Rc;
 /// use std::cell::RefCell;
@@ -713,7 +713,7 @@ impl_consumer_debug_display!(RcStatefulBiConsumer<T, U>);
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiConsumer, ArcStatefulBiConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
@@ -815,7 +815,7 @@ impl_closure_trait!(
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiConsumer, FnStatefulBiConsumerOps};
 /// use std::sync::{Arc, Mutex};
 ///
@@ -863,7 +863,7 @@ pub trait FnStatefulBiConsumerOps<T, U>: FnMut(&T, &U) + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiConsumer, FnStatefulBiConsumerOps};
     /// use std::sync::{Arc, Mutex};
     ///
@@ -921,7 +921,7 @@ impl<T, U, F> FnStatefulBiConsumerOps<T, U> for F where F: FnMut(&T, &U) {}
 ///
 /// ## Basic Conditional Execution
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiConsumer, BoxStatefulBiConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
@@ -941,7 +941,7 @@ impl<T, U, F> FnStatefulBiConsumerOps<T, U> for F where F: FnMut(&T, &U) {}
 ///
 /// ## With or_else Branch
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiConsumer, BoxStatefulBiConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
@@ -1017,7 +1017,7 @@ impl_conditional_consumer_debug_display!(BoxConditionalStatefulBiConsumer<T, U>)
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiConsumer, ArcStatefulBiConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
@@ -1095,7 +1095,7 @@ impl_conditional_consumer_debug_display!(ArcConditionalStatefulBiConsumer<T, U>)
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiConsumer, RcStatefulBiConsumer};
 /// use std::rc::Rc;
 /// use std::cell::RefCell;

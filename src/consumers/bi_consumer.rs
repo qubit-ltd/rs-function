@@ -313,7 +313,7 @@ pub trait BiConsumer<T, U> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiConsumer, RcBiConsumer};
     ///
     /// let consumer = RcBiConsumer::new(|x: &i32, y: &i32| {

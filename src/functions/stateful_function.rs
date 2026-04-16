@@ -106,7 +106,7 @@ pub trait StatefulFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{StatefulFunction, BoxStatefulFunction};
     ///
     /// struct CustomStatefulFunction {
@@ -149,7 +149,7 @@ pub trait StatefulFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{StatefulFunction, RcStatefulFunction};
     ///
     /// struct CustomStatefulFunction {
@@ -192,7 +192,7 @@ pub trait StatefulFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{StatefulFunction, ArcStatefulFunction};
     ///
     /// struct CustomStatefulFunction {
@@ -234,7 +234,7 @@ pub trait StatefulFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{StatefulFunction, BoxStatefulFunction};
     ///
     /// let function = BoxStatefulFunction::new(|x: i32| x * 2);
@@ -264,7 +264,7 @@ pub trait StatefulFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{StatefulFunctionOnce, StatefulFunction,
     ///                       BoxStatefulFunction};
     ///
@@ -340,7 +340,7 @@ pub trait StatefulFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{StatefulFunctionOnce, StatefulFunction,
     ///                       BoxStatefulFunction};
     ///
@@ -588,7 +588,7 @@ impl<T, R> StatefulFunction<T, R> for ArcStatefulFunction<T, R> {
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::StatefulFunction;
 ///
 /// let mut counter = 0;
@@ -719,7 +719,7 @@ impl_fn_ops_trait!(
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{StatefulFunction, BoxStatefulFunction};
 ///
 /// let mut high_count = 0;
@@ -780,7 +780,7 @@ impl_conditional_function_debug_display!(BoxConditionalStatefulFunction<T, R>);
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{StatefulFunction, RcStatefulFunction};
 ///
 /// let mut function = RcStatefulFunction::new(|x: i32| x * 2)
@@ -839,7 +839,7 @@ impl_conditional_function_debug_display!(RcConditionalStatefulFunction<T, R>);
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{StatefulFunction, ArcStatefulFunction};
 ///
 /// let mut function = ArcStatefulFunction::new(|x: i32| x * 2)

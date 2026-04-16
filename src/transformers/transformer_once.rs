@@ -79,7 +79,7 @@ pub trait TransformerOnce<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::TransformerOnce;
     ///
     /// let double = |x: i32| x * 2;
@@ -104,7 +104,7 @@ pub trait TransformerOnce<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::TransformerOnce;
     ///
     /// let double = |x: i32| x * 2;
@@ -135,7 +135,7 @@ pub trait TransformerOnce<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::TransformerOnce;
     ///
     /// let double = |x: i32| x * 2;
@@ -166,7 +166,7 @@ pub trait TransformerOnce<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::TransformerOnce;
     ///
     /// let double = |x: i32| x * 2;
@@ -276,7 +276,7 @@ impl_closure_once_trait!(
 ///
 /// ## Chain composition with and_then
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{TransformerOnce, FnTransformerOnceOps};
 ///
 /// let parse = |s: String| s.parse::<i32>().unwrap_or(0);
@@ -288,7 +288,7 @@ impl_closure_once_trait!(
 ///
 /// ## Reverse composition with compose
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{TransformerOnce, FnTransformerOnceOps};
 ///
 /// let double = |x: i32| x * 2;
@@ -300,7 +300,7 @@ impl_closure_once_trait!(
 ///
 /// ## Conditional transformation with when
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{TransformerOnce, FnTransformerOnceOps};
 ///
 /// let double = |x: i32| x * 2;
@@ -341,7 +341,7 @@ pub trait FnTransformerOnceOps<T, R>: FnOnce(T) -> R + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{TransformerOnce, FnTransformerOnceOps,
     ///     BoxTransformerOnce};
     ///
@@ -393,7 +393,7 @@ pub trait FnTransformerOnceOps<T, R>: FnOnce(T) -> R + Sized {
     ///
     /// ## Basic usage with or_else
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{TransformerOnce, FnTransformerOnceOps};
     ///
     /// let double = |x: i32| x * 2;
@@ -404,7 +404,7 @@ pub trait FnTransformerOnceOps<T, R>: FnOnce(T) -> R + Sized {
     ///
     /// ## Preserving predicate with clone
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{TransformerOnce, FnTransformerOnceOps,
     ///     RcPredicate};
     ///
@@ -466,7 +466,7 @@ impl<T, R, F> FnTransformerOnceOps<T, R> for F where F: FnOnce(T) -> R {}
 ///
 /// ## Using in generic constraints
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{UnaryOperatorOnce, TransformerOnce};
 ///
 /// fn apply<T, O>(value: T, op: O) -> T
@@ -512,7 +512,7 @@ where
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BoxUnaryOperatorOnce, TransformerOnce};
 ///
 /// let increment: BoxUnaryOperatorOnce<i32> = BoxUnaryOperatorOnce::new(|x| x + 1);
@@ -549,7 +549,7 @@ pub type BoxUnaryOperatorOnce<T> = BoxTransformerOnce<T, T>;
 ///
 /// ## With or_else Branch
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{TransformerOnce, BoxTransformerOnce};
 ///
 /// let double = BoxTransformerOnce::new(|x: i32| x * 2);

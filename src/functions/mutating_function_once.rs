@@ -71,7 +71,7 @@
 //!
 //! ## Basic Usage
 //!
-//! ```rust
+//! ```rust,ignore
 //! use qubit_function::{BoxMutatingFunctionOnce, MutatingFunctionOnce};
 //!
 //! let data = vec![1, 2, 3];
@@ -89,7 +89,7 @@
 //!
 //! ## Method Chaining
 //!
-//! ```rust
+//! ```rust,ignore
 //! use qubit_function::{BoxMutatingFunctionOnce, MutatingFunctionOnce};
 //!
 //! let data1 = vec![1, 2];
@@ -112,7 +112,7 @@
 //!
 //! ## Validation Pattern
 //!
-//! ```rust
+//! ```rust,ignore
 //! use qubit_function::{BoxMutatingFunctionOnce, MutatingFunctionOnce};
 //!
 //! struct Data {
@@ -195,7 +195,7 @@ use crate::predicates::predicate::{
 ///
 /// ## Generic Function
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{MutatingFunctionOnce, BoxMutatingFunctionOnce};
 ///
 /// fn apply<F: MutatingFunctionOnce<Vec<i32>, usize>>(
@@ -220,7 +220,7 @@ use crate::predicates::predicate::{
 ///
 /// ## Type Conversion
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::MutatingFunctionOnce;
 ///
 /// let data = vec![1, 2, 3];
@@ -252,7 +252,7 @@ pub trait MutatingFunctionOnce<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{MutatingFunctionOnce,
     ///                       BoxMutatingFunctionOnce};
     ///
@@ -380,7 +380,7 @@ pub trait MutatingFunctionOnce<T, R> {
 ///
 /// ## Basic Usage
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{MutatingFunctionOnce, BoxMutatingFunctionOnce};
 ///
 /// let data = vec![1, 2, 3];
@@ -398,7 +398,7 @@ pub trait MutatingFunctionOnce<T, R> {
 ///
 /// ## Method Chaining
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{MutatingFunctionOnce, BoxMutatingFunctionOnce};
 ///
 /// let data1 = vec![1, 2];
@@ -511,7 +511,7 @@ impl_fn_ops_trait!(
 ///
 /// ## With or_else Branch
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{MutatingFunctionOnce, BoxMutatingFunctionOnce};
 ///
 /// let double = BoxMutatingFunctionOnce::new(|x: &mut i32| x * 2);

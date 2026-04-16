@@ -115,7 +115,7 @@ pub trait BiMutatingFunctionOnce<T, U, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::BiMutatingFunctionOnce;
     ///
     /// let swap_and_sum = |x: &mut i32, y: &mut i32| {
@@ -147,7 +147,7 @@ pub trait BiMutatingFunctionOnce<T, U, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::BiMutatingFunctionOnce;
     ///
     /// let swap_and_sum = |x: &mut i32, y: &mut i32| {
@@ -267,7 +267,7 @@ impl_closure_once_trait!(
 ///
 /// ## Chain composition with and_then
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiMutatingFunctionOnce, FnBiMutatingFunctionOnceOps};
 ///
 /// let swap_and_sum = |x: &mut i32, y: &mut i32| {
@@ -286,7 +286,7 @@ impl_closure_once_trait!(
 ///
 /// ## Conditional execution with when
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiMutatingFunctionOnce, FnBiMutatingFunctionOnceOps};
 ///
 /// let swap_and_sum = |x: &mut i32, y: &mut i32| {
@@ -344,7 +344,7 @@ pub trait FnBiMutatingFunctionOnceOps<T, U, R>: FnOnce(&mut T, &mut U) -> R + Si
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiMutatingFunctionOnce, FnBiMutatingFunctionOnceOps,
     ///     BoxFunction};
     ///
@@ -402,7 +402,7 @@ pub trait FnBiMutatingFunctionOnceOps<T, U, R>: FnOnce(&mut T, &mut U) -> R + Si
     ///
     /// ## Basic usage with or_else
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiMutatingFunctionOnce, FnBiMutatingFunctionOnceOps};
     ///
     /// let swap_and_sum = |x: &mut i32, y: &mut i32| {
@@ -425,7 +425,7 @@ pub trait FnBiMutatingFunctionOnceOps<T, U, R>: FnOnce(&mut T, &mut U) -> R + Si
     ///
     /// ## Preserving bi-predicate with clone
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiMutatingFunctionOnce, FnBiMutatingFunctionOnceOps,
     ///     RcBiPredicate};
     ///

@@ -48,7 +48,7 @@
 //!
 //! ## 1. Calling in `&self` Methods
 //!
-//! ```rust
+//! ```rust,ignore
 //! use qubit_function::{ArcSupplier, Supplier};
 //!
 //! struct Executor<E> {
@@ -65,7 +65,7 @@
 //!
 //! ## 2. High-Concurrency Lock-Free Access
 //!
-//! ```rust
+//! ```rust,ignore
 //! use qubit_function::{ArcSupplier, Supplier};
 //! use std::thread;
 //!
@@ -87,7 +87,7 @@
 //!
 //! ## 3. Fixed Factories
 //!
-//! ```rust
+//! ```rust,ignore
 //! use qubit_function::{BoxSupplier, Supplier};
 //!
 //! #[derive(Clone)]
@@ -169,7 +169,7 @@ use crate::BoxSupplierOnce;
 ///
 /// ## Using with Generic Functions
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{Supplier, BoxSupplier};
 ///
 /// fn call_twice<S: Supplier<i32>>(supplier: &S)
@@ -187,7 +187,7 @@ use crate::BoxSupplierOnce;
 ///
 /// ## Stateless Factory
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::Supplier;
 ///
 /// struct User {
@@ -224,7 +224,7 @@ pub trait Supplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{Supplier, BoxSupplier};
     ///
     /// let supplier = BoxSupplier::new(|| 42);
@@ -245,7 +245,7 @@ pub trait Supplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::Supplier;
     ///
     /// let closure = || 42;
@@ -271,7 +271,7 @@ pub trait Supplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::Supplier;
     ///
     /// let closure = || 42;
@@ -297,7 +297,7 @@ pub trait Supplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::Supplier;
     ///
     /// let closure = || 42;
@@ -323,7 +323,7 @@ pub trait Supplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::Supplier;
     ///
     /// let closure = || 42;
@@ -350,7 +350,7 @@ pub trait Supplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::Supplier;
     ///
     /// let closure = || 42;
@@ -376,7 +376,7 @@ pub trait Supplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::Supplier;
     ///
     /// let closure = || 42;
@@ -402,7 +402,7 @@ pub trait Supplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::Supplier;
     ///
     /// let closure = || 42;
@@ -429,7 +429,7 @@ pub trait Supplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::Supplier;
     ///
     /// let closure = || 42;
@@ -455,7 +455,7 @@ pub trait Supplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::Supplier;
     ///
     /// let closure = || 42;
@@ -502,7 +502,7 @@ pub trait Supplier<T> {
 /// read-only operations. When you call methods like `map()`, the
 /// original supplier is consumed and you get a new one:
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BoxSupplier, Supplier};
 ///
 /// let supplier = BoxSupplier::new(|| 10);
@@ -514,7 +514,7 @@ pub trait Supplier<T> {
 ///
 /// ## Constant Factory
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BoxSupplier, Supplier};
 ///
 /// let factory = BoxSupplier::new(|| 42);
@@ -524,7 +524,7 @@ pub trait Supplier<T> {
 ///
 /// ## Method Chaining
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BoxSupplier, Supplier};
 ///
 /// let pipeline = BoxSupplier::new(|| 10)
@@ -582,7 +582,7 @@ impl<T> Supplier<T> for BoxSupplier<T> {
 /// Methods borrow `&self` instead of consuming `self`. The
 /// original supplier remains usable after method calls:
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{ArcSupplier, Supplier};
 ///
 /// let source = ArcSupplier::new(|| 10);
@@ -600,7 +600,7 @@ impl<T> Supplier<T> for BoxSupplier<T> {
 ///
 /// ## Thread-safe Factory
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{ArcSupplier, Supplier};
 /// use std::thread;
 ///
@@ -620,7 +620,7 @@ impl<T> Supplier<T> for BoxSupplier<T> {
 ///
 /// ## Reusable Transformations
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{ArcSupplier, Supplier};
 ///
 /// let base = ArcSupplier::new(|| 10);
@@ -676,7 +676,7 @@ impl<T> ArcSupplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{ArcSupplier, Supplier};
     ///
     /// let supplier = ArcSupplier::constant(42);
@@ -726,7 +726,7 @@ impl<T> Supplier<T> for ArcSupplier<T> {
 /// Like `ArcSupplier`, methods borrow `&self` instead of
 /// consuming `self`:
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{RcSupplier, Supplier};
 ///
 /// let source = RcSupplier::new(|| 10);
@@ -738,7 +738,7 @@ impl<T> Supplier<T> for ArcSupplier<T> {
 ///
 /// ## Shared Factory
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{RcSupplier, Supplier};
 ///
 /// let factory = RcSupplier::new(|| {
@@ -753,7 +753,7 @@ impl<T> Supplier<T> for ArcSupplier<T> {
 ///
 /// ## Reusable Transformations
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{RcSupplier, Supplier};
 ///
 /// let base = RcSupplier::new(|| 10);

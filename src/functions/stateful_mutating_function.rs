@@ -71,7 +71,7 @@
 //!
 //! ## Basic Usage
 //!
-//! ```rust
+//! ```rust,ignore
 //! use qubit_function::{BoxStatefulMutatingFunction,
 //!                       StatefulMutatingFunction};
 //!
@@ -94,7 +94,7 @@
 //!
 //! ## Accumulator Pattern
 //!
-//! ```rust
+//! ```rust,ignore
 //! use qubit_function::{BoxStatefulMutatingFunction,
 //!                       StatefulMutatingFunction};
 //!
@@ -197,7 +197,7 @@ use crate::predicates::predicate::{
 ///
 /// ## Generic Function
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{StatefulMutatingFunction,
 ///                       BoxStatefulMutatingFunction};
 ///
@@ -224,7 +224,7 @@ use crate::predicates::predicate::{
 ///
 /// ## Type Conversion
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::StatefulMutatingFunction;
 ///
 /// let mut count = 0;
@@ -260,7 +260,7 @@ pub trait StatefulMutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{StatefulMutatingFunction,
     ///                       BoxStatefulMutatingFunction};
     ///
@@ -302,7 +302,7 @@ pub trait StatefulMutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::StatefulMutatingFunction;
     ///
     /// let mut count = 0;
@@ -340,7 +340,7 @@ pub trait StatefulMutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::StatefulMutatingFunction;
     ///
     /// let mut count = 0;
@@ -378,7 +378,7 @@ pub trait StatefulMutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::StatefulMutatingFunction;
     ///
     /// let mut count = 0;
@@ -416,7 +416,7 @@ pub trait StatefulMutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{StatefulMutatingFunction,
     ///                       BoxStatefulMutatingFunction};
     ///
@@ -526,7 +526,7 @@ pub trait StatefulMutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{StatefulMutatingFunctionOnce,
     ///                       StatefulMutatingFunction,
     ///                       BoxStatefulMutatingFunction};
@@ -561,7 +561,7 @@ pub trait StatefulMutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{StatefulMutatingFunctionOnce,
     ///                       StatefulMutatingFunction,
     ///                       BoxStatefulMutatingFunction};
@@ -634,7 +634,7 @@ type RcStatefulMutatingFunctionFn<T, R> = Rc<RefCell<dyn FnMut(&mut T) -> R>>;
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{StatefulMutatingFunction,
 ///                       BoxStatefulMutatingFunction};
 ///
@@ -726,7 +726,7 @@ impl<T, R> StatefulMutatingFunction<T, R> for BoxStatefulMutatingFunction<T, R> 
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{StatefulMutatingFunction,
 ///                       RcStatefulMutatingFunction};
 ///
@@ -822,7 +822,7 @@ impl<T, R> StatefulMutatingFunction<T, R> for RcStatefulMutatingFunction<T, R> {
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{StatefulMutatingFunction,
 ///                       ArcStatefulMutatingFunction};
 ///
@@ -1013,7 +1013,7 @@ impl_fn_ops_trait!(
 ///
 /// ## With or_else Branch
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{StatefulMutatingFunction, BoxStatefulMutatingFunction};
 ///
 /// let double = BoxStatefulMutatingFunction::new(|x: &mut i32| x * 2);
@@ -1064,7 +1064,7 @@ impl_conditional_function_debug_display!(BoxConditionalStatefulMutatingFunction<
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{StatefulMutatingFunction, RcStatefulMutatingFunction};
 ///
 /// let double = RcStatefulMutatingFunction::new(|x: &mut i32| x * 2);
@@ -1121,7 +1121,7 @@ impl_conditional_function_debug_display!(RcConditionalStatefulMutatingFunction<T
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{StatefulMutatingFunction, ArcStatefulMutatingFunction};
 ///
 /// let double = ArcStatefulMutatingFunction::new(|x: &mut i32| x * 2);

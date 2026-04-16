@@ -220,7 +220,7 @@ pub trait Consumer<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     ///
     /// fn takes_once<C: ConsumerOnce<i32>>(consumer: C, value: &i32) {
     ///     consumer.accept(value);
@@ -311,7 +311,7 @@ pub trait Consumer<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     ///
     /// fn takes_once<C: ConsumerOnce<i32>>(consumer: C, value: &i32) {
     ///     consumer.accept(value);

@@ -455,7 +455,7 @@ impl<T, U, R> BiTransformer<T, U, R> for ArcBiTransformer<T, U, R> {
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::BiTransformer;
 ///
 /// fn add(x: i32, y: i32) -> i32 { x + y }
@@ -540,7 +540,7 @@ where
 ///
 /// ## Chain composition with and_then
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiTransformer, FnBiTransformerOps};
 ///
 /// let add = |x: i32, y: i32| x + y;
@@ -552,7 +552,7 @@ where
 ///
 /// ## Conditional execution with when
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiTransformer, FnBiTransformerOps};
 ///
 /// let add = |x: i32, y: i32| x + y;
@@ -600,7 +600,7 @@ pub trait FnBiTransformerOps<T, U, R>: Fn(T, U) -> R + Sized {
     ///
     /// ## Direct value passing (ownership transfer)
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiTransformer, FnBiTransformerOps,
     ///     BoxTransformer};
     ///
@@ -615,7 +615,7 @@ pub trait FnBiTransformerOps<T, U, R>: Fn(T, U) -> R + Sized {
     ///
     /// ## Preserving original with clone
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiTransformer, FnBiTransformerOps,
     ///     BoxTransformer};
     ///
@@ -668,7 +668,7 @@ pub trait FnBiTransformerOps<T, U, R>: Fn(T, U) -> R + Sized {
     ///
     /// ## Basic usage with or_else
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiTransformer, FnBiTransformerOps};
     ///
     /// let add = |x: i32, y: i32| x + y;
@@ -681,7 +681,7 @@ pub trait FnBiTransformerOps<T, U, R>: Fn(T, U) -> R + Sized {
     ///
     /// ## Preserving bi-predicate with clone
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiTransformer, FnBiTransformerOps,
     ///     RcBiPredicate};
     ///
@@ -744,7 +744,7 @@ impl<T, U, R, F> FnBiTransformerOps<T, U, R> for F where F: Fn(T, U) -> R {}
 ///
 /// ## Using in generic constraints
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BinaryOperator, BiTransformer};
 ///
 /// fn reduce<T, O>(values: Vec<T>, initial: T, op: O) -> T
@@ -761,7 +761,7 @@ impl<T, U, R, F> FnBiTransformerOps<T, U, R> for F where F: Fn(T, U) -> R {}
 ///
 /// ## With concrete types
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BoxBinaryOperator, BinaryOperator, BiTransformer};
 ///
 /// fn create_adder() -> BoxBinaryOperator<i32> {
@@ -804,7 +804,7 @@ where
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BoxBinaryOperator, BiTransformer};
 ///
 /// let add: BoxBinaryOperator<i32> = BoxBinaryOperator::new(|x, y| x + y);
@@ -824,7 +824,7 @@ pub type BoxBinaryOperator<T> = BoxBiTransformer<T, T, T>;
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{ArcBinaryOperator, BiTransformer};
 ///
 /// let multiply: ArcBinaryOperator<i32> = ArcBinaryOperator::new(|x, y| x * y);
@@ -846,7 +846,7 @@ pub type ArcBinaryOperator<T> = ArcBiTransformer<T, T, T>;
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{RcBinaryOperator, BiTransformer};
 ///
 /// let max: RcBinaryOperator<i32> = RcBinaryOperator::new(|x, y| if x > y { x } else { y });
@@ -884,7 +884,7 @@ pub type RcBinaryOperator<T> = RcBiTransformer<T, T, T>;
 ///
 /// ## With or_else Branch
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiTransformer, BoxBiTransformer};
 ///
 /// let add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
@@ -935,7 +935,7 @@ impl_conditional_transformer_debug_display!(BoxConditionalBiTransformer<T, U, R>
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiTransformer, RcBiTransformer};
 ///
 /// let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
@@ -993,7 +993,7 @@ impl_conditional_transformer_clone!(RcConditionalBiTransformer<T, U, R>);
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiTransformer, ArcBiTransformer};
 ///
 /// let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);

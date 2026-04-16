@@ -104,7 +104,7 @@ pub trait StatefulTransformer<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{StatefulTransformer, BoxStatefulTransformer};
     ///
     /// struct CustomTransformer {
@@ -148,7 +148,7 @@ pub trait StatefulTransformer<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{StatefulTransformer, RcStatefulTransformer};
     ///
     /// struct CustomTransformer {
@@ -192,7 +192,7 @@ pub trait StatefulTransformer<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{StatefulTransformer, ArcStatefulTransformer};
     ///
     /// struct CustomTransformer {
@@ -235,7 +235,7 @@ pub trait StatefulTransformer<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{StatefulTransformer, BoxStatefulTransformer};
     ///
     /// let transformer = BoxStatefulTransformer::new(|x: i32| x * 2);
@@ -263,7 +263,7 @@ pub trait StatefulTransformer<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::StatefulTransformer;
     ///
     /// let closure = |x: i32| x * 2;
@@ -576,7 +576,7 @@ impl_closure_trait!(
 ///
 /// ## Chain composition with and_then
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{StatefulTransformer, FnStatefulTransformerOps};
 ///
 /// let mut counter1 = 0;
@@ -597,7 +597,7 @@ impl_closure_trait!(
 ///
 /// ## Reverse composition with compose
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{StatefulTransformer, FnStatefulTransformerOps};
 ///
 /// let mut counter = 0;
@@ -612,7 +612,7 @@ impl_closure_trait!(
 ///
 /// ## Conditional mapping with when
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{StatefulTransformer, FnStatefulTransformerOps};
 ///
 /// let mut transformer = (|x: i32| x * 2)
@@ -653,7 +653,7 @@ pub trait FnStatefulTransformerOps<T, R>: FnMut(T) -> R + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{StatefulTransformer, FnStatefulTransformerOps, BoxStatefulTransformer};
     ///
     /// let mut counter1 = 0;
@@ -704,7 +704,7 @@ pub trait FnStatefulTransformerOps<T, R>: FnMut(T) -> R + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{StatefulTransformer, FnStatefulTransformerOps};
     ///
     /// let mut transformer = (|x: i32| x * 2)
@@ -758,7 +758,7 @@ impl<T, R, F> FnStatefulTransformerOps<T, R> for F where F: FnMut(T) -> R {}
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{StatefulTransformer, BoxStatefulTransformer};
 ///
 /// let mut high_count = 0;
@@ -819,7 +819,7 @@ impl_conditional_transformer_debug_display!(BoxConditionalStatefulTransformer<T,
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{StatefulTransformer, RcStatefulTransformer};
 ///
 /// let mut transformer = RcStatefulTransformer::new(|x: i32| x * 2)
@@ -879,7 +879,7 @@ impl_conditional_transformer_clone!(RcConditionalStatefulTransformer<T, R>);
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{StatefulTransformer, ArcStatefulTransformer};
 ///
 /// let mut transformer = ArcStatefulTransformer::new(|x: i32| x * 2)

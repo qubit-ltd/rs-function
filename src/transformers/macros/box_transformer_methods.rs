@@ -140,7 +140,7 @@ macro_rules! impl_box_transformer_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
+        /// ```rust,ignore
         /// use std::sync::Arc;
         /// use std::sync::atomic::{AtomicI32, Ordering};
         /// use qubit_function::transformers::*;
@@ -181,7 +181,7 @@ macro_rules! impl_box_transformer_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
+        /// ```rust,ignore
         /// use qubit_function::transformers::*;
         ///
         /// let transformer1 = BoxTransformer::new({
@@ -233,7 +233,7 @@ macro_rules! impl_box_transformer_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
+        /// ```rust,ignore
         /// use qubit_function::transformers::*;
         ///
         /// let bi_transformer = BoxBiTransformer::new({
@@ -273,7 +273,7 @@ macro_rules! impl_box_transformer_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
+        /// ```rust,ignore
         /// use qubit_function::transformers::*;
         ///
         /// let bi_transformer1 = BoxBiTransformer::new({

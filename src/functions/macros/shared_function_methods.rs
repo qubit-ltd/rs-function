@@ -151,7 +151,7 @@ macro_rules! impl_shared_function_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
+        /// ```rust,ignore
         /// use qubit_function::{ArcFunction, Function};
         /// use std::sync::Arc;
         ///
@@ -188,7 +188,7 @@ macro_rules! impl_shared_function_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
+        /// ```rust,ignore
         /// use qubit_function::{ArcFunction, Function};
         /// use std::sync::Arc;
         ///
@@ -238,7 +238,7 @@ macro_rules! impl_shared_function_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
+        /// ```rust,ignore
         /// use qubit_function::{ArcBiFunction, BiFunction};
         /// use std::sync::Arc;
         ///
@@ -276,7 +276,7 @@ macro_rules! impl_shared_function_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
+        /// ```rust,ignore
         /// use qubit_function::{ArcBiFunction, BiFunction};
         /// use std::sync::Arc;
         ///

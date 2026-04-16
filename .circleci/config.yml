@@ -112,6 +112,9 @@ jobs:
           name: Build project (debug)
           command: cargo build --verbose
       - run:
+          name: Run doc tests
+          command: cargo test --doc --verbose
+      - run:
           name: Run tests and generate coverage report
           command: |
             # Auto-detect package name from Cargo.toml

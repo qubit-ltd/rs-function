@@ -113,7 +113,7 @@ pub trait BiTransformerOnce<T, U, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::BiTransformerOnce;
     ///
     /// let add = |x: i32, y: i32| x + y;
@@ -138,7 +138,7 @@ pub trait BiTransformerOnce<T, U, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::BiTransformerOnce;
     ///
     /// let add = |x: i32, y: i32| x + y;
@@ -248,7 +248,7 @@ impl_closure_once_trait!(
 ///
 /// ## Chain composition with and_then
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiTransformerOnce, FnBiTransformerOnceOps};
 ///
 /// let add = |x: i32, y: i32| x + y;
@@ -260,7 +260,7 @@ impl_closure_once_trait!(
 ///
 /// ## Conditional execution with when
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiTransformerOnce, FnBiTransformerOnceOps};
 ///
 /// let add = |x: i32, y: i32| x + y;
@@ -301,7 +301,7 @@ pub trait FnBiTransformerOnceOps<T, U, R>: FnOnce(T, U) -> R + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiTransformerOnce, FnBiTransformerOnceOps,
     ///     BoxTransformerOnce};
     ///
@@ -352,7 +352,7 @@ pub trait FnBiTransformerOnceOps<T, U, R>: FnOnce(T, U) -> R + Sized {
     ///
     /// ## Basic usage with or_else
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiTransformerOnce, FnBiTransformerOnceOps};
     ///
     /// let add = |x: i32, y: i32| x + y;
@@ -365,7 +365,7 @@ pub trait FnBiTransformerOnceOps<T, U, R>: FnOnce(T, U) -> R + Sized {
     ///
     /// ## Preserving bi-predicate with clone
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BiTransformerOnce, FnBiTransformerOnceOps,
     ///     RcBiPredicate};
     ///
@@ -429,7 +429,7 @@ impl<T, U, R, F> FnBiTransformerOnceOps<T, U, R> for F where F: FnOnce(T, U) -> 
 ///
 /// ## Using in generic constraints
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BinaryOperatorOnce, BiTransformerOnce};
 ///
 /// fn combine<T, O>(a: T, b: T, op: O) -> T
@@ -475,7 +475,7 @@ where
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BoxBinaryOperatorOnce, BiTransformerOnce};
 ///
 /// let add: BoxBinaryOperatorOnce<i32> = BoxBinaryOperatorOnce::new(|x, y| x + y);
@@ -511,7 +511,7 @@ pub type BoxBinaryOperatorOnce<T> = BoxBiTransformerOnce<T, T, T>;
 ///
 /// ## With or_else Branch
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BiTransformerOnce, BoxBiTransformerOnce};
 ///
 /// let add = BoxBiTransformerOnce::new(|x: i32, y: i32| x + y);

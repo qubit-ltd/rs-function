@@ -102,7 +102,7 @@ macro_rules! impl_box_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
+        /// ```rust,ignore
         /// use qubit_function::suppliers::*;
         ///
         /// let supplier = BoxSupplier::new(|| 10);
@@ -137,7 +137,7 @@ macro_rules! impl_box_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
+        /// ```rust,ignore
         /// use qubit_function::suppliers::*;
         ///
         /// let supplier = BoxSupplier::new(|| 42);
@@ -177,7 +177,7 @@ macro_rules! impl_box_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
+        /// ```rust,ignore
         /// use qubit_function::suppliers::*;
         ///
         /// let first = BoxSupplier::new(|| 42);

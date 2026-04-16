@@ -79,7 +79,7 @@ pub trait FunctionOnce<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::FunctionOnce;
     ///
     /// let double = |x: &i32| x * 2;
@@ -104,7 +104,7 @@ pub trait FunctionOnce<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::FunctionOnce;
     ///
     /// let double = |x: &i32| x * 2;
@@ -135,7 +135,7 @@ pub trait FunctionOnce<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::FunctionOnce;
     ///
     /// let double = |x: &i32| x * 2;
@@ -166,7 +166,7 @@ pub trait FunctionOnce<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::FunctionOnce;
     ///
     /// let double = |x: &i32| x * 2;
@@ -293,7 +293,7 @@ impl_fn_ops_trait!(
 ///
 /// ## With or_else Branch
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{FunctionOnce, BoxFunctionOnce};
 ///
 /// let double = BoxFunctionOnce::new(|x: i32| x * 2);

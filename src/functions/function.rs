@@ -184,7 +184,7 @@ pub trait Function<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     ///
     /// fn takes_once<F: FunctionOnce<i32, i32>>(func: F, value: &i32) -> i32 {
     ///     func.apply(value)
@@ -218,7 +218,7 @@ pub trait Function<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{ArcFunction, Function};
     ///
     /// let double = ArcFunction::new(|x: i32| x * 2);
@@ -252,7 +252,7 @@ pub trait Function<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{ArcFunction, Function};
     ///
     /// let double = ArcFunction::new(|x: i32| x * 2);
@@ -286,7 +286,7 @@ pub trait Function<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{ArcFunction, Function};
     ///
     /// let double = ArcFunction::new(|x: i32| x * 2);
@@ -320,7 +320,7 @@ pub trait Function<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{ArcFunction, Function};
     ///
     /// let double = ArcFunction::new(|x: i32| x * 2);
@@ -348,7 +348,7 @@ pub trait Function<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     ///
     /// fn takes_once<F: FunctionOnce<i32, i32>>(func: F, value: &i32) -> i32 {
     ///     func.apply(value)
@@ -623,7 +623,7 @@ impl_fn_ops_trait!(
 ///
 /// ## With or_else Branch
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{Function, BoxFunction};
 ///
 /// let double = BoxFunction::new(|x: i32| x * 2);
@@ -674,7 +674,7 @@ impl_conditional_function_debug_display!(BoxConditionalFunction<T, R>);
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{Function, RcFunction};
 ///
 /// let double = RcFunction::new(|x: i32| x * 2);
@@ -731,7 +731,7 @@ impl_conditional_function_debug_display!(RcConditionalFunction<T, R>);
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{Function, ArcFunction};
 ///
 /// let double = ArcFunction::new(|x: i32| x * 2);

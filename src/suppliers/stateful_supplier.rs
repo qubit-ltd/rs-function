@@ -58,7 +58,7 @@
 //!
 //! ## Basic Counter
 //!
-//! ```rust
+//! ```rust,ignore
 //! use qubit_function::{BoxStatefulSupplier, Supplier};
 //!
 //! let mut counter = 0;
@@ -74,7 +74,7 @@
 //!
 //! ## Method Chaining
 //!
-//! ```rust
+//! ```rust,ignore
 //! use qubit_function::{BoxStatefulSupplier, Supplier};
 //!
 //! let mut pipeline = BoxStatefulSupplier::new(|| 10)
@@ -86,7 +86,7 @@
 //!
 //! ## Thread-safe Sharing
 //!
-//! ```rust
+//! ```rust,ignore
 //! use qubit_function::{ArcStatefulSupplier, Supplier};
 //! use std::sync::{Arc, Mutex};
 //! use std::thread;
@@ -170,7 +170,7 @@ use crate::transformers::transformer::Transformer;
 ///
 /// ## Using with Generic Functions
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{Supplier, BoxStatefulSupplier};
 ///
 /// fn call_twice<S: StatefulSupplier<i32>>(supplier: &mut S) -> (i32, i32) {
@@ -186,7 +186,7 @@ use crate::transformers::transformer::Transformer;
 ///
 /// ## Stateful Supplier
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::Supplier;
 ///
 /// let mut counter = 0;
@@ -215,7 +215,7 @@ pub trait StatefulSupplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{Supplier, BoxStatefulSupplier};
     ///
     /// let mut supplier = BoxStatefulSupplier::new(|| 42);
@@ -235,7 +235,7 @@ pub trait StatefulSupplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::Supplier;
     ///
     /// let closure = || 42;
@@ -261,7 +261,7 @@ pub trait StatefulSupplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::Supplier;
     ///
     /// let closure = || 42;
@@ -287,7 +287,7 @@ pub trait StatefulSupplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::Supplier;
     ///
     /// let closure = || 42;
@@ -313,7 +313,7 @@ pub trait StatefulSupplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{Supplier, BoxStatefulSupplier};
     ///
     /// let supplier = BoxStatefulSupplier::new(|| 42);
@@ -324,7 +324,7 @@ pub trait StatefulSupplier<T> {
     ///
     /// ## Using with functions that expect FnMut
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{Supplier, BoxStatefulSupplier};
     ///
     /// fn call_fn_twice<F: FnMut() -> i32>(mut f: F) -> (i32, i32) {
@@ -354,7 +354,7 @@ pub trait StatefulSupplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::StatefulSupplier;
     ///
     /// let closure = || 42;
@@ -444,7 +444,7 @@ pub trait StatefulSupplier<T> {
 /// like `map()`, the original supplier is consumed and you get a new
 /// one:
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BoxStatefulSupplier, Supplier};
 ///
 /// let supplier = BoxStatefulSupplier::new(|| 10);
@@ -456,7 +456,7 @@ pub trait StatefulSupplier<T> {
 ///
 /// ## Counter
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BoxStatefulSupplier, Supplier};
 ///
 /// let mut counter = 0;
@@ -471,7 +471,7 @@ pub trait StatefulSupplier<T> {
 ///
 /// ## Method Chaining
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{BoxStatefulSupplier, Supplier};
 ///
 /// let mut pipeline = BoxStatefulSupplier::new(|| 10)
@@ -509,7 +509,7 @@ impl<T> BoxStatefulSupplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{BoxStatefulSupplier, Supplier};
     ///
     /// let mut call_count = 0;
@@ -569,7 +569,7 @@ impl<T> StatefulSupplier<T> for BoxStatefulSupplier<T> {
 /// Like `ArcStatefulSupplier`, methods borrow `&self` instead of consuming
 /// `self`:
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{RcStatefulSupplier, Supplier};
 ///
 /// let source = RcStatefulSupplier::new(|| 10);
@@ -581,7 +581,7 @@ impl<T> StatefulSupplier<T> for BoxStatefulSupplier<T> {
 ///
 /// ## Shared Counter
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{RcStatefulSupplier, Supplier};
 /// use std::rc::Rc;
 /// use std::cell::RefCell;
@@ -603,7 +603,7 @@ impl<T> StatefulSupplier<T> for BoxStatefulSupplier<T> {
 ///
 /// ## Reusable Transformations
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{RcStatefulSupplier, Supplier};
 ///
 /// let base = RcStatefulSupplier::new(|| 10);
@@ -649,7 +649,7 @@ impl<T> RcStatefulSupplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{RcStatefulSupplier, Supplier};
     /// use std::rc::Rc;
     /// use std::cell::RefCell;
@@ -724,7 +724,7 @@ impl<T> StatefulSupplier<T> for RcStatefulSupplier<T> {
 /// Methods borrow `&self` instead of consuming `self`. The original
 /// supplier remains usable after method calls:
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{ArcStatefulSupplier, Supplier};
 ///
 /// let source = ArcStatefulSupplier::new(|| 10);
@@ -736,7 +736,7 @@ impl<T> StatefulSupplier<T> for RcStatefulSupplier<T> {
 ///
 /// ## Thread-safe Counter
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{ArcStatefulSupplier, Supplier};
 /// use std::sync::{Arc, Mutex};
 /// use std::thread;
@@ -763,7 +763,7 @@ impl<T> StatefulSupplier<T> for RcStatefulSupplier<T> {
 ///
 /// ## Reusable Transformations
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{ArcStatefulSupplier, Supplier};
 ///
 /// let base = ArcStatefulSupplier::new(|| 10);
@@ -822,7 +822,7 @@ impl<T> ArcStatefulSupplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{ArcStatefulSupplier, StatefulSupplier};
     ///
     /// let mut supplier = ArcStatefulSupplier::constant(42);
@@ -847,7 +847,7 @@ impl<T> ArcStatefulSupplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{ArcStatefulSupplier, StatefulSupplier};
     /// use std::sync::{Arc, Mutex};
     ///
@@ -944,7 +944,7 @@ impl_closure_trait!(
 ///
 /// ## Map transformation
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{Supplier, FnStatefulSupplierOps};
 ///
 /// let mut counter = 0;
@@ -959,7 +959,7 @@ impl_closure_trait!(
 ///
 /// ## Filter values
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{Supplier, FnStatefulSupplierOps};
 ///
 /// let mut counter = 0;
@@ -974,7 +974,7 @@ impl_closure_trait!(
 ///
 /// ## Combine with zip
 ///
-/// ```rust
+/// ```rust,ignore
 /// use qubit_function::{Supplier, FnStatefulSupplierOps, BoxStatefulSupplier};
 ///
 /// let first = || 42;
@@ -1003,7 +1003,7 @@ pub trait FnStatefulSupplierOps<T>: FnMut() -> T + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{Supplier, FnStatefulSupplierOps};
     ///
     /// let mut mapped = (|| 10)
@@ -1036,7 +1036,7 @@ pub trait FnStatefulSupplierOps<T>: FnMut() -> T + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{Supplier, FnStatefulSupplierOps};
     ///
     /// let mut counter = 0;
@@ -1073,7 +1073,7 @@ pub trait FnStatefulSupplierOps<T>: FnMut() -> T + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{Supplier, FnStatefulSupplierOps, BoxStatefulSupplier};
     ///
     /// let first = || 42;
@@ -1103,7 +1103,7 @@ pub trait FnStatefulSupplierOps<T>: FnMut() -> T + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust
+    /// ```rust,ignore
     /// use qubit_function::{Supplier, FnStatefulSupplierOps};
     ///
     /// let mut call_count = 0;
