@@ -254,24 +254,30 @@ pub use transformers::{
 };
 
 // ---- Operator Types ----
+// Binary operators (Fn(T, T) -> T)
 pub use transformers::{
     ArcBinaryOperator,
-    ArcStatefulBinaryOperator,
-    ArcUnaryOperator,
-
-    // Binary operators (Fn(T, T) -> T)
     BinaryOperator,
     BinaryOperatorOnce,
+    BoxBinaryOperator,
+    BoxBinaryOperatorOnce,
+    RcBinaryOperator,
+};
+
+// Stateful binary operators (FnMut(T, T) -> T)
+pub use transformers::{
+    ArcStatefulBinaryOperator,
     BoxStatefulBinaryOperator,
     RcStatefulBinaryOperator,
     StatefulBinaryOperator,
-    BoxBinaryOperator,
-    BoxBinaryOperatorOnce,
+};
+
+// Unary operators (Fn(T) -> T)
+pub use transformers::{
+    ArcUnaryOperator,
     BoxUnaryOperator,
     BoxUnaryOperatorOnce,
-    RcBinaryOperator,
     RcUnaryOperator,
-    // Unary operators (Fn(T) -> T)
     UnaryOperator,
     UnaryOperatorOnce,
 };

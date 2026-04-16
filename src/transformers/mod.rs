@@ -44,18 +44,20 @@ pub use bi_transformer_once::{
     FnBiTransformerOnceOps,
 };
 pub use stateful_bi_transformer::{
-    ArcStatefulBinaryOperator,
     ArcConditionalStatefulBiTransformer,
     ArcStatefulBiTransformer,
-    BoxStatefulBinaryOperator,
     BoxConditionalStatefulBiTransformer,
     BoxStatefulBiTransformer,
     FnStatefulBiTransformerOps,
-    RcStatefulBinaryOperator,
     RcConditionalStatefulBiTransformer,
     RcStatefulBiTransformer,
-    StatefulBinaryOperator,
     StatefulBiTransformer,
+};
+pub use stateful_bi_transformer::{
+    ArcStatefulBinaryOperator,
+    BoxStatefulBinaryOperator,
+    RcStatefulBinaryOperator,
+    StatefulBinaryOperator,
 };
 pub use stateful_transformer::{
     ArcConditionalStatefulTransformer,
