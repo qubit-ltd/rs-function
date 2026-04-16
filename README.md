@@ -385,6 +385,10 @@ allowing mutable internal state.
 - `ArcStatefulBiTransformer<T, U, R>` - Thread-safe with parking_lot::Mutex
 - `RcStatefulBiTransformer<T, U, R>` - Single-threaded with RefCell
 
+**Stateful Operator Alias**:
+- `StatefulBinaryOperator<T>` = `StatefulBiTransformer<T, T, T>`
+- `BoxStatefulBinaryOperator<T>`, `ArcStatefulBinaryOperator<T>`, `RcStatefulBinaryOperator<T>`
+
 ### 20. BiTransformerOnce - Single-Use Two-Argument Value Transformer
 
 Consumes two input values once and transforms them into a result.
@@ -503,6 +507,9 @@ assert!(!tester.test());
 | `BiTransformerOnce<T, U, R>` | `apply(self, first: T, second: U) -> R` | `FnOnce(T, U) -> R` |
 | `Comparator<T>` | `compare(&self, a: &T, b: &T) -> Ordering` | `Fn(&T, &T) -> Ordering` |
 | `Tester` | `test(&self) -> bool` | `Fn() -> bool` |
+
+For stateful traits, closure conversions support both compatibility names
+(`into_fn` / `to_fn`) and explicit mutable names (`into_mut_fn` / `to_mut_fn`).
 
 ## Implementation Types Comparison
 

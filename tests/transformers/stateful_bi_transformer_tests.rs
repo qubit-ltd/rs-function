@@ -8,14 +8,18 @@
  ******************************************************************************/
 
 use qubit_function::{
+    ArcStatefulBinaryOperator,
     ArcStatefulBiTransformer,
+    BoxStatefulBinaryOperator,
     ArcStatefulTransformer,
     BoxBiPredicate,
     BoxStatefulBiTransformer,
     BoxStatefulTransformer,
     FnStatefulBiTransformerOps,
+    RcStatefulBinaryOperator,
     RcStatefulBiTransformer,
     RcStatefulTransformer,
+    StatefulBinaryOperator,
     StatefulBiTransformer,
 };
 use std::cell::Cell;
@@ -76,6 +80,8 @@ fn test_stateful_bi_transformer_default_conversions_allow_relaxed_generic_types(
     ));
     let mut into_fn = transformer.clone().into_fn();
     assert_left(into_fn(first(), second()));
+    let mut into_mut_fn = transformer.clone().into_mut_fn();
+    assert_left(into_mut_fn(first(), second()));
 
     assert_left(transformer.to_box().apply(first(), second()));
     assert_left(transformer.to_rc().apply(first(), second()));
@@ -87,6 +93,36 @@ fn test_stateful_bi_transformer_default_conversions_allow_relaxed_generic_types(
     ));
     let mut to_fn = transformer.to_fn();
     assert_left(to_fn(first(), second()));
+    let mut to_mut_fn = transformer.to_mut_fn();
+    assert_left(to_mut_fn(first(), second()));
+}
+
+#[test]
+fn test_stateful_binary_operator_trait_bound() {
+    fn reduce<T, O>(values: Vec<T>, initial: T, mut op: O) -> T
+    where
+        O: StatefulBinaryOperator<T>,
+    {
+        values.into_iter().fold(initial, |acc, value| op.apply(acc, value))
+    }
+
+    let sum = BoxStatefulBiTransformer::new(|a: i32, b: i32| a + b);
+    assert_eq!(reduce(vec![1, 2, 3, 4], 0, sum), 10);
+}
+
+#[test]
+fn test_stateful_binary_operator_aliases() {
+    let mut box_add: BoxStatefulBinaryOperator<i32> =
+        BoxStatefulBinaryOperator::new(|a, b| a + b);
+    assert_eq!(box_add.apply(20, 22), 42);
+
+    let mut arc_mul: ArcStatefulBinaryOperator<i32> =
+        ArcStatefulBinaryOperator::new(|a, b| a * b);
+    assert_eq!(arc_mul.apply(6, 7), 42);
+
+    let mut rc_max: RcStatefulBinaryOperator<i32> =
+        RcStatefulBinaryOperator::new(|a, b| if a > b { a } else { b });
+    assert_eq!(rc_max.apply(30, 42), 42);
 }
 
 // ============================================================================

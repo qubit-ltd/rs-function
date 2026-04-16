@@ -379,6 +379,10 @@ assert_eq!(add.apply(10, 20), 30);
 - `ArcStatefulBiTransformer<T, U, R>` - 线程安全(使用 parking_lot::Mutex)
 - `RcStatefulBiTransformer<T, U, R>` - 单线程(使用 RefCell)
 
+**有状态运算符别名**:
+- `StatefulBinaryOperator<T>` = `StatefulBiTransformer<T, T, T>`
+- `BoxStatefulBinaryOperator<T>`、`ArcStatefulBinaryOperator<T>`、`RcStatefulBinaryOperator<T>`
+
 ### 20. BiTransformerOnce - 一次性双参数值转换器
 
 一次性取得两个输入值的所有权,并将其转换为结果。
@@ -495,6 +499,10 @@ assert!(!tester.test());
 | `BiTransformerOnce<T, U, R>` | `apply(self, first: T, second: U) -> R` | `FnOnce(T, U) -> R` |
 | `Comparator<T>` | `compare(&self, a: &T, b: &T) -> Ordering` | `Fn(&T, &T) -> Ordering` |
 | `Tester` | `test(&self) -> bool` | `Fn() -> bool` |
+
+对于有状态 trait，闭包转换同时支持兼容命名
+`into_fn` / `to_fn`，以及更明确的可变闭包命名
+`into_mut_fn` / `to_mut_fn`。
 
 ## 实现类型对比
 

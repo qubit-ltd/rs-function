@@ -76,6 +76,8 @@ fn test_stateful_mutating_function_default_conversions_allow_relaxed_generic_typ
     assert_left(function.clone().into_once().apply(&mut value));
     let mut into_fn = function.clone().into_fn();
     assert_left(into_fn(&mut value));
+    let mut into_mut_fn = function.clone().into_mut_fn();
+    assert_left(into_mut_fn(&mut value));
 
     assert_left(function.to_box().apply(&mut value));
     assert_left(function.to_rc().apply(&mut value));
@@ -83,6 +85,8 @@ fn test_stateful_mutating_function_default_conversions_allow_relaxed_generic_typ
     assert_left(function.to_once().apply(&mut value));
     let mut to_fn = function.to_fn();
     assert_left(to_fn(&mut value));
+    let mut to_mut_fn = function.to_mut_fn();
+    assert_left(to_mut_fn(&mut value));
 }
 
 /// Test struct that implements StatefulMutatingFunction to test default methods

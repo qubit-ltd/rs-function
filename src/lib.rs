@@ -14,6 +14,7 @@
 //! - **UnaryOperator types**: Transform values of type T to the same type T
 //! - **BiTransformer types**: Transform two values to produce a result
 //! - **BinaryOperator types**: Transform two values of type T to produce a T
+//! - **StatefulBinaryOperator types**: Stateful transform two values of type T to produce a T
 //! - **Consumer types**: Functions that consume values without returning
 //! - **BiConsumer types**: Functions that consume two values without returning
 //! - **Predicate types**: Functions that test values and return boolean
@@ -255,11 +256,15 @@ pub use transformers::{
 // ---- Operator Types ----
 pub use transformers::{
     ArcBinaryOperator,
+    ArcStatefulBinaryOperator,
     ArcUnaryOperator,
 
     // Binary operators (Fn(T, T) -> T)
     BinaryOperator,
     BinaryOperatorOnce,
+    BoxStatefulBinaryOperator,
+    RcStatefulBinaryOperator,
+    StatefulBinaryOperator,
     BoxBinaryOperator,
     BoxBinaryOperatorOnce,
     BoxUnaryOperator,

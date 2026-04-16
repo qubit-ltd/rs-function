@@ -249,6 +249,17 @@ pub trait StatefulFunction<T, R> {
         move |t| self.apply(t)
     }
 
+    /// Converts to a mutable closure (`FnMut`) with an explicit method name.
+    ///
+    /// This is a naming alias of [`StatefulFunction::into_fn`] to make the
+    /// mutability of the returned closure explicit.
+    fn into_mut_fn(self) -> impl FnMut(&T) -> R
+    where
+        Self: Sized + 'static,
+    {
+        self.into_fn()
+    }
+
     /// Convert to StatefulFunctionOnce
     ///
     /// **⚠️ Consumes `self`**: The original function will be unavailable
@@ -327,6 +338,18 @@ pub trait StatefulFunction<T, R> {
         Self: Sized + Clone + 'static,
     {
         self.clone().into_fn()
+    }
+
+    /// Non-consuming conversion to a mutable closure (`FnMut`) with an explicit
+    /// method name.
+    ///
+    /// This is a naming alias of [`StatefulFunction::to_fn`] and preserves the
+    /// same clone-based behavior.
+    fn to_mut_fn(&self) -> impl FnMut(&T) -> R
+    where
+        Self: Sized + Clone + 'static,
+    {
+        self.to_fn()
     }
 
     /// Convert to StatefulFunctionOnce without consuming self

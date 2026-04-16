@@ -439,6 +439,17 @@ pub trait StatefulMutatingFunction<T, R> {
         move |t| self.apply(t)
     }
 
+    /// Consume the function and return an explicit `FnMut` closure.
+    ///
+    /// This is a naming alias of [`StatefulMutatingFunction::into_fn`] to make
+    /// the mutability of the returned closure explicit.
+    fn into_mut_fn(self) -> impl FnMut(&mut T) -> R
+    where
+        Self: Sized + 'static,
+    {
+        self.into_fn()
+    }
+
     /// Create a non-consuming `BoxStatefulMutatingFunction<T, R>` that
     /// forwards to `self`.
     ///
@@ -509,6 +520,17 @@ pub trait StatefulMutatingFunction<T, R> {
         Self: Sized + Clone + 'static,
     {
         self.clone().into_fn()
+    }
+
+    /// Create a non-consuming explicit `FnMut` closure from `self`.
+    ///
+    /// This is a naming alias of [`StatefulMutatingFunction::to_fn`] and
+    /// preserves the same clone-based behavior.
+    fn to_mut_fn(&self) -> impl FnMut(&mut T) -> R
+    where
+        Self: Sized + Clone + 'static,
+    {
+        self.to_fn()
     }
 
     /// Convert to StatefulMutatingFunctionOnce

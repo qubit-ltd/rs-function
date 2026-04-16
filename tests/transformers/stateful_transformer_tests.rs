@@ -69,6 +69,8 @@ fn test_stateful_transformer_default_conversions_allow_relaxed_generic_types() {
     ));
     let mut into_fn = transformer.clone().into_fn();
     assert_left(into_fn(value()));
+    let mut into_mut_fn = transformer.clone().into_mut_fn();
+    assert_left(into_mut_fn(value()));
 
     assert_left(transformer.to_box().apply(value()));
     assert_left(transformer.to_rc().apply(value()));
@@ -79,6 +81,8 @@ fn test_stateful_transformer_default_conversions_allow_relaxed_generic_types() {
     ));
     let mut to_fn = transformer.to_fn();
     assert_left(to_fn(value()));
+    let mut to_mut_fn = transformer.to_mut_fn();
+    assert_left(to_mut_fn(value()));
 }
 
 // ============================================================================

@@ -251,6 +251,18 @@ pub trait StatefulTransformer<T, R> {
         move |t| transformer.apply(t)
     }
 
+    /// Converts transformer to a mutable closure (`FnMut`) with an explicit
+    /// method name.
+    ///
+    /// This is a naming alias of [`StatefulTransformer::into_fn`] to make the
+    /// mutability of the returned closure explicit.
+    fn into_mut_fn(self) -> impl FnMut(T) -> R
+    where
+        Self: Sized + 'static,
+    {
+        self.into_fn()
+    }
+
     /// Converts to `BoxTransformerOnce`.
     ///
     /// This method has a default implementation that wraps the
@@ -322,6 +334,18 @@ pub trait StatefulTransformer<T, R> {
         Self: Sized + Clone + 'static,
     {
         self.clone().into_fn()
+    }
+
+    /// Non-consuming conversion to a mutable closure (`FnMut`) with an explicit
+    /// method name.
+    ///
+    /// This is a naming alias of [`StatefulTransformer::to_fn`] and preserves
+    /// the same clone-based behavior.
+    fn to_mut_fn(&self) -> impl FnMut(T) -> R
+    where
+        Self: Sized + Clone + 'static,
+    {
+        self.to_fn()
     }
 
     /// Creates a `BoxTransformerOnce` from a cloned transformer

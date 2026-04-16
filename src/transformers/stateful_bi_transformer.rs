@@ -176,6 +176,18 @@ pub trait StatefulBiTransformer<T, U, R> {
         move |t, u| trans.apply(t, u)
     }
 
+    /// Converts bi-transformer to a mutable closure (`FnMut`) with an explicit
+    /// method name.
+    ///
+    /// This is a naming alias of [`StatefulBiTransformer::into_fn`] to avoid
+    /// confusion with non-stateful `into_fn` methods that typically return `Fn`.
+    fn into_mut_fn(self) -> impl FnMut(T, U) -> R
+    where
+        Self: Sized + 'static,
+    {
+        self.into_fn()
+    }
+
     /// Converts to BoxBiTransformerOnce
     ///
     /// **⚠️ Consumes `self`**: The original bi-transformer becomes unavailable
@@ -237,6 +249,18 @@ pub trait StatefulBiTransformer<T, U, R> {
         Self: Sized + Clone + 'static,
     {
         self.clone().into_fn()
+    }
+
+    /// Non-consuming conversion to a mutable closure (`FnMut`) with an explicit
+    /// method name.
+    ///
+    /// This is a naming alias of [`StatefulBiTransformer::to_fn`] and keeps the
+    /// same clone-based behavior.
+    fn to_mut_fn(&self) -> impl FnMut(T, U) -> R
+    where
+        Self: Sized + Clone + 'static,
+    {
+        self.to_fn()
     }
 
     /// Non-consuming conversion to `BoxBiTransformerOnce` using `&self`.
@@ -712,10 +736,10 @@ pub trait FnStatefulBiTransformerOps<T, U, R>: FnMut(T, U) -> R + Sized {
 impl<T, U, R, F> FnStatefulBiTransformerOps<T, U, R> for F where F: FnMut(T, U) -> R {}
 
 // ============================================================================
-// BinaryOperator Trait - Marker trait for StatefulBiTransformer<T, T, T>
+// StatefulBinaryOperator Trait - Marker trait for StatefulBiTransformer<T, T, T>
 // ============================================================================
 
-/// BinaryOperator trait - marker trait for binary operators
+/// StatefulBinaryOperator trait - marker trait for stateful binary operators
 ///
 /// A binary operator takes two values of type `T` and produces a value of the
 /// same type `T`. This trait extends `StatefulBiTransformer<T, T, T>` to provide
@@ -736,11 +760,11 @@ impl<T, U, R, F> FnStatefulBiTransformerOps<T, U, R> for F where F: FnMut(T, U) 
 /// ## Using in generic constraints
 ///
 /// ```rust,ignore
-/// use qubit_function::{BinaryOperator, StatefulBiTransformer};
+/// use qubit_function::{StatefulBinaryOperator, StatefulBiTransformer};
 ///
 /// fn reduce<T, O>(values: Vec<T>, initial: T, op: O) -> T
 /// where
-///     O: BinaryOperator<T>,
+///     O: StatefulBinaryOperator<T>,
 ///     T: Clone,
 /// {
 ///     values.into_iter().fold(initial, |acc, val| op.apply(acc, val))
@@ -753,10 +777,10 @@ impl<T, U, R, F> FnStatefulBiTransformerOps<T, U, R> for F where F: FnMut(T, U) 
 /// ## With concrete types
 ///
 /// ```rust,ignore
-/// use qubit_function::{BoxBinaryOperator, BinaryOperator, StatefulBiTransformer};
+/// use qubit_function::{BoxStatefulBinaryOperator, StatefulBiTransformer};
 ///
-/// fn create_adder() -> BoxBinaryOperator<i32> {
-///     BoxBinaryOperator::new(|x, y| x + y)
+/// fn create_adder() -> BoxStatefulBinaryOperator<i32> {
+///     BoxStatefulBinaryOperator::new(|x, y| x + y)
 /// }
 ///
 /// let op = create_adder();
@@ -766,25 +790,35 @@ impl<T, U, R, F> FnStatefulBiTransformerOps<T, U, R> for F where F: FnMut(T, U) 
 /// # Author
 ///
 /// Haixing Hu
-pub trait BinaryOperator<T>: StatefulBiTransformer<T, T, T> {}
+pub trait StatefulBinaryOperator<T>: StatefulBiTransformer<T, T, T> {}
 
-/// Blanket implementation of BinaryOperator for all StatefulBiTransformer<T, T, T>
+/// Blanket implementation of StatefulBinaryOperator for all StatefulBiTransformer<T, T, T>
 ///
-/// This automatically implements `BinaryOperator<T>` for any type that
+/// This automatically implements `StatefulBinaryOperator<T>` for any type that
 /// implements `StatefulBiTransformer<T, T, T>`.
 ///
 /// # Author
 ///
 /// Haixing Hu
-impl<F, T> BinaryOperator<T> for F
+impl<F, T> StatefulBinaryOperator<T> for F
 where
     F: StatefulBiTransformer<T, T, T>,
 {
     // empty
 }
 
+/// Deprecated alias of [`StatefulBinaryOperator`].
+#[deprecated(
+    since = "0.8.4",
+    note = "Use StatefulBinaryOperator<T> for stateful bi-transformers."
+)]
+pub trait BinaryOperator<T>: StatefulBinaryOperator<T> {}
+
+#[allow(deprecated)]
+impl<F, T> BinaryOperator<T> for F where F: StatefulBinaryOperator<T> {}
+
 // ============================================================================
-// Type Aliases for BinaryOperator (StatefulBiTransformer<T, T, T>)
+// Type Aliases for StatefulBinaryOperator (StatefulBiTransformer<T, T, T>)
 // ============================================================================
 
 /// Type alias for `BoxStatefulBiTransformer<T, T, T>`
@@ -796,16 +830,16 @@ where
 /// # Examples
 ///
 /// ```rust,ignore
-/// use qubit_function::{BoxBinaryOperator, StatefulBiTransformer};
+/// use qubit_function::{BoxStatefulBinaryOperator, StatefulBiTransformer};
 ///
-/// let add: BoxBinaryOperator<i32> = BoxBinaryOperator::new(|x, y| x + y);
+/// let add: BoxStatefulBinaryOperator<i32> = BoxStatefulBinaryOperator::new(|x, y| x + y);
 /// assert_eq!(add.apply(20, 22), 42);
 /// ```
 ///
 /// # Author
 ///
 /// Haixing Hu
-pub type BoxBinaryOperator<T> = BoxStatefulBiTransformer<T, T, T>;
+pub type BoxStatefulBinaryOperator<T> = BoxStatefulBiTransformer<T, T, T>;
 
 /// Type alias for `ArcStatefulBiTransformer<T, T, T>`
 ///
@@ -816,9 +850,9 @@ pub type BoxBinaryOperator<T> = BoxStatefulBiTransformer<T, T, T>;
 /// # Examples
 ///
 /// ```rust,ignore
-/// use qubit_function::{ArcBinaryOperator, StatefulBiTransformer};
+/// use qubit_function::{ArcStatefulBinaryOperator, StatefulBiTransformer};
 ///
-/// let multiply: ArcBinaryOperator<i32> = ArcBinaryOperator::new(|x, y| x * y);
+/// let multiply: ArcStatefulBinaryOperator<i32> = ArcStatefulBinaryOperator::new(|x, y| x * y);
 /// let multiply_clone = multiply.clone();
 /// assert_eq!(multiply.apply(6, 7), 42);
 /// assert_eq!(multiply_clone.apply(6, 7), 42);
@@ -827,7 +861,7 @@ pub type BoxBinaryOperator<T> = BoxStatefulBiTransformer<T, T, T>;
 /// # Author
 ///
 /// Haixing Hu
-pub type ArcBinaryOperator<T> = ArcStatefulBiTransformer<T, T, T>;
+pub type ArcStatefulBinaryOperator<T> = ArcStatefulBiTransformer<T, T, T>;
 
 /// Type alias for `RcStatefulBiTransformer<T, T, T>`
 ///
@@ -838,9 +872,9 @@ pub type ArcBinaryOperator<T> = ArcStatefulBiTransformer<T, T, T>;
 /// # Examples
 ///
 /// ```rust,ignore
-/// use qubit_function::{RcBinaryOperator, StatefulBiTransformer};
+/// use qubit_function::{RcStatefulBinaryOperator, StatefulBiTransformer};
 ///
-/// let max: RcBinaryOperator<i32> = RcBinaryOperator::new(|x, y| if x > y { x } else { y });
+/// let max: RcStatefulBinaryOperator<i32> = RcStatefulBinaryOperator::new(|x, y| if x > y { x } else { y });
 /// let max_clone = max.clone();
 /// assert_eq!(max.apply(30, 42), 42);
 /// assert_eq!(max_clone.apply(30, 42), 42);
@@ -849,7 +883,28 @@ pub type ArcBinaryOperator<T> = ArcStatefulBiTransformer<T, T, T>;
 /// # Author
 ///
 /// Haixing Hu
-pub type RcBinaryOperator<T> = RcStatefulBiTransformer<T, T, T>;
+pub type RcStatefulBinaryOperator<T> = RcStatefulBiTransformer<T, T, T>;
+
+/// Deprecated alias of [`BoxStatefulBinaryOperator`].
+#[deprecated(
+    since = "0.8.4",
+    note = "Use BoxStatefulBinaryOperator<T> for stateful bi-transformers."
+)]
+pub type BoxBinaryOperator<T> = BoxStatefulBinaryOperator<T>;
+
+/// Deprecated alias of [`ArcStatefulBinaryOperator`].
+#[deprecated(
+    since = "0.8.4",
+    note = "Use ArcStatefulBinaryOperator<T> for stateful bi-transformers."
+)]
+pub type ArcBinaryOperator<T> = ArcStatefulBinaryOperator<T>;
+
+/// Deprecated alias of [`RcStatefulBinaryOperator`].
+#[deprecated(
+    since = "0.8.4",
+    note = "Use RcStatefulBinaryOperator<T> for stateful bi-transformers."
+)]
+pub type RcBinaryOperator<T> = RcStatefulBinaryOperator<T>;
 
 // ============================================================================
 // BoxConditionalStatefulBiTransformer - Box-based Conditional StatefulBiTransformer
