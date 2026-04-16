@@ -537,6 +537,7 @@ Each trait has multiple implementations based on ownership model:
 | TransformerOnce | BoxTransformerOnce | - | - |
 | StatefulTransformer | BoxStatefulTransformer | ArcStatefulTransformer | RcStatefulTransformer |
 | BiTransformer | BoxBiTransformer | ArcBiTransformer | RcBiTransformer |
+| StatefulBinaryOperator | BoxStatefulBinaryOperator | ArcStatefulBinaryOperator | RcStatefulBinaryOperator |
 | StatefulBiTransformer | BoxStatefulBiTransformer | ArcStatefulBiTransformer | RcStatefulBiTransformer |
 | BiTransformerOnce | BoxBiTransformerOnce | - | - |
 | Comparator | BoxComparator | ArcComparator | RcComparator |
