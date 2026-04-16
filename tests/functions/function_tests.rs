@@ -1335,6 +1335,34 @@ fn test_function_conversions_without_name() {
 }
 
 #[test]
+fn test_box_function_clear_name() {
+    let mut function = BoxFunction::new_with_name("named_fn", |x: &i32| x * 2);
+    assert_eq!(function.name(), Some("named_fn"));
+
+    function.clear_name();
+    assert_eq!(function.name(), None);
+    assert_eq!(function.apply(&21), 42);
+}
+
+#[test]
+fn test_box_function_set_name_same_value_keeps_storage() {
+    let mut function = BoxFunction::new_with_name("stable_name", |x: &i32| x * 2);
+    let ptr_before = function
+        .name()
+        .expect("name should be initialized")
+        .as_ptr();
+
+    function.set_name("stable_name");
+    let ptr_after = function
+        .name()
+        .expect("name should remain initialized")
+        .as_ptr();
+
+    assert_eq!(function.name(), Some("stable_name"));
+    assert_eq!(ptr_before, ptr_after);
+}
+
+#[test]
 fn test_multiple_conversions_preserve_name() {
     // Test that multiple conversions preserve the name correctly
     let original = ArcFunction::new_with_name("original_func", |x: &i32| x * 2);

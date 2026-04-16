@@ -100,9 +100,9 @@ pub trait StatefulFunction<T, R> {
     ///
     /// # Default Implementation
     ///
-    /// The default implementation wraps `self` in a `BoxStatefulFunction` by creating
-    /// a new closure that calls `self.apply()`. This provides a zero-cost
-    /// abstraction for most use cases.
+    /// The default implementation wraps `self` in a `BoxStatefulFunction` by
+    /// creating a new closure that calls `self.apply()`. This is a lightweight
+    /// adapter, but it is not strictly zero-cost.
     ///
     /// # Examples
     ///

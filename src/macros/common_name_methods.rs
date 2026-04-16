@@ -29,6 +29,7 @@
 ///
 /// * `name(&self) -> Option<&str>` - Gets the current name if set
 /// * `set_name(&mut self, name: &str)` - Sets a new name for the instance
+/// * `clear_name(&mut self)` - Clears the current name
 ///
 /// # Author
 ///
@@ -52,7 +53,15 @@ macro_rules! impl_common_name_methods {
         #[doc = concat!("* `name` - The name to set for this ", $type_desc)]
         #[inline]
         pub fn set_name(&mut self, name: &str) {
-            self.name = Some(name.to_string());
+            if self.name.as_deref() != Some(name) {
+                self.name = Some(name.to_owned());
+            }
+        }
+
+        #[doc = concat!("Clears the name of this ", $type_desc, ".")]
+        #[inline]
+        pub fn clear_name(&mut self) {
+            self.name = None;
         }
     };
 }
