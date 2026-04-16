@@ -807,16 +807,6 @@ where
     // empty
 }
 
-/// Deprecated alias of [`StatefulBinaryOperator`].
-#[deprecated(
-    since = "0.8.4",
-    note = "Use StatefulBinaryOperator<T> for stateful bi-transformers."
-)]
-pub trait BinaryOperator<T>: StatefulBinaryOperator<T> {}
-
-#[allow(deprecated)]
-impl<F, T> BinaryOperator<T> for F where F: StatefulBinaryOperator<T> {}
-
 // ============================================================================
 // Type Aliases for StatefulBinaryOperator (StatefulBiTransformer<T, T, T>)
 // ============================================================================
@@ -884,27 +874,6 @@ pub type ArcStatefulBinaryOperator<T> = ArcStatefulBiTransformer<T, T, T>;
 ///
 /// Haixing Hu
 pub type RcStatefulBinaryOperator<T> = RcStatefulBiTransformer<T, T, T>;
-
-/// Deprecated alias of [`BoxStatefulBinaryOperator`].
-#[deprecated(
-    since = "0.8.4",
-    note = "Use BoxStatefulBinaryOperator<T> for stateful bi-transformers."
-)]
-pub type BoxBinaryOperator<T> = BoxStatefulBinaryOperator<T>;
-
-/// Deprecated alias of [`ArcStatefulBinaryOperator`].
-#[deprecated(
-    since = "0.8.4",
-    note = "Use ArcStatefulBinaryOperator<T> for stateful bi-transformers."
-)]
-pub type ArcBinaryOperator<T> = ArcStatefulBinaryOperator<T>;
-
-/// Deprecated alias of [`RcStatefulBinaryOperator`].
-#[deprecated(
-    since = "0.8.4",
-    note = "Use RcStatefulBinaryOperator<T> for stateful bi-transformers."
-)]
-pub type RcBinaryOperator<T> = RcStatefulBinaryOperator<T>;
 
 // ============================================================================
 // BoxConditionalStatefulBiTransformer - Box-based Conditional StatefulBiTransformer
