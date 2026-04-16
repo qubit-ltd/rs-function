@@ -184,7 +184,8 @@ pub trait Function<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
+    /// use qubit_function::{BoxFunction, Function, FunctionOnce};
     ///
     /// fn takes_once<F: FunctionOnce<i32, i32>>(func: F, value: &i32) -> i32 {
     ///     func.apply(value)
@@ -218,15 +219,15 @@ pub trait Function<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{ArcFunction, Function};
     ///
-    /// let double = ArcFunction::new(|x: i32| x * 2);
+    /// let double = ArcFunction::new(|x: &i32| x * 2);
     /// let boxed = double.to_box();
     ///
     /// // Original function still usable
-    /// assert_eq!(double.apply(21), 42);
-    /// assert_eq!(boxed.apply(21), 42);
+    /// assert_eq!(double.apply(&21), 42);
+    /// assert_eq!(boxed.apply(&21), 42);
     /// ```
     fn to_box(&self) -> BoxFunction<T, R>
     where
@@ -252,15 +253,15 @@ pub trait Function<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{ArcFunction, Function};
+    /// ```rust
+    /// use qubit_function::{RcFunction, Function};
     ///
-    /// let double = ArcFunction::new(|x: i32| x * 2);
+    /// let double = RcFunction::new(|x: &i32| x * 2);
     /// let rc = double.to_rc();
     ///
     /// // Original function still usable
-    /// assert_eq!(double.apply(21), 42);
-    /// assert_eq!(rc.apply(21), 42);
+    /// assert_eq!(double.apply(&21), 42);
+    /// assert_eq!(rc.apply(&21), 42);
     /// ```
     fn to_rc(&self) -> RcFunction<T, R>
     where
@@ -286,15 +287,15 @@ pub trait Function<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{ArcFunction, Function};
     ///
-    /// let double = ArcFunction::new(|x: i32| x * 2);
+    /// let double = ArcFunction::new(|x: &i32| x * 2);
     /// let arc = double.to_arc();
     ///
     /// // Original function still usable
-    /// assert_eq!(double.apply(21), 42);
-    /// assert_eq!(arc.apply(21), 42);
+    /// assert_eq!(double.apply(&21), 42);
+    /// assert_eq!(arc.apply(&21), 42);
     /// ```
     fn to_arc(&self) -> ArcFunction<T, R>
     where
@@ -320,15 +321,15 @@ pub trait Function<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{ArcFunction, Function};
     ///
-    /// let double = ArcFunction::new(|x: i32| x * 2);
+    /// let double = ArcFunction::new(|x: &i32| x * 2);
     /// let closure = double.to_fn();
     ///
     /// // Original function still usable
-    /// assert_eq!(double.apply(21), 42);
-    /// assert_eq!(closure(21), 42);
+    /// assert_eq!(double.apply(&21), 42);
+    /// assert_eq!(closure(&21), 42);
     /// ```
     fn to_fn(&self) -> impl Fn(&T) -> R
     where
@@ -348,13 +349,15 @@ pub trait Function<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
+    ///
+    /// use qubit_function::{Function, FunctionOnce, RcFunction};
     ///
     /// fn takes_once<F: FunctionOnce<i32, i32>>(func: F, value: &i32) -> i32 {
     ///     func.apply(value)
     /// }
     ///
-    /// let func = BoxFunction::new(|x: &i32| x * 2);
+    /// let func = RcFunction::new(|x: &i32| x * 2);
     /// let result = takes_once(func.to_once(), &5);
     /// assert_eq!(result, 10);
     /// ```
@@ -623,15 +626,15 @@ impl_fn_ops_trait!(
 ///
 /// ## With or_else Branch
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{Function, BoxFunction};
 ///
-/// let double = BoxFunction::new(|x: i32| x * 2);
-/// let negate = BoxFunction::new(|x: i32| -x);
+/// let double = BoxFunction::new(|x: &i32| x * 2);
+/// let negate = BoxFunction::new(|x: &i32| -x);
 /// let conditional = double.when(|x: &i32| *x > 0).or_else(negate);
 ///
-/// assert_eq!(conditional.apply(5), 10); // when branch executed
-/// assert_eq!(conditional.apply(-5), 5); // or_else branch executed
+/// assert_eq!(conditional.apply(&5), 10); // when branch executed
+/// assert_eq!(conditional.apply(&-5), 5); // or_else branch executed
 /// ```
 ///
 /// # Author
@@ -674,17 +677,17 @@ impl_conditional_function_debug_display!(BoxConditionalFunction<T, R>);
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{Function, RcFunction};
 ///
-/// let double = RcFunction::new(|x: i32| x * 2);
+/// let double = RcFunction::new(|x: &i32| x * 2);
 /// let identity = RcFunction::<i32, i32>::identity();
 /// let conditional = double.when(|x: &i32| *x > 0).or_else(identity);
 ///
 /// let conditional_clone = conditional.clone();
 ///
-/// assert_eq!(conditional.apply(5), 10);
-/// assert_eq!(conditional_clone.apply(-5), -5);
+/// assert_eq!(conditional.apply(&5), 10);
+/// assert_eq!(conditional_clone.apply(&-5), -5);
 /// ```
 ///
 /// # Author
@@ -731,17 +734,17 @@ impl_conditional_function_debug_display!(RcConditionalFunction<T, R>);
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{Function, ArcFunction};
 ///
-/// let double = ArcFunction::new(|x: i32| x * 2);
+/// let double = ArcFunction::new(|x: &i32| x * 2);
 /// let identity = ArcFunction::<i32, i32>::identity();
 /// let conditional = double.when(|x: &i32| *x > 0).or_else(identity);
 ///
 /// let conditional_clone = conditional.clone();
 ///
-/// assert_eq!(conditional.apply(5), 10);
-/// assert_eq!(conditional_clone.apply(-5), -5);
+/// assert_eq!(conditional.apply(&5), 10);
+/// assert_eq!(conditional_clone.apply(&-5), -5);
 /// ```
 ///
 /// # Author

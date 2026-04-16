@@ -32,20 +32,25 @@
 //!
 //! # Examples
 //!
-//! ```ignore
-//! // Single-parameter with Arc
-//! impl_shared_supplier_methods!(
-//!     ArcSupplier<T>,
-//!     Supplier,
-//!     ('static)
-//! );
+//! ```rust
+//! use qubit_function::Supplier;
+//! use qubit_function::{ArcSupplier, RcSupplier};
 //!
-//! // Single-parameter with Rc
-//! impl_shared_supplier_methods!(
-//!     RcSupplier<T>,
-//!     Supplier,
-//!     ('static)
-//! );
+//! let arc = ArcSupplier::new(|| 2i32);
+//! let mapped = arc.map(|v| v * 2);
+//! assert_eq!(mapped.get(), 4);
+//! let filtered = arc.filter(|v: &i32| *v % 2 == 0);
+//! assert_eq!(filtered.get(), Some(2));
+//! let zipped = arc.zip(ArcSupplier::new(|| "ok"));
+//! assert_eq!(zipped.get(), (2, "ok"));
+//!
+//! let rc = RcSupplier::new(|| "hello".to_string());
+//! let mapped = rc.map(|v: String| v.len());
+//! assert_eq!(mapped.get(), 5);
+//! let filtered = rc.filter(|v: &String| !v.is_empty());
+//! assert_eq!(filtered.get(), Some("hello".to_string()));
+//! let zipped = rc.zip(RcSupplier::new(|| 1));
+//! assert_eq!(zipped.get(), ("hello".to_string(), 1));
 //! ```
 //!
 //! # Author
@@ -77,20 +82,25 @@
 ///
 /// # Examples
 ///
-/// ```ignore
-/// // Single-parameter with Arc
-/// impl_shared_supplier_methods!(
-///     ArcSupplier<T>,
-///     Supplier,
-///     'static
-/// );
+/// ```rust
+/// use qubit_function::Supplier;
+/// use qubit_function::{ArcSupplier, RcSupplier};
 ///
-/// // Single-parameter with Rc
-/// impl_shared_supplier_methods!(
-///     RcSupplier<T>,
-///     Supplier,
-///     'static
-/// );
+/// let arc = ArcSupplier::new(|| 2i32);
+/// let mapped = arc.map(|v| v * 2);
+/// assert_eq!(mapped.get(), 4);
+/// let filtered = arc.filter(|v: &i32| *v % 2 == 0);
+/// assert_eq!(filtered.get(), Some(2));
+/// let zipped = arc.zip(ArcSupplier::new(|| "ok"));
+/// assert_eq!(zipped.get(), (2, "ok"));
+///
+/// let rc = RcSupplier::new(|| "hello".to_string());
+/// let mapped = rc.map(|v: String| v.len());
+/// assert_eq!(mapped.get(), 5);
+/// let filtered = rc.filter(|v: &String| !v.is_empty());
+/// assert_eq!(filtered.get(), Some("hello".to_string()));
+/// let zipped = rc.zip(RcSupplier::new(|| 1));
+/// assert_eq!(zipped.get(), ("hello".to_string(), 1));
 /// ```
 /// # Author
 ///
@@ -114,10 +124,10 @@ macro_rules! impl_shared_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust,ignore
-        /// use qubit_function::{$struct_name, $supplier_trait};
+        /// ```rust
+        /// use qubit_function::{ArcSupplier, Supplier};
         ///
-        /// let source = $struct_name::new(|| 10);
+        /// let source = ArcSupplier::new(|| 10);
         /// let mapped = source.map(|x| x * 2);
         /// // source is still usable
         /// assert_eq!(mapped.get(), 20);
@@ -149,11 +159,11 @@ macro_rules! impl_shared_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust,ignore
-        /// use qubit_function::{$struct_name, $supplier_trait};
+        /// ```rust
+        /// use qubit_function::{ArcSupplier, Supplier};
         ///
-        /// let source = $struct_name::new(|| 42);
-        /// let filtered = source.filter(|x| x % 2 == 0);
+        /// let source = ArcSupplier::new(|| 42);
+        /// let filtered = source.filter(|x: &i32| x % 2 == 0);
         ///
         /// assert_eq!(filtered.get(), Some(42));
         /// ```
@@ -187,11 +197,11 @@ macro_rules! impl_shared_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust,ignore
-        /// use qubit_function::{$struct_name, $supplier_trait};
+        /// ```rust
+        /// use qubit_function::{ArcSupplier, Supplier};
         ///
-        /// let first = $struct_name::new(|| 42);
-        /// let second = $struct_name::new(|| "hello");
+        /// let first = ArcSupplier::new(|| 42);
+        /// let second = ArcSupplier::new(|| "hello");
         ///
         /// let zipped = first.zip(second);
         ///
@@ -232,10 +242,10 @@ macro_rules! impl_shared_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust,ignore
-        /// use qubit_function::{$struct_name, $supplier_trait};
+        /// ```rust
+        /// use qubit_function::{RcSupplier, Supplier};
         ///
-        /// let source = $struct_name::new(|| 10);
+        /// let source = RcSupplier::new(|| 10);
         /// let mapped = source.map(|x| x * 2);
         /// // source is still usable
         /// assert_eq!(mapped.get(), 20);
@@ -267,11 +277,11 @@ macro_rules! impl_shared_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust,ignore
-        /// use qubit_function::{$struct_name, $supplier_trait};
+        /// ```rust
+        /// use qubit_function::{RcSupplier, Supplier};
         ///
-        /// let source = $struct_name::new(|| 42);
-        /// let filtered = source.filter(|x| x % 2 == 0);
+        /// let source = RcSupplier::new(|| 42);
+        /// let filtered = source.filter(|x: &i32| x % 2 == 0);
         ///
         /// assert_eq!(filtered.get(), Some(42));
         /// ```
@@ -305,11 +315,11 @@ macro_rules! impl_shared_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust,ignore
-        /// use qubit_function::{$struct_name, $supplier_trait};
+        /// ```rust
+        /// use qubit_function::{RcSupplier, Supplier};
         ///
-        /// let first = $struct_name::new(|| 42);
-        /// let second = $struct_name::new(|| "hello");
+        /// let first = RcSupplier::new(|| 42);
+        /// let second = RcSupplier::new(|| "hello");
         ///
         /// let zipped = first.zip(second);
         ///

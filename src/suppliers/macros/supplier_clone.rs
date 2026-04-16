@@ -22,18 +22,22 @@
 //!
 //! # Examples
 //!
-//! ```ignore
-//! //!For single type parameter
-//! impl_supplier_clone!(ArcSupplier<T>);
+//! ```rust
+//! use qubit_function::{ArcStatefulSupplier, ArcSupplier, RcStatefulSupplier, RcSupplier, Supplier};
 //!
-//! // For single type parameter with Rc
-//! impl_supplier_clone!(RcSupplier<T>);
+//! let arc = ArcSupplier::new(|| 1);
+//! let arc_clone = arc.clone();
+//! assert_eq!(arc_clone.get(), 1);
 //!
-//! // For stateful supplier
-//! impl_supplier_clone!(ArcStatefulSupplier<T>);
+//! let rc = RcSupplier::new(|| "ok".to_string());
+//! let rc_clone = rc.clone();
+//! assert_eq!(rc_clone.get(), "ok".to_string());
 //!
-//! // For stateful supplier with Rc
-//! impl_supplier_clone!(RcStatefulSupplier<T>);
+//! let stateful_arc = ArcStatefulSupplier::new(|| 1);
+//! let _stateful_arc_clone = stateful_arc.clone();
+//!
+//! let stateful_rc = RcStatefulSupplier::new(|| 1);
+//! let _stateful_rc_clone = stateful_rc.clone();
 //! ```
 //!
 //! # Author
@@ -55,18 +59,22 @@
 ///
 /// # Examples
 ///
-/// ```ignore
-/// // For single type parameter with Arc
-/// impl_supplier_clone!(ArcSupplier<T>);
+/// ```rust
+/// use qubit_function::{ArcStatefulSupplier, ArcSupplier, RcStatefulSupplier, RcSupplier, Supplier};
 ///
-/// // For single type parameter with Rc
-/// impl_supplier_clone!(RcSupplier<T>);
+/// let arc = ArcSupplier::new(|| 1);
+/// let arc_clone = arc.clone();
+/// assert_eq!(arc_clone.get(), 1);
 ///
-/// // For stateful supplier with Arc
-/// impl_supplier_clone!(ArcStatefulSupplier<T>);
+/// let rc = RcSupplier::new(|| "ok".to_string());
+/// let rc_clone = rc.clone();
+/// assert_eq!(rc_clone.get(), "ok".to_string());
 ///
-/// // For stateful supplier with Rc
-/// impl_supplier_clone!(RcStatefulSupplier<T>);
+/// let stateful_arc = ArcStatefulSupplier::new(|| 1);
+/// let _stateful_arc_clone = stateful_arc.clone();
+///
+/// let stateful_rc = RcStatefulSupplier::new(|| 1);
+/// let _stateful_rc_clone = stateful_rc.clone();
 /// ```
 ///
 /// # Author

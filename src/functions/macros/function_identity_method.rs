@@ -21,58 +21,29 @@
 //!
 //! # Usage
 //!
-//! ```ignore
+//! ```text
 //! impl_function_identity!(BoxFunction<T>);
 //! impl_function_identity!(RcFunction<T>);
 //! impl_function_identity!(ArcFunction<T>);
 //! impl_function_identity!(BoxBiFunction<T, U>);
+//! impl_function_identity!(ArcBiFunction<T, U>);
 //! ```
 //!
 //! # Generated Implementation
 //!
 //! For single-parameter functions, the macro generates:
 //!
-//! ```ignore
-//! impl<T> $struct_name<T, T>
-//! where
-//!     T: Clone,
-//! {
-//!     /// Creates an identity function
-//!     ///
-//!     /// # Examples
-//!     ///
-//!     /// ```rust,ignore
-//!     /// use qubit_function::{$struct_name, Function};
-//!     ///
-//!     /// let identity = $struct_name::<i32, i32>::identity();
-//!     /// assert_eq!(identity.apply(&42), 42);
-//!     /// ```
-//!     pub fn identity() -> $struct_name<T, T> {
-//!         $struct_name::new(|x: &T| x.clone())
-//!     }
+//! ```text
+//! impl<T> BoxFunction<T, T> where T: Clone {
+//!     pub fn identity() -> BoxFunction<T, T>;
 //! }
 //! ```
 //!
 //! For two-parameter functions, the macro generates:
 //!
-//! ```ignore
-//! impl<T, U> $struct_name<T, U, T>
-//! where
-//!     T: Clone,
-//! {
-//!     /// Creates an identity function
-//!     ///
-//!     /// # Examples
-//!     ///
-//!     /// ```rust,ignore
-//!     /// use qubit_function::{$struct_name, BiFunction};
-//!     ///
-//!     /// let identity = $struct_name::<i32, String, i32>::identity();
-//!     /// assert_eq!(identity.apply(&42, &"test".to_string()), 42);
-//!     /// ```
-//!     pub fn identity() -> $struct_name<T, U, T> {
-//!         $struct_name::new(|x: &T, _: &U| x.clone())
-//!     }
+//! ```text
+//! impl<T, U> ArcBiFunction<T, U, T> where T: Clone {
+//!     pub fn identity() -> ArcBiFunction<T, U, T>;
 //! }
 //! ```
 //!
@@ -93,7 +64,7 @@
 ///
 /// # Usage
 ///
-/// ```rust,ignore
+/// ```text
 /// impl_function_identity_method!(BoxFunction<T, T>);
 /// impl_function_identity_method!(RcFunction<T, T>);
 /// impl_function_identity_method!(ArcFunction<T, T>);
@@ -112,7 +83,7 @@ macro_rules! impl_function_identity_method {
             /// Creates an identity function
             ///
             /// # Examples
-            #[doc = concat!("/// ```rust,ignore\n/// use qubit_function::", stringify!($struct_name), ";\n///\n/// let identity = ", stringify!($struct_name), "::<i32, i32>::identity();\n/// assert_eq!(identity.apply(&42), 42);\n/// ```")]
+            #[doc = concat!("/// ```rust\n/// use qubit_function::", stringify!($struct_name), ";\n///\n/// let identity = ", stringify!($struct_name), "::<i32, i32>::identity();\n/// assert_eq!(identity.apply(&42), 42);\n/// ```")]
             #[inline]
             pub fn identity() -> $struct_name<$t, $t>
             where
@@ -130,7 +101,7 @@ macro_rules! impl_function_identity_method {
             /// Creates an identity function
             ///
             /// # Examples
-            #[doc = concat!("/// ```rust,ignore\n/// use qubit_function::", stringify!($struct_name), ";\n///\n/// let mut identity = ", stringify!($struct_name), "::<i32, i32>::identity();\n/// let mut value = 42;\n/// assert_eq!(identity.apply(&mut value), 42);\n/// ```")]
+            #[doc = concat!("/// ```rust\n/// use qubit_function::", stringify!($struct_name), ";\n///\n/// let mut identity = ", stringify!($struct_name), "::<i32, i32>::identity();\n/// let mut value = 42;\n/// assert_eq!(identity.apply(&mut value), 42);\n/// ```")]
             #[inline]
             pub fn identity() -> $struct_name<$t, $t>
             where

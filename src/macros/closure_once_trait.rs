@@ -48,44 +48,39 @@
 ///
 /// # Generated implementation
 ///
-/// ```ignore
-/// impl<F, Generics...> TraitName<Generics...> for F
+/// ```text
+/// impl<F> ConsumerOnce<i32> for F
 /// where
-///     F: FnOnce(...),
+///     F: FnOnce(&i32),
 /// {
-///     fn method_name(self, ...) {
-///         self(...)
-///     }
-///     fn into_box(self) -> BoxType<...> { ... }
-///     fn into_fn(self) -> impl FnOnce(...) { ... }
+///     fn accept(self, value: &i32);
+///     fn into_box(self) -> BoxConsumerOnce<i32>;
+///     fn into_fn(self) -> impl FnOnce(&i32);
 /// }
 /// ```
 ///
 /// # Examples
 ///
-/// ```ignore
-/// // ConsumerOnce<T>
+/// ```text
 /// impl_closure_once_trait!(
-///     ConsumerOnce<T>,
+///     ConsumerOnce<i32>,
 ///     accept,
 ///     BoxConsumerOnce,
-///     FnOnce(value: &T)
+///     FnOnce(value: &i32)
 /// );
 ///
-/// // BiConsumerOnce<T, U>
 /// impl_closure_once_trait!(
-///     BiConsumerOnce<T, U>,
-///     accept,
-///     BoxBiConsumerOnce,
-///     FnOnce(first: &T, second: &U)
-/// );
-///
-/// // FunctionOnce<T, R>
-/// impl_closure_once_trait!(
-///     FunctionOnce<T, R>,
+///     FunctionOnce<i32, i32>,
 ///     apply,
 ///     BoxFunctionOnce,
-///     FnOnce(input: &T) -> R
+///     FnOnce(input: &i32) -> i32
+/// );
+///
+/// impl_closure_once_trait!(
+///     BiFunctionOnce<i32, i32, i32>,
+///     apply,
+///     BoxBiFunctionOnce,
+///     FnOnce(first: &i32, second: &i32) -> i32
 /// );
 /// ```
 ///
