@@ -18,12 +18,12 @@ mod tests {
         Tester,
     };
     use std::sync::{
+        Arc,
         atomic::{
             AtomicBool,
             AtomicUsize,
             Ordering,
         },
-        Arc,
     };
 
     // ========================================================================

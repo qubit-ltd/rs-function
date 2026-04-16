@@ -8,19 +8,19 @@
  ******************************************************************************/
 
 use qubit_function::{
-    ArcStatefulBinaryOperator,
     ArcStatefulBiTransformer,
-    BoxStatefulBinaryOperator,
+    ArcStatefulBinaryOperator,
     ArcStatefulTransformer,
     BoxBiPredicate,
     BoxStatefulBiTransformer,
+    BoxStatefulBinaryOperator,
     BoxStatefulTransformer,
     FnStatefulBiTransformerOps,
-    RcStatefulBinaryOperator,
     RcStatefulBiTransformer,
+    RcStatefulBinaryOperator,
     RcStatefulTransformer,
-    StatefulBinaryOperator,
     StatefulBiTransformer,
+    StatefulBinaryOperator,
 };
 use std::cell::Cell;
 
@@ -103,7 +103,9 @@ fn test_stateful_binary_operator_trait_bound() {
     where
         O: StatefulBinaryOperator<T>,
     {
-        values.into_iter().fold(initial, |acc, value| op.apply(acc, value))
+        values
+            .into_iter()
+            .fold(initial, |acc, value| op.apply(acc, value))
     }
 
     let sum = BoxStatefulBiTransformer::new(|a: i32, b: i32| a + b);
@@ -112,12 +114,10 @@ fn test_stateful_binary_operator_trait_bound() {
 
 #[test]
 fn test_stateful_binary_operator_aliases() {
-    let mut box_add: BoxStatefulBinaryOperator<i32> =
-        BoxStatefulBinaryOperator::new(|a, b| a + b);
+    let mut box_add: BoxStatefulBinaryOperator<i32> = BoxStatefulBinaryOperator::new(|a, b| a + b);
     assert_eq!(box_add.apply(20, 22), 42);
 
-    let mut arc_mul: ArcStatefulBinaryOperator<i32> =
-        ArcStatefulBinaryOperator::new(|a, b| a * b);
+    let mut arc_mul: ArcStatefulBinaryOperator<i32> = ArcStatefulBinaryOperator::new(|a, b| a * b);
     assert_eq!(arc_mul.apply(6, 7), 42);
 
     let mut rc_max: RcStatefulBinaryOperator<i32> =
@@ -1183,7 +1183,10 @@ mod conditional_stateful_bi_transformer_display_debug_tests {
         });
         let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
         let display_str = format!("{}", conditional);
-        assert_eq!(display_str, "BoxConditionalStatefulBiTransformer(BoxStatefulBiTransformer, BoxBiPredicate(unnamed))");
+        assert_eq!(
+            display_str,
+            "BoxConditionalStatefulBiTransformer(BoxStatefulBiTransformer, BoxBiPredicate(unnamed))"
+        );
     }
 
     #[test]
@@ -1258,7 +1261,10 @@ mod conditional_stateful_bi_transformer_display_debug_tests {
         });
         let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
         let display_str = format!("{}", conditional);
-        assert_eq!(display_str, "ArcConditionalStatefulBiTransformer(ArcStatefulBiTransformer, ArcBiPredicate(unnamed))");
+        assert_eq!(
+            display_str,
+            "ArcConditionalStatefulBiTransformer(ArcStatefulBiTransformer, ArcBiPredicate(unnamed))"
+        );
     }
 
     #[test]

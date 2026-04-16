@@ -148,7 +148,7 @@ mod trait_tests {
         let multiply = move |x: i32, y: i32| op.call(x, y);
         let f = multiply.to_fn();
         assert_eq!(f(3, 5), 16); // (3 + 5) * 2
-                                 // Original closure still usable
+        // Original closure still usable
         assert_eq!(multiply(10, 5), 30); // (10 + 5) * 2
     }
 
@@ -197,7 +197,7 @@ mod trait_tests {
         let add_with_base = move |x: i32, y: i32| calc.calculate(x, y);
         let f = add_with_base.to_fn();
         assert_eq!(f(20, 22), 142); // 20 + 22 + 100
-                                    // Original closure still usable
+        // Original closure still usable
         assert_eq!(add_with_base(10, 5), 115); // 10 + 5 + 100
     }
 }
@@ -228,7 +228,7 @@ mod trait_default_impl_tests {
         let transformer = CustomAddTransformer { offset: 10 };
         let boxed = transformer.to_box();
         assert_eq!(boxed.apply(20, 22), 52); // 20 + 22 + 10
-                                             // Original transformer still usable
+        // Original transformer still usable
         assert_eq!(transformer.apply(5, 3), 18); // 5 + 3 + 10
     }
 
@@ -238,7 +238,7 @@ mod trait_default_impl_tests {
         let transformer = CustomAddTransformer { offset: 100 };
         let f = transformer.to_fn();
         assert_eq!(f(20, 22), 142); // 20 + 22 + 100
-                                    // Original transformer still usable
+        // Original transformer still usable
         assert_eq!(transformer.apply(10, 5), 115); // 10 + 5 + 100
     }
 
@@ -301,7 +301,7 @@ mod trait_default_impl_tests {
         let boxed = transformer.to_box();
         let result = boxed.apply(3.0, 5.0);
         assert!((result - 20.0).abs() < 1e-10); // (3.0 + 5.0) * 2.5 = 20.0
-                                                // Original transformer still usable
+        // Original transformer still usable
         let result2 = transformer.apply(2.0, 4.0);
         assert!((result2 - 15.0).abs() < 1e-10); // (2.0 + 4.0) * 2.5 = 15.0
     }
@@ -313,7 +313,7 @@ mod trait_default_impl_tests {
         let f = transformer.to_fn();
         let result = f(4.0, 6.0);
         assert!((result - 30.0).abs() < 1e-10); // (4.0 + 6.0) * 3.0 = 30.0
-                                                // Original transformer still usable
+        // Original transformer still usable
         let result2 = transformer.apply(1.0, 2.0);
         assert!((result2 - 9.0).abs() < 1e-10); // (1.0 + 2.0) * 3.0 = 9.0
     }

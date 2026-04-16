@@ -1121,11 +1121,11 @@ mod test_mutating_function_trait_default_methods {
     use super::*;
     use qubit_function::MutatingFunctionOnce;
     use std::sync::{
+        Arc,
         atomic::{
             AtomicUsize,
             Ordering,
         },
-        Arc,
     };
 
     #[test]

@@ -856,7 +856,7 @@ mod complex_composition_tests {
         let square = RcTransformer::new(|x: i32| x * x);
         let composed = add_one.and_then(double.clone()).and_then(square.clone());
         assert_eq!(composed.apply(5), 144); // (5 + 1) * 2 = 12, then 12 * 12 = 144
-                                            // Original transformers still usable
+        // Original transformers still usable
         assert_eq!(add_one.apply(5), 6);
         assert_eq!(double.apply(5), 10);
         assert_eq!(square.apply(5), 25);
@@ -2676,11 +2676,11 @@ mod transformer_once_tests {
 mod test_transformer_trait_default_methods {
     use qubit_function::TransformerOnce;
     use std::sync::{
+        Arc,
         atomic::{
             AtomicUsize,
             Ordering,
         },
-        Arc,
     };
 
     #[test]

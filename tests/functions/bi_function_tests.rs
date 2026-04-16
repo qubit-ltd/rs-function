@@ -897,7 +897,9 @@ fn test_impl_conditional_function_clone_three_params_macro_coverage() {
 
         let conditional_rc = add.when(pred);
 
-        println!("Calling clone() on RcConditionalBiFunction - this should trigger macro-generated three-param code");
+        println!(
+            "Calling clone() on RcConditionalBiFunction - this should trigger macro-generated three-param code"
+        );
         let cloned_rc = conditional_rc.clone();
         println!("Clone completed for RcConditionalBiFunction");
 
@@ -919,7 +921,9 @@ fn test_impl_conditional_function_clone_three_params_macro_coverage() {
 
         let conditional_arc = subtract.when(pred);
 
-        println!("Calling clone() on ArcConditionalBiFunction - this should trigger macro-generated three-param code");
+        println!(
+            "Calling clone() on ArcConditionalBiFunction - this should trigger macro-generated three-param code"
+        );
         let cloned_arc = conditional_arc.clone();
         println!("Clone completed for ArcConditionalBiFunction");
 

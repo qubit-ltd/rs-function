@@ -1902,11 +1902,11 @@ mod test_stateful_transformer_trait_default_methods {
     use super::*;
     use qubit_function::TransformerOnce;
     use std::sync::{
+        Arc,
         atomic::{
             AtomicUsize,
             Ordering,
         },
-        Arc,
     };
 
     #[test]

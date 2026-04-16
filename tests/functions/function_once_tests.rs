@@ -403,11 +403,7 @@ fn test_function_once_with_complex_closure() {
     let multiplier = 2;
     let func = BoxFunctionOnce::new(
         move |x: &i32| {
-            if *x > threshold {
-                x * multiplier
-            } else {
-                *x
-            }
+            if *x > threshold { x * multiplier } else { *x }
         },
     );
     assert_eq!(func.apply(&15), 30);
@@ -420,11 +416,7 @@ fn test_function_once_with_complex_closure_below_threshold() {
     let multiplier = 2;
     let func = BoxFunctionOnce::new(
         move |x: &i32| {
-            if *x > threshold {
-                x * multiplier
-            } else {
-                *x
-            }
+            if *x > threshold { x * multiplier } else { *x }
         },
     );
     assert_eq!(func.apply(&5), 5);

@@ -866,7 +866,9 @@ fn test_impl_conditional_function_clone_three_params_bi_mutating_macro_coverage(
 
         let conditional_rc = swap.when(pred);
 
-        println!("Calling clone() on RcConditionalBiMutatingFunction - this should trigger macro-generated three-param code");
+        println!(
+            "Calling clone() on RcConditionalBiMutatingFunction - this should trigger macro-generated three-param code"
+        );
         let cloned_rc = conditional_rc.clone();
         println!("Clone completed for RcConditionalBiMutatingFunction");
 
@@ -890,7 +892,9 @@ fn test_impl_conditional_function_clone_three_params_bi_mutating_macro_coverage(
 
     // Test ArcConditionalBiMutatingFunction (three parameters: T, U, R)
     {
-        println!("Testing ArcConditionalBiMutatingFunction with macro-generated Clone (three parameters)");
+        println!(
+            "Testing ArcConditionalBiMutatingFunction with macro-generated Clone (three parameters)"
+        );
         let increment = ArcBiMutatingFunction::new(|x: &mut i32, y: &mut i32| {
             *x += *y;
             *x
@@ -899,7 +903,9 @@ fn test_impl_conditional_function_clone_three_params_bi_mutating_macro_coverage(
 
         let conditional_arc = increment.when(pred);
 
-        println!("Calling clone() on ArcConditionalBiMutatingFunction - this should trigger macro-generated three-param code");
+        println!(
+            "Calling clone() on ArcConditionalBiMutatingFunction - this should trigger macro-generated three-param code"
+        );
         let cloned_arc = conditional_arc.clone();
         println!("Clone completed for ArcConditionalBiMutatingFunction");
 

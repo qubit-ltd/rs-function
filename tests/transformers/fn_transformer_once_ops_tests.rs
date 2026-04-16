@@ -201,11 +201,7 @@ mod tests {
     fn test_parse_and_validate() {
         let parse = |s: String| s.parse::<i32>().unwrap_or(0);
         let validate = |x: i32| {
-            if x > 0 {
-                x
-            } else {
-                1
-            }
+            if x > 0 { x } else { 1 }
         };
 
         let composed = FnTransformerOnceOps::and_then(parse, validate);
@@ -216,11 +212,7 @@ mod tests {
     fn test_parse_and_validate_negative() {
         let parse = |s: String| s.parse::<i32>().unwrap_or(0);
         let validate = |x: i32| {
-            if x > 0 {
-                x
-            } else {
-                1
-            }
+            if x > 0 { x } else { 1 }
         };
 
         let composed = FnTransformerOnceOps::and_then(parse, validate);

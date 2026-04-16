@@ -42,7 +42,9 @@ fn test_three_param_conditional_clone_macro_coverage() {
 
         let conditional = add.when(pred);
 
-        println!("Calling clone() on RcConditionalBiFunction - this should trigger macro-generated three-param code");
+        println!(
+            "Calling clone() on RcConditionalBiFunction - this should trigger macro-generated three-param code"
+        );
         let cloned = conditional.clone();
         println!("Clone completed for RcConditionalBiFunction");
 

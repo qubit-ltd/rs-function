@@ -881,11 +881,11 @@ mod display_debug_tests {
 #[cfg(test)]
 mod custom_struct_tests {
     use super::*;
+    use std::sync::Arc;
     use std::sync::atomic::{
         AtomicUsize,
         Ordering,
     };
-    use std::sync::Arc;
 
     pub struct MyConsumer {
         counter: Arc<AtomicUsize>,

@@ -1415,7 +1415,9 @@ fn test_arc_conditional_stateful_mutating_function_debug_display() {
 
     let named_display_str = format!("{}", named_conditional);
     assert!(named_display_str.starts_with("ArcConditionalStatefulMutatingFunction("));
-    assert!(named_display_str.contains("ArcStatefulMutatingFunction(arc_stateful_mutating_double)"));
+    assert!(
+        named_display_str.contains("ArcStatefulMutatingFunction(arc_stateful_mutating_double)")
+    );
     assert!(named_display_str.contains("ArcPredicate"));
     assert!(named_display_str.ends_with(")"));
 }
@@ -1429,11 +1431,11 @@ mod test_stateful_mutating_function_trait_default_methods {
     use super::*;
     use qubit_function::MutatingFunctionOnce;
     use std::sync::{
+        Arc,
         atomic::{
             AtomicUsize,
             Ordering,
         },
-        Arc,
     };
 
     #[test]

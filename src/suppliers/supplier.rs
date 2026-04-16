@@ -122,6 +122,7 @@
 use std::rc::Rc;
 use std::sync::Arc;
 
+use crate::BoxSupplierOnce;
 use crate::macros::{
     impl_arc_conversions,
     impl_box_conversions,
@@ -137,7 +138,6 @@ use crate::suppliers::macros::{
     impl_supplier_debug_display,
 };
 use crate::transformers::transformer::Transformer;
-use crate::BoxSupplierOnce;
 
 // ======================================================================
 // Supplier Trait
