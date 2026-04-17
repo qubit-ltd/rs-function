@@ -889,15 +889,15 @@ pub trait FnMutatorOps<T>: Fn(&mut T) + Sized {
     /// # Examples
     ///
     /// ```rust
-/// use qubit_function::{Mutator, FnMutatorOps};
+    /// use qubit_function::{Mutator, FnMutatorOps};
     ///
     /// let chained = (|x: &mut i32| *x *= 2)
     ///     .and_then(|x: &mut i32| *x += 10);
     ///
     /// let mut value = 5;
-/// chained.apply(&mut value);
-/// assert_eq!(value, 20);
-/// ```
+    /// chained.apply(&mut value);
+    /// assert_eq!(value, 20);
+    /// ```
     fn and_then<C>(self, next: C) -> BoxMutator<T>
     where
         Self: 'static,

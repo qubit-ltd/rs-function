@@ -104,14 +104,14 @@
 /// ```rust
 /// // Single-parameter with Arc
 /// use qubit_function::{ArcConsumer, RcConsumer};
-/// 
+///
 /// let _arc_conditional = ArcConsumer::new(|x: &i32| {
 ///     let _ = x;
 /// }).when(|x: &i32| *x > 0);
 /// let _rc_conditional = RcConsumer::new(|x: &i32| {
 ///     let _ = x;
 /// }).when(|x: &i32| *x > 0);
-/// 
+///
 /// // Two-parameter with Rc
 /// use qubit_function::{RcBiConsumer};
 /// let _rc_bi_conditional = RcBiConsumer::new(|x: &i32, y: &i32| {

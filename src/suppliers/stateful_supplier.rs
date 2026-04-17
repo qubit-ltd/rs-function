@@ -235,11 +235,11 @@ pub trait StatefulSupplier<T> {
     ///
     /// # Examples
     ///
-/// ```rust
-/// use qubit_function::{StatefulSupplier, SupplierOnce};
-///
-/// let closure = || 42;
-/// let mut boxed = StatefulSupplier::into_box(closure);
+    /// ```rust
+    /// use qubit_function::{StatefulSupplier, SupplierOnce};
+    ///
+    /// let closure = || 42;
+    /// let mut boxed = StatefulSupplier::into_box(closure);
     /// assert_eq!(boxed.get(), 42);
     /// ```
     fn into_box(mut self) -> BoxStatefulSupplier<T>
@@ -261,8 +261,8 @@ pub trait StatefulSupplier<T> {
     ///
     /// # Examples
     ///
-/// ```rust
-/// use qubit_function::{StatefulSupplier, SupplierOnce};
+    /// ```rust
+    /// use qubit_function::{StatefulSupplier, SupplierOnce};
     ///
     /// let closure = || 42;
     /// let mut rc = closure.into_rc();
@@ -510,7 +510,7 @@ impl<T> BoxStatefulSupplier<T> {
     /// # Examples
     ///
     /// ```rust
-/// use qubit_function::{BoxStatefulSupplier, StatefulSupplier};
+    /// use qubit_function::{BoxStatefulSupplier, StatefulSupplier};
     ///
     /// let mut call_count = 0;
     /// let mut memoized = BoxStatefulSupplier::new(move || {
@@ -650,7 +650,7 @@ impl<T> RcStatefulSupplier<T> {
     /// # Examples
     ///
     /// ```rust
-/// use qubit_function::{RcStatefulSupplier, StatefulSupplier};
+    /// use qubit_function::{RcStatefulSupplier, StatefulSupplier};
     /// use std::rc::Rc;
     /// use std::cell::RefCell;
     ///
@@ -1043,7 +1043,7 @@ pub trait FnStatefulSupplierOps<T>: FnMut() -> T + Sized {
     /// let mut filtered = (move || {
     ///     counter += 1;
     ///     counter
-/// }).filter(|x: &i32| x % 2 == 0);
+    /// }).filter(|x: &i32| x % 2 == 0);
     ///
     /// assert_eq!(filtered.get(), None);     // 1 is odd
     /// assert_eq!(filtered.get(), Some(2));  // 2 is even

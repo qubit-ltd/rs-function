@@ -101,32 +101,32 @@
 /// use std::sync::atomic::{AtomicI32, Ordering};
 /// use std::sync::Arc;
 /// use qubit_function::{Consumer, ArcConsumer};
-/// 
+///
 /// let result = Arc::new(AtomicI32::new(0));
 /// let result1 = std::sync::Arc::clone(&result);
 /// let consumer1 = ArcConsumer::new(move |x: &i32| {
 ///     result1.fetch_add(*x, Ordering::SeqCst);
 /// });
-/// 
+///
 /// let consumer2 = consumer1.when(|x: &i32| *x > 0);
 /// let result2 = std::sync::Arc::clone(&result);
 /// let chained = consumer2.and_then(ArcConsumer::new(move |x: &i32| {
 ///     result2.fetch_add(*x * 2, Ordering::SeqCst);
 /// }));
-/// 
+///
 /// chained.accept(&5);
 /// assert_eq!(result.load(Ordering::SeqCst), 15);
 /// chained.accept(&-5);
 /// assert_eq!(result.load(Ordering::SeqCst), 5);
-/// 
+///
 /// // Rc single-parameter Consumer
 /// use qubit_function::{RcConsumer};
-/// 
+///
 /// let base = RcConsumer::new(|x: &i32| {
 ///     let _ = x;
 /// });
 /// let _ = base.when(|x: &i32| *x > 0);
-/// 
+///
 /// // Arc two-parameter BiConsumer
 /// use qubit_function::{BiConsumer, ArcBiConsumer};
 /// let bi_base = ArcBiConsumer::new(|x: &i32, y: &i32| {
@@ -136,7 +136,7 @@
 /// let _ = bi_conditional.and_then(ArcBiConsumer::new(|x: &i32, y: &i32| {
 ///     let _ = (*x, *y);
 /// }));
-/// 
+///
 /// // Rc two-parameter BiConsumer
 /// use qubit_function::RcBiConsumer;
 /// let bi_base_rc = RcBiConsumer::new(|x: &i32, y: &i32| {
@@ -190,20 +190,20 @@ macro_rules! impl_shared_conditional_consumer {
             /// ```rust
             /// use std::sync::atomic::{AtomicI32, Ordering};
             /// use qubit_function::{Consumer, ArcConsumer};
-            /// 
+            ///
 /// let result = std::sync::Arc::new(AtomicI32::new(0));
 /// let result1 = std::sync::Arc::clone(&result);
 /// let consumer = ArcConsumer::new(move |x: &i32| {
 ///     result1.fetch_add(*x, Ordering::SeqCst);
 /// });
-            /// 
+            ///
 /// let consumer2 = consumer.when(|x: &i32| *x > 0);
-            /// 
+            ///
 /// let result2 = std::sync::Arc::clone(&result);
 /// let chained = consumer2.and_then(ArcConsumer::new(move |x: &i32| {
 ///     result2.fetch_add(2 * (*x), Ordering::SeqCst);
 /// }));
-            /// 
+            ///
             /// chained.accept(&5);  // result = 5 + (2*5) = 15
             /// result.store(0, Ordering::SeqCst);  // reset
             /// chained.accept(&-5); // result = 0 + (2*-5) = -10 (not -15!)
@@ -298,19 +298,19 @@ macro_rules! impl_shared_conditional_consumer {
 /// use std::sync::atomic::{AtomicI32, Ordering};
 /// use std::sync::Arc;
 /// use qubit_function::{BiConsumer, ArcBiConsumer};
-/// 
+///
 /// let result = Arc::new(AtomicI32::new(0));
 /// let result1 = std::sync::Arc::clone(&result);
 /// let consumer = ArcBiConsumer::new(move |x: &i32, y: &i32| {
 ///     result1.fetch_add(*x + *y, Ordering::SeqCst);
 /// });
-            /// 
+            ///
 /// let consumer2 = consumer.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
 /// let result2 = std::sync::Arc::clone(&result);
 /// let chained = consumer2.and_then(ArcBiConsumer::new(move |x: &i32, y: &i32| {
 ///     result2.fetch_add(2 * (*x + *y), Ordering::SeqCst);
 /// }));
-            /// 
+            ///
             /// chained.accept(&5, &3);  // result = (5+3) + 2*(5+3) = 24
             /// result.store(0, Ordering::SeqCst);  // reset
             /// chained.accept(&-5, &3); // result = 0 + 2*(-5+3) = -4 (not -8!)

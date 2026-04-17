@@ -113,17 +113,17 @@ pub trait StatefulFunction<T, R> {
     ///     multiplier: i32,
     /// }
     ///
-/// impl StatefulFunction<i32, i32> for CustomStatefulFunction {
-///     fn apply(&mut self, input: &i32) -> i32 {
-///         self.multiplier += 1;
-///         input * self.multiplier
-///     }
-/// }
+    /// impl StatefulFunction<i32, i32> for CustomStatefulFunction {
+    ///     fn apply(&mut self, input: &i32) -> i32 {
+    ///         self.multiplier += 1;
+    ///         input * self.multiplier
+    ///     }
+    /// }
     ///
     /// let function = CustomStatefulFunction { multiplier: 0 };
     /// let mut boxed = function.into_box();
-/// assert_eq!(boxed.apply(&10), 10);  // 10 * 1
-/// assert_eq!(boxed.apply(&10), 20);  // 10 * 2
+    /// assert_eq!(boxed.apply(&10), 10);  // 10 * 1
+    /// assert_eq!(boxed.apply(&10), 20);  // 10 * 2
     /// ```
     fn into_box(mut self) -> BoxStatefulFunction<T, R>
     where
@@ -156,17 +156,17 @@ pub trait StatefulFunction<T, R> {
     ///     multiplier: i32,
     /// }
     ///
-/// impl StatefulFunction<i32, i32> for CustomStatefulFunction {
-///     fn apply(&mut self, input: &i32) -> i32 {
-///         self.multiplier += 1;
-///         input * self.multiplier
-///     }
-/// }
+    /// impl StatefulFunction<i32, i32> for CustomStatefulFunction {
+    ///     fn apply(&mut self, input: &i32) -> i32 {
+    ///         self.multiplier += 1;
+    ///         input * self.multiplier
+    ///     }
+    /// }
     ///
     /// let function = CustomStatefulFunction { multiplier: 0 };
     /// let mut rc_function = function.into_rc();
-/// assert_eq!(rc_function.apply(&10), 10);  // 10 * 1
-/// assert_eq!(rc_function.apply(&10), 20);  // 10 * 2
+    /// assert_eq!(rc_function.apply(&10), 10);  // 10 * 1
+    /// assert_eq!(rc_function.apply(&10), 20);  // 10 * 2
     /// ```
     fn into_rc(mut self) -> RcStatefulFunction<T, R>
     where
@@ -199,17 +199,17 @@ pub trait StatefulFunction<T, R> {
     ///     multiplier: i32,
     /// }
     ///
-/// impl StatefulFunction<i32, i32> for CustomStatefulFunction {
-///     fn apply(&mut self, input: &i32) -> i32 {
-///         self.multiplier += 1;
-///         input * self.multiplier
-///     }
-/// }
+    /// impl StatefulFunction<i32, i32> for CustomStatefulFunction {
+    ///     fn apply(&mut self, input: &i32) -> i32 {
+    ///         self.multiplier += 1;
+    ///         input * self.multiplier
+    ///     }
+    /// }
     ///
     /// let function = CustomStatefulFunction { multiplier: 0 };
     /// let mut arc_function = function.into_arc();
-/// assert_eq!(arc_function.apply(&10), 10);  // 10 * 1
-/// assert_eq!(arc_function.apply(&10), 20);  // 10 * 2
+    /// assert_eq!(arc_function.apply(&10), 10);  // 10 * 1
+    /// assert_eq!(arc_function.apply(&10), 20);  // 10 * 2
     /// ```
     fn into_arc(mut self) -> ArcStatefulFunction<T, R>
     where
@@ -237,10 +237,10 @@ pub trait StatefulFunction<T, R> {
     /// ```rust
     /// use qubit_function::{StatefulFunction, BoxStatefulFunction};
     ///
-/// let function = BoxStatefulFunction::new(|x: &i32| x * 2);
-/// let mut closure = function.into_fn();
-/// assert_eq!(closure(&10), 20);
-/// assert_eq!(closure(&15), 30);
+    /// let function = BoxStatefulFunction::new(|x: &i32| x * 2);
+    /// let mut closure = function.into_fn();
+    /// assert_eq!(closure(&10), 20);
+    /// assert_eq!(closure(&15), 30);
     /// ```
     fn into_fn(mut self) -> impl FnMut(&T) -> R
     where
@@ -276,15 +276,15 @@ pub trait StatefulFunction<T, R> {
     /// # Examples
     ///
     /// ```rust
-/// use qubit_function::{FunctionOnce, StatefulFunction,
-///                       RcStatefulFunction};
-///
-/// fn takes_once<F: FunctionOnce<i32, i32>>(func: F, value: &i32) {
-///     let result = func.apply(value);
-///     println!("Result: {}", result);
-/// }
+    /// use qubit_function::{FunctionOnce, StatefulFunction,
+    ///                       RcStatefulFunction};
     ///
-/// let func = RcStatefulFunction::new(|x: &i32| x * 2);
+    /// fn takes_once<F: FunctionOnce<i32, i32>>(func: F, value: &i32) {
+    ///     let result = func.apply(value);
+    ///     println!("Result: {}", result);
+    /// }
+    ///
+    /// let func = RcStatefulFunction::new(|x: &i32| x * 2);
     /// takes_once(func.into_once(), &5);
     /// ```
     fn into_once(mut self) -> BoxFunctionOnce<T, R>
@@ -364,15 +364,15 @@ pub trait StatefulFunction<T, R> {
     /// # Examples
     ///
     /// ```rust
-/// use qubit_function::{FunctionOnce, StatefulFunction,
-///                       RcStatefulFunction};
-///
-/// fn takes_once<F: FunctionOnce<i32, i32>>(func: F, value: &i32) {
-///     let result = func.apply(value);
-///     println!("Result: {}", result);
-/// }
+    /// use qubit_function::{FunctionOnce, StatefulFunction,
+    ///                       RcStatefulFunction};
     ///
-/// let func = RcStatefulFunction::new(|x: &i32| x * 2);
+    /// fn takes_once<F: FunctionOnce<i32, i32>>(func: F, value: &i32) {
+    ///     let result = func.apply(value);
+    ///     println!("Result: {}", result);
+    /// }
+    ///
+    /// let func = RcStatefulFunction::new(|x: &i32| x * 2);
     /// takes_once(func.to_once(), &5);
     /// ```
     fn to_once(&self) -> BoxFunctionOnce<T, R>

@@ -560,17 +560,17 @@ pub trait FnBiMutatingFunctionOps<T, U, R>: Fn(&mut T, &mut U) -> R + Sized {
     ///
     /// ## Direct value passing (ownership transfer)
     ///
-/// ```rust
-/// use qubit_function::{BiMutatingFunction, FnBiMutatingFunctionOps,
-///     BoxFunction, Function};
+    /// ```rust
+    /// use qubit_function::{BiMutatingFunction, FnBiMutatingFunctionOps,
+    ///     BoxFunction, Function};
     ///
-/// let swap = |x: &mut i32, y: &mut i32| {
+    /// let swap = |x: &mut i32, y: &mut i32| {
     ///     let temp = *x;
     ///     *x = *y;
     ///     *y = temp;
     ///     *x + *y
     /// };
-/// let to_string = BoxFunction::new(|x: &i32| x.to_string());
+    /// let to_string = BoxFunction::new(|x: &i32| x.to_string());
     ///
     /// // to_string is moved here
     /// let composed = swap.and_then(to_string);
@@ -582,17 +582,17 @@ pub trait FnBiMutatingFunctionOps<T, U, R>: Fn(&mut T, &mut U) -> R + Sized {
     ///
     /// ## Preserving original with clone
     ///
-/// ```rust
-/// use qubit_function::{BiMutatingFunction, FnBiMutatingFunctionOps,
-///     Function, RcFunction};
+    /// ```rust
+    /// use qubit_function::{BiMutatingFunction, FnBiMutatingFunctionOps,
+    ///     Function, RcFunction};
     ///
-/// let swap = |x: &mut i32, y: &mut i32| {
+    /// let swap = |x: &mut i32, y: &mut i32| {
     ///     let temp = *x;
     ///     *x = *y;
     ///     *y = temp;
     ///     *x + *y
     /// };
-/// let to_string = RcFunction::new(|x: &i32| x.to_string());
+    /// let to_string = RcFunction::new(|x: &i32| x.to_string());
     ///
     /// // Clone to preserve original
     /// let composed = swap.and_then(to_string.clone());
@@ -655,7 +655,7 @@ pub trait FnBiMutatingFunctionOps<T, U, R>: Fn(&mut T, &mut U) -> R + Sized {
     ///     *x *= *y;
     ///     *x
     /// };
-/// let conditional = swap_and_sum.when(|x: &i32, y: &i32| *x > 0)
+    /// let conditional = swap_and_sum.when(|x: &i32, y: &i32| *x > 0)
     ///     .or_else(multiply);
     ///
     /// let mut a = 5;
@@ -675,7 +675,7 @@ pub trait FnBiMutatingFunctionOps<T, U, R>: Fn(&mut T, &mut U) -> R + Sized {
     ///     *y = temp;
     ///     *x + *y
     /// };
-/// let both_positive = RcBiPredicate::new(|x: &i32, y: &i32|
+    /// let both_positive = RcBiPredicate::new(|x: &i32, y: &i32|
     ///     *x > 0 && *y > 0);
     ///
     /// // Clone to preserve original bi-predicate
@@ -686,11 +686,11 @@ pub trait FnBiMutatingFunctionOps<T, U, R>: Fn(&mut T, &mut U) -> R + Sized {
     /// let mut b = 3;
     /// assert_eq!(conditional.apply(&mut a, &mut b), 8);
     ///
-/// // Original bi-predicate still usable
-/// use qubit_function::BiPredicate;
-/// let test_a = 5;
-/// let test_b = 3;
-/// assert!(both_positive.test(&test_a, &test_b));
+    /// // Original bi-predicate still usable
+    /// use qubit_function::BiPredicate;
+    /// let test_a = 5;
+    /// let test_b = 3;
+    /// assert!(both_positive.test(&test_a, &test_b));
     /// ```
     fn when<P>(self, predicate: P) -> BoxConditionalBiMutatingFunction<T, U, R>
     where

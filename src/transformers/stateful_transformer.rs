@@ -276,7 +276,7 @@ pub trait StatefulTransformer<T, R> {
     /// # Examples
     ///
     /// ```rust
-/// use qubit_function::{StatefulTransformer, TransformerOnce};
+    /// use qubit_function::{StatefulTransformer, TransformerOnce};
     ///
     /// let closure = |x: i32| x * 2;
     /// let once = closure.into_once();

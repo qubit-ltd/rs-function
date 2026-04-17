@@ -39,7 +39,7 @@
 /// //     BoxConsumerOnce,
 /// //     Fn(value: &i32)
 /// // );
-/// 
+///
 /// // Function trait
 /// // impl_closure_trait!(
 /// //     Function<i32, i32>,
@@ -47,14 +47,14 @@
 /// //     BoxFunctionOnce,
 /// //     Fn(input: i32) -> i32
 /// // );
-/// 
+///
 /// // Predicate trait (no once conversion)
 /// // impl_closure_trait!(
 /// //     Predicate<i32>,
 /// //     test,
 /// //     Fn(value: &i32) -> bool
 /// // );
-/// 
+///
 /// // StatefulConsumer trait
 /// // impl_closure_trait!(
 /// //     StatefulConsumer<i32>,

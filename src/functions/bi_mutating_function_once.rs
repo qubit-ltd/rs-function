@@ -354,7 +354,7 @@ pub trait FnBiMutatingFunctionOnceOps<T, U, R>: FnOnce(&mut T, &mut U) -> R + Si
     ///     *y = temp;
     ///     *x + *y
     /// };
-/// let to_string = BoxFunction::new(|x: &i32| x.to_string());
+    /// let to_string = BoxFunction::new(|x: &i32| x.to_string());
     ///
     /// // to_string is moved and consumed
     /// let composed = swap_and_sum.and_then(to_string);
@@ -415,7 +415,7 @@ pub trait FnBiMutatingFunctionOnceOps<T, U, R>: FnOnce(&mut T, &mut U) -> R + Si
     ///     *x *= *y;
     ///     *x
     /// };
-/// let conditional = swap_and_sum.when(|x: &i32, y: &i32| *x > 0)
+    /// let conditional = swap_and_sum.when(|x: &i32, y: &i32| *x > 0)
     ///     .or_else(multiply);
     ///
     /// let mut a = 5;
@@ -435,8 +435,8 @@ pub trait FnBiMutatingFunctionOnceOps<T, U, R>: FnOnce(&mut T, &mut U) -> R + Si
     ///     *y = temp;
     ///     *x + *y
     /// };
-/// let both_positive = RcBiPredicate::new(|x: &i32, y: &i32|
-///     *x > 0 && *y > 0);
+    /// let both_positive = RcBiPredicate::new(|x: &i32, y: &i32|
+    ///     *x > 0 && *y > 0);
     ///
     /// // Clone to preserve original bi-predicate
     /// let conditional = swap_and_sum.when(both_positive.clone())
@@ -446,11 +446,11 @@ pub trait FnBiMutatingFunctionOnceOps<T, U, R>: FnOnce(&mut T, &mut U) -> R + Si
     /// let mut b = 3;
     /// assert_eq!(conditional.apply(&mut a, &mut b), 8);
     ///
-/// // Original bi-predicate still usable
-/// use qubit_function::BiPredicate;
-/// let test_a = 5;
-/// let test_b = 3;
-/// assert!(both_positive.test(&test_a, &test_b));
+    /// // Original bi-predicate still usable
+    /// use qubit_function::BiPredicate;
+    /// let test_a = 5;
+    /// let test_b = 3;
+    /// assert!(both_positive.test(&test_a, &test_b));
     /// ```
     fn when<P>(self, predicate: P) -> BoxConditionalBiMutatingFunctionOnce<T, U, R>
     where

@@ -427,8 +427,8 @@ pub trait MutatingFunction<T, R> {
     /// # Examples
     ///
     /// ```rust
-/// use qubit_function::{MutatingFunctionOnce, MutatingFunction,
-///                       ArcMutatingFunction, BoxMutatingFunction};
+    /// use qubit_function::{MutatingFunctionOnce, MutatingFunction,
+    ///                       ArcMutatingFunction, BoxMutatingFunction};
     ///
     /// fn takes_once<F: MutatingFunctionOnce<i32, i32>>(func: F, value: &mut i32) {
     ///     let result = func.apply(value);
@@ -527,21 +527,21 @@ pub trait MutatingFunction<T, R> {
     ///
     /// Returns a `BoxMutatingFunctionOnce<T, R>`
     ///
-/// # Examples
-///
-/// ```rust
-/// use qubit_function::{MutatingFunctionOnce, MutatingFunction,
-///                       ArcMutatingFunction};
+    /// # Examples
+    ///
+    /// ```rust
+    /// use qubit_function::{MutatingFunctionOnce, MutatingFunction,
+    ///                       ArcMutatingFunction};
     ///
     /// fn takes_once<F: MutatingFunctionOnce<i32, i32>>(func: F, value: &mut i32) {
     ///     let result = func.apply(value);
     ///     println!("Result: {}", result);
     /// }
     ///
-/// let func = ArcMutatingFunction::new(|x: &mut i32| {
-///     *x *= 2;
-///     *x
-/// });
+    /// let func = ArcMutatingFunction::new(|x: &mut i32| {
+    ///     *x *= 2;
+    ///     *x
+    /// });
     /// let mut value = 5;
     /// takes_once(func.to_once(), &mut value);
     /// ```

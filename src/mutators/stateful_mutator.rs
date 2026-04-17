@@ -552,8 +552,8 @@ pub trait StatefulMutator<T> {
     /// # Examples
     ///
     /// ```rust
-/// use qubit_function::{StatefulMutator, MutatorOnce, BoxStatefulMutator,
-///                       BoxMutatorOnce};
+    /// use qubit_function::{StatefulMutator, MutatorOnce, BoxStatefulMutator,
+    ///                       BoxMutatorOnce};
     ///
     /// let mutator = BoxStatefulMutator::new(|x: &mut i32| *x *= 2);
     /// let once_mutator = mutator.into_once();
@@ -916,9 +916,9 @@ pub trait FnMutStatefulMutatorOps<T>: FnMut(&mut T) + Sized {
     ///     .and_then(|x: &mut i32| *x += 10)
     ///     .and_then(|x: &mut i32| println!("Result: {}", x));
     ///
-/// let mut value = 5;
-/// let mut result = chained;
-/// result.apply(&mut value); // Prints: Result: 20
+    /// let mut value = 5;
+    /// let mut result = chained;
+    /// result.apply(&mut value); // Prints: Result: 20
     /// assert_eq!(value, 20);
     /// ```
     fn and_then<C>(self, next: C) -> BoxStatefulMutator<T>

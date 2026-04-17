@@ -305,12 +305,12 @@ pub trait FnBiFunctionOnceOps<T, U, R>: FnOnce(&T, &U) -> R + Sized {
     ///
     /// # Examples
     ///
-/// ```rust
-/// use qubit_function::{BiFunctionOnce, FnBiFunctionOnceOps,
-///     BoxFunctionOnce};
+    /// ```rust
+    /// use qubit_function::{BiFunctionOnce, FnBiFunctionOnceOps,
+    ///     BoxFunctionOnce};
     ///
-/// let add = |x: &i32, y: &i32| *x + *y;
-/// let to_string = BoxFunctionOnce::new(|x: &i32| x.to_string());
+    /// let add = |x: &i32, y: &i32| *x + *y;
+    /// let to_string = BoxFunctionOnce::new(|x: &i32| x.to_string());
     ///
     /// // to_string is moved and consumed
     /// let composed = add.and_then(to_string);
@@ -369,24 +369,24 @@ pub trait FnBiFunctionOnceOps<T, U, R>: FnOnce(&T, &U) -> R + Sized {
     ///
     /// ## Preserving bi-predicate with clone
     ///
-/// ```rust
-/// use qubit_function::{BiFunctionOnce, FnBiFunctionOnceOps,
-///     RcBiPredicate};
+    /// ```rust
+    /// use qubit_function::{BiFunctionOnce, FnBiFunctionOnceOps,
+    ///     RcBiPredicate};
     ///
     /// let add = |x: &i32, y: &i32| *x + *y;
     /// let both_positive = RcBiPredicate::new(|x: &i32, y: &i32|
     ///     *x > 0 && *y > 0);
     ///
     /// // Clone to preserve original bi-predicate
-/// let conditional = add.when(both_positive.clone())
-///     .or_else(|x: &i32, y: &i32| *x * *y);
+    /// let conditional = add.when(both_positive.clone())
+    ///     .or_else(|x: &i32, y: &i32| *x * *y);
     ///
     /// assert_eq!(conditional.apply(&5, &3), 8);
     ///
-/// // Original bi-predicate still usable
-/// use qubit_function::BiPredicate;
-/// assert!(both_positive.test(&5, &3));
-/// ```
+    /// // Original bi-predicate still usable
+    /// use qubit_function::BiPredicate;
+    /// assert!(both_positive.test(&5, &3));
+    /// ```
     fn when<P>(self, predicate: P) -> BoxConditionalBiFunctionOnce<T, U, R>
     where
         Self: 'static,

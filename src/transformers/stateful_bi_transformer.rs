@@ -582,15 +582,15 @@ pub trait FnStatefulBiTransformerOps<T, U, R>: FnMut(T, U) -> R + Sized {
     /// ## Direct value passing (ownership transfer)
     ///
     /// ```rust
-/// use qubit_function::{StatefulBiTransformer, FnStatefulBiTransformerOps};
+    /// use qubit_function::{StatefulBiTransformer, FnStatefulBiTransformerOps};
     ///
     /// let add = |x: i32, y: i32| x + y;
-/// let to_string = |x: i32| x.to_string();
+    /// let to_string = |x: i32| x.to_string();
     ///
     /// // to_string is moved here
-/// let mut composed = add.and_then(to_string);
-/// assert_eq!(composed.apply(20, 22), "42");
-/// // to_string(10); // Would not compile - moved
+    /// let mut composed = add.and_then(to_string);
+    /// assert_eq!(composed.apply(20, 22), "42");
+    /// // to_string(10); // Would not compile - moved
     /// ```
     ///
     /// ## Preserving original with clone
@@ -600,14 +600,14 @@ pub trait FnStatefulBiTransformerOps<T, U, R>: FnMut(T, U) -> R + Sized {
     ///     BoxTransformer};
     ///
     /// let add = |x: i32, y: i32| x + y;
-/// let to_string = |x: i32| x.to_string();
+    /// let to_string = |x: i32| x.to_string();
     ///
     /// // Clone to preserve original
-/// let mut composed = add.and_then(to_string.clone());
+    /// let mut composed = add.and_then(to_string.clone());
     /// assert_eq!(composed.apply(20, 22), "42");
     ///
     /// // Original still usable
-/// assert_eq!(to_string(10), "10");
+    /// assert_eq!(to_string(10), "10");
     /// ```
     fn and_then<S, F>(self, after: F) -> BoxStatefulBiTransformer<T, U, S>
     where
@@ -653,7 +653,7 @@ pub trait FnStatefulBiTransformerOps<T, U, R>: FnMut(T, U) -> R + Sized {
     /// use qubit_function::{StatefulBiTransformer, FnStatefulBiTransformerOps};
     ///
     /// let add = |x: i32, y: i32| x + y;
-/// let mut conditional = add.when(|x: &i32, y: &i32| *x > 0)
+    /// let mut conditional = add.when(|x: &i32, y: &i32| *x > 0)
     ///     .or_else(|x: i32, y: i32| x * y);
     ///
     /// assert_eq!(conditional.apply(5, 3), 8);
@@ -663,15 +663,15 @@ pub trait FnStatefulBiTransformerOps<T, U, R>: FnMut(T, U) -> R + Sized {
     /// ## Preserving bi-predicate with clone
     ///
     /// ```rust
-/// use qubit_function::{BiPredicate, StatefulBiTransformer, FnStatefulBiTransformerOps,
-///     RcBiPredicate};
+    /// use qubit_function::{BiPredicate, StatefulBiTransformer, FnStatefulBiTransformerOps,
+    ///     RcBiPredicate};
     ///
     /// let add = |x: i32, y: i32| x + y;
     /// let both_positive = RcBiPredicate::new(|x: &i32, y: &i32|
     ///     *x > 0 && *y > 0);
     ///
     /// // Clone to preserve original bi-predicate
-/// let mut conditional = add.when(both_positive.clone())
+    /// let mut conditional = add.when(both_positive.clone())
     ///     .or_else(|x: i32, y: i32| x * y);
     ///
     /// assert_eq!(conditional.apply(5, 3), 8);
@@ -713,7 +713,7 @@ pub trait FnStatefulBiTransformerOps<T, U, R>: FnMut(T, U) -> R + Sized {
     /// let transformer = move |x: i32, y: i32| {
     ///     let c = counter.get() + 1;
     ///     counter.set(c);
-///     x + y + c
+    ///     x + y + c
     /// };
     ///
     /// let mut fn_transformer = FnStatefulBiTransformerOps::to_fn(&transformer);

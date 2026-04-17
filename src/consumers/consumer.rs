@@ -313,7 +313,7 @@ pub trait Consumer<T> {
     /// # Examples
     ///
     /// ```rust
-/// use qubit_function::{Consumer, ConsumerOnce, ArcConsumer};
+    /// use qubit_function::{Consumer, ConsumerOnce, ArcConsumer};
     ///
     /// fn takes_once<C: ConsumerOnce<i32>>(consumer: C, value: &i32) {
     ///     consumer.accept(value);

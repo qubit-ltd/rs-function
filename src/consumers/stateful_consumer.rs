@@ -128,13 +128,13 @@ pub trait StatefulConsumer<T> {
     ///
     /// * `value` - Reference to the value to be consumed
     ///
-/// # Examples
-///
-/// ```rust
-/// use qubit_function::{Consumer, StatefulConsumer, BoxStatefulConsumer};
-/// 
-/// let mut consumer = BoxStatefulConsumer::new(|x: &i32| println!("{}", x));
-/// let value = 5;
+    /// # Examples
+    ///
+    /// ```rust
+    /// use qubit_function::{Consumer, StatefulConsumer, BoxStatefulConsumer};
+    ///
+    /// let mut consumer = BoxStatefulConsumer::new(|x: &i32| println!("{}", x));
+    /// let value = 5;
     /// consumer.accept(&value);
     /// ```
     fn accept(&mut self, value: &T);
@@ -260,14 +260,14 @@ pub trait StatefulConsumer<T> {
     ///
     /// Returns a `BoxConsumerOnce<T>`
     ///
-/// # Examples
-///
-/// ```rust
-/// use qubit_function::{Consumer, ConsumerOnce, StatefulConsumer, BoxStatefulConsumer};
-///
-/// fn takes_once<C: ConsumerOnce<i32>>(consumer: C, value: &i32) {
-///     consumer.accept(value);
-/// }
+    /// # Examples
+    ///
+    /// ```rust
+    /// use qubit_function::{Consumer, ConsumerOnce, StatefulConsumer, BoxStatefulConsumer};
+    ///
+    /// fn takes_once<C: ConsumerOnce<i32>>(consumer: C, value: &i32) {
+    ///     consumer.accept(value);
+    /// }
     ///
     /// let consumer = BoxStatefulConsumer::new(|x: &i32| println!("{}", x));
     /// takes_once(consumer.into_once(), &5);
@@ -459,16 +459,16 @@ pub trait StatefulConsumer<T> {
     ///
     /// Returns a `BoxConsumerOnce<T>`
     ///
-/// # Examples
-///
-/// ```rust
-/// use qubit_function::{Consumer, ConsumerOnce, StatefulConsumer, RcStatefulConsumer};
-///
-/// fn takes_once<C: ConsumerOnce<i32>>(consumer: C, value: &i32) {
-///     consumer.accept(value);
-/// }
-///
-/// let consumer = RcStatefulConsumer::new(|x: &i32| println!("{}", x));
+    /// # Examples
+    ///
+    /// ```rust
+    /// use qubit_function::{Consumer, ConsumerOnce, StatefulConsumer, RcStatefulConsumer};
+    ///
+    /// fn takes_once<C: ConsumerOnce<i32>>(consumer: C, value: &i32) {
+    ///     consumer.accept(value);
+    /// }
+    ///
+    /// let consumer = RcStatefulConsumer::new(|x: &i32| println!("{}", x));
     /// takes_once(consumer.to_once(), &5);
     /// ```
     fn to_once(&self) -> BoxConsumerOnce<T>
@@ -865,7 +865,7 @@ pub trait FnStatefulConsumerOps<T>: FnMut(&T) + Sized {
     /// ## Direct value passing (ownership transfer)
     ///
     /// ```rust
-/// use qubit_function::{Consumer, StatefulConsumer, FnStatefulConsumerOps, BoxStatefulConsumer};
+    /// use qubit_function::{Consumer, StatefulConsumer, FnStatefulConsumerOps, BoxStatefulConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -888,13 +888,13 @@ pub trait FnStatefulConsumerOps<T>: FnMut(&T) + Sized {
     /// ## Preserving original with clone
     ///
     /// ```rust
-/// use qubit_function::{Consumer, StatefulConsumer, FnStatefulConsumerOps, RcStatefulConsumer};
+    /// use qubit_function::{Consumer, StatefulConsumer, FnStatefulConsumerOps, RcStatefulConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
     /// let l1 = log.clone();
     /// let l2 = log.clone();
-/// let mut second = RcStatefulConsumer::new(move |x: &i32| {
+    /// let mut second = RcStatefulConsumer::new(move |x: &i32| {
     ///     l2.lock().unwrap().push(*x + 10);
     /// });
     ///

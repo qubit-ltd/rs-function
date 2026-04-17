@@ -548,23 +548,23 @@ pub trait StatefulMutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-/// ```rust
-/// use qubit_function::{MutatingFunctionOnce,
-///                       StatefulMutatingFunction,
-///                       BoxStatefulMutatingFunction};
+    /// ```rust
+    /// use qubit_function::{MutatingFunctionOnce,
+    ///                       StatefulMutatingFunction,
+    ///                       BoxStatefulMutatingFunction};
     ///
-/// fn takes_once<F: MutatingFunctionOnce<i32, i32>>(func: F, value: &mut i32) {
+    /// fn takes_once<F: MutatingFunctionOnce<i32, i32>>(func: F, value: &mut i32) {
     ///     let result = func.apply(value);
     ///     println!("Result: {}", result);
     /// }
     ///
-/// let func = BoxStatefulMutatingFunction::new(|x: &mut i32| {
-///     *x *= 2;
-///     *x
-/// });
-/// let mut value = 5;
-/// takes_once(func.into_once(), &mut value);
-/// ```
+    /// let func = BoxStatefulMutatingFunction::new(|x: &mut i32| {
+    ///     *x *= 2;
+    ///     *x
+    /// });
+    /// let mut value = 5;
+    /// takes_once(func.into_once(), &mut value);
+    /// ```
     fn into_once(mut self) -> BoxMutatingFunctionOnce<T, R>
     where
         Self: Sized + 'static,
@@ -584,22 +584,22 @@ pub trait StatefulMutatingFunction<T, R> {
     /// # Examples
     ///
     /// ```rust
-/// use qubit_function::{MutatingFunctionOnce,
-///                       StatefulMutatingFunction,
-///                       RcStatefulMutatingFunction};
+    /// use qubit_function::{MutatingFunctionOnce,
+    ///                       StatefulMutatingFunction,
+    ///                       RcStatefulMutatingFunction};
     ///
-/// fn takes_once<F: MutatingFunctionOnce<i32, i32>>(func: F, value: &mut i32) {
+    /// fn takes_once<F: MutatingFunctionOnce<i32, i32>>(func: F, value: &mut i32) {
     ///     let result = func.apply(value);
     ///     println!("Result: {}", result);
     /// }
     ///
-/// let func = RcStatefulMutatingFunction::new(|x: &mut i32| {
-///     *x *= 2;
-///     *x
-/// });
-/// let mut value = 5;
-/// takes_once(func.to_once(), &mut value);
-/// ```
+    /// let func = RcStatefulMutatingFunction::new(|x: &mut i32| {
+    ///     *x *= 2;
+    ///     *x
+    /// });
+    /// let mut value = 5;
+    /// takes_once(func.to_once(), &mut value);
+    /// ```
     fn to_once(&self) -> BoxMutatingFunctionOnce<T, R>
     where
         Self: Clone + 'static,

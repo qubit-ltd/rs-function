@@ -984,11 +984,11 @@ pub trait FnComparatorOps<T>: Fn(&T, &T) -> Ordering + Sized {
     /// # Examples
     ///
     /// ```rust
-/// use qubit_function::comparator::{Comparator, FnComparatorOps, BoxComparator};
+    /// use qubit_function::comparator::{Comparator, FnComparatorOps, BoxComparator};
     /// use std::cmp::Ordering;
     ///
-/// let cmp = (|a: &i32, b: &i32| (a % 2).cmp(&(b % 2)))
-///     .then_comparing(BoxComparator::new(|a: &i32, b: &i32| a.cmp(b)));
+    /// let cmp = (|a: &i32, b: &i32| (a % 2).cmp(&(b % 2)))
+    ///     .then_comparing(BoxComparator::new(|a: &i32, b: &i32| a.cmp(b)));
     /// assert_eq!(cmp.compare(&4, &2), Ordering::Greater);
     /// ```
     #[inline]

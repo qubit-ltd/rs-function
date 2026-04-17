@@ -141,7 +141,7 @@ pub trait StatefulBiConsumer<T, U> {
     /// # Examples
     ///
     /// ```rust
-/// use qubit_function::{BiConsumer, BoxStatefulBiConsumer, StatefulBiConsumer};
+    /// use qubit_function::{BiConsumer, BoxStatefulBiConsumer, StatefulBiConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -177,7 +177,7 @@ pub trait StatefulBiConsumer<T, U> {
     /// # Examples
     ///
     /// ```rust
-/// use qubit_function::{BiConsumer, StatefulBiConsumer};
+    /// use qubit_function::{BiConsumer, StatefulBiConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -185,7 +185,7 @@ pub trait StatefulBiConsumer<T, U> {
     /// let closure = move |x: &i32, y: &i32| {
     ///     l.lock().unwrap().push(*x + *y);
     /// };
-/// let mut box_consumer = StatefulBiConsumer::into_box(closure);
+    /// let mut box_consumer = StatefulBiConsumer::into_box(closure);
     /// box_consumer.accept(&5, &3);
     /// assert_eq!(*log.lock().unwrap(), vec![8]);
     /// ```
@@ -244,12 +244,12 @@ pub trait StatefulBiConsumer<T, U> {
     /// # Examples
     ///
     /// ```rust
-/// use qubit_function::{BiConsumer, ArcStatefulBiConsumer, StatefulBiConsumer};
+    /// use qubit_function::{BiConsumer, ArcStatefulBiConsumer, StatefulBiConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
     /// let l = log.clone();
-/// let mut consumer = ArcStatefulBiConsumer::new(move |x: &i32, y: &i32| {
+    /// let mut consumer = ArcStatefulBiConsumer::new(move |x: &i32, y: &i32| {
     ///     l.lock().unwrap().push(*x + *y);
     /// });
     /// let mut func = consumer.into_fn();
@@ -304,12 +304,12 @@ pub trait StatefulBiConsumer<T, U> {
     /// # Examples
     ///
     /// ```rust
-/// use qubit_function::{BiConsumer, ArcStatefulBiConsumer, StatefulBiConsumer};
+    /// use qubit_function::{BiConsumer, ArcStatefulBiConsumer, StatefulBiConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
     /// let l = log.clone();
-/// let mut consumer = ArcStatefulBiConsumer::new(move |x: &i32, y: &i32| {
+    /// let mut consumer = ArcStatefulBiConsumer::new(move |x: &i32, y: &i32| {
     ///     l.lock().unwrap().push(*x + *y);
     /// });
     /// let mut box_consumer = consumer.to_box();
@@ -346,7 +346,7 @@ pub trait StatefulBiConsumer<T, U> {
     /// # Examples
     ///
     /// ```rust
-/// use qubit_function::{BiConsumer, ArcStatefulBiConsumer, StatefulBiConsumer};
+    /// use qubit_function::{BiConsumer, ArcStatefulBiConsumer, StatefulBiConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -389,12 +389,12 @@ pub trait StatefulBiConsumer<T, U> {
     /// # Examples
     ///
     /// ```rust
-/// use qubit_function::{BiConsumer, ArcStatefulBiConsumer, StatefulBiConsumer};
+    /// use qubit_function::{BiConsumer, ArcStatefulBiConsumer, StatefulBiConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
     /// let l = log.clone();
-/// let mut consumer = ArcStatefulBiConsumer::new(move |x: &i32, y: &i32| {
+    /// let mut consumer = ArcStatefulBiConsumer::new(move |x: &i32, y: &i32| {
     ///     l.lock().unwrap().push(*x + *y);
     /// });
     /// let mut arc_consumer = consumer.to_arc();
@@ -431,23 +431,23 @@ pub trait StatefulBiConsumer<T, U> {
     /// # Examples
     ///
     /// ```rust
-/// use qubit_function::{BiConsumer, ArcStatefulBiConsumer, StatefulBiConsumer};
-/// use std::sync::{Arc, Mutex};
-///
-/// let log = Arc::new(Mutex::new(Vec::new()));
-/// let l = log.clone();
-/// let mut consumer = ArcStatefulBiConsumer::new(move |x: &i32, y: &i32| {
-///     l.lock().unwrap().push(*x + *y);
-/// });
-/// {
-///     let mut func = consumer.to_fn();
-///     func(&5, &3);
-///     assert_eq!(*log.lock().unwrap(), vec![8]);
-/// }
-/// // Original consumer still usable
-/// consumer.accept(&2, &1);
-/// assert_eq!(*log.lock().unwrap(), vec![8, 3]);
-/// ```
+    /// use qubit_function::{BiConsumer, ArcStatefulBiConsumer, StatefulBiConsumer};
+    /// use std::sync::{Arc, Mutex};
+    ///
+    /// let log = Arc::new(Mutex::new(Vec::new()));
+    /// let l = log.clone();
+    /// let mut consumer = ArcStatefulBiConsumer::new(move |x: &i32, y: &i32| {
+    ///     l.lock().unwrap().push(*x + *y);
+    /// });
+    /// {
+    ///     let mut func = consumer.to_fn();
+    ///     func(&5, &3);
+    ///     assert_eq!(*log.lock().unwrap(), vec![8]);
+    /// }
+    /// // Original consumer still usable
+    /// consumer.accept(&2, &1);
+    /// assert_eq!(*log.lock().unwrap(), vec![8, 3]);
+    /// ```
     fn to_fn(&self) -> impl FnMut(&T, &U)
     where
         Self: Sized + Clone + 'static,

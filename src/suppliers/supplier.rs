@@ -245,11 +245,11 @@ pub trait Supplier<T> {
     ///
     /// # Examples
     ///
-/// ```rust
-/// use qubit_function::{Supplier, SupplierOnce};
-///
-/// let closure = || 42;
-/// let boxed = Supplier::into_box(closure);
+    /// ```rust
+    /// use qubit_function::{Supplier, SupplierOnce};
+    ///
+    /// let closure = || 42;
+    /// let boxed = Supplier::into_box(closure);
     /// assert_eq!(boxed.get(), 42);
     /// ```
     fn into_box(self) -> BoxSupplier<T>
@@ -271,8 +271,8 @@ pub trait Supplier<T> {
     ///
     /// # Examples
     ///
-/// ```rust
-/// use qubit_function::{Supplier, SupplierOnce};
+    /// ```rust
+    /// use qubit_function::{Supplier, SupplierOnce};
     ///
     /// let closure = || 42;
     /// let rc = closure.into_rc();
