@@ -71,7 +71,7 @@
 //!
 //! ## Basic Usage
 //!
-//! ```rust,ignore
+//! ```rust
 //! use qubit_function::{BoxStatefulMutatingFunction,
 //!                       StatefulMutatingFunction};
 //!
@@ -94,7 +94,7 @@
 //!
 //! ## Accumulator Pattern
 //!
-//! ```rust,ignore
+//! ```rust
 //! use qubit_function::{BoxStatefulMutatingFunction,
 //!                       StatefulMutatingFunction};
 //!
@@ -197,7 +197,7 @@ use crate::predicates::predicate::{
 ///
 /// ## Generic Function
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{StatefulMutatingFunction,
 ///                       BoxStatefulMutatingFunction};
 ///
@@ -224,7 +224,7 @@ use crate::predicates::predicate::{
 ///
 /// ## Type Conversion
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::StatefulMutatingFunction;
 ///
 /// let mut count = 0;
@@ -260,7 +260,7 @@ pub trait StatefulMutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{StatefulMutatingFunction,
     ///                       BoxStatefulMutatingFunction};
     ///
@@ -302,7 +302,7 @@ pub trait StatefulMutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::StatefulMutatingFunction;
     ///
     /// let mut count = 0;
@@ -340,7 +340,7 @@ pub trait StatefulMutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::StatefulMutatingFunction;
     ///
     /// let mut count = 0;
@@ -378,7 +378,7 @@ pub trait StatefulMutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::StatefulMutatingFunction;
     ///
     /// let mut count = 0;
@@ -416,7 +416,7 @@ pub trait StatefulMutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{StatefulMutatingFunction,
     ///                       BoxStatefulMutatingFunction};
     ///
@@ -548,23 +548,23 @@ pub trait StatefulMutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{StatefulMutatingFunctionOnce,
-    ///                       StatefulMutatingFunction,
-    ///                       BoxStatefulMutatingFunction};
+/// ```rust
+/// use qubit_function::{MutatingFunctionOnce,
+///                       StatefulMutatingFunction,
+///                       BoxStatefulMutatingFunction};
     ///
-    /// fn takes_once<F: StatefulMutatingFunctionOnce<i32, i32>>(func: F, value: &mut i32) {
+/// fn takes_once<F: MutatingFunctionOnce<i32, i32>>(func: F, value: &mut i32) {
     ///     let result = func.apply(value);
     ///     println!("Result: {}", result);
     /// }
     ///
-    /// let func = BoxStatefulMutatingFunction::new(|x: &mut i32| {
-    ///     *x *= 2;
-    ///     *x
-    /// });
-    /// let mut value = 5;
-    /// takes_once(func.into_once(), &mut value);
-    /// ```
+/// let func = BoxStatefulMutatingFunction::new(|x: &mut i32| {
+///     *x *= 2;
+///     *x
+/// });
+/// let mut value = 5;
+/// takes_once(func.into_once(), &mut value);
+/// ```
     fn into_once(mut self) -> BoxMutatingFunctionOnce<T, R>
     where
         Self: Sized + 'static,
@@ -583,23 +583,23 @@ pub trait StatefulMutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{StatefulMutatingFunctionOnce,
-    ///                       StatefulMutatingFunction,
-    ///                       BoxStatefulMutatingFunction};
+    /// ```rust
+/// use qubit_function::{MutatingFunctionOnce,
+///                       StatefulMutatingFunction,
+///                       RcStatefulMutatingFunction};
     ///
-    /// fn takes_once<F: StatefulMutatingFunctionOnce<i32, i32>>(func: F, value: &mut i32) {
+/// fn takes_once<F: MutatingFunctionOnce<i32, i32>>(func: F, value: &mut i32) {
     ///     let result = func.apply(value);
     ///     println!("Result: {}", result);
     /// }
     ///
-    /// let func = BoxStatefulMutatingFunction::new(|x: &mut i32| {
-    ///     *x *= 2;
-    ///     *x
-    /// });
-    /// let mut value = 5;
-    /// takes_once(func.to_once(), &mut value);
-    /// ```
+/// let func = RcStatefulMutatingFunction::new(|x: &mut i32| {
+///     *x *= 2;
+///     *x
+/// });
+/// let mut value = 5;
+/// takes_once(func.to_once(), &mut value);
+/// ```
     fn to_once(&self) -> BoxMutatingFunctionOnce<T, R>
     where
         Self: Clone + 'static,
@@ -656,7 +656,7 @@ type RcStatefulMutatingFunctionFn<T, R> = Rc<RefCell<dyn FnMut(&mut T) -> R>>;
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{StatefulMutatingFunction,
 ///                       BoxStatefulMutatingFunction};
 ///
@@ -748,7 +748,7 @@ impl<T, R> StatefulMutatingFunction<T, R> for BoxStatefulMutatingFunction<T, R> 
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{StatefulMutatingFunction,
 ///                       RcStatefulMutatingFunction};
 ///
@@ -844,7 +844,7 @@ impl<T, R> StatefulMutatingFunction<T, R> for RcStatefulMutatingFunction<T, R> {
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{StatefulMutatingFunction,
 ///                       ArcStatefulMutatingFunction};
 ///
@@ -1035,15 +1035,23 @@ impl_fn_ops_trait!(
 ///
 /// ## With or_else Branch
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{StatefulMutatingFunction, BoxStatefulMutatingFunction};
 ///
-/// let double = BoxStatefulMutatingFunction::new(|x: &mut i32| x * 2);
-/// let negate = BoxStatefulMutatingFunction::new(|x: &mut i32| -x);
-/// let conditional = double.when(|x: &i32| *x > 0).or_else(negate);
+/// let double = BoxStatefulMutatingFunction::new(|x: &mut i32| {
+///     *x *= 2;
+///     *x
+/// });
+/// let negate = BoxStatefulMutatingFunction::new(|x: &mut i32| {
+///     *x = -*x;
+///     *x
+/// });
+/// let mut conditional = double.when(|x: &i32| *x > 0).or_else(negate);
 ///
-/// assert_eq!(conditional.apply(5), 10); // when branch executed
-/// assert_eq!(conditional.apply(-5), 5); // or_else branch executed
+/// let mut positive = 5;
+/// let mut negative = -5;
+/// assert_eq!(conditional.apply(&mut positive), 10); // when branch executed
+/// assert_eq!(conditional.apply(&mut negative), 5); // or_else branch executed
 /// ```
 ///
 /// # Author
@@ -1086,17 +1094,22 @@ impl_conditional_function_debug_display!(BoxConditionalStatefulMutatingFunction<
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{StatefulMutatingFunction, RcStatefulMutatingFunction};
 ///
-/// let double = RcStatefulMutatingFunction::new(|x: &mut i32| x * 2);
+/// let double = RcStatefulMutatingFunction::new(|x: &mut i32| {
+///     *x *= 2;
+///     *x
+/// });
 /// let identity = RcStatefulMutatingFunction::<i32, i32>::identity();
-/// let conditional = double.when(|x: &i32| *x > 0).or_else(identity);
+/// let mut conditional = double.when(|x: &i32| *x > 0).or_else(identity);
 ///
-/// let conditional_clone = conditional.clone();
+/// let mut conditional_clone = conditional.clone();
 ///
-/// assert_eq!(conditional.apply(5), 10);
-/// assert_eq!(conditional_clone.apply(-5), -5);
+/// let mut positive = 5;
+/// let mut negative = -5;
+/// assert_eq!(conditional.apply(&mut positive), 10);
+/// assert_eq!(conditional_clone.apply(&mut negative), -5);
 /// ```
 ///
 /// # Author
@@ -1143,17 +1156,22 @@ impl_conditional_function_debug_display!(RcConditionalStatefulMutatingFunction<T
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{StatefulMutatingFunction, ArcStatefulMutatingFunction};
 ///
-/// let double = ArcStatefulMutatingFunction::new(|x: &mut i32| x * 2);
+/// let double = ArcStatefulMutatingFunction::new(|x: &mut i32| {
+///     *x *= 2;
+///     *x
+/// });
 /// let identity = ArcStatefulMutatingFunction::<i32, i32>::identity();
-/// let conditional = double.when(|x: &i32| *x > 0).or_else(identity);
+/// let mut conditional = double.when(|x: &i32| *x > 0).or_else(identity);
 ///
-/// let conditional_clone = conditional.clone();
+/// let mut conditional_clone = conditional.clone();
 ///
-/// assert_eq!(conditional.apply(5), 10);
-/// assert_eq!(conditional_clone.apply(-5), -5);
+/// let mut positive = 5;
+/// let mut negative = -5;
+/// assert_eq!(conditional.apply(&mut positive), 10);
+/// assert_eq!(conditional_clone.apply(&mut negative), -5);
 /// ```
 ///
 /// # Author

@@ -51,8 +51,8 @@
 //!
 //! ### Basic Usage with Closures
 //!
-//! ```rust,ignore
-//! use qubit_function::bi_predicate::BiPredicate;
+//! ```rust
+//! use qubit_function::BiPredicate;
 //!
 //! let is_sum_positive = |x: &i32, y: &i32| x + y > 0;
 //! assert!(is_sum_positive.test(&5, &3));
@@ -61,8 +61,8 @@
 //!
 //! ### BoxBiPredicate - Single Ownership
 //!
-//! ```rust,ignore
-//! use qubit_function::bi_predicate::{BiPredicate, BoxBiPredicate};
+//! ```rust
+//! use qubit_function::{BiPredicate, BoxBiPredicate};
 //!
 //! let pred = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0)
 //!     .and(BoxBiPredicate::new(|x, y| x > y));
@@ -74,8 +74,8 @@
 //! Closures automatically gain `and`, `or`, `not` methods through the
 //! `FnBiPredicateOps` extension trait, returning `BoxBiPredicate`:
 //!
-//! ```rust,ignore
-//! use qubit_function::bi_predicate::{BiPredicate,
+//! ```rust
+//! use qubit_function::{BiPredicate,
 //!     FnBiPredicateOps};
 //!
 //! // Compose closures directly - result is BoxBiPredicate
@@ -96,8 +96,8 @@
 //!
 //! ### RcBiPredicate - Single-threaded Reuse
 //!
-//! ```rust,ignore
-//! use qubit_function::bi_predicate::{BiPredicate, RcBiPredicate};
+//! ```rust
+//! use qubit_function::{BiPredicate, RcBiPredicate};
 //!
 //! let pred = RcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
 //! let combined1 = pred.and(RcBiPredicate::new(|x, y| x > y));
@@ -109,8 +109,8 @@
 //!
 //! ### ArcBiPredicate - Thread-safe Sharing
 //!
-//! ```rust,ignore
-//! use qubit_function::bi_predicate::{BiPredicate, ArcBiPredicate};
+//! ```rust
+//! use qubit_function::{BiPredicate, ArcBiPredicate};
 //! use std::thread;
 //!
 //! let pred = ArcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
@@ -126,8 +126,8 @@
 //!
 //! ### Stateful BiPredicates with Interior Mutability
 //!
-//! ```rust,ignore
-//! use qubit_function::bi_predicate::{BiPredicate, BoxBiPredicate};
+//! ```rust
+//! use qubit_function::{BiPredicate, BoxBiPredicate};
 //! use std::cell::Cell;
 //!
 //! let count = Cell::new(0);
@@ -226,8 +226,8 @@ type SendSyncBiPredicateFn<T, U> = dyn Fn(&T, &U) -> bool + Send + Sync;
 ///
 /// ### Basic Usage
 ///
-/// ```rust,ignore
-/// use qubit_function::bi_predicate::BiPredicate;
+/// ```rust
+/// use qubit_function::BiPredicate;
 ///
 /// let is_sum_positive = |x: &i32, y: &i32| x + y > 0;
 /// assert!(is_sum_positive.test(&5, &3));
@@ -236,8 +236,8 @@ type SendSyncBiPredicateFn<T, U> = dyn Fn(&T, &U) -> bool + Send + Sync;
 ///
 /// ### Type Conversion
 ///
-/// ```rust,ignore
-/// use qubit_function::bi_predicate::{BiPredicate,
+/// ```rust
+/// use qubit_function::{BiPredicate,
 ///     BoxBiPredicate};
 ///
 /// let closure = |x: &i32, y: &i32| x + y > 0;
@@ -247,8 +247,8 @@ type SendSyncBiPredicateFn<T, U> = dyn Fn(&T, &U) -> bool + Send + Sync;
 ///
 /// ### Stateful BiPredicate with Interior Mutability
 ///
-/// ```rust,ignore
-/// use qubit_function::bi_predicate::{BiPredicate,
+/// ```rust
+/// use qubit_function::{BiPredicate,
 ///     BoxBiPredicate};
 /// use std::cell::Cell;
 ///
@@ -362,8 +362,8 @@ pub trait BiPredicate<T, U> {
     ///
     /// ## Using with Iterator Methods
     ///
-    /// ```rust,ignore
-    /// use qubit_function::bi_predicate::{BiPredicate,
+    /// ```rust
+    /// use qubit_function::{BiPredicate,
     ///     BoxBiPredicate};
     ///
     /// let pred = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
@@ -419,8 +419,8 @@ pub trait BiPredicate<T, U> {
 ///
 /// # Examples
 ///
-/// ```rust,ignore
-/// use qubit_function::bi_predicate::{BiPredicate, BoxBiPredicate};
+/// ```rust
+/// use qubit_function::{BiPredicate, BoxBiPredicate};
 ///
 /// let pred = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
 /// assert!(pred.test(&5, &3));
@@ -475,8 +475,8 @@ impl<T, U> BiPredicate<T, U> for BoxBiPredicate<T, U> {
 ///
 /// # Examples
 ///
-/// ```rust,ignore
-/// use qubit_function::bi_predicate::{BiPredicate, RcBiPredicate};
+/// ```rust
+/// use qubit_function::{BiPredicate, RcBiPredicate};
 ///
 /// let pred = RcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
 /// assert!(pred.test(&5, &3));
@@ -535,8 +535,8 @@ impl<T, U> BiPredicate<T, U> for RcBiPredicate<T, U> {
 ///
 /// # Examples
 ///
-/// ```rust,ignore
-/// use qubit_function::bi_predicate::{BiPredicate, ArcBiPredicate};
+/// ```rust
+/// use qubit_function::{BiPredicate, ArcBiPredicate};
 ///
 /// let pred = ArcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
 /// assert!(pred.test(&5, &3));
@@ -613,8 +613,8 @@ impl_closure_trait!(
 ///
 /// # Examples
 ///
-/// ```rust,ignore
-/// use qubit_function::bi_predicate::{BiPredicate, FnBiPredicateOps};
+/// ```rust
+/// use qubit_function::{BiPredicate, FnBiPredicateOps};
 ///
 /// let is_sum_positive = |x: &i32, y: &i32| x + y > 0;
 /// let first_larger = |x: &i32, y: &i32| x > y;

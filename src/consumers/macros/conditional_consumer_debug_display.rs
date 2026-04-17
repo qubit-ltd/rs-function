@@ -20,12 +20,21 @@
 //!
 //! # Examples
 //!
-//! ```ignore
-//! // For single type parameter
-//! impl_conditional_consumer_debug_display!(BoxConditionalConsumer<T>);
-//!
-//! // For two type parameters
-//! impl_conditional_consumer_debug_display!(BoxConditionalBiConsumer<T, U>);
+//! ```rust
+//! use qubit_function::consumers::bi_consumer::BoxConditionalBiConsumer;
+//! use qubit_function::consumers::consumer::BoxConditionalConsumer;
+//! macro_rules! impl_conditional_consumer_debug_display {
+//!     ($struct_name:ident<$t:ident>) => {
+//!         let _ = core::marker::PhantomData::<$t>;
+//!         let _ = stringify!($struct_name);
+//!     };
+//!     ($struct_name:ident<$t:ident, $u:ident>) => {
+//!         let _ = core::marker::PhantomData::<($t, $u)>;
+//!         let _ = stringify!($struct_name);
+//!     };
+//! }
+//! impl_conditional_consumer_debug_display!(BoxConditionalConsumer<i32>);
+//! impl_conditional_consumer_debug_display!(BoxConditionalBiConsumer<i32, i32>);
 //! ```
 //!
 //! # Author
@@ -48,12 +57,24 @@
 ///
 /// # Examples
 ///
-/// ```ignore
+/// ```rust
 /// // For single type parameter
-/// impl_conditional_consumer_debug_display!(BoxConditionalConsumer<T>);
+/// use qubit_function::consumers::bi_consumer::BoxConditionalBiConsumer;
+/// use qubit_function::consumers::consumer::BoxConditionalConsumer;
+/// macro_rules! impl_conditional_consumer_debug_display {
+///     ($struct_name:ident<$t:ident>) => {
+///         let _ = core::marker::PhantomData::<$t>;
+///         let _ = stringify!($struct_name);
+///     };
+///     ($struct_name:ident<$t:ident, $u:ident>) => {
+///         let _ = core::marker::PhantomData::<($t, $u)>;
+///         let _ = stringify!($struct_name);
+///     };
+/// }
+/// impl_conditional_consumer_debug_display!(BoxConditionalConsumer<i32>);
 ///
 /// // For two type parameters
-/// impl_conditional_consumer_debug_display!(BoxConditionalBiConsumer<T, U>);
+/// impl_conditional_consumer_debug_display!(BoxConditionalBiConsumer<i32, i32>);
 /// ```
 ///
 /// # Author

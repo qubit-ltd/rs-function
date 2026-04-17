@@ -455,7 +455,7 @@ impl<T, U, R> BiTransformer<T, U, R> for ArcBiTransformer<T, U, R> {
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::BiTransformer;
 ///
 /// fn add(x: i32, y: i32) -> i32 { x + y }
@@ -540,7 +540,7 @@ where
 ///
 /// ## Chain composition with and_then
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{BiTransformer, FnBiTransformerOps};
 ///
 /// let add = |x: i32, y: i32| x + y;
@@ -552,7 +552,7 @@ where
 ///
 /// ## Conditional execution with when
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{BiTransformer, FnBiTransformerOps};
 ///
 /// let add = |x: i32, y: i32| x + y;
@@ -600,7 +600,7 @@ pub trait FnBiTransformerOps<T, U, R>: Fn(T, U) -> R + Sized {
     ///
     /// ## Direct value passing (ownership transfer)
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{BiTransformer, FnBiTransformerOps,
     ///     BoxTransformer};
     ///
@@ -613,21 +613,20 @@ pub trait FnBiTransformerOps<T, U, R>: Fn(T, U) -> R + Sized {
     /// // to_string.apply(10); // Would not compile - moved
     /// ```
     ///
-    /// ## Preserving original with clone
+    /// ## Preserving original with separate transformers
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{BiTransformer, FnBiTransformerOps,
-    ///     BoxTransformer};
+    /// ```rust
+    /// use qubit_function::{BiTransformer, FnBiTransformerOps};
     ///
     /// let add = |x: i32, y: i32| x + y;
-    /// let to_string = BoxTransformer::new(|x: i32| x.to_string());
+    /// let to_string = |x: i32| x.to_string();
+    /// let to_string_for_validation = |x: i32| x.to_string();
     ///
-    /// // Clone to preserve original
-    /// let composed = add.and_then(to_string.clone());
+    /// let composed = add.and_then(to_string);
     /// assert_eq!(composed.apply(20, 22), "42");
     ///
     /// // Original still usable
-    /// assert_eq!(to_string.apply(10), "10");
+    /// assert_eq!(to_string_for_validation(10), "10");
     /// ```
     fn and_then<S, F>(self, after: F) -> BoxBiTransformer<T, U, S>
     where
@@ -668,7 +667,7 @@ pub trait FnBiTransformerOps<T, U, R>: Fn(T, U) -> R + Sized {
     ///
     /// ## Basic usage with or_else
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{BiTransformer, FnBiTransformerOps};
     ///
     /// let add = |x: i32, y: i32| x + y;
@@ -679,24 +678,23 @@ pub trait FnBiTransformerOps<T, U, R>: Fn(T, U) -> R + Sized {
     /// assert_eq!(conditional.apply(-5, 3), -15);
     /// ```
     ///
-    /// ## Preserving bi-predicate with clone
+    /// ## Preserving original with separate bi-predicates
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{BiTransformer, FnBiTransformerOps,
-    ///     RcBiPredicate};
+    /// ```rust
+    /// use qubit_function::{BiTransformer, FnBiTransformerOps};
     ///
     /// let add = |x: i32, y: i32| x + y;
-    /// let both_positive = RcBiPredicate::new(|x: &i32, y: &i32|
-    ///     *x > 0 && *y > 0);
+    /// let both_positive = |x: &i32, y: &i32| *x > 0 && *y > 0;
+    /// let both_positive_for_validation = |x: &i32, y: &i32|
+    ///     *x > 0 && *y > 0;
     ///
-    /// // Clone to preserve original bi-predicate
-    /// let conditional = add.when(both_positive.clone())
+    /// let conditional = add.when(both_positive)
     ///     .or_else(|x: i32, y: i32| x * y);
     ///
     /// assert_eq!(conditional.apply(5, 3), 8);
     ///
     /// // Original bi-predicate still usable
-    /// assert!(both_positive.test(&5, &3));
+    /// assert!(both_positive_for_validation(&5, &3));
     /// ```
     fn when<P>(self, predicate: P) -> BoxConditionalBiTransformer<T, U, R>
     where
@@ -744,7 +742,7 @@ impl<T, U, R, F> FnBiTransformerOps<T, U, R> for F where F: Fn(T, U) -> R {}
 ///
 /// ## Using in generic constraints
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{BinaryOperator, BiTransformer};
 ///
 /// fn reduce<T, O>(values: Vec<T>, initial: T, op: O) -> T
@@ -761,7 +759,7 @@ impl<T, U, R, F> FnBiTransformerOps<T, U, R> for F where F: Fn(T, U) -> R {}
 ///
 /// ## With concrete types
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{BoxBinaryOperator, BinaryOperator, BiTransformer};
 ///
 /// fn create_adder() -> BoxBinaryOperator<i32> {
@@ -804,7 +802,7 @@ where
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{BoxBinaryOperator, BiTransformer};
 ///
 /// let add: BoxBinaryOperator<i32> = BoxBinaryOperator::new(|x, y| x + y);
@@ -824,7 +822,7 @@ pub type BoxBinaryOperator<T> = BoxBiTransformer<T, T, T>;
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{ArcBinaryOperator, BiTransformer};
 ///
 /// let multiply: ArcBinaryOperator<i32> = ArcBinaryOperator::new(|x, y| x * y);
@@ -846,7 +844,7 @@ pub type ArcBinaryOperator<T> = ArcBiTransformer<T, T, T>;
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{RcBinaryOperator, BiTransformer};
 ///
 /// let max: RcBinaryOperator<i32> = RcBinaryOperator::new(|x, y| if x > y { x } else { y });
@@ -884,7 +882,7 @@ pub type RcBinaryOperator<T> = RcBiTransformer<T, T, T>;
 ///
 /// ## With or_else Branch
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{BiTransformer, BoxBiTransformer};
 ///
 /// let add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
@@ -935,7 +933,7 @@ impl_conditional_transformer_debug_display!(BoxConditionalBiTransformer<T, U, R>
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{BiTransformer, RcBiTransformer};
 ///
 /// let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
@@ -993,7 +991,7 @@ impl_conditional_transformer_clone!(RcConditionalBiTransformer<T, U, R>);
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{BiTransformer, ArcBiTransformer};
 ///
 /// let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);

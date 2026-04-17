@@ -27,43 +27,45 @@
 //! # Usage Examples
 //!
 //! For Mutator (immutable):
-//! ```ignore
-//! impl<T> Mutator<T> for BoxConditionalMutator<T>
-//! where
-//!     T: 'static,
-//! {
-//!     fn apply(&self, value: &mut T) {
-//!         if self.predicate.test(value) {
-//!             self.mutator.apply(value);
-//!         }
-//!     }
-//!
-//!     impl_conditional_mutator_conversions!(
-//!         BoxMutator<T>,
-//!         RcMutator,
-//!         Fn
-//!     );
-//! }
+//! ```rust
+//! // impl<T> Mutator<T> for BoxConditionalMutator<T>
+//! // where
+//! //     T: 'static,
+//! // {
+//! //     fn apply(&self, value: &mut T) {
+//! //         if self.predicate.test(value) {
+//! //             self.mutator.apply(value);
+//! //         }
+//! //     }
+//! //
+//! //     // Inside the trait impl block
+//! //     impl_conditional_mutator_conversions!(
+//! //         BoxMutator<T>,
+//! //         RcMutator,
+//! //         Fn
+//! //     );
+//! // }
 //! ```
 //!
 //! For StatefulMutator (mutable):
-//! ```ignore
-//! impl<T> StatefulMutator<T> for BoxConditionalStatefulMutator<T>
-//! where
-//!     T: 'static,
-//! {
-//!     fn apply(&mut self, value: &mut T) {
-//!         if self.predicate.test(value) {
-//!             self.mutator.apply(value);
-//!         }
-//!     }
-//!
-//!     impl_conditional_mutator_conversions!(
-//!         BoxStatefulMutator<T>,
-//!         RcStatefulMutator,
-//!         FnMut
-//!     );
-//! }
+//! ```rust
+//! // impl<T> StatefulMutator<T> for BoxConditionalStatefulMutator<T>
+//! // where
+//! //     T: 'static,
+//! // {
+//! //     fn apply(&mut self, value: &mut T) {
+//! //         if self.predicate.test(value) {
+//! //             self.mutator.apply(value);
+//! //         }
+//! //     }
+//! //
+//! //     // Inside the trait impl block
+//! //     impl_conditional_mutator_conversions!(
+//! //         BoxStatefulMutator<T>,
+//! //         RcStatefulMutator,
+//! //         FnMut
+//! //     );
+//! // }
 //! ```
 //!
 //! # Implementation Details
@@ -103,44 +105,45 @@
 /// # Usage Examples
 ///
 /// For Mutator (immutable):
-/// ```ignore
-/// impl<T> Mutator<T> for BoxConditionalMutator<T>
-/// where
-///     T: 'static,
-/// {
-///     fn apply(&self, value: &mut T) {
-///         if self.predicate.test(value) {
-///             self.mutator.apply(value);
-///         }
-///     }
-///
-///     // Inside the trait impl block
-///     impl_conditional_mutator_conversions!(
-///         BoxMutator<T>,
-///         RcMutator,
-///         Fn
-///     );
-/// }
+/// ```rust
+/// // impl<T> Mutator<T> for BoxConditionalMutator<T>
+/// // where
+/// //     T: 'static,
+/// // {
+/// //     fn apply(&self, value: &mut T) {
+/// //         if self.predicate.test(value) {
+/// //             self.mutator.apply(value);
+/// //         }
+/// //     }
+/// //
+/// //     // Inside the trait impl block
+/// //     impl_conditional_mutator_conversions!(
+/// //         BoxMutator<T>,
+/// //         RcMutator,
+/// //         Fn
+/// //     );
+/// // }
 /// ```
 ///
 /// For StatefulMutator (mutable):
-/// ```ignore
-/// impl<T> StatefulMutator<T> for BoxConditionalStatefulMutator<T>
-/// where
-///     T: 'static,
-/// {
-///     fn apply(&mut self, value: &mut T) {
-///         if self.predicate.test(value) {
-///             self.mutator.apply(value);
-///         }
-///     }
-///
-///     impl_conditional_mutator_conversions!(
-///         BoxStatefulMutator<T>,
-///         RcStatefulMutator,
-///         FnMut
-///     );
-/// }
+/// ```rust
+/// // impl<T> StatefulMutator<T> for BoxConditionalStatefulMutator<T>
+/// // where
+/// //     T: 'static,
+/// // {
+/// //     fn apply(&mut self, value: &mut T) {
+/// //         if self.predicate.test(value) {
+/// //             self.mutator.apply(value);
+/// //         }
+/// //     }
+/// //
+/// //     // Inside the trait impl block
+/// //     impl_conditional_mutator_conversions!(
+/// //         BoxStatefulMutator<T>,
+/// //         RcStatefulMutator,
+/// //         FnMut
+/// //     );
+/// // }
 /// ```
 ///
 /// # Implementation Details

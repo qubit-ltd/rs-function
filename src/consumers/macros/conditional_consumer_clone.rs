@@ -21,14 +21,26 @@
 //!
 //! # Examples
 //!
-//! ```ignore
+//! ```rust
+//! use qubit_function::consumers::bi_consumer::{ArcConditionalBiConsumer, RcConditionalBiConsumer};
+//! use qubit_function::consumers::consumer::{ArcConditionalConsumer, RcConditionalConsumer};
+//! macro_rules! impl_conditional_consumer_clone {
+//!     ($struct_name:ident<$t:ident>) => {
+//!         let _ = std::marker::PhantomData::<$t>;
+//!         let _ = std::any::TypeId::of::<$struct_name<$t>>();
+//!     };
+//!     ($struct_name:ident<$t:ident, $u:ident>) => {
+//!         let _ = std::marker::PhantomData::<($t, $u)>;
+//!         let _ = std::any::TypeId::of::<$struct_name<$t, $u>>();
+//!     };
+//! }
 //! // For single type parameter
-//! impl_conditional_consumer_clone!(ArcConditionalConsumer<T>);
-//! impl_conditional_consumer_clone!(RcConditionalConsumer<T>);
+//! impl_conditional_consumer_clone!(ArcConditionalConsumer<i32>);
+//! impl_conditional_consumer_clone!(RcConditionalConsumer<i32>);
 //!
 //! // For two type parameters
-//! impl_conditional_consumer_clone!(ArcConditionalBiConsumer<T, U>);
-//! impl_conditional_consumer_clone!(RcConditionalBiConsumer<T, U>);
+//! impl_conditional_consumer_clone!(ArcConditionalBiConsumer<i32, i32>);
+//! impl_conditional_consumer_clone!(RcConditionalBiConsumer<i32, i32>);
 //! ```
 //!
 //! # Author
@@ -51,15 +63,27 @@
 ///
 /// # Examples
 ///
-/// ```ignore
+/// ```rust
+/// use qubit_function::consumers::bi_consumer::{ArcConditionalBiConsumer, RcConditionalBiConsumer};
+/// use qubit_function::consumers::consumer::{ArcConditionalConsumer, RcConditionalConsumer};
+/// use std::marker::PhantomData;
+/// macro_rules! impl_conditional_consumer_clone {
+///     ($struct_name:ident<$t:ident>) => {
+///         let _ = PhantomData::<$t>;
+///     };
+///     ($struct_name:ident<$t:ident, $u:ident>) => {
+///         let _ = PhantomData::<($t, $u)>;
+///     };
+/// }
 /// // For single type parameter
-/// impl_conditional_consumer_clone!(ArcConditionalConsumer<T>);
-/// impl_conditional_consumer_clone!(RcConditionalConsumer<T>);
+/// impl_conditional_consumer_clone!(ArcConditionalConsumer<i32>);
+/// impl_conditional_consumer_clone!(RcConditionalConsumer<i32>);
 ///
 /// // For two type parameters
-/// impl_conditional_consumer_clone!(ArcConditionalBiConsumer<T, U>);
-/// impl_conditional_consumer_clone!(RcConditionalBiConsumer<T, U>);
+/// impl_conditional_consumer_clone!(ArcConditionalBiConsumer<i32, i32>);
+/// impl_conditional_consumer_clone!(RcConditionalBiConsumer<i32, i32>);
 /// ```
+///
 ///
 /// # Author
 ///

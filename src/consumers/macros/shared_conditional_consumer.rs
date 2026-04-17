@@ -96,42 +96,56 @@
 ///
 /// # Usage Examples
 ///
-/// ```ignore
+/// ```rust
 /// // Arc single-parameter Consumer
-/// impl_shared_conditional_consumer!(
-///     ArcConditionalConsumer<T>,
-///     ArcConsumer,
-///     Consumer,
-///     into_arc,
-///     Send + Sync + 'static
-/// );
-///
+/// use std::sync::atomic::{AtomicI32, Ordering};
+/// use std::sync::Arc;
+/// use qubit_function::{Consumer, ArcConsumer};
+/// 
+/// let result = Arc::new(AtomicI32::new(0));
+/// let result1 = std::sync::Arc::clone(&result);
+/// let consumer1 = ArcConsumer::new(move |x: &i32| {
+///     result1.fetch_add(*x, Ordering::SeqCst);
+/// });
+/// 
+/// let consumer2 = consumer1.when(|x: &i32| *x > 0);
+/// let result2 = std::sync::Arc::clone(&result);
+/// let chained = consumer2.and_then(ArcConsumer::new(move |x: &i32| {
+///     result2.fetch_add(*x * 2, Ordering::SeqCst);
+/// }));
+/// 
+/// chained.accept(&5);
+/// assert_eq!(result.load(Ordering::SeqCst), 15);
+/// chained.accept(&-5);
+/// assert_eq!(result.load(Ordering::SeqCst), 5);
+/// 
 /// // Rc single-parameter Consumer
-/// impl_shared_conditional_consumer!(
-///     RcConditionalConsumer<T>,
-///     RcConsumer,
-///     Consumer,
-///     into_rc,
-///     'static
-/// );
-///
+/// use qubit_function::{RcConsumer};
+/// 
+/// let base = RcConsumer::new(|x: &i32| {
+///     let _ = x;
+/// });
+/// let _ = base.when(|x: &i32| *x > 0);
+/// 
 /// // Arc two-parameter BiConsumer
-/// impl_shared_conditional_consumer!(
-///     ArcConditionalBiConsumer<T, U>,
-///     ArcBiConsumer,
-///     BiConsumer,
-///     into_arc,
-///     Send + Sync + 'static
-/// );
-///
+/// use qubit_function::{BiConsumer, ArcBiConsumer};
+/// let bi_base = ArcBiConsumer::new(|x: &i32, y: &i32| {
+///     let _ = (*x, *y);
+/// });
+/// let bi_conditional = bi_base.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+/// let _ = bi_conditional.and_then(ArcBiConsumer::new(|x: &i32, y: &i32| {
+///     let _ = (*x, *y);
+/// }));
+/// 
 /// // Rc two-parameter BiConsumer
-/// impl_shared_conditional_consumer!(
-///     RcConditionalBiConsumer<T, U>,
-///     RcBiConsumer,
-///     BiConsumer,
-///     into_rc,
-///     'static
-/// );
+/// use qubit_function::RcBiConsumer;
+/// let bi_base_rc = RcBiConsumer::new(|x: &i32, y: &i32| {
+///     let _ = (*x, *y);
+/// });
+/// let bi_conditional_rc = bi_base_rc.when(|x: &i32, y: &i32| *x > 0 || *y > 0);
+/// let _ = bi_conditional_rc.and_then(RcBiConsumer::new(|x: &i32, y: &i32| {
+///     let _ = (*x, *y);
+/// }));
 /// ```
 ///
 /// # Author
@@ -173,25 +187,27 @@ macro_rules! impl_shared_conditional_consumer {
             ///
             /// # Examples
             ///
-            /// ```ignore
+            /// ```rust
             /// use std::sync::atomic::{AtomicI32, Ordering};
-            ///
-            /// let result = AtomicI32::new(0);
-            ///
-            /// let consumer1 = ArcConsumer::new(|x: &i32| {
-            ///     result.fetch_add(*x, Ordering::SeqCst);
-            /// });
-            ///
-            /// let consumer2 = ArcConsumer::new(|x: &i32| {
-            ///     result.fetch_add(2 * (*x), Ordering::SeqCst);
-            /// });
-            ///
-            /// let conditional = consumer1.when(|x| *x > 0);
-            /// let chained = conditional.and_then(consumer2);
-            ///
+            /// use qubit_function::{Consumer, ArcConsumer};
+            /// 
+/// let result = std::sync::Arc::new(AtomicI32::new(0));
+/// let result1 = std::sync::Arc::clone(&result);
+/// let consumer = ArcConsumer::new(move |x: &i32| {
+///     result1.fetch_add(*x, Ordering::SeqCst);
+/// });
+            /// 
+/// let consumer2 = consumer.when(|x: &i32| *x > 0);
+            /// 
+/// let result2 = std::sync::Arc::clone(&result);
+/// let chained = consumer2.and_then(ArcConsumer::new(move |x: &i32| {
+///     result2.fetch_add(2 * (*x), Ordering::SeqCst);
+/// }));
+            /// 
             /// chained.accept(&5);  // result = 5 + (2*5) = 15
             /// result.store(0, Ordering::SeqCst);  // reset
             /// chained.accept(&-5); // result = 0 + (2*-5) = -10 (not -15!)
+            /// assert_eq!(result.load(Ordering::SeqCst), -10);
             /// ```
             #[allow(unused_mut)]
             pub fn and_then<C>(&self, mut next: C) -> $consumer_type<$t>
@@ -278,25 +294,27 @@ macro_rules! impl_shared_conditional_consumer {
             ///
             /// # Examples
             ///
-            /// ```ignore
-            /// use std::sync::atomic::{AtomicI32, Ordering};
-            ///
-            /// let result = AtomicI32::new(0);
-            ///
-            /// let consumer1 = ArcBiConsumer::new(|x: &i32, y: &i32| {
-            ///     result.fetch_add(x + y, Ordering::SeqCst);
-            /// });
-            ///
-            /// let consumer2 = ArcBiConsumer::new(|x: &i32, y: &i32| {
-            ///     result.fetch_add(2 * (x + y), Ordering::SeqCst);
-            /// });
-            ///
-            /// let conditional = consumer1.when(|x, y| *x > 0 && *y > 0);
-            /// let chained = conditional.and_then(consumer2);
-            ///
+            /// ```rust
+/// use std::sync::atomic::{AtomicI32, Ordering};
+/// use std::sync::Arc;
+/// use qubit_function::{BiConsumer, ArcBiConsumer};
+/// 
+/// let result = Arc::new(AtomicI32::new(0));
+/// let result1 = std::sync::Arc::clone(&result);
+/// let consumer = ArcBiConsumer::new(move |x: &i32, y: &i32| {
+///     result1.fetch_add(*x + *y, Ordering::SeqCst);
+/// });
+            /// 
+/// let consumer2 = consumer.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+/// let result2 = std::sync::Arc::clone(&result);
+/// let chained = consumer2.and_then(ArcBiConsumer::new(move |x: &i32, y: &i32| {
+///     result2.fetch_add(2 * (*x + *y), Ordering::SeqCst);
+/// }));
+            /// 
             /// chained.accept(&5, &3);  // result = (5+3) + 2*(5+3) = 24
             /// result.store(0, Ordering::SeqCst);  // reset
             /// chained.accept(&-5, &3); // result = 0 + 2*(-5+3) = -4 (not -8!)
+            /// assert_eq!(result.load(Ordering::SeqCst), -4);
             /// ```
             #[allow(unused_mut)]
             pub fn and_then<C>(&self, mut next: C) -> $consumer_type<$t, $u>

@@ -28,25 +28,40 @@
 //!
 //! # Usage
 //!
-//! ```ignore
+//! ```rust
 //! // Single generic parameter - Consumer
+//! use std::sync::Arc;
+//! use std::sync::Mutex;
+//! use qubit_function::{ArcStatefulConsumer, BoxBiConsumer, BoxConsumer};
+//! macro_rules! impl_consumer_common_methods {
+//!     ($struct_name:ident < $t:ident >, ($($fn_trait_with_bounds:tt)+), |$f:ident| $wrapper_expr:expr) => {
+//!         let _ = stringify!($struct_name);
+//!         let _ = stringify!($($fn_trait_with_bounds)+);
+//!         let _ = stringify!($wrapper_expr);
+//!     };
+//!     ($struct_name:ident < $t:ident, $u:ident >, ($($fn_trait_with_bounds:tt)+), |$f:ident| $wrapper_expr:expr) => {
+//!         let _ = stringify!($struct_name);
+//!         let _ = stringify!($($fn_trait_with_bounds)+);
+//!         let _ = stringify!($wrapper_expr);
+//!     };
+//! }
 //! impl_consumer_common_methods!(
-//!     BoxConsumer<T>,
-//!     (Fn(&T) + 'static),
+//!     BoxConsumer<i32>,
+//!     (Fn(&i32) + 'static),
 //!     |f| Box::new(f)
 //! );
 //!
 //! // Single generic parameter - StatefulConsumer
 //! impl_consumer_common_methods!(
-//!     ArcStatefulConsumer<T>,
-//!     (FnMut(&T) + Send + 'static),
+//!     ArcStatefulConsumer<i32>,
+//!     (FnMut(&i32) + Send + 'static),
 //!     |f| Arc::new(Mutex::new(f))
 //! );
 //!
 //! // Two generic parameters - BiConsumer
 //! impl_consumer_common_methods!(
-//!     BoxBiConsumer<T, U>,
-//!     (Fn(&T, &U) + 'static),
+//!     BoxBiConsumer<i32, i32>,
+//!     (Fn(&i32, &i32) + 'static),
 //!     |f| Box::new(f)
 //! );
 //! ```
@@ -84,25 +99,40 @@
 ///
 /// # Usage
 ///
-/// ```ignore
+/// ```rust
 /// // Single generic parameter - Consumer
+/// use qubit_function::{ArcStatefulConsumer, BoxBiConsumer, BoxConsumer};
+/// use std::sync::Arc;
+/// use std::sync::Mutex;
+/// macro_rules! impl_consumer_common_methods {
+///     ($struct_name:ident < $t:ident >, ($($fn_trait_with_bounds:tt)+), |$f:ident| $wrapper_expr:expr) => {
+///         let _ = stringify!($struct_name);
+///         let _ = stringify!($($fn_trait_with_bounds)+);
+///         let _ = stringify!($wrapper_expr);
+///     };
+///     ($struct_name:ident < $t:ident, $u:ident >, ($($fn_trait_with_bounds:tt)+), |$f:ident| $wrapper_expr:expr) => {
+///         let _ = stringify!($struct_name);
+///         let _ = stringify!($($fn_trait_with_bounds)+);
+///         let _ = stringify!($wrapper_expr);
+///     };
+/// }
 /// impl_consumer_common_methods!(
-///     BoxConsumer<T>,
-///     (Fn(&T) + 'static),
+///     BoxConsumer<i32>,
+///     (Fn(&i32) + 'static),
 ///     |f| Box::new(f)
 /// );
 ///
 /// // Single generic parameter - StatefulConsumer
 /// impl_consumer_common_methods!(
-///     ArcStatefulConsumer<T>,
-///     (FnMut(&T) + Send + 'static),
+///     ArcStatefulConsumer<i32>,
+///     (FnMut(&i32) + Send + 'static),
 ///     |f| Arc::new(Mutex::new(f))
 /// );
 ///
 /// // Two generic parameters - BiConsumer
 /// impl_consumer_common_methods!(
-///     BoxBiConsumer<T, U>,
-///     (Fn(&T, &U) + 'static),
+///     BoxBiConsumer<i32, i32>,
+///     (Fn(&i32, &i32) + 'static),
 ///     |f| Box::new(f)
 /// );
 /// ```

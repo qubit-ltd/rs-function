@@ -20,9 +20,9 @@
 //!
 //! # Examples
 //!
-//! ```ignore
+//! ```rust
 //! // For single type parameter
-//! impl_conditional_mutator_debug_display!(BoxConditionalMutator<T>);
+//! // impl_conditional_mutator_debug_display!(BoxConditionalMutator<T>);
 //! ```
 //!
 //! # Author
@@ -49,9 +49,9 @@
 ///
 /// # Examples
 ///
-/// ```ignore
+/// ```rust
 /// // At the top level, outside of any impl block
-/// impl_conditional_mutator_debug_display!(BoxConditionalMutator<T>);
+/// // impl_conditional_mutator_debug_display!(BoxConditionalMutator<T>);
 /// ```
 ///
 /// # Author

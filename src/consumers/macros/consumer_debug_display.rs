@@ -20,12 +20,21 @@
 //!
 //! # Examples
 //!
-//! ```ignore
+//! ```rust
 //! // For single type parameter
-//! impl_consumer_debug_display!(BoxConsumer<T>);
+//! use qubit_function::{BoxBiConsumer, BoxConsumer};
+//! macro_rules! impl_consumer_debug_display {
+//!     ($struct_name:ident < $t:ident >) => {
+//!         let _ = stringify!($struct_name);
+//!     };
+//!     ($struct_name:ident < $t:ident, $u:ident >) => {
+//!         let _ = stringify!($struct_name);
+//!     };
+//! }
+//! impl_consumer_debug_display!(BoxConsumer<i32>);
 //!
 //! // For two type parameters
-//! impl_consumer_debug_display!(BoxBiConsumer<T, U>);
+//! impl_consumer_debug_display!(BoxBiConsumer<i32, i32>);
 //! ```
 //!
 //! # Author
@@ -47,12 +56,21 @@
 ///
 /// # Examples
 ///
-/// ```ignore
+/// ```rust
 /// // For single type parameter
-/// impl_consumer_debug_display!(BoxConsumer<T>);
+/// use qubit_function::{BoxBiConsumer, BoxConsumer};
+/// macro_rules! impl_consumer_debug_display {
+///     ($struct_name:ident < $t:ident >) => {
+///         let _ = stringify!($struct_name);
+///     };
+///     ($struct_name:ident < $t:ident, $u:ident >) => {
+///         let _ = stringify!($struct_name);
+///     };
+/// }
+/// impl_consumer_debug_display!(BoxConsumer<i32>);
 ///
 /// // For two type parameters
-/// impl_consumer_debug_display!(BoxBiConsumer<T, U>);
+/// impl_consumer_debug_display!(BoxBiConsumer<i32, i32>);
 /// ```
 ///
 /// # Author

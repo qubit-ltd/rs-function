@@ -69,7 +69,7 @@
 //!
 //! ## Basic Usage
 //!
-//! ```rust,ignore
+//! ```rust
 //! use qubit_function::{BoxMutatingFunction, MutatingFunction};
 //!
 //! // Increment counter and return new value
@@ -86,27 +86,24 @@
 //!
 //! ## Method Chaining
 //!
-//! ```rust,ignore
+//! ```rust
 //! use qubit_function::{BoxMutatingFunction, MutatingFunction};
 //!
 //! let chained = BoxMutatingFunction::new(|x: &mut i32| {
 //!     *x *= 2;
 //!     *x
 //! })
-//! .and_then(|x: &mut i32| {
-//!     *x += 10;
-//!     *x
-//! });
+//! .and_then(|x: &i32| x + 10);
 //!
 //! let mut value = 5;
 //! let result = chained.apply(&mut value);
-//! assert_eq!(value, 20); // (5 * 2) + 10
+//! assert_eq!(value, 10); // (5 * 2), value is still mutated by the first function
 //! assert_eq!(result, 20);
 //! ```
 //!
 //! ## Cache Update Pattern
 //!
-//! ```rust,ignore
+//! ```rust
 //! use qubit_function::{BoxMutatingFunction, MutatingFunction};
 //! use std::collections::HashMap;
 //!
@@ -199,7 +196,7 @@ use crate::predicates::predicate::{
 ///
 /// ## Generic Function
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{MutatingFunction, BoxMutatingFunction};
 ///
 /// fn apply_and_log<F: MutatingFunction<i32, i32>>(
@@ -221,7 +218,7 @@ use crate::predicates::predicate::{
 ///
 /// ## Type Conversion
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::MutatingFunction;
 ///
 /// let closure = |x: &mut i32| {
@@ -254,7 +251,7 @@ pub trait MutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{MutatingFunction, BoxMutatingFunction};
     ///
     /// let func = BoxMutatingFunction::new(|x: &mut i32| {
@@ -289,7 +286,7 @@ pub trait MutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::MutatingFunction;
     ///
     /// let closure = |x: &mut i32| {
@@ -324,7 +321,7 @@ pub trait MutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::MutatingFunction;
     ///
     /// let closure = |x: &mut i32| {
@@ -360,7 +357,7 @@ pub trait MutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::MutatingFunction;
     ///
     /// let closure = |x: &mut i32| {
@@ -396,7 +393,7 @@ pub trait MutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{MutatingFunction, BoxMutatingFunction};
     ///
     /// let func = BoxMutatingFunction::new(|x: &mut i32| {
@@ -429,9 +426,9 @@ pub trait MutatingFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{MutatingFunctionOnce, MutatingFunction,
-    ///                       BoxMutatingFunction};
+    /// ```rust
+/// use qubit_function::{MutatingFunctionOnce, MutatingFunction,
+///                       ArcMutatingFunction, BoxMutatingFunction};
     ///
     /// fn takes_once<F: MutatingFunctionOnce<i32, i32>>(func: F, value: &mut i32) {
     ///     let result = func.apply(value);
@@ -530,21 +527,21 @@ pub trait MutatingFunction<T, R> {
     ///
     /// Returns a `BoxMutatingFunctionOnce<T, R>`
     ///
-    /// # Examples
-    ///
-    /// ```rust,ignore
-    /// use qubit_function::{MutatingFunctionOnce, MutatingFunction,
-    ///                       BoxMutatingFunction};
+/// # Examples
+///
+/// ```rust
+/// use qubit_function::{MutatingFunctionOnce, MutatingFunction,
+///                       ArcMutatingFunction};
     ///
     /// fn takes_once<F: MutatingFunctionOnce<i32, i32>>(func: F, value: &mut i32) {
     ///     let result = func.apply(value);
     ///     println!("Result: {}", result);
     /// }
     ///
-    /// let func = BoxMutatingFunction::new(|x: &mut i32| {
-    ///     *x *= 2;
-    ///     *x
-    /// });
+/// let func = ArcMutatingFunction::new(|x: &mut i32| {
+///     *x *= 2;
+///     *x
+/// });
     /// let mut value = 5;
     /// takes_once(func.to_once(), &mut value);
     /// ```
@@ -594,7 +591,7 @@ pub trait MutatingFunction<T, R> {
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{MutatingFunction, BoxMutatingFunction};
 ///
 /// let func = BoxMutatingFunction::new(|x: &mut i32| {
@@ -680,7 +677,7 @@ impl<T, R> MutatingFunction<T, R> for BoxMutatingFunction<T, R> {
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{MutatingFunction, RcMutatingFunction};
 ///
 /// let func = RcMutatingFunction::new(|x: &mut i32| {
@@ -771,7 +768,7 @@ impl<T, R> MutatingFunction<T, R> for RcMutatingFunction<T, R> {
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{MutatingFunction, ArcMutatingFunction};
 ///
 /// let func = ArcMutatingFunction::new(|x: &mut i32| {
@@ -881,15 +878,17 @@ impl_fn_ops_trait!(
 ///
 /// ## With or_else Branch
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{MutatingFunction, BoxMutatingFunction};
 ///
-/// let double = BoxMutatingFunction::new(|x: &mut i32| x * 2);
-/// let negate = BoxMutatingFunction::new(|x: &mut i32| -x);
+/// let double = BoxMutatingFunction::new(|x: &mut i32| *x * 2);
+/// let negate = BoxMutatingFunction::new(|x: &mut i32| -*x);
 /// let conditional = double.when(|x: &i32| *x > 0).or_else(negate);
 ///
-/// assert_eq!(conditional.apply(5), 10); // when branch executed
-/// assert_eq!(conditional.apply(-5), 5); // or_else branch executed
+/// let mut positive = 5;
+/// assert_eq!(conditional.apply(&mut positive), 10); // when branch executed
+/// let mut negative = -5;
+/// assert_eq!(conditional.apply(&mut negative), 5); // or_else branch executed
 /// ```
 ///
 /// # Author
@@ -932,17 +931,19 @@ impl_conditional_function_debug_display!(BoxConditionalMutatingFunction<T, R>);
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{MutatingFunction, RcMutatingFunction};
 ///
-/// let double = RcMutatingFunction::new(|x: &mut i32| x * 2);
+/// let double = RcMutatingFunction::new(|x: &mut i32| *x * 2);
 /// let identity = RcMutatingFunction::<i32, i32>::identity();
 /// let conditional = double.when(|x: &i32| *x > 0).or_else(identity);
 ///
 /// let conditional_clone = conditional.clone();
 ///
-/// assert_eq!(conditional.apply(5), 10);
-/// assert_eq!(conditional_clone.apply(-5), -5);
+/// let mut positive = 5;
+/// assert_eq!(conditional.apply(&mut positive), 10);
+/// let mut negative = -5;
+/// assert_eq!(conditional_clone.apply(&mut negative), -5);
 /// ```
 ///
 /// # Author
@@ -989,17 +990,19 @@ impl_conditional_function_debug_display!(RcConditionalMutatingFunction<T, R>);
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{MutatingFunction, ArcMutatingFunction};
 ///
-/// let double = ArcMutatingFunction::new(|x: &mut i32| x * 2);
+/// let double = ArcMutatingFunction::new(|x: &mut i32| *x * 2);
 /// let identity = ArcMutatingFunction::<i32, i32>::identity();
 /// let conditional = double.when(|x: &i32| *x > 0).or_else(identity);
 ///
 /// let conditional_clone = conditional.clone();
 ///
-/// assert_eq!(conditional.apply(5), 10);
-/// assert_eq!(conditional_clone.apply(-5), -5);
+/// let mut positive = 5;
+/// assert_eq!(conditional.apply(&mut positive), 10);
+/// let mut negative = -5;
+/// assert_eq!(conditional_clone.apply(&mut negative), -5);
 /// ```
 ///
 /// # Author

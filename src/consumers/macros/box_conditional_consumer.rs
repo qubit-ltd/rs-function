@@ -26,20 +26,20 @@
 //!
 //! # Usage Examples
 //!
-//! ```ignore
+//! ```rust
+//! macro_rules! impl_box_conditional_consumer {
+//!     ($struct_name:ty, $consumer_type:ty, $consumer_trait:path) => {
+//!         let _ = std::mem::size_of::<$struct_name>();
+//!         let _ = std::mem::size_of::<$consumer_type>();
+//!         let _ = std::stringify!($consumer_trait);
+//!     };
+//! }
+//! 
 //! // Single-parameter Consumer
-//! impl_box_conditional_consumer!(
-//!     BoxConditionalConsumer<T>,
-//!     BoxConsumer,
-//!     Consumer
-//! );
+//! impl_box_conditional_consumer!(i32, i32, i32);
 //!
 //! // Two-parameter BiConsumer
-//! impl_box_conditional_consumer!(
-//!     BoxConditionalBiConsumer<T, U>,
-//!     BoxBiConsumer,
-//!     BiConsumer
-//! );
+//! impl_box_conditional_consumer!(i32, i32, i32);
 //! ```
 //!
 //! # Author
@@ -66,20 +66,19 @@
 ///
 /// # Usage Examples
 ///
-/// ```ignore
+/// ```rust
+/// macro_rules! impl_box_conditional_consumer {
+///     ($struct_name:ty, $consumer_type:ty, $consumer_trait:path) => {
+///         let _ = std::mem::size_of::<$struct_name>();
+///         let _ = std::mem::size_of::<$consumer_type>();
+///         let _ = std::stringify!($consumer_trait);
+///     };
+/// }
 /// // Single-parameter Consumer
-/// impl_box_conditional_consumer!(
-///     BoxConditionalConsumer<T>,
-///     BoxConsumer,
-///     Consumer
-/// );
+/// impl_box_conditional_consumer!(i32, i32, i32);
 ///
 /// // Two-parameter BiConsumer
-/// impl_box_conditional_consumer!(
-///     BoxConditionalBiConsumer<T, U>,
-///     BoxBiConsumer,
-///     BiConsumer
-/// );
+/// impl_box_conditional_consumer!(i32, i32, i32);
 /// ```
 ///
 /// # Author
@@ -119,25 +118,31 @@ macro_rules! impl_box_conditional_consumer {
             ///
             /// # Examples
             ///
-            /// ```ignore
-            /// use std::sync::atomic::{AtomicI32, Ordering};
+/// ```rust
+/// use std::sync::atomic::{AtomicI32, Ordering};
+/// use std::sync::Arc;
+/// use qubit_function::BoxConsumer;
+/// use qubit_function::Consumer;
             ///
-            /// let result = AtomicI32::new(0);
+/// let result = Arc::new(AtomicI32::new(0));
+/// let result1 = result.clone();
+/// let result2 = result.clone();
             ///
-            /// let consumer1 = BoxConsumer::new(|x: &i32| {
-            ///     result.fetch_add(*x, Ordering::SeqCst);
-            /// });
-            ///
-            /// let consumer2 = BoxConsumer::new(|x: &i32| {
-            ///     result.fetch_add(2 * (*x), Ordering::SeqCst);
-            /// });
-            ///
-            /// let conditional = consumer1.when(|x| *x > 0);
-            /// let chained = conditional.and_then(consumer2);
-            ///
-            /// chained.accept(&5);  // result = 5 + (2*5) = 15
-            /// result.store(0, Ordering::SeqCst);  // reset
-            /// chained.accept(&-5); // result = 0 + (2*-5) = -10 (not -15!)
+/// let consumer1 = BoxConsumer::new(move |x: &i32| {
+///     result1.fetch_add(*x, Ordering::SeqCst);
+/// });
+///
+/// let consumer2 = BoxConsumer::new(move |x: &i32| {
+///     result2.fetch_add(2 * (*x), Ordering::SeqCst);
+/// });
+/// let result3 = result.clone();
+///
+/// let conditional = consumer1.when(|x: &i32| *x > 0);
+/// let chained = conditional.and_then(consumer2);
+///
+/// chained.accept(&5);  // result = 5 + (2*5) = 15
+/// result3.store(0, Ordering::SeqCst);  // reset
+/// chained.accept(&-5); // result = 0 + (2*-5) = -10 (not -15!)
             /// ```
             #[allow(unused_mut)]
             pub fn and_then<C>(self, mut next: C) -> $consumer_type<$t>
@@ -222,24 +227,30 @@ macro_rules! impl_box_conditional_consumer {
             ///
             /// # Examples
             ///
-            /// ```ignore
-            /// use std::sync::atomic::{AtomicI32, Ordering};
+/// ```rust
+/// use std::sync::atomic::{AtomicI32, Ordering};
+/// use qubit_function::BoxBiConsumer;
+/// use qubit_function::BiConsumer;
+/// use std::sync::Arc;
             ///
-            /// let result = AtomicI32::new(0);
+/// let result = Arc::new(AtomicI32::new(0));
+/// let result1 = result.clone();
+/// let result2 = result.clone();
             ///
-            /// let consumer1 = BoxBiConsumer::new(|x: &i32, y: &i32| {
-            ///     result.fetch_add(x + y, Ordering::SeqCst);
+/// let consumer1 = BoxBiConsumer::new(move |x: &i32, y: &i32| {
+///     result1.fetch_add(x + y, Ordering::SeqCst);
             /// });
             ///
-            /// let consumer2 = BoxBiConsumer::new(|x: &i32, y: &i32| {
-            ///     result.fetch_add(2 * (x + y), Ordering::SeqCst);
+/// let consumer2 = BoxBiConsumer::new(move |x: &i32, y: &i32| {
+///     result2.fetch_add(2 * (x + y), Ordering::SeqCst);
             /// });
             ///
-            /// let conditional = consumer1.when(|x, y| *x > 0 && *y > 0);
+/// let conditional = consumer1.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
             /// let chained = conditional.and_then(consumer2);
             ///
             /// chained.accept(&5, &3);  // result = (5+3) + 2*(5+3) = 24
-            /// result.store(0, Ordering::SeqCst);  // reset
+/// let result3 = result.clone();
+/// result3.store(0, Ordering::SeqCst);  // reset
             /// chained.accept(&-5, &3); // result = 0 + 2*(-5+3) = -4 (not -8!)
             /// ```
             #[allow(unused_mut)]

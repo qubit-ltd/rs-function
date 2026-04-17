@@ -160,7 +160,7 @@ macro_rules! impl_fn_ops_trait {
         ///
         /// ## Chain composition with and_then
         ///
-        /// ```rust,ignore
+        /// ```rust
         /// use qubit_function::{Function, FnFunctionOps};
         ///
         /// let double = |x: i32| x * 2;
@@ -172,7 +172,7 @@ macro_rules! impl_fn_ops_trait {
         ///
         /// ## Conditional transformation with when
         ///
-        /// ```rust,ignore
+        /// ```rust
         /// use qubit_function::{Function, FnFunctionOps};
         ///
         /// let double = |x: i32| x * 2;
@@ -218,7 +218,7 @@ macro_rules! impl_fn_ops_trait {
             ///
             /// ## Direct value passing (ownership transfer)
             ///
-            /// ```rust,ignore
+            /// ```rust
             /// use qubit_function::{Function, FnFunctionOps, BoxFunction};
             ///
             /// let double = |x: i32| x * 2;
@@ -232,7 +232,7 @@ macro_rules! impl_fn_ops_trait {
             ///
             /// ## Preserving original with clone
             ///
-            /// ```rust,ignore
+            /// ```rust
             /// use qubit_function::{Function, FnFunctionOps, BoxFunction};
             ///
             /// let double = |x: i32| x * 2;
@@ -287,7 +287,7 @@ macro_rules! impl_fn_ops_trait {
             ///
             /// ## Basic usage with or_else
             ///
-            /// ```rust,ignore
+            /// ```rust
             /// use qubit_function::{Function, FnFunctionOps};
             ///
             /// let double = |x: i32| x * 2;
@@ -299,7 +299,7 @@ macro_rules! impl_fn_ops_trait {
             ///
             /// ## Preserving predicate with clone
             ///
-            /// ```rust,ignore
+            /// ```rust
             /// use qubit_function::{Function, FnFunctionOps, BoxPredicate};
             ///
             /// let double = |x: i32| x * 2;

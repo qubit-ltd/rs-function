@@ -32,11 +32,13 @@
 //!
 //! # Examples
 //!
-//! ```ignore
-//! impl_box_supplier_methods!(
-//!     BoxSupplier<T>,
-//!     Supplier
-//! );
+//! ```rust
+//! // Example usage pattern:
+//! // impl_box_supplier_methods!(
+//! //     BoxSupplier<T>,
+//! //     Supplier
+//! // );
+//! // (private to crate implementation)
 //! ```
 //!
 //! # Author
@@ -68,12 +70,10 @@
 ///
 /// # Examples
 ///
-/// ```ignore
-/// // Single-parameter supplier
-/// impl_box_supplier_methods!(
-///     BoxSupplier<T>,
-///     Supplier
-/// );
+/// ```rust
+/// // The macro is only available within the crate where it is defined.
+/// // Use this macro from `qubit_function::suppliers` when implementing
+/// // supplier methods in that module.
 /// ```
 ///
 /// # Author
@@ -102,7 +102,7 @@ macro_rules! impl_box_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust,ignore
+        /// ```rust
         /// use qubit_function::suppliers::*;
         ///
         /// let supplier = BoxSupplier::new(|| 10);
@@ -137,11 +137,13 @@ macro_rules! impl_box_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust,ignore
-        /// use qubit_function::suppliers::*;
+        /// ```rust
+        /// use qubit_function::predicates::BoxPredicate;
+        /// use qubit_function::{Predicate, suppliers::*};
         ///
         /// let supplier = BoxSupplier::new(|| 42);
-        /// let filtered = supplier.filter(|x| x % 2 == 0);
+        /// let is_even = BoxPredicate::new(|x: &i32| *x % 2 == 0);
+        /// let filtered = supplier.filter(is_even);
         ///
         /// assert_eq!(filtered.get(), Some(42));
         /// ```
@@ -177,7 +179,7 @@ macro_rules! impl_box_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust,ignore
+        /// ```rust
         /// use qubit_function::suppliers::*;
         ///
         /// let first = BoxSupplier::new(|| 42);

@@ -20,12 +20,11 @@
 //!
 //! # Examples
 //!
-//! ```ignore
-//! // For two type parameters
-//! impl_conditional_function_debug_display!(BoxConditionalFunction<T, R>);
-//!
-//! // For three type parameters
-//! impl_conditional_function_debug_display!(BoxConditionalBiFunction<T, U, R>);
+//! ```rust
+//! // Macro is crate-private and used internally by `qubit_function`.
+//! //
+//! // impl_conditional_function_debug_display!(BoxConditionalFunction<T, R>);
+//! // impl_conditional_function_debug_display!(BoxConditionalBiFunction<T, U, R>);
 //! ```
 //!
 //! # Author
@@ -47,12 +46,12 @@
 ///
 /// # Examples
 ///
-/// ```ignore
+/// ```rust
 /// // For two type parameters
-/// impl_conditional_function_debug_display!(BoxConditionalFunction<T, R>);
-///
+/// // impl_conditional_function_debug_display!(BoxConditionalFunction<T, R>);
+/// //
 /// // For three type parameters
-/// impl_conditional_function_debug_display!(BoxConditionalBiFunction<T, U, R>);
+/// // impl_conditional_function_debug_display!(BoxConditionalBiFunction<T, U, R>);
 /// ```
 ///
 /// # Author

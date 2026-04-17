@@ -33,13 +33,13 @@
 //!
 //! # Examples
 //!
-//! ```ignore
+//! ```rust
 //! // Single-parameter mutator
-//! impl_box_mutator_methods!(
-//!     BoxMutator<T>,
-//!     BoxConditionalMutator,
-//!     Mutator
-//! );
+//! // impl_box_mutator_methods!(
+//! //     BoxMutator<T>,
+//! //     BoxConditionalMutator,
+//! //     Mutator
+//! // );
 //! ```
 //!
 //! # Author
@@ -76,15 +76,15 @@
 ///
 /// # Examples
 ///
-/// ```ignore
-/// impl<T> BoxMutator<T> {
-///     // Inside an impl block
-///     impl_box_mutator_methods!(
-///         BoxMutator<T>,
-///         BoxConditionalMutator,
-///         Mutator
-///     );
-/// }
+/// ```rust
+/// // impl<T> BoxMutator<T> {
+/// //     // Inside an impl block
+/// //     impl_box_mutator_methods!(
+/// //         BoxMutator<T>,
+/// //         BoxConditionalMutator,
+/// //         Mutator
+/// //     );
+/// // }
 /// ```
 ///
 /// # Author

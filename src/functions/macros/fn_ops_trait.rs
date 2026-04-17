@@ -160,26 +160,26 @@ macro_rules! impl_fn_ops_trait {
         ///
         /// ## Chain composition with and_then
         ///
-        /// ```rust,ignore
+        /// ```rust
         /// use qubit_function::{Function, FnFunctionOps};
         ///
-        /// let double = |x: i32| x * 2;
-        /// let to_string = |x: i32| x.to_string();
+        /// let double = |x: &i32| x * 2;
+        /// let to_string = |x: &i32| x.to_string();
         ///
         /// let composed = double.and_then(to_string);
-        /// assert_eq!(composed.apply(21), "42");
+        /// assert_eq!(composed.apply(&21), "42");
         /// ```
         ///
         /// ## Conditional transformation with when
         ///
-        /// ```rust,ignore
+        /// ```rust
         /// use qubit_function::{Function, FnFunctionOps};
         ///
-        /// let double = |x: i32| x * 2;
-        /// let conditional = double.when(|x: &i32| *x > 0).or_else(|x: i32| -x);
+        /// let double = |x: &i32| x * 2;
+        /// let conditional = double.when(|x: &i32| *x > 0).or_else(|x: &i32| -x);
         ///
-        /// assert_eq!(conditional.apply(5), 10);
-        /// assert_eq!(conditional.apply(-5), 5);
+        /// assert_eq!(conditional.apply(&5), 10);
+        /// assert_eq!(conditional.apply(&-5), 5);
         /// ```
         ///
         /// # Author
@@ -216,35 +216,36 @@ macro_rules! impl_fn_ops_trait {
             ///
             /// # Examples
             ///
-            /// ## Direct value passing (ownership transfer)
+        /// ## Direct value passing (ownership transfer)
+        ///
+        /// ```rust
+        /// use qubit_function::{Function, FnFunctionOps, BoxFunction};
+        ///
+        /// let double = |x: &i32| x * 2;
+        /// let to_string = BoxFunction::new(|x: &i32| x.to_string());
+        ///
+        /// // to_string is moved here
+        /// let composed = double.and_then(to_string);
+        /// assert_eq!(composed.apply(&21), "42");
+        /// // to_string.apply(5); // Would not compile - moved
+        /// ```
             ///
-            /// ```rust,ignore
-            /// use qubit_function::{Function, FnFunctionOps, BoxFunction};
-            ///
-            /// let double = |x: i32| x * 2;
-            /// let to_string = BoxFunction::new(|x: i32| x.to_string());
-            ///
-            /// // to_string is moved here
-            /// let composed = double.and_then(to_string);
-            /// assert_eq!(composed.apply(21), "42");
-            /// // to_string.apply(5); // Would not compile - moved
-            /// ```
-            ///
-            /// ## Preserving original with clone
-            ///
-            /// ```rust,ignore
-            /// use qubit_function::{Function, FnFunctionOps, BoxFunction};
-            ///
-            /// let double = |x: i32| x * 2;
-            /// let to_string = BoxFunction::new(|x: i32| x.to_string());
-            ///
-            /// // Clone to preserve original
-            /// let composed = double.and_then(to_string.clone());
-            /// assert_eq!(composed.apply(21), "42");
-            ///
-            /// // Original still usable
-            /// assert_eq!(to_string.apply(5), "5");
-            /// ```
+        /// ## Preserving original with clone
+        ///
+        /// ```rust
+        /// use qubit_function::{Function, FnFunctionOps, BoxFunction};
+        ///
+        /// let double = |x: &i32| x * 2;
+        /// let to_string = BoxFunction::new(|x: &i32| x.to_string());
+        /// let to_string_reuse = BoxFunction::new(|x: &i32| x.to_string());
+        ///
+        /// // Clone to preserve original
+        /// let composed = double.and_then(to_string);
+        /// assert_eq!(composed.apply(&21), "42");
+        ///
+        /// // Original still usable
+        /// assert_eq!(to_string_reuse.apply(&5), "5");
+        /// ```
             #[allow(unused_mut)]
             #[inline]
             fn and_then<S, F>(mut self, mut after: F) -> $box_type<T, S>
@@ -285,35 +286,37 @@ macro_rules! impl_fn_ops_trait {
             ///
             /// # Examples
             ///
-            /// ## Basic usage with or_else
+        /// ## Basic usage with or_else
+        ///
+        /// ```rust
+        /// use qubit_function::{Function, FnFunctionOps};
+        ///
+        /// let double = |x: &i32| x * 2;
+        /// let conditional = double.when(|x: &i32| *x > 0).or_else(|x: &i32| -x);
+        ///
+        /// assert_eq!(conditional.apply(&5), 10);
+        /// assert_eq!(conditional.apply(&-5), 5);
+        /// ```
             ///
-            /// ```rust,ignore
-            /// use qubit_function::{Function, FnFunctionOps};
-            ///
-            /// let double = |x: i32| x * 2;
-            /// let conditional = double.when(|x: &i32| *x > 0).or_else(|x: i32| -x);
-            ///
-            /// assert_eq!(conditional.apply(5), 10);
-            /// assert_eq!(conditional.apply(-5), 5);
-            /// ```
-            ///
-            /// ## Preserving predicate with clone
-            ///
-            /// ```rust,ignore
-            /// use qubit_function::{Function, FnFunctionOps, BoxPredicate};
-            ///
-            /// let double = |x: i32| x * 2;
-            /// let is_positive = BoxPredicate::new(|x: &i32| *x > 0);
-            ///
-            /// // Clone to preserve original predicate
-            /// let conditional = double.when(is_positive.clone())
-            ///     .or_else(|x: i32| -x);
-            ///
-            /// assert_eq!(conditional.apply(5), 10);
-            ///
-            /// // Original predicate still usable
-            /// assert!(is_positive.test(&3));
-            /// ```
+        /// ## Preserving predicate with clone
+        ///
+        /// ```rust
+        /// use qubit_function::{Function, FnFunctionOps, BoxPredicate};
+        ///
+        /// let double = |x: &i32| x * 2;
+        /// let is_positive = BoxPredicate::new(|x: &i32| *x > 0);
+        ///
+        /// // Clone to preserve original predicate
+        /// let conditional = double.when(is_positive)
+        ///     .or_else(|x: &i32| -x);
+        ///
+        /// assert_eq!(conditional.apply(&5), 10);
+        ///
+        /// // Original predicate still usable
+        /// let still_positive = double.when(|x: &i32| *x > 0)
+        ///     .or_else(|x: &i32| -x);
+        /// assert_eq!(still_positive.apply(&5), 10);
+        /// ```
             #[inline]
             fn when<P>(self, predicate: P) -> $conditional_type<T, R>
             where

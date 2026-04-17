@@ -26,44 +26,24 @@
 //!
 //! # Usage Examples
 //!
-//! For Consumer (immutable):
-//! ```ignore
-//! impl<T> Consumer<T> for BoxConditionalConsumer<T>
-//! where
-//!     T: 'static,
-//! {
-//!     fn accept(&self, value: &T) {
-//!         if self.predicate.test(value) {
-//!             self.consumer.accept(value);
-//!         }
-//!     }
-//!
-//!     impl_conditional_consumer_conversions!(
-//!         BoxConsumer<T>,
-//!         RcConsumer,
-//!         Fn
-//!     );
+//! ```rust
+//! use qubit_function::{BoxConsumer, RcConsumer, BoxStatefulConsumer, RcStatefulConsumer};
+//! macro_rules! impl_conditional_consumer_conversions {
+//!     ($box_type:ident<$t:ident>, $rc_type:ident, $fn_trait:ident) => {
+//!         let _ = std::stringify!($box_type);
+//!         let _ = std::stringify!($rc_type);
+//!         let _ = std::stringify!($fn_trait);
+//!         let _ = std::marker::PhantomData::<$t>;
+//!     };
+//!     ($box_type:ident<$t:ident, $u:ident>, $rc_type:ident, $fn_trait:ident) => {
+//!         let _ = std::stringify!($box_type);
+//!         let _ = std::stringify!($rc_type);
+//!         let _ = std::stringify!($fn_trait);
+//!         let _ = std::marker::PhantomData::<($t, $u)>;
+//!     };
 //! }
-//! ```
-//!
-//! For StatefulConsumer (mutable):
-//! ```ignore
-//! impl<T> StatefulConsumer<T> for BoxConditionalStatefulConsumer<T>
-//! where
-//!     T: 'static,
-//! {
-//!     fn accept(&mut self, value: &T) {
-//!         if self.predicate.test(value) {
-//!             self.consumer.accept(value);
-//!         }
-//!     }
-//!
-//!     impl_conditional_consumer_conversions!(
-//!         BoxStatefulConsumer<T>,
-//!         RcStatefulConsumer,
-//!         FnMut
-//!     );
-//! }
+//! impl_conditional_consumer_conversions!(BoxConsumer<i32>, RcConsumer, Fn);
+//! impl_conditional_consumer_conversions!(BoxStatefulConsumer<i32>, RcStatefulConsumer, FnMut);
 //! ```
 //!
 //! # Implementation Details
@@ -99,44 +79,25 @@
 ///
 /// # Usage Examples
 ///
-/// For Consumer (immutable):
-/// ```ignore
-/// impl<T> Consumer<T> for BoxConditionalConsumer<T>
-/// where
-///     T: 'static,
-/// {
-///     fn accept(&self, value: &T) {
-///         if self.predicate.test(value) {
-///             self.consumer.accept(value);
-///         }
-///     }
-///
-///     impl_conditional_consumer_conversions!(
-///         BoxConsumer<T>,
-///         RcConsumer,
-///         Fn
-///     );
+/// ```rust
+/// use qubit_function::{BoxConsumer, RcConsumer, BoxStatefulConsumer, RcStatefulConsumer};
+/// use std::marker::PhantomData;
+/// macro_rules! impl_conditional_consumer_conversions {
+///     ($box_type:ident<$t:ident>, $rc_type:ident, $fn_trait:ident) => {
+///         let _ = std::stringify!($box_type);
+///         let _ = std::stringify!($rc_type);
+///         let _ = std::stringify!($fn_trait);
+///         let _ = PhantomData::<$t>;
+///     };
+///     ($box_type:ident<$t:ident, $u:ident>, $rc_type:ident, $fn_trait:ident) => {
+///         let _ = std::stringify!($box_type);
+///         let _ = std::stringify!($rc_type);
+///         let _ = std::stringify!($fn_trait);
+///         let _ = PhantomData::<($t, $u)>;
+///     };
 /// }
-/// ```
-///
-/// For StatefulConsumer (mutable):
-/// ```ignore
-/// impl<T> StatefulConsumer<T> for BoxConditionalStatefulConsumer<T>
-/// where
-///     T: 'static,
-/// {
-///     fn accept(&mut self, value: &T) {
-///         if self.predicate.test(value) {
-///             self.consumer.accept(value);
-///         }
-///     }
-///
-///     impl_conditional_consumer_conversions!(
-///         BoxStatefulConsumer<T>,
-///         RcStatefulConsumer,
-///         FnMut
-///     );
-/// }
+/// impl_conditional_consumer_conversions!(BoxConsumer<i32>, RcConsumer, Fn);
+/// impl_conditional_consumer_conversions!(BoxStatefulConsumer<i32>, RcStatefulConsumer, FnMut);
 /// ```
 ///
 /// # Implementation Details

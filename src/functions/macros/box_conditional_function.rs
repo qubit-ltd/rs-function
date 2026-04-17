@@ -24,20 +24,21 @@
 //!
 //! # Usage Examples
 //!
-//! ```ignore
-//! // Two-parameter Function
-//! impl_box_conditional_function!(
-//!     BoxConditionalFunction<T, R>,
-//!     BoxFunction,
-//!     Function
-//! );
-//!
-//! // Three-parameter BiFunction
-//! impl_box_conditional_function!(
-//!     BoxConditionalBiFunction<T, U, R>,
-//!     BoxBiFunction,
-//!     BiFunction
-//! );
+//! ```rust
+//! // The `impl_box_conditional_function` macro is crate-private.
+//! // Its usage pattern in crate source is:
+//! //
+//! // impl_box_conditional_function!(
+//! //     BoxConditionalFunction<T, R>,
+//! //     BoxFunction,
+//! //     Function
+//! // );
+//! //
+//! // impl_box_conditional_function!(
+//! //     BoxConditionalBiFunction<T, U, R>,
+//! //     BoxBiFunction,
+//! //     BiFunction
+//! // );
 //! ```
 //!
 //! # Author
@@ -64,20 +65,21 @@
 ///
 /// # Usage Examples
 ///
-/// ```ignore
+/// ```rust
 /// // Two-parameter Function
-/// impl_box_conditional_function!(
-///     BoxConditionalFunction<T, R>,
-///     BoxFunction,
-///     Function
-/// );
+/// // `impl_box_conditional_function!` is crate-private and expanded internally.
+/// // impl_box_conditional_function!(
+/// //     BoxConditionalFunction<T, R>,
+/// //     BoxFunction,
+/// //     Function
+/// // );
 ///
 /// // Three-parameter BiFunction
-/// impl_box_conditional_function!(
-///     BoxConditionalBiFunction<T, U, R>,
-///     BoxBiFunction,
-///     BiFunction
-/// );
+/// // impl_box_conditional_function!(
+/// //     BoxConditionalBiFunction<T, U, R>,
+/// //     BoxBiFunction,
+/// //     BiFunction
+/// // );
 /// ```
 ///
 /// # Author
@@ -110,14 +112,16 @@ macro_rules! impl_box_conditional_function {
             ///
             /// # Examples
             ///
-            /// ```ignore
-            /// let func = BoxFunction::new(|x: i32| x * 2);
-            /// let alternative = BoxFunction::new(|x: i32| x + 10);
+            /// ```rust
+            /// use qubit_function::{BoxFunction, Function};
             ///
-            /// let conditional = func.when(|x| *x > 0).or_else(alternative);
+            /// let func = BoxFunction::new(|x: &i32| x * 2);
+            /// let alternative = BoxFunction::new(|x: &i32| x + 10);
             ///
-            /// assert_eq!(conditional.apply(5), 10);  // 5 * 2 = 10
-            /// assert_eq!(conditional.apply(-3), 7);  // -3 + 10 = 7
+            /// let conditional = func.when(|x: &i32| *x > 0).or_else(alternative);
+            ///
+            /// assert_eq!(conditional.apply(&5), 10);  // 5 * 2 = 10
+            /// assert_eq!(conditional.apply(&-3), 7);  // -3 + 10 = 7
             /// ```
             #[allow(unused_mut)]
             pub fn or_else<F>(self, mut else_function: F) -> $box_function_type<$t, $r>
@@ -165,14 +169,16 @@ macro_rules! impl_box_conditional_function {
             ///
             /// # Examples
             ///
-            /// ```ignore
-            /// let func = BoxBiFunction::new(|x: i32, y: i32| x + y);
-            /// let alternative = BoxBiFunction::new(|x: i32, y: i32| x * y);
+            /// ```rust
+            /// use qubit_function::{BiFunction, BoxBiFunction};
             ///
-            /// let conditional = func.when(|x, y| *x > 0 && *y > 0).or_else(alternative);
+            /// let func = BoxBiFunction::new(|x: &i32, y: &i32| x + y);
+            /// let alternative = BoxBiFunction::new(|x: &i32, y: &i32| x * y);
             ///
-            /// assert_eq!(conditional.apply(3, 4), 7);   // 3 + 4 = 7 (predicate satisfied)
-            /// assert_eq!(conditional.apply(-2, 4), -8); // -2 * 4 = -8 (predicate failed)
+            /// let conditional = func.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(alternative);
+            ///
+            /// assert_eq!(conditional.apply(&3, &4), 7);   // 3 + 4 = 7 (predicate satisfied)
+            /// assert_eq!(conditional.apply(&-2, &4), -8); // -2 * 4 = -8 (predicate failed)
             /// ```
             #[allow(unused_mut)]
             pub fn or_else<F>(self, mut else_function: F) -> $box_function_type<$t, $u, $r>

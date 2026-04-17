@@ -29,27 +29,27 @@
 //!
 //! # Usage
 //!
-//! ```ignore
+//! ```rust
 //! // Single generic parameter - Function
-//! impl_function_common_methods!(
-//!     BoxFunction<T, R>,
-//!     (Fn(&T) -> R + 'static),
-//!     |f| Box::new(f)
-//! );
+//! // impl_function_common_methods!(
+//! //     BoxFunction<T, R>,
+//! //     (Fn(&T) -> R + 'static),
+//! //     |f| Box::new(f)
+//! // );
 //!
 //! // Stateful function with state
-//! impl_function_common_methods!(
-//!     ArcStatefulFunction<T, R>,
-//!     (FnMut(&T) -> R + Send + 'static),
-//!     |f| Arc::new(Mutex::new(f))
-//! );
+//! // impl_function_common_methods!(
+//! //     ArcStatefulFunction<T, R>,
+//! //     (FnMut(&T) -> R + Send + 'static),
+//! //     |f| Arc::new(Mutex::new(f))
+//! // );
 //!
 //! // Two generic parameters - BiFunction (if applicable)
-//! impl_function_common_methods!(
-//!     BoxBiFunction<T, U, R>,
-//!     (Fn(&T, &U) -> R + 'static),
-//!     |f| Box::new(f)
-//! );
+//! // impl_function_common_methods!(
+//! //     BoxBiFunction<T, U, R>,
+//! //     (Fn(&T, &U) -> R + 'static),
+//! //     |f| Box::new(f)
+//! // );
 //! ```
 //!
 //! # Generated Methods
@@ -85,27 +85,27 @@
 ///
 /// # Usage
 ///
-/// ```ignore
+/// ```rust
 /// // Single generic parameter - Function
-/// impl_function_common_methods!(
-///     BoxFunction<T, R>,
-///     (Fn(&T) -> R + 'static),
-///     |f| Box::new(f)
-/// );
+/// // impl_function_common_methods!(
+/// //     BoxFunction<T, R>,
+/// //     (Fn(&T) -> R + 'static),
+/// //     |f| Box::new(f)
+/// // );
 ///
 /// // Stateful function with state
-/// impl_function_common_methods!(
-///     ArcStatefulFunction<T, R>,
-///     (FnMut(&T) -> R + Send + 'static),
-///     |f| Arc::new(Mutex::new(f))
-/// );
+/// // impl_function_common_methods!(
+/// //     ArcStatefulFunction<T, R>,
+/// //     (FnMut(&T) -> R + Send + 'static),
+/// //     |f| Arc::new(Mutex::new(f))
+/// // );
 ///
 /// // Two generic parameters - BiFunction (if applicable)
-/// impl_function_common_methods!(
-///     BoxBiFunction<T, U, R>,
-///     (Fn(&T, &U) -> R + 'static),
-///     |f| Box::new(f)
-/// );
+/// // impl_function_common_methods!(
+/// //     BoxBiFunction<T, U, R>,
+/// //     (Fn(&T, &U) -> R + 'static),
+/// //     |f| Box::new(f)
+/// // );
 /// ```
 ///
 /// # Generated Methods

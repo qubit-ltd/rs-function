@@ -1104,9 +1104,8 @@ mod closure_to_methods_tests {
         assert_eq!(*log.lock().unwrap(), vec![5]);
     }
 
-    /// Test that we cannot call to_box() on non-cloneable closures
+    /// Test that we can call into_box() on non-cloneable closures
     #[test]
-    #[ignore] // This test is meant to demonstrate that the code doesn't compile
     fn test_closure_to_box_does_not_compile() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();

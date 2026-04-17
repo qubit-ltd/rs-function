@@ -43,24 +43,24 @@
 //!
 //! # Examples
 //!
-//! ```ignore
+//! ```rust
 //! // Single-parameter with Arc
-//! impl_shared_function_methods!(
-//!     ArcFunction<T, R>,
-//!     ArcConditionalFunction,
-//!     into_arc,
-//!     Function,
-//!     Send + Sync + 'static
-//! );
+//! // impl_shared_function_methods!(
+//! //     ArcFunction<T, R>,
+//! //     ArcConditionalFunction,
+//! //     into_arc,
+//! //     Function,
+//! //     Send + Sync + 'static
+//! // );
 //!
 //! // Two-parameter with Rc
-//! impl_shared_function_methods!(
-//!     RcBiFunction<T, U, R>,
-//!     RcConditionalBiFunction,
-//!     into_rc,
-//!     BiFunction,
-//!     'static
-//! );
+//! // impl_shared_function_methods!(
+//! //     RcBiFunction<T, U, R>,
+//! //     RcConditionalBiFunction,
+//! //     into_rc,
+//! //     BiFunction,
+//! //     'static
+//! // );
 //! ```
 //!
 //! # Author
@@ -104,24 +104,24 @@
 ///
 /// # Examples
 ///
-/// ```ignore
+/// ```rust
 /// // Single-parameter with Arc
-/// impl_shared_function_methods!(
-///     ArcFunction<T, R>,
-///     ArcConditionalFunction,
-///     into_arc,
-///     Function,
-///     Send + Sync + 'static
-/// );
+/// // impl_shared_function_methods!(
+/// //     ArcFunction<T, R>,
+/// //     ArcConditionalFunction,
+/// //     into_arc,
+/// //     Function,
+/// //     Send + Sync + 'static
+/// // );
 ///
 /// // Two-parameter with Rc
-/// impl_shared_function_methods!(
-///     RcBiFunction<T, U, R>,
-///     RcConditionalBiFunction,
-///     into_rc,
-///     BiFunction,
-///     'static
-/// );
+/// // impl_shared_function_methods!(
+/// //     RcBiFunction<T, U, R>,
+/// //     RcConditionalBiFunction,
+/// //     into_rc,
+/// //     BiFunction,
+/// //     'static
+/// // );
 /// ```
 ///
 /// # Author
@@ -151,14 +151,14 @@ macro_rules! impl_shared_function_methods {
         ///
         /// # Examples
         ///
-        /// ```rust,ignore
-        /// use qubit_function::{ArcFunction, Function};
+        /// ```rust
+        /// use qubit_function::{ArcBiFunction, BiFunction, ArcFunction, Function};
         /// use std::sync::Arc;
         ///
-        /// let double = ArcFunction::new(|x: i32| x * 2);
+        /// let double = ArcFunction::new(|x: &i32| x * 2);
         /// let conditional = double.when(|value: &i32| *value > 0);
-        /// assert_eq!(conditional.or_else(|_| 0).apply(5), 10);  // executed
-        /// assert_eq!(conditional.or_else(|_| 0).apply(-3), 0);  // not executed
+        /// assert_eq!(conditional.or_else(|_: &i32| 0).apply(&5), 10);  // executed
+        /// assert_eq!(conditional.or_else(|_: &i32| 0).apply(&-3), 0);  // not executed
         /// ```
         #[inline]
         pub fn when<P>(&self, predicate: P) -> $conditional_type<$t, $r>
@@ -188,15 +188,15 @@ macro_rules! impl_shared_function_methods {
         ///
         /// # Examples
         ///
-        /// ```rust,ignore
+        /// ```rust
         /// use qubit_function::{ArcFunction, Function};
         /// use std::sync::Arc;
         ///
-        /// let double = ArcFunction::new(|x: i32| x * 2);
-        /// let to_string = ArcFunction::new(|x: i32| x.to_string());
+        /// let double = ArcFunction::new(|x: &i32| x * 2);
+        /// let to_string = ArcFunction::new(|x: &i32| x.to_string());
         ///
         /// let chained = double.and_then(to_string);
-        /// assert_eq!(chained.apply(5), "10".to_string());
+        /// assert_eq!(chained.apply(&5), "10".to_string());
         /// ```
         #[allow(unused_mut)]
         #[inline]
@@ -238,14 +238,14 @@ macro_rules! impl_shared_function_methods {
         ///
         /// # Examples
         ///
-        /// ```rust,ignore
-        /// use qubit_function::{ArcBiFunction, BiFunction};
+        /// ```rust
+        /// use qubit_function::{ArcBiFunction, BiFunction, BiMutatingFunction};
         /// use std::sync::Arc;
         ///
-        /// let add = ArcBiFunction::new(|x: i32, y: i32| x + y);
+        /// let add = ArcBiFunction::new(|x: &i32, y: &i32| x + y);
         /// let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
-        /// assert_eq!(conditional.or_else(|_, _| 0).apply(2, 3), 5);  // executed
-        /// assert_eq!(conditional.or_else(|_, _| 0).apply(-1, 3), 0); // not executed
+        /// assert_eq!(conditional.or_else(|_: &i32, _: &i32| 0).apply(&2, &3), 5);  // executed
+        /// assert_eq!(conditional.or_else(|_: &i32, _: &i32| 0).apply(&-1, &3), 0); // not executed
         /// ```
         #[inline]
         pub fn when<P>(&self, predicate: P) -> $conditional_type<$t, $u, $r>
@@ -276,15 +276,15 @@ macro_rules! impl_shared_function_methods {
         ///
         /// # Examples
         ///
-        /// ```rust,ignore
-        /// use qubit_function::{ArcBiFunction, BiFunction};
+        /// ```rust
+        /// use qubit_function::{ArcBiFunction, ArcFunction, BiFunction, BiMutatingFunction, Function};
         /// use std::sync::Arc;
         ///
-        /// let add = ArcBiFunction::new(|x: i32, y: i32| x + y);
-        /// let multiply_by_two = ArcBiFunction::new(|x: i32, y: i32| x * y * 2);
+        /// let add = ArcBiFunction::new(|x: &i32, y: &i32| x + y);
+        /// let multiply_by_two = ArcFunction::new(|x: &i32| x * 2);
         ///
         /// let chained = add.and_then(multiply_by_two);
-        /// assert_eq!(chained.apply(2, 3), 10); // (2+3) * 2 = 10
+        /// assert_eq!(chained.apply(&2, &3), 10); // (2+3) * 2 = 10
         /// ```
         #[allow(unused_mut)]
         #[inline]

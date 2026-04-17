@@ -44,60 +44,60 @@
 ///
 /// # Syntax
 ///
-/// ```ignore
+/// ```rust
 /// // 4-parameter version (with once type, for consumers, functions, etc.)
-/// impl_arc_conversions!(
-///     ArcType<Generics>,           // Arc wrapper type with all generic params
-///     BoxType,                     // Corresponding Box wrapper type
-///     RcType,                      // Corresponding Rc wrapper type
-///     OnceType,                    // Corresponding once wrapper type
-///     Fn(args) [-> RetType]        // Fn or FnMut signature (auto-infers everything!)
-/// );
+/// // impl_arc_conversions!(
+/// //     ArcType<Generics>,           // Arc wrapper type with all generic params
+/// //     BoxType,                     // Corresponding Box wrapper type
+/// //     RcType,                      // Corresponding Rc wrapper type
+/// //     OnceType,                    // Corresponding once wrapper type
+/// //     Fn(args) [-> RetType]        // Fn or FnMut signature (auto-infers everything!)
+/// // );
 ///
 /// // 3-parameter version (no once type, for predicates and similar pure functions)
-/// impl_arc_conversions!(
-///     ArcType<Generics>,           // Arc wrapper type with all generic params
-///     BoxType,                     // Corresponding Box wrapper type
-///     RcType,                      // Corresponding Rc wrapper type
-///     Fn(args) [-> RetType]        // Fn or FnMut signature (auto-infers everything!)
-/// );
+/// // impl_arc_conversions!(
+/// //     ArcType<Generics>,           // Arc wrapper type with all generic params
+/// //     BoxType,                     // Corresponding Box wrapper type
+/// //     RcType,                      // Corresponding Rc wrapper type
+/// //     Fn(args) [-> RetType]        // Fn or FnMut signature (auto-infers everything!)
+/// // );
 /// ```
 ///
 /// # Examples
 ///
-/// ```ignore
+/// ```rust
 /// // Predicate: Fn(&T) -> bool → direct call mode (no once type)
-/// impl_arc_conversions!(ArcPredicate<T>, BoxPredicate, RcPredicate,
-///                       Fn(t: &T) -> bool);
+/// // impl_arc_conversions!(ArcPredicate<T>, BoxPredicate, RcPredicate,
+/// //                       Fn(t: &T) -> bool);
 ///
 /// // BiPredicate: Fn(&T, &U) -> bool → direct call mode (no once type)
-/// impl_arc_conversions!(ArcBiPredicate<T, U>, BoxBiPredicate, RcBiPredicate,
-///                       Fn(t: &T, u: &U) -> bool);
+/// // impl_arc_conversions!(ArcBiPredicate<T, U>, BoxBiPredicate, RcBiPredicate,
+/// //                       Fn(t: &T, u: &U) -> bool);
 ///
 /// // Consumer: Fn(&T) → direct call mode (with once type)
-/// impl_arc_conversions!(ArcConsumer<T>, BoxConsumer, RcConsumer,
-///                       BoxConsumerOnce, Fn(t: &T));
+/// // impl_arc_conversions!(ArcConsumer<T>, BoxConsumer, RcConsumer,
+/// //                       BoxConsumerOnce, Fn(t: &T));
 ///
 /// // StatefulConsumer: FnMut(&T) → lock_unwrap call mode (with once type)
-/// impl_arc_conversions!(ArcStatefulConsumer<T>, BoxStatefulConsumer,
-///                       RcStatefulConsumer, BoxConsumerOnce, FnMut(t: &T));
+/// // impl_arc_conversions!(ArcStatefulConsumer<T>, BoxStatefulConsumer,
+/// //                       RcStatefulConsumer, BoxConsumerOnce, FnMut(t: &T));
 ///
 /// // BiConsumer: Fn(&T, &U) → direct call mode (with once type)
-/// impl_arc_conversions!(ArcBiConsumer<T, U>, BoxBiConsumer, RcBiConsumer,
-///                       BoxBiConsumerOnce, Fn(t: &T, u: &U));
+/// // impl_arc_conversions!(ArcBiConsumer<T, U>, BoxBiConsumer, RcBiConsumer,
+/// //                       BoxBiConsumerOnce, Fn(t: &T, u: &U));
 ///
 /// // Function: Fn(&T) -> R → direct call mode (with once type)
-/// impl_arc_conversions!(ArcFunction<T, R>, BoxFunction, RcFunction,
-///                       BoxFunctionOnce, Fn(t: &T) -> R);
+/// // impl_arc_conversions!(ArcFunction<T, R>, BoxFunction, RcFunction,
+/// //                       BoxFunctionOnce, Fn(t: &T) -> R);
 ///
 /// // StatefulFunction: FnMut(&T) -> R → lock_unwrap call mode (with once type)
-/// impl_arc_conversions!(ArcStatefulFunction<T, R>, BoxStatefulFunction,
-///                       RcStatefulFunction, BoxFunctionOnce, FnMut(t: &T) -> R);
+/// // impl_arc_conversions!(ArcStatefulFunction<T, R>, BoxStatefulFunction,
+/// //                       RcStatefulFunction, BoxFunctionOnce, FnMut(t: &T) -> R);
 ///
 /// // MutatingFunction: Fn(&mut T) -> R → direct call mode (with once type)
-/// impl_arc_conversions!(ArcMutatingFunction<T, R>, BoxMutatingFunction,
-///                       RcMutatingFunction, BoxMutatingFunctionOnce,
-///                       Fn(input: &mut T) -> R);
+/// // impl_arc_conversions!(ArcMutatingFunction<T, R>, BoxMutatingFunction,
+/// //                       RcMutatingFunction, BoxMutatingFunctionOnce,
+/// //                       Fn(input: &mut T) -> R);
 /// ```
 ///
 /// # Author

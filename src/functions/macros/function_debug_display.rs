@@ -20,12 +20,12 @@
 //!
 //! # Examples
 //!
-//! ```ignore
+//! ```rust
 //! // For two type parameters
-//! impl_function_debug_display!(BoxFunction<T, R>);
+//! // impl_function_debug_display!(BoxFunction<T, R>);
 //!
 //! // For three type parameters
-//! impl_function_debug_display!(BoxBiFunction<T, U, R>);
+//! // impl_function_debug_display!(BoxBiFunction<T, U, R>);
 //! ```
 //!
 //! # Author
@@ -46,12 +46,12 @@
 ///
 /// # Examples
 ///
-/// ```ignore
+/// ```rust
 /// // For two type parameters
-/// impl_function_debug_display!(BoxFunction<T, R>);
+/// // impl_function_debug_display!(BoxFunction<T, R>);
 ///
 /// // For three type parameters
-/// impl_function_debug_display!(BoxBiFunction<T, U, R>);
+/// // impl_function_debug_display!(BoxBiFunction<T, U, R>);
 /// ```
 ///
 /// # Author

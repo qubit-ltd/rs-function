@@ -79,7 +79,7 @@ pub trait TransformerOnce<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::TransformerOnce;
     ///
     /// let double = |x: i32| x * 2;
@@ -104,7 +104,7 @@ pub trait TransformerOnce<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::TransformerOnce;
     ///
     /// let double = |x: i32| x * 2;
@@ -135,7 +135,7 @@ pub trait TransformerOnce<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::TransformerOnce;
     ///
     /// let double = |x: i32| x * 2;
@@ -166,7 +166,7 @@ pub trait TransformerOnce<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::TransformerOnce;
     ///
     /// let double = |x: i32| x * 2;
@@ -276,7 +276,7 @@ impl_closure_once_trait!(
 ///
 /// ## Chain composition with and_then
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{TransformerOnce, FnTransformerOnceOps};
 ///
 /// let parse = |s: String| s.parse::<i32>().unwrap_or(0);
@@ -286,21 +286,21 @@ impl_closure_once_trait!(
 /// assert_eq!(composed.apply("21".to_string()), 42);
 /// ```
 ///
-/// ## Reverse composition with compose
+/// ## Forward composition with and_then
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{TransformerOnce, FnTransformerOnceOps};
 ///
 /// let double = |x: i32| x * 2;
-/// let to_string = |x: i32| x.to_string();
+/// let parse = |s: String| s.parse::<i32>().unwrap_or(0);
 ///
-/// let composed = to_string.compose(double);
-/// assert_eq!(composed.apply(21), "42");
+/// let composed = parse.and_then(double);
+/// assert_eq!(composed.apply("21".to_string()), 42);
 /// ```
 ///
 /// ## Conditional transformation with when
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{TransformerOnce, FnTransformerOnceOps};
 ///
 /// let double = |x: i32| x * 2;
@@ -341,7 +341,7 @@ pub trait FnTransformerOnceOps<T, R>: FnOnce(T) -> R + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{TransformerOnce, FnTransformerOnceOps,
     ///     BoxTransformerOnce};
     ///
@@ -393,7 +393,7 @@ pub trait FnTransformerOnceOps<T, R>: FnOnce(T) -> R + Sized {
     ///
     /// ## Basic usage with or_else
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{TransformerOnce, FnTransformerOnceOps};
     ///
     /// let double = |x: i32| x * 2;
@@ -402,23 +402,21 @@ pub trait FnTransformerOnceOps<T, R>: FnOnce(T) -> R + Sized {
     /// assert_eq!(conditional.apply(5), 10);
     /// ```
     ///
-    /// ## Preserving predicate with clone
+    /// ## Preserving predicate with a second closure
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{TransformerOnce, FnTransformerOnceOps,
-    ///     RcPredicate};
+    /// ```rust
+    /// use qubit_function::{Predicate, TransformerOnce, FnTransformerOnceOps};
     ///
     /// let double = |x: i32| x * 2;
-    /// let is_positive = RcPredicate::new(|x: &i32| *x > 0);
-    ///
-    /// // Clone to preserve original predicate
-    /// let conditional = double.when(is_positive.clone())
+    /// let is_positive = |x: &i32| *x > 0;
+    /// let is_positive_for_validation = |x: &i32| *x > 0;
+    /// let conditional = double.when(is_positive)
     ///     .or_else(|x: i32| -x);
     ///
     /// assert_eq!(conditional.apply(5), 10);
     ///
     /// // Original predicate still usable
-    /// assert!(is_positive.test(&3));
+    /// assert!(is_positive_for_validation(&3));
     /// ```
     fn when<P>(self, predicate: P) -> BoxConditionalTransformerOnce<T, R>
     where
@@ -466,7 +464,7 @@ impl<T, R, F> FnTransformerOnceOps<T, R> for F where F: FnOnce(T) -> R {}
 ///
 /// ## Using in generic constraints
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{UnaryOperatorOnce, TransformerOnce};
 ///
 /// fn apply<T, O>(value: T, op: O) -> T
@@ -512,7 +510,7 @@ where
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{BoxUnaryOperatorOnce, TransformerOnce};
 ///
 /// let increment: BoxUnaryOperatorOnce<i32> = BoxUnaryOperatorOnce::new(|x| x + 1);
@@ -549,7 +547,7 @@ pub type BoxUnaryOperatorOnce<T> = BoxTransformerOnce<T, T>;
 ///
 /// ## With or_else Branch
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{TransformerOnce, BoxTransformerOnce};
 ///
 /// let double = BoxTransformerOnce::new(|x: i32| x * 2);

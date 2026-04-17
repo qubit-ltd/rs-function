@@ -21,10 +21,10 @@
 //!
 //! # Examples
 //!
-//! ```ignore
+//! ```rust
 //! // For single type parameter
-//! impl_conditional_mutator_clone!(ArcConditionalMutator<T>);
-//! impl_conditional_mutator_clone!(RcConditionalMutator<T>);
+//! // impl_conditional_mutator_clone!(ArcConditionalMutator<T>);
+//! // impl_conditional_mutator_clone!(RcConditionalMutator<T>);
 //! ```
 //!
 //! # Author
@@ -51,10 +51,10 @@
 ///
 /// # Examples
 ///
-/// ```ignore
+/// ```rust
 /// // At the top level, outside of any impl block
-/// impl_conditional_mutator_clone!(ArcConditionalMutator<T>);
-/// impl_conditional_mutator_clone!(RcConditionalMutator<T>);
+/// // impl_conditional_mutator_clone!(ArcConditionalMutator<T>);
+/// // impl_conditional_mutator_clone!(RcConditionalMutator<T>);
 /// ```
 ///
 /// # Author

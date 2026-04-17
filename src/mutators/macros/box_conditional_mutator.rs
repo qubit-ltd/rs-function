@@ -26,13 +26,13 @@
 //!
 //! # Usage Examples
 //!
-//! ```ignore
+//! ```rust
 //! // Single-parameter Mutator
-//! impl_box_conditional_mutator!(
-//!     BoxConditionalMutator<T>,
-//!     BoxMutator,
-//!     Mutator
-//! );
+//! // impl_box_conditional_mutator!(
+//! //     BoxConditionalMutator<T>,
+//! //     BoxMutator,
+//! //     Mutator
+//! // );
 //! ```
 //!
 //! # Author
@@ -65,13 +65,13 @@
 ///
 /// # Usage Examples
 ///
-/// ```ignore
+/// ```rust
 /// // At the top level, outside of any impl block
-/// impl_box_conditional_mutator!(
-///     BoxConditionalMutator<T>,
-///     BoxMutator,
-///     Mutator
-/// );
+/// // impl_box_conditional_mutator!(
+/// //     BoxConditionalMutator<T>,
+/// //     BoxMutator,
+/// //     Mutator
+/// // );
 /// ```
 ///
 /// # Author
@@ -111,27 +111,27 @@ macro_rules! impl_box_conditional_mutator {
             ///
             /// # Examples
             ///
-            /// ```ignore
-            /// use std::sync::atomic::{AtomicI32, Ordering};
-            ///
-            /// let result = AtomicI32::new(0);
-            ///
-            /// let mutator1 = BoxMutator::new(|x: &mut i32| {
-            ///     *x += 1;
-            /// });
-            ///
-            /// let mutator2 = BoxMutator::new(|x: &mut i32| {
-            ///     *x += 2;
-            /// });
-            ///
-            /// let conditional = mutator1.when(|x| *x > 0);
-            /// let chained = conditional.and_then(mutator2);
-            ///
-            /// let mut val = 5;
-            /// chained.apply(&mut val);  // val = 5 + 1 + 2 = 8
-            /// let mut val2 = -1;
-            /// chained.apply(&mut val2); // val2 = -1 + 2 = 1 (not -1 + 1 + 2!)
-            /// ```
+            /// ```rust
+            /// // use std::sync::atomic::{AtomicI32, Ordering};
+            /// //
+            /// // let result = AtomicI32::new(0);
+            /// //
+            /// // let mutator1 = BoxMutator::new(|x: &mut i32| {
+            /// //     *x += 1;
+            /// // });
+            /// //
+            /// // let mutator2 = BoxMutator::new(|x: &mut i32| {
+            /// //     *x += 2;
+            /// // });
+            /// //
+            /// // let conditional = mutator1.when(|x| *x > 0);
+            /// // let chained = conditional.and_then(mutator2);
+            /// //
+            /// // let mut val = 5;
+            /// // chained.apply(&mut val);  // val = 5 + 1 + 2 = 8
+            /// // let mut val2 = -1;
+            /// // chained.apply(&mut val2); // val2 = -1 + 2 = 1 (not -1 + 1 + 2!)
+            /// // ```
             #[allow(unused_mut)]
             pub fn and_then<M>(self, mut next: M) -> $mutator_type<$t>
             where

@@ -101,24 +101,22 @@
 ///
 /// # Examples
 ///
-/// ```ignore
+/// ```rust
 /// // Single-parameter with Arc
-/// impl_shared_consumer_methods!(
-///     ArcConsumer<T>,
-///     ArcConditionalConsumer,
-///     into_arc,
-///     Consumer,
-///     Send + Sync + 'static
-/// );
-///
+/// use qubit_function::{ArcConsumer, RcConsumer};
+/// 
+/// let _arc_conditional = ArcConsumer::new(|x: &i32| {
+///     let _ = x;
+/// }).when(|x: &i32| *x > 0);
+/// let _rc_conditional = RcConsumer::new(|x: &i32| {
+///     let _ = x;
+/// }).when(|x: &i32| *x > 0);
+/// 
 /// // Two-parameter with Rc
-/// impl_shared_consumer_methods!(
-///     RcBiConsumer<T, U>,
-///     RcConditionalBiConsumer,
-///     into_rc,
-///     BiConsumer,
-///     'static
-/// );
+/// use qubit_function::{RcBiConsumer};
+/// let _rc_bi_conditional = RcBiConsumer::new(|x: &i32, y: &i32| {
+///     let _ = (*x, *y);
+/// }).when(|x: &i32, y: &i32| *x > 0 && *y > 0);
 /// ```
 ///
 /// # Author
@@ -151,9 +149,10 @@ macro_rules! impl_shared_consumer_methods {
         ///
         /// # Examples
         ///
-        /// ```ignore
+        /// ```rust
+        /// use qubit_function::{ArcConsumer, Consumer};
         /// let consumer = ArcConsumer::new(|x: &i32| println!("{}", x));
-        /// let conditional = consumer.when(|x| *x > 0);
+        /// let conditional = consumer.when(|x: &i32| *x > 0);
         ///
         /// conditional.accept(&5);  // prints: 5
         /// conditional.accept(&-5); // prints nothing
@@ -187,7 +186,8 @@ macro_rules! impl_shared_consumer_methods {
         ///
         /// # Examples
         ///
-        /// ```ignore
+        /// ```rust
+        /// use qubit_function::{ArcConsumer, Consumer};
         /// let consumer1 = ArcConsumer::new(|x: &i32| print!("first: {}", x));
         /// let consumer2 = ArcConsumer::new(|x: &i32| println!(" second: {}", x));
         ///
@@ -236,9 +236,10 @@ macro_rules! impl_shared_consumer_methods {
         ///
         /// # Examples
         ///
-        /// ```ignore
+        /// ```rust
+        /// use qubit_function::{ArcBiConsumer, BiConsumer};
         /// let consumer = ArcBiConsumer::new(|x: &i32, y: &i32| println!("{}", x + y));
-        /// let conditional = consumer.when(|x, y| *x > 0 && *y > 0);
+        /// let conditional = consumer.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
         ///
         /// conditional.accept(&5, &3);  // prints: 8
         /// conditional.accept(&-5, &3); // prints nothing
@@ -273,7 +274,8 @@ macro_rules! impl_shared_consumer_methods {
         ///
         /// # Examples
         ///
-        /// ```ignore
+        /// ```rust
+        /// use qubit_function::{ArcBiConsumer, BiConsumer};
         /// let consumer1 = ArcBiConsumer::new(|x: &i32, y: &i32| print!("first: {}", x + y));
         /// let consumer2 = ArcBiConsumer::new(|x: &i32, y: &i32| println!(" second: {}", x * y));
         ///

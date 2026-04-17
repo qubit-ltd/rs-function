@@ -31,37 +31,37 @@
 ///
 /// # Examples
 ///
-/// ```ignore
+/// ```rust
 /// // Consumer trait (with once conversion)
-/// impl_closure_trait!(
-///     Consumer<T>,
-///     accept,
-///     BoxConsumerOnce,
-///     Fn(value: &T)
-/// );
-///
+/// // impl_closure_trait!(
+/// //     Consumer<i32>,
+/// //     accept,
+/// //     BoxConsumerOnce,
+/// //     Fn(value: &i32)
+/// // );
+/// 
 /// // Function trait
-/// impl_closure_trait!(
-///     Function<T, R>,
-///     apply,
-///     BoxFunctionOnce,
-///     Fn(input: &T) -> R
-/// );
-///
+/// // impl_closure_trait!(
+/// //     Function<i32, i32>,
+/// //     apply,
+/// //     BoxFunctionOnce,
+/// //     Fn(input: i32) -> i32
+/// // );
+/// 
 /// // Predicate trait (no once conversion)
-/// impl_closure_trait!(
-///     Predicate<T>,
-///     test,
-///     Fn(value: &T) -> bool
-/// );
-///
+/// // impl_closure_trait!(
+/// //     Predicate<i32>,
+/// //     test,
+/// //     Fn(value: &i32) -> bool
+/// // );
+/// 
 /// // StatefulConsumer trait
-/// impl_closure_trait!(
-///     StatefulConsumer<T>,
-///     accept,
-///     BoxConsumerOnce,
-///     FnMut(value: &T)
-/// );
+/// // impl_closure_trait!(
+/// //     StatefulConsumer<i32>,
+/// //     accept,
+/// //     BoxConsumerOnce,
+/// //     FnMut(value: &i32)
+/// // );
 /// ```
 ///
 /// # Author

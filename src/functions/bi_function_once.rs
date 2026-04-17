@@ -114,7 +114,7 @@ pub trait BiFunctionOnce<T, U, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::BiFunctionOnce;
     ///
     /// let add = |x: &i32, y: &i32| *x + *y;
@@ -139,7 +139,7 @@ pub trait BiFunctionOnce<T, U, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::BiFunctionOnce;
     ///
     /// let add = |x: &i32, y: &i32| *x + *y;
@@ -252,11 +252,11 @@ impl_closure_once_trait!(
 ///
 /// ## Chain composition with and_then
 ///
-/// ```rust,ignore
-/// use qubit_function::{BiFunctionOnce, FnBiFunctionOnceOps};
+/// ```rust
+/// use qubit_function::{BiFunctionOnce, FnBiFunctionOnceOps, FunctionOnce};
 ///
 /// let add = |x: &i32, y: &i32| *x + *y;
-/// let double = |x: i32| x * 2;
+/// let double = |x: &i32| x * 2;
 ///
 /// let composed = add.and_then(double);
 /// assert_eq!(composed.apply(&3, &5), 16); // (3 + 5) * 2
@@ -264,7 +264,7 @@ impl_closure_once_trait!(
 ///
 /// ## Conditional execution with when
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{BiFunctionOnce, FnBiFunctionOnceOps};
 ///
 /// let add = |x: &i32, y: &i32| *x + *y;
@@ -305,12 +305,12 @@ pub trait FnBiFunctionOnceOps<T, U, R>: FnOnce(&T, &U) -> R + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{BiFunctionOnce, FnBiFunctionOnceOps,
-    ///     BoxFunctionOnce};
+/// ```rust
+/// use qubit_function::{BiFunctionOnce, FnBiFunctionOnceOps,
+///     BoxFunctionOnce};
     ///
-    /// let add = |x: &i32, y: &i32| *x + *y;
-    /// let to_string = BoxFunctionOnce::new(|x: i32| x.to_string());
+/// let add = |x: &i32, y: &i32| *x + *y;
+/// let to_string = BoxFunctionOnce::new(|x: &i32| x.to_string());
     ///
     /// // to_string is moved and consumed
     /// let composed = add.and_then(to_string);
@@ -356,7 +356,7 @@ pub trait FnBiFunctionOnceOps<T, U, R>: FnOnce(&T, &U) -> R + Sized {
     ///
     /// ## Basic usage with or_else
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{BiFunctionOnce, FnBiFunctionOnceOps};
     ///
     /// let add = |x: &i32, y: &i32| *x + *y;
@@ -369,23 +369,24 @@ pub trait FnBiFunctionOnceOps<T, U, R>: FnOnce(&T, &U) -> R + Sized {
     ///
     /// ## Preserving bi-predicate with clone
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{BiFunctionOnce, FnBiFunctionOnceOps,
-    ///     RcBiPredicate};
+/// ```rust
+/// use qubit_function::{BiFunctionOnce, FnBiFunctionOnceOps,
+///     RcBiPredicate};
     ///
     /// let add = |x: &i32, y: &i32| *x + *y;
     /// let both_positive = RcBiPredicate::new(|x: &i32, y: &i32|
     ///     *x > 0 && *y > 0);
     ///
     /// // Clone to preserve original bi-predicate
-    /// let conditional = add.when(both_positive.clone())
-    ///     .or_else(|x: &i32, y: &i32| *x * *y);
+/// let conditional = add.when(both_positive.clone())
+///     .or_else(|x: &i32, y: &i32| *x * *y);
     ///
     /// assert_eq!(conditional.apply(&5, &3), 8);
     ///
-    /// // Original bi-predicate still usable
-    /// assert!(both_positive.test(&5, &3));
-    /// ```
+/// // Original bi-predicate still usable
+/// use qubit_function::BiPredicate;
+/// assert!(both_positive.test(&5, &3));
+/// ```
     fn when<P>(self, predicate: P) -> BoxConditionalBiFunctionOnce<T, U, R>
     where
         Self: 'static,
@@ -437,7 +438,7 @@ where
 ///
 /// ## With or_else Branch
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{BiFunctionOnce, BoxBiFunctionOnce};
 ///
 /// let add = BoxBiFunctionOnce::new(|x: &i32, y: &i32| *x + *y);

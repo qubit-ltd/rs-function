@@ -21,12 +21,12 @@
 //!
 //! # Examples
 //!
-//! ```ignore
+//! ```rust
 //! // For single type parameter
-//! impl_mutator_clone!(ArcMutator<T>);
-//!
-//! // For single type parameter with Rc
-//! impl_mutator_clone!(RcMutator<T>);
+//! // impl_mutator_clone!(ArcMutator<T>);
+//! //
+//! // // For single type parameter with Rc
+//! // impl_mutator_clone!(RcMutator<T>);
 //! ```
 //!
 //! # Author
@@ -53,12 +53,12 @@
 ///
 /// # Examples
 ///
-/// ```ignore
+/// ```rust
 /// // At the top level, outside of any impl block
-/// impl_mutator_clone!(ArcMutator<T>);
-///
-/// // For single type parameter with Rc
-/// impl_mutator_clone!(RcMutator<T>);
+/// // impl_mutator_clone!(ArcMutator<T>);
+/// //
+/// // // For single type parameter with Rc
+/// // impl_mutator_clone!(RcMutator<T>);
 /// ```
 ///
 /// # Author

@@ -220,7 +220,8 @@ pub trait Consumer<T> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
+    /// use qubit_function::{Consumer, ConsumerOnce, BoxConsumer};
     ///
     /// fn takes_once<C: ConsumerOnce<i32>>(consumer: C, value: &i32) {
     ///     consumer.accept(value);
@@ -311,13 +312,14 @@ pub trait Consumer<T> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
+/// use qubit_function::{Consumer, ConsumerOnce, ArcConsumer};
     ///
     /// fn takes_once<C: ConsumerOnce<i32>>(consumer: C, value: &i32) {
     ///     consumer.accept(value);
     /// }
     ///
-    /// let consumer = BoxConsumer::new(|x: &i32| println!("{}", x));
+    /// let consumer = ArcConsumer::new(|x: &i32| println!("{}", x));
     /// takes_once(consumer.to_once(), &5);
     /// ```
     fn to_once(&self) -> BoxConsumerOnce<T>

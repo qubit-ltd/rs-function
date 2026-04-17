@@ -30,21 +30,21 @@
 ///
 /// # Syntax
 ///
-/// ```ignore
+/// ```rust
 /// // 2-parameter version (no once type, for predicates and similar pure functions)
-/// impl_rc_conversions!(
-///     RcType<Generics>,           // Rc wrapper type with all generic parameters
-///     BoxType,                     // Corresponding Box wrapper type
-///     Fn(args) [-> RetType]        // Fn or FnMut signature (auto-infers everything!)
-/// );
+/// // impl_rc_conversions!(
+/// //     RcType<Generics>,           // Rc wrapper type with all generic parameters
+/// //     BoxType,                     // Corresponding Box wrapper type
+/// //     Fn(args) [-> RetType]        // Fn or FnMut signature (auto-infers everything!)
+/// // );
 ///
 /// // 3-parameter version (with once type, for consumers, functions, etc.)
-/// impl_rc_conversions!(
-///     RcType<Generics>,           // Rc wrapper type with all generic parameters
-///     BoxType,                     // Corresponding Box wrapper type
-///     OnceType,                    // Corresponding once wrapper type
-///     Fn(args) [-> RetType]        // Fn or FnMut signature (auto-infers everything!)
-/// );
+/// // impl_rc_conversions!(
+/// //     RcType<Generics>,           // Rc wrapper type with all generic parameters
+/// //     BoxType,                     // Corresponding Box wrapper type
+/// //     OnceType,                    // Corresponding once wrapper type
+/// //     Fn(args) [-> RetType]        // Fn or FnMut signature (auto-infers everything!)
+/// // );
 /// ```
 ///
 /// # Generated methods
@@ -60,30 +60,37 @@
 ///
 /// # Examples
 ///
-/// ```ignore
+/// ```rust
+/// // use qubit_function::{
+/// //     RcPredicate, BoxPredicate, RcBiPredicate, BoxBiPredicate, RcConsumer, BoxConsumer, BoxConsumerOnce,
+/// //     RcStatefulConsumer, BoxStatefulConsumer, RcBiConsumer, BoxBiConsumer, BoxBiConsumerOnce,
+/// //     RcFunction, BoxFunction, BoxFunctionOnce, RcStatefulFunction, BoxStatefulFunction,
+/// //     RcMutatingFunction, BoxMutatingFunction, BoxMutatingFunctionOnce,
+/// // };
+///
 /// // Predicate: Fn(&T) -> bool → direct call mode (no once type)
-/// impl_rc_conversions!(RcPredicate<T>, BoxPredicate, Fn(t: &T) -> bool);
+/// // impl_rc_conversions!(RcPredicate<i32>, BoxPredicate, Fn(t: &i32) -> bool);
 ///
 /// // BiPredicate: Fn(&T, &U) -> bool → direct call mode (no once type)
-/// impl_rc_conversions!(RcBiPredicate<T, U>, BoxBiPredicate, Fn(t: &T, u: &U) -> bool);
+/// // impl_rc_conversions!(RcBiPredicate<i32, i32>, BoxBiPredicate, Fn(t: &i32, u: &i32) -> bool);
 ///
 /// // Consumer: Fn(&T) → direct call mode (with once type)
-/// impl_rc_conversions!(RcConsumer<T>, BoxConsumer, BoxConsumerOnce, Fn(t: &T));
+/// // impl_rc_conversions!(RcConsumer<i32>, BoxConsumer, BoxConsumerOnce, Fn(t: &i32));
 ///
 /// // StatefulConsumer: FnMut(&T) → borrow_mut call mode (with once type)
-/// impl_rc_conversions!(RcStatefulConsumer<T>, BoxStatefulConsumer, BoxConsumerOnce, FnMut(t: &T));
+/// // impl_rc_conversions!(RcStatefulConsumer<i32>, BoxStatefulConsumer, BoxConsumerOnce, FnMut(t: &i32));
 ///
 /// // BiConsumer: Fn(&T, &U) → direct call mode (with once type)
-/// impl_rc_conversions!(RcBiConsumer<T, U>, BoxBiConsumer, BoxBiConsumerOnce, Fn(t: &T, u: &U));
+/// // impl_rc_conversions!(RcBiConsumer<i32, i32>, BoxBiConsumer, BoxBiConsumerOnce, Fn(t: &i32, u: &i32));
 ///
 /// // Function: Fn(&T) -> R → direct call mode (with once type)
-/// impl_rc_conversions!(RcFunction<T, R>, BoxFunction, BoxFunctionOnce, Fn(t: &T) -> R);
+/// // impl_rc_conversions!(RcFunction<i32, i32>, BoxFunction, BoxFunctionOnce, Fn(t: &i32) -> i32);
 ///
 /// // StatefulFunction: FnMut(&T) -> R → borrow_mut call mode (with once type)
-/// impl_rc_conversions!(RcStatefulFunction<T, R>, BoxStatefulFunction, BoxFunctionOnce, FnMut(t: &T) -> R);
+/// // impl_rc_conversions!(RcStatefulFunction<i32, i32>, BoxStatefulFunction, BoxFunctionOnce, FnMut(t: &i32) -> i32);
 ///
 /// // MutatingFunction: Fn(&mut T) -> R → direct call mode (with once type)
-/// impl_rc_conversions!(RcMutatingFunction<T, R>, BoxMutatingFunction, BoxMutatingFunctionOnce, Fn(input: &mut T) -> R);
+/// // impl_rc_conversions!(RcMutatingFunction<i32, i32>, BoxMutatingFunction, BoxMutatingFunctionOnce, Fn(input: &mut i32) -> i32);
 /// ```
 ///
 /// # Author

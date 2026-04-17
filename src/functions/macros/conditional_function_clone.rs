@@ -21,14 +21,13 @@
 //!
 //! # Examples
 //!
-//! ```ignore
-//! // For two type parameters
-//! impl_conditional_function_clone!(ArcConditionalFunction<T, R>);
-//! impl_conditional_function_clone!(RcConditionalFunction<T, R>);
-//!
-//! // For three type parameters
-//! impl_conditional_function_clone!(ArcConditionalBiFunction<T, U, R>);
-//! impl_conditional_function_clone!(RcConditionalBiFunction<T, U, R>);
+//! ```rust
+//! // Macro is crate-private and used internally by `qubit_function`.
+//! //
+//! // impl_conditional_function_clone!(ArcConditionalFunction<T, R>);
+//! // impl_conditional_function_clone!(RcConditionalFunction<T, R>);
+//! // impl_conditional_function_clone!(ArcConditionalBiFunction<T, U, R>);
+//! // impl_conditional_function_clone!(RcConditionalBiFunction<T, U, R>);
 //! ```
 //!
 //! # Author
@@ -50,14 +49,13 @@
 ///
 /// # Examples
 ///
-/// ```ignore
-/// // For two type parameters
-/// impl_conditional_function_clone!(ArcConditionalFunction<T, R>);
-/// impl_conditional_function_clone!(RcConditionalFunction<T, R>);
-///
-/// // For three type parameters
-/// impl_conditional_function_clone!(ArcConditionalBiFunction<T, U, R>);
-/// impl_conditional_function_clone!(RcConditionalBiFunction<T, U, R>);
+/// ```rust
+/// // Macro is crate-private and used internally by `qubit_function`.
+/// //
+/// // impl_conditional_function_clone!(ArcConditionalFunction<T, R>);
+/// // impl_conditional_function_clone!(RcConditionalFunction<T, R>);
+/// // impl_conditional_function_clone!(ArcConditionalBiFunction<T, U, R>);
+/// // impl_conditional_function_clone!(RcConditionalBiFunction<T, U, R>);
 /// ```
 ///
 /// # Author

@@ -58,8 +58,8 @@
 //!
 //! ## Basic Counter
 //!
-//! ```rust,ignore
-//! use qubit_function::{BoxStatefulSupplier, Supplier};
+//! ```rust
+//! use qubit_function::{BoxStatefulSupplier, StatefulSupplier};
 //!
 //! let mut counter = 0;
 //! let mut supplier = BoxStatefulSupplier::new(move || {
@@ -74,8 +74,8 @@
 //!
 //! ## Method Chaining
 //!
-//! ```rust,ignore
-//! use qubit_function::{BoxStatefulSupplier, Supplier};
+//! ```rust
+//! use qubit_function::{BoxStatefulSupplier, StatefulSupplier};
 //!
 //! let mut pipeline = BoxStatefulSupplier::new(|| 10)
 //!     .map(|x| x * 2)
@@ -86,8 +86,8 @@
 //!
 //! ## Thread-safe Sharing
 //!
-//! ```rust,ignore
-//! use qubit_function::{ArcStatefulSupplier, Supplier};
+//! ```rust
+//! use qubit_function::{ArcStatefulSupplier, StatefulSupplier};
 //! use std::sync::{Arc, Mutex};
 //! use std::thread;
 //!
@@ -170,8 +170,8 @@ use crate::transformers::transformer::Transformer;
 ///
 /// ## Using with Generic Functions
 ///
-/// ```rust,ignore
-/// use qubit_function::{Supplier, BoxStatefulSupplier};
+/// ```rust
+/// use qubit_function::{StatefulSupplier, BoxStatefulSupplier};
 ///
 /// fn call_twice<S: StatefulSupplier<i32>>(supplier: &mut S) -> (i32, i32) {
 ///     (supplier.get(), supplier.get())
@@ -186,8 +186,8 @@ use crate::transformers::transformer::Transformer;
 ///
 /// ## Stateful Supplier
 ///
-/// ```rust,ignore
-/// use qubit_function::Supplier;
+/// ```rust
+/// use qubit_function::StatefulSupplier;
 ///
 /// let mut counter = 0;
 /// let mut stateful = || {
@@ -215,8 +215,8 @@ pub trait StatefulSupplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{Supplier, BoxStatefulSupplier};
+    /// ```rust
+    /// use qubit_function::{StatefulSupplier, BoxStatefulSupplier};
     ///
     /// let mut supplier = BoxStatefulSupplier::new(|| 42);
     /// assert_eq!(supplier.get(), 42);
@@ -235,11 +235,11 @@ pub trait StatefulSupplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::Supplier;
-    ///
-    /// let closure = || 42;
-    /// let mut boxed = closure.into_box();
+/// ```rust
+/// use qubit_function::{StatefulSupplier, SupplierOnce};
+///
+/// let closure = || 42;
+/// let mut boxed = StatefulSupplier::into_box(closure);
     /// assert_eq!(boxed.get(), 42);
     /// ```
     fn into_box(mut self) -> BoxStatefulSupplier<T>
@@ -261,8 +261,8 @@ pub trait StatefulSupplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::Supplier;
+/// ```rust
+/// use qubit_function::{StatefulSupplier, SupplierOnce};
     ///
     /// let closure = || 42;
     /// let mut rc = closure.into_rc();
@@ -287,8 +287,8 @@ pub trait StatefulSupplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::Supplier;
+    /// ```rust
+    /// use qubit_function::{StatefulSupplier, SupplierOnce};
     ///
     /// let closure = || 42;
     /// let mut arc = closure.into_arc();
@@ -313,8 +313,8 @@ pub trait StatefulSupplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{Supplier, BoxStatefulSupplier};
+    /// ```rust
+    /// use qubit_function::{StatefulSupplier, BoxStatefulSupplier};
     ///
     /// let supplier = BoxStatefulSupplier::new(|| 42);
     /// let mut closure = supplier.into_fn();
@@ -324,8 +324,8 @@ pub trait StatefulSupplier<T> {
     ///
     /// ## Using with functions that expect FnMut
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{Supplier, BoxStatefulSupplier};
+    /// ```rust
+    /// use qubit_function::{StatefulSupplier, BoxStatefulSupplier};
     ///
     /// fn call_fn_twice<F: FnMut() -> i32>(mut f: F) -> (i32, i32) {
     ///     (f(), f())
@@ -354,8 +354,8 @@ pub trait StatefulSupplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::StatefulSupplier;
+    /// ```rust
+    /// use qubit_function::{StatefulSupplier, SupplierOnce};
     ///
     /// let closure = || 42;
     /// let once = closure.into_once();
@@ -444,8 +444,8 @@ pub trait StatefulSupplier<T> {
 /// like `map()`, the original supplier is consumed and you get a new
 /// one:
 ///
-/// ```rust,ignore
-/// use qubit_function::{BoxStatefulSupplier, Supplier};
+/// ```rust
+/// use qubit_function::{BoxStatefulSupplier, StatefulSupplier};
 ///
 /// let supplier = BoxStatefulSupplier::new(|| 10);
 /// let mapped = supplier.map(|x| x * 2);
@@ -456,8 +456,8 @@ pub trait StatefulSupplier<T> {
 ///
 /// ## Counter
 ///
-/// ```rust,ignore
-/// use qubit_function::{BoxStatefulSupplier, Supplier};
+/// ```rust
+/// use qubit_function::{BoxStatefulSupplier, StatefulSupplier};
 ///
 /// let mut counter = 0;
 /// let mut supplier = BoxStatefulSupplier::new(move || {
@@ -471,8 +471,8 @@ pub trait StatefulSupplier<T> {
 ///
 /// ## Method Chaining
 ///
-/// ```rust,ignore
-/// use qubit_function::{BoxStatefulSupplier, Supplier};
+/// ```rust
+/// use qubit_function::{BoxStatefulSupplier, StatefulSupplier};
 ///
 /// let mut pipeline = BoxStatefulSupplier::new(|| 10)
 ///     .map(|x| x * 2)
@@ -509,8 +509,8 @@ impl<T> BoxStatefulSupplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{BoxStatefulSupplier, Supplier};
+    /// ```rust
+/// use qubit_function::{BoxStatefulSupplier, StatefulSupplier};
     ///
     /// let mut call_count = 0;
     /// let mut memoized = BoxStatefulSupplier::new(move || {
@@ -569,8 +569,8 @@ impl<T> StatefulSupplier<T> for BoxStatefulSupplier<T> {
 /// Like `ArcStatefulSupplier`, methods borrow `&self` instead of consuming
 /// `self`:
 ///
-/// ```rust,ignore
-/// use qubit_function::{RcStatefulSupplier, Supplier};
+/// ```rust
+/// use qubit_function::{RcStatefulSupplier, StatefulSupplier};
 ///
 /// let source = RcStatefulSupplier::new(|| 10);
 /// let mapped = source.map(|x| x * 2);
@@ -581,8 +581,8 @@ impl<T> StatefulSupplier<T> for BoxStatefulSupplier<T> {
 ///
 /// ## Shared Counter
 ///
-/// ```rust,ignore
-/// use qubit_function::{RcStatefulSupplier, Supplier};
+/// ```rust
+/// use qubit_function::{RcStatefulSupplier, StatefulSupplier};
 /// use std::rc::Rc;
 /// use std::cell::RefCell;
 ///
@@ -603,8 +603,8 @@ impl<T> StatefulSupplier<T> for BoxStatefulSupplier<T> {
 ///
 /// ## Reusable Transformations
 ///
-/// ```rust,ignore
-/// use qubit_function::{RcStatefulSupplier, Supplier};
+/// ```rust
+/// use qubit_function::{RcStatefulSupplier, StatefulSupplier};
 ///
 /// let base = RcStatefulSupplier::new(|| 10);
 /// let doubled = base.map(|x| x * 2);
@@ -649,8 +649,8 @@ impl<T> RcStatefulSupplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{RcStatefulSupplier, Supplier};
+    /// ```rust
+/// use qubit_function::{RcStatefulSupplier, StatefulSupplier};
     /// use std::rc::Rc;
     /// use std::cell::RefCell;
     ///
@@ -724,8 +724,8 @@ impl<T> StatefulSupplier<T> for RcStatefulSupplier<T> {
 /// Methods borrow `&self` instead of consuming `self`. The original
 /// supplier remains usable after method calls:
 ///
-/// ```rust,ignore
-/// use qubit_function::{ArcStatefulSupplier, Supplier};
+/// ```rust
+/// use qubit_function::{ArcStatefulSupplier, StatefulSupplier};
 ///
 /// let source = ArcStatefulSupplier::new(|| 10);
 /// let mapped = source.map(|x| x * 2);
@@ -736,8 +736,8 @@ impl<T> StatefulSupplier<T> for RcStatefulSupplier<T> {
 ///
 /// ## Thread-safe Counter
 ///
-/// ```rust,ignore
-/// use qubit_function::{ArcStatefulSupplier, Supplier};
+/// ```rust
+/// use qubit_function::{ArcStatefulSupplier, StatefulSupplier};
 /// use std::sync::{Arc, Mutex};
 /// use std::thread;
 ///
@@ -763,8 +763,8 @@ impl<T> StatefulSupplier<T> for RcStatefulSupplier<T> {
 ///
 /// ## Reusable Transformations
 ///
-/// ```rust,ignore
-/// use qubit_function::{ArcStatefulSupplier, Supplier};
+/// ```rust
+/// use qubit_function::{ArcStatefulSupplier, StatefulSupplier};
 ///
 /// let base = ArcStatefulSupplier::new(|| 10);
 /// let doubled = base.map(|x| x * 2);
@@ -822,7 +822,7 @@ impl<T> ArcStatefulSupplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{ArcStatefulSupplier, StatefulSupplier};
     ///
     /// let mut supplier = ArcStatefulSupplier::constant(42);
@@ -847,14 +847,14 @@ impl<T> ArcStatefulSupplier<T> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{ArcStatefulSupplier, StatefulSupplier};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let call_count = Arc::new(Mutex::new(0));
     /// let call_count_clone = Arc::clone(&call_count);
     /// let source = ArcStatefulSupplier::new(move || {
-    ///     let mut c = call_count_clone.lock();
+    ///     let mut c = call_count_clone.lock().unwrap();
     ///     *c += 1;
     ///     42
     /// });
@@ -863,7 +863,7 @@ impl<T> ArcStatefulSupplier<T> {
     /// let mut s = memoized;
     /// assert_eq!(s.get(), 42); // Calls underlying function
     /// assert_eq!(s.get(), 42); // Returns cached value
-    /// assert_eq!(*call_count.lock(), 1);
+    /// assert_eq!(*call_count.lock().unwrap(), 1);
     /// ```
     pub fn memoize(&self) -> ArcStatefulSupplier<T>
     where
@@ -944,8 +944,8 @@ impl_closure_trait!(
 ///
 /// ## Map transformation
 ///
-/// ```rust,ignore
-/// use qubit_function::{Supplier, FnStatefulSupplierOps};
+/// ```rust
+/// use qubit_function::{StatefulSupplier, FnStatefulSupplierOps};
 ///
 /// let mut counter = 0;
 /// let mut mapped = (move || {
@@ -959,14 +959,14 @@ impl_closure_trait!(
 ///
 /// ## Filter values
 ///
-/// ```rust,ignore
-/// use qubit_function::{Supplier, FnStatefulSupplierOps};
+/// ```rust
+/// use qubit_function::{StatefulSupplier, FnStatefulSupplierOps};
 ///
 /// let mut counter = 0;
 /// let mut filtered = (move || {
 ///     counter += 1;
 ///     counter
-/// }).filter(|x| x % 2 == 0);
+/// }).filter(|x: &i32| x % 2 == 0);
 ///
 /// assert_eq!(filtered.get(), None);     // 1 is odd
 /// assert_eq!(filtered.get(), Some(2));  // 2 is even
@@ -974,8 +974,8 @@ impl_closure_trait!(
 ///
 /// ## Combine with zip
 ///
-/// ```rust,ignore
-/// use qubit_function::{Supplier, FnStatefulSupplierOps, BoxStatefulSupplier};
+/// ```rust
+/// use qubit_function::{StatefulSupplier, FnStatefulSupplierOps, BoxStatefulSupplier};
 ///
 /// let first = || 42;
 /// let second = BoxStatefulSupplier::new(|| "hello");
@@ -1003,8 +1003,8 @@ pub trait FnStatefulSupplierOps<T>: FnMut() -> T + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{Supplier, FnStatefulSupplierOps};
+    /// ```rust
+    /// use qubit_function::{StatefulSupplier, FnStatefulSupplierOps};
     ///
     /// let mut mapped = (|| 10)
     ///     .map(|x| x * 2)
@@ -1036,14 +1036,14 @@ pub trait FnStatefulSupplierOps<T>: FnMut() -> T + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{Supplier, FnStatefulSupplierOps};
+    /// ```rust
+    /// use qubit_function::{StatefulSupplier, FnStatefulSupplierOps};
     ///
     /// let mut counter = 0;
     /// let mut filtered = (move || {
     ///     counter += 1;
     ///     counter
-    /// }).filter(|x| x % 2 == 0);
+/// }).filter(|x: &i32| x % 2 == 0);
     ///
     /// assert_eq!(filtered.get(), None);     // 1 is odd
     /// assert_eq!(filtered.get(), Some(2));  // 2 is even
@@ -1073,8 +1073,8 @@ pub trait FnStatefulSupplierOps<T>: FnMut() -> T + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{Supplier, FnStatefulSupplierOps, BoxStatefulSupplier};
+    /// ```rust
+    /// use qubit_function::{StatefulSupplier, FnStatefulSupplierOps, BoxStatefulSupplier};
     ///
     /// let first = || 42;
     /// let second = BoxStatefulSupplier::new(|| "hello");
@@ -1103,8 +1103,8 @@ pub trait FnStatefulSupplierOps<T>: FnMut() -> T + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{Supplier, FnStatefulSupplierOps};
+    /// ```rust
+    /// use qubit_function::{StatefulSupplier, FnStatefulSupplierOps};
     ///
     /// let mut call_count = 0;
     /// let mut memoized = (move || {

@@ -46,20 +46,20 @@
 //!
 //! # Examples
 //!
-//! ```ignore
+//! ```rust
 //! // Single-parameter transformer
-//! impl_box_transformer_methods!(
-//!     BoxTransformer<T, U>,
-//!     BoxConditionalTransformer,
-//!     Transformer
-//! );
-//!
+//! // impl_box_transformer_methods!(
+//! //     BoxTransformer<T, U>,
+//! //     BoxConditionalTransformer,
+//! //     Transformer
+//! // );
+//! //
 //! // Two-parameter transformer
-//! impl_box_transformer_methods!(
-//!     BoxBiTransformer<T, U, V>,
-//!     BoxConditionalBiTransformer,
-//!     BiTransformer
-//! );
+//! // impl_box_transformer_methods!(
+//! //     BoxBiTransformer<T, U, V>,
+//! //     BoxConditionalBiTransformer,
+//! //     BiTransformer
+//! // );
 //! ```
 //!
 //! # Author
@@ -99,20 +99,20 @@
 //
 /// # Examples
 ///
-/// ```ignore
+/// ```rust
 /// // Single-parameter transformer
-/// impl_box_transformer_methods!(
-///     BoxTransformer<T, U>,
-///     BoxConditionalTransformer,
-///     Transformer
-/// );
-///
+/// // impl_box_transformer_methods!(
+/// //     BoxTransformer<T, U>,
+/// //     BoxConditionalTransformer,
+/// //     Transformer
+/// // );
+/// //
 /// // Two-parameter transformer
-/// impl_box_transformer_methods!(
-///     BoxBiTransformer<T, U, V>,
-///     BoxConditionalBiTransformer,
-///     BiTransformer
-/// );
+/// // impl_box_transformer_methods!(
+/// //     BoxBiTransformer<T, U, V>,
+/// //     BoxConditionalBiTransformer,
+/// //     BiTransformer
+/// // );
 /// ```
 ///
 /// # Author
@@ -140,18 +140,18 @@ macro_rules! impl_box_transformer_methods {
         ///
         /// # Examples
         ///
-        /// ```rust,ignore
+        /// ```rust
         /// use std::sync::Arc;
         /// use std::sync::atomic::{AtomicI32, Ordering};
         /// use qubit_function::transformers::*;
         ///
         /// let transformer = BoxTransformer::new({
-        ///     |value: &i32| value * 2
+        ///     |value: i32| value * 2
         /// });
         ///
-        /// let conditional = transformer.when(|value: &i32| *value > 0);
-        /// assert_eq!(conditional.transform(&5), 10);  // transformed
-        /// assert_eq!(conditional.transform(&-1), -1); // identity (unchanged)
+        /// let conditional = transformer.when(|value: &i32| *value > 0).or_else(|value: i32| value);
+        /// assert_eq!(conditional.apply(5), 10);  // transformed
+        /// assert_eq!(conditional.apply(-1), -1); // identity (unchanged)
         /// ```
         #[inline]
         pub fn when<P>(self, predicate: P) -> $conditional_type<$t, $r>
@@ -181,19 +181,19 @@ macro_rules! impl_box_transformer_methods {
         ///
         /// # Examples
         ///
-        /// ```rust,ignore
+        /// ```rust
         /// use qubit_function::transformers::*;
         ///
         /// let transformer1 = BoxTransformer::new({
-        ///     |value: &i32| value + 1
+        ///     |value: i32| value + 1
         /// });
         ///
         /// let transformer2 = BoxTransformer::new({
-        ///     |value: &i32| value * 2
+        ///     |value: i32| value * 2
         /// });
         ///
         /// let chained = transformer1.and_then(transformer2);
-        /// assert_eq!(chained.transform(&5), 12); // (5 + 1) * 2 = 12
+        /// assert_eq!(chained.apply(5), 12); // (5 + 1) * 2 = 12
         /// ```
         #[allow(unused_mut)]
         #[inline]
@@ -233,16 +233,18 @@ macro_rules! impl_box_transformer_methods {
         ///
         /// # Examples
         ///
-        /// ```rust,ignore
+        /// ```rust
         /// use qubit_function::transformers::*;
         ///
         /// let bi_transformer = BoxBiTransformer::new({
-        ///     |key: &String, value: &i32| format!("{}: {}", key, value)
+        ///     |key: String, value: i32| format!("{}: {}", key, value)
         /// });
         ///
-        /// let conditional = bi_transformer.when(|key: &String, value: &i32| *value > 0);
-        /// assert_eq!(conditional.transform(&"test".to_string(), &5), "test: 5".to_string());  // transformed
-        /// assert_eq!(conditional.transform(&"test".to_string(), &-1), "test".to_string());    // identity (key unchanged)
+        /// let conditional = bi_transformer
+        ///     .when(|key: &String, value: &i32| *value > 0)
+        ///     .or_else(|key: String, _value: i32| key);
+        /// assert_eq!(conditional.apply("test".to_string(), 5), "test: 5".to_string());  // transformed
+        /// assert_eq!(conditional.apply("test".to_string(), -1), "test".to_string());    // identity (key unchanged)
         /// ```
         #[inline]
         pub fn when<P>(self, predicate: P) -> $conditional_type<$t, $u, $r>
@@ -273,19 +275,19 @@ macro_rules! impl_box_transformer_methods {
         ///
         /// # Examples
         ///
-        /// ```rust,ignore
+        /// ```rust
         /// use qubit_function::transformers::*;
         ///
         /// let bi_transformer1 = BoxBiTransformer::new({
-        ///     |key: &String, value: &i32| (key.clone(), *value + 1)
+        ///     |key: String, value: i32| (key, value + 1)
         /// });
         ///
-        /// let bi_transformer2 = BoxBiTransformer::new({
-        ///     |key: &String, value: &i32| format!("{}: {}", key, value)
+        /// let bi_transformer2 = BoxTransformer::new({
+        ///     |value: (String, i32)| format!("{}: {}", value.0, value.1)
         /// });
         ///
         /// let chained = bi_transformer1.and_then(bi_transformer2);
-        /// let result = chained.transform(&"test".to_string(), &5);
+        /// let result = chained.apply("test".to_string(), 5);
         /// assert_eq!(result, "test: 6"); // (value + 1) = 6
         /// ```
         #[allow(unused_mut)]

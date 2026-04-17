@@ -39,7 +39,7 @@
 //!
 //! ## Lazy Initialization
 //!
-//! ```rust,ignore
+//! ```rust
 //! use qubit_function::{BoxSupplierOnce, SupplierOnce};
 //!
 //! let once = BoxSupplierOnce::new(|| {
@@ -53,7 +53,7 @@
 //!
 //! ## Moving Captured Values
 //!
-//! ```rust,ignore
+//! ```rust
 //! use qubit_function::{BoxSupplierOnce, SupplierOnce};
 //!
 //! let resource = String::from("data");
@@ -108,7 +108,7 @@ use crate::transformers::transformer::Transformer;
 ///
 /// ## Lazy Initialization
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{BoxSupplierOnce, SupplierOnce};
 ///
 /// let once = BoxSupplierOnce::new(|| {
@@ -123,7 +123,7 @@ use crate::transformers::transformer::Transformer;
 ///
 /// ## Resource Consumption
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{BoxSupplierOnce, SupplierOnce};
 ///
 /// let resource = String::from("data");
@@ -151,7 +151,7 @@ pub trait SupplierOnce<T> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{BoxSupplierOnce, SupplierOnce};
     ///
     /// let once = BoxSupplierOnce::new(|| 42);
@@ -168,7 +168,7 @@ pub trait SupplierOnce<T> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::SupplierOnce;
     ///
     /// let closure = || 42;
@@ -194,7 +194,7 @@ pub trait SupplierOnce<T> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::SupplierOnce;
     ///
     /// let closure = || 42;
@@ -267,7 +267,7 @@ pub trait SupplierOnce<T> {
 ///
 /// ## Lazy Initialization
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{BoxSupplierOnce, SupplierOnce};
 ///
 /// let once = BoxSupplierOnce::new(|| {
@@ -281,7 +281,7 @@ pub trait SupplierOnce<T> {
 ///
 /// ## Moving Captured Values
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{BoxSupplierOnce, SupplierOnce};
 ///
 /// let resource = String::from("data");

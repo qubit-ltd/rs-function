@@ -21,18 +21,18 @@
 //!
 //! # Examples
 //!
-//! ```ignore
+//! ```rust
 //! // For two type parameters
-//! impl_function_clone!(ArcFunction<T, R>);
+//! // impl_function_clone!(ArcFunction<T, R>);
 //!
 //! // For two type parameters with Rc
-//! impl_function_clone!(RcFunction<T, R>);
+//! // impl_function_clone!(RcFunction<T, R>);
 //!
 //! // For three type parameters - BiFunction
-//! impl_function_clone!(ArcBiFunction<T, U, R>);
+//! // impl_function_clone!(ArcBiFunction<T, U, R>);
 //!
 //! // For three type parameters with Rc
-//! impl_function_clone!(RcBiFunction<T, U, R>);
+//! // impl_function_clone!(RcBiFunction<T, U, R>);
 //! ```
 //!
 //! # Author
@@ -54,18 +54,18 @@
 ///
 /// # Examples
 ///
-/// ```ignore
+/// ```rust
 /// // For two type parameters with Arc
-/// impl_function_clone!(ArcFunction<T, R>);
+/// // impl_function_clone!(ArcFunction<T, R>);
 ///
 /// // For two type parameters with Rc
-/// impl_function_clone!(RcFunction<T, R>);
+/// // impl_function_clone!(RcFunction<T, R>);
 ///
 /// // For three type parameters with Arc
-/// impl_function_clone!(ArcBiFunction<T, U, R>);
+/// // impl_function_clone!(ArcBiFunction<T, U, R>);
 ///
 /// // For three type parameters with Rc
-/// impl_function_clone!(RcBiFunction<T, U, R>);
+/// // impl_function_clone!(RcBiFunction<T, U, R>);
 /// ```
 ///
 /// # Author

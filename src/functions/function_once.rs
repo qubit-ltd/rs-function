@@ -79,7 +79,7 @@ pub trait FunctionOnce<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::FunctionOnce;
     ///
     /// let double = |x: &i32| x * 2;
@@ -104,7 +104,7 @@ pub trait FunctionOnce<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::FunctionOnce;
     ///
     /// let double = |x: &i32| x * 2;
@@ -135,7 +135,7 @@ pub trait FunctionOnce<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::FunctionOnce;
     ///
     /// let double = |x: &i32| x * 2;
@@ -166,7 +166,7 @@ pub trait FunctionOnce<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::FunctionOnce;
     ///
     /// let double = |x: &i32| x * 2;
@@ -293,18 +293,18 @@ impl_fn_ops_trait!(
 ///
 /// ## With or_else Branch
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{FunctionOnce, BoxFunctionOnce};
 ///
-/// let double = BoxFunctionOnce::new(|x: i32| x * 2);
-/// let negate = BoxFunctionOnce::new(|x: i32| -x);
+/// let double = BoxFunctionOnce::new(|x: &i32| x * 2);
+/// let negate = BoxFunctionOnce::new(|x: &i32| -x);
 /// let conditional = double.when(|x: &i32| *x > 0).or_else(negate);
-/// assert_eq!(conditional.apply(5), 10); // when branch executed
+/// assert_eq!(conditional.apply(&5), 10); // when branch executed
 ///
-/// let double2 = BoxFunctionOnce::new(|x: i32| x * 2);
-/// let negate2 = BoxFunctionOnce::new(|x: i32| -x);
+/// let double2 = BoxFunctionOnce::new(|x: &i32| x * 2);
+/// let negate2 = BoxFunctionOnce::new(|x: &i32| -x);
 /// let conditional2 = double2.when(|x: &i32| *x > 0).or_else(negate2);
-/// assert_eq!(conditional2.apply(-5), 5); // or_else branch executed
+/// assert_eq!(conditional2.apply(&-5), 5); // or_else branch executed
 /// ```
 ///
 /// # Author

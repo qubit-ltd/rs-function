@@ -50,7 +50,7 @@
 //!     ///
 //!     /// # Examples
 //!     ///
-//!     /// ```rust,ignore
+//!     /// ```rust
 //!     /// use qubit_function::{BoxTransformer, Transformer};
 //!     ///
 //!     /// let constant = BoxTransformer::constant("hello");
@@ -83,15 +83,11 @@
 ///
 /// # Usage
 ///
-/// ```rust,ignore
-/// // Single-parameter transformer
-/// impl_transformer_constant_method!(BoxTransformer<T, R>);
+/// ```rust
+/// use qubit_function::{BoxTransformer, Transformer};
 ///
-/// // Two-parameter transformer
-/// impl_transformer_constant_method!(BoxBiTransformer<T, U, R>);
-///
-/// // Stateful transformer
-/// impl_transformer_constant_method!(BoxStatefulTransformer<T, R>);
+/// let constant = BoxTransformer::constant("hello");
+/// assert_eq!(constant.apply(123), "hello");
 /// ```
 ///
 /// # Author
@@ -105,7 +101,7 @@ macro_rules! impl_transformer_constant_method {
             ///
             /// # Examples
             ///
-            #[doc = concat!("/// ```rust,ignore\n/// use qubit_function::{", stringify!($struct_name), ", Transformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123), \"hello\");\n/// ```")]
+            #[doc = concat!("/// ```rust\n/// use qubit_function::{", stringify!($struct_name), ", Transformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123), \"hello\");\n/// ```")]
             pub fn constant(value: $r) -> $struct_name<$t, $r>
             where
                 $r: Clone + 'static,
@@ -122,7 +118,7 @@ macro_rules! impl_transformer_constant_method {
             ///
             /// # Examples
             ///
-            #[doc = concat!("/// ```rust,ignore\n/// use qubit_function::{", stringify!($struct_name), ", Transformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123), \"hello\");\n/// ```")]
+            #[doc = concat!("/// ```rust\n/// use qubit_function::{", stringify!($struct_name), ", Transformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123), \"hello\");\n/// ```")]
             pub fn constant(value: $r) -> $struct_name<$t, $r>
             where
                 $r: Clone + Send + Sync + 'static,
@@ -139,7 +135,7 @@ macro_rules! impl_transformer_constant_method {
             ///
             /// # Examples
             ///
-            #[doc = concat!("/// ```rust,ignore\n/// use qubit_function::{", stringify!($struct_name), ", BiTransformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123, 456), \"hello\");\n/// ```")]
+            #[doc = concat!("/// ```rust\n/// use qubit_function::{", stringify!($struct_name), ", BiTransformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123, 456), \"hello\");\n/// ```")]
             pub fn constant(value: $r) -> $struct_name<$t, $u, $r>
             where
                 $r: Clone + 'static,
@@ -156,7 +152,7 @@ macro_rules! impl_transformer_constant_method {
             ///
             /// # Examples
             ///
-            #[doc = concat!("/// ```rust,ignore\n/// use qubit_function::{", stringify!($struct_name), ", BiTransformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123, 456), \"hello\");\n/// ```")]
+            #[doc = concat!("/// ```rust\n/// use qubit_function::{", stringify!($struct_name), ", BiTransformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123, 456), \"hello\");\n/// ```")]
             pub fn constant(value: $r) -> $struct_name<$t, $u, $r>
             where
                 $r: Clone + Send + Sync + 'static,
@@ -173,7 +169,7 @@ macro_rules! impl_transformer_constant_method {
             ///
             /// # Examples
             ///
-            #[doc = concat!("/// ```rust,ignore\n/// use qubit_function::{", stringify!($struct_name), ", StatefulTransformer};\n///\n/// let mut constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123), \"hello\");\n/// ```")]
+            #[doc = concat!("/// ```rust\n/// use qubit_function::{", stringify!($struct_name), ", StatefulTransformer};\n///\n/// let mut constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123), \"hello\");\n/// ```")]
             pub fn constant(value: $r) -> $struct_name<$t, $r>
             where
                 $r: Clone + 'static,
@@ -190,7 +186,7 @@ macro_rules! impl_transformer_constant_method {
             ///
             /// # Examples
             ///
-            #[doc = concat!("/// ```rust,ignore\n/// use qubit_function::{", stringify!($struct_name), ", StatefulTransformer};\n///\n/// let mut constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123), \"hello\");\n/// ```")]
+            #[doc = concat!("/// ```rust\n/// use qubit_function::{", stringify!($struct_name), ", StatefulTransformer};\n///\n/// let mut constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123), \"hello\");\n/// ```")]
             pub fn constant(value: $r) -> $struct_name<$t, $r>
             where
                 $r: Clone + Send + 'static,
@@ -207,7 +203,7 @@ macro_rules! impl_transformer_constant_method {
             ///
             /// # Examples
             ///
-            #[doc = concat!("/// ```rust,ignore\n/// use qubit_function::{", stringify!($struct_name), ", StatefulBiTransformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123, 456), \"hello\");\n/// ```")]
+            #[doc = concat!("/// ```rust\n/// use qubit_function::{", stringify!($struct_name), ", StatefulBiTransformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123, 456), \"hello\");\n/// ```")]
             pub fn constant(value: $r) -> $struct_name<$t, $u, $r>
             where
                 $r: Clone + 'static,
@@ -224,7 +220,7 @@ macro_rules! impl_transformer_constant_method {
             ///
             /// # Examples
             ///
-            #[doc = concat!("/// ```rust,ignore\n/// use qubit_function::{", stringify!($struct_name), ", StatefulBiTransformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123, 456), \"hello\");\n/// ```")]
+            #[doc = concat!("/// ```rust\n/// use qubit_function::{", stringify!($struct_name), ", StatefulBiTransformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123, 456), \"hello\");\n/// ```")]
             pub fn constant(value: $r) -> $struct_name<$t, $u, $r>
             where
                 $r: Clone + Send + 'static,

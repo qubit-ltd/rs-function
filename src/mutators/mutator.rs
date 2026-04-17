@@ -105,7 +105,7 @@
 //!
 //! ## Method Chaining
 //!
-//! ```rust,ignore
+//! ```rust
 //! use qubit_function::{Mutator, BoxMutator, ArcMutator};
 //!
 //! // BoxMutator: Consumes self
@@ -118,7 +118,10 @@
 //! // ArcMutator: Borrows &self, original still usable
 //! let first = ArcMutator::new(|x: &mut i32| *x *= 2);
 //! let second = ArcMutator::new(|x: &mut i32| *x += 10);
-//! let combined = first.and_then(&second);
+//! let combined = first.clone().and_then(second.clone());
+//! let mut value = 5;
+//! combined.apply(&mut value);
+//! assert_eq!(value, 20); // (5 * 2) + 10
 //! // first and second are still usable here
 //! ```
 //!
@@ -482,8 +485,8 @@ pub trait Mutator<T> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{Mutator, BoxMutator, BoxMutatorOnce};
+    /// ```rust
+    /// use qubit_function::{Mutator, MutatorOnce, BoxMutator, BoxMutatorOnce};
     ///
     /// let mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
     /// let once_mutator = mutator.into_once();
@@ -847,13 +850,13 @@ impl_closure_trait!(
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{Mutator, FnMutatorOps};
 ///
 /// let chained = (|x: &mut i32| *x *= 2)
 ///     .and_then(|x: &mut i32| *x += 10);
 /// let mut value = 5;
-/// chained.mutate(&mut value);
+/// chained.apply(&mut value);
 /// assert_eq!(value, 20); // (5 * 2) + 10
 /// ```
 ///
@@ -885,16 +888,16 @@ pub trait FnMutatorOps<T>: Fn(&mut T) + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{Mutator, FnMutatorOps};
+    /// ```rust
+/// use qubit_function::{Mutator, FnMutatorOps};
     ///
     /// let chained = (|x: &mut i32| *x *= 2)
     ///     .and_then(|x: &mut i32| *x += 10);
     ///
     /// let mut value = 5;
-    /// chained.mutate(&mut value);
-    /// assert_eq!(value, 20);
-    /// ```
+/// chained.apply(&mut value);
+/// assert_eq!(value, 20);
+/// ```
     fn and_then<C>(self, next: C) -> BoxMutator<T>
     where
         Self: 'static,

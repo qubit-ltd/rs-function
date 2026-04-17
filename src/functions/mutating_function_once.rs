@@ -71,7 +71,7 @@
 //!
 //! ## Basic Usage
 //!
-//! ```rust,ignore
+//! ```rust
 //! use qubit_function::{BoxMutatingFunctionOnce, MutatingFunctionOnce};
 //!
 //! let data = vec![1, 2, 3];
@@ -89,30 +89,26 @@
 //!
 //! ## Method Chaining
 //!
-//! ```rust,ignore
+//! ```rust
 //! use qubit_function::{BoxMutatingFunctionOnce, MutatingFunctionOnce};
 //!
 //! let data1 = vec![1, 2];
-//! let data2 = vec![3, 4];
 //!
 //! let chained = BoxMutatingFunctionOnce::new(move |x: &mut Vec<i32>| {
 //!     x.extend(data1);
 //!     x.len()
 //! })
-//! .and_then(move |x: &mut Vec<i32>| {
-//!     x.extend(data2);
-//!     x.len()
-//! });
+//! .and_then(|len: &usize| len + 2);
 //!
 //! let mut target = vec![0];
 //! let final_len = chained.apply(&mut target);
 //! assert_eq!(final_len, 5);
-//! assert_eq!(target, vec![0, 1, 2, 3, 4]);
+//! assert_eq!(target, vec![0, 1, 2]);
 //! ```
 //!
 //! ## Validation Pattern
 //!
-//! ```rust,ignore
+//! ```rust
 //! use qubit_function::{BoxMutatingFunctionOnce, MutatingFunctionOnce};
 //!
 //! struct Data {
@@ -195,7 +191,7 @@ use crate::predicates::predicate::{
 ///
 /// ## Generic Function
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{MutatingFunctionOnce, BoxMutatingFunctionOnce};
 ///
 /// fn apply<F: MutatingFunctionOnce<Vec<i32>, usize>>(
@@ -220,7 +216,7 @@ use crate::predicates::predicate::{
 ///
 /// ## Type Conversion
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::MutatingFunctionOnce;
 ///
 /// let data = vec![1, 2, 3];
@@ -252,7 +248,7 @@ pub trait MutatingFunctionOnce<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{MutatingFunctionOnce,
     ///                       BoxMutatingFunctionOnce};
     ///
@@ -380,7 +376,7 @@ pub trait MutatingFunctionOnce<T, R> {
 ///
 /// ## Basic Usage
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{MutatingFunctionOnce, BoxMutatingFunctionOnce};
 ///
 /// let data = vec![1, 2, 3];
@@ -398,25 +394,22 @@ pub trait MutatingFunctionOnce<T, R> {
 ///
 /// ## Method Chaining
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{MutatingFunctionOnce, BoxMutatingFunctionOnce};
 ///
 /// let data1 = vec![1, 2];
-/// let data2 = vec![3, 4];
+/// let additional_len = 2;
 ///
 /// let chained = BoxMutatingFunctionOnce::new(move |x: &mut Vec<i32>| {
 ///     x.extend(data1);
 ///     x.len()
 /// })
-/// .and_then(move |x: &mut Vec<i32>| {
-///     x.extend(data2);
-///     x.len()
-/// });
+/// .and_then(move |len: &usize| len + additional_len);
 ///
 /// let mut target = vec![0];
 /// let final_len = chained.apply(&mut target);
 /// assert_eq!(final_len, 5);
-/// assert_eq!(target, vec![0, 1, 2, 3, 4]);
+/// assert_eq!(target, vec![0, 1, 2]);
 /// ```
 ///
 /// # Author
@@ -511,18 +504,32 @@ impl_fn_ops_trait!(
 ///
 /// ## With or_else Branch
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{MutatingFunctionOnce, BoxMutatingFunctionOnce};
 ///
-/// let double = BoxMutatingFunctionOnce::new(|x: &mut i32| x * 2);
-/// let negate = BoxMutatingFunctionOnce::new(|x: &mut i32| -x);
+/// let double = BoxMutatingFunctionOnce::new(|x: &mut i32| {
+///     *x *= 2;
+///     *x
+/// });
+/// let negate = BoxMutatingFunctionOnce::new(|x: &mut i32| {
+///     *x = -*x;
+///     *x
+/// });
 /// let conditional = double.when(|x: &i32| *x > 0).or_else(negate);
-/// assert_eq!(conditional.apply(5), 10); // when branch executed
+/// let mut positive = 5;
+/// assert_eq!(conditional.apply(&mut positive), 10); // when branch executed
 ///
-/// let double2 = BoxMutatingFunctionOnce::new(|x: &mut i32| x * 2);
-/// let negate2 = BoxMutatingFunctionOnce::new(|x: &mut i32| -x);
+/// let double2 = BoxMutatingFunctionOnce::new(|x: &mut i32| {
+///     *x *= 2;
+///     *x
+/// });
+/// let negate2 = BoxMutatingFunctionOnce::new(|x: &mut i32| {
+///     *x = -*x;
+///     *x
+/// });
 /// let conditional2 = double2.when(|x: &i32| *x > 0).or_else(negate2);
-/// assert_eq!(conditional2.apply(-5), 5); // or_else branch executed
+/// let mut negative = -5;
+/// assert_eq!(conditional2.apply(&mut negative), 5); // or_else branch executed
 /// ```
 ///
 /// # Author

@@ -41,21 +41,21 @@
 ///
 /// # Examples
 ///
-/// ```ignore
+/// ```rust
 /// // 3-parameter version (no once type)
-/// impl_box_conversions!(
-///     BoxPredicate<T>,
-///     RcPredicate,
-///     Fn(&T) -> bool
-/// );
+/// // impl_box_conversions!(
+/// //     BoxPredicate<T>,
+/// //     RcPredicate,
+/// //     Fn(&T) -> bool
+/// // );
 ///
 /// // 4-parameter version (with once type)
-/// impl_box_conversions!(
-///     BoxConsumer<T>,
-///     RcConsumer,
-///     Fn(&T),
-///     BoxConsumerOnce
-/// );
+/// // impl_box_conversions!(
+/// //     BoxConsumer<T>,
+/// //     RcConsumer,
+/// //     Fn(&T),
+/// //     BoxConsumerOnce
+/// // );
 /// ```
 ///
 /// # Author
@@ -140,24 +140,24 @@ pub(crate) use impl_box_conversions;
 ///
 /// # Examples
 ///
-/// ```ignore
+/// ```rust
 /// // Consumer: (&T) -> ()
-/// impl_box_once_conversions!(BoxConsumerOnce<T>, ConsumerOnce, FnOnce(&T));
+/// // impl_box_once_conversions!(BoxConsumerOnce<T>, ConsumerOnce, FnOnce(&T));
 ///
 /// // BiConsumer: (&T, &U) -> ()
-/// impl_box_once_conversions!(BoxBiConsumerOnce<T, U>, BiConsumerOnce,
-///     FnOnce(&T, &U));
+/// // impl_box_once_conversions!(BoxBiConsumerOnce<T, U>, BiConsumerOnce,
+/// //     FnOnce(&T, &U));
 ///
 /// // Function: (&T) -> R
-/// impl_box_once_conversions!(BoxFunctionOnce<T, R>, FunctionOnce,
-///     FnOnce(&T) -> R);
+/// // impl_box_once_conversions!(BoxFunctionOnce<T, R>, FunctionOnce,
+/// //     FnOnce(&T) -> R);
 ///
 /// // Transformer: (T) -> R
-/// impl_box_once_conversions!(BoxTransformerOnce<T, R>, TransformerOnce,
-///     FnOnce(T) -> R);
+/// // impl_box_once_conversions!(BoxTransformerOnce<T, R>, TransformerOnce,
+/// //     FnOnce(T) -> R);
 ///
 /// // Supplier: () -> T
-/// impl_box_once_conversions!(BoxSupplierOnce<T>, SupplierOnce, FnOnce() -> T);
+/// // impl_box_once_conversions!(BoxSupplierOnce<T>, SupplierOnce, FnOnce() -> T);
 /// ```
 ///
 /// # Author

@@ -96,8 +96,8 @@ use crate::predicates::predicate::{
 ///
 /// # Examples
 ///
-/// ```rust,ignore
-/// use qubit_function::{Consumer, BoxStatefulConsumer, ArcStatefulConsumer};
+/// ```rust
+/// use qubit_function::{Consumer, StatefulConsumer, BoxStatefulConsumer, ArcStatefulConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
 /// fn apply_consumer<C: StatefulConsumer<i32>>(consumer: &mut C, value: &i32) {
@@ -128,13 +128,13 @@ pub trait StatefulConsumer<T> {
     ///
     /// * `value` - Reference to the value to be consumed
     ///
-    /// # Examples
-    ///
-    /// ```rust,ignore
-    /// use qubit_function::{Consumer, BoxStatefulConsumer};
-    ///
-    /// let mut consumer = BoxStatefulConsumer::new(|x: &i32| println!("{}", x));
-    /// let value = 5;
+/// # Examples
+///
+/// ```rust
+/// use qubit_function::{Consumer, StatefulConsumer, BoxStatefulConsumer};
+/// 
+/// let mut consumer = BoxStatefulConsumer::new(|x: &i32| println!("{}", x));
+/// let value = 5;
     /// consumer.accept(&value);
     /// ```
     fn accept(&mut self, value: &T);
@@ -228,13 +228,13 @@ pub trait StatefulConsumer<T> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{Consumer, BoxStatefulConsumer};
+    /// ```rust
+    /// use qubit_function::{Consumer, StatefulConsumer, RcStatefulConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
     /// let l = log.clone();
-    /// let consumer = BoxStatefulConsumer::new(move |x: &i32| {
+    /// let mut consumer = RcStatefulConsumer::new(move |x: &i32| {
     ///     l.lock().unwrap().push(*x);
     /// });
     /// let mut func = consumer.into_fn();
@@ -260,13 +260,14 @@ pub trait StatefulConsumer<T> {
     ///
     /// Returns a `BoxConsumerOnce<T>`
     ///
-    /// # Examples
-    ///
-    /// ```rust,ignore
-    ///
-    /// fn takes_once<C: ConsumerOnce<i32>>(consumer: C, value: &i32) {
-    ///     consumer.accept(value);
-    /// }
+/// # Examples
+///
+/// ```rust
+/// use qubit_function::{Consumer, ConsumerOnce, StatefulConsumer, BoxStatefulConsumer};
+///
+/// fn takes_once<C: ConsumerOnce<i32>>(consumer: C, value: &i32) {
+///     consumer.accept(value);
+/// }
     ///
     /// let consumer = BoxStatefulConsumer::new(|x: &i32| println!("{}", x));
     /// takes_once(consumer.into_once(), &5);
@@ -299,13 +300,13 @@ pub trait StatefulConsumer<T> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{Consumer, ArcStatefulConsumer};
+    /// ```rust
+    /// use qubit_function::{Consumer, StatefulConsumer, ArcStatefulConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
     /// let l = log.clone();
-    /// let consumer = ArcStatefulConsumer::new(move |x: &i32| {
+    /// let mut consumer = ArcStatefulConsumer::new(move |x: &i32| {
     ///     l.lock().unwrap().push(*x);
     /// });
     /// let mut box_consumer = consumer.to_box();
@@ -340,13 +341,13 @@ pub trait StatefulConsumer<T> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{Consumer, ArcStatefulConsumer};
+    /// ```rust
+    /// use qubit_function::{Consumer, StatefulConsumer, ArcStatefulConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
     /// let l = log.clone();
-    /// let consumer = ArcStatefulConsumer::new(move |x: &i32| {
+    /// let mut consumer = ArcStatefulConsumer::new(move |x: &i32| {
     ///     l.lock().unwrap().push(*x);
     /// });
     /// let mut rc_consumer = consumer.to_rc();
@@ -382,22 +383,21 @@ pub trait StatefulConsumer<T> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{Consumer, RcStatefulConsumer};
-    /// use std::rc::Rc;
-    /// use std::cell::RefCell;
+    /// ```rust
+    /// use qubit_function::{Consumer, StatefulConsumer, ArcStatefulConsumer};
+    /// use std::sync::{Arc, Mutex};
     ///
-    /// let log = Rc::new(RefCell::new(Vec::new()));
+    /// let log = Arc::new(Mutex::new(Vec::new()));
     /// let l = log.clone();
-    /// let consumer = RcStatefulConsumer::new(move |x: &i32| {
-    ///     l.borrow_mut().push(*x);
+    /// let mut consumer = ArcStatefulConsumer::new(move |x: &i32| {
+    ///     l.lock().unwrap().push(*x);
     /// });
     /// let mut arc_consumer = consumer.to_arc();
     /// arc_consumer.accept(&5);
-    /// assert_eq!(*log.borrow(), vec![5]);
+    /// assert_eq!(*log.lock().unwrap(), vec![5]);
     /// // Original consumer still usable
     /// consumer.accept(&3);
-    /// assert_eq!(*log.borrow(), vec![5, 3]);
+    /// assert_eq!(*log.lock().unwrap(), vec![5, 3]);
     /// ```
     fn to_arc(&self) -> ArcStatefulConsumer<T>
     where
@@ -425,17 +425,19 @@ pub trait StatefulConsumer<T> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{Consumer, BoxStatefulConsumer};
+    /// ```rust
+    /// use qubit_function::{Consumer, StatefulConsumer, RcStatefulConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
     /// let l = log.clone();
-    /// let consumer = BoxStatefulConsumer::new(move |x: &i32| {
+    /// let mut consumer = RcStatefulConsumer::new(move |x: &i32| {
     ///     l.lock().unwrap().push(*x);
     /// });
-    /// let mut func = consumer.to_fn();
-    /// func(&5);
+    /// {
+    ///     let mut func = consumer.to_fn();
+    ///     func(&5);
+    /// }
     /// assert_eq!(*log.lock().unwrap(), vec![5]);
     /// // Original consumer still usable
     /// consumer.accept(&3);
@@ -457,15 +459,16 @@ pub trait StatefulConsumer<T> {
     ///
     /// Returns a `BoxConsumerOnce<T>`
     ///
-    /// # Examples
-    ///
-    /// ```rust,ignore
-    ///
-    /// fn takes_once<C: ConsumerOnce<i32>>(consumer: C, value: &i32) {
-    ///     consumer.accept(value);
-    /// }
-    ///
-    /// let consumer = BoxStatefulConsumer::new(|x: &i32| println!("{}", x));
+/// # Examples
+///
+/// ```rust
+/// use qubit_function::{Consumer, ConsumerOnce, StatefulConsumer, RcStatefulConsumer};
+///
+/// fn takes_once<C: ConsumerOnce<i32>>(consumer: C, value: &i32) {
+///     consumer.accept(value);
+/// }
+///
+/// let consumer = RcStatefulConsumer::new(|x: &i32| println!("{}", x));
     /// takes_once(consumer.to_once(), &5);
     /// ```
     fn to_once(&self) -> BoxConsumerOnce<T>
@@ -511,8 +514,8 @@ pub trait StatefulConsumer<T> {
 ///
 /// # Examples
 ///
-/// ```rust,ignore
-/// use qubit_function::{Consumer, BoxStatefulConsumer};
+/// ```rust
+/// use qubit_function::{Consumer, StatefulConsumer, BoxStatefulConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -612,8 +615,8 @@ impl_consumer_debug_display!(BoxStatefulConsumer<T>);
 ///
 /// # Examples
 ///
-/// ```rust,ignore
-/// use qubit_function::{Consumer, RcStatefulConsumer};
+/// ```rust
+/// use qubit_function::{Consumer, StatefulConsumer, RcStatefulConsumer};
 /// use std::rc::Rc;
 /// use std::cell::RefCell;
 ///
@@ -712,8 +715,8 @@ impl_consumer_debug_display!(RcStatefulConsumer<T>);
 ///
 /// # Examples
 ///
-/// ```rust,ignore
-/// use qubit_function::{Consumer, ArcStatefulConsumer};
+/// ```rust
+/// use qubit_function::{Consumer, StatefulConsumer, ArcStatefulConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -811,8 +814,8 @@ impl_closure_trait!(
 ///
 /// # Examples
 ///
-/// ```rust,ignore
-/// use qubit_function::{Consumer, FnStatefulConsumerOps};
+/// ```rust
+/// use qubit_function::{Consumer, StatefulConsumer, FnStatefulConsumerOps};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -861,8 +864,8 @@ pub trait FnStatefulConsumerOps<T>: FnMut(&T) + Sized {
     ///
     /// ## Direct value passing (ownership transfer)
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{Consumer, FnStatefulConsumerOps, BoxStatefulConsumer};
+    /// ```rust
+/// use qubit_function::{Consumer, StatefulConsumer, FnStatefulConsumerOps, BoxStatefulConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -884,14 +887,14 @@ pub trait FnStatefulConsumerOps<T>: FnMut(&T) + Sized {
     ///
     /// ## Preserving original with clone
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{Consumer, FnStatefulConsumerOps, BoxStatefulConsumer};
+    /// ```rust
+/// use qubit_function::{Consumer, StatefulConsumer, FnStatefulConsumerOps, RcStatefulConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));
     /// let l1 = log.clone();
     /// let l2 = log.clone();
-    /// let second = BoxStatefulConsumer::new(move |x: &i32| {
+/// let mut second = RcStatefulConsumer::new(move |x: &i32| {
     ///     l2.lock().unwrap().push(*x + 10);
     /// });
     ///
@@ -948,8 +951,8 @@ impl<T, F> FnStatefulConsumerOps<T> for F where F: FnMut(&T) {}
 ///
 /// ## Basic Conditional Execution
 ///
-/// ```rust,ignore
-/// use qubit_function::{Consumer, BoxStatefulConsumer};
+/// ```rust
+/// use qubit_function::{Consumer, StatefulConsumer, BoxStatefulConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -968,8 +971,8 @@ impl<T, F> FnStatefulConsumerOps<T> for F where F: FnMut(&T) {}
 ///
 /// ## With or_else Branch
 ///
-/// ```rust,ignore
-/// use qubit_function::{Consumer, BoxStatefulConsumer};
+/// ```rust
+/// use qubit_function::{Consumer, StatefulConsumer, BoxStatefulConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -1041,8 +1044,8 @@ impl_conditional_consumer_debug_display!(BoxConditionalStatefulConsumer<T>);
 ///
 /// # Examples
 ///
-/// ```rust,ignore
-/// use qubit_function::{Consumer, ArcStatefulConsumer};
+/// ```rust
+/// use qubit_function::{Consumer, StatefulConsumer, ArcStatefulConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -1116,8 +1119,8 @@ impl_conditional_consumer_debug_display!(ArcConditionalStatefulConsumer<T>);
 ///
 /// # Examples
 ///
-/// ```rust,ignore
-/// use qubit_function::{Consumer, RcStatefulConsumer};
+/// ```rust
+/// use qubit_function::{Consumer, StatefulConsumer, RcStatefulConsumer};
 /// use std::rc::Rc;
 /// use std::cell::RefCell;
 ///

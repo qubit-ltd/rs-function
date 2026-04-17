@@ -256,9 +256,9 @@ pub trait BiConsumer<T, U> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_function::{BiConsumer, RcBiConsumer};
+    /// use qubit_function::{BiConsumer, ArcBiConsumer};
     ///
-    /// let consumer = RcBiConsumer::new(|x: &i32, y: &i32| {
+    /// let consumer = ArcBiConsumer::new(|x: &i32, y: &i32| {
     ///     println!("Sum: {}", x + y);
     /// });
     /// let box_consumer = consumer.to_box();
@@ -313,14 +313,12 @@ pub trait BiConsumer<T, U> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{BiConsumer, RcBiConsumer};
+    /// ```rust
+    /// use qubit_function::{BiConsumer, ArcBiConsumer};
     ///
-    /// let consumer = RcBiConsumer::new(|x: &i32, y: &i32| {
+    /// let consumer = ArcBiConsumer::new(|x: &i32, y: &i32| {
     ///     println!("Sum: {}", x + y);
     /// });
-    /// // Note: This will only compile if the closure is Send + Sync
-    /// // For demonstration, we use a simple closure
     /// let arc_consumer = consumer.to_arc();
     /// arc_consumer.accept(&5, &3);
     /// ```
@@ -486,9 +484,9 @@ impl_consumer_debug_display!(BoxBiConsumer<T, U>);
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{BiConsumer, RcBiConsumer};
+/// use qubit_function::{BiConsumer, ArcBiConsumer};
 ///
-/// let consumer = RcBiConsumer::new(|x: &i32, y: &i32| {
+/// let consumer: ArcBiConsumer<i32, i32> = ArcBiConsumer::new(|x: &i32, y: &i32| {
 ///     println!("Sum: {}", x + y);
 /// });
 /// let clone = consumer.clone();

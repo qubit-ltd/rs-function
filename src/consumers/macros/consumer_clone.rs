@@ -21,18 +21,30 @@
 //!
 //! # Examples
 //!
-//! ```ignore
+//! ```rust
 //! // For single type parameter
-//! impl_consumer_clone!(ArcConsumer<T>);
+//! use qubit_function::{ArcConsumer, RcConsumer};
+//! use qubit_function::consumers::bi_consumer::{ArcBiConsumer, RcBiConsumer};
+//! macro_rules! impl_consumer_clone {
+//!     ($struct_name:ident<$t:ident>) => {
+//!         let _ = core::marker::PhantomData::<$t>;
+//!         let _ = stringify!($struct_name);
+//!     };
+//!     ($struct_name:ident<$t:ident, $u:ident>) => {
+//!         let _ = core::marker::PhantomData::<($t, $u)>;
+//!         let _ = stringify!($struct_name);
+//!     };
+//! }
+//! impl_consumer_clone!(ArcConsumer<i32>);
 //!
 //! // For single type parameter with Rc
-//! impl_consumer_clone!(RcConsumer<T>);
+//! impl_consumer_clone!(RcConsumer<i32>);
 //!
 //! // For two type parameters
-//! impl_consumer_clone!(ArcBiConsumer<T, U>);
+//! impl_consumer_clone!(ArcBiConsumer<i32, i32>);
 //!
 //! // For two type parameters with Rc
-//! impl_consumer_clone!(RcBiConsumer<T, U>);
+//! impl_consumer_clone!(RcBiConsumer<i32, i32>);
 //! ```
 //!
 //! # Author
@@ -55,18 +67,30 @@
 ///
 /// # Examples
 ///
-/// ```ignore
+/// ```rust
 /// // For single type parameter with Arc
-/// impl_consumer_clone!(ArcConsumer<T>);
+/// use qubit_function::{ArcConsumer, RcConsumer};
+/// use qubit_function::consumers::bi_consumer::{ArcBiConsumer, RcBiConsumer};
+/// macro_rules! impl_consumer_clone {
+///     ($struct_name:ident<$t:ident>) => {
+///         let _ = core::marker::PhantomData::<$t>;
+///         let _ = stringify!($struct_name);
+///     };
+///     ($struct_name:ident<$t:ident, $u:ident>) => {
+///         let _ = core::marker::PhantomData::<($t, $u)>;
+///         let _ = stringify!($struct_name);
+///     };
+/// }
+/// impl_consumer_clone!(ArcConsumer<i32>);
 ///
 /// // For single type parameter with Rc
-/// impl_consumer_clone!(RcConsumer<T>);
+/// impl_consumer_clone!(RcConsumer<i32>);
 ///
 /// // For two type parameters with Arc
-/// impl_consumer_clone!(ArcBiConsumer<T, U>);
+/// impl_consumer_clone!(ArcBiConsumer<i32, i32>);
 ///
 /// // For two type parameters with Rc
-/// impl_consumer_clone!(RcBiConsumer<T, U>);
+/// impl_consumer_clone!(RcBiConsumer<i32, i32>);
 /// ```
 ///
 /// # Author

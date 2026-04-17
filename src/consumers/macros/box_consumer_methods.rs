@@ -37,20 +37,20 @@
 //!
 //! # Examples
 //!
-//! ```ignore
-//! // Single-parameter consumer
-//! impl_box_consumer_methods!(
-//!     BoxConsumer<T>,
-//!     BoxConditionalConsumer,
-//!     Consumer
-//! );
-//!
-//! // Two-parameter consumer
-//! impl_box_consumer_methods!(
-//!     BoxBiConsumer<T, U>,
-//!     BoxConditionalBiConsumer,
-//!     BiConsumer
-//! );
+//! ```rust
+//! use qubit_function::{BiConsumer, Consumer};
+//! use qubit_function::consumers::consumer::BoxConditionalConsumer;
+//! use qubit_function::consumers::bi_consumer::BoxConditionalBiConsumer;
+//! use qubit_function::consumers::{BoxBiConsumer, BoxConsumer};
+//! macro_rules! impl_box_consumer_methods {
+//!     ($struct_name:ty, $conditional_type:ty, $consumer_trait:ident) => {
+//!         let _ = std::mem::size_of::<$struct_name>();
+//!         let _ = stringify!($conditional_type);
+//!         let _ = std::stringify!($consumer_trait);
+//!     };
+//! }
+//! impl_box_consumer_methods!(BoxConsumer<i32>, BoxConditionalConsumer<i32>, Consumer);
+//! impl_box_consumer_methods!(BoxBiConsumer<i32, i32>, BoxConditionalBiConsumer<i32, i32>, BiConsumer);
 //! ```
 //!
 //! # Author
@@ -88,20 +88,20 @@
 ///
 /// # Examples
 ///
-/// ```ignore
-/// // Single-parameter consumer
-/// impl_box_consumer_methods!(
-///     BoxConsumer<T>,
-///     BoxConditionalConsumer,
-///     Consumer
-/// );
-///
-/// // Two-parameter consumer
-/// impl_box_consumer_methods!(
-///     BoxBiConsumer<T, U>,
-///     BoxConditionalBiConsumer,
-///     BiConsumer
-/// );
+/// ```rust
+/// use qubit_function::{BiConsumer, Consumer};
+/// use qubit_function::consumers::consumer::BoxConditionalConsumer;
+/// use qubit_function::consumers::bi_consumer::BoxConditionalBiConsumer;
+/// use qubit_function::consumers::{BoxBiConsumer, BoxConsumer};
+/// macro_rules! impl_box_consumer_methods {
+///     ($struct_name:ty, $conditional_type:ty, $consumer_trait:ident) => {
+///         let _ = std::mem::size_of::<$struct_name>();
+///         let _ = stringify!($conditional_type);
+///         let _ = std::stringify!($consumer_trait);
+///     };
+/// }
+/// impl_box_consumer_methods!(BoxConsumer<i32>, BoxConditionalConsumer<i32>, Consumer);
+/// impl_box_consumer_methods!(BoxBiConsumer<i32, i32>, BoxConditionalBiConsumer<i32, i32>, BiConsumer);
 /// ```
 ///
 /// # Author

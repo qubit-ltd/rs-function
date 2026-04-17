@@ -106,24 +106,24 @@ pub trait StatefulFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{StatefulFunction, BoxStatefulFunction};
     ///
     /// struct CustomStatefulFunction {
     ///     multiplier: i32,
     /// }
     ///
-    /// impl StatefulFunction<i32, i32> for CustomStatefulFunction {
-    ///     fn apply(&mut self, input: i32) -> i32 {
-    ///         self.multiplier += 1;
-    ///         input * self.multiplier
-    ///     }
-    /// }
+/// impl StatefulFunction<i32, i32> for CustomStatefulFunction {
+///     fn apply(&mut self, input: &i32) -> i32 {
+///         self.multiplier += 1;
+///         input * self.multiplier
+///     }
+/// }
     ///
     /// let function = CustomStatefulFunction { multiplier: 0 };
     /// let mut boxed = function.into_box();
-    /// assert_eq!(boxed.apply(10), 10);  // 10 * 1
-    /// assert_eq!(boxed.apply(10), 20);  // 10 * 2
+/// assert_eq!(boxed.apply(&10), 10);  // 10 * 1
+/// assert_eq!(boxed.apply(&10), 20);  // 10 * 2
     /// ```
     fn into_box(mut self) -> BoxStatefulFunction<T, R>
     where
@@ -149,24 +149,24 @@ pub trait StatefulFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{StatefulFunction, RcStatefulFunction};
     ///
     /// struct CustomStatefulFunction {
     ///     multiplier: i32,
     /// }
     ///
-    /// impl StatefulFunction<i32, i32> for CustomStatefulFunction {
-    ///     fn apply(&mut self, input: i32) -> i32 {
-    ///         self.multiplier += 1;
-    ///         input * self.multiplier
-    ///     }
-    /// }
+/// impl StatefulFunction<i32, i32> for CustomStatefulFunction {
+///     fn apply(&mut self, input: &i32) -> i32 {
+///         self.multiplier += 1;
+///         input * self.multiplier
+///     }
+/// }
     ///
     /// let function = CustomStatefulFunction { multiplier: 0 };
     /// let mut rc_function = function.into_rc();
-    /// assert_eq!(rc_function.apply(10), 10);  // 10 * 1
-    /// assert_eq!(rc_function.apply(10), 20);  // 10 * 2
+/// assert_eq!(rc_function.apply(&10), 10);  // 10 * 1
+/// assert_eq!(rc_function.apply(&10), 20);  // 10 * 2
     /// ```
     fn into_rc(mut self) -> RcStatefulFunction<T, R>
     where
@@ -192,24 +192,24 @@ pub trait StatefulFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{StatefulFunction, ArcStatefulFunction};
     ///
     /// struct CustomStatefulFunction {
     ///     multiplier: i32,
     /// }
     ///
-    /// impl StatefulFunction<i32, i32> for CustomStatefulFunction {
-    ///     fn apply(&mut self, input: i32) -> i32 {
-    ///         self.multiplier += 1;
-    ///         input * self.multiplier
-    ///     }
-    /// }
+/// impl StatefulFunction<i32, i32> for CustomStatefulFunction {
+///     fn apply(&mut self, input: &i32) -> i32 {
+///         self.multiplier += 1;
+///         input * self.multiplier
+///     }
+/// }
     ///
     /// let function = CustomStatefulFunction { multiplier: 0 };
     /// let mut arc_function = function.into_arc();
-    /// assert_eq!(arc_function.apply(10), 10);  // 10 * 1
-    /// assert_eq!(arc_function.apply(10), 20);  // 10 * 2
+/// assert_eq!(arc_function.apply(&10), 10);  // 10 * 1
+/// assert_eq!(arc_function.apply(&10), 20);  // 10 * 2
     /// ```
     fn into_arc(mut self) -> ArcStatefulFunction<T, R>
     where
@@ -234,13 +234,13 @@ pub trait StatefulFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{StatefulFunction, BoxStatefulFunction};
     ///
-    /// let function = BoxStatefulFunction::new(|x: i32| x * 2);
-    /// let mut closure = function.into_fn();
-    /// assert_eq!(closure(10), 20);
-    /// assert_eq!(closure(15), 30);
+/// let function = BoxStatefulFunction::new(|x: &i32| x * 2);
+/// let mut closure = function.into_fn();
+/// assert_eq!(closure(&10), 20);
+/// assert_eq!(closure(&15), 30);
     /// ```
     fn into_fn(mut self) -> impl FnMut(&T) -> R
     where
@@ -275,16 +275,16 @@ pub trait StatefulFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{StatefulFunctionOnce, StatefulFunction,
-    ///                       BoxStatefulFunction};
+    /// ```rust
+/// use qubit_function::{FunctionOnce, StatefulFunction,
+///                       RcStatefulFunction};
+///
+/// fn takes_once<F: FunctionOnce<i32, i32>>(func: F, value: &i32) {
+///     let result = func.apply(value);
+///     println!("Result: {}", result);
+/// }
     ///
-    /// fn takes_once<F: StatefulFunctionOnce<i32, i32>>(func: F, value: &i32) {
-    ///     let result = func.apply(value);
-    ///     println!("Result: {}", result);
-    /// }
-    ///
-    /// let func = BoxStatefulFunction::new(|x: &i32| x * 2);
+/// let func = RcStatefulFunction::new(|x: &i32| x * 2);
     /// takes_once(func.into_once(), &5);
     /// ```
     fn into_once(mut self) -> BoxFunctionOnce<T, R>
@@ -363,16 +363,16 @@ pub trait StatefulFunction<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{StatefulFunctionOnce, StatefulFunction,
-    ///                       BoxStatefulFunction};
+    /// ```rust
+/// use qubit_function::{FunctionOnce, StatefulFunction,
+///                       RcStatefulFunction};
+///
+/// fn takes_once<F: FunctionOnce<i32, i32>>(func: F, value: &i32) {
+///     let result = func.apply(value);
+///     println!("Result: {}", result);
+/// }
     ///
-    /// fn takes_once<F: StatefulFunctionOnce<i32, i32>>(func: F, value: &i32) {
-    ///     let result = func.apply(value);
-    ///     println!("Result: {}", result);
-    /// }
-    ///
-    /// let func = BoxStatefulFunction::new(|x: &i32| x * 2);
+/// let func = RcStatefulFunction::new(|x: &i32| x * 2);
     /// takes_once(func.to_once(), &5);
     /// ```
     fn to_once(&self) -> BoxFunctionOnce<T, R>
@@ -611,17 +611,17 @@ impl<T, R> StatefulFunction<T, R> for ArcStatefulFunction<T, R> {
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::StatefulFunction;
 ///
 /// let mut counter = 0;
-/// let mut function = |x: i32| {
+/// let mut function = |x: &i32| {
 ///     counter += 1;
-///     x + counter
+///     *x + counter
 /// };
 ///
-/// assert_eq!(function.apply(10), 11);
-/// assert_eq!(function.apply(10), 12);
+/// assert_eq!(function.apply(&10), 11);
+/// assert_eq!(function.apply(&10), 12);
 /// ```
 ///
 /// # Author
@@ -742,24 +742,24 @@ impl_fn_ops_trait!(
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{StatefulFunction, BoxStatefulFunction};
 ///
 /// let mut high_count = 0;
 /// let mut low_count = 0;
 ///
-/// let mut function = BoxStatefulFunction::new(move |x: i32| {
+/// let mut function = BoxStatefulFunction::new(move |x: &i32| {
 ///     high_count += 1;
 ///     x * 2
 /// })
 /// .when(|x: &i32| *x >= 10)
-/// .or_else(move |x| {
+/// .or_else(move |x: &i32| {
 ///     low_count += 1;
 ///     x + 1
 /// });
 ///
-/// assert_eq!(function.apply(15), 30); // when branch executed
-/// assert_eq!(function.apply(5), 6);   // or_else branch executed
+/// assert_eq!(function.apply(&15), 30); // when branch executed
+/// assert_eq!(function.apply(&5), 6);   // or_else branch executed
 /// ```
 ///
 /// # Author
@@ -803,17 +803,17 @@ impl_conditional_function_debug_display!(BoxConditionalStatefulFunction<T, R>);
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{StatefulFunction, RcStatefulFunction};
 ///
-/// let mut function = RcStatefulFunction::new(|x: i32| x * 2)
+/// let mut function = RcStatefulFunction::new(|x: &i32| x * 2)
 ///     .when(|x: &i32| *x > 0)
-///     .or_else(|x: i32| -x);
+///     .or_else(|x: &i32| -x);
 ///
 /// let mut function_clone = function.clone();
 ///
-/// assert_eq!(function.apply(5), 10);
-/// assert_eq!(function_clone.apply(-5), 5);
+/// assert_eq!(function.apply(&5), 10);
+/// assert_eq!(function_clone.apply(&-5), 5);
 /// ```
 ///
 /// # Author
@@ -862,17 +862,17 @@ impl_conditional_function_debug_display!(RcConditionalStatefulFunction<T, R>);
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{StatefulFunction, ArcStatefulFunction};
 ///
-/// let mut function = ArcStatefulFunction::new(|x: i32| x * 2)
+/// let mut function = ArcStatefulFunction::new(|x: &i32| x * 2)
 ///     .when(|x: &i32| *x > 0)
-///     .or_else(|x: i32| -x);
+///     .or_else(|x: &i32| -x);
 ///
 /// let mut function_clone = function.clone();
 ///
-/// assert_eq!(function.apply(5), 10);
-/// assert_eq!(function_clone.apply(-5), 5);
+/// assert_eq!(function.apply(&5), 10);
+/// assert_eq!(function_clone.apply(&-5), 5);
 /// ```
 ///
 /// # Author

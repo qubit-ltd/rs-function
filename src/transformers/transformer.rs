@@ -180,8 +180,8 @@ pub trait Transformer<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::Transformer;
+    /// ```rust
+    /// use qubit_function::{Transformer, TransformerOnce};
     ///
     /// let closure = |x: i32| x * 2;
     /// let once = closure.into_once();
@@ -211,7 +211,7 @@ pub trait Transformer<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{ArcTransformer, Transformer};
     ///
     /// let double = ArcTransformer::new(|x: i32| x * 2);
@@ -245,7 +245,7 @@ pub trait Transformer<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{ArcTransformer, Transformer};
     ///
     /// let double = ArcTransformer::new(|x: i32| x * 2);
@@ -279,7 +279,7 @@ pub trait Transformer<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{ArcTransformer, Transformer};
     ///
     /// let double = ArcTransformer::new(|x: i32| x * 2);
@@ -313,7 +313,7 @@ pub trait Transformer<T, R> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{ArcTransformer, Transformer};
     ///
     /// let double = ArcTransformer::new(|x: i32| x * 2);
@@ -578,7 +578,7 @@ impl_closure_trait!(
 ///
 /// ## Chain composition with and_then
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{Transformer, FnTransformerOps};
 ///
 /// let double = |x: i32| x * 2;
@@ -590,7 +590,7 @@ impl_closure_trait!(
 ///
 /// ## Reverse composition with compose
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{Transformer, FnTransformerOps};
 ///
 /// let double = |x: i32| x * 2;
@@ -602,7 +602,7 @@ impl_closure_trait!(
 ///
 /// ## Conditional transformation with when
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{Transformer, FnTransformerOps};
 ///
 /// let double = |x: i32| x * 2;
@@ -648,7 +648,7 @@ pub trait FnTransformerOps<T, R>: Fn(T) -> R + Sized {
     ///
     /// ## Direct value passing (ownership transfer)
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{Transformer, FnTransformerOps, BoxTransformer};
     ///
     /// let double = |x: i32| x * 2;
@@ -660,20 +660,20 @@ pub trait FnTransformerOps<T, R>: Fn(T) -> R + Sized {
     /// // to_string.apply(5); // Would not compile - moved
     /// ```
     ///
-    /// ## Preserving original with clone
+    /// ## Preserving original with separate closures
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{Transformer, FnTransformerOps, BoxTransformer};
+    /// ```rust
+    /// use qubit_function::{Transformer, FnTransformerOps};
     ///
     /// let double = |x: i32| x * 2;
-    /// let to_string = BoxTransformer::new(|x: i32| x.to_string());
+    /// let to_string = |x: i32| x.to_string();
+    /// let to_string_for_validation = |x: i32| x.to_string();
     ///
-    /// // Clone to preserve original
-    /// let composed = double.and_then(to_string.clone());
+    /// let composed = double.and_then(to_string);
     /// assert_eq!(composed.apply(21), "42");
     ///
     /// // Original still usable
-    /// assert_eq!(to_string.apply(5), "5");
+    /// assert_eq!(to_string_for_validation(5), "5");
     /// ```
     fn and_then<S, F>(self, after: F) -> BoxTransformer<T, S>
     where
@@ -718,7 +718,7 @@ pub trait FnTransformerOps<T, R>: Fn(T) -> R + Sized {
     ///
     /// ## Direct value passing (ownership transfer)
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{Transformer, FnTransformerOps, BoxTransformer};
     ///
     /// let double = |x: i32| x * 2;
@@ -730,20 +730,20 @@ pub trait FnTransformerOps<T, R>: Fn(T) -> R + Sized {
     /// // add_one.apply(3); // Would not compile - moved
     /// ```
     ///
-    /// ## Preserving original with clone
+    /// ## Preserving original with separate closures
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{Transformer, FnTransformerOps, BoxTransformer};
+    /// ```rust
+    /// use qubit_function::{Transformer, FnTransformerOps};
     ///
     /// let double = |x: i32| x * 2;
-    /// let add_one = BoxTransformer::new(|x: i32| x + 1);
+    /// let add_one = |x: i32| x + 1;
+    /// let add_one_for_validation = |x: i32| x + 1;
     ///
-    /// // Clone to preserve original
-    /// let composed = double.compose(add_one.clone());
+    /// let composed = double.compose(add_one);
     /// assert_eq!(composed.apply(5), 12); // (5 + 1) * 2
     ///
     /// // Original still usable
-    /// assert_eq!(add_one.apply(3), 4);
+    /// assert_eq!(add_one_for_validation(3), 4);
     /// ```
     fn compose<S, F>(self, before: F) -> BoxTransformer<S, R>
     where
@@ -782,7 +782,7 @@ pub trait FnTransformerOps<T, R>: Fn(T) -> R + Sized {
     ///
     /// ## Basic usage with or_else
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{Transformer, FnTransformerOps};
     ///
     /// let double = |x: i32| x * 2;
@@ -792,22 +792,21 @@ pub trait FnTransformerOps<T, R>: Fn(T) -> R + Sized {
     /// assert_eq!(conditional.apply(-5), 5);
     /// ```
     ///
-    /// ## Preserving predicate with clone
+    /// ## Preserving original with separate predicates
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{Transformer, FnTransformerOps, BoxPredicate};
+    /// ```rust
+    /// use qubit_function::{Transformer, FnTransformerOps};
     ///
     /// let double = |x: i32| x * 2;
-    /// let is_positive = BoxPredicate::new(|x: &i32| *x > 0);
-    ///
-    /// // Clone to preserve original predicate
-    /// let conditional = double.when(is_positive.clone())
+    /// let is_positive = |x: &i32| *x > 0;
+    /// let is_positive_for_validation = |x: &i32| *x > 0;
+    /// let conditional = double.when(is_positive)
     ///     .or_else(|x: i32| -x);
     ///
     /// assert_eq!(conditional.apply(5), 10);
     ///
     /// // Original predicate still usable
-    /// assert!(is_positive.test(&3));
+    /// assert!(is_positive_for_validation(&3));
     /// ```
     fn when<P>(self, predicate: P) -> BoxConditionalTransformer<T, R>
     where
@@ -854,7 +853,7 @@ impl<T, R, F> FnTransformerOps<T, R> for F where F: Fn(T) -> R {}
 ///
 /// ## Using in generic constraints
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{UnaryOperator, Transformer};
 ///
 /// fn apply_twice<T, O>(value: T, op: O) -> T
@@ -872,7 +871,7 @@ impl<T, R, F> FnTransformerOps<T, R> for F where F: Fn(T) -> R {}
 ///
 /// ## With concrete types
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{BoxUnaryOperator, UnaryOperator, Transformer};
 ///
 /// fn create_incrementer() -> BoxUnaryOperator<i32> {
@@ -915,7 +914,7 @@ where
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{BoxUnaryOperator, Transformer};
 ///
 /// let increment: BoxUnaryOperator<i32> = BoxUnaryOperator::new(|x| x + 1);
@@ -935,7 +934,7 @@ pub type BoxUnaryOperator<T> = BoxTransformer<T, T>;
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{ArcUnaryOperator, Transformer};
 ///
 /// let double: ArcUnaryOperator<i32> = ArcUnaryOperator::new(|x| x * 2);
@@ -957,7 +956,7 @@ pub type ArcUnaryOperator<T> = ArcTransformer<T, T>;
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{RcUnaryOperator, Transformer};
 ///
 /// let negate: RcUnaryOperator<i32> = RcUnaryOperator::new(|x: i32| -x);
@@ -994,7 +993,7 @@ pub type RcUnaryOperator<T> = RcTransformer<T, T>;
 ///
 /// ## With or_else Branch
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{Transformer, BoxTransformer};
 ///
 /// let double = BoxTransformer::new(|x: i32| x * 2);
@@ -1045,7 +1044,7 @@ impl_conditional_transformer_debug_display!(BoxConditionalTransformer<T, R>);
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{Transformer, RcTransformer};
 ///
 /// let double = RcTransformer::new(|x: i32| x * 2);
@@ -1103,7 +1102,7 @@ impl_conditional_transformer_clone!(RcConditionalTransformer<T, R>);
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{Transformer, ArcTransformer};
 ///
 /// let double = ArcTransformer::new(|x: i32| x * 2);

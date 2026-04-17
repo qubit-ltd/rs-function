@@ -39,20 +39,23 @@
 //!
 //! # Examples
 //!
-//! ```ignore
+//! ```rust
+//! // `impl_box_function_methods!` is crate-private and expanded in `qubit_function`
+//! // internal macro exports.
+//!
 //! // Single-parameter function
-//! impl_box_function_methods!(
-//!     BoxFunction<T, R>,
-//!     BoxConditionalFunction,
-//!     Function
-//! );
+//! // impl_box_function_methods!(
+//! //     BoxFunction<T, R>,
+//! //     BoxConditionalFunction,
+//! //     Function
+//! // );
 //!
 //! // Two-parameter function
-//! impl_box_function_methods!(
-//!     BoxBiFunction<T, U, R>,
-//!     BoxConditionalBiFunction,
-//!     BiFunction
-//! );
+//! // impl_box_function_methods!(
+//! //     BoxBiFunction<T, U, R>,
+//! //     BoxConditionalBiFunction,
+//! //     BiFunction
+//! // );
 //! ```
 //!
 //! # Author
@@ -92,20 +95,20 @@
 ///
 /// # Examples
 ///
-/// ```ignore
+/// ```rust
 /// // Single-parameter function
-/// impl_box_function_methods!(
-///     BoxFunction<T, R>,
-///     BoxConditionalFunction,
-///     Function
-/// );
+/// // impl_box_function_methods!(
+/// //     BoxFunction<T, R>,
+/// //     BoxConditionalFunction,
+/// //     Function
+/// // );
 ///
 /// // Two-parameter function
-/// impl_box_function_methods!(
-///     BoxBiFunction<T, U, R>,
-///     BoxConditionalBiFunction,
-///     BiFunction
-/// );
+/// // impl_box_function_methods!(
+/// //     BoxBiFunction<T, U, R>,
+/// //     BoxConditionalBiFunction,
+/// //     BiFunction
+/// // );
 /// ```
 ///
 /// # Author
@@ -133,13 +136,19 @@ macro_rules! impl_box_function_methods {
         ///
         /// # Examples
         ///
-        /// ```rust,ignore
-        /// use qubit_function::{BoxFunction, Function};
-        ///
-        /// let double = BoxFunction::new(|x: i32| x * 2);
-        /// let conditional = double.when(|value: &i32| *value > 0);
-        /// assert_eq!(conditional.or_else(|_| 0).apply(5), 10);  // executed
-        /// assert_eq!(conditional.or_else(|_| 0).apply(-3), 0);  // not executed
+/// ```rust
+/// use qubit_function::{BoxFunction, Function};
+///
+/// fn or_else_zero(_: &i32) -> i32 {
+///     0
+/// }
+///
+/// let double = BoxFunction::new(|x: &i32| x * 2);
+/// let conditional = double.when(|value: &i32| *value > 0);
+/// assert_eq!(conditional.or_else(or_else_zero).apply(&5), 10);  // executed
+/// let double = BoxFunction::new(|x: &i32| x * 2);
+/// let conditional = double.when(|value: &i32| *value > 0);
+/// assert_eq!(conditional.or_else(or_else_zero).apply(&-3), 0);  // not executed
         /// ```
         #[inline]
         pub fn when<P>(self, predicate: P) -> $conditional_type<$t, $r>
@@ -169,14 +178,14 @@ macro_rules! impl_box_function_methods {
         ///
         /// # Examples
         ///
-        /// ```rust,ignore
+        /// ```rust
         /// use qubit_function::{BoxFunction, Function};
         ///
-        /// let double = BoxFunction::new(|x: i32| x * 2);
-        /// let to_string = BoxFunction::new(|x: i32| x.to_string());
+/// let double = BoxFunction::new(|x: &i32| x * 2);
+/// let to_string = BoxFunction::new(|x: &i32| x.to_string());
         ///
         /// let chained = double.and_then(to_string);
-        /// assert_eq!(chained.apply(5), "10".to_string());
+/// assert_eq!(chained.apply(&5), "10".to_string());
         /// ```
         #[allow(unused_mut)]
         #[inline]
@@ -216,13 +225,19 @@ macro_rules! impl_box_function_methods {
         ///
         /// # Examples
         ///
-        /// ```rust,ignore
-        /// use qubit_function::{BoxBiFunction, BiFunction};
+        /// ```rust
+/// use qubit_function::{BiFunction, BoxBiFunction};
+///
+/// fn or_else_zero(_: &i32, _: &i32) -> i32 {
+///     0
+/// }
         ///
-        /// let add = BoxBiFunction::new(|x: i32, y: i32| x + y);
-        /// let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
-        /// assert_eq!(conditional.or_else(|_, _| 0).apply(2, 3), 5);  // executed
-        /// assert_eq!(conditional.or_else(|_, _| 0).apply(-1, 3), 0); // not executed
+/// let add = BoxBiFunction::new(|x: &i32, y: &i32| x + y);
+/// let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+/// assert_eq!(conditional.or_else(or_else_zero).apply(&2, &3), 5);  // executed
+/// let add = BoxBiFunction::new(|x: &i32, y: &i32| x + y);
+/// let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+/// assert_eq!(conditional.or_else(or_else_zero).apply(&-1, &3), 0); // not executed
         /// ```
         #[inline]
         pub fn when<P>(self, predicate: P) -> $conditional_type<$t, $u, $r>
@@ -253,14 +268,14 @@ macro_rules! impl_box_function_methods {
         ///
         /// # Examples
         ///
-        /// ```rust,ignore
-        /// use qubit_function::{BoxBiFunction, BoxFunction};
+        /// ```rust
+/// use qubit_function::{BiFunction, BoxBiFunction, BoxFunction};
         ///
-        /// let add = BoxBiFunction::new(|x: i32, y: i32| x + y);
-        /// let multiply_by_two = BoxFunction::new(|z: i32| z * 2);
+/// let add = BoxBiFunction::new(|x: &i32, y: &i32| x + y);
+/// let multiply_by_two = BoxFunction::new(|z: &i32| z * 2);
         ///
         /// let chained = add.and_then(multiply_by_two);
-        /// assert_eq!(chained.apply(2, 3), 10); // (2+3) * 2 = 10
+/// assert_eq!(chained.apply(&2, &3), 10); // (2+3) * 2 = 10
         /// ```
         #[allow(unused_mut)]
         #[inline]

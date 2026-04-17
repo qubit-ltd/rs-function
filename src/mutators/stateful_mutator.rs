@@ -101,7 +101,7 @@
 //!
 //! ## Method Chaining
 //!
-//! ```rust,ignore
+//! ```rust
 //! use qubit_function::{Mutator, BoxMutator, ArcMutator};
 //!
 //! // BoxMutator: Consumes self
@@ -114,7 +114,10 @@
 //! // ArcMutator: Borrows &self, original still usable
 //! let first = ArcMutator::new(|x: &mut i32| *x *= 2);
 //! let second = ArcMutator::new(|x: &mut i32| *x += 10);
-//! let combined = first.and_then(&second);
+//! let combined = first.clone().and_then(second.clone());
+//! let mut value = 5;
+//! combined.apply(&mut value);
+//! assert_eq!(value, 20);
 //! // first and second are still usable here
 //! ```
 //!
@@ -548,9 +551,9 @@ pub trait StatefulMutator<T> {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::{StatefulMutator, BoxStatefulMutator,
-    ///                       BoxMutatorOnce};
+    /// ```rust
+/// use qubit_function::{StatefulMutator, MutatorOnce, BoxStatefulMutator,
+///                       BoxMutatorOnce};
     ///
     /// let mutator = BoxStatefulMutator::new(|x: &mut i32| *x *= 2);
     /// let once_mutator = mutator.into_once();
@@ -693,7 +696,7 @@ impl_mutator_debug_display!(BoxStatefulMutator<T>);
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{Mutator, RcMutator};
 ///
 /// let mutator = RcMutator::new(|x: &mut i32| *x *= 2);
@@ -701,7 +704,7 @@ impl_mutator_debug_display!(BoxStatefulMutator<T>);
 ///
 /// let mut value = 5;
 /// let mut m = mutator;
-/// m.mutate(&mut value);
+/// m.apply(&mut value);
 /// assert_eq!(value, 10);
 /// ```
 ///
@@ -777,7 +780,7 @@ impl_mutator_debug_display!(RcStatefulMutator<T>);
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{Mutator, ArcMutator};
 ///
 /// let mutator = ArcMutator::new(|x: &mut i32| *x *= 2);
@@ -785,7 +788,7 @@ impl_mutator_debug_display!(RcStatefulMutator<T>);
 ///
 /// let mut value = 5;
 /// let mut m = mutator;
-/// m.mutate(&mut value);
+/// m.apply(&mut value);
 /// assert_eq!(value, 10);
 /// ```
 ///
@@ -867,14 +870,14 @@ impl_closure_trait!(
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{Mutator, FnMutatorOps};
 ///
 /// let chained = (|x: &mut i32| *x *= 2)
 ///     .and_then(|x: &mut i32| *x += 10);
 /// let mut value = 5;
 /// let mut result = chained;
-/// result.mutate(&mut value);
+/// result.apply(&mut value);
 /// assert_eq!(value, 20); // (5 * 2) + 10
 /// ```
 ///
@@ -906,16 +909,16 @@ pub trait FnMutStatefulMutatorOps<T>: FnMut(&mut T) + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
+    /// ```rust
     /// use qubit_function::{Mutator, FnMutatorOps};
     ///
     /// let chained = (|x: &mut i32| *x *= 2)
     ///     .and_then(|x: &mut i32| *x += 10)
     ///     .and_then(|x: &mut i32| println!("Result: {}", x));
     ///
-    /// let mut value = 5;
-    /// let mut result = chained;
-    /// result.mutate(&mut value); // Prints: Result: 20
+/// let mut value = 5;
+/// let mut result = chained;
+/// result.apply(&mut value); // Prints: Result: 20
     /// assert_eq!(value, 20);
     /// ```
     fn and_then<C>(self, next: C) -> BoxStatefulMutator<T>
@@ -1043,7 +1046,7 @@ impl_conditional_mutator_debug_display!(BoxConditionalStatefulMutator<T>);
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{Mutator, RcMutator};
 ///
 /// let conditional = RcMutator::new(|x: &mut i32| *x *= 2)
@@ -1053,7 +1056,7 @@ impl_conditional_mutator_debug_display!(BoxConditionalStatefulMutator<T>);
 ///
 /// let mut value = 5;
 /// let mut m = conditional;
-/// m.mutate(&mut value);
+/// m.apply(&mut value);
 /// assert_eq!(value, 10);
 /// ```
 ///
@@ -1113,7 +1116,7 @@ impl_conditional_mutator_debug_display!(RcConditionalStatefulMutator<T>);
 ///
 /// # Examples
 ///
-/// ```rust,ignore
+/// ```rust
 /// use qubit_function::{Mutator, ArcMutator};
 ///
 /// let conditional = ArcMutator::new(|x: &mut i32| *x *= 2)
@@ -1123,7 +1126,7 @@ impl_conditional_mutator_debug_display!(RcConditionalStatefulMutator<T>);
 ///
 /// let mut value = 5;
 /// let mut m = conditional;
-/// m.mutate(&mut value);
+/// m.apply(&mut value);
 /// assert_eq!(value, 10);
 /// ```
 ///

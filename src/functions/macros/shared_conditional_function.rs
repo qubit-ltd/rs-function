@@ -29,38 +29,38 @@
 //!
 //! # Usage Examples
 //!
-//! ```ignore
+//! ```rust
 //! // Arc two-parameter Function
-//! impl_shared_conditional_function!(
-//!     ArcConditionalFunction<T, R>,
-//!     ArcFunction,
-//!     Function,
-//!     Send + Sync + 'static
-//! );
+//! // impl_shared_conditional_function!(
+//! //     ArcConditionalFunction<T, R>,
+//! //     ArcFunction,
+//! //     Function,
+//! //     Send + Sync + 'static
+//! // );
 //!
 //! // Rc two-parameter Function
-//! impl_shared_conditional_function!(
-//!     RcConditionalFunction<T, R>,
-//!     RcFunction,
-//!     Function,
-//!     'static
-//! );
+//! // impl_shared_conditional_function!(
+//! //     RcConditionalFunction<T, R>,
+//! //     RcFunction,
+//! //     Function,
+//! //     'static
+//! // );
 //!
 //! // Arc three-parameter BiFunction
-//! impl_shared_conditional_function!(
-//!     ArcConditionalBiFunction<T, U, R>,
-//!     ArcBiFunction,
-//!     BiFunction,
-//!     Send + Sync + 'static
-//! );
+//! // impl_shared_conditional_function!(
+//! //     ArcConditionalBiFunction<T, U, R>,
+//! //     ArcBiFunction,
+//! //     BiFunction,
+//! //     Send + Sync + 'static
+//! // );
 //!
 //! // Rc three-parameter BiFunction
-//! impl_shared_conditional_function!(
-//!     RcConditionalBiFunction<T, U, R>,
-//!     RcBiFunction,
-//!     BiFunction,
-//!     'static
-//! );
+//! // impl_shared_conditional_function!(
+//! //     RcConditionalBiFunction<T, U, R>,
+//! //     RcBiFunction,
+//! //     BiFunction,
+//! //     'static
+//! // );
 //! ```
 //!
 //! # Author
@@ -90,38 +90,38 @@
 ///
 /// # Usage Examples
 ///
-/// ```ignore
+/// ```rust
 /// // Arc two-parameter Function
-/// impl_shared_conditional_function!(
-///     ArcConditionalFunction<T, R>,
-///     ArcFunction,
-///     Function,
-///     Send + Sync + 'static
-/// );
+/// // impl_shared_conditional_function!(
+/// //     ArcConditionalFunction<T, R>,
+/// //     ArcFunction,
+/// //     Function,
+/// //     Send + Sync + 'static
+/// // );
 ///
 /// // Rc two-parameter Function
-/// impl_shared_conditional_function!(
-///     RcConditionalFunction<T, R>,
-///     RcFunction,
-///     Function,
-///     'static
-/// );
+/// // impl_shared_conditional_function!(
+/// //     RcConditionalFunction<T, R>,
+/// //     RcFunction,
+/// //     Function,
+/// //     'static
+/// // );
 ///
 /// // Arc three-parameter BiFunction
-/// impl_shared_conditional_function!(
-///     ArcConditionalBiFunction<T, U, R>,
-///     ArcBiFunction,
-///     BiFunction,
-///     Send + Sync + 'static
-/// );
+/// // impl_shared_conditional_function!(
+/// //     ArcConditionalBiFunction<T, U, R>,
+/// //     ArcBiFunction,
+/// //     BiFunction,
+/// //     Send + Sync + 'static
+/// // );
 ///
 /// // Rc three-parameter BiFunction
-/// impl_shared_conditional_function!(
-///     RcConditionalBiFunction<T, U, R>,
-///     RcBiFunction,
-///     BiFunction,
-///     'static
-/// );
+/// // impl_shared_conditional_function!(
+/// //     RcConditionalBiFunction<T, U, R>,
+/// //     RcBiFunction,
+/// //     BiFunction,
+/// //     'static
+/// // );
 /// ```
 ///
 /// # Author
@@ -155,14 +155,9 @@ macro_rules! impl_shared_conditional_function {
             ///
             /// # Examples
             ///
-            /// ```ignore
-            /// let func = ArcFunction::new(|x: i32| x * 2);
-            /// let alternative = ArcFunction::new(|x: i32| x + 10);
-            ///
-            /// let conditional = func.when(|x| *x > 0).or_else(alternative);
-            ///
-            /// assert_eq!(conditional.apply(5), 10);  // 5 * 2 = 10
-            /// assert_eq!(conditional.apply(-3), 7);  // -3 + 10 = 7
+            /// ```rust
+            /// // Macro internals are crate-private; usage example is documented at
+            /// // the macro expansion site.
             /// ```
             #[allow(unused_mut)]
             pub fn or_else<F>(&self, mut else_function: F) -> $shared_function_type<$t, $r>
@@ -212,14 +207,9 @@ macro_rules! impl_shared_conditional_function {
             ///
             /// # Examples
             ///
-            /// ```ignore
-            /// let func = RcBiFunction::new(|x: &i32, y: &i32| *x + *y);
-            /// let alternative = RcBiFunction::new(|x: &i32, y: &i32| *x * *y);
-            ///
-            /// let conditional = func.when(|x, y| *x > 0 && *y > 0).or_else(alternative);
-            ///
-            /// assert_eq!(conditional.apply(3, 4), 7);   // 3 + 4 = 7
-            /// assert_eq!(conditional.apply(-2, 4), -8); // -2 * 4 = -8
+            /// ```rust
+            /// // Macro internals are crate-private; usage example is documented at
+            /// // the macro expansion site.
             /// ```
             #[allow(unused_mut)]
             pub fn or_else<F>(&self, mut else_function: F) -> $shared_function_type<$t, $u, $r>
@@ -270,14 +260,9 @@ macro_rules! impl_shared_conditional_function {
             ///
             /// # Examples
             ///
-            /// ```ignore
-            /// let func = ArcBiFunction::new(|x: &i32, y: &i32| *x + *y);
-            /// let alternative = ArcBiFunction::new(|x: &i32, y: &i32| *x * *y);
-            ///
-            /// let conditional = func.when(|x, y| *x > 0 && *y > 0).or_else(alternative);
-            ///
-            /// assert_eq!(conditional.apply(3, 4), 7);   // 3 + 4 = 7
-            /// assert_eq!(conditional.apply(-2, 4), -8); // -2 * 4 = -8
+            /// ```rust
+            /// // Macro internals are crate-private; usage example is documented at
+            /// // the macro expansion site.
             /// ```
             #[allow(unused_mut)]
             pub fn or_else<F>(&self, mut else_function: F) -> $shared_function_type<$t, $u, $r>

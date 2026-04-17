@@ -89,14 +89,14 @@
 //! methods, providing a natural experience without requiring explicit
 //! `.clone()` calls:
 //!
-//! ```rust,ignore
+//! ```rust
 //! use qubit_function::comparator::{Comparator, ArcComparator};
 //!
 //! let cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
 //!
 //! // No need for explicit clone()
 //! let reversed = cmp.reversed();
-//! let chained = cmp.then_comparing(&ArcComparator::new(|a, b| b.cmp(a)));
+//! let chained = cmp.then_comparing(&ArcComparator::new(|a: &i32, b: &i32| b.cmp(a)));
 //!
 //! // cmp is still available
 //! cmp.compare(&1, &2);
@@ -107,13 +107,13 @@
 //! The `FnComparatorOps` extension trait allows direct composition on
 //! closures:
 //!
-//! ```rust,ignore
-//! use qubit_function::comparator::{Comparator, FnComparatorOps};
+//! ```rust
+//! use qubit_function::comparator::{Comparator, FnComparatorOps, BoxComparator};
 //! use std::cmp::Ordering;
 //!
 //! let cmp = (|a: &i32, b: &i32| a.cmp(b))
 //!     .reversed()
-//!     .then_comparing(|a: &i32, b: &i32| b.cmp(a));
+//!     .then_comparing(BoxComparator::new(|a: &i32, b: &i32| b.cmp(a)));
 //!
 //! assert_eq!(cmp.compare(&5, &3), Ordering::Less);
 //! ```
@@ -931,13 +931,13 @@ impl<T> Comparator<T> for RcComparator<T> {
 ///
 /// # Examples
 ///
-/// ```rust,ignore
-/// use qubit_function::comparator::{Comparator, FnComparatorOps};
+/// ```rust
+/// use qubit_function::comparator::{Comparator, FnComparatorOps, BoxComparator};
 /// use std::cmp::Ordering;
 ///
 /// let cmp = (|a: &i32, b: &i32| a.cmp(b))
 ///     .reversed()
-///     .then_comparing(BoxComparator::new(|a, b| b.cmp(a)));
+///     .then_comparing(BoxComparator::new(|a: &i32, b: &i32| b.cmp(a)));
 ///
 /// assert_eq!(cmp.compare(&5, &3), Ordering::Less);
 /// ```
@@ -983,13 +983,12 @@ pub trait FnComparatorOps<T>: Fn(&T, &T) -> Ordering + Sized {
     ///
     /// # Examples
     ///
-    /// ```rust,ignore
-    /// use qubit_function::comparator::{Comparator, FnComparatorOps,
-    ///                                   BoxComparator};
+    /// ```rust
+/// use qubit_function::comparator::{Comparator, FnComparatorOps, BoxComparator};
     /// use std::cmp::Ordering;
     ///
-    /// let cmp = (|a: &i32, b: &i32| (a % 2).cmp(&(b % 2)))
-    ///     .then_comparing(BoxComparator::new(|a, b| a.cmp(b)));
+/// let cmp = (|a: &i32, b: &i32| (a % 2).cmp(&(b % 2)))
+///     .then_comparing(BoxComparator::new(|a: &i32, b: &i32| a.cmp(b)));
     /// assert_eq!(cmp.compare(&4, &2), Ordering::Greater);
     /// ```
     #[inline]
