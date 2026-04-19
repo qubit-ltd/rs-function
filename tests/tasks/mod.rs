@@ -7,10 +7,5 @@
  *
  ******************************************************************************/
 
-mod consumers;
-mod functions;
-mod mutators;
-mod predicates;
-mod suppliers;
-mod tasks;
-mod transformers;
+mod callable_tests;
+mod runnable_tests;

@@ -20,6 +20,7 @@
 //! - **Predicate types**: Functions that test values and return boolean
 //! - **BiPredicate types**: Functions that test two values and return boolean
 //! - **Supplier types**: Functions that produce values without input
+//! - **Task types**: Fallible zero-argument actions and computations
 //! - **Mapper types**: Stateful transformations from type T to type R
 //! - **Tester types**: Functions that test conditions without input
 //! - **Comparator types**: Functions that compare values and return ordering
@@ -36,6 +37,7 @@ pub mod macros;
 pub mod mutators;
 pub mod predicates;
 pub mod suppliers;
+pub mod tasks;
 pub mod tester;
 pub mod transformers;
 
@@ -395,6 +397,14 @@ pub use suppliers::{
     // Core traits
     Supplier,
     SupplierOnce,
+};
+
+// ---- Task Types (FnOnce() -> Result<R, E>) ----
+pub use tasks::{
+    BoxCallable,
+    BoxRunnable,
+    Callable,
+    Runnable,
 };
 
 // ---- Comparator Types (Fn(&T, &T) -> Ordering) ----

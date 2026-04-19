@@ -15,7 +15,7 @@ This crate provides a complete set of functional programming abstractions inspir
 
 ## Key Features
 
-- **Complete Functional Interface Suite**: 24 core functional abstractions with multiple variants
+- **Complete Functional Interface Suite**: 26 core functional abstractions with multiple variants
 - **High-Performance Concurrency**: Uses parking_lot Mutex for superior thread synchronization performance
 - **Multiple Ownership Models**: Box-based single ownership, Arc-based thread-safe sharing, and Rc-based single-threaded sharing
 - **Flexible API Design**: Trait-based unified interface with concrete implementations optimized for different scenarios
@@ -29,12 +29,12 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-qubit-function = "0.7.1"
+qubit-function = "0.10.0"
 ```
 
 ## Core Abstractions
 
-This crate provides 24 core functional abstractions, each with multiple implementations:
+This crate provides 26 core functional abstractions, each with multiple implementations:
 
 ### 1. Predicate - Single-Argument Predicate
 
@@ -222,7 +222,47 @@ May invoke `get` only once to return a single `T` (equivalent to
 **Implementations**:
 - `BoxSupplierOnce<T>` - Single ownership, one-time use
 
-### 11. StatefulSupplier - Stateful Value Supplier
+### 11. Callable - Single-Use Fallible Computation
+
+Executes a zero-argument computation once and returns either a success value
+or an error (equivalent to `FnOnce() -> Result<R, E>`).
+
+**Trait**: `Callable<R, E>`
+**Core Method**: `call(self) -> Result<R, E>`
+**Closure Equivalent**: `FnOnce() -> Result<R, E>`
+
+**Implementations**:
+- `BoxCallable<R, E>` - Single ownership, one-time use
+
+**Example**:
+```rust
+use qubit_function::{Callable, BoxCallable};
+
+let task = BoxCallable::new(|| Ok::<i32, String>(42));
+assert_eq!(task.call(), Ok(42));
+```
+
+### 12. Runnable - Single-Use Fallible Action
+
+Executes a zero-argument action once and reports success or failure
+(equivalent to `FnOnce() -> Result<(), E>`).
+
+**Trait**: `Runnable<E>`
+**Core Method**: `run(self) -> Result<(), E>`
+**Closure Equivalent**: `FnOnce() -> Result<(), E>`
+
+**Implementations**:
+- `BoxRunnable<E>` - Single ownership, one-time use
+
+**Example**:
+```rust
+use qubit_function::{Runnable, BoxRunnable};
+
+let task = BoxRunnable::new(|| Ok::<(), String>(()));
+assert_eq!(task.run(), Ok(()));
+```
+
+### 13. StatefulSupplier - Stateful Value Supplier
 
 Supplies a `T` using mutable internal state; successive `get` calls may differ (equivalent to `FnMut() -> T`).
 
@@ -251,7 +291,7 @@ assert_eq!(counter.get(), 1);
 assert_eq!(counter.get(), 2);
 ```
 
-### 12. Function - Borrowed-Input Function
+### 14. Function - Borrowed-Input Function
 
 Computes a result from a borrowed input without consuming the input.
 
@@ -272,7 +312,7 @@ let to_string = BoxFunction::new(|x: &i32| format!("Value: {}", x));
 assert_eq!(to_string.apply(&42), "Value: 42");
 ```
 
-### 13. FunctionOnce - Single-Use Borrowed-Input Function
+### 15. FunctionOnce - Single-Use Borrowed-Input Function
 
 Computes a result from a borrowed input once.
 
@@ -283,7 +323,7 @@ Computes a result from a borrowed input once.
 **Implementations**:
 - `BoxFunctionOnce<T, R>` - Single ownership, one-time use
 
-### 14. StatefulFunction - Stateful Borrowed-Input Function
+### 16. StatefulFunction - Stateful Borrowed-Input Function
 
 Computes a result from a borrowed input while allowing mutable internal
 state.
@@ -297,7 +337,7 @@ state.
 - `ArcStatefulFunction<T, R>` - Thread-safe with parking_lot::Mutex
 - `RcStatefulFunction<T, R>` - Single-threaded with RefCell
 
-### 15. Transformer - Value Transformer
+### 17. Transformer - Value Transformer
 
 Consumes an input value of type `T` and transforms it into a value of
 type `R`.
@@ -321,7 +361,7 @@ let parse = BoxTransformer::new(|s: String| s.parse::<i32>().unwrap_or(0));
 assert_eq!(parse.apply("42".to_string()), 42);
 ```
 
-### 16. TransformerOnce - Single-Use Value Transformer
+### 18. TransformerOnce - Single-Use Value Transformer
 
 Consumes an input value once and transforms it into a value of type `R`.
 
@@ -334,7 +374,7 @@ Consumes an input value once and transforms it into a value of type `R`.
 
 **Type Alias**: `UnaryOperatorOnce<T>` = `TransformerOnce<T, T>`
 
-### 17. StatefulTransformer - Stateful Value Transformer
+### 19. StatefulTransformer - Stateful Value Transformer
 
 Consumes an input value and transforms it into a value of type `R`
 while allowing mutable internal state.
@@ -348,7 +388,7 @@ while allowing mutable internal state.
 - `ArcStatefulTransformer<T, R>` - Thread-safe with parking_lot::Mutex
 - `RcStatefulTransformer<T, R>` - Single-threaded with RefCell
 
-### 18. BiTransformer - Two-Argument Value Transformer
+### 20. BiTransformer - Two-Argument Value Transformer
 
 Consumes two input values and transforms them into a result.
 
@@ -371,7 +411,7 @@ let add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
 assert_eq!(add.apply(10, 20), 30);
 ```
 
-### 19. StatefulBiTransformer - Stateful Two-Argument Value Transformer
+### 21. StatefulBiTransformer - Stateful Two-Argument Value Transformer
 
 Consumes two input values and transforms them into a result while
 allowing mutable internal state.
@@ -389,7 +429,7 @@ allowing mutable internal state.
 - `StatefulBinaryOperator<T>` = `StatefulBiTransformer<T, T, T>`
 - `BoxStatefulBinaryOperator<T>`, `ArcStatefulBinaryOperator<T>`, `RcStatefulBinaryOperator<T>`
 
-### 20. BiTransformerOnce - Single-Use Two-Argument Value Transformer
+### 22. BiTransformerOnce - Single-Use Two-Argument Value Transformer
 
 Consumes two input values once and transforms them into a result.
 
@@ -402,7 +442,7 @@ Consumes two input values once and transforms them into a result.
 
 **Type Alias**: `BinaryOperatorOnce<T>` = `BiTransformerOnce<T, T, T>`
 
-### 21. StatefulConsumer - Stateful Consumer
+### 23. StatefulConsumer - Stateful Consumer
 
 Accepts a value reference and performs side effects while allowing
 mutable internal state.
@@ -416,7 +456,7 @@ mutable internal state.
 - `ArcStatefulConsumer<T>` - Thread-safe with parking_lot::Mutex
 - `RcStatefulConsumer<T>` - Single-threaded with RefCell
 
-### 22. StatefulBiConsumer - Stateful Two-Argument Consumer
+### 24. StatefulBiConsumer - Stateful Two-Argument Consumer
 
 Accepts two value references and performs side effects while allowing
 mutable internal state.
@@ -430,7 +470,7 @@ mutable internal state.
 - `ArcStatefulBiConsumer<T, U>` - Thread-safe with parking_lot::Mutex
 - `RcStatefulBiConsumer<T, U>` - Single-threaded with RefCell
 
-### 23. Comparator - Ordering Comparator
+### 25. Comparator - Ordering Comparator
 
 Compares two values and returns an `Ordering`.
 
@@ -452,7 +492,7 @@ let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
 assert_eq!(cmp.compare(&5, &3), Ordering::Greater);
 ```
 
-### 24. Tester - Zero-Argument Condition Checker
+### 26. Tester - Zero-Argument Condition Checker
 
 Checks whether a condition or state holds without taking input.
 
@@ -495,6 +535,8 @@ assert!(!tester.test());
 | `MutatorOnce<T>` | `apply(self, value: &mut T)` | `FnOnce(&mut T)` |
 | `Supplier<T>` | `get(&self) -> T` | `Fn() -> T` |
 | `SupplierOnce<T>` | `get(self) -> T` | `FnOnce() -> T` |
+| `Callable<R, E>` | `call(self) -> Result<R, E>` | `FnOnce() -> Result<R, E>` |
+| `Runnable<E>` | `run(self) -> Result<(), E>` | `FnOnce() -> Result<(), E>` |
 | `StatefulSupplier<T>` | `get(&mut self) -> T` | `FnMut() -> T` |
 | `Function<T, R>` | `apply(&self, input: &T) -> R` | `Fn(&T) -> R` |
 | `FunctionOnce<T, R>` | `apply(self, input: &T) -> R` | `FnOnce(&T) -> R` |
@@ -529,6 +571,8 @@ Each trait has multiple implementations based on ownership model:
 | MutatorOnce | BoxMutatorOnce | - | - |
 | Supplier | BoxSupplier | ArcSupplier | RcSupplier |
 | SupplierOnce | BoxSupplierOnce | - | - |
+| Callable | BoxCallable | - | - |
+| Runnable | BoxRunnable | - | - |
 | StatefulSupplier | BoxStatefulSupplier | ArcStatefulSupplier | RcStatefulSupplier |
 | Function | BoxFunction | ArcFunction | RcFunction |
 | FunctionOnce | BoxFunctionOnce | - | - |
