@@ -22,9 +22,14 @@
 //!
 //! Haixing Hu
 
-use std::fmt;
-
 use crate::{
+    functions::macros::impl_function_debug_display,
+    macros::{
+        impl_box_once_conversions,
+        impl_closure_once_trait,
+        impl_common_name_methods,
+        impl_common_new_methods,
+    },
     suppliers::supplier_once::SupplierOnce,
     tasks::runnable::BoxRunnable,
 };
@@ -172,67 +177,11 @@ pub struct BoxCallable<R, E> {
 }
 
 impl<R, E> BoxCallable<R, E> {
-    /// Creates a new boxed callable.
-    ///
-    /// # Parameters
-    ///
-    /// * `function` - The one-time closure executed by this callable.
-    ///
-    /// # Returns
-    ///
-    /// A new unnamed `BoxCallable<R, E>`.
-    #[inline]
-    pub fn new<F>(function: F) -> Self
-    where
-        F: FnOnce() -> Result<R, E> + 'static,
-    {
-        Self {
-            function: Box::new(function),
-            name: None,
-        }
-    }
-
-    /// Creates a new named boxed callable.
-    ///
-    /// # Parameters
-    ///
-    /// * `name` - Name used by `Debug` and `Display`.
-    /// * `function` - The one-time closure executed by this callable.
-    ///
-    /// # Returns
-    ///
-    /// A new named `BoxCallable<R, E>`.
-    #[inline]
-    pub fn new_with_name<F>(name: &str, function: F) -> Self
-    where
-        F: FnOnce() -> Result<R, E> + 'static,
-    {
-        Self {
-            function: Box::new(function),
-            name: Some(name.to_string()),
-        }
-    }
-
-    /// Creates a new boxed callable with an optional name.
-    ///
-    /// # Parameters
-    ///
-    /// * `function` - The one-time closure executed by this callable.
-    /// * `name` - Optional name used by `Debug` and `Display`.
-    ///
-    /// # Returns
-    ///
-    /// A new `BoxCallable<R, E>`.
-    #[inline]
-    pub fn new_with_optional_name<F>(function: F, name: Option<String>) -> Self
-    where
-        F: FnOnce() -> Result<R, E> + 'static,
-    {
-        Self {
-            function: Box::new(function),
-            name,
-        }
-    }
+    impl_common_new_methods!(
+        (FnOnce() -> Result<R, E> + 'static),
+        |function| Box::new(function),
+        "callable"
+    );
 
     /// Creates a boxed callable from a one-time supplier.
     ///
@@ -254,33 +203,7 @@ impl<R, E> BoxCallable<R, E> {
         Self::new(move || supplier.get())
     }
 
-    /// Gets the optional callable name.
-    ///
-    /// # Returns
-    ///
-    /// Returns `Some(&str)` if a name was set, or `None` otherwise.
-    #[inline]
-    pub fn name(&self) -> Option<&str> {
-        self.name.as_deref()
-    }
-
-    /// Sets the callable name.
-    ///
-    /// # Parameters
-    ///
-    /// * `name` - The new name.
-    #[inline]
-    pub fn set_name(&mut self, name: &str) {
-        if self.name.as_deref() != Some(name) {
-            self.name = Some(name.to_owned());
-        }
-    }
-
-    /// Clears the callable name.
-    #[inline]
-    pub fn clear_name(&mut self) {
-        self.name = None;
-    }
+    impl_common_name_methods!("callable");
 
     /// Maps the success value of this callable.
     ///
@@ -354,17 +277,7 @@ impl<R, E> Callable<R, E> for BoxCallable<R, E> {
         (self.function)()
     }
 
-    /// Returns this boxed callable without re-boxing it.
-    #[inline]
-    fn into_box(self) -> BoxCallable<R, E> {
-        self
-    }
-
-    /// Extracts the underlying one-time closure.
-    #[inline]
-    fn into_fn(self) -> impl FnOnce() -> Result<R, E> {
-        self.function
-    }
+    impl_box_once_conversions!(BoxCallable<R, E>, Callable, FnOnce() -> Result<R, E>);
 
     /// Converts this boxed callable into a boxed runnable while preserving its
     /// name.
@@ -387,51 +300,11 @@ impl<R, E> SupplierOnce<Result<R, E>> for BoxCallable<R, E> {
     }
 }
 
-impl<F, R, E> Callable<R, E> for F
-where
-    F: FnOnce() -> Result<R, E>,
-{
-    /// Executes the closure as a callable.
-    #[inline]
-    fn call(self) -> Result<R, E> {
-        self()
-    }
+impl_closure_once_trait!(
+    Callable<R, E>,
+    call,
+    BoxCallable,
+    FnOnce() -> Result<R, E>
+);
 
-    /// Converts the closure to a boxed callable.
-    #[inline]
-    fn into_box(self) -> BoxCallable<R, E>
-    where
-        Self: Sized + 'static,
-    {
-        BoxCallable::new(self)
-    }
-
-    /// Returns the closure unchanged.
-    #[inline]
-    fn into_fn(self) -> impl FnOnce() -> Result<R, E>
-    where
-        Self: Sized + 'static,
-    {
-        self
-    }
-}
-
-impl<R, E> fmt::Debug for BoxCallable<R, E> {
-    /// Formats this boxed callable for debugging.
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("BoxCallable")
-            .field("name", &self.name)
-            .field("function", &"<function>")
-            .finish()
-    }
-}
-
-impl<R, E> fmt::Display for BoxCallable<R, E> {
-    /// Formats this boxed callable for display.
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match &self.name {
-            Some(name) => write!(f, "BoxCallable({name})"),
-            None => write!(f, "BoxCallable"),
-        }
-    }
-}
+impl_function_debug_display!(BoxCallable<R, E>);
