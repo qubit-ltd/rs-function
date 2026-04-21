@@ -399,12 +399,20 @@ pub use suppliers::{
     SupplierOnce,
 };
 
-// ---- Task Types (FnOnce() -> Result<R, E>) ----
+// ---- Task Types (FnMut() -> Result<R, E>) ----
 pub use tasks::{
+    ArcCallable,
+    ArcRunnable,
     BoxCallable,
+    BoxCallableOnce,
     BoxRunnable,
+    BoxRunnableOnce,
     Callable,
+    CallableOnce,
+    RcCallable,
+    RcRunnable,
     Runnable,
+    RunnableOnce,
 };
 
 // ---- Comparator Types (Fn(&T, &T) -> Ordering) ----

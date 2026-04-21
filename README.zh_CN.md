@@ -219,17 +219,19 @@ assert_eq!(factory.get(), "你好");
 **实现类型**:
 - `BoxSupplierOnce<T>` - 单一所有权,一次性使用
 
-### 11. Callable - 一次性可失败计算
+### 11. Callable - 可复用可失败计算
 
-无参数,仅执行一次计算,并返回成功值或错误(对应
-`FnOnce() -> Result<R, E>`)。
+无参数,可多次执行计算,并返回成功值或错误(对应
+`FnMut() -> Result<R, E>`)。
 
 **Trait**: `Callable<R, E>`
-**核心方法**: `call(self) -> Result<R, E>`
-**等价闭包**: `FnOnce() -> Result<R, E>`
+**核心方法**: `call(&mut self) -> Result<R, E>`
+**等价闭包**: `FnMut() -> Result<R, E>`
 
 **实现类型**:
-- `BoxCallable<R, E>` - 单一所有权,一次性使用
+- `BoxCallable<R, E>` - 可复用单一所有权
+- `RcCallable<R, E>` - 可复用单线程共享所有权
+- `ArcCallable<R, E>` - 可复用线程安全共享所有权
 
 **示例**:
 ```rust
@@ -239,17 +241,19 @@ let task = BoxCallable::new(|| Ok::<i32, String>(42));
 assert_eq!(task.call(), Ok(42));
 ```
 
-### 12. Runnable - 一次性可失败动作
+### 12. Runnable - 可复用可失败动作
 
-无参数,仅执行一次动作,并报告成功或失败(对应
-`FnOnce() -> Result<(), E>`)。
+无参数,可重复执行动作,并报告成功或失败(对应
+`FnMut() -> Result<(), E>`)。
 
 **Trait**: `Runnable<E>`
-**核心方法**: `run(self) -> Result<(), E>`
-**等价闭包**: `FnOnce() -> Result<(), E>`
+**核心方法**: `run(&mut self) -> Result<(), E>`
+**等价闭包**: `FnMut() -> Result<(), E>`
 
 **实现类型**:
-- `BoxRunnable<E>` - 单一所有权,一次性使用
+- `BoxRunnable<E>` - 可复用单一所有权
+- `RcRunnable<E>` - 可复用单线程共享所有权
+- `ArcRunnable<E>` - 可复用线程安全共享所有权
 
 **示例**:
 ```rust
@@ -259,7 +263,47 @@ let task = BoxRunnable::new(|| Ok::<(), String>(()));
 assert_eq!(task.run(), Ok(()));
 ```
 
-### 13. StatefulSupplier - 有状态值提供者
+### 13. CallableOnce - 一次性可失败计算
+
+无参数,仅执行一次计算,并返回成功值或错误(对应
+`FnOnce() -> Result<R, E>`)。
+
+**Trait**: `CallableOnce<R, E>`
+**核心方法**: `call(self) -> Result<R, E>`
+**等价闭包**: `FnOnce() -> Result<R, E>`
+
+**实现类型**:
+- `BoxCallableOnce<R, E>` - 单一所有权,一次性使用
+
+**示例**:
+```rust
+use qubit_function::{CallableOnce, BoxCallableOnce};
+
+let task = BoxCallableOnce::new(|| Ok::<i32, String>(42));
+assert_eq!(task.call(), Ok(42));
+```
+
+### 14. RunnableOnce - 一次性可失败动作
+
+无参数,仅执行一次动作,并报告成功或失败(对应
+`FnOnce() -> Result<(), E>`)。
+
+**Trait**: `RunnableOnce<E>`
+**核心方法**: `run(self) -> Result<(), E>`
+**等价闭包**: `FnOnce() -> Result<(), E>`
+
+**实现类型**:
+- `BoxRunnableOnce<E>` - 单一所有权,一次性使用
+
+**示例**:
+```rust
+use qubit_function::{RunnableOnce, BoxRunnableOnce};
+
+let task = BoxRunnableOnce::new(|| Ok::<(), String>(()));
+assert_eq!(task.run(), Ok(()));
+```
+
+### 15. StatefulSupplier - 有状态值提供者
 
 在可变内部状态下返回 `T`; 多次 `get` 的结果可以不同(对应
 `FnMut() -> T`)。
@@ -527,8 +571,10 @@ assert!(!tester.test());
 | `MutatorOnce<T>` | `apply(self, value: &mut T)` | `FnOnce(&mut T)` |
 | `Supplier<T>` | `get(&self) -> T` | `Fn() -> T` |
 | `SupplierOnce<T>` | `get(self) -> T` | `FnOnce() -> T` |
-| `Callable<R, E>` | `call(self) -> Result<R, E>` | `FnOnce() -> Result<R, E>` |
-| `Runnable<E>` | `run(self) -> Result<(), E>` | `FnOnce() -> Result<(), E>` |
+| `Callable<R, E>` | `call(&mut self) -> Result<R, E>` | `FnMut() -> Result<R, E>` |
+| `CallableOnce<R, E>` | `call(self) -> Result<R, E>` | `FnOnce() -> Result<R, E>` |
+| `Runnable<E>` | `run(&mut self) -> Result<(), E>` | `FnMut() -> Result<(), E>` |
+| `RunnableOnce<E>` | `run(self) -> Result<(), E>` | `FnOnce() -> Result<(), E>` |
 | `StatefulSupplier<T>` | `get(&mut self) -> T` | `FnMut() -> T` |
 | `Function<T, R>` | `apply(&self, input: &T) -> R` | `Fn(&T) -> R` |
 | `FunctionOnce<T, R>` | `apply(self, input: &T) -> R` | `FnOnce(&T) -> R` |
@@ -564,8 +610,10 @@ assert!(!tester.test());
 | MutatorOnce | BoxMutatorOnce | - | - |
 | Supplier | BoxSupplier | ArcSupplier | RcSupplier |
 | SupplierOnce | BoxSupplierOnce | - | - |
-| Callable | BoxCallable | - | - |
-| Runnable | BoxRunnable | - | - |
+| Callable | BoxCallable | RcCallable | ArcCallable |
+| CallableOnce | BoxCallableOnce | - | - |
+| Runnable | BoxRunnable | ArcRunnable | RcRunnable |
+| RunnableOnce | BoxRunnableOnce | - | - |
 | StatefulSupplier | BoxStatefulSupplier | ArcStatefulSupplier | RcStatefulSupplier |
 | Function | BoxFunction | ArcFunction | RcFunction |
 | FunctionOnce | BoxFunctionOnce | - | - |

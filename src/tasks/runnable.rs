@@ -8,27 +8,31 @@
  ******************************************************************************/
 //! # Runnable Types
 //!
-//! Provides fallible, one-time, zero-argument actions.
-//!
-//! A `Runnable<E>` is equivalent to `FnOnce() -> Result<(), E>`, but uses
-//! task-oriented vocabulary. Use it when the operation's side effect matters
-//! and only success or failure should be reported.
-//!
-//! The trait itself does not require `Send`; concurrent executors should add
-//! `+ Send + 'static` at their API boundary.
+//! Fallible, reusable, zero-argument actions. Design intent, equivalence to
+//! [`FnMut`], and [`Send`] at executor boundaries are documented on
+//! [`Runnable`].
 //!
 //! # Author
 //!
 //! Haixing Hu
 
+use std::cell::RefCell;
+use std::rc::Rc;
+use std::sync::Arc;
+
+use parking_lot::Mutex;
+
 use crate::{
     macros::{
-        impl_box_once_conversions,
-        impl_closure_once_trait,
+        impl_arc_conversions,
+        impl_box_conversions,
+        impl_closure_trait,
         impl_common_name_methods,
         impl_common_new_methods,
+        impl_rc_conversions,
     },
     suppliers::macros::impl_supplier_debug_display,
+    suppliers::supplier::Supplier,
     suppliers::supplier_once::SupplierOnce,
     tasks::callable::BoxCallable,
 };
@@ -37,11 +41,19 @@ use crate::{
 // Runnable Trait
 // ============================================================================
 
-/// A fallible one-time action.
+/// A fallible, reusable, zero-argument action.
 ///
-/// `Runnable<E>` consumes itself and returns `Result<(), E>`. It is a semantic
-/// specialization of `SupplierOnce<Result<(), E>>` for executable actions and
-/// deferred side effects.
+/// Conceptually, `Runnable<E>` matches [`FnMut`] `() -> Result<(), E>`, but
+/// uses task-oriented vocabulary. Prefer it when the operation’s side effect
+/// matters and only success or failure need to be reported.
+///
+/// Each call borrows `self` mutably and returns [`Result::Ok`] with unit or
+/// [`Result::Err`] with `E`. Semantically, this is a specialization of
+/// [`SupplierOnce`]`<Result<(), E>>` for executable actions and deferred side
+/// effects.
+///
+/// The trait does not require [`Send`]. Concurrent executors should require
+/// `Runnable<E> + Send + 'static` (or similar) at their API boundary.
 ///
 /// # Type Parameters
 ///
@@ -52,7 +64,7 @@ use crate::{
 /// ```rust
 /// use qubit_function::Runnable;
 ///
-/// let task = || Ok::<(), String>(());
+/// let mut task = || Ok::<(), String>(());
 /// assert_eq!(task.run(), Ok(()));
 /// ```
 ///
@@ -60,32 +72,56 @@ use crate::{
 ///
 /// Haixing Hu
 pub trait Runnable<E> {
-    /// Executes the action, consuming `self`.
+    /// Executes the action, borrowing `self` mutably.
     ///
     /// # Returns
     ///
     /// Returns `Ok(())` when the action succeeds, or `Err(E)` when it fails.
     /// The exact error meaning is defined by the concrete runnable.
-    fn run(self) -> Result<(), E>;
+    fn run(&mut self) -> Result<(), E>;
 
     /// Converts this runnable into a boxed runnable.
     ///
     /// # Returns
     ///
     /// A `BoxRunnable<E>` that executes this runnable when `run()` is invoked.
-    fn into_box(self) -> BoxRunnable<E>
+    fn into_box(mut self) -> BoxRunnable<E>
     where
         Self: Sized + 'static,
     {
         BoxRunnable::new(move || self.run())
     }
 
-    /// Converts this runnable into a closure.
+    /// Converts this runnable into a shared single-threaded runnable.
     ///
     /// # Returns
     ///
-    /// A closure implementing `FnOnce() -> Result<(), E>`.
-    fn into_fn(self) -> impl FnOnce() -> Result<(), E>
+    /// An `RcRunnable<E>` that executes this runnable when `run()` is invoked.
+    fn into_rc(mut self) -> RcRunnable<E>
+    where
+        Self: Sized + 'static,
+    {
+        RcRunnable::new(move || self.run())
+    }
+
+    /// Converts this runnable into a shared thread-safe runnable.
+    ///
+    /// # Returns
+    ///
+    /// An `ArcRunnable<E>` that executes this runnable when `run()` is invoked.
+    fn into_arc(mut self) -> ArcRunnable<E>
+    where
+        Self: Sized + Send + 'static,
+    {
+        ArcRunnable::new(move || self.run())
+    }
+
+    /// Converts this runnable into a mutable closure.
+    ///
+    /// # Returns
+    ///
+    /// A closure implementing `FnMut() -> Result<(), E>`.
+    fn into_fn(mut self) -> impl FnMut() -> Result<(), E>
     where
         Self: Sized + 'static,
     {
@@ -107,19 +143,49 @@ pub trait Runnable<E> {
         self.clone().into_box()
     }
 
-    /// Converts this runnable into a closure without consuming `self`.
+    /// Converts this runnable into a mutable closure without consuming `self`.
     ///
-    /// The method clones `self` and returns a one-time closure that executes
+    /// The method clones `self` and returns a mutable closure that executes
     /// the clone.
     ///
     /// # Returns
     ///
-    /// A closure implementing `FnOnce() -> Result<(), E>`.
-    fn to_fn(&self) -> impl FnOnce() -> Result<(), E>
+    /// A closure implementing `FnMut() -> Result<(), E>`.
+    fn to_fn(&self) -> impl FnMut() -> Result<(), E>
     where
         Self: Clone + Sized + 'static,
     {
         self.clone().into_fn()
+    }
+
+    /// Converts this runnable into a shared single-threaded runnable without
+    /// consuming `self`.
+    ///
+    /// The method clones `self` and wraps the clone.
+    ///
+    /// # Returns
+    ///
+    /// A new `RcRunnable<E>` built from a clone of this runnable.
+    fn to_rc(&self) -> RcRunnable<E>
+    where
+        Self: Clone + Sized + 'static,
+    {
+        self.clone().into_rc()
+    }
+
+    /// Converts this runnable into a shared thread-safe runnable without
+    /// consuming `self`.
+    ///
+    /// The method clones `self` and wraps the clone.
+    ///
+    /// # Returns
+    ///
+    /// A new `ArcRunnable<E>` built from a clone of this runnable.
+    fn to_arc(&self) -> ArcRunnable<E>
+    where
+        Self: Clone + Send + Sized + 'static,
+    {
+        self.clone().into_arc()
     }
 
     /// Converts this runnable into a callable returning unit.
@@ -132,7 +198,8 @@ pub trait Runnable<E> {
     where
         Self: Sized + 'static,
     {
-        BoxCallable::new(move || self.run())
+        let mut runnable = self;
+        BoxCallable::new(move || runnable.run())
     }
 }
 
@@ -140,10 +207,10 @@ pub trait Runnable<E> {
 // BoxRunnable
 // ============================================================================
 
-/// Box-based one-time runnable.
+/// Box-based reusable runnable.
 ///
-/// `BoxRunnable<E>` stores a `Box<dyn FnOnce() -> Result<(), E>>` and can be
-/// executed only once. It is the boxed concrete implementation of
+/// `BoxRunnable<E>` stores a `Box<dyn FnMut() -> Result<(), E>>` and can be
+/// executed repeatedly. It is the boxed concrete implementation of
 /// [`Runnable`].
 ///
 /// # Type Parameters
@@ -155,7 +222,7 @@ pub trait Runnable<E> {
 /// ```rust
 /// use qubit_function::{BoxRunnable, Runnable};
 ///
-/// let task = BoxRunnable::new(|| Ok::<(), String>(()));
+/// let mut task = BoxRunnable::new(|| Ok::<(), String>(()));
 /// assert_eq!(task.run(), Ok(()));
 /// ```
 ///
@@ -163,22 +230,22 @@ pub trait Runnable<E> {
 ///
 /// Haixing Hu
 pub struct BoxRunnable<E> {
-    /// The one-time closure executed by this runnable.
-    function: Box<dyn FnOnce() -> Result<(), E>>,
+    /// The stateful closure executed by this runnable.
+    function: Box<dyn FnMut() -> Result<(), E>>,
     /// The optional name of this runnable.
     name: Option<String>,
 }
 
 impl<E> BoxRunnable<E> {
     impl_common_new_methods!(
-        (FnOnce() -> Result<(), E> + 'static),
+        (FnMut() -> Result<(), E> + 'static),
         |function| Box::new(function),
         "runnable"
     );
 
-    /// Creates a boxed runnable from a one-time supplier.
+    /// Creates a boxed runnable from a reusable supplier.
     ///
-    /// This is an explicit bridge from `SupplierOnce<Result<(), E>>` to
+    /// This is an explicit bridge from `Supplier<Result<(), E>>` to
     /// `Runnable<E>`.
     ///
     /// # Parameters
@@ -191,7 +258,7 @@ impl<E> BoxRunnable<E> {
     #[inline]
     pub fn from_supplier<S>(supplier: S) -> Self
     where
-        S: SupplierOnce<Result<(), E>> + 'static,
+        S: Supplier<Result<(), E>> + 'static,
     {
         Self::new(move || supplier.get())
     }
@@ -208,7 +275,7 @@ impl<E> BoxRunnable<E> {
     ///
     /// # Returns
     ///
-    /// A new runnable executing both actions in sequence.
+    /// A runnable executing both actions in sequence.
     #[inline]
     pub fn and_then<N>(self, next: N) -> BoxRunnable<E>
     where
@@ -216,7 +283,8 @@ impl<E> BoxRunnable<E> {
         E: 'static,
     {
         let name = self.name;
-        let function = self.function;
+        let mut function = self.function;
+        let mut next = next;
         BoxRunnable::new_with_optional_name(
             move || {
                 function()?;
@@ -245,7 +313,8 @@ impl<E> BoxRunnable<E> {
         E: 'static,
     {
         let name = self.name;
-        let function = self.function;
+        let mut function = self.function;
+        let mut callable = callable;
         BoxCallable::new_with_optional_name(
             move || {
                 function()?;
@@ -259,11 +328,15 @@ impl<E> BoxRunnable<E> {
 impl<E> Runnable<E> for BoxRunnable<E> {
     /// Executes the boxed runnable.
     #[inline]
-    fn run(self) -> Result<(), E> {
+    fn run(&mut self) -> Result<(), E> {
         (self.function)()
     }
 
-    impl_box_once_conversions!(BoxRunnable<E>, Runnable, FnOnce() -> Result<(), E>);
+    impl_box_conversions!(
+        BoxRunnable<E>,
+        RcRunnable,
+        FnMut() -> Result<(), E>
+    );
 
     /// Converts this boxed runnable into a boxed callable while preserving its
     /// name.
@@ -273,24 +346,178 @@ impl<E> Runnable<E> for BoxRunnable<E> {
         Self: Sized + 'static,
     {
         let name = self.name;
-        let function = self.function;
-        BoxCallable::new_with_optional_name(function, name)
+        let mut function = self.function;
+        BoxCallable::new_with_optional_name(
+            move || {
+                function()?;
+                Ok(())
+            },
+            name,
+        )
     }
+}
+
+// ============================================================================
+// RcRunnable
+// ============================================================================
+
+/// Single-threaded shared runnable.
+///
+/// `RcRunnable<E>` stores a `Rc<RefCell<dyn FnMut() -> Result<(), E>>>` and can
+/// be called repeatedly through shared ownership.
+///
+/// # Type Parameters
+///
+/// * `E` - The error value returned when the action fails.
+///
+/// # Author
+///
+/// Haixing Hu
+pub struct RcRunnable<E> {
+    /// The stateful closure executed by this runnable.
+    function: Rc<RefCell<dyn FnMut() -> Result<(), E>>>,
+    /// The optional name of this runnable.
+    name: Option<String>,
+}
+
+impl<E> Clone for RcRunnable<E> {
+    #[inline]
+    fn clone(&self) -> Self {
+        Self {
+            function: Rc::clone(&self.function),
+            name: self.name.clone(),
+        }
+    }
+}
+
+impl<E> RcRunnable<E> {
+    impl_common_new_methods!(
+        (FnMut() -> Result<(), E> + 'static),
+        |function| Rc::new(RefCell::new(function)),
+        "runnable"
+    );
+
+    /// Creates a shared runnable from a reusable supplier.
+    ///
+    /// # Parameters
+    ///
+    /// * `supplier` - The supplier that produces the runnable result.
+    ///
+    /// # Returns
+    ///
+    /// A new `RcRunnable<E>`.
+    #[inline]
+    pub fn from_supplier<S>(supplier: S) -> Self
+    where
+        S: Supplier<Result<(), E>> + 'static,
+    {
+        Self::new(move || supplier.get())
+    }
+
+    impl_common_name_methods!("runnable");
+}
+
+impl<E> Runnable<E> for RcRunnable<E> {
+    /// Executes the shared runnable.
+    #[inline]
+    fn run(&mut self) -> Result<(), E> {
+        (self.function.borrow_mut())()
+    }
+
+    impl_rc_conversions!(
+        RcRunnable<E>,
+        BoxRunnable,
+        FnMut() -> Result<(), E>
+    );
+}
+
+// ============================================================================
+// ArcRunnable
+// ============================================================================
+
+/// Thread-safe runnable.
+///
+/// `ArcRunnable<E>` stores an `Arc<Mutex<dyn FnMut() -> Result<(), E> + Send>>`
+/// and can be called repeatedly across threads.
+///
+/// # Type Parameters
+///
+/// * `E` - The error value returned when the action fails.
+///
+/// # Author
+///
+/// Haixing Hu
+pub struct ArcRunnable<E> {
+    /// The stateful closure executed by this runnable.
+    function: Arc<Mutex<dyn FnMut() -> Result<(), E> + Send>>,
+    /// The optional name of this runnable.
+    name: Option<String>,
+}
+
+impl<E> Clone for ArcRunnable<E> {
+    #[inline]
+    fn clone(&self) -> Self {
+        Self {
+            function: Arc::clone(&self.function),
+            name: self.name.clone(),
+        }
+    }
+}
+
+impl<E> ArcRunnable<E> {
+    impl_common_new_methods!(
+        (FnMut() -> Result<(), E> + Send + 'static),
+        |function| Arc::new(Mutex::new(function)),
+        "runnable"
+    );
+
+    /// Creates a thread-safe runnable from a reusable supplier.
+    ///
+    /// # Parameters
+    ///
+    /// * `supplier` - The supplier that produces the runnable result.
+    ///
+    /// # Returns
+    ///
+    /// A new `ArcRunnable<E>`.
+    #[inline]
+    pub fn from_supplier<S>(supplier: S) -> Self
+    where
+        S: Supplier<Result<(), E>> + Send + 'static,
+    {
+        Self::new(move || supplier.get())
+    }
+
+    impl_common_name_methods!("runnable");
+}
+
+impl<E> Runnable<E> for ArcRunnable<E> {
+    /// Executes the thread-safe runnable.
+    #[inline]
+    fn run(&mut self) -> Result<(), E> {
+        (self.function.lock())()
+    }
+
+    impl_arc_conversions!(
+        ArcRunnable<E>,
+        BoxRunnable,
+        RcRunnable,
+        FnMut() -> Result<(), E>
+    );
 }
 
 impl<E> SupplierOnce<Result<(), E>> for BoxRunnable<E> {
     /// Executes the boxed runnable as a one-time supplier of `Result<(), E>`.
     #[inline]
-    fn get(self) -> Result<(), E> {
+    fn get(mut self) -> Result<(), E> {
         self.run()
     }
 }
 
-impl_closure_once_trait!(
+impl_closure_trait!(
     Runnable<E>,
     run,
-    BoxRunnable,
-    FnOnce() -> Result<(), E>
+    FnMut() -> Result<(), E>
 );
 
 impl_supplier_debug_display!(BoxRunnable<E>);

@@ -7,5 +7,7 @@
  *
  ******************************************************************************/
 
+mod callable_once_tests;
 mod callable_tests;
+mod runnable_once_tests;
 mod runnable_tests;

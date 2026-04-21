@@ -222,17 +222,19 @@ May invoke `get` only once to return a single `T` (equivalent to
 **Implementations**:
 - `BoxSupplierOnce<T>` - Single ownership, one-time use
 
-### 11. Callable - Single-Use Fallible Computation
+### 11. Callable - Reusable Fallible Computation
 
-Executes a zero-argument computation once and returns either a success value
-or an error (equivalent to `FnOnce() -> Result<R, E>`).
+Executes a zero-argument computation and returns either a success value
+or an error (equivalent to `FnMut() -> Result<R, E>`).
 
 **Trait**: `Callable<R, E>`
-**Core Method**: `call(self) -> Result<R, E>`
-**Closure Equivalent**: `FnOnce() -> Result<R, E>`
+**Core Method**: `call(&mut self) -> Result<R, E>`
+**Closure Equivalent**: `FnMut() -> Result<R, E>`
 
 **Implementations**:
-- `BoxCallable<R, E>` - Single ownership, one-time use
+- `BoxCallable<R, E>` - Reusable single ownership
+- `RcCallable<R, E>` - Reusable single-threaded shared ownership
+- `ArcCallable<R, E>` - Reusable thread-safe ownership
 
 **Example**:
 ```rust
@@ -242,17 +244,19 @@ let task = BoxCallable::new(|| Ok::<i32, String>(42));
 assert_eq!(task.call(), Ok(42));
 ```
 
-### 12. Runnable - Single-Use Fallible Action
+### 12. Runnable - Reusable Fallible Action
 
-Executes a zero-argument action once and reports success or failure
-(equivalent to `FnOnce() -> Result<(), E>`).
+Executes a zero-argument action and reports success or failure
+(equivalent to `FnMut() -> Result<(), E>`).
 
 **Trait**: `Runnable<E>`
-**Core Method**: `run(self) -> Result<(), E>`
-**Closure Equivalent**: `FnOnce() -> Result<(), E>`
+**Core Method**: `run(&mut self) -> Result<(), E>`
+**Closure Equivalent**: `FnMut() -> Result<(), E>`
 
 **Implementations**:
-- `BoxRunnable<E>` - Single ownership, one-time use
+- `BoxRunnable<E>` - Reusable single ownership
+- `RcRunnable<E>` - Reusable single-threaded shared ownership
+- `ArcRunnable<E>` - Reusable thread-safe ownership
 
 **Example**:
 ```rust
@@ -262,7 +266,47 @@ let task = BoxRunnable::new(|| Ok::<(), String>(()));
 assert_eq!(task.run(), Ok(()));
 ```
 
-### 13. StatefulSupplier - Stateful Value Supplier
+### 13. CallableOnce - Single-Use Fallible Computation
+
+Executes a zero-argument computation once and returns either a success value
+or an error (equivalent to `FnOnce() -> Result<R, E>`).
+
+**Trait**: `CallableOnce<R, E>`
+**Core Method**: `call(self) -> Result<R, E>`
+**Closure Equivalent**: `FnOnce() -> Result<R, E>`
+
+**Implementations**:
+- `BoxCallableOnce<R, E>` - Single ownership, one-time use
+
+**Example**:
+```rust
+use qubit_function::{CallableOnce, BoxCallableOnce};
+
+let task = BoxCallableOnce::new(|| Ok::<i32, String>(42));
+assert_eq!(task.call(), Ok(42));
+```
+
+### 14. RunnableOnce - Single-Use Fallible Action
+
+Executes a zero-argument action once and reports success or failure
+(equivalent to `FnOnce() -> Result<(), E>`).
+
+**Trait**: `RunnableOnce<E>`
+**Core Method**: `run(self) -> Result<(), E>`
+**Closure Equivalent**: `FnOnce() -> Result<(), E>`
+
+**Implementations**:
+- `BoxRunnableOnce<E>` - Single ownership, one-time use
+
+**Example**:
+```rust
+use qubit_function::{RunnableOnce, BoxRunnableOnce};
+
+let task = BoxRunnableOnce::new(|| Ok::<(), String>(()));
+assert_eq!(task.run(), Ok(()));
+```
+
+### 15. StatefulSupplier - Stateful Value Supplier
 
 Supplies a `T` using mutable internal state; successive `get` calls may differ (equivalent to `FnMut() -> T`).
 
@@ -535,8 +579,10 @@ assert!(!tester.test());
 | `MutatorOnce<T>` | `apply(self, value: &mut T)` | `FnOnce(&mut T)` |
 | `Supplier<T>` | `get(&self) -> T` | `Fn() -> T` |
 | `SupplierOnce<T>` | `get(self) -> T` | `FnOnce() -> T` |
-| `Callable<R, E>` | `call(self) -> Result<R, E>` | `FnOnce() -> Result<R, E>` |
-| `Runnable<E>` | `run(self) -> Result<(), E>` | `FnOnce() -> Result<(), E>` |
+| `Callable<R, E>` | `call(&mut self) -> Result<R, E>` | `FnMut() -> Result<R, E>` |
+| `CallableOnce<R, E>` | `call(self) -> Result<R, E>` | `FnOnce() -> Result<R, E>` |
+| `Runnable<E>` | `run(&mut self) -> Result<(), E>` | `FnMut() -> Result<(), E>` |
+| `RunnableOnce<E>` | `run(self) -> Result<(), E>` | `FnOnce() -> Result<(), E>` |
 | `StatefulSupplier<T>` | `get(&mut self) -> T` | `FnMut() -> T` |
 | `Function<T, R>` | `apply(&self, input: &T) -> R` | `Fn(&T) -> R` |
 | `FunctionOnce<T, R>` | `apply(self, input: &T) -> R` | `FnOnce(&T) -> R` |
@@ -571,8 +617,10 @@ Each trait has multiple implementations based on ownership model:
 | MutatorOnce | BoxMutatorOnce | - | - |
 | Supplier | BoxSupplier | ArcSupplier | RcSupplier |
 | SupplierOnce | BoxSupplierOnce | - | - |
-| Callable | BoxCallable | - | - |
-| Runnable | BoxRunnable | - | - |
+| Callable | BoxCallable | RcCallable | ArcCallable |
+| CallableOnce | BoxCallableOnce | - | - |
+| Runnable | BoxRunnable | ArcRunnable | RcRunnable |
+| RunnableOnce | BoxRunnableOnce | - | - |
 | StatefulSupplier | BoxStatefulSupplier | ArcStatefulSupplier | RcStatefulSupplier |
 | Function | BoxFunction | ArcFunction | RcFunction |
 | FunctionOnce | BoxFunctionOnce | - | - |

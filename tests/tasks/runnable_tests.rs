@@ -28,7 +28,7 @@ struct ClonedRunnable {
 }
 
 impl Runnable<io::Error> for ClonedRunnable {
-    fn run(self) -> Result<(), io::Error> {
+    fn run(&mut self) -> Result<(), io::Error> {
         self.flag.set(true);
         Ok(())
     }
@@ -38,7 +38,7 @@ impl Runnable<io::Error> for ClonedRunnable {
 fn test_runnable_closure_run_returns_success() {
     let flag = Rc::new(Cell::new(false));
     let captured = Rc::clone(&flag);
-    let task = move || {
+    let mut task = move || {
         captured.set(true);
         Ok::<(), io::Error>(())
     };
@@ -49,7 +49,7 @@ fn test_runnable_closure_run_returns_success() {
 
 #[test]
 fn test_runnable_closure_run_returns_error() {
-    let task = || Err::<(), _>(io::Error::other("failed"));
+    let mut task = || Err::<(), _>(io::Error::other("failed"));
 
     let error = task.run().expect_err("runnable closure should fail");
     assert_eq!(error.kind(), io::ErrorKind::Other);
@@ -65,7 +65,7 @@ fn test_runnable_closure_into_box_executes_once() {
         Ok::<(), io::Error>(())
     };
 
-    let boxed = Runnable::into_box(task);
+    let mut boxed = Runnable::into_box(task);
 
     boxed.run().expect("boxed runnable should succeed");
     assert!(flag.get());
@@ -75,7 +75,7 @@ fn test_runnable_closure_into_box_executes_once() {
 fn test_runnable_closure_into_fn_returns_fn_once() {
     let task = || Ok::<(), io::Error>(());
 
-    let function = Runnable::into_fn(task);
+    let mut function = Runnable::into_fn(task);
 
     function().expect("runnable function should succeed");
 }
@@ -83,11 +83,11 @@ fn test_runnable_closure_into_fn_returns_fn_once() {
 #[test]
 fn test_runnable_to_box_clones_runnable() {
     let flag = Rc::new(Cell::new(false));
-    let task = ClonedRunnable {
+    let mut task = ClonedRunnable {
         flag: Rc::clone(&flag),
     };
 
-    let boxed = task.to_box();
+    let mut boxed = task.to_box();
 
     boxed.run().expect("boxed clone should succeed");
     assert!(flag.get());
@@ -100,16 +100,17 @@ fn test_runnable_to_box_clones_runnable() {
 #[test]
 fn test_runnable_to_fn_clones_runnable() {
     let flag = Rc::new(Cell::new(false));
-    let task = ClonedRunnable {
+    let mut task = ClonedRunnable {
         flag: Rc::clone(&flag),
     };
 
-    let function = task.to_fn();
+    let mut function = task.to_fn();
 
     function().expect("cloned runnable should succeed");
     assert!(flag.get());
 
     flag.set(false);
+    drop(function);
     task.run().expect("original runnable should remain usable");
     assert!(flag.get());
 }
@@ -121,7 +122,7 @@ fn test_runnable_default_into_callable_returns_unit() {
         flag: Rc::clone(&flag),
     };
 
-    let callable = Runnable::into_callable(task);
+    let mut callable = Runnable::into_callable(task);
 
     callable.call().expect("default callable should succeed");
     assert!(flag.get());
@@ -131,7 +132,7 @@ fn test_runnable_default_into_callable_returns_unit() {
 fn test_box_runnable_new_and_run() {
     let flag = Rc::new(Cell::new(false));
     let captured = Rc::clone(&flag);
-    let task = BoxRunnable::new(move || {
+    let mut task = BoxRunnable::new(move || {
         captured.set(true);
         Ok::<(), io::Error>(())
     });
@@ -160,7 +161,7 @@ fn test_box_runnable_name_management() {
 fn test_box_runnable_into_box_returns_self() {
     let task = BoxRunnable::new(|| Ok::<(), io::Error>(()));
 
-    let boxed = Runnable::into_box(task);
+    let mut boxed = Runnable::into_box(task);
 
     boxed.run().expect("boxed runnable should succeed");
 }
@@ -169,7 +170,7 @@ fn test_box_runnable_into_box_returns_self() {
 fn test_box_runnable_into_fn_extracts_function() {
     let task = BoxRunnable::new(|| Ok::<(), io::Error>(()));
 
-    let function = Runnable::into_fn(task);
+    let mut function = Runnable::into_fn(task);
 
     function().expect("runnable function should succeed");
 }
@@ -178,7 +179,7 @@ fn test_box_runnable_into_fn_extracts_function() {
 fn test_box_runnable_from_supplier() {
     let supplier = || Ok::<(), io::Error>(());
 
-    let task = BoxRunnable::from_supplier(supplier);
+    let mut task = BoxRunnable::from_supplier(supplier);
 
     task.run().expect("supplier-backed runnable should succeed");
 }
@@ -206,7 +207,7 @@ fn test_box_runnable_and_then_runs_next_on_success() {
         Ok::<(), io::Error>(())
     };
 
-    let chained = first.and_then(second);
+    let mut chained = first.and_then(second);
 
     chained.run().expect("chained runnable should succeed");
     assert_eq!(events.get(), 2);
@@ -222,7 +223,7 @@ fn test_box_runnable_and_then_skips_next_on_error() {
         Ok::<(), io::Error>(())
     };
 
-    let chained = first.and_then(second);
+    let mut chained = first.and_then(second);
 
     assert_eq!(
         chained
@@ -239,7 +240,7 @@ fn test_box_runnable_then_callable_runs_callable_on_success() {
     let task = BoxRunnable::new_with_name("prepare", || Ok::<(), io::Error>(()));
     let callable = || Ok::<i32, io::Error>(42);
 
-    let chained = task.then_callable(callable);
+    let mut chained = task.then_callable(callable);
 
     assert_eq!(chained.name(), Some("prepare"));
     assert_eq!(chained.call().expect("callable should succeed"), 42);
@@ -249,7 +250,7 @@ fn test_box_runnable_then_callable_runs_callable_on_success() {
 fn test_runnable_into_callable_returns_unit_callable() {
     let task = BoxRunnable::new_with_name("cleanup", || Ok::<(), io::Error>(()));
 
-    let callable = task.into_callable();
+    let mut callable = task.into_callable();
 
     assert_eq!(callable.name(), Some("cleanup"));
     callable.call().expect("unit callable should succeed");
