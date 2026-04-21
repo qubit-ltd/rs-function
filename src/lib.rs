@@ -20,7 +20,7 @@
 //! - **Predicate types**: Functions that test values and return boolean
 //! - **BiPredicate types**: Functions that test two values and return boolean
 //! - **Supplier types**: Functions that produce values without input
-//! - **Task types**: Fallible zero-argument actions and computations
+//! - **Task types**: Fallible zero-argument and mutable-input actions and computations
 //! - **Mapper types**: Stateful transformations from type T to type R
 //! - **Tester types**: Functions that test conditions without input
 //! - **Comparator types**: Functions that compare values and return ordering
@@ -399,20 +399,28 @@ pub use suppliers::{
     SupplierOnce,
 };
 
-// ---- Task Types (FnMut() -> Result<R, E>) ----
+// ---- Task Types (fallible actions and computations) ----
 pub use tasks::{
     ArcCallable,
+    ArcCallableWith,
     ArcRunnable,
+    ArcRunnableWith,
     BoxCallable,
     BoxCallableOnce,
+    BoxCallableWith,
     BoxRunnable,
     BoxRunnableOnce,
+    BoxRunnableWith,
     Callable,
     CallableOnce,
+    CallableWith,
     RcCallable,
+    RcCallableWith,
     RcRunnable,
+    RcRunnableWith,
     Runnable,
     RunnableOnce,
+    RunnableWith,
 };
 
 // ---- Comparator Types (Fn(&T, &T) -> Ordering) ----

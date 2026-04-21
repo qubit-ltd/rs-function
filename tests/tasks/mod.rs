@@ -9,5 +9,7 @@
 
 mod callable_once_tests;
 mod callable_tests;
+mod callable_with_tests;
 mod runnable_once_tests;
 mod runnable_tests;
+mod runnable_with_tests;

@@ -15,7 +15,7 @@
 
 ## 核心特性
 
-- **完整的函数式接口套件**: 26 种核心函数式抽象及其多种变体
+- **完整的函数式接口套件**: 30 种核心函数式抽象及其多种变体
 - **高性能并发**: 使用 parking_lot Mutex 提供卓越的线程同步性能
 - **多种所有权模型**: 基于 Box 的单一所有权、基于 Arc 的线程安全共享、基于 Rc 的单线程共享
 - **灵活的 API 设计**: 基于 trait 的统一接口,针对不同场景优化的具体实现
@@ -29,12 +29,12 @@
 
 ```toml
 [dependencies]
-qubit-function = "0.10.0"
+qubit-function = "0.10.5"
 ```
 
 ## 核心抽象
 
-本 crate 提供 26 种核心函数式抽象,每种都有多个实现:
+本 crate 提供 30 种核心函数式抽象,每种都有多个实现:
 
 ### 1. Predicate - 单参数谓词
 
@@ -263,7 +263,60 @@ let task = BoxRunnable::new(|| Ok::<(), String>(()));
 assert_eq!(task.run(), Ok(()));
 ```
 
-### 13. CallableOnce - 一次性可失败计算
+### 13. CallableWith - 可复用可失败可变输入计算
+
+接收调用方提供的可变输入并执行计算,返回成功值或错误(对应
+`FnMut(&mut T) -> Result<R, E>`)。
+
+**Trait**: `CallableWith<T, R, E>`
+**核心方法**: `call_with(&mut self, input: &mut T) -> Result<R, E>`
+**等价闭包**: `FnMut(&mut T) -> Result<R, E>`
+
+**实现类型**:
+- `BoxCallableWith<T, R, E>` - 可复用单一所有权
+- `RcCallableWith<T, R, E>` - 可复用单线程共享所有权
+- `ArcCallableWith<T, R, E>` - 可复用线程安全共享所有权
+
+**示例**:
+```rust
+use qubit_function::{CallableWith, BoxCallableWith};
+
+let mut value = 40;
+let mut task = BoxCallableWith::new(|input: &mut i32| {
+    *input += 2;
+    Ok::<i32, String>(*input)
+});
+assert_eq!(task.call_with(&mut value), Ok(42));
+```
+
+### 14. RunnableWith - 可复用可失败可变输入动作
+
+接收调用方提供的可变输入并执行动作,只报告成功或失败(对应
+`FnMut(&mut T) -> Result<(), E>`)。
+
+**Trait**: `RunnableWith<T, E>`
+**核心方法**: `run_with(&mut self, input: &mut T) -> Result<(), E>`
+**等价闭包**: `FnMut(&mut T) -> Result<(), E>`
+
+**实现类型**:
+- `BoxRunnableWith<T, E>` - 可复用单一所有权
+- `RcRunnableWith<T, E>` - 可复用单线程共享所有权
+- `ArcRunnableWith<T, E>` - 可复用线程安全共享所有权
+
+**示例**:
+```rust
+use qubit_function::{RunnableWith, BoxRunnableWith};
+
+let mut value = 40;
+let mut task = BoxRunnableWith::new(|input: &mut i32| {
+    *input += 2;
+    Ok::<(), String>(())
+});
+assert_eq!(task.run_with(&mut value), Ok(()));
+assert_eq!(value, 42);
+```
+
+### 15. CallableOnce - 一次性可失败计算
 
 无参数,仅执行一次计算,并返回成功值或错误(对应
 `FnOnce() -> Result<R, E>`)。
@@ -283,7 +336,7 @@ let task = BoxCallableOnce::new(|| Ok::<i32, String>(42));
 assert_eq!(task.call(), Ok(42));
 ```
 
-### 14. RunnableOnce - 一次性可失败动作
+### 16. RunnableOnce - 一次性可失败动作
 
 无参数,仅执行一次动作,并报告成功或失败(对应
 `FnOnce() -> Result<(), E>`)。
@@ -303,7 +356,7 @@ let task = BoxRunnableOnce::new(|| Ok::<(), String>(()));
 assert_eq!(task.run(), Ok(()));
 ```
 
-### 15. StatefulSupplier - 有状态值提供者
+### 17. StatefulSupplier - 有状态值提供者
 
 在可变内部状态下返回 `T`; 多次 `get` 的结果可以不同(对应
 `FnMut() -> T`)。
@@ -333,7 +386,7 @@ assert_eq!(counter.get(), 1);
 assert_eq!(counter.get(), 2);
 ```
 
-### 14. Function - 借用输入函数
+### 18. Function - 借用输入函数
 
 基于借用输入计算结果,不消耗输入。
 
@@ -354,7 +407,7 @@ let to_string = BoxFunction::new(|x: &i32| format!("值: {}", x));
 assert_eq!(to_string.apply(&42), "值: 42");
 ```
 
-### 15. FunctionOnce - 一次性借用输入函数
+### 19. FunctionOnce - 一次性借用输入函数
 
 基于借用输入计算一次结果。
 
@@ -365,7 +418,7 @@ assert_eq!(to_string.apply(&42), "值: 42");
 **实现类型**:
 - `BoxFunctionOnce<T, R>` - 单一所有权,一次性使用
 
-### 16. StatefulFunction - 有状态借用输入函数
+### 20. StatefulFunction - 有状态借用输入函数
 
 基于借用输入计算结果,并允许修改内部状态。
 
@@ -378,7 +431,7 @@ assert_eq!(to_string.apply(&42), "值: 42");
 - `ArcStatefulFunction<T, R>` - 线程安全(使用 parking_lot::Mutex)
 - `RcStatefulFunction<T, R>` - 单线程(使用 RefCell)
 
-### 17. Transformer - 值转换器
+### 21. Transformer - 值转换器
 
 取得输入值的所有权,并将类型 `T` 的值转换为类型 `R` 的值。
 
@@ -401,7 +454,7 @@ let parse = BoxTransformer::new(|s: String| s.parse::<i32>().unwrap_or(0));
 assert_eq!(parse.apply("42".to_string()), 42);
 ```
 
-### 18. TransformerOnce - 一次性值转换器
+### 22. TransformerOnce - 一次性值转换器
 
 一次性取得输入值的所有权,并将其转换为类型 `R` 的值。
 
@@ -414,7 +467,7 @@ assert_eq!(parse.apply("42".to_string()), 42);
 
 **类型别名**: `UnaryOperatorOnce<T>` = `TransformerOnce<T, T>`
 
-### 19. StatefulTransformer - 有状态值转换器
+### 23. StatefulTransformer - 有状态值转换器
 
 取得输入值的所有权并完成转换,同时允许修改内部状态。
 
@@ -427,7 +480,7 @@ assert_eq!(parse.apply("42".to_string()), 42);
 - `ArcStatefulTransformer<T, R>` - 线程安全(使用 parking_lot::Mutex)
 - `RcStatefulTransformer<T, R>` - 单线程(使用 RefCell)
 
-### 20. BiTransformer - 双参数值转换器
+### 24. BiTransformer - 双参数值转换器
 
 取得两个输入值的所有权,并将其转换为结果。
 
@@ -450,7 +503,7 @@ let add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
 assert_eq!(add.apply(10, 20), 30);
 ```
 
-### 21. StatefulBiTransformer - 有状态双参数值转换器
+### 25. StatefulBiTransformer - 有状态双参数值转换器
 
 取得两个输入值的所有权并完成转换,同时允许修改内部状态。
 
@@ -467,7 +520,7 @@ assert_eq!(add.apply(10, 20), 30);
 - `StatefulBinaryOperator<T>` = `StatefulBiTransformer<T, T, T>`
 - `BoxStatefulBinaryOperator<T>`、`ArcStatefulBinaryOperator<T>`、`RcStatefulBinaryOperator<T>`
 
-### 22. BiTransformerOnce - 一次性双参数值转换器
+### 26. BiTransformerOnce - 一次性双参数值转换器
 
 一次性取得两个输入值的所有权,并将其转换为结果。
 
@@ -480,7 +533,7 @@ assert_eq!(add.apply(10, 20), 30);
 
 **类型别名**: `BinaryOperatorOnce<T>` = `BiTransformerOnce<T, T, T>`
 
-### 23. StatefulConsumer - 有状态消费者
+### 27. StatefulConsumer - 有状态消费者
 
 接受值引用并执行带副作用的操作,同时允许修改内部状态。
 
@@ -493,7 +546,7 @@ assert_eq!(add.apply(10, 20), 30);
 - `ArcStatefulConsumer<T>` - 线程安全(使用 parking_lot::Mutex)
 - `RcStatefulConsumer<T>` - 单线程(使用 RefCell)
 
-### 24. StatefulBiConsumer - 有状态双参数消费者
+### 28. StatefulBiConsumer - 有状态双参数消费者
 
 接受两个值引用并执行带副作用的操作,同时允许修改内部状态。
 
@@ -506,7 +559,7 @@ assert_eq!(add.apply(10, 20), 30);
 - `ArcStatefulBiConsumer<T, U>` - 线程安全(使用 parking_lot::Mutex)
 - `RcStatefulBiConsumer<T, U>` - 单线程(使用 RefCell)
 
-### 25. Comparator - 排序比较器
+### 29. Comparator - 排序比较器
 
 比较两个值并返回 `Ordering`。
 
@@ -528,7 +581,7 @@ let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
 assert_eq!(cmp.compare(&5, &3), Ordering::Greater);
 ```
 
-### 26. Tester - 无参条件判定器
+### 30. Tester - 无参条件判定器
 
 在不接收参数的前提下,判断某一状态或条件是否成立。
 
@@ -572,8 +625,10 @@ assert!(!tester.test());
 | `Supplier<T>` | `get(&self) -> T` | `Fn() -> T` |
 | `SupplierOnce<T>` | `get(self) -> T` | `FnOnce() -> T` |
 | `Callable<R, E>` | `call(&mut self) -> Result<R, E>` | `FnMut() -> Result<R, E>` |
+| `CallableWith<T, R, E>` | `call_with(&mut self, input: &mut T) -> Result<R, E>` | `FnMut(&mut T) -> Result<R, E>` |
 | `CallableOnce<R, E>` | `call(self) -> Result<R, E>` | `FnOnce() -> Result<R, E>` |
 | `Runnable<E>` | `run(&mut self) -> Result<(), E>` | `FnMut() -> Result<(), E>` |
+| `RunnableWith<T, E>` | `run_with(&mut self, input: &mut T) -> Result<(), E>` | `FnMut(&mut T) -> Result<(), E>` |
 | `RunnableOnce<E>` | `run(self) -> Result<(), E>` | `FnOnce() -> Result<(), E>` |
 | `StatefulSupplier<T>` | `get(&mut self) -> T` | `FnMut() -> T` |
 | `Function<T, R>` | `apply(&self, input: &T) -> R` | `Fn(&T) -> R` |
@@ -610,9 +665,11 @@ assert!(!tester.test());
 | MutatorOnce | BoxMutatorOnce | - | - |
 | Supplier | BoxSupplier | ArcSupplier | RcSupplier |
 | SupplierOnce | BoxSupplierOnce | - | - |
-| Callable | BoxCallable | RcCallable | ArcCallable |
+| Callable | BoxCallable | ArcCallable | RcCallable |
+| CallableWith | BoxCallableWith | ArcCallableWith | RcCallableWith |
 | CallableOnce | BoxCallableOnce | - | - |
 | Runnable | BoxRunnable | ArcRunnable | RcRunnable |
+| RunnableWith | BoxRunnableWith | ArcRunnableWith | RcRunnableWith |
 | RunnableOnce | BoxRunnableOnce | - | - |
 | StatefulSupplier | BoxStatefulSupplier | ArcStatefulSupplier | RcStatefulSupplier |
 | Function | BoxFunction | ArcFunction | RcFunction |
