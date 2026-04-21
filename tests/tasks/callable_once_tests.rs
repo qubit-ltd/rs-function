@@ -217,7 +217,8 @@ fn test_box_callable_once_into_runnable_preserves_name_on_success() {
 
 #[test]
 fn test_box_callable_once_into_runnable_preserves_error() {
-    let task = BoxCallableOnce::new_with_name("prepare", || Err::<i32, _>(io::Error::other("boom")));
+    let task =
+        BoxCallableOnce::new_with_name("prepare", || Err::<i32, _>(io::Error::other("boom")));
 
     let runnable = CallableOnce::into_runnable(task);
 
@@ -255,7 +256,10 @@ fn test_callable_once_default_conversions_with_text_error_type() {
     assert_eq!(function().expect("into_fn should succeed"), "once");
 
     let boxed_from_ref = task.to_box();
-    assert_eq!(boxed_from_ref.call().expect("to_box should succeed"), "once");
+    assert_eq!(
+        boxed_from_ref.call().expect("to_box should succeed"),
+        "once"
+    );
 
     let function_from_ref = task.to_fn();
     assert_eq!(function_from_ref().expect("to_fn should succeed"), "once");
@@ -271,7 +275,9 @@ fn test_box_callable_once_combinators_with_text_error_type() {
 
     let mapped_err = BoxCallableOnce::new(|| Err::<i32, _>("raw")).map_err(|e| format!("E:{e}"));
     assert_eq!(
-        mapped_err.call().expect_err("map_err should transform error"),
+        mapped_err
+            .call()
+            .expect_err("map_err should transform error"),
         "E:raw",
     );
 
@@ -282,7 +288,8 @@ fn test_box_callable_once_combinators_with_text_error_type() {
 
 #[test]
 fn test_box_callable_once_from_supplier_with_text_error_type() {
-    let task = BoxCallableOnce::from_supplier(|| Ok::<String, &'static str>("supplied".to_string()));
+    let task =
+        BoxCallableOnce::from_supplier(|| Ok::<String, &'static str>("supplied".to_string()));
     assert_eq!(
         task.call().expect("from_supplier should succeed"),
         "supplied",

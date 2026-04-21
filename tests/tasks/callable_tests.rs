@@ -419,7 +419,10 @@ fn test_callable_default_conversions_with_text_error_type() {
     };
 
     let mut boxed = Callable::into_box(task.clone());
-    assert_eq!(boxed.call().expect("boxed conversion should succeed"), "payload");
+    assert_eq!(
+        boxed.call().expect("boxed conversion should succeed"),
+        "payload"
+    );
 
     let mut shared_rc = Callable::into_rc(task.clone());
     assert_eq!(
@@ -434,13 +437,13 @@ fn test_callable_default_conversions_with_text_error_type() {
     );
 
     let mut function = Callable::into_fn(task.clone());
-    assert_eq!(
-        function().expect("fn conversion should succeed"),
-        "payload",
-    );
+    assert_eq!(function().expect("fn conversion should succeed"), "payload",);
 
     let once = Callable::into_once(task.clone());
-    assert_eq!(once.call().expect("once conversion should succeed"), "payload");
+    assert_eq!(
+        once.call().expect("once conversion should succeed"),
+        "payload"
+    );
 
     let mut runnable = Callable::into_runnable(task);
     runnable.run().expect("runnable conversion should succeed");
@@ -453,12 +456,14 @@ fn test_box_callable_combinators_with_text_error_type() {
 
     let mut mapped_err = BoxCallable::new(|| Err::<i32, _>("raw")).map_err(|e| format!("E:{e}"));
     assert_eq!(
-        mapped_err.call().expect_err("map_err should transform error"),
+        mapped_err
+            .call()
+            .expect_err("map_err should transform error"),
         "E:raw",
     );
 
-    let mut chained =
-        BoxCallable::new(|| Ok::<i32, &'static str>(3)).and_then(|v| Ok::<i32, &'static str>(v * 4));
+    let mut chained = BoxCallable::new(|| Ok::<i32, &'static str>(3))
+        .and_then(|v| Ok::<i32, &'static str>(v * 4));
     assert_eq!(chained.call().expect("and_then should succeed"), 12);
 }
 
