@@ -400,3 +400,75 @@ fn test_arc_callable_from_supplier() {
     assert_eq!(task.call().expect("arc supplier should execute again"), 2);
     assert_eq!(count.load(Ordering::SeqCst), 2);
 }
+
+#[derive(Clone)]
+struct TextCallable {
+    value: String,
+}
+
+impl Callable<String, &'static str> for TextCallable {
+    fn call(&mut self) -> Result<String, &'static str> {
+        Ok(self.value.clone())
+    }
+}
+
+#[test]
+fn test_callable_default_conversions_with_text_error_type() {
+    let task = TextCallable {
+        value: "payload".to_string(),
+    };
+
+    let mut boxed = Callable::into_box(task.clone());
+    assert_eq!(boxed.call().expect("boxed conversion should succeed"), "payload");
+
+    let mut shared_rc = Callable::into_rc(task.clone());
+    assert_eq!(
+        shared_rc.call().expect("rc conversion should succeed"),
+        "payload",
+    );
+
+    let mut shared_arc = Callable::into_arc(task.clone());
+    assert_eq!(
+        shared_arc.call().expect("arc conversion should succeed"),
+        "payload",
+    );
+
+    let mut function = Callable::into_fn(task.clone());
+    assert_eq!(
+        function().expect("fn conversion should succeed"),
+        "payload",
+    );
+
+    let once = Callable::into_once(task.clone());
+    assert_eq!(once.call().expect("once conversion should succeed"), "payload");
+
+    let mut runnable = Callable::into_runnable(task);
+    runnable.run().expect("runnable conversion should succeed");
+}
+
+#[test]
+fn test_box_callable_combinators_with_text_error_type() {
+    let mut mapped = BoxCallable::new(|| Ok::<i32, &'static str>(5)).map(|v| v + 7);
+    assert_eq!(mapped.call().expect("map should succeed"), 12);
+
+    let mut mapped_err = BoxCallable::new(|| Err::<i32, _>("raw")).map_err(|e| format!("E:{e}"));
+    assert_eq!(
+        mapped_err.call().expect_err("map_err should transform error"),
+        "E:raw",
+    );
+
+    let mut chained =
+        BoxCallable::new(|| Ok::<i32, &'static str>(3)).and_then(|v| Ok::<i32, &'static str>(v * 4));
+    assert_eq!(chained.call().expect("and_then should succeed"), 12);
+}
+
+#[test]
+fn test_rc_and_arc_callable_into_runnable_keep_error_type() {
+    let rc_task = RcCallable::from_supplier(|| Ok::<i32, &'static str>(1));
+    let mut rc_runnable = Callable::into_runnable(rc_task);
+    rc_runnable.run().expect("rc runnable should succeed");
+
+    let arc_task = ArcCallable::from_supplier(|| Ok::<i32, &'static str>(1));
+    let mut arc_runnable = Callable::into_runnable(arc_task);
+    arc_runnable.run().expect("arc runnable should succeed");
+}

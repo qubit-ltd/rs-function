@@ -204,3 +204,87 @@ fn test_box_callable_once_and_then_skips_next_on_error() {
         "stop",
     );
 }
+
+#[test]
+fn test_box_callable_once_into_runnable_preserves_name_on_success() {
+    let task = BoxCallableOnce::new_with_name("prepare", || Ok::<i32, io::Error>(42));
+
+    let runnable = CallableOnce::into_runnable(task);
+
+    assert_eq!(runnable.name(), Some("prepare"));
+    runnable.run().expect("converted runnable should succeed");
+}
+
+#[test]
+fn test_box_callable_once_into_runnable_preserves_error() {
+    let task = BoxCallableOnce::new_with_name("prepare", || Err::<i32, _>(io::Error::other("boom")));
+
+    let runnable = CallableOnce::into_runnable(task);
+
+    assert_eq!(runnable.name(), Some("prepare"));
+    assert_eq!(
+        runnable
+            .run()
+            .expect_err("converted runnable should preserve error")
+            .to_string(),
+        "boom",
+    );
+}
+
+#[derive(Clone)]
+struct TextCallableOnce {
+    value: String,
+}
+
+impl CallableOnce<String, &'static str> for TextCallableOnce {
+    fn call(self) -> Result<String, &'static str> {
+        Ok(self.value)
+    }
+}
+
+#[test]
+fn test_callable_once_default_conversions_with_text_error_type() {
+    let task = TextCallableOnce {
+        value: "once".to_string(),
+    };
+
+    let boxed = CallableOnce::into_box(task.clone());
+    assert_eq!(boxed.call().expect("into_box should succeed"), "once");
+
+    let function = CallableOnce::into_fn(task.clone());
+    assert_eq!(function().expect("into_fn should succeed"), "once");
+
+    let boxed_from_ref = task.to_box();
+    assert_eq!(boxed_from_ref.call().expect("to_box should succeed"), "once");
+
+    let function_from_ref = task.to_fn();
+    assert_eq!(function_from_ref().expect("to_fn should succeed"), "once");
+
+    let runnable = CallableOnce::into_runnable(task);
+    runnable.run().expect("into_runnable should succeed");
+}
+
+#[test]
+fn test_box_callable_once_combinators_with_text_error_type() {
+    let mapped = BoxCallableOnce::new(|| Ok::<i32, &'static str>(6)).map(|v| v + 1);
+    assert_eq!(mapped.call().expect("map should succeed"), 7);
+
+    let mapped_err = BoxCallableOnce::new(|| Err::<i32, _>("raw")).map_err(|e| format!("E:{e}"));
+    assert_eq!(
+        mapped_err.call().expect_err("map_err should transform error"),
+        "E:raw",
+    );
+
+    let chained = BoxCallableOnce::new(|| Ok::<i32, &'static str>(4))
+        .and_then(|v| Ok::<i32, &'static str>(v * 2));
+    assert_eq!(chained.call().expect("and_then should succeed"), 8);
+}
+
+#[test]
+fn test_box_callable_once_from_supplier_with_text_error_type() {
+    let task = BoxCallableOnce::from_supplier(|| Ok::<String, &'static str>("supplied".to_string()));
+    assert_eq!(
+        task.call().expect("from_supplier should succeed"),
+        "supplied",
+    );
+}

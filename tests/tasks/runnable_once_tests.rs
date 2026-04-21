@@ -227,3 +227,69 @@ fn test_box_runnable_once_into_callable() {
     assert_eq!(callable.name(), Some("cleanup"));
     callable.call().expect("unit callable should succeed");
 }
+
+#[derive(Clone)]
+struct TextRunnableOnce {
+    events: Rc<Cell<u32>>,
+}
+
+impl RunnableOnce<&'static str> for TextRunnableOnce {
+    fn run(self) -> Result<(), &'static str> {
+        self.events.set(self.events.get() + 1);
+        Ok(())
+    }
+}
+
+#[test]
+fn test_runnable_once_default_conversions_with_text_error_type() {
+    let events = Rc::new(Cell::new(0));
+    let task = TextRunnableOnce {
+        events: Rc::clone(&events),
+    };
+
+    let boxed = RunnableOnce::into_box(task.clone());
+    boxed.run().expect("into_box should succeed");
+
+    let function = RunnableOnce::into_fn(task.clone());
+    function().expect("into_fn should succeed");
+
+    let boxed_from_ref = task.to_box();
+    boxed_from_ref.run().expect("to_box should succeed");
+
+    let function_from_ref = task.to_fn();
+    function_from_ref().expect("to_fn should succeed");
+
+    let callable = RunnableOnce::into_callable(task);
+    callable.call().expect("into_callable should succeed");
+
+    assert_eq!(events.get(), 5);
+}
+
+#[test]
+fn test_box_runnable_once_from_supplier_with_text_error_type() {
+    let task = BoxRunnableOnce::from_supplier(|| Ok::<(), &'static str>(()));
+    task.run().expect("from_supplier should succeed");
+}
+
+#[test]
+fn test_box_runnable_once_combinators_with_text_error_type() {
+    let events = Rc::new(Cell::new(0));
+    let first_events = Rc::clone(&events);
+    let second_events = Rc::clone(&events);
+
+    let first = BoxRunnableOnce::new(move || {
+        first_events.set(first_events.get() + 1);
+        Ok::<(), &'static str>(())
+    });
+    let second = move || {
+        second_events.set(second_events.get() + 1);
+        Ok::<(), &'static str>(())
+    };
+    let chained = first.and_then(second);
+    chained.run().expect("and_then should succeed");
+    assert_eq!(events.get(), 2);
+
+    let runnable = BoxRunnableOnce::new(|| Ok::<(), &'static str>(()));
+    let callable = runnable.then_callable(|| Ok::<i32, &'static str>(9));
+    assert_eq!(callable.call().expect("then_callable should succeed"), 9);
+}
