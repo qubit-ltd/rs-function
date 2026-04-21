@@ -19,6 +19,7 @@ use qubit_function::{
     BoxRunnableOnce,
     CallableOnce,
     RunnableOnce,
+    SupplierOnce,
 };
 
 #[derive(Clone)]
@@ -157,6 +158,15 @@ fn test_box_runnable_once_into_fn_extracts_function() {
     let function = RunnableOnce::into_fn(task);
 
     function().expect("runnable-once function should succeed");
+}
+
+#[test]
+fn test_box_runnable_once_implements_supplier_once() {
+    let task = BoxRunnableOnce::new(|| Ok::<(), io::Error>(()));
+
+    let result = SupplierOnce::get(task);
+
+    result.expect("supplier once runnable should succeed");
 }
 
 #[test]

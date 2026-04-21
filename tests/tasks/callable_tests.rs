@@ -9,12 +9,26 @@
 
 //! Unit tests for callable task types.
 
-use std::io;
+use std::{
+    cell::Cell,
+    io,
+    rc::Rc,
+    sync::{
+        Arc,
+        atomic::{
+            AtomicUsize,
+            Ordering,
+        },
+    },
+};
 
 use qubit_function::{
+    ArcCallable,
     BoxCallable,
     BoxCallableOnce,
     Callable,
+    CallableOnce,
+    RcCallable,
     Runnable,
     SupplierOnce,
 };
@@ -27,6 +41,30 @@ struct ClonedCallable {
 impl Callable<i32, io::Error> for ClonedCallable {
     fn call(&mut self) -> Result<i32, io::Error> {
         Ok(self.value)
+    }
+}
+
+#[derive(Clone)]
+struct SharedCallable {
+    count: Rc<Cell<u32>>,
+}
+
+impl Callable<u32, io::Error> for SharedCallable {
+    fn call(&mut self) -> Result<u32, io::Error> {
+        self.count.set(self.count.get() + 1);
+        Ok(self.count.get())
+    }
+}
+
+#[derive(Clone)]
+struct SharedCallableForArc {
+    count: Arc<AtomicUsize>,
+}
+
+impl Callable<u32, io::Error> for SharedCallableForArc {
+    fn call(&mut self) -> Result<u32, io::Error> {
+        let value = self.count.fetch_add(1, Ordering::SeqCst) + 1;
+        Ok(value as u32)
     }
 }
 
@@ -224,4 +262,141 @@ fn test_callable_into_runnable_discards_success_value() {
 
     assert_eq!(runnable.name(), Some("compute"));
     runnable.run().expect("runnable should succeed");
+}
+
+#[test]
+fn test_callable_into_rc_preserves_state_and_name() {
+    let shared = SharedCallable {
+        count: Rc::new(Cell::new(0)),
+    };
+    let shared = BoxCallable::new_with_name("count", move || {
+        let mut current = shared.count.get();
+        current += 1;
+        shared.count.set(current);
+        Ok::<i32, io::Error>(current as i32)
+    });
+    let mut shared = Callable::into_rc(shared);
+    assert_eq!(shared.name(), Some("count"));
+
+    let value = shared
+        .call()
+        .expect("into_rc should execute first call through shared closure");
+    let value2 = shared
+        .clone()
+        .call()
+        .expect("into_rc clone should execute second call");
+    assert_eq!(value2, 2);
+    assert_eq!(value, 1);
+}
+
+#[test]
+fn test_callable_to_rc_reuses_source_via_clone() {
+    let count = Rc::new(Cell::new(0));
+    let mut source = SharedCallable {
+        count: Rc::clone(&count),
+    };
+    let mut shared = source.to_rc();
+    let mut shared_clone = shared.clone();
+
+    shared.call().expect("to_rc should execute");
+    shared_clone.call().expect("to_rc clone should execute");
+    source.call().expect("original source should remain usable");
+
+    assert_eq!(count.get(), 3);
+}
+
+#[test]
+fn test_callable_into_arc_preserves_state() {
+    let task = SharedCallableForArc {
+        count: Arc::new(AtomicUsize::new(0)),
+    };
+    let mut shared = Callable::into_arc(task);
+
+    assert_eq!(shared.call().expect("first into_arc call"), 1);
+    assert_eq!(shared.call().expect("second into_arc call"), 2);
+}
+
+#[test]
+fn test_callable_to_arc_reuses_source_via_clone() {
+    let count = Arc::new(AtomicUsize::new(0));
+    let mut source = SharedCallableForArc {
+        count: Arc::clone(&count),
+    };
+    let mut shared = source.to_arc();
+    let mut shared_clone = shared.clone();
+
+    shared.call().expect("to_arc should execute");
+    shared_clone.call().expect("to_arc clone should execute");
+    source.call().expect("original source should remain usable");
+
+    assert_eq!(count.load(Ordering::SeqCst), 3);
+}
+
+#[test]
+fn test_callable_into_once_from_reusable_callable() {
+    let count = Rc::new(Cell::new(0));
+    let count_clone = Rc::clone(&count);
+    let once = Callable::into_once(move || {
+        let mut state = count_clone.get() as i32;
+        state += 1;
+        count_clone.set(state as u32);
+        Ok::<i32, io::Error>(state)
+    });
+
+    assert_eq!(once.call().expect("into_once should execute"), 1);
+    assert_eq!(count.get(), 1);
+}
+
+#[test]
+fn test_callable_to_once_produces_repeatable_once_callables() {
+    let task = SharedCallable {
+        count: Rc::new(Cell::new(0)),
+    };
+    let first = task.to_once();
+    let second = task.to_once();
+
+    assert_eq!(first.call().expect("first once should execute"), 1);
+    assert_eq!(second.call().expect("second once should execute"), 2);
+}
+
+#[test]
+fn test_box_callable_into_rc() {
+    let task = BoxCallable::new(|| Ok::<i32, io::Error>(21));
+    let mut rc_task = task.into_rc();
+
+    assert_eq!(rc_task.call().expect("rc callable should succeed"), 21);
+    assert_eq!(
+        rc_task
+            .call()
+            .expect("rc callable clone should reuse state"),
+        21
+    );
+}
+
+#[test]
+fn test_rc_callable_from_supplier() {
+    let count = Rc::new(Cell::new(0));
+    let captured = Rc::clone(&count);
+    let mut task = RcCallable::from_supplier(move || {
+        captured.set(captured.get() + 1);
+        Ok::<i32, io::Error>(captured.get())
+    });
+
+    assert_eq!(task.call().expect("rc supplier should execute"), 1);
+    assert_eq!(task.call().expect("rc supplier should execute again"), 2);
+    assert_eq!(count.get(), 2);
+}
+
+#[test]
+fn test_arc_callable_from_supplier() {
+    let count = Arc::new(AtomicUsize::new(0));
+    let captured = Arc::clone(&count);
+    let mut task = ArcCallable::from_supplier(move || {
+        captured.fetch_add(1, Ordering::SeqCst);
+        Ok::<i32, io::Error>(captured.load(Ordering::SeqCst) as i32)
+    });
+
+    assert_eq!(task.call().expect("arc supplier should execute"), 1);
+    assert_eq!(task.call().expect("arc supplier should execute again"), 2);
+    assert_eq!(count.load(Ordering::SeqCst), 2);
 }

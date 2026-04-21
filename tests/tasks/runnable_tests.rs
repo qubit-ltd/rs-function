@@ -13,11 +13,20 @@ use std::{
     cell::Cell,
     io,
     rc::Rc,
+    sync::{
+        Arc,
+        atomic::{
+            AtomicUsize,
+            Ordering,
+        },
+    },
 };
 
 use qubit_function::{
+    ArcRunnable,
     BoxRunnable,
     Callable,
+    RcRunnable,
     Runnable,
     SupplierOnce,
 };
@@ -115,6 +124,30 @@ fn test_runnable_to_fn_clones_runnable() {
     assert!(flag.get());
 }
 
+#[derive(Clone)]
+struct SharedCounterRunnable {
+    count: Rc<Cell<u32>>,
+}
+
+impl Runnable<io::Error> for SharedCounterRunnable {
+    fn run(&mut self) -> Result<(), io::Error> {
+        self.count.set(self.count.get() + 1);
+        Ok(())
+    }
+}
+
+#[derive(Clone)]
+struct SharedAtomicRunnable {
+    count: Arc<AtomicUsize>,
+}
+
+impl Runnable<io::Error> for SharedAtomicRunnable {
+    fn run(&mut self) -> Result<(), io::Error> {
+        self.count.fetch_add(1, Ordering::SeqCst);
+        Ok(())
+    }
+}
+
 #[test]
 fn test_runnable_default_into_callable_returns_unit() {
     let flag = Rc::new(Cell::new(false));
@@ -126,6 +159,115 @@ fn test_runnable_default_into_callable_returns_unit() {
 
     callable.call().expect("default callable should succeed");
     assert!(flag.get());
+}
+
+#[test]
+fn test_runnable_into_rc_runnable_preserves_name_and_state() {
+    let count = Rc::new(Cell::new(0));
+    let captured = Rc::clone(&count);
+    let task = BoxRunnable::new_with_name("shared", move || {
+        captured.set(captured.get() + 1);
+        Ok::<(), io::Error>(())
+    });
+
+    let mut shared = Runnable::into_rc(task);
+    let mut clone = shared.clone();
+
+    assert_eq!(shared.name(), Some("shared"));
+    shared.run().expect("shared runnable should succeed");
+    clone.run().expect("shared clone should succeed");
+    assert_eq!(count.get(), 2);
+}
+
+#[test]
+fn test_runnable_to_rc_clones_source_after_boxed_runnable() {
+    let count = Rc::new(Cell::new(0));
+    let mut source = SharedCounterRunnable {
+        count: Rc::clone(&count),
+    };
+    let mut shared = source.to_rc();
+    let mut shared_clone = shared.clone();
+
+    shared
+        .run()
+        .expect("to_rc should build shared runnable from cloneable source");
+    shared_clone
+        .run()
+        .expect("shared clone should also execute");
+    source
+        .run()
+        .expect("original cloneable runnable should remain usable");
+
+    assert_eq!(count.get(), 3);
+}
+
+#[test]
+fn test_runnable_into_arc_runnable_preserves_name_and_state() {
+    let count = Arc::new(AtomicUsize::new(0));
+    let captured = Arc::clone(&count);
+    let task = move || {
+        captured.fetch_add(1, Ordering::SeqCst);
+        Ok::<(), io::Error>(())
+    };
+
+    let mut shared = Runnable::into_arc(task);
+    assert_eq!(count.load(Ordering::SeqCst), 0);
+
+    shared.run().expect("shared runnable should succeed");
+    shared
+        .run()
+        .expect("shared runnable should execute repeatedly");
+    assert_eq!(count.load(Ordering::SeqCst), 2);
+}
+
+#[test]
+fn test_runnable_to_arc_clones_source_after_boxed_runnable() {
+    let count = Arc::new(AtomicUsize::new(0));
+    let mut source = SharedAtomicRunnable {
+        count: Arc::clone(&count),
+    };
+    let mut shared = source.to_arc();
+    let mut shared_clone = shared.clone();
+
+    shared
+        .run()
+        .expect("to_arc should build shared runnable from cloneable source");
+    shared_clone
+        .run()
+        .expect("shared arc clone should also execute");
+    source
+        .run()
+        .expect("original cloneable runnable should remain usable");
+
+    assert_eq!(count.load(Ordering::SeqCst), 3);
+}
+
+#[test]
+fn test_rc_runnable_from_supplier() {
+    let count = Rc::new(Cell::new(0));
+    let captured = Rc::clone(&count);
+    let mut task = RcRunnable::from_supplier(move || {
+        captured.set(captured.get() + 1);
+        Ok::<(), io::Error>(())
+    });
+
+    task.run().expect("supplier runnable should succeed");
+    task.run().expect("supplier runnable should succeed again");
+    assert_eq!(count.get(), 2);
+}
+
+#[test]
+fn test_arc_runnable_from_supplier() {
+    let count = Arc::new(AtomicUsize::new(0));
+    let captured = Arc::clone(&count);
+    let mut task = ArcRunnable::from_supplier(move || {
+        captured.fetch_add(1, Ordering::SeqCst);
+        Ok::<(), io::Error>(())
+    });
+
+    task.run().expect("supplier runnable should succeed");
+    task.run().expect("supplier runnable should succeed again");
+    assert_eq!(count.load(Ordering::SeqCst), 2);
 }
 
 #[test]

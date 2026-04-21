@@ -15,6 +15,7 @@ use qubit_function::{
     BoxCallableOnce,
     CallableOnce,
     RunnableOnce,
+    SupplierOnce,
 };
 
 #[derive(Clone)]
@@ -150,6 +151,15 @@ fn test_box_callable_once_from_supplier() {
             .expect("supplier-backed callable should succeed"),
         34
     );
+}
+
+#[test]
+fn test_box_callable_once_implements_supplier_once() {
+    let task = BoxCallableOnce::new(|| Ok::<i32, io::Error>(55));
+
+    let result = SupplierOnce::get(task);
+
+    assert_eq!(result.expect("supplier once should succeed"), 55);
 }
 
 #[test]
