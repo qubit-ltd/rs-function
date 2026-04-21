@@ -10,8 +10,10 @@
 //!
 //! Provides fallible, one-time, zero-argument computations.
 //!
-//! See [`CallableOnce`] for the `FnOnce`/`Result` mapping and when to prefer
-//! [`RunnableOnce`](crate::tasks::runnable_once::RunnableOnce).
+//! A `CallableOnce<R, E>` is equivalent to `FnOnce() -> Result<R, E>`, but uses
+//! task-oriented vocabulary. Use it when the operation is a computation or task
+//! whose success value matters. Use `RunnableOnce<E>` when the operation only
+//! needs to report success or failure.
 //!
 //! The trait itself does not require `Send`; concurrent executors should add
 //! `+ Send + 'static` at their API boundary.

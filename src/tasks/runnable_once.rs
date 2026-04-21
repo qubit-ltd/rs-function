@@ -8,8 +8,14 @@
  ******************************************************************************/
 //! # Runnable Once Types
 //!
-//! Provides fallible, one-time, zero-argument actions; see [`RunnableOnce`] for
-//! semantics.
+//! Provides fallible, one-time, zero-argument actions.
+//!
+//! A `RunnableOnce<E>` is equivalent to `FnOnce() -> Result<(), E>`, but uses
+//! task-oriented vocabulary. Use it when the operation's side effect matters
+//! and only success or failure should be reported.
+//!
+//! The trait itself does not require `Send`; concurrent executors should add
+//! `+ Send + 'static` at their API boundary.
 //!
 //! # Author
 //!
@@ -34,17 +40,16 @@ use crate::{
 // RunnableOnce Trait
 // ============================================================================
 
-/// A fallible one-time action: the task-oriented name for
-/// `FnOnce() -> Result<(), E>`.
+/// A fallible one-time action.
 ///
-/// Prefer this when the operation’s side effect matters and only success or
-/// failure should be communicated. It is a semantic specialization of
-/// `SupplierOnce<Result<(), E>>` for executable actions and deferred side
-/// effects; [`run`](RunnableOnce::run) consumes `self` and returns
-/// `Result<(), E>`.
+/// Conceptually this matches `FnOnce() -> Result<(), E>`: `run` consumes `self`
+/// and returns `Result<(), E>`, but the surface uses task-oriented naming and
+/// helpers instead of closure types. It is a semantic specialization of
+/// `SupplierOnce<Result<(), E>>` for executable actions and deferred side effects.
 ///
-/// The trait does not require [`Send`]; concurrent executors should add
-/// `Send + 'static` (and any other bounds they need) at their API boundary.
+/// Choose **`RunnableOnce`** when only success or failure matters; the success
+/// type is `()`. When callers need the success value `R`, use
+/// [`CallableOnce`](crate::tasks::callable_once::CallableOnce).
 ///
 /// # Type Parameters
 ///

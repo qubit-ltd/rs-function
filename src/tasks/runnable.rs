@@ -8,9 +8,14 @@
  ******************************************************************************/
 //! # Runnable Types
 //!
-//! Fallible, reusable, zero-argument actions. Design intent, equivalence to
-//! [`FnMut`], and [`Send`] at executor boundaries are documented on
-//! [`Runnable`].
+//! Provides fallible, reusable, zero-argument actions.
+//!
+//! A `Runnable<E>` is equivalent to `FnMut() -> Result<(), E>`, but uses
+//! task-oriented vocabulary. Use it when the operation's side effect matters
+//! and only success or failure should be reported.
+//!
+//! The trait itself does not require `Send`; concurrent executors should add
+//! `+ Send + 'static` at their API boundary.
 //!
 //! # Author
 //!
@@ -44,7 +49,7 @@ use crate::{
 /// A fallible, reusable, zero-argument action.
 ///
 /// Conceptually, `Runnable<E>` matches [`FnMut`] `() -> Result<(), E>`, but
-/// uses task-oriented vocabulary. Prefer it when the operation’s side effect
+/// uses task-oriented vocabulary. Prefer it when the operation's side effect
 /// matters and only success or failure need to be reported.
 ///
 /// Each call borrows `self` mutably and returns [`Result::Ok`] with unit or
