@@ -124,21 +124,13 @@ jobs:
       - run:
           name: Run tests and generate coverage report
           command: |
-            # Auto-detect package name from Cargo.toml
-            PACKAGE_NAME=$(grep "^name = " Cargo.toml | head -n 1 | sed 's/name = "\(.*\)"/\1/')
-            echo "📦 Detected package: $PACKAGE_NAME"
-            # Generate JSON report first so coverage.sh enforces per-file thresholds:
-            # functions = 100%, lines > 98%, regions > 98%.
-            ./coverage.sh json
+            # Run tests once, then generate all coverage report formats from the same data.
+            # coverage.sh enforces per-file thresholds: functions = 100%,
+            # lines > 98%, regions > 98%.
+            ./coverage.sh all
             cp target/llvm-cov/coverage.json coverage.json
-            # Generate LCOV report for Coveralls
-            cargo llvm-cov --package "$PACKAGE_NAME" \
-              --lcov --output-path coverage.lcov \
-              --ignore-filename-regex "(\.cargo/registry|\.rustup/)"
-            # Generate a text report for console output
-            cargo llvm-cov --package "$PACKAGE_NAME" \
-              --ignore-filename-regex "(\.cargo/registry|\.rustup/)" \
-              | tee coverage.txt
+            cp target/llvm-cov/lcov.info coverage.lcov
+            cp target/llvm-cov/coverage.txt coverage.txt
       - run:
           name: Display coverage summary
           command: |

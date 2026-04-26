@@ -232,25 +232,34 @@ case "$FORMAT_ARG" in
     all)
         echo "📊 Generating all format coverage reports..."
 
+        echo "  - Running tests and collecting coverage data..."
+        cargo llvm-cov --package "$PACKAGE_NAME" --no-report \
+            --ignore-filename-regex "$EXCLUDE_PATTERN"
+
         # HTML
         echo "  - Generating HTML report..."
-        cargo llvm-cov --package "$PACKAGE_NAME" --html \
+        cargo llvm-cov report --package "$PACKAGE_NAME" --html --output-dir target/llvm-cov \
             --ignore-filename-regex "$EXCLUDE_PATTERN"
 
         # LCOV
         echo "  - Generating LCOV report..."
-        cargo llvm-cov --package "$PACKAGE_NAME" --lcov --output-path target/llvm-cov/lcov.info \
+        cargo llvm-cov report --package "$PACKAGE_NAME" --lcov --output-path target/llvm-cov/lcov.info \
             --ignore-filename-regex "$EXCLUDE_PATTERN"
 
         # JSON
         echo "  - Generating JSON report..."
-        cargo llvm-cov --package "$PACKAGE_NAME" --json --output-path target/llvm-cov/coverage.json \
+        cargo llvm-cov report --package "$PACKAGE_NAME" --json --output-path target/llvm-cov/coverage.json \
             --ignore-filename-regex "$EXCLUDE_PATTERN"
         check_json_coverage target/llvm-cov/coverage.json
 
         # Cobertura
         echo "  - Generating Cobertura XML report..."
-        cargo llvm-cov --package "$PACKAGE_NAME" --cobertura --output-path target/llvm-cov/cobertura.xml \
+        cargo llvm-cov report --package "$PACKAGE_NAME" --cobertura --output-path target/llvm-cov/cobertura.xml \
+            --ignore-filename-regex "$EXCLUDE_PATTERN"
+
+        # Text
+        echo "  - Generating text report..."
+        cargo llvm-cov report --package "$PACKAGE_NAME" --text --output-path target/llvm-cov/coverage.txt \
             --ignore-filename-regex "$EXCLUDE_PATTERN"
 
         echo "✅ All format reports generated"
@@ -258,6 +267,7 @@ case "$FORMAT_ARG" in
         echo "   LCOV:      target/llvm-cov/lcov.info"
         echo "   JSON:      target/llvm-cov/coverage.json"
         echo "   Cobertura: target/llvm-cov/cobertura.xml"
+        echo "   Text:      target/llvm-cov/coverage.txt"
         ;;
 
     *)
