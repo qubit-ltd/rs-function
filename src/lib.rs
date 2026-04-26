@@ -21,7 +21,6 @@
 //! - **BiPredicate types**: Functions that test two values and return boolean
 //! - **Supplier types**: Functions that produce values without input
 //! - **Task types**: Fallible zero-argument and mutable-input actions and computations
-//! - **Mapper types**: Stateful transformations from type T to type R
 //! - **Tester types**: Functions that test conditions without input
 //! - **Comparator types**: Functions that compare values and return ordering
 //!

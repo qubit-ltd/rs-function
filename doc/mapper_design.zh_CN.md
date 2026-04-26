@@ -1,5 +1,8 @@
 # Mapper 设计方案分析
 
+> 状态：设计草案。当前版本尚未实现 `Mapper`、`BoxMapper`、`RcMapper` 或 `ArcMapper`；
+> 本文档仅用于记录未来可能加入的 API 方向。
+
 ## 概述
 
 本文档分析是否需要实现一个 `Mapper` trait（等价于 `FnMut(T) -> R`），探讨其语义定位、与现有抽象的关系，以及是否应该将其添加到 `qubit-function` 库中。
