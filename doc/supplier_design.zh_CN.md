@@ -1,5 +1,10 @@
 # Supplier 设计方案对比分析
 
+> 状态：历史设计分析。当前公开 API 提供 `Supplier` 表示无状态
+> `Fn() -> T`，`SupplierOnce` 表示一次性 `FnOnce() -> T`，
+> `StatefulSupplier` 表示有状态 `FnMut() -> T`。下文中的
+> `ReadonlySupplier` 仅作为历史设计方案保留，不是当前公开类型。
+
 ## 概述
 
 本文档分析 Rust 中实现 Supplier（值提供者）类型的设计方案，阐明核心语义和设计决策。
@@ -1023,9 +1028,10 @@ pub trait SupplierOnce<T> {
 ```
 
 **当前实现状态**：
-- ✅ `Supplier` - 需要实现（有状态值提供者，使用 `&mut self`）
-- ✅ `SupplierOnce` - 需要实现（一次性值提供者）
-- ✅ `ReadonlySupplier` - **需要实现**（无状态值提供者，使用 `&self`，无锁性能）
+- ✅ `Supplier` - 已作为无状态 `Fn() -> T` supplier 实现，使用 `&self`
+- ✅ `SupplierOnce` - 已作为一次性 `FnOnce() -> T` supplier 实现
+- ✅ `StatefulSupplier` - 已作为有状态 `FnMut() -> T` supplier 实现，使用 `&mut self`
+- ℹ️ `ReadonlySupplier` - 历史设计名称，当前由 `Supplier` 承担该角色
 
 ### 具体实现
 
@@ -1416,4 +1422,3 @@ println!("ArcReadonlySupplier: {:?}", start.elapsed());
 
 // 预期结果：ArcReadonlySupplier 性能显著优于 ArcSupplier
 ```
-

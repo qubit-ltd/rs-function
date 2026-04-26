@@ -1,5 +1,10 @@
 # Supplier Design Comparison and Analysis
 
+> Status: historical design analysis. The current public API provides
+> `Supplier` for stateless `Fn() -> T`, `SupplierOnce` for `FnOnce() -> T`,
+> and `StatefulSupplier` for `FnMut() -> T`. `ReadonlySupplier` is retained
+> below only as a design alternative, not as a current public type.
+
 ## Overview
 
 This document analyzes design approaches for implementing Supplier types in Rust, elucidating core semantics and design decisions.
@@ -1023,9 +1028,10 @@ pub trait SupplierOnce<T> {
 ```
 
 **Current Implementation Status**:
-- ✅ `Supplier` - needs implementation (stateful supplier, uses `&mut self`)
-- ✅ `SupplierOnce` - needs implementation (one-shot supplier)
-- ✅ `ReadonlySupplier` - **needs implementation** (stateless supplier, uses `&self`, lock-free performance)
+- ✅ `Supplier` - Implemented as the stateless `Fn() -> T` supplier using `&self`
+- ✅ `SupplierOnce` - Implemented as the one-shot `FnOnce() -> T` supplier
+- ✅ `StatefulSupplier` - Implemented as the stateful `FnMut() -> T` supplier using `&mut self`
+- ℹ️ `ReadonlySupplier` - Historical design name; the current `Supplier` fills this role
 
 ### Specific Implementations
 

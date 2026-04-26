@@ -21,11 +21,11 @@
 //!
 //! # Why No Arc/Rc Variants?
 //!
-//! Unlike `BiConsumer` and `ReadonlyBiConsumer`, this module does **not**
-//! provide `ArcBiConsumerOnce` or `RcBiConsumerOnce` implementations. This
-//! is a design decision based on the fundamental incompatibility between
-//! `FnOnce` semantics and shared ownership. See the design documentation
-//! for details.
+//! Unlike reusable [`BiConsumer`](crate::consumers::BiConsumer)
+//! implementations, this module does **not** provide `ArcBiConsumerOnce` or
+//! `RcBiConsumerOnce` implementations. This is a design decision based on the
+//! fundamental incompatibility between `FnOnce` semantics and shared ownership.
+//! See the design documentation for details.
 //!
 //! # Design Philosophy
 //!

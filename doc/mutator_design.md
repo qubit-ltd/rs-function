@@ -1,5 +1,9 @@
 # Mutator Design Document
 
+> Status: historical design analysis. The current public API provides
+> `Mutator` for stateless `Fn(&mut T)`, `StatefulMutator` for
+> `FnMut(&mut T)`, and `MutatorOnce` for `FnOnce(&mut T)`.
+
 ## Overview
 
 This document describes the design approach for implementing Mutator types in Rust, explaining core semantics and design decisions.
@@ -183,7 +187,8 @@ pub trait MutatorOnce<T> {
   - ✅ `ArcMutator<T>` - Thread-safe sharing
   - ✅ `RcMutator<T>` - Single-thread sharing
   - ✅ Conditional mutators (`when` + `or_else`)
-- ❌ `MutatorOnce` - Not implemented yet (low priority)
+- ✅ `StatefulMutator` - Fully implemented (`src/mutators/stateful_mutator.rs`)
+- ✅ `MutatorOnce` - Fully implemented (`src/mutators/mutator_once.rs`)
 - ❌ `ReadonlyMutator` - **Should not be implemented** (conceptual contradiction)
 
 ### Specific Implementations

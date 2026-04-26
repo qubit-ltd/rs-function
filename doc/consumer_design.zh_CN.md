@@ -1,5 +1,10 @@
 # Consumer 设计方案对比分析
 
+> 状态：历史设计分析。当前公开 API 使用 `Consumer`/`BiConsumer` 表示只读
+> `Fn` 风格 consumer，使用 `StatefulConsumer`/`StatefulBiConsumer` 表示
+> `FnMut` 风格 consumer，并使用 `ConsumerOnce`/`BiConsumerOnce` 表示一次性
+> consumer。下文中的 `ReadonlyConsumer` 等早期名称仅作为历史设计方案保留。
+
 ## 概述
 
 本文档分析 Rust 中实现 Consumer（消费者）类型的设计方案，阐明核心语义和设计决策。
@@ -653,18 +658,19 @@ pub trait Mutator<T> {
     fn mutate(&mut self, value: &mut T);
 }
 
-/// 一次性修改器：消费自己，可修改输入（暂未实现）
+/// 一次性修改器：消费自己，可修改输入
 pub trait MutatorOnce<T> {
     fn apply(self, value: &mut T);
 }
 ```
 
 **当前实现状态**：
-- ✅ `ReadonlyConsumer` - 已实现（`src/consumers/readonly_consumer.rs`）
-- ✅ `Consumer` - 已实现（`src/consumers/consumer.rs`）
+- ✅ `Consumer` - 已作为只读 `Fn(&T)` consumer 实现（`src/consumers/consumer.rs`）
+- ✅ `StatefulConsumer` - 已作为可变 self 的 `FnMut(&T)` consumer 实现（`src/consumers/stateful_consumer.rs`）
 - ✅ `ConsumerOnce` - 已实现（`src/consumers/consumer_once.rs`）
-- ✅ `Mutator` - 已实现（`src/mutator.rs`），原名为 `ConsumerMut`
-- ❌ `MutatorOnce` - 暂未实现（低优先级）
+- ✅ `BiConsumer`、`StatefulBiConsumer` 和 `BiConsumerOnce` - 已实现
+- ✅ `Mutator`、`StatefulMutator` 和 `MutatorOnce` - 已在 `src/mutators/` 中实现
+- ℹ️ `ReadonlyConsumer` - 历史设计名称，不是当前公开类型
 
 ### 具体实现
 
@@ -799,4 +805,3 @@ use qubit_function::{Mutator, BoxMutator};
 let mut mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
 mutator.apply(&mut value);
 ```
-

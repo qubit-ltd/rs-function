@@ -15,7 +15,7 @@
 
 ## 核心特性
 
-- **完整的函数式接口套件**: 30 种核心函数式抽象及其多种变体
+- **完整的函数式接口套件**: 覆盖可复用、一次性、有状态、可变输入和可失败任务等函数式抽象家族
 - **高性能并发**: 使用 parking_lot Mutex 提供卓越的线程同步性能
 - **多种所有权模型**: 基于 Box 的单一所有权、基于 Arc 的线程安全共享、基于 Rc 的单线程共享
 - **灵活的 API 设计**: 基于 trait 的统一接口,针对不同场景优化的具体实现
@@ -34,7 +34,7 @@ qubit-function = "0.10.5"
 
 ## 核心抽象
 
-本 crate 提供 30 种核心函数式抽象,每种都有多个实现:
+本 crate 提供一组广泛的函数式抽象,并在适合的地方提供所有权感知的实现。下方章节介绍主要家族,汇总表覆盖额外的 mutating、bi-function 和 operator 变体。
 
 ### 1. Predicate - 单参数谓词
 
@@ -186,6 +186,20 @@ assert_eq!(value, 20);
 **实现类型**:
 - `BoxMutatorOnce<T>` - 单一所有权,一次性使用
 
+### StatefulMutator - 有状态原地修改器
+
+通过可变引用原地修改目标值,同时允许修改自身内部状态(对应
+`FnMut(&mut T)`)。
+
+**Trait**: `StatefulMutator<T>`
+**核心方法**: `apply(&mut self, value: &mut T)`
+**等价闭包**: `FnMut(&mut T)`
+
+**实现类型**:
+- `BoxStatefulMutator<T>` - 单一所有权
+- `ArcStatefulMutator<T>` - 线程安全(使用 parking_lot::Mutex)
+- `RcStatefulMutator<T>` - 单线程(使用 RefCell)
+
 ### 9. Supplier - 无状态值提供者
 
 无参数,每次调用 `get` 都返回一个 `T`; 值提供者自身无状态,以
@@ -237,7 +251,7 @@ assert_eq!(factory.get(), "你好");
 ```rust
 use qubit_function::{Callable, BoxCallable};
 
-let task = BoxCallable::new(|| Ok::<i32, String>(42));
+let mut task = BoxCallable::new(|| Ok::<i32, String>(42));
 assert_eq!(task.call(), Ok(42));
 ```
 
@@ -259,7 +273,7 @@ assert_eq!(task.call(), Ok(42));
 ```rust
 use qubit_function::{Runnable, BoxRunnable};
 
-let task = BoxRunnable::new(|| Ok::<(), String>(()));
+let mut task = BoxRunnable::new(|| Ok::<(), String>(()));
 assert_eq!(task.run(), Ok(()));
 ```
 
@@ -431,6 +445,20 @@ assert_eq!(to_string.apply(&42), "值: 42");
 - `ArcStatefulFunction<T, R>` - 线程安全(使用 parking_lot::Mutex)
 - `RcStatefulFunction<T, R>` - 单线程(使用 RefCell)
 
+### 额外 Function 变体
+
+Function 家族还包含借用双输入和可变输入形式：
+
+| Trait | 核心方法签名 | 等价闭包类型 |
+|-------|------------|-------------|
+| `BiFunction<T, U, R>` | `apply(&self, first: &T, second: &U) -> R` | `Fn(&T, &U) -> R` |
+| `BiFunctionOnce<T, U, R>` | `apply(self, first: &T, second: &U) -> R` | `FnOnce(&T, &U) -> R` |
+| `MutatingFunction<T, R>` | `apply(&self, value: &mut T) -> R` | `Fn(&mut T) -> R` |
+| `MutatingFunctionOnce<T, R>` | `apply(self, value: &mut T) -> R` | `FnOnce(&mut T) -> R` |
+| `StatefulMutatingFunction<T, R>` | `apply(&mut self, value: &mut T) -> R` | `FnMut(&mut T) -> R` |
+| `BiMutatingFunction<T, U, R>` | `apply(&self, first: &mut T, second: &mut U) -> R` | `Fn(&mut T, &mut U) -> R` |
+| `BiMutatingFunctionOnce<T, U, R>` | `apply(self, first: &mut T, second: &mut U) -> R` | `FnOnce(&mut T, &mut U) -> R` |
+
 ### 21. Transformer - 值转换器
 
 取得输入值的所有权,并将类型 `T` 的值转换为类型 `R` 的值。
@@ -444,7 +472,10 @@ assert_eq!(to_string.apply(&42), "值: 42");
 - `ArcTransformer<T, R>` - 线程安全
 - `RcTransformer<T, R>` - 单线程
 
-**类型别名**: `UnaryOperator<T>` = `Transformer<T, T>`
+**运算符标记 trait 与别名**: `UnaryOperator<T>` 是
+`Transformer<T, T>` 的标记 trait。`BoxUnaryOperator<T>`、
+`ArcUnaryOperator<T>` 和 `RcUnaryOperator<T>` 是同输入/输出类型
+transformer 实现的别名。
 
 **示例**:
 ```rust
@@ -465,7 +496,9 @@ assert_eq!(parse.apply("42".to_string()), 42);
 **实现类型**:
 - `BoxTransformerOnce<T, R>` - 单一所有权,一次性使用
 
-**类型别名**: `UnaryOperatorOnce<T>` = `TransformerOnce<T, T>`
+**运算符标记 trait 与别名**: `UnaryOperatorOnce<T>` 是
+`TransformerOnce<T, T>` 的标记 trait。`BoxUnaryOperatorOnce<T>` 是
+`BoxTransformerOnce<T, T>` 的别名。
 
 ### 23. StatefulTransformer - 有状态值转换器
 
@@ -493,7 +526,10 @@ assert_eq!(parse.apply("42".to_string()), 42);
 - `ArcBiTransformer<T, U, R>` - 线程安全
 - `RcBiTransformer<T, U, R>` - 单线程
 
-**类型别名**: `BinaryOperator<T>` = `BiTransformer<T, T, T>`
+**运算符标记 trait 与别名**: `BinaryOperator<T>` 是
+`BiTransformer<T, T, T>` 的标记 trait。`BoxBinaryOperator<T>`、
+`ArcBinaryOperator<T>` 和 `RcBinaryOperator<T>` 是同类型二元
+transformer 实现的别名。
 
 **示例**:
 ```rust
@@ -516,8 +552,8 @@ assert_eq!(add.apply(10, 20), 30);
 - `ArcStatefulBiTransformer<T, U, R>` - 线程安全(使用 parking_lot::Mutex)
 - `RcStatefulBiTransformer<T, U, R>` - 单线程(使用 RefCell)
 
-**有状态运算符别名**:
-- `StatefulBinaryOperator<T>` = `StatefulBiTransformer<T, T, T>`
+**有状态运算符标记 trait 与别名**:
+- `StatefulBinaryOperator<T>` 是 `StatefulBiTransformer<T, T, T>` 的标记 trait
 - `BoxStatefulBinaryOperator<T>`、`ArcStatefulBinaryOperator<T>`、`RcStatefulBinaryOperator<T>`
 
 ### 26. BiTransformerOnce - 一次性双参数值转换器
@@ -531,7 +567,9 @@ assert_eq!(add.apply(10, 20), 30);
 **实现类型**:
 - `BoxBiTransformerOnce<T, U, R>` - 单一所有权,一次性使用
 
-**类型别名**: `BinaryOperatorOnce<T>` = `BiTransformerOnce<T, T, T>`
+**运算符标记 trait 与别名**: `BinaryOperatorOnce<T>` 是
+`BiTransformerOnce<T, T, T>` 的标记 trait。`BoxBinaryOperatorOnce<T>`
+是 `BoxBiTransformerOnce<T, T, T>` 的别名。
 
 ### 27. StatefulConsumer - 有状态消费者
 
@@ -622,6 +660,7 @@ assert!(!tester.test());
 | `StatefulBiConsumer<T, U>` | `accept(&mut self, first: &T, second: &U)` | `FnMut(&T, &U)` |
 | `Mutator<T>` | `apply(&self, value: &mut T)` | `Fn(&mut T)` |
 | `MutatorOnce<T>` | `apply(self, value: &mut T)` | `FnOnce(&mut T)` |
+| `StatefulMutator<T>` | `apply(&mut self, value: &mut T)` | `FnMut(&mut T)` |
 | `Supplier<T>` | `get(&self) -> T` | `Fn() -> T` |
 | `SupplierOnce<T>` | `get(self) -> T` | `FnOnce() -> T` |
 | `Callable<R, E>` | `call(&mut self) -> Result<R, E>` | `FnMut() -> Result<R, E>` |
@@ -634,6 +673,13 @@ assert!(!tester.test());
 | `Function<T, R>` | `apply(&self, input: &T) -> R` | `Fn(&T) -> R` |
 | `FunctionOnce<T, R>` | `apply(self, input: &T) -> R` | `FnOnce(&T) -> R` |
 | `StatefulFunction<T, R>` | `apply(&mut self, input: &T) -> R` | `FnMut(&T) -> R` |
+| `BiFunction<T, U, R>` | `apply(&self, first: &T, second: &U) -> R` | `Fn(&T, &U) -> R` |
+| `BiFunctionOnce<T, U, R>` | `apply(self, first: &T, second: &U) -> R` | `FnOnce(&T, &U) -> R` |
+| `MutatingFunction<T, R>` | `apply(&self, value: &mut T) -> R` | `Fn(&mut T) -> R` |
+| `MutatingFunctionOnce<T, R>` | `apply(self, value: &mut T) -> R` | `FnOnce(&mut T) -> R` |
+| `StatefulMutatingFunction<T, R>` | `apply(&mut self, value: &mut T) -> R` | `FnMut(&mut T) -> R` |
+| `BiMutatingFunction<T, U, R>` | `apply(&self, first: &mut T, second: &mut U) -> R` | `Fn(&mut T, &mut U) -> R` |
+| `BiMutatingFunctionOnce<T, U, R>` | `apply(self, first: &mut T, second: &mut U) -> R` | `FnOnce(&mut T, &mut U) -> R` |
 | `Transformer<T, R>` | `apply(&self, input: T) -> R` | `Fn(T) -> R` |
 | `TransformerOnce<T, R>` | `apply(self, input: T) -> R` | `FnOnce(T) -> R` |
 | `StatefulTransformer<T, R>` | `apply(&mut self, input: T) -> R` | `FnMut(T) -> R` |
@@ -663,6 +709,7 @@ assert!(!tester.test());
 | StatefulBiConsumer | BoxStatefulBiConsumer | ArcStatefulBiConsumer | RcStatefulBiConsumer |
 | Mutator | BoxMutator | ArcMutator | RcMutator |
 | MutatorOnce | BoxMutatorOnce | - | - |
+| StatefulMutator | BoxStatefulMutator | ArcStatefulMutator | RcStatefulMutator |
 | Supplier | BoxSupplier | ArcSupplier | RcSupplier |
 | SupplierOnce | BoxSupplierOnce | - | - |
 | Callable | BoxCallable | ArcCallable | RcCallable |
@@ -675,10 +722,21 @@ assert!(!tester.test());
 | Function | BoxFunction | ArcFunction | RcFunction |
 | FunctionOnce | BoxFunctionOnce | - | - |
 | StatefulFunction | BoxStatefulFunction | ArcStatefulFunction | RcStatefulFunction |
+| BiFunction | BoxBiFunction | ArcBiFunction | RcBiFunction |
+| BiFunctionOnce | BoxBiFunctionOnce | - | - |
+| MutatingFunction | BoxMutatingFunction | ArcMutatingFunction | RcMutatingFunction |
+| MutatingFunctionOnce | BoxMutatingFunctionOnce | - | - |
+| StatefulMutatingFunction | BoxStatefulMutatingFunction | ArcStatefulMutatingFunction | RcStatefulMutatingFunction |
+| BiMutatingFunction | BoxBiMutatingFunction | ArcBiMutatingFunction | RcBiMutatingFunction |
+| BiMutatingFunctionOnce | BoxBiMutatingFunctionOnce | - | - |
 | Transformer | BoxTransformer | ArcTransformer | RcTransformer |
 | TransformerOnce | BoxTransformerOnce | - | - |
 | StatefulTransformer | BoxStatefulTransformer | ArcStatefulTransformer | RcStatefulTransformer |
 | BiTransformer | BoxBiTransformer | ArcBiTransformer | RcBiTransformer |
+| UnaryOperator | BoxUnaryOperator | ArcUnaryOperator | RcUnaryOperator |
+| UnaryOperatorOnce | BoxUnaryOperatorOnce | - | - |
+| BinaryOperator | BoxBinaryOperator | ArcBinaryOperator | RcBinaryOperator |
+| BinaryOperatorOnce | BoxBinaryOperatorOnce | - | - |
 | StatefulBinaryOperator | BoxStatefulBinaryOperator | ArcStatefulBinaryOperator | RcStatefulBinaryOperator |
 | StatefulBiTransformer | BoxStatefulBiTransformer | ArcStatefulBiTransformer | RcStatefulBiTransformer |
 | BiTransformerOnce | BoxBiTransformerOnce | - | - |
@@ -704,17 +762,22 @@ assert!(!tester.test());
 
 ## 示例
 
-`examples/` 目录包含每种类型的全面演示。运行示例:
+`examples/` 目录包含每个主要抽象家族的演示。运行示例:
 
 ```bash
 cargo run --example predicate_demo
 cargo run --example consumer_demo
+cargo run --example function_family_demo
 cargo run --example transformer_demo
+cargo run --example task_demo
+cargo run --example comparator_demo
+cargo run --example tester_demo
 ```
 
 ## 文档
 
-`doc/` 目录中提供了每个主要抽象的详细设计文档。
+仓库的 `doc/` 目录保留历史设计说明。这些文档不会打入发布包；面向用户的
+API 参考以 README 和 rustdoc 为准。
 
 ## 许可证
 

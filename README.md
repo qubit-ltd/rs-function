@@ -15,7 +15,7 @@ This crate provides a complete set of functional programming abstractions inspir
 
 ## Key Features
 
-- **Complete Functional Interface Suite**: 30 core functional abstractions with multiple variants
+- **Complete Functional Interface Suite**: broad functional abstraction families with reusable, one-time, stateful, mutating, and fallible variants
 - **High-Performance Concurrency**: Uses parking_lot Mutex for superior thread synchronization performance
 - **Multiple Ownership Models**: Box-based single ownership, Arc-based thread-safe sharing, and Rc-based single-threaded sharing
 - **Flexible API Design**: Trait-based unified interface with concrete implementations optimized for different scenarios
@@ -34,7 +34,7 @@ qubit-function = "0.10.5"
 
 ## Core Abstractions
 
-This crate provides 30 core functional abstractions, each with multiple implementations:
+This crate provides a broad set of functional abstractions, each with ownership-aware implementations where appropriate. The sections below introduce the main families, while the summary tables cover the additional mutating, bi-function, and operator variants.
 
 ### 1. Predicate - Single-Argument Predicate
 
@@ -187,6 +187,20 @@ May be invoked once to mutate the target in place via `&mut T` (equivalent to `F
 **Implementations**:
 - `BoxMutatorOnce<T>` - Single ownership, one-time use
 
+### StatefulMutator - Stateful In-Place Mutator
+
+Modifies the target value in place while allowing mutable internal state
+(equivalent to `FnMut(&mut T)`).
+
+**Trait**: `StatefulMutator<T>`
+**Core Method**: `apply(&mut self, value: &mut T)`
+**Closure Equivalent**: `FnMut(&mut T)`
+
+**Implementations**:
+- `BoxStatefulMutator<T>` - Single ownership
+- `ArcStatefulMutator<T>` - Thread-safe with parking_lot::Mutex
+- `RcStatefulMutator<T>` - Single-threaded with RefCell
+
 ### 9. Supplier - Stateless Value Supplier
 
 Returns a value of type `T` on each `get` call with no input. The
@@ -240,7 +254,7 @@ or an error (equivalent to `FnMut() -> Result<R, E>`).
 ```rust
 use qubit_function::{Callable, BoxCallable};
 
-let task = BoxCallable::new(|| Ok::<i32, String>(42));
+let mut task = BoxCallable::new(|| Ok::<i32, String>(42));
 assert_eq!(task.call(), Ok(42));
 ```
 
@@ -262,7 +276,7 @@ Executes a zero-argument action and reports success or failure
 ```rust
 use qubit_function::{Runnable, BoxRunnable};
 
-let task = BoxRunnable::new(|| Ok::<(), String>(()));
+let mut task = BoxRunnable::new(|| Ok::<(), String>(()));
 assert_eq!(task.run(), Ok(()));
 ```
 
@@ -434,6 +448,20 @@ state.
 - `ArcStatefulFunction<T, R>` - Thread-safe with parking_lot::Mutex
 - `RcStatefulFunction<T, R>` - Single-threaded with RefCell
 
+### Additional Function Variants
+
+The function family also includes borrowed bi-input and mutable-input forms:
+
+| Trait | Core Method Signature | Equivalent Closure Type |
+|-------|----------------------|------------------------|
+| `BiFunction<T, U, R>` | `apply(&self, first: &T, second: &U) -> R` | `Fn(&T, &U) -> R` |
+| `BiFunctionOnce<T, U, R>` | `apply(self, first: &T, second: &U) -> R` | `FnOnce(&T, &U) -> R` |
+| `MutatingFunction<T, R>` | `apply(&self, value: &mut T) -> R` | `Fn(&mut T) -> R` |
+| `MutatingFunctionOnce<T, R>` | `apply(self, value: &mut T) -> R` | `FnOnce(&mut T) -> R` |
+| `StatefulMutatingFunction<T, R>` | `apply(&mut self, value: &mut T) -> R` | `FnMut(&mut T) -> R` |
+| `BiMutatingFunction<T, U, R>` | `apply(&self, first: &mut T, second: &mut U) -> R` | `Fn(&mut T, &mut U) -> R` |
+| `BiMutatingFunctionOnce<T, U, R>` | `apply(self, first: &mut T, second: &mut U) -> R` | `FnOnce(&mut T, &mut U) -> R` |
+
 ### 21. Transformer - Value Transformer
 
 Consumes an input value of type `T` and transforms it into a value of
@@ -448,7 +476,10 @@ type `R`.
 - `ArcTransformer<T, R>` - Thread-safe
 - `RcTransformer<T, R>` - Single-threaded
 
-**Type Alias**: `UnaryOperator<T>` = `Transformer<T, T>`
+**Operator Marker and Aliases**: `UnaryOperator<T>` is a marker trait for
+`Transformer<T, T>`. `BoxUnaryOperator<T>`, `ArcUnaryOperator<T>`, and
+`RcUnaryOperator<T>` are aliases for same-input/output transformer
+implementations.
 
 **Example**:
 ```rust
@@ -469,7 +500,9 @@ Consumes an input value once and transforms it into a value of type `R`.
 **Implementations**:
 - `BoxTransformerOnce<T, R>` - Single ownership, one-time use
 
-**Type Alias**: `UnaryOperatorOnce<T>` = `TransformerOnce<T, T>`
+**Operator Marker and Alias**: `UnaryOperatorOnce<T>` is a marker trait for
+`TransformerOnce<T, T>`. `BoxUnaryOperatorOnce<T>` is an alias for
+`BoxTransformerOnce<T, T>`.
 
 ### 23. StatefulTransformer - Stateful Value Transformer
 
@@ -498,7 +531,10 @@ Consumes two input values and transforms them into a result.
 - `ArcBiTransformer<T, U, R>` - Thread-safe
 - `RcBiTransformer<T, U, R>` - Single-threaded
 
-**Type Alias**: `BinaryOperator<T>` = `BiTransformer<T, T, T>`
+**Operator Marker and Aliases**: `BinaryOperator<T>` is a marker trait for
+`BiTransformer<T, T, T>`. `BoxBinaryOperator<T>`,
+`ArcBinaryOperator<T>`, and `RcBinaryOperator<T>` are aliases for same-type
+binary transformer implementations.
 
 **Example**:
 ```rust
@@ -522,8 +558,8 @@ allowing mutable internal state.
 - `ArcStatefulBiTransformer<T, U, R>` - Thread-safe with parking_lot::Mutex
 - `RcStatefulBiTransformer<T, U, R>` - Single-threaded with RefCell
 
-**Stateful Operator Alias**:
-- `StatefulBinaryOperator<T>` = `StatefulBiTransformer<T, T, T>`
+**Stateful Operator Marker and Aliases**:
+- `StatefulBinaryOperator<T>` is a marker trait for `StatefulBiTransformer<T, T, T>`
 - `BoxStatefulBinaryOperator<T>`, `ArcStatefulBinaryOperator<T>`, `RcStatefulBinaryOperator<T>`
 
 ### 26. BiTransformerOnce - Single-Use Two-Argument Value Transformer
@@ -537,7 +573,9 @@ Consumes two input values once and transforms them into a result.
 **Implementations**:
 - `BoxBiTransformerOnce<T, U, R>` - Single ownership, one-time use
 
-**Type Alias**: `BinaryOperatorOnce<T>` = `BiTransformerOnce<T, T, T>`
+**Operator Marker and Alias**: `BinaryOperatorOnce<T>` is a marker trait for
+`BiTransformerOnce<T, T, T>`. `BoxBinaryOperatorOnce<T>` is an alias for
+`BoxBiTransformerOnce<T, T, T>`.
 
 ### 27. StatefulConsumer - Stateful Consumer
 
@@ -630,6 +668,7 @@ assert!(!tester.test());
 | `StatefulBiConsumer<T, U>` | `accept(&mut self, first: &T, second: &U)` | `FnMut(&T, &U)` |
 | `Mutator<T>` | `apply(&self, value: &mut T)` | `Fn(&mut T)` |
 | `MutatorOnce<T>` | `apply(self, value: &mut T)` | `FnOnce(&mut T)` |
+| `StatefulMutator<T>` | `apply(&mut self, value: &mut T)` | `FnMut(&mut T)` |
 | `Supplier<T>` | `get(&self) -> T` | `Fn() -> T` |
 | `SupplierOnce<T>` | `get(self) -> T` | `FnOnce() -> T` |
 | `Callable<R, E>` | `call(&mut self) -> Result<R, E>` | `FnMut() -> Result<R, E>` |
@@ -642,6 +681,13 @@ assert!(!tester.test());
 | `Function<T, R>` | `apply(&self, input: &T) -> R` | `Fn(&T) -> R` |
 | `FunctionOnce<T, R>` | `apply(self, input: &T) -> R` | `FnOnce(&T) -> R` |
 | `StatefulFunction<T, R>` | `apply(&mut self, input: &T) -> R` | `FnMut(&T) -> R` |
+| `BiFunction<T, U, R>` | `apply(&self, first: &T, second: &U) -> R` | `Fn(&T, &U) -> R` |
+| `BiFunctionOnce<T, U, R>` | `apply(self, first: &T, second: &U) -> R` | `FnOnce(&T, &U) -> R` |
+| `MutatingFunction<T, R>` | `apply(&self, value: &mut T) -> R` | `Fn(&mut T) -> R` |
+| `MutatingFunctionOnce<T, R>` | `apply(self, value: &mut T) -> R` | `FnOnce(&mut T) -> R` |
+| `StatefulMutatingFunction<T, R>` | `apply(&mut self, value: &mut T) -> R` | `FnMut(&mut T) -> R` |
+| `BiMutatingFunction<T, U, R>` | `apply(&self, first: &mut T, second: &mut U) -> R` | `Fn(&mut T, &mut U) -> R` |
+| `BiMutatingFunctionOnce<T, U, R>` | `apply(self, first: &mut T, second: &mut U) -> R` | `FnOnce(&mut T, &mut U) -> R` |
 | `Transformer<T, R>` | `apply(&self, input: T) -> R` | `Fn(T) -> R` |
 | `TransformerOnce<T, R>` | `apply(self, input: T) -> R` | `FnOnce(T) -> R` |
 | `StatefulTransformer<T, R>` | `apply(&mut self, input: T) -> R` | `FnMut(T) -> R` |
@@ -670,6 +716,7 @@ Each trait has multiple implementations based on ownership model:
 | StatefulBiConsumer | BoxStatefulBiConsumer | ArcStatefulBiConsumer | RcStatefulBiConsumer |
 | Mutator | BoxMutator | ArcMutator | RcMutator |
 | MutatorOnce | BoxMutatorOnce | - | - |
+| StatefulMutator | BoxStatefulMutator | ArcStatefulMutator | RcStatefulMutator |
 | Supplier | BoxSupplier | ArcSupplier | RcSupplier |
 | SupplierOnce | BoxSupplierOnce | - | - |
 | Callable | BoxCallable | ArcCallable | RcCallable |
@@ -682,10 +729,21 @@ Each trait has multiple implementations based on ownership model:
 | Function | BoxFunction | ArcFunction | RcFunction |
 | FunctionOnce | BoxFunctionOnce | - | - |
 | StatefulFunction | BoxStatefulFunction | ArcStatefulFunction | RcStatefulFunction |
+| BiFunction | BoxBiFunction | ArcBiFunction | RcBiFunction |
+| BiFunctionOnce | BoxBiFunctionOnce | - | - |
+| MutatingFunction | BoxMutatingFunction | ArcMutatingFunction | RcMutatingFunction |
+| MutatingFunctionOnce | BoxMutatingFunctionOnce | - | - |
+| StatefulMutatingFunction | BoxStatefulMutatingFunction | ArcStatefulMutatingFunction | RcStatefulMutatingFunction |
+| BiMutatingFunction | BoxBiMutatingFunction | ArcBiMutatingFunction | RcBiMutatingFunction |
+| BiMutatingFunctionOnce | BoxBiMutatingFunctionOnce | - | - |
 | Transformer | BoxTransformer | ArcTransformer | RcTransformer |
 | TransformerOnce | BoxTransformerOnce | - | - |
 | StatefulTransformer | BoxStatefulTransformer | ArcStatefulTransformer | RcStatefulTransformer |
 | BiTransformer | BoxBiTransformer | ArcBiTransformer | RcBiTransformer |
+| UnaryOperator | BoxUnaryOperator | ArcUnaryOperator | RcUnaryOperator |
+| UnaryOperatorOnce | BoxUnaryOperatorOnce | - | - |
+| BinaryOperator | BoxBinaryOperator | ArcBinaryOperator | RcBinaryOperator |
+| BinaryOperatorOnce | BoxBinaryOperatorOnce | - | - |
 | StatefulBinaryOperator | BoxStatefulBinaryOperator | ArcStatefulBinaryOperator | RcStatefulBinaryOperator |
 | StatefulBiTransformer | BoxStatefulBiTransformer | ArcStatefulBiTransformer | RcStatefulBiTransformer |
 | BiTransformerOnce | BoxBiTransformerOnce | - | - |
@@ -711,17 +769,24 @@ This crate adopts the **Trait + Multiple Implementations** pattern:
 
 ## Examples
 
-The `examples/` directory contains comprehensive demonstrations for each type. Run examples with:
+The `examples/` directory contains demonstrations for every major abstraction
+family. Run examples with:
 
 ```bash
 cargo run --example predicate_demo
 cargo run --example consumer_demo
+cargo run --example function_family_demo
 cargo run --example transformer_demo
+cargo run --example task_demo
+cargo run --example comparator_demo
+cargo run --example tester_demo
 ```
 
 ## Documentation
 
-Detailed design documents are available in the `doc/` directory for each major abstraction.
+Historical design notes are available in the repository `doc/` directory. They
+are excluded from published crate packages; the README and rustdoc are the
+authoritative user-facing API references.
 
 ## License
 

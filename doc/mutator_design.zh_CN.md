@@ -1,5 +1,9 @@
 # Mutator 设计方案
 
+> 状态：历史设计分析。当前公开 API 提供 `Mutator` 表示无状态
+> `Fn(&mut T)`，`StatefulMutator` 表示 `FnMut(&mut T)`，
+> `MutatorOnce` 表示 `FnOnce(&mut T)`。
+
 ## 概述
 
 本文档阐述 Rust 中实现 Mutator（变异器）类型的设计方案，说明核心语义和设计决策。
@@ -183,7 +187,8 @@ pub trait MutatorOnce<T> {
   - ✅ `ArcMutator<T>` - 线程安全共享
   - ✅ `RcMutator<T>` - 单线程共享
   - ✅ 条件变异器（`when` + `or_else`）
-- ❌ `MutatorOnce` - 暂未实现（低优先级）
+- ✅ `StatefulMutator` - 已完整实现（`src/mutators/stateful_mutator.rs`）
+- ✅ `MutatorOnce` - 已完整实现（`src/mutators/mutator_once.rs`）
 - ❌ `ReadonlyMutator` - **不应该实现**（概念矛盾）
 
 ### 具体实现
@@ -610,4 +615,3 @@ impl<T> BoxMutatorOnce<T> {
 6. **条件执行是核心特性**：区别于 Consumer 的重要功能
 
 这个设计为用户提供了灵活、强大、清晰的 API，是库项目的最佳选择。
-

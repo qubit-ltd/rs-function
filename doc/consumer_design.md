@@ -1,5 +1,11 @@
 # Consumer Design Comparison and Analysis
 
+> Status: historical design analysis. The current public API uses
+> `Consumer`/`BiConsumer` for read-only `Fn`-style consumers,
+> `StatefulConsumer`/`StatefulBiConsumer` for `FnMut`-style consumers, and
+> `ConsumerOnce`/`BiConsumerOnce` for one-time consumers. Earlier names such as
+> `ReadonlyConsumer` are retained below only as design alternatives.
+
 ## Overview
 
 This document analyzes design approaches for implementing Consumer types in Rust, elucidating core semantics and design decisions.
@@ -653,18 +659,19 @@ pub trait Mutator<T> {
     fn mutate(&mut self, value: &mut T);
 }
 
-/// One-time mutator: consumes self, can modify input (not yet implemented)
+/// One-time mutator: consumes self, can modify input
 pub trait MutatorOnce<T> {
     fn apply(self, value: &mut T);
 }
 ```
 
 **Current Implementation Status**:
-- ✅ `ReadonlyConsumer` - Implemented (`src/consumers/readonly_consumer.rs`)
-- ✅ `Consumer` - Implemented (`src/consumers/consumer.rs`)
+- ✅ `Consumer` - Implemented as the read-only `Fn(&T)` consumer (`src/consumers/consumer.rs`)
+- ✅ `StatefulConsumer` - Implemented as the mutable-self `FnMut(&T)` consumer (`src/consumers/stateful_consumer.rs`)
 - ✅ `ConsumerOnce` - Implemented (`src/consumers/consumer_once.rs`)
-- ✅ `Mutator` - Implemented (`src/mutator.rs`), originally named `ConsumerMut`
-- ❌ `MutatorOnce` - Not yet implemented (low priority)
+- ✅ `BiConsumer`, `StatefulBiConsumer`, and `BiConsumerOnce` - Implemented
+- ✅ `Mutator`, `StatefulMutator`, and `MutatorOnce` - Implemented in `src/mutators/`
+- ℹ️ `ReadonlyConsumer` - Historical design name; not a current public type
 
 ### Specific Implementations
 

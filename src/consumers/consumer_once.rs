@@ -19,9 +19,11 @@
 //!
 //! # Why No Arc/Rc Variants?
 //!
-//! Unlike `Consumer` and `ReadonlyConsumer`, this module does **not** provide `ArcConsumerOnce`
-//! or `RcConsumerOnce` implementations. This is a design decision based on the fact that
-//! `FnOnce` semantics are fundamentally incompatible with shared ownership. See design docs for details.
+//! Unlike reusable [`Consumer`](crate::consumers::Consumer) implementations,
+//! this module does **not** provide `ArcConsumerOnce` or `RcConsumerOnce`
+//! implementations. This is a design decision based on the fact that `FnOnce`
+//! semantics are fundamentally incompatible with shared ownership. See design
+//! docs for details.
 //!
 //! # Design Philosophy
 //!
