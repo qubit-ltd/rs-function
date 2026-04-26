@@ -34,6 +34,10 @@ print_usage() {
     echo "  --clean    Clean old coverage data and build cache before running"
     echo "             By default, cached builds are used to speed up compilation"
     echo ""
+    echo "Dependencies:"
+    echo "  cargo, cargo-llvm-cov"
+    echo "  jq         Required for JSON/all threshold checks"
+    echo ""
     echo "Coverage thresholds for JSON/all:"
     echo "  functions: ${MIN_FUNCTION_COVERAGE}%"
     echo "  lines:     > ${MIN_LINE_COVERAGE}%"
@@ -176,6 +180,10 @@ done
 
 # Default format is html
 FORMAT_ARG="${FORMAT_ARG:-html}"
+
+if [ "$FORMAT_ARG" = "json" ] || [ "$FORMAT_ARG" = "all" ]; then
+    require_command jq
+fi
 
 # If --clean option is specified, clean old data
 if [ "$CLEAN_FLAG" = "yes" ]; then

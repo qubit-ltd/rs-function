@@ -27,10 +27,13 @@ if ! command -v rustup > /dev/null 2>&1; then
     exit 1
 fi
 
-if ! rustup toolchain list | grep -q nightly; then
+if ! rustup toolchain list | grep -q '^nightly'; then
     echo "Installing nightly toolchain..."
     rustup toolchain install nightly
 fi
+
+echo "==> ensuring nightly rustfmt and clippy components"
+rustup component add rustfmt clippy --toolchain nightly
 
 echo "==> cargo +nightly fmt"
 cargo +nightly fmt

@@ -45,6 +45,15 @@ require_command() {
     fi
 }
 
+ensure_nightly_components() {
+    if ! rustup toolchain list | grep -q '^nightly'; then
+        print_warning "Nightly toolchain not found, installing..."
+        rustup toolchain install nightly
+    fi
+
+    rustup component add rustfmt clippy --toolchain nightly
+}
+
 run_security_audit() {
     if cargo audit; then
         print_success "Security audit passed, no known vulnerabilities found"
@@ -79,12 +88,7 @@ echo ""
 
 # Check 1: Code formatting
 print_step "1/7 Checking code format (cargo +nightly fmt)..."
-
-# Check if nightly toolchain is installed
-if ! rustup toolchain list | grep -q nightly; then
-    print_warning "Nightly toolchain not found, installing..."
-    rustup toolchain install nightly
-fi
+ensure_nightly_components
 
 if cargo +nightly fmt -- --check > /dev/null 2>&1; then
     print_success "Code format check passed"
