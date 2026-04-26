@@ -46,7 +46,7 @@
 //!
 //! # Examples
 //!
-//! ```rust
+//! ```text
 //! // Single-parameter transformer
 //! // impl_box_transformer_methods!(
 //! //     BoxTransformer<T, U>,
@@ -99,7 +99,7 @@
 //
 /// # Examples
 ///
-/// ```rust
+/// ```text
 /// // Single-parameter transformer
 /// // impl_box_transformer_methods!(
 /// //     BoxTransformer<T, U>,

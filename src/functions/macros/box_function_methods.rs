@@ -39,7 +39,7 @@
 //!
 //! # Examples
 //!
-//! ```rust
+//! ```text
 //! // `impl_box_function_methods!` is crate-private and expanded in `qubit_function`
 //! // internal macro exports.
 //!
@@ -95,7 +95,7 @@
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```text
 /// // Single-parameter function
 /// // impl_box_function_methods!(
 /// //     BoxFunction<T, R>,

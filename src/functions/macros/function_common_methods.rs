@@ -29,7 +29,7 @@
 //!
 //! # Usage
 //!
-//! ```rust
+//! ```text
 //! // Single generic parameter - Function
 //! // impl_function_common_methods!(
 //! //     BoxFunction<T, R>,
@@ -85,7 +85,7 @@
 ///
 /// # Usage
 ///
-/// ```rust
+/// ```text
 /// // Single generic parameter - Function
 /// // impl_function_common_methods!(
 /// //     BoxFunction<T, R>,

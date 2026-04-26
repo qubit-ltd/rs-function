@@ -27,7 +27,7 @@
 //! # Usage Examples
 //!
 //! For Mutator (immutable):
-//! ```rust
+//! ```text
 //! // impl<T> Mutator<T> for BoxConditionalMutator<T>
 //! // where
 //! //     T: 'static,
@@ -48,7 +48,7 @@
 //! ```
 //!
 //! For StatefulMutator (mutable):
-//! ```rust
+//! ```text
 //! // impl<T> StatefulMutator<T> for BoxConditionalStatefulMutator<T>
 //! // where
 //! //     T: 'static,
@@ -105,7 +105,7 @@
 /// # Usage Examples
 ///
 /// For Mutator (immutable):
-/// ```rust
+/// ```text
 /// // impl<T> Mutator<T> for BoxConditionalMutator<T>
 /// // where
 /// //     T: 'static,
@@ -126,7 +126,7 @@
 /// ```
 ///
 /// For StatefulMutator (mutable):
-/// ```rust
+/// ```text
 /// // impl<T> StatefulMutator<T> for BoxConditionalStatefulMutator<T>
 /// // where
 /// //     T: 'static,

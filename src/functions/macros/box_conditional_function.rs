@@ -24,7 +24,7 @@
 //!
 //! # Usage Examples
 //!
-//! ```rust
+//! ```text
 //! // The `impl_box_conditional_function` macro is crate-private.
 //! // Its usage pattern in crate source is:
 //! //
@@ -65,7 +65,7 @@
 ///
 /// # Usage Examples
 ///
-/// ```rust
+/// ```text
 /// // Two-parameter Function
 /// // `impl_box_conditional_function!` is crate-private and expanded internally.
 /// // impl_box_conditional_function!(

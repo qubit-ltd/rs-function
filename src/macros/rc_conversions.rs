@@ -30,7 +30,7 @@
 ///
 /// # Syntax
 ///
-/// ```rust
+/// ```text
 /// // 2-parameter version (no once type, for predicates and similar pure functions)
 /// // impl_rc_conversions!(
 /// //     RcType<Generics>,           // Rc wrapper type with all generic parameters
@@ -60,7 +60,7 @@
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```text
 /// // use qubit_function::{
 /// //     RcPredicate, BoxPredicate, RcBiPredicate, BoxBiPredicate, RcConsumer, BoxConsumer, BoxConsumerOnce,
 /// //     RcStatefulConsumer, BoxStatefulConsumer, RcBiConsumer, BoxBiConsumer, BoxBiConsumerOnce,

@@ -49,7 +49,7 @@ use crate::{
 ///
 /// Choose **`RunnableOnce`** when only success or failure matters; the success
 /// type is `()`. When callers need the success value `R`, use
-/// [`CallableOnce`](crate::tasks::callable_once::CallableOnce).
+/// [`CallableOnce`].
 ///
 /// # Type Parameters
 ///

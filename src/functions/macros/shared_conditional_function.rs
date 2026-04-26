@@ -29,7 +29,7 @@
 //!
 //! # Usage Examples
 //!
-//! ```rust
+//! ```text
 //! // Arc two-parameter Function
 //! // impl_shared_conditional_function!(
 //! //     ArcConditionalFunction<T, R>,
@@ -90,7 +90,7 @@
 ///
 /// # Usage Examples
 ///
-/// ```rust
+/// ```text
 /// // Arc two-parameter Function
 /// // impl_shared_conditional_function!(
 /// //     ArcConditionalFunction<T, R>,
@@ -155,7 +155,7 @@ macro_rules! impl_shared_conditional_function {
             ///
             /// # Examples
             ///
-            /// ```rust
+            /// ```text
             /// // Macro internals are crate-private; usage example is documented at
             /// // the macro expansion site.
             /// ```
@@ -207,7 +207,7 @@ macro_rules! impl_shared_conditional_function {
             ///
             /// # Examples
             ///
-            /// ```rust
+            /// ```text
             /// // Macro internals are crate-private; usage example is documented at
             /// // the macro expansion site.
             /// ```
@@ -260,7 +260,7 @@ macro_rules! impl_shared_conditional_function {
             ///
             /// # Examples
             ///
-            /// ```rust
+            /// ```text
             /// // Macro internals are crate-private; usage example is documented at
             /// // the macro expansion site.
             /// ```

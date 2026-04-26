@@ -20,7 +20,7 @@
 //!
 //! # Examples
 //!
-//! ```rust
+//! ```text
 //! // For two type parameters
 //! // impl_function_debug_display!(BoxFunction<T, R>);
 //!
@@ -46,7 +46,7 @@
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```text
 /// // For two type parameters
 /// // impl_function_debug_display!(BoxFunction<T, R>);
 ///

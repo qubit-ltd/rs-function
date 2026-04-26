@@ -21,7 +21,7 @@
 //!
 //! # Examples
 //!
-//! ```rust
+//! ```text
 //! // For two type parameters
 //! // impl_function_clone!(ArcFunction<T, R>);
 //!
@@ -54,7 +54,7 @@
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```text
 /// // For two type parameters with Arc
 /// // impl_function_clone!(ArcFunction<T, R>);
 ///

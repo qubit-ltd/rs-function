@@ -41,7 +41,7 @@
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```text
 /// // 3-parameter version (no once type)
 /// // impl_box_conversions!(
 /// //     BoxPredicate<T>,
@@ -140,7 +140,7 @@ pub(crate) use impl_box_conversions;
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```text
 /// // Consumer: (&T) -> ()
 /// // impl_box_once_conversions!(BoxConsumerOnce<T>, ConsumerOnce, FnOnce(&T));
 ///

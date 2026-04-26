@@ -21,7 +21,7 @@
 //!
 //! # Examples
 //!
-//! ```rust
+//! ```text
 //! // For single type parameter
 //! // impl_mutator_clone!(ArcMutator<T>);
 //! //
@@ -53,7 +53,7 @@
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```text
 /// // At the top level, outside of any impl block
 /// // impl_mutator_clone!(ArcMutator<T>);
 /// //

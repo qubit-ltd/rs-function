@@ -26,7 +26,7 @@
 //!
 //! # Usage Examples
 //!
-//! ```rust
+//! ```text
 //! // Single-parameter Mutator
 //! // impl_box_conditional_mutator!(
 //! //     BoxConditionalMutator<T>,
@@ -65,7 +65,7 @@
 ///
 /// # Usage Examples
 ///
-/// ```rust
+/// ```text
 /// // At the top level, outside of any impl block
 /// // impl_box_conditional_mutator!(
 /// //     BoxConditionalMutator<T>,
@@ -111,7 +111,7 @@ macro_rules! impl_box_conditional_mutator {
             ///
             /// # Examples
             ///
-            /// ```rust
+            /// ```text
             /// // use std::sync::atomic::{AtomicI32, Ordering};
             /// //
             /// // let result = AtomicI32::new(0);

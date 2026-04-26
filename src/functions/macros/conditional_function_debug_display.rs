@@ -20,7 +20,7 @@
 //!
 //! # Examples
 //!
-//! ```rust
+//! ```text
 //! // Macro is crate-private and used internally by `qubit_function`.
 //! //
 //! // impl_conditional_function_debug_display!(BoxConditionalFunction<T, R>);
@@ -46,7 +46,7 @@
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```text
 /// // For two type parameters
 /// // impl_conditional_function_debug_display!(BoxConditionalFunction<T, R>);
 /// //

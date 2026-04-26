@@ -43,7 +43,7 @@
 //!
 //! # Examples
 //!
-//! ```rust
+//! ```text
 //! // Single-parameter with Arc
 //! // impl_shared_function_methods!(
 //! //     ArcFunction<T, R>,
@@ -104,7 +104,7 @@
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```text
 /// // Single-parameter with Arc
 /// // impl_shared_function_methods!(
 /// //     ArcFunction<T, R>,

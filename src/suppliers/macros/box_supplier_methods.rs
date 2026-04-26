@@ -32,7 +32,7 @@
 //!
 //! # Examples
 //!
-//! ```rust
+//! ```text
 //! // Example usage pattern:
 //! // impl_box_supplier_methods!(
 //! //     BoxSupplier<T>,
@@ -70,7 +70,7 @@
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```text
 /// // The macro is only available within the crate where it is defined.
 /// // Use this macro from `qubit_function::suppliers` when implementing
 /// // supplier methods in that module.

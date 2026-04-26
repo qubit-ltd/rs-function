@@ -31,7 +31,7 @@
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```text
 /// // Consumer trait (with once conversion)
 /// // impl_closure_trait!(
 /// //     Consumer<i32>,

@@ -33,7 +33,7 @@
 //!
 //! # Examples
 //!
-//! ```rust
+//! ```text
 //! // Single-parameter mutator
 //! // impl_box_mutator_methods!(
 //! //     BoxMutator<T>,
@@ -76,7 +76,7 @@
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```text
 /// // impl<T> BoxMutator<T> {
 /// //     // Inside an impl block
 /// //     impl_box_mutator_methods!(

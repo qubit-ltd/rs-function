@@ -20,7 +20,7 @@
 //!
 //! # Examples
 //!
-//! ```rust
+//! ```text
 //! // For single type parameter
 //! // impl_conditional_mutator_debug_display!(BoxConditionalMutator<T>);
 //! ```
@@ -49,7 +49,7 @@
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```text
 /// // At the top level, outside of any impl block
 /// // impl_conditional_mutator_debug_display!(BoxConditionalMutator<T>);
 /// ```

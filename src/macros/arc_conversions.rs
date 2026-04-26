@@ -44,7 +44,7 @@
 ///
 /// # Syntax
 ///
-/// ```rust
+/// ```text
 /// // 4-parameter version (with once type, for consumers, functions, etc.)
 /// // impl_arc_conversions!(
 /// //     ArcType<Generics>,           // Arc wrapper type with all generic params
@@ -65,7 +65,7 @@
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```text
 /// // Predicate: Fn(&T) -> bool → direct call mode (no once type)
 /// // impl_arc_conversions!(ArcPredicate<T>, BoxPredicate, RcPredicate,
 /// //                       Fn(t: &T) -> bool);

@@ -21,7 +21,7 @@
 //!
 //! # Examples
 //!
-//! ```rust
+//! ```text
 //! // Macro is crate-private and used internally by `qubit_function`.
 //! //
 //! // impl_conditional_function_clone!(ArcConditionalFunction<T, R>);
@@ -49,7 +49,7 @@
 ///
 /// # Examples
 ///
-/// ```rust
+/// ```text
 /// // Macro is crate-private and used internally by `qubit_function`.
 /// //
 /// // impl_conditional_function_clone!(ArcConditionalFunction<T, R>);
