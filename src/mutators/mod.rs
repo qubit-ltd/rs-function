@@ -15,6 +15,7 @@
 //!
 //! Haixing Hu
 
+#[doc(hidden)]
 pub mod macros;
 pub mod mutator;
 pub mod mutator_once;

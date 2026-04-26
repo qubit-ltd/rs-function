@@ -16,6 +16,7 @@
 //! Haixing Hu
 
 pub mod bi_predicate;
+#[doc(hidden)]
 pub mod macros;
 pub mod predicate;
 

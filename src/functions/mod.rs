@@ -21,6 +21,7 @@ pub mod bi_mutating_function;
 pub mod bi_mutating_function_once;
 pub mod function;
 pub mod function_once;
+#[doc(hidden)]
 pub mod macros;
 pub mod mutating_function;
 pub mod mutating_function_once;

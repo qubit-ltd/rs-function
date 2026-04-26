@@ -32,6 +32,7 @@
 pub mod comparator;
 pub mod consumers;
 pub mod functions;
+#[doc(hidden)]
 pub mod macros;
 pub mod mutators;
 pub mod predicates;
