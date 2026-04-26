@@ -97,8 +97,8 @@ else
     echo ""
     echo "Please run the following command to fix formatting issues:"
     echo "  cargo +nightly fmt"
-    echo "Or use the format script:"
-    echo "  ./format.sh"
+    echo "Or use the CI alignment script:"
+    echo "  ./align-ci.sh"
     exit 1
 fi
 echo ""
