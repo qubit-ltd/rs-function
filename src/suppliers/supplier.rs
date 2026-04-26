@@ -6,28 +6,31 @@
  *    All rights reserved.
  *
  ******************************************************************************/
-//! # Read-only Supplier Types
+//! # Supplier Types
 //!
-//! Provides read-only supplier implementations that generate and
-//! return values without modifying their own state.
+//! Provides stateless supplier implementations that generate and
+//! return values without taking input.
 //!
 //! # Overview
 //!
-//! A **Supplier** is a functional abstraction that
-//! generates values without accepting input or modifying its own
-//! state. Unlike `Supplier`, it uses `&self` instead of `&mut
-//! self`, enabling usage in read-only contexts and lock-free
-//! concurrent access.
+//! A **Supplier** is a functional abstraction equivalent to
+//! `Fn() -> T`: it generates values without accepting input or
+//! requiring mutable access to itself. The `get` method uses `&self`,
+//! enabling use in read-only contexts and lock-free concurrent access
+//! for the `Arc` implementation.
 //!
-//! # Key Differences from Supplier
+//! For generators that need mutable internal state, such as counters
+//! or sequences, use [`StatefulSupplier`](crate::StatefulSupplier).
 //!
-//! | Aspect | Supplier | Supplier |
-//! |--------|----------|------------------|
-//! | self signature | `&mut self` | `&self` |
-//! | Closure type | `FnMut() -> T` | `Fn() -> T` |
-//! | Can modify state | Yes | No |
-//! | Arc implementation | `Arc<Mutex<FnMut>>` | `Arc<Fn>` (lock-free!) |
-//! | Use cases | Counter, generator | Factory, constant, high concurrency |
+//! # Key Differences from StatefulSupplier
+//!
+//! | Aspect | `Supplier<T>` | `StatefulSupplier<T>` |
+//! |--------|---------------|----------------------|
+//! | self signature | `&self` | `&mut self` |
+//! | Closure type | `Fn() -> T` | `FnMut() -> T` |
+//! | Can modify internal state | No | Yes |
+//! | Arc implementation | `Arc<dyn Fn() -> T + Send + Sync>` | `Arc<Mutex<dyn FnMut() -> T + Send>>` |
+//! | Use cases | Factory, constant, high concurrency | Counter, sequence, generator |
 //!
 //! # Three Implementations
 //!
@@ -107,13 +110,14 @@
 //!
 //! For stateless scenarios in multi-threaded environments:
 //!
-//! - `ArcSupplier<T>`: Requires `Mutex`, lock contention on
-//!   every `get()` call
+//! - `ArcStatefulSupplier<T>`: Requires `Mutex`, lock contention on
+//!   every `get()` call.
 //! - `ArcSupplier<T>`: Lock-free, can call `get()`
-//!   concurrently without contention
+//!   concurrently without contention.
 //!
 //! Benchmark results show `ArcSupplier` can be **10x
-//! faster** than `ArcSupplier` in high-concurrency scenarios.
+//! faster** than `ArcStatefulSupplier` in high-concurrency stateless
+//! scenarios.
 //!
 //! # Author
 //!
@@ -143,7 +147,7 @@ use crate::transformers::transformer::Transformer;
 // Supplier Trait
 // ======================================================================
 
-/// Read-only supplier trait: generates values without modifying
+/// Stateless supplier trait: generates values without modifying
 /// state.
 ///
 /// The core abstraction for stateless value generation. Unlike
@@ -490,10 +494,10 @@ pub trait Supplier<T> {
 // BoxSupplier - Single Ownership Implementation
 // ======================================================================
 
-/// Box-based single ownership read-only supplier.
+/// Box-based single ownership stateless supplier.
 ///
 /// Uses `Box<dyn Fn() -> T>` for single ownership scenarios. This
-/// is the most lightweight read-only supplier with zero reference
+/// is the most lightweight stateless supplier with zero reference
 /// counting overhead.
 ///
 /// # Ownership Model
@@ -571,7 +575,7 @@ impl<T> Supplier<T> for BoxSupplier<T> {
 // ArcSupplier - Thread-safe Shared Ownership Implementation
 // ======================================================================
 
-/// Thread-safe shared ownership read-only supplier.
+/// Thread-safe shared ownership stateless supplier.
 ///
 /// Uses `Arc<dyn Fn() -> T + Send + Sync>` for thread-safe shared
 /// ownership. **Lock-free** - no `Mutex` needed! Can be cloned and
@@ -592,7 +596,7 @@ impl<T> Supplier<T> for BoxSupplier<T> {
 ///
 /// # Lock-Free Performance
 ///
-/// Unlike `ArcSupplier`, this implementation doesn't need `Mutex`.
+/// Unlike `ArcStatefulSupplier`, this implementation doesn't need `Mutex`.
 /// Multiple threads can call `get()` concurrently without lock
 /// contention, making it ideal for high-concurrency scenarios.
 ///
@@ -716,7 +720,7 @@ impl<T> Supplier<T> for ArcSupplier<T> {
 // RcSupplier - Single-threaded Shared Ownership
 // ======================================================================
 
-/// Single-threaded shared ownership read-only supplier.
+/// Single-threaded shared ownership stateless supplier.
 ///
 /// Uses `Rc<dyn Fn() -> T>` for single-threaded shared ownership.
 /// Can be cloned but not sent across threads.

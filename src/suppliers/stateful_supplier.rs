@@ -6,30 +6,29 @@
  *    All rights reserved.
  *
  ******************************************************************************/
-//! # Supplier Types
+//! # StatefulSupplier Types
 //!
-//! Provides supplier implementations that generate and return values
-//! without taking any input parameters.
+//! Provides stateful supplier implementations that generate and return values
+//! without taking input while allowing mutable internal state.
 //!
 //! # Overview
 //!
-//! A **Supplier** is a functional abstraction that generates and
-//! provides a value without accepting input. It can produce new
-//! values each time (like a factory) or return fixed values
-//! (like constants).
+//! A **StatefulSupplier** is a functional abstraction equivalent to
+//! `FnMut() -> T`: it generates values without accepting input and may update
+//! its own internal state between calls. It is useful for counters,
+//! sequences, generators, and memoized computations.
 //!
-//! This module implements **Approach 3** from the design document: a
-//! unified `Supplier` trait with multiple concrete implementations
-//! optimized for different ownership and concurrency scenarios.
+//! For stateless factories and constants that only need `Fn() -> T`, use
+//! [`Supplier`](crate::Supplier).
 //!
 //! # Core Design Principles
 //!
-//! 1. **Returns Ownership**: `Supplier` returns `T` (not `&T`) to
+//! 1. **Returns Ownership**: `StatefulSupplier` returns `T` (not `&T`) to
 //!    avoid lifetime issues
 //! 2. **Uses `&mut self`**: Typical scenarios (counters, generators)
 //!    require state modification
-//! 3. **No ReadonlySupplier**: Main use cases require state
-//!    modification; value is extremely low
+//! 3. **Separate stateless API**: `Supplier` covers lock-free stateless
+//!    factories, while `StatefulSupplier` covers stateful generation
 //!
 //! # Three Implementations
 //!
