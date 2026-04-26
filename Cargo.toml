@@ -125,8 +125,8 @@ name = "predicate_set_name_demo"
 path = "examples/predicates/predicate_set_name_demo.rs"
 
 [[example]]
-name = "readonly_bi_consumer_demo"
-path = "examples/consumers/readonly_bi_consumer_demo.rs"
+name = "bi_consumer_observation_demo"
+path = "examples/consumers/bi_consumer_observation_demo.rs"
 
 [[example]]
 name = "stateful_supplier_demo"

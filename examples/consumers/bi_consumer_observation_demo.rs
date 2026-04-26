@@ -7,10 +7,10 @@
  *
  ******************************************************************************/
 
-//! ReadonlyBiConsumer demonstration
+//! BiConsumer observation demonstration
 //!
-//! This example demonstrates the usage of ReadonlyBiConsumer types, which
-//! neither modify their own state nor the input values.
+//! This example demonstrates stateless BiConsumer types that observe two input
+//! values without mutating them.
 
 use qubit_function::{
     ArcBiConsumer,
@@ -27,7 +27,7 @@ use std::sync::{
 use std::thread;
 
 fn main() {
-    println!("=== ReadonlyBiConsumer Demo ===\n");
+    println!("=== BiConsumer Observation Demo ===\n");
 
     // 1. BoxBiConsumer - Single ownership
     println!("1. BoxBiConsumer - Single ownership:");
