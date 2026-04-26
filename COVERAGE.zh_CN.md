@@ -1,167 +1,110 @@
-# 代码覆盖率统计指南
+# 代码覆盖率指南
 
-本项目使用 `cargo-llvm-cov` 进行代码覆盖率统计。
+本项目使用 `cargo-llvm-cov` 生成本地和 CI 覆盖率报告。覆盖率脚本用于贡献者检查，
+不会随 crate 发布。
 
-## 安装依赖
+## 依赖
 
-如果还没有安装 `cargo-llvm-cov`，请先安装：
+先安装覆盖率工具和对应 LLVM 组件：
 
 ```bash
 cargo install cargo-llvm-cov
+rustup component add llvm-tools-preview
 ```
+
+`json` 和 `all` 格式还需要 `jq`，因为脚本会从 JSON 报告中检查逐文件覆盖率阈值。
 
 ## 快速开始
 
-### 使用便捷脚本（推荐）
-
-我们提供了一个便捷脚本 `coverage.sh`，可以快速生成各种格式的覆盖率报告：
+日常检查优先使用 `coverage.sh`：
 
 ```bash
-# 生成 HTML 报告并在浏览器中打开（默认）
-./coverage.sh
-
-# 或指定格式
-./coverage.sh html       # HTML 报告（在浏览器中打开）
-./coverage.sh text       # 终端文本报告
-./coverage.sh lcov       # LCOV 格式
-./coverage.sh json       # JSON 格式
-./coverage.sh cobertura  # Cobertura XML 格式
-./coverage.sh all        # 生成所有格式
-
-# 查看帮助
-./coverage.sh help
+./coverage.sh              # 生成 HTML 并在浏览器中打开
+./coverage.sh text         # 在终端输出文本报告
+./coverage.sh lcov         # 生成 LCOV
+./coverage.sh json         # 生成 JSON 并检查阈值
+./coverage.sh cobertura    # 生成 Cobertura XML
+./coverage.sh all          # 只运行一次测试并生成所有报告格式
+./coverage.sh all --clean  # 先清理旧覆盖率数据
+./coverage.sh help         # 查看所有选项
 ```
 
-### 使用 cargo 命令
+`json` 和 `all` 会对每个源码文件执行当前 CI 阈值：
 
-你也可以直接使用 `cargo llvm-cov` 命令：
+- 函数覆盖率：`100%`
+- 行覆盖率：`> 98%`
+- 区域覆盖率：`> 98%`
+
+临时实验时可以通过环境变量覆盖阈值：
 
 ```bash
-# 清理旧的覆盖率数据
-cargo llvm-cov clean
-
-# 生成 HTML 报告并在浏览器中打开
-cargo llvm-cov --html --open
-
-# 生成文本格式报告（输出到终端）
-cargo llvm-cov
-
-# 生成 LCOV 格式报告
-cargo llvm-cov --lcov --output-path target/llvm-cov/lcov.info
-
-# 生成 JSON 格式报告
-cargo llvm-cov --json --output-path target/llvm-cov/coverage.json
-
-# 生成 Cobertura XML 格式报告
-cargo llvm-cov --cobertura --output-path target/llvm-cov/cobertura.xml
+MIN_FUNCTION_COVERAGE=100 MIN_LINE_COVERAGE=98 MIN_REGION_COVERAGE=98 ./coverage.sh json
 ```
 
 ## 报告位置
 
-生成的报告默认保存在以下位置：
+生成的报告位于 `target/llvm-cov`：
 
-- **HTML 报告**: `target/llvm-cov/html/index.html`
-- **LCOV 报告**: `target/llvm-cov/lcov.info`
-- **JSON 报告**: `target/llvm-cov/coverage.json`
-- **Cobertura 报告**: `target/llvm-cov/cobertura.xml`
+- HTML: `target/llvm-cov/html/index.html`
+- LCOV: `target/llvm-cov/lcov.info`
+- JSON: `target/llvm-cov/coverage.json`
+- Cobertura: `target/llvm-cov/cobertura.xml`
+- Text: `target/llvm-cov/coverage.txt`（仅 `all` 生成）
 
-## 只测试特定模块
+## `all` 的工作方式
 
-如果只想测试特定的模块，可以使用：
+`./coverage.sh all` 先用 `cargo llvm-cov --no-report` 运行一次测试并收集覆盖率数据，
+再用 `cargo llvm-cov report` 基于同一份数据生成 HTML、LCOV、JSON、Cobertura 和
+文本报告。这样可以和 CircleCI 保持一致，并避免重复执行测试。
 
-```bash
-# 只测试 lang 模块
-cargo llvm-cov --html --open -- lang::
+## 直接使用 `cargo llvm-cov`
 
-# 只测试特定的测试文件
-cargo llvm-cov --html --open --test lang_tests -- lang::argument
-```
-
-## 排除特定文件
-
-在 `.llvm-cov.toml` 配置文件中，我们已经排除了以下文件：
-
-- `tests/*` - 测试文件
-- `benches/*` - 性能测试文件
-- `examples/*` - 示例文件
-
-如果需要修改排除规则，请编辑 `.llvm-cov.toml` 文件。
-
-## CI/CD 集成
-
-### GitHub Actions 示例
-
-```yaml
-name: Code Coverage
-
-on:
-  push:
-    branches: [ main, dev ]
-  pull_request:
-    branches: [ main, dev ]
-
-jobs:
-  coverage:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-
-      - name: Install cargo-llvm-cov
-        run: cargo install cargo-llvm-cov
-
-      - name: Generate coverage
-        run: |
-          cd rs-function
-          cargo llvm-cov --lcov --output-path lcov.info
-
-      - name: Upload to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          files: rs-function/lcov.info
-          flags: rs-function
-```
-
-## 常见问题
-
-### 1. 找不到 `cargo-llvm-cov` 命令
-
-确保已经安装了 `cargo-llvm-cov`：
-
-```bash
-cargo install cargo-llvm-cov
-```
-
-### 2. 覆盖率数据不准确
-
-先清理旧的覆盖率数据：
+直接命令适合临时查看，但不会执行本项目的逐文件阈值检查：
 
 ```bash
 cargo llvm-cov clean
+cargo llvm-cov --html --open
+cargo llvm-cov --lcov --output-path target/llvm-cov/lcov.info
+cargo llvm-cov --json --output-path target/llvm-cov/coverage.json
+cargo llvm-cov --cobertura --output-path target/llvm-cov/cobertura.xml
 ```
 
-### 3. 如何提高覆盖率？
+如果只想筛选部分测试，把普通测试过滤参数放在 `--` 后面：
 
-- 为所有公共 API 编写测试
-- 测试边界条件和异常情况
-- 使用覆盖率报告识别未测试的代码路径
-- 为复杂的逻辑分支编写测试
+```bash
+cargo llvm-cov --html --open --test tester_tests -- test_always_true
+```
 
-## 覆盖率目标
+## 排除规则
 
-我们建议的覆盖率目标：
+`.llvm-cov.toml` 会从报告中排除测试、benchmark 和示例文件：
 
-- **最低要求**: 60%
-- **良好**: 75%
-- **优秀**: 85%+
-- **核心模块**: 90%+
+- `tests/*`
+- `benches/*`
+- `examples/*`
+
+`coverage.sh` 还会过滤 Cargo registry、rustup 和同级 workspace crate，确保报告只覆盖
+当前 crate 的源码文件。
+
+## CI
+
+CircleCI 调用 `./coverage.sh all`，保存 JSON、LCOV 和文本报告，并在配置了
+`COVERALLS_REPO_TOKEN` 时把 LCOV 上传到 Coveralls。`./ci-check.sh` 也会通过
+`./coverage.sh json` 执行相同的阈值检查。
+
+## 常见问题
+
+如果缺少 `cargo-llvm-cov`，请安装它，并给当前 toolchain 添加 `llvm-tools-preview`。
+
+如果 `json` 或 `all` 在阈值检查前失败，请安装 `jq`。
+
+如果覆盖率数据看起来过期，可以运行：
+
+```bash
+./coverage.sh json --clean
+```
 
 ## 参考资料
 
-- [cargo-llvm-cov GitHub](https://github.com/taiki-e/cargo-llvm-cov)
+- [cargo-llvm-cov](https://github.com/taiki-e/cargo-llvm-cov)
 - [LLVM Coverage Mapping](https://llvm.org/docs/CoverageMappingFormat.html)

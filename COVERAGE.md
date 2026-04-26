@@ -1,167 +1,115 @@
-# Code Coverage Testing Guide
+# Code Coverage Guide
 
-This project uses `cargo-llvm-cov` for code coverage statistics.
+This project uses `cargo-llvm-cov` for local and CI coverage reporting.
+The coverage script is intended for contributor checks and is excluded from
+published crates.
 
-## Install Dependencies
+## Dependencies
 
-If you haven't installed `cargo-llvm-cov` yet, please install it first:
+Install the coverage tool and its LLVM component:
 
 ```bash
 cargo install cargo-llvm-cov
+rustup component add llvm-tools-preview
 ```
+
+The `json` and `all` formats also require `jq` because the script validates
+per-file thresholds from the generated JSON report.
 
 ## Quick Start
 
-### Using Convenience Script (Recommended)
-
-We provide a convenience script `coverage.sh` that can quickly generate coverage reports in various formats:
+Use `coverage.sh` for normal checks:
 
 ```bash
-# Generate HTML report and open in browser (default)
-./coverage.sh
-
-# Or specify format
-./coverage.sh html       # HTML report (opens in browser)
-./coverage.sh text       # Terminal text report
-./coverage.sh lcov       # LCOV format
-./coverage.sh json       # JSON format
-./coverage.sh cobertura  # Cobertura XML format
-./coverage.sh all        # Generate all formats
-
-# View help
-./coverage.sh help
+./coverage.sh              # Generate HTML and open it in a browser
+./coverage.sh text         # Print a text report to the terminal
+./coverage.sh lcov         # Generate LCOV
+./coverage.sh json         # Generate JSON and enforce thresholds
+./coverage.sh cobertura    # Generate Cobertura XML
+./coverage.sh all          # Run tests once and generate all report formats
+./coverage.sh all --clean  # Clean old coverage data first
+./coverage.sh help         # Show all options
 ```
 
-### Using cargo Commands
+`json` and `all` enforce the current CI gate for every source file:
 
-You can also use `cargo llvm-cov` commands directly:
+- Functions: `100%`
+- Lines: `> 98%`
+- Regions: `> 98%`
+
+The thresholds can be overridden for experiments:
 
 ```bash
-# Clean old coverage data
-cargo llvm-cov clean
-
-# Generate HTML report and open in browser
-cargo llvm-cov --html --open
-
-# Generate text format report (output to terminal)
-cargo llvm-cov
-
-# Generate LCOV format report
-cargo llvm-cov --lcov --output-path target/llvm-cov/lcov.info
-
-# Generate JSON format report
-cargo llvm-cov --json --output-path target/llvm-cov/coverage.json
-
-# Generate Cobertura XML format report
-cargo llvm-cov --cobertura --output-path target/llvm-cov/cobertura.xml
+MIN_FUNCTION_COVERAGE=100 MIN_LINE_COVERAGE=98 MIN_REGION_COVERAGE=98 ./coverage.sh json
 ```
 
 ## Report Locations
 
-Generated reports are saved in the following locations by default:
+Generated reports are written under `target/llvm-cov`:
 
-- **HTML Report**: `target/llvm-cov/html/index.html`
-- **LCOV Report**: `target/llvm-cov/lcov.info`
-- **JSON Report**: `target/llvm-cov/coverage.json`
-- **Cobertura Report**: `target/llvm-cov/cobertura.xml`
+- HTML: `target/llvm-cov/html/index.html`
+- LCOV: `target/llvm-cov/lcov.info`
+- JSON: `target/llvm-cov/coverage.json`
+- Cobertura: `target/llvm-cov/cobertura.xml`
+- Text: `target/llvm-cov/coverage.txt` (`all` only)
 
-## Testing Specific Modules Only
+## How `all` Works
 
-If you only want to test specific modules, you can use:
+`./coverage.sh all` runs tests once with `cargo llvm-cov --no-report`, then
+uses `cargo llvm-cov report` to generate HTML, LCOV, JSON, Cobertura, and text
+reports from the same coverage data. This keeps local behavior aligned with
+CircleCI and avoids repeated test execution.
 
-```bash
-# Test only lang module
-cargo llvm-cov --html --open -- lang::
+## Direct `cargo llvm-cov` Usage
 
-# Test only specific test files
-cargo llvm-cov --html --open --test lang_tests -- lang::argument
-```
-
-## Exclude Specific Files
-
-In the `.llvm-cov.toml` configuration file, we have excluded the following files:
-
-- `tests/*` - Test files
-- `benches/*` - Benchmark files
-- `examples/*` - Example files
-
-If you need to modify exclusion rules, please edit the `.llvm-cov.toml` file.
-
-## CI/CD Integration
-
-### GitHub Actions Example
-
-```yaml
-name: Code Coverage
-
-on:
-  push:
-    branches: [ main, dev ]
-  pull_request:
-    branches: [ main, dev ]
-
-jobs:
-  coverage:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          override: true
-
-      - name: Install cargo-llvm-cov
-        run: cargo install cargo-llvm-cov
-
-      - name: Generate coverage
-        run: |
-          cd rs-function
-          cargo llvm-cov --lcov --output-path lcov.info
-
-      - name: Upload to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          files: rs-function/lcov.info
-          flags: rs-function
-```
-
-## Common Issues
-
-### 1. Cannot find `cargo-llvm-cov` command
-
-Make sure you have installed `cargo-llvm-cov`:
-
-```bash
-cargo install cargo-llvm-cov
-```
-
-### 2. Coverage data is inaccurate
-
-Clean old coverage data first:
+Direct commands are useful for ad hoc inspection, but they do not enforce this
+project's per-file thresholds:
 
 ```bash
 cargo llvm-cov clean
+cargo llvm-cov --html --open
+cargo llvm-cov --lcov --output-path target/llvm-cov/lcov.info
+cargo llvm-cov --json --output-path target/llvm-cov/coverage.json
+cargo llvm-cov --cobertura --output-path target/llvm-cov/cobertura.xml
 ```
 
-### 3. How to improve coverage?
+To filter tests, pass normal test filters after `--`:
 
-- Write tests for all public APIs
-- Test boundary conditions and exception cases
-- Use coverage reports to identify untested code paths
-- Write tests for complex logic branches
+```bash
+cargo llvm-cov --html --open --test tester_tests -- test_always_true
+```
 
-## Coverage Goals
+## Exclusions
 
-Our recommended coverage goals:
+`.llvm-cov.toml` excludes test, benchmark, and example files from reports:
 
-- **Minimum requirement**: 60%
-- **Good**: 75%
-- **Excellent**: 85%+
-- **Core modules**: 90%+
+- `tests/*`
+- `benches/*`
+- `examples/*`
+
+`coverage.sh` also filters Cargo registry, rustup, and sibling workspace crates
+so reports only cover this crate's source files.
+
+## CI
+
+CircleCI calls `./coverage.sh all`, stores JSON/LCOV/text artifacts, and uploads
+LCOV to Coveralls when `COVERALLS_REPO_TOKEN` is available. The same threshold
+check is also run by `./ci-check.sh` through `./coverage.sh json`.
+
+## Common Issues
+
+If `cargo-llvm-cov` is missing, install it and add `llvm-tools-preview` to the
+active toolchain.
+
+If `json` or `all` fails before threshold checking, install `jq`.
+
+If coverage data looks stale, run:
+
+```bash
+./coverage.sh json --clean
+```
 
 ## References
 
-- [cargo-llvm-cov GitHub](https://github.com/taiki-e/cargo-llvm-cov)
+- [cargo-llvm-cov](https://github.com/taiki-e/cargo-llvm-cov)
 - [LLVM Coverage Mapping](https://llvm.org/docs/CoverageMappingFormat.html)
