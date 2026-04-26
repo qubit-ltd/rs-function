@@ -6,7 +6,7 @@
  *    All rights reserved.
  *
  ******************************************************************************/
-use qubit_function::predicate::{
+use qubit_function::{
     ArcPredicate,
     BoxPredicate,
     Predicate,

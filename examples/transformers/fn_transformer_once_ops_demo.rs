@@ -8,7 +8,7 @@
  ******************************************************************************/
 //! Demonstrates the usage of FnTransformerOnceOps extension trait
 //!
-//! This example shows how to directly use and_then, compose, and when methods on FnOnce closures,
+//! This example shows how to directly use and_then and when methods on FnOnce closures,
 //! without explicitly wrapping them in BoxTransformerOnce.
 
 use qubit_function::{
@@ -42,13 +42,13 @@ fn main() {
     ); // (5 + 1) * 2 = 12
     println!();
 
-    // 3. compose reverse composition
-    println!("3. compose reverse composition:");
+    // 3. More and_then composition
+    println!("3. More and_then composition:");
     let double = |x: i32| x * 2;
     let to_string = |x: i32| x.to_string();
-    let composed = to_string.compose(double);
+    let composed = double.and_then(to_string);
     println!(
-        "   to_string.compose(double).apply(21) = {}",
+        "   double.and_then(to_string).apply(21) = {}",
         composed.apply(21)
     ); // (21 * 2).to_string() = "42"
     println!();
@@ -77,10 +77,7 @@ fn main() {
         .and_then(to_string);
 
     println!("   parse.and_then(double.when(x > 5).or_else(triple)).and_then(to_string):");
-    println!(
-        "     transform(\"3\") = {}",
-        complex.apply("3".to_string())
-    ); // 3 <= 5, so 3 * 3 = 9
+    println!("     transform(\"3\") = {}", complex.apply("3".to_string())); // 3 <= 5, so 3 * 3 = 9
 
     let parse2 = |s: String| s.parse::<i32>().unwrap_or(0);
     let double2 = |x: i32| x * 2;

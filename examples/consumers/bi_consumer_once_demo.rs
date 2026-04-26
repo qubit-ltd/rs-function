@@ -32,7 +32,7 @@ fn main() {
         l.lock().unwrap().push(*x + *y);
         println!("  Sum: {}", x + y);
     });
-    consumer.accept_once(&10, &5);
+    consumer.accept(&10, &5);
     println!("  Log: {:?}\n", *log.lock().unwrap());
 
     // 2. Method chaining
@@ -48,7 +48,7 @@ fn main() {
         l2.lock().unwrap().push(*x * *y);
         println!("  Second: product={}", x * y);
     });
-    chained.accept_once(&5, &3);
+    chained.accept(&5, &3);
     println!("  Log: {:?}\n", *log.lock().unwrap());
 
     // 3. Conditional execution - true case
@@ -59,7 +59,7 @@ fn main() {
         l.lock().unwrap().push(*x + *y);
     })
     .when(|x: &i32, y: &i32| *x > 0 && *y > 0);
-    conditional.accept_once(&5, &3);
+    conditional.accept(&5, &3);
     println!("  Positive values: {:?}\n", *log.lock().unwrap());
 
     // 4. Conditional execution - false case
@@ -70,7 +70,7 @@ fn main() {
         l.lock().unwrap().push(*x + *y);
     })
     .when(|x: &i32, y: &i32| *x > 0 && *y > 0);
-    conditional.accept_once(&-5, &3);
+    conditional.accept(&-5, &3);
     println!("  Negative value (unchanged): {:?}\n", *log.lock().unwrap());
 
     // 5. Conditional branching
@@ -85,7 +85,7 @@ fn main() {
     .or_else(move |_x: &i32, y: &i32| {
         l2.lock().unwrap().push(*y);
     });
-    branch.accept_once(&15, &10);
+    branch.accept(&15, &10);
     println!("  When x > y: {:?}\n", *log.lock().unwrap());
 
     // 6. Working with closures directly
@@ -96,7 +96,7 @@ fn main() {
         l.lock().unwrap().push(*x + *y);
         println!("  Processed: {}", x + y);
     };
-    closure.accept_once(&10, &20);
+    closure.accept(&10, &20);
     println!("  Log: {:?}\n", *log.lock().unwrap());
 
     // 7. Moving captured values
@@ -107,7 +107,7 @@ fn main() {
         println!("  Captured data: {:?}", data);
         println!("  Data sum: {}", data.iter().sum::<i32>());
     });
-    consumer.accept_once(&5, &3);
+    consumer.accept(&5, &3);
     // data is no longer available here
     println!();
 
@@ -119,7 +119,7 @@ fn main() {
         println!("  Initializing with dimensions: {}x{}", width, height);
         l.lock().unwrap().push(*width * *height);
     });
-    init_callback.accept_once(&800, &600);
+    init_callback.accept(&800, &600);
     println!("  Areas: {:?}\n", *log.lock().unwrap());
 
     // 9. Cleanup callback
@@ -131,7 +131,7 @@ fn main() {
             (*count as f64 / *total as f64) * 100.0
         );
     });
-    cleanup.accept_once(&85, &100);
+    cleanup.accept(&85, &100);
     println!();
 
     // 10. Name support
@@ -142,17 +142,17 @@ fn main() {
     named_consumer.set_name("init_callback");
     println!("  After setting name: {:?}", named_consumer.name());
     println!("  Display: {}", named_consumer);
-    named_consumer.accept_once(&1, &2);
+    named_consumer.accept(&1, &2);
     println!();
 
     // 11. Print helpers
     println!("11. Print helpers:");
     let print = BoxBiConsumerOnce::new(|x: &i32, y: &i32| println!("{}, {}", x, y));
-    print.accept_once(&42, &10);
+    print.accept(&42, &10);
 
     let print_with =
         BoxBiConsumerOnce::new(|x: &i32, y: &i32| println!("Dimensions: {}, {}", x, y));
-    print_with.accept_once(&800, &600);
+    print_with.accept(&800, &600);
     println!();
 
     // 12. Converting to function

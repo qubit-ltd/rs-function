@@ -20,9 +20,9 @@ use qubit_function::{
 };
 use std::rc::Rc;
 use std::sync::{
+    Arc,
     atomic::AtomicUsize,
     atomic::Ordering,
-    Arc,
 };
 use std::thread;
 

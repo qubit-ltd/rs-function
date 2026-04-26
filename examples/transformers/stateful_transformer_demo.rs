@@ -18,7 +18,6 @@ use qubit_function::{
     FnStatefulTransformerOps,
     RcStatefulTransformer,
     StatefulTransformer,
-    TransformerOnce,
 };
 
 fn main() {
@@ -143,7 +142,7 @@ fn main() {
 
     // BoxStatefulTransformer can be consumed as TransformerOnce
     let mut counter = 0;
-    let box_mapper = BoxStatefulTransformer::new(move |x: i32| {
+    let mut box_mapper = BoxStatefulTransformer::new(move |x: i32| {
         counter += 1;
         x * counter
     });
@@ -154,7 +153,7 @@ fn main() {
 
     // RcStatefulTransformer can be consumed as TransformerOnce
     let mut counter = 0;
-    let rc_mapper = RcStatefulTransformer::new(move |x: i32| {
+    let mut rc_mapper = RcStatefulTransformer::new(move |x: i32| {
         counter += 1;
         x + counter
     });
@@ -163,14 +162,14 @@ fn main() {
         "  RcStatefulTransformer consumed once: {}",
         rc_mapper.apply(10)
     ); // 10 + 1 = 11
-    println!(
-        "  RcStatefulTransformer clone still works: {}",
-        rc_clone.clone().apply(10)
-    ); // 10 + 2 = 12
+    println!("  RcStatefulTransformer clone still works: {}", {
+        let mut rc_clone_for_call = rc_clone.clone();
+        rc_clone_for_call.apply(10)
+    }); // 10 + 2 = 12
 
     // ArcStatefulTransformer can be consumed as TransformerOnce
     let mut counter = 0;
-    let arc_mapper = ArcStatefulTransformer::new(move |x: i32| {
+    let mut arc_mapper = ArcStatefulTransformer::new(move |x: i32| {
         counter += 1;
         x * counter
     });
@@ -179,10 +178,10 @@ fn main() {
         "  ArcStatefulTransformer consumed once: {}",
         arc_mapper.apply(10)
     ); // 10 * 1 = 10
-    println!(
-        "  ArcStatefulTransformer clone still works: {}",
-        arc_clone.clone().apply(10)
-    ); // 10 * 2 = 20
+    println!("  ArcStatefulTransformer clone still works: {}", {
+        let mut arc_clone_for_call = arc_clone.clone();
+        arc_clone_for_call.apply(10)
+    }); // 10 * 2 = 20
 
     // 8. Converting to BoxTransformerOnce
     println!("\n8. Converting StatefulTransformers to BoxTransformerOnce:");
@@ -192,7 +191,7 @@ fn main() {
         counter += 1;
         x * counter
     });
-    let once_mapper = mapper.into_box();
+    let mut once_mapper = mapper.into_box();
     println!(
         "  BoxStatefulTransformer->BoxTransformerOnce: {}",
         once_mapper.apply(5)
@@ -204,15 +203,15 @@ fn main() {
         counter += 1;
         x * counter
     });
-    let once_mapper = rc_mapper.to_box();
+    let mut once_mapper = rc_mapper.to_box();
     println!(
         "  RcStatefulTransformer->BoxTransformerOnce: {}",
         once_mapper.apply(5)
     ); // 5 * 1 = 5
-    println!(
-        "  Original RcStatefulTransformer still works: {}",
-        rc_mapper.clone().apply(5)
-    ); // 5 * 2 = 10
+    println!("  Original RcStatefulTransformer still works: {}", {
+        let mut rc_original_for_call = rc_mapper.clone();
+        rc_original_for_call.apply(5)
+    }); // 5 * 2 = 10
 
     println!("\n=== Demo Complete ===");
 }

@@ -29,6 +29,10 @@ use std::sync::{
 };
 use std::thread;
 
+fn is_even_i32(value: &i32) -> bool {
+    value % 2 == 0
+}
+
 fn main() {
     println!("=== Supplier Demo ===\n");
 
@@ -106,7 +110,7 @@ fn demo_box_supplier_methods() {
         counter += 1;
         counter
     })
-    .filter(|x| x % 2 == 0);
+    .filter(is_even_i32);
     println!("Filtered (odd): {:?}", filtered.get());
     println!("Filtered (even): {:?}", filtered.get());
 

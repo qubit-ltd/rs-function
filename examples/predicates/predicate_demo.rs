@@ -18,7 +18,7 @@
 //! - Interior mutability patterns
 //! - Type conversions
 
-use qubit_function::predicate::{
+use qubit_function::{
     ArcPredicate,
     BoxPredicate,
     FnPredicateOps,

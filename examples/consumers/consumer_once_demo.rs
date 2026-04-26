@@ -32,7 +32,7 @@ fn main() {
             l.lock().unwrap().push(*x);
             println!("  BoxConsumerOnce consumed: {}", x);
         });
-        consumer.accept_once(&42);
+        consumer.accept(&42);
         println!("  Log: {:?}\n", *log.lock().unwrap());
     }
 
@@ -55,7 +55,7 @@ fn main() {
             l3.lock().unwrap().push(*x - 1);
             println!("  Step 3: {} - 1 = {}", x, x - 1);
         });
-        chained.accept_once(&5);
+        chained.accept(&5);
         println!("  Log: {:?}\n", *log.lock().unwrap());
     }
 
@@ -64,18 +64,18 @@ fn main() {
     {
         // No-op consumer
         let noop = BoxConsumerOnce::<i32>::noop();
-        noop.accept_once(&42);
+        noop.accept(&42);
         println!("  No-op consumer executed (no output)");
 
         // Print consumer
         print!("  Print consumer: ");
         let print = BoxConsumerOnce::new(|x: &i32| println!("{}", x));
-        print.accept_once(&42);
+        print.accept(&42);
 
         // Print with prefix
         print!("  Print with prefix: ");
         let print_with = BoxConsumerOnce::new(|x: &i32| println!("Value: {}", x));
-        print_with.accept_once(&42);
+        print_with.accept(&42);
 
         // Conditional consumer
         let log = Arc::new(Mutex::new(Vec::new()));
@@ -84,7 +84,7 @@ fn main() {
             l.lock().unwrap().push(*x * 2);
         })
         .when(|x: &i32| *x > 0);
-        conditional.accept_once(&5);
+        conditional.accept(&5);
         println!("  Conditional (positive): {:?}", *log.lock().unwrap());
 
         let log = Arc::new(Mutex::new(Vec::new()));
@@ -93,7 +93,7 @@ fn main() {
             l.lock().unwrap().push(*x * 2);
         })
         .when(|x: &i32| *x > 0);
-        conditional.accept_once(&-5);
+        conditional.accept(&-5);
         println!("  Conditional (negative): {:?}\n", *log.lock().unwrap());
     }
 
@@ -106,7 +106,7 @@ fn main() {
             l.lock().unwrap().push(*x * 2);
             println!("  Closure consumed: {}", x);
         };
-        closure.accept_once(&42);
+        closure.accept(&42);
         println!("  Log: {:?}\n", *log.lock().unwrap());
     }
 
@@ -124,7 +124,7 @@ fn main() {
             l2.lock().unwrap().push(*x + 10);
             println!("  Closure 2: {} + 10 = {}", x, x + 10);
         });
-        chained.accept_once(&5);
+        chained.accept(&5);
         println!("  Log: {:?}\n", *log.lock().unwrap());
     }
 
@@ -139,7 +139,7 @@ fn main() {
             l.lock().unwrap().push(*x);
         };
         let box_consumer = closure.into_box();
-        box_consumer.accept_once(&1);
+        box_consumer.accept(&1);
         println!("  BoxConsumerOnce: {:?}", *log.lock().unwrap());
     }
 
@@ -153,7 +153,7 @@ fn main() {
         });
         // Note: This will panic because BoxConsumerOnce can only be called once
         // vec![1, 2, 3, 4, 5].iter().for_each(consumer.into_fn());
-        consumer.accept_once(&1);
+        consumer.accept(&1);
         println!(
             "  BoxConsumerOnce with single value: {:?}\n",
             *log.lock().unwrap()

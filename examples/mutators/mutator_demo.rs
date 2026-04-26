@@ -32,7 +32,7 @@ fn main() {
     println!("Example 1: BoxMutator Basic Usage");
     println!("{}", "-".repeat(50));
 
-    let mut mutator = BoxMutator::new(|x: &mut i32| {
+    let mutator = BoxMutator::new(|x: &mut i32| {
         *x *= 2;
     });
     let mut value = 5;
@@ -46,7 +46,7 @@ fn main() {
     println!("Example 2: BoxMutator Method Chaining");
     println!("{}", "-".repeat(50));
 
-    let mut chained = BoxMutator::new(|x: &mut i32| {
+    let chained = BoxMutator::new(|x: &mut i32| {
         *x *= 2; // multiply by 2
     })
     .and_then(|x: &mut i32| {
@@ -67,7 +67,7 @@ fn main() {
     println!("Example 3: Direct Use of Closure Extension Methods");
     println!("{}", "-".repeat(50));
 
-    let mut closure_chain = (|x: &mut i32| *x *= 2).and_then(|x: &mut i32| *x += 10);
+    let closure_chain = (|x: &mut i32| *x *= 2).and_then(|x: &mut i32| *x += 10);
 
     let mut value = 5;
     println!("Initial value: {}", value);
@@ -81,7 +81,7 @@ fn main() {
     println!("{}", "-".repeat(50));
 
     // noop
-    let mut noop = BoxMutator::<i32>::noop();
+    let noop = BoxMutator::<i32>::noop();
     let mut value = 42;
     println!("Before noop: {}", value);
     noop.apply(&mut value);
@@ -94,7 +94,7 @@ fn main() {
     println!("{}", "-".repeat(50));
 
     // when (conditional execution)
-    let mut increment_if_positive = BoxMutator::new(|x: &mut i32| *x += 1).when(|x: &i32| *x > 0);
+    let increment_if_positive = BoxMutator::new(|x: &mut i32| *x += 1).when(|x: &i32| *x > 0);
 
     let mut positive = 5;
     let mut negative = -5;
@@ -110,7 +110,7 @@ fn main() {
     );
 
     // when().or_else() (conditional branching)
-    let mut adjust = BoxMutator::new(|x: &mut i32| *x *= 2)
+    let adjust = BoxMutator::new(|x: &mut i32| *x *= 2)
         .when(|x: &i32| *x > 0)
         .or_else(|x: &mut i32| *x = -*x);
 
@@ -139,7 +139,7 @@ fn main() {
     let shared_clone = shared.clone();
     let handle = thread::spawn(move || {
         let mut value = 5;
-        let mut mutator = shared_clone;
+        let mutator = shared_clone;
         mutator.apply(&mut value);
         println!("In thread: 5 * 2 = {}", value);
         value
@@ -147,7 +147,7 @@ fn main() {
 
     // Use in main thread
     let mut value = 3;
-    let mut mutator = shared;
+    let mutator = shared;
     mutator.apply(&mut value);
     println!("Main thread: 3 * 2 = {}", value);
 
@@ -168,18 +168,18 @@ fn main() {
     let pipeline2 = add_ten.and_then(double.clone());
 
     let mut value1 = 5;
-    let mut p1 = pipeline1;
+    let p1 = pipeline1;
     p1.apply(&mut value1);
     println!("pipeline1 (double then add): 5 -> {}", value1);
 
     let mut value2 = 5;
-    let mut p2 = pipeline2;
+    let p2 = pipeline2;
     p2.apply(&mut value2);
     println!("pipeline2 (add then double): 5 -> {}", value2);
 
     // double and add_ten are still available
     let mut value3 = 10;
-    let mut d = double;
+    let d = double;
     d.apply(&mut value3);
     println!("Original double still available: 10 -> {}\n", value3);
 
@@ -196,17 +196,17 @@ fn main() {
     let clone2 = rc_mutator.clone();
 
     let mut value1 = 5;
-    let mut c1 = clone1;
+    let c1 = clone1;
     c1.apply(&mut value1);
     println!("clone1: 5 -> {}", value1);
 
     let mut value2 = 3;
-    let mut c2 = clone2;
+    let c2 = clone2;
     c2.apply(&mut value2);
     println!("clone2: 3 -> {}", value2);
 
     let mut value3 = 7;
-    let mut c3 = rc_mutator;
+    let c3 = rc_mutator;
     c3.apply(&mut value3);
     println!("Original: 7 -> {}\n", value3);
 
@@ -223,12 +223,12 @@ fn main() {
     let pipeline2 = add_ten.and_then(double.clone());
 
     let mut value1 = 5;
-    let mut p1 = pipeline1;
+    let p1 = pipeline1;
     p1.apply(&mut value1);
     println!("pipeline1 (double then add): 5 -> {}", value1);
 
     let mut value2 = 5;
-    let mut p2 = pipeline2;
+    let p2 = pipeline2;
     p2.apply(&mut value2);
     println!("pipeline2 (add then double): 5 -> {}\n", value2);
 
@@ -274,7 +274,7 @@ fn main() {
     println!("Example 11: Complex Data Processing Pipeline");
     println!("{}", "-".repeat(50));
 
-    let mut pipeline = BoxMutator::new(|x: &mut i32| {
+    let pipeline = BoxMutator::new(|x: &mut i32| {
         // Validation: clamp to 0-100
         *x = (*x).clamp(0, 100);
     })
@@ -305,7 +305,7 @@ fn main() {
     println!("Example 12: String Processing");
     println!("{}", "-".repeat(50));
 
-    let mut string_processor = BoxMutator::new(|s: &mut String| s.retain(|c| !c.is_whitespace()))
+    let string_processor = BoxMutator::new(|s: &mut String| s.retain(|c| !c.is_whitespace()))
         .and_then(|s: &mut String| *s = s.to_lowercase())
         .and_then(|s: &mut String| s.push_str("!!!"));
 
@@ -322,35 +322,35 @@ fn main() {
 
     // Closure -> BoxMutator
     let closure = |x: &mut i32| *x *= 2;
-    let mut box_mut = closure.into_box();
+    let box_mut = closure.into_box();
     let mut value = 5;
     box_mut.apply(&mut value);
     println!("Closure -> BoxMutator: 5 -> {}", value);
 
     // Closure -> RcMutator
     let closure = |x: &mut i32| *x *= 2;
-    let mut rc_mut = closure.into_rc();
+    let rc_mut = closure.into_rc();
     let mut value = 5;
     rc_mut.apply(&mut value);
     println!("Closure -> RcMutator: 5 -> {}", value);
 
     // Closure -> ArcMutator
     let closure = |x: &mut i32| *x *= 2;
-    let mut arc_mut = closure.into_arc();
+    let arc_mut = closure.into_arc();
     let mut value = 5;
     arc_mut.apply(&mut value);
     println!("Closure -> ArcMutator: 5 -> {}", value);
 
     // BoxMutator -> RcMutator
     let box_mut = BoxMutator::new(|x: &mut i32| *x *= 2);
-    let mut rc_mut = box_mut.into_rc();
+    let rc_mut = box_mut.into_rc();
     let mut value = 5;
     rc_mut.apply(&mut value);
     println!("BoxMutator -> RcMutator: 5 -> {}", value);
 
     // RcMutator -> BoxMutator
     let rc_mut = RcMutator::new(|x: &mut i32| *x *= 2);
-    let mut box_mut = rc_mut.into_box();
+    let box_mut = rc_mut.into_box();
     let mut value = 5;
     box_mut.apply(&mut value);
     println!("RcMutator -> BoxMutator: 5 -> {}\n", value);
@@ -367,7 +367,7 @@ fn main() {
         y: i32,
     }
 
-    let mut processor = BoxMutator::new(|p: &mut Point| p.x *= 2)
+    let processor = BoxMutator::new(|p: &mut Point| p.x *= 2)
         .and_then(|p: &mut Point| p.y *= 2)
         .and_then(|p: &mut Point| p.x += p.y);
 

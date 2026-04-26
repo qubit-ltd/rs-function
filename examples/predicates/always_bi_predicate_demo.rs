@@ -6,7 +6,7 @@
  *    All rights reserved.
  *
  ******************************************************************************/
-use qubit_function::bi_predicate::{
+use qubit_function::{
     ArcBiPredicate,
     BiPredicate,
     BoxBiPredicate,

@@ -18,6 +18,14 @@ use qubit_function::{
     StatefulSupplier,
 };
 
+fn is_even_i32(value: &i32) -> bool {
+    value % 2 == 0
+}
+
+fn greater_than_five(value: &i32) -> bool {
+    *value > 5
+}
+
 fn main() {
     println!("=== Closure StatefulSupplier Operations Demo ===\n");
 
@@ -40,7 +48,7 @@ fn main() {
         counter2 += 1;
         counter2
     })
-    .filter(|x| x % 2 == 0);
+    .filter(is_even_i32);
 
     println!("   First call (odd number): {:?}", filtered.get());
     println!("   Second call (even number): {:?}\n", filtered.get());
@@ -66,7 +74,7 @@ fn main() {
 
     // 5. Fn closure using filter (Fn also implements FnMut, so can use FnSupplierOps)
     println!("5. Fn closure using filter:");
-    let mut filtered_readonly = (|| 42).filter(|x| x % 2 == 0);
+    let mut filtered_readonly = (|| 42).filter(is_even_i32);
     println!("   Filtered even number: {:?}\n", filtered_readonly.get());
 
     // 6. Chained operations
@@ -77,7 +85,7 @@ fn main() {
         counter3
     })
     .map(|x| x * 2)
-    .filter(|x| *x > 5)
+    .filter(greater_than_five)
     .map(|opt: Option<i32>| opt.unwrap_or(0));
 
     println!("   First call: {}", chained.get()); // 2, filtered out

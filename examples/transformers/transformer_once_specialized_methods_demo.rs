@@ -19,7 +19,6 @@ use qubit_function::{
     ArcTransformer,
     RcTransformer,
     Transformer,
-    TransformerOnce,
 };
 
 fn main() {
@@ -35,10 +34,7 @@ fn main() {
 
     // Test into_box - consumes self
     let boxed_once = arc_double.clone().into_box();
-    println!(
-        "   ArcTransformer::into_box(): {}",
-        boxed_once.apply(21)
-    );
+    println!("   ArcTransformer::into_box(): {}", boxed_once.apply(21));
 
     // Test into_fn - consumes self
     let fn_once = arc_double.clone().into_fn();
@@ -73,10 +69,7 @@ fn main() {
 
     // Test into_box - consumes self
     let boxed_once = rc_triple.clone().into_box();
-    println!(
-        "   RcTransformer::into_box(): {}",
-        boxed_once.apply(14)
-    );
+    println!("   RcTransformer::into_box(): {}", boxed_once.apply(14));
 
     // Test into_fn - consumes self
     let fn_once = rc_triple.clone().into_fn();
@@ -111,10 +104,7 @@ fn main() {
 
     // Using specialized method (more efficient)
     let specialized_box = arc_square.clone().into_box();
-    println!(
-        "   Specialized into_box: {}",
-        specialized_box.apply(5)
-    );
+    println!("   Specialized into_box: {}", specialized_box.apply(5));
 
     // Using default implementation (less efficient)
     let default_box = arc_square.clone().into_box();

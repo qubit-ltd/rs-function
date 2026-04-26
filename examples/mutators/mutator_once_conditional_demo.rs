@@ -10,12 +10,10 @@
 //!
 //! Demonstrates conditional execution features of BoxMutatorOnce
 
-use qubit_function::predicate::{
-    BoxPredicate,
-    FnPredicateOps,
-};
 use qubit_function::{
     BoxMutatorOnce,
+    BoxPredicate,
+    FnPredicateOps,
     MutatorOnce,
 };
 

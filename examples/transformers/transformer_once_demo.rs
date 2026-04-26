@@ -19,7 +19,7 @@ use qubit_function::{
     ArcTransformer,
     BoxTransformer,
     RcTransformer,
-    TransformerOnce,
+    Transformer,
 };
 use std::sync::Arc;
 use std::thread;
@@ -82,10 +82,7 @@ fn main() {
     });
 
     let result = handle.join().unwrap();
-    println!(
-        "   Executed in thread: new_double.apply(21) = {}",
-        result
-    );
+    println!("   Executed in thread: new_double.apply(21) = {}", result);
 
     println!("\n=== Demo completed ===");
 }
