@@ -28,19 +28,23 @@ pub mod transformer_once;
 pub use bi_transformer::{
     ArcBiTransformer,
     ArcBinaryOperator,
+    ArcConditionalBiTransformer,
     BiTransformer,
     BinaryOperator,
     BoxBiTransformer,
     BoxBinaryOperator,
+    BoxConditionalBiTransformer,
     FnBiTransformerOps,
     RcBiTransformer,
     RcBinaryOperator,
+    RcConditionalBiTransformer,
 };
 pub use bi_transformer_once::{
     BiTransformerOnce,
     BinaryOperatorOnce,
     BoxBiTransformerOnce,
     BoxBinaryOperatorOnce,
+    BoxConditionalBiTransformerOnce,
     FnBiTransformerOnceOps,
 };
 pub use stateful_bi_transformer::{

@@ -43,6 +43,7 @@ pub use bi_function::{
 pub use bi_function_once::{
     BiFunctionOnce,
     BoxBiFunctionOnce,
+    BoxConditionalBiFunctionOnce,
     FnBiFunctionOnceOps,
 };
 pub use bi_mutating_function::{
@@ -75,18 +76,23 @@ pub use function::{
     RcFunction,
 };
 pub use function_once::{
+    BoxConditionalFunctionOnce,
     BoxFunctionOnce,
     FnFunctionOnceOps,
     FunctionOnce,
 };
 pub use mutating_function::{
+    ArcConditionalMutatingFunction,
     ArcMutatingFunction,
+    BoxConditionalMutatingFunction,
     BoxMutatingFunction,
     FnMutatingFunctionOps,
     MutatingFunction,
+    RcConditionalMutatingFunction,
     RcMutatingFunction,
 };
 pub use mutating_function_once::{
+    BoxConditionalMutatingFunctionOnce,
     BoxMutatingFunctionOnce,
     FnMutatingFunctionOnceOps,
     MutatingFunctionOnce,
@@ -102,9 +108,12 @@ pub use stateful_function::{
     StatefulFunction,
 };
 pub use stateful_mutating_function::{
+    ArcConditionalStatefulMutatingFunction,
     ArcStatefulMutatingFunction,
+    BoxConditionalStatefulMutatingFunction,
     BoxStatefulMutatingFunction,
     FnStatefulMutatingFunctionOps,
+    RcConditionalStatefulMutatingFunction,
     RcStatefulMutatingFunction,
     StatefulMutatingFunction,
 };

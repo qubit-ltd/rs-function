@@ -300,6 +300,17 @@ fn test_box_runnable_name_management() {
 }
 
 #[test]
+fn test_box_runnable_set_name_handles_empty_and_same_name() {
+    let mut task = BoxRunnable::<io::Error>::new(|| Ok(()));
+
+    assert_eq!(task.name(), None);
+    task.set_name("cleanup");
+    assert_eq!(task.name(), Some("cleanup"));
+    task.set_name("cleanup");
+    assert_eq!(task.name(), Some("cleanup"));
+}
+
+#[test]
 fn test_box_runnable_into_box_returns_self() {
     let task = BoxRunnable::new(|| Ok::<(), io::Error>(()));
 
@@ -389,6 +400,25 @@ fn test_box_runnable_then_callable_runs_callable_on_success() {
 }
 
 #[test]
+fn test_box_runnable_then_callable_skips_callable_on_error() {
+    let callable_ran = Rc::new(Cell::new(false));
+    let callable_ran_capture = Rc::clone(&callable_ran);
+    let task = BoxRunnable::<io::Error>::new(|| Err(io::Error::other("prepare failed")));
+    let callable = move || {
+        callable_ran_capture.set(true);
+        Ok::<i32, io::Error>(42)
+    };
+
+    let mut chained = task.then_callable(callable);
+    let error = chained
+        .call()
+        .expect_err("then_callable should preserve runnable error");
+
+    assert_eq!(error.to_string(), "prepare failed");
+    assert!(!callable_ran.get());
+}
+
+#[test]
 fn test_runnable_into_callable_returns_unit_callable() {
     let task = BoxRunnable::new_with_name("cleanup", || Ok::<(), io::Error>(()));
 
@@ -396,4 +426,19 @@ fn test_runnable_into_callable_returns_unit_callable() {
 
     assert_eq!(callable.name(), Some("cleanup"));
     callable.call().expect("unit callable should succeed");
+}
+
+#[test]
+fn test_runnable_into_callable_preserves_error() {
+    let task = BoxRunnable::<io::Error>::new_with_name("cleanup", || {
+        Err(io::Error::other("cleanup failed"))
+    });
+
+    let mut callable = task.into_callable();
+    let error = callable
+        .call()
+        .expect_err("unit callable should preserve runnable error");
+
+    assert_eq!(callable.name(), Some("cleanup"));
+    assert_eq!(error.to_string(), "cleanup failed");
 }

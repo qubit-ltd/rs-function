@@ -34,6 +34,17 @@ impl RunnableOnce<io::Error> for ClonedRunnableOnce {
     }
 }
 
+struct FlagCallableOnce {
+    flag: Rc<Cell<bool>>,
+}
+
+impl CallableOnce<i32, io::Error> for FlagCallableOnce {
+    fn call(self) -> Result<i32, io::Error> {
+        self.flag.set(true);
+        Ok(42)
+    }
+}
+
 #[test]
 fn test_runnable_once_closure_run_returns_success() {
     let flag = Rc::new(Cell::new(false));
@@ -210,6 +221,60 @@ fn test_box_runnable_once_and_then_skips_next_on_error() {
 }
 
 #[test]
+fn test_box_runnable_once_combinators_cover_branches_with_same_next_types() {
+    let success_flag = Rc::new(Cell::new(false));
+    let first = BoxRunnableOnce::new(|| Ok::<(), io::Error>(()));
+    let chained = first.and_then(ClonedRunnableOnce {
+        flag: Rc::clone(&success_flag),
+    });
+    chained
+        .run()
+        .expect("concrete and_then next should run after success");
+    assert!(success_flag.get());
+
+    let error_flag = Rc::new(Cell::new(false));
+    let first = BoxRunnableOnce::new(|| Err::<(), _>(io::Error::other("stop")));
+    let chained = first.and_then(ClonedRunnableOnce {
+        flag: Rc::clone(&error_flag),
+    });
+    assert_eq!(
+        chained
+            .run()
+            .expect_err("concrete and_then next should be skipped")
+            .to_string(),
+        "stop",
+    );
+    assert!(!error_flag.get());
+
+    let success_flag = Rc::new(Cell::new(false));
+    let first = BoxRunnableOnce::new(|| Ok::<(), io::Error>(()));
+    let callable = first.then_callable(FlagCallableOnce {
+        flag: Rc::clone(&success_flag),
+    });
+    assert_eq!(
+        callable
+            .call()
+            .expect("concrete callable should run after success"),
+        42
+    );
+    assert!(success_flag.get());
+
+    let error_flag = Rc::new(Cell::new(false));
+    let first = BoxRunnableOnce::new(|| Err::<(), _>(io::Error::other("prepare failed")));
+    let callable = first.then_callable(FlagCallableOnce {
+        flag: Rc::clone(&error_flag),
+    });
+    assert_eq!(
+        callable
+            .call()
+            .expect_err("concrete callable should be skipped")
+            .to_string(),
+        "prepare failed",
+    );
+    assert!(!error_flag.get());
+}
+
+#[test]
 fn test_box_runnable_once_then_callable_runs_callable_on_success() {
     let task = BoxRunnableOnce::new_with_name("prepare", || Ok::<(), io::Error>(()));
     let callable = || Ok::<i32, io::Error>(42);
@@ -217,6 +282,25 @@ fn test_box_runnable_once_then_callable_runs_callable_on_success() {
     let chained = task.then_callable(callable);
     assert_eq!(chained.name(), Some("prepare"));
     assert_eq!(chained.call().expect("callable should succeed"), 42);
+}
+
+#[test]
+fn test_box_runnable_once_then_callable_skips_callable_on_error() {
+    let callable_ran = Rc::new(Cell::new(false));
+    let callable_ran_capture = Rc::clone(&callable_ran);
+    let task = BoxRunnableOnce::<io::Error>::new(|| Err(io::Error::other("prepare failed")));
+    let callable = move || {
+        callable_ran_capture.set(true);
+        Ok::<i32, io::Error>(42)
+    };
+
+    let chained = task.then_callable(callable);
+    let error = chained
+        .call()
+        .expect_err("then_callable should preserve runnable error");
+
+    assert_eq!(error.to_string(), "prepare failed");
+    assert!(!callable_ran.get());
 }
 
 #[test]
@@ -292,4 +376,30 @@ fn test_box_runnable_once_combinators_with_text_error_type() {
     let runnable = BoxRunnableOnce::new(|| Ok::<(), &'static str>(()));
     let callable = runnable.then_callable(|| Ok::<i32, &'static str>(9));
     assert_eq!(callable.call().expect("then_callable should succeed"), 9);
+
+    let skipped = Rc::new(Cell::new(false));
+    let skipped_capture = Rc::clone(&skipped);
+    let first = BoxRunnableOnce::new(|| Err::<(), &'static str>("stop"));
+    let second = move || {
+        skipped_capture.set(true);
+        Ok::<(), &'static str>(())
+    };
+    let chained = first.and_then(second);
+    assert_eq!(chained.run().expect_err("and_then should fail"), "stop");
+    assert!(!skipped.get());
+
+    let callable_ran = Rc::new(Cell::new(false));
+    let callable_ran_capture = Rc::clone(&callable_ran);
+    let runnable = BoxRunnableOnce::new(|| Err::<(), &'static str>("prepare"));
+    let callable = runnable.then_callable(move || {
+        callable_ran_capture.set(true);
+        Ok::<i32, &'static str>(9)
+    });
+    assert_eq!(
+        callable
+            .call()
+            .expect_err("then_callable should preserve runnable error"),
+        "prepare"
+    );
+    assert!(!callable_ran.get());
 }

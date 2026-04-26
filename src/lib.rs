@@ -51,10 +51,15 @@ pub mod transformers;
 // ---- Consumer Types (Fn(&T)) ----
 pub use consumers::{
     // Arc-based (shared multi-threaded ownership)
+    ArcConditionalConsumer,
+    ArcConditionalStatefulConsumer,
     ArcConsumer,
     ArcStatefulConsumer,
 
     // Box-based (single ownership)
+    BoxConditionalConsumer,
+    BoxConditionalConsumerOnce,
+    BoxConditionalStatefulConsumer,
     BoxConsumer,
     BoxConsumerOnce,
     BoxStatefulConsumer,
@@ -67,6 +72,8 @@ pub use consumers::{
     FnConsumerOps,
     FnStatefulConsumerOps,
     // Rc-based (shared single-threaded ownership)
+    RcConditionalConsumer,
+    RcConditionalStatefulConsumer,
     RcConsumer,
     RcStatefulConsumer,
 
@@ -77,6 +84,8 @@ pub use consumers::{
 pub use consumers::{
     // Arc-based (shared multi-threaded ownership)
     ArcBiConsumer,
+    ArcConditionalBiConsumer,
+    ArcConditionalStatefulBiConsumer,
     ArcStatefulBiConsumer,
 
     // Core traits
@@ -85,6 +94,9 @@ pub use consumers::{
     // Box-based (single ownership)
     BoxBiConsumer,
     BoxBiConsumerOnce,
+    BoxConditionalBiConsumer,
+    BoxConditionalBiConsumerOnce,
+    BoxConditionalStatefulBiConsumer,
     BoxStatefulBiConsumer,
 
     FnBiConsumerOnceOps,
@@ -93,6 +105,8 @@ pub use consumers::{
     FnStatefulBiConsumerOps,
     // Rc-based (shared single-threaded ownership)
     RcBiConsumer,
+    RcConditionalBiConsumer,
+    RcConditionalStatefulBiConsumer,
     RcStatefulBiConsumer,
 
     StatefulBiConsumer,
@@ -184,20 +198,29 @@ pub use functions::{
     ArcConditionalBiMutatingFunction,
     // Arc-based (shared multi-threaded ownership)
     ArcConditionalFunction,
+    ArcConditionalMutatingFunction,
     ArcConditionalStatefulFunction,
+    ArcConditionalStatefulMutatingFunction,
     BoxConditionalBiFunction,
+    BoxConditionalBiFunctionOnce,
     BoxConditionalBiMutatingFunction,
     BoxConditionalBiMutatingFunctionOnce,
-
     // Box-based (single ownership)
     BoxConditionalFunction,
+    BoxConditionalFunctionOnce,
+    BoxConditionalMutatingFunction,
+    BoxConditionalMutatingFunctionOnce,
+
     BoxConditionalStatefulFunction,
+    BoxConditionalStatefulMutatingFunction,
     RcConditionalBiFunction,
     RcConditionalBiMutatingFunction,
-
     // Rc-based (shared single-threaded ownership)
     RcConditionalFunction,
+    RcConditionalMutatingFunction,
+
     RcConditionalStatefulFunction,
+    RcConditionalStatefulMutatingFunction,
 };
 
 // =============================================================================
@@ -286,16 +309,20 @@ pub use transformers::{
 
 // ---- Conditional Transformer Types ----
 pub use transformers::{
+    ArcConditionalBiTransformer,
     ArcConditionalStatefulBiTransformer,
     ArcConditionalStatefulTransformer,
     // Arc-based (shared multi-threaded ownership)
     ArcConditionalTransformer,
+    BoxConditionalBiTransformer,
+    BoxConditionalBiTransformerOnce,
     BoxConditionalStatefulBiTransformer,
 
     BoxConditionalStatefulTransformer,
     // Box-based (single ownership)
     BoxConditionalTransformer,
     BoxConditionalTransformerOnce,
+    RcConditionalBiTransformer,
     RcConditionalStatefulBiTransformer,
 
     RcConditionalStatefulTransformer,
