@@ -69,13 +69,13 @@ fn main() {
 
     // 4. Fn closure using map (Fn also implements FnMut, so can use FnSupplierOps)
     println!("4. Fn closure using map:");
-    let mut mapped_readonly = (|| 10).map(|x| x * 3).map(|x| x + 5);
-    println!("   Result: {}\n", mapped_readonly.get());
+    let mut mapped_stateless = (|| 10).map(|x| x * 3).map(|x| x + 5);
+    println!("   Result: {}\n", mapped_stateless.get());
 
     // 5. Fn closure using filter (Fn also implements FnMut, so can use FnSupplierOps)
     println!("5. Fn closure using filter:");
-    let mut filtered_readonly = (|| 42).filter(is_even_i32);
-    println!("   Filtered even number: {:?}\n", filtered_readonly.get());
+    let mut filtered_stateless = (|| 42).filter(is_even_i32);
+    println!("   Filtered even number: {:?}\n", filtered_stateless.get());
 
     // 6. Chained operations
     println!("6. Chained operations:");

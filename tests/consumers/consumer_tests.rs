@@ -55,7 +55,7 @@ fn test_consumer_default_conversions_allow_relaxed_generic_types() {
 }
 
 #[cfg(test)]
-mod box_readonly_consumer_tests {
+mod box_non_mutating_consumer_tests {
     use super::*;
 
     #[test]
@@ -213,7 +213,7 @@ mod box_readonly_consumer_tests {
 }
 
 #[cfg(test)]
-mod arc_readonly_consumer_tests {
+mod arc_non_mutating_consumer_tests {
     use super::*;
 
     #[test]
@@ -363,7 +363,7 @@ mod arc_readonly_consumer_tests {
 }
 
 #[cfg(test)]
-mod rc_readonly_consumer_tests {
+mod rc_non_mutating_consumer_tests {
     use super::*;
 
     #[test]

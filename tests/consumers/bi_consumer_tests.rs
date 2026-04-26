@@ -59,7 +59,7 @@ fn test_bi_consumer_default_conversions_allow_relaxed_generic_types() {
 }
 
 #[cfg(test)]
-mod box_readonly_bi_consumer_tests {
+mod box_non_mutating_bi_consumer_tests {
     use super::*;
 
     #[test]
@@ -162,7 +162,7 @@ mod box_readonly_bi_consumer_tests {
 }
 
 #[cfg(test)]
-mod arc_readonly_bi_consumer_tests {
+mod arc_non_mutating_bi_consumer_tests {
     use super::*;
 
     #[test]
@@ -305,7 +305,7 @@ mod arc_readonly_bi_consumer_tests {
 }
 
 #[cfg(test)]
-mod rc_readonly_bi_consumer_tests {
+mod rc_non_mutating_bi_consumer_tests {
     use super::*;
 
     #[test]
@@ -976,7 +976,7 @@ mod display_debug_tests {
 // ============================================================================
 
 #[cfg(test)]
-mod custom_readonly_bi_consumer_tests {
+mod custom_non_mutating_bi_consumer_tests {
     use super::*;
 
     /// Custom BiConsumer implementation for testing trait's default methods

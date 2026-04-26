@@ -8,7 +8,7 @@
  ******************************************************************************/
 //! # Consumer Types
 //!
-//! Provides implementations of readonly consumer interfaces for executing
+//! Provides implementations of non-mutating consumer interfaces for executing
 //! operations that neither modify their own state nor modify input values.
 //!
 //! It is similar to the `Fn(&T)` trait in the standard library.
@@ -24,12 +24,13 @@
 //!
 //! # Design Philosophy
 //!
-//! Consumer uses `Fn(&T)` semantics, neither modifying its own state nor
-//! modifying input values.
+//! Consumer uses `Fn(&T)` semantics: it is invoked through `&self` and receives
+//! shared references to input values.
 //!
 //! Suitable for pure observation, logging, notification and other scenarios.
-//! Compared to Consumer, Consumer does not require interior mutability
-//! (Mutex/RefCell), making it more efficient and easier to share.
+//! Compared to `StatefulConsumer`, `Consumer` does not require wrapper-level
+//! interior mutability (`Mutex`/`RefCell`), making it more efficient and easier
+//! to share.
 //!
 //! # Author
 //!
@@ -68,13 +69,13 @@ use crate::predicates::predicate::{
 // 1. Consumer Trait - Unified Consumer Interface
 // ============================================================================
 
-/// Consumer trait - Unified readonly consumer interface
+/// Consumer trait - Unified non-mutating consumer interface
 ///
 /// It is similar to the `Fn(&T)` trait in the standard library.
 ///
-/// Defines the core behavior of all readonly consumer types. Unlike `Consumer`,
-/// `Consumer` neither modifies its own state nor modifies input values,
-/// making it a completely immutable operation.
+/// Defines the core behavior of all non-mutating consumer types. The API uses
+/// `&self` and shared input references, so callers can use a consumer without
+/// granting mutable access to the consumer wrapper or input value.
 ///
 /// # Auto-implementation
 ///
@@ -84,14 +85,15 @@ use crate::predicates::predicate::{
 ///
 /// # Features
 ///
-/// - **Unified Interface**: All readonly consumer types share the same `accept`
+/// - **Unified Interface**: All non-mutating consumer types share the same `accept`
 ///   method signature
 /// - **Auto-implementation**: Closures automatically implement this trait with
 ///   zero overhead
 /// - **Type Conversion**: Easy conversion between different ownership models
-/// - **Generic Programming**: Write functions that work with any readonly
+/// - **Generic Programming**: Write functions that work with any non-mutating
 ///   consumer type
-/// - **No Interior Mutability**: No need for Mutex or RefCell, more efficient
+/// - **No Wrapper Interior Mutability**: No need for Mutex or RefCell in the
+///   wrapper, making shared ownership more efficient
 ///
 /// # Examples
 ///
@@ -112,7 +114,7 @@ use crate::predicates::predicate::{
 ///
 /// Haixing Hu
 pub trait Consumer<T> {
-    /// Execute readonly consumption operation
+    /// Execute non-mutating consumption operation
     ///
     /// Performs an operation on the given reference. The operation typically
     /// reads input values or produces side effects, but neither modifies the
@@ -182,7 +184,7 @@ pub trait Consumer<T> {
     /// **⚠️ Consumes `self`**: The original consumer will be unavailable after
     /// calling this method.
     ///
-    /// Converts a readonly consumer to a closure that can be used directly in
+    /// Converts a non-mutating consumer to a closure that can be used directly in
     /// places where the standard library requires `Fn`.
     ///
     /// # Returns
@@ -211,7 +213,7 @@ pub trait Consumer<T> {
     ///
     /// **⚠️ Consumes `self`**: The original consumer will be unavailable after calling this method.
     ///
-    /// Converts a reusable readonly consumer to a one-time consumer that consumes itself on use.
+    /// Converts a reusable non-mutating consumer to a one-time consumer that consumes itself on use.
     /// This enables passing `Consumer` to functions that require `ConsumerOnce`.
     ///
     /// # Returns
@@ -240,7 +242,7 @@ pub trait Consumer<T> {
     /// Non-consuming conversion to `BoxConsumer`
     ///
     /// **⚠️ Does NOT consume `self`**: This method clones `self` and returns a
-    /// boxed readonly consumer that calls the cloned consumer. Requires
+    /// boxed non-mutating consumer that calls the cloned consumer. Requires
     /// `Self: Clone` so it can be called through an immutable reference.
     ///
     /// # Returns
@@ -336,20 +338,22 @@ pub trait Consumer<T> {
 
 /// BoxConsumer struct
 ///
-/// Readonly consumer implementation based on `Box<dyn Fn(&T)>` for single
+/// Non-mutating consumer implementation based on `Box<dyn Fn(&T)>` for single
 /// ownership scenarios.
 ///
 /// # Features
 ///
 /// - **Single Ownership**: Not cloneable, transfers ownership when used
 /// - **Zero Overhead**: No reference counting or lock overhead
-/// - **Completely Immutable**: Neither modifies itself nor input
-/// - **No Interior Mutability**: No need for Mutex or RefCell
+/// - **Shared-reference API**: Invoked through `&self` and shared input
+///   references
+/// - **No Wrapper Interior Mutability**: No need for Mutex or RefCell in the
+///   wrapper
 ///
 /// # Use Cases
 ///
 /// Choose `BoxConsumer` when:
-/// - Readonly consumer is used once or in a linear flow
+/// - Non-mutating consumer is used once or in a linear flow
 /// - No need to share consumer across contexts
 /// - Pure observation operations, such as logging
 ///
@@ -398,22 +402,23 @@ impl_consumer_debug_display!(BoxConsumer<T>);
 
 /// RcConsumer struct
 ///
-/// Readonly consumer implementation based on `Rc<dyn Fn(&T)>` for
-/// single-threaded shared ownership scenarios. No RefCell needed because
-/// operations are readonly.
+/// Non-mutating consumer implementation based on `Rc<dyn Fn(&T)>` for
+/// single-threaded shared ownership scenarios. The wrapper does not need
+/// `RefCell` because it only invokes a shared `Fn`.
 ///
 /// # Features
 ///
 /// - **Shared Ownership**: Cloneable through `Rc`, allows multiple owners
 /// - **Single-threaded**: Not thread-safe, cannot be sent across threads
-/// - **No Interior Mutability Overhead**: No RefCell needed because it's readonly
+/// - **No Wrapper Interior Mutability Overhead**: No RefCell needed by the
+///   wrapper
 /// - **Non-consuming API**: `and_then` borrows `&self`, original object remains
 ///   usable
 ///
 /// # Use Cases
 ///
 /// Choose `RcConsumer` when:
-/// - Need to share readonly consumer within a single thread
+/// - Need to share non-mutating consumer within a single thread
 /// - Pure observation operations, performance critical
 /// - Event handling in single-threaded UI frameworks
 ///
@@ -421,7 +426,7 @@ impl_consumer_debug_display!(BoxConsumer<T>);
 ///
 /// `RcConsumer` has neither Arc's atomic operation overhead nor
 /// RefCell's runtime borrow checking overhead, making it the most performant of
-/// the three readonly consumers.
+/// the three non-mutating consumers.
 ///
 /// # Examples
 ///
@@ -485,29 +490,29 @@ impl_consumer_debug_display!(RcConsumer<T>);
 
 /// ArcConsumer struct
 ///
-/// Readonly consumer implementation based on `Arc<dyn Fn(&T) + Send + Sync>`,
-/// for thread-safe shared ownership scenarios. No Mutex needed because
-/// operations are readonly.
+/// Non-mutating consumer implementation based on `Arc<dyn Fn(&T) + Send + Sync>`,
+/// for thread-safe shared ownership scenarios. The wrapper does not need
+/// `Mutex` because it only invokes a shared `Fn`.
 ///
 /// # Features
 ///
 /// - **Shared Ownership**: Cloneable through `Arc`, allows multiple owners
 /// - **Thread Safe**: Implements `Send + Sync`, can be safely used concurrently
-/// - **Lock-free**: No Mutex protection needed because it's readonly
+/// - **Lock-free Wrapper**: No Mutex protection needed by the wrapper
 /// - **Non-consuming API**: `and_then` borrows `&self`, original object remains
 ///   usable
 ///
 /// # Use Cases
 ///
 /// Choose `ArcConsumer` when:
-/// - Need to share readonly consumer across multiple threads
+/// - Need to share non-mutating consumer across multiple threads
 /// - Pure observation operations, such as logging, monitoring, notifications
 /// - Need high-concurrency reads with no lock overhead
 ///
 /// # Performance Advantages
 ///
-/// Compared to `ArcConsumer`, `ArcConsumer` has no Mutex lock overhead,
-/// performing better in high-concurrency scenarios.
+/// Compared to `ArcStatefulConsumer`, `ArcConsumer` has no Mutex lock overhead,
+/// performing better in high-concurrency observation scenarios.
 ///
 /// # Examples
 ///
@@ -584,7 +589,7 @@ impl_closure_trait!(
 // 6. Provide extension methods for closures
 // ============================================================================
 
-/// Extension trait providing readonly consumer composition methods for closures
+/// Extension trait providing non-mutating consumer composition methods for closures
 ///
 /// Provides `and_then` and other composition methods for all closures
 /// implementing `Fn(&T)`, allowing closures to directly chain methods without
@@ -615,7 +620,7 @@ impl_closure_trait!(
 ///
 /// Haixing Hu
 pub trait FnConsumerOps<T>: Fn(&T) + Sized {
-    /// Sequentially chain another readonly consumer
+    /// Sequentially chain another non-mutating consumer
     ///
     /// Returns a new consumer that executes the current operation first, then the
     /// next operation. Consumes the current closure and returns
@@ -670,7 +675,7 @@ impl<T, F> FnConsumerOps<T> for F where F: Fn(&T) {}
 
 /// BoxConditionalConsumer struct
 ///
-/// A conditional readonly consumer that only executes when a predicate is satisfied.
+/// A conditional non-mutating consumer that only executes when a predicate is satisfied.
 /// Uses `BoxConsumer` and `BoxPredicate` for single ownership semantics.
 ///
 /// This type is typically created by calling `BoxConsumer::when()` and is
@@ -682,7 +687,7 @@ impl<T, F> FnConsumerOps<T> for F where F: Fn(&T) {}
 /// - **Conditional Execution**: Only consumes when predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 /// - **Implements Consumer**: Can be used anywhere a `Consumer` is expected
-/// - **Readonly**: Neither modifies itself nor input values
+/// - **Non-mutating**: Neither modifies itself nor input values
 ///
 /// # Examples
 ///
@@ -749,7 +754,7 @@ impl_conditional_consumer_debug_display!(BoxConditionalConsumer<T>);
 
 /// RcConditionalConsumer struct
 ///
-/// A conditional readonly consumer that only executes when a predicate is satisfied.
+/// A conditional non-mutating consumer that only executes when a predicate is satisfied.
 /// Uses `RcConsumer` and `RcPredicate` for single-threaded shared ownership semantics.
 ///
 /// This type is typically created by calling `RcConsumer::when()` and is
@@ -762,7 +767,7 @@ impl_conditional_consumer_debug_display!(BoxConditionalConsumer<T>);
 /// - **Conditional Execution**: Only consumes when predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 /// - **Implements Consumer**: Can be used anywhere a `Consumer` is expected
-/// - **Readonly**: Neither modifies itself nor input values
+/// - **Non-mutating**: Neither modifies itself nor input values
 ///
 /// # Examples
 ///
@@ -838,7 +843,7 @@ impl_conditional_consumer_debug_display!(RcConditionalConsumer<T>);
 
 /// ArcConditionalConsumer struct
 ///
-/// A conditional readonly consumer that only executes when a predicate is satisfied.
+/// A conditional non-mutating consumer that only executes when a predicate is satisfied.
 /// Uses `ArcConsumer` and `ArcPredicate` for thread-safe shared ownership semantics.
 ///
 /// This type is typically created by calling `ArcConsumer::when()` and is
@@ -851,7 +856,7 @@ impl_conditional_consumer_debug_display!(RcConditionalConsumer<T>);
 /// - **Conditional Execution**: Only consumes when predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 /// - **Implements Consumer**: Can be used anywhere a `Consumer` is expected
-/// - **Readonly**: Neither modifies itself nor input values
+/// - **Non-mutating**: Neither modifies itself nor input values
 ///
 /// # Examples
 ///

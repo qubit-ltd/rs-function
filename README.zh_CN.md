@@ -83,9 +83,10 @@ assert!(sum_positive.test(&3, &4));
 assert!(!sum_positive.test(&-5, &2));
 ```
 
-### 3. Consumer - 只读消费者
+### 3. Consumer - 非修改型消费者
 
-接受值引用并执行带副作用的操作,不返回结果。
+接受值引用并执行带副作用的操作,不返回结果。API 使用共享引用,
+不会向消费者包装器或输入值授予可变访问权。
 
 **Trait**: `Consumer<T>`
 **核心方法**: `accept(&self, value: &T)`
@@ -106,7 +107,7 @@ let logger = BoxConsumer::new(|x: &i32| {
 logger.accept(&42);
 ```
 
-### 4. ConsumerOnce - 一次性只读消费者
+### 4. ConsumerOnce - 一次性非修改型消费者
 
 接受值引用并执行一次带副作用的操作。
 
@@ -117,9 +118,10 @@ logger.accept(&42);
 **实现类型**:
 - `BoxConsumerOnce<T>` - 单一所有权,一次性使用
 
-### 5. BiConsumer - 双参数只读消费者
+### 5. BiConsumer - 双参数非修改型消费者
 
-接受两个值引用并执行带副作用的操作,不返回结果。
+接受两个值引用并执行带副作用的操作,不返回结果。API 使用共享引用,
+不会向消费者包装器或输入值授予可变访问权。
 
 **Trait**: `BiConsumer<T, U>`
 **核心方法**: `accept(&self, first: &T, second: &U)`
@@ -140,7 +142,7 @@ let sum_logger = BoxBiConsumer::new(|x: &i32, y: &i32| {
 sum_logger.accept(&10, &20);
 ```
 
-### 6. BiConsumerOnce - 一次性双参数只读消费者
+### 6. BiConsumerOnce - 一次性双参数非修改型消费者
 
 接受两个值引用并执行一次带副作用的操作。
 

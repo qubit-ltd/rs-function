@@ -12,7 +12,7 @@
 //! This example demonstrates the three implementations of Mutator (BoxMutator, ArcMutator, RcMutator)
 //! and their various usage patterns.
 //!
-//! Mutator is used to modify values, unlike the read-only Consumer.
+//! Mutator is used to modify values, unlike the non-mutating Consumer.
 
 use qubit_function::{
     ArcMutator,

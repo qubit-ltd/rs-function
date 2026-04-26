@@ -8,7 +8,7 @@
  ******************************************************************************/
 //! # BiConsumer Types
 //!
-//! Provides readonly bi-consumer interface implementations for operations
+//! Provides non-mutating bi-consumer interface implementations for operations
 //! that accept two input parameters without modifying their own state or
 //! the input values.
 //!
@@ -25,12 +25,13 @@
 //!
 //! # Design Philosophy
 //!
-//! BiConsumer uses `Fn(&T, &U)` semantics: neither modifies its
-//! own state nor the input values.
+//! BiConsumer uses `Fn(&T, &U)` semantics: it is invoked through `&self` and
+//! receives shared references to both input values.
 //!
 //! Suitable for pure observation, logging, and notification scenarios with two
-//! parameters. Compared to BiConsumer, BiConsumer does not require interior
-//! mutability (Mutex/RefCell), thus more efficient and easier to share.
+//! parameters. Compared to `StatefulBiConsumer`, `BiConsumer` does not require
+//! wrapper-level interior mutability (`Mutex`/`RefCell`), making it more
+//! efficient and easier to share.
 //!
 //! # Author
 //!
@@ -70,23 +71,23 @@ use crate::predicates::bi_predicate::{
 // Type Aliases
 // ==========================================================================
 
-/// Type alias for readonly bi-consumer function signature.
+/// Type alias for non-mutating bi-consumer function signature.
 type BiConsumerFn<T, U> = dyn Fn(&T, &U);
 
-/// Type alias for thread-safe readonly bi-consumer function signature.
+/// Type alias for thread-safe non-mutating bi-consumer function signature.
 type ThreadSafeBiConsumerFn<T, U> = dyn Fn(&T, &U) + Send + Sync;
 
 // =======================================================================
 // 1. BiConsumer Trait - Unified Interface
 // =======================================================================
 
-/// BiConsumer trait - Unified readonly bi-consumer interface
+/// BiConsumer trait - Unified non-mutating bi-consumer interface
 ///
 /// It is similar to the `Fn(&T, &U)` trait in the standard library.
 ///
-/// Defines core behavior for all readonly bi-consumer types. Unlike
-/// `BiConsumer`, `BiConsumer` neither modifies its own state nor
-/// the input values, making it a fully immutable operation.
+/// Defines core behavior for all non-mutating bi-consumer types. The API uses
+/// `&self` and shared input references, so callers can use a bi-consumer
+/// without granting mutable access to the consumer wrapper or input values.
 ///
 /// # Automatic Implementations
 ///
@@ -96,15 +97,15 @@ type ThreadSafeBiConsumerFn<T, U> = dyn Fn(&T, &U) + Send + Sync;
 ///
 /// # Features
 ///
-/// - **Unified Interface**: All readonly bi-consumer types share the same
+/// - **Unified Interface**: All non-mutating bi-consumer types share the same
 ///   `accept` method signature
 /// - **Automatic Implementation**: Closures automatically implement this
 ///   trait with zero overhead
 /// - **Type Conversions**: Easy conversion between ownership models
-/// - **Generic Programming**: Write functions accepting any readonly
+/// - **Generic Programming**: Write functions accepting any non-mutating
 ///   bi-consumer type
-/// - **No Interior Mutability**: No need for Mutex or RefCell, more
-///   efficient
+/// - **No Wrapper Interior Mutability**: No need for Mutex or RefCell in the
+///   wrapper, making shared ownership more efficient
 ///
 /// # Examples
 ///
@@ -129,7 +130,7 @@ type ThreadSafeBiConsumerFn<T, U> = dyn Fn(&T, &U) + Send + Sync;
 ///
 /// Haixing Hu
 pub trait BiConsumer<T, U> {
-    /// Performs the readonly consumption operation
+    /// Performs the non-mutating consumption operation
     ///
     /// Executes an operation on the given two references. The operation
     /// typically reads input values or produces side effects, but neither
@@ -197,12 +198,12 @@ pub trait BiConsumer<T, U> {
         ArcBiConsumer::new(move |t, u| self.accept(t, u))
     }
 
-    /// Converts readonly bi-consumer to a closure
+    /// Converts non-mutating bi-consumer to a closure
     ///
     /// **⚠️ Consumes `self`**: Original consumer becomes unavailable after
     /// calling this method.
     ///
-    /// Converts the readonly bi-consumer to a closure usable with standard
+    /// Converts the non-mutating bi-consumer to a closure usable with standard
     /// library methods requiring `Fn`.
     ///
     /// # Returns
@@ -231,7 +232,7 @@ pub trait BiConsumer<T, U> {
     ///
     /// **⚠️ Consumes `self`**: The original consumer will be unavailable after calling this method.
     ///
-    /// Converts a reusable readonly bi-consumer to a one-time consumer that consumes itself on use.
+    /// Converts a reusable non-mutating bi-consumer to a one-time consumer that consumes itself on use.
     /// This enables passing `BiConsumer` to functions that require `BiConsumerOnce`.
     ///
     /// # Returns
@@ -380,20 +381,22 @@ pub trait BiConsumer<T, U> {
 
 /// BoxBiConsumer struct
 ///
-/// A readonly bi-consumer implementation based on `Box<dyn Fn(&T, &U)>`
+/// A non-mutating bi-consumer implementation based on `Box<dyn Fn(&T, &U)>`
 /// for single ownership scenarios.
 ///
 /// # Features
 ///
 /// - **Single Ownership**: Not cloneable, ownership moves on use
 /// - **Zero Overhead**: No reference counting or locking
-/// - **Fully Immutable**: Neither modifies itself nor input values
-/// - **No Interior Mutability**: No need for Mutex or RefCell
+/// - **Shared-reference API**: Invoked through `&self` and shared input
+///   references
+/// - **No Wrapper Interior Mutability**: No need for Mutex or RefCell in the
+///   wrapper
 ///
 /// # Use Cases
 ///
 /// Choose `BoxBiConsumer` when:
-/// - The readonly bi-consumer is used only once or in a linear flow
+/// - The non-mutating bi-consumer is used only once or in a linear flow
 /// - No need to share the consumer across contexts
 /// - Pure observation operations like logging
 ///
@@ -455,23 +458,23 @@ impl_consumer_debug_display!(BoxBiConsumer<T, U>);
 
 /// RcBiConsumer struct
 ///
-/// A readonly bi-consumer implementation based on `Rc<dyn Fn(&T, &U)>`
-/// for single-threaded shared ownership scenarios. No need for RefCell
-/// because operations are readonly.
+/// A non-mutating bi-consumer implementation based on `Rc<dyn Fn(&T, &U)>`
+/// for single-threaded shared ownership scenarios. The wrapper does not need
+/// `RefCell` because it only invokes a shared `Fn`.
 ///
 /// # Features
 ///
 /// - **Shared Ownership**: Cloneable via `Rc`, multiple owners allowed
 /// - **Single-Threaded**: Not thread-safe, cannot send across threads
-/// - **No Interior Mutability Overhead**: No need for RefCell because
-///   readonly
+/// - **No Wrapper Interior Mutability Overhead**: No RefCell needed by the
+///   wrapper
 /// - **Non-Consuming API**: `and_then` borrows `&self`, original remains
 ///   usable
 ///
 /// # Use Cases
 ///
 /// Choose `RcBiConsumer` when:
-/// - Need to share readonly bi-consumer within a single thread
+/// - Need to share non-mutating bi-consumer within a single thread
 /// - Pure observation operations, performance critical
 /// - Single-threaded UI framework event handling
 ///
@@ -479,14 +482,14 @@ impl_consumer_debug_display!(BoxBiConsumer<T, U>);
 ///
 /// `RcBiConsumer` has neither Arc's atomic operation overhead nor
 /// RefCell's runtime borrow checking overhead, making it the best
-/// performing among the three readonly bi-consumer types.
+/// performing among the three non-mutating bi-consumer types.
 ///
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{BiConsumer, ArcBiConsumer};
+/// use qubit_function::{BiConsumer, RcBiConsumer};
 ///
-/// let consumer: ArcBiConsumer<i32, i32> = ArcBiConsumer::new(|x: &i32, y: &i32| {
+/// let consumer: RcBiConsumer<i32, i32> = RcBiConsumer::new(|x: &i32, y: &i32| {
 ///     println!("Sum: {}", x + y);
 /// });
 /// let clone = consumer.clone();
@@ -547,29 +550,30 @@ impl_consumer_debug_display!(RcBiConsumer<T, U>);
 
 /// ArcBiConsumer struct
 ///
-/// A readonly bi-consumer implementation based on
+/// A non-mutating bi-consumer implementation based on
 /// `Arc<dyn Fn(&T, &U) + Send + Sync>` for thread-safe shared ownership
-/// scenarios. No need for Mutex because operations are readonly.
+/// scenarios. The wrapper does not need `Mutex` because it only invokes a
+/// shared `Fn`.
 ///
 /// # Features
 ///
 /// - **Shared Ownership**: Cloneable via `Arc`, multiple owners allowed
 /// - **Thread-Safe**: Implements `Send + Sync`, safe for concurrent use
-/// - **No Locks**: Because readonly, no need for Mutex protection
+/// - **Lock-free Wrapper**: No Mutex protection needed by the wrapper
 /// - **Non-Consuming API**: `and_then` borrows `&self`, original remains
 ///   usable
 ///
 /// # Use Cases
 ///
 /// Choose `ArcBiConsumer` when:
-/// - Need to share readonly bi-consumer across multiple threads
+/// - Need to share non-mutating bi-consumer across multiple threads
 /// - Pure observation operations like logging, monitoring, notifications
 /// - Need high-concurrency reads without lock overhead
 ///
 /// # Performance Advantages
 ///
-/// Compared to `ArcBiConsumer`, `ArcBiConsumer` has no Mutex
-/// locking overhead, resulting in better performance in high-concurrency
+/// Compared to `ArcStatefulBiConsumer`, `ArcBiConsumer` has no Mutex locking
+/// overhead, resulting in better performance in high-concurrency observation
 /// scenarios.
 ///
 /// # Examples
@@ -649,7 +653,7 @@ impl_closure_trait!(
 // 6. Provide extension methods for closures
 // =======================================================================
 
-/// Extension trait providing readonly bi-consumer composition methods for
+/// Extension trait providing non-mutating bi-consumer composition methods for
 /// closures
 ///
 /// Provides `and_then` and other composition methods for all closures
@@ -682,7 +686,7 @@ impl_closure_trait!(
 ///
 /// Haixing Hu
 pub trait FnBiConsumerOps<T, U>: Fn(&T, &U) + Sized {
-    /// Chains another readonly bi-consumer in sequence
+    /// Chains another non-mutating bi-consumer in sequence
     ///
     /// Returns a new consumer executing the current operation first, then
     /// the next operation. Consumes the current closure and returns
@@ -740,7 +744,7 @@ impl<T, U, F> FnBiConsumerOps<T, U> for F where F: Fn(&T, &U) {}
 
 /// BoxConditionalBiConsumer struct
 ///
-/// A conditional readonly bi-consumer that only executes when a predicate is satisfied.
+/// A conditional non-mutating bi-consumer that only executes when a predicate is satisfied.
 /// Uses `BoxBiConsumer` and `BoxBiPredicate` for single ownership semantics.
 ///
 /// This type is typically created by calling `BoxBiConsumer::when()` and is
@@ -752,7 +756,7 @@ impl<T, U, F> FnBiConsumerOps<T, U> for F where F: Fn(&T, &U) {}
 /// - **Conditional Execution**: Only consumes when predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 /// - **Implements BiConsumer**: Can be used anywhere a `BiConsumer` is expected
-/// - **Readonly**: Neither modifies itself nor input values
+/// - **Non-mutating**: Neither modifies itself nor input values
 ///
 /// # Examples
 ///
@@ -836,7 +840,7 @@ impl_conditional_consumer_debug_display!(BoxConditionalBiConsumer<T, U>);
 /// - **Thread Safe**: Implements `Send + Sync`, can be safely used concurrently
 /// - **Conditional Execution**: Only consumes when predicate returns `true`
 /// - **Implements BiConsumer**: Can be used anywhere a `BiConsumer` is expected
-/// - **Readonly**: Neither modifies itself nor input values
+/// - **Non-mutating**: Neither modifies itself nor input values
 ///
 /// # Author
 ///
@@ -892,7 +896,7 @@ impl_conditional_consumer_debug_display!(ArcConditionalBiConsumer<T, U>);
 /// - **Single-Threaded**: Not thread-safe, more efficient than Arc in single-threaded contexts
 /// - **Conditional Execution**: Only consumes when predicate returns `true`
 /// - **Implements BiConsumer**: Can be used anywhere a `BiConsumer` is expected
-/// - **Readonly**: Neither modifies itself nor input values
+/// - **Non-mutating**: Neither modifies itself nor input values
 ///
 /// # Author
 ///

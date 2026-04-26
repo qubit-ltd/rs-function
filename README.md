@@ -83,10 +83,11 @@ assert!(sum_positive.test(&3, &4));
 assert!(!sum_positive.test(&-5, &2));
 ```
 
-### 3. Consumer - Read-Only Consumer
+### 3. Consumer - Non-Mutating Consumer
 
 Accepts a value reference and performs side effects without returning a
-result.
+result. The API uses shared references and does not grant mutable access to
+the consumer wrapper or input value.
 
 **Trait**: `Consumer<T>`
 **Core Method**: `accept(&self, value: &T)`
@@ -107,7 +108,7 @@ let logger = BoxConsumer::new(|x: &i32| {
 logger.accept(&42);
 ```
 
-### 4. ConsumerOnce - Single-Use Read-Only Consumer
+### 4. ConsumerOnce - Single-Use Non-Mutating Consumer
 
 Accepts a value reference and performs side effects once.
 
@@ -118,10 +119,11 @@ Accepts a value reference and performs side effects once.
 **Implementations**:
 - `BoxConsumerOnce<T>` - Single ownership, one-time use
 
-### 5. BiConsumer - Two-Argument Read-Only Consumer
+### 5. BiConsumer - Two-Argument Non-Mutating Consumer
 
 Accepts two value references and performs side effects without returning a
-result.
+result. The API uses shared references and does not grant mutable access to
+the consumer wrapper or input values.
 
 **Trait**: `BiConsumer<T, U>`
 **Core Method**: `accept(&self, first: &T, second: &U)`
@@ -142,7 +144,7 @@ let sum_logger = BoxBiConsumer::new(|x: &i32, y: &i32| {
 sum_logger.accept(&10, &20);
 ```
 
-### 6. BiConsumerOnce - Single-Use Two-Argument Read-Only Consumer
+### 6. BiConsumerOnce - Single-Use Two-Argument Non-Mutating Consumer
 
 Accepts two value references and performs side effects once.
 

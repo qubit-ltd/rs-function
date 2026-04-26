@@ -68,11 +68,11 @@ fn test_supplier_default_conversions_allow_relaxed_generic_types() {
 }
 
 #[cfg(test)]
-mod test_readonly_supplier_trait {
+mod test_stateless_supplier_trait {
     use super::*;
 
     #[test]
-    fn test_closure_implements_readonly_supplier() {
+    fn test_closure_implements_stateless_supplier() {
         // Test that closure implements Supplier trait
         let closure = || 42;
         let boxed = closure.into_box();
@@ -170,7 +170,7 @@ mod test_readonly_supplier_trait {
 // ======================================================================
 
 #[cfg(test)]
-mod test_box_readonly_supplier {
+mod test_box_stateless_supplier {
     use super::*;
 
     mod test_new {
@@ -369,7 +369,7 @@ mod test_box_readonly_supplier {
 // ======================================================================
 
 #[cfg(test)]
-mod test_arc_readonly_supplier {
+mod test_arc_stateless_supplier {
     use super::*;
 
     mod test_new {
@@ -638,7 +638,7 @@ mod test_arc_readonly_supplier {
 // ======================================================================
 
 #[cfg(test)]
-mod test_rc_readonly_supplier {
+mod test_rc_stateless_supplier {
     use super::*;
 
     mod test_new {
@@ -933,7 +933,7 @@ mod test_integration {
 // ======================================================================
 
 #[cfg(test)]
-mod test_box_readonly_supplier_map_with_transformer {
+mod test_box_stateless_supplier_map_with_transformer {
     use super::*;
 
     // Helper function pointers
@@ -1025,7 +1025,7 @@ mod test_box_readonly_supplier_map_with_transformer {
 // ======================================================================
 
 #[cfg(test)]
-mod test_arc_readonly_supplier_map_with_transformer {
+mod test_arc_stateless_supplier_map_with_transformer {
     use super::*;
 
     // Helper function pointers
@@ -1147,7 +1147,7 @@ mod test_arc_readonly_supplier_map_with_transformer {
 // ======================================================================
 
 #[cfg(test)]
-mod test_rc_readonly_supplier_map_with_transformer {
+mod test_rc_stateless_supplier_map_with_transformer {
     use super::*;
 
     // Helper function pointers
@@ -1327,7 +1327,7 @@ mod test_map_transformer_integration {
 // ======================================================================
 
 #[cfg(test)]
-mod test_custom_readonly_supplier_default_impl {
+mod test_custom_stateless_supplier_default_impl {
     use super::*;
 
     /// A simple custom type that implements Supplier with
@@ -1586,7 +1586,7 @@ mod test_to_methods {
     // Tests for ArcSupplier to_* methods
     // ============================================================
 
-    mod test_arc_readonly_supplier_to_methods {
+    mod test_arc_stateless_supplier_to_methods {
         use super::*;
 
         #[test]
@@ -1686,7 +1686,7 @@ mod test_to_methods {
     // Tests for RcSupplier to_* methods
     // ============================================================
 
-    mod test_rc_readonly_supplier_to_methods {
+    mod test_rc_stateless_supplier_to_methods {
         use super::*;
 
         #[test]

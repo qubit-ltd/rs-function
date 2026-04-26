@@ -171,8 +171,8 @@ mod test_stateful_supplier_trait {
     }
 
     #[test]
-    fn test_closure_get_readonly() {
-        // Test readonly closure (Fn)
+    fn test_closure_get_fn() {
+        // Test an Fn closure that returns the captured value without mutation.
         let value = 42;
         let mut closure = move || value;
         assert_eq!(closure.get(), 42);
@@ -1943,8 +1943,7 @@ mod test_custom_stateful_supplier_default_impl {
 
     impl StatefulSupplier<i32> for CounterStatefulSupplier {
         fn get(&mut self) -> i32 {
-            // For readonly StatefulSupplier, we can't modify state
-            // This is just a demo, return the counter value
+            // This implementation intentionally leaves its state unchanged.
             self.counter
         }
         // Note: into_box(), into_rc(), and into_arc() use the
@@ -2026,7 +2025,7 @@ mod test_custom_stateful_supplier_default_impl {
         let v1 = h1.join().unwrap();
         let v2 = h2.join().unwrap();
 
-        // Both threads should get the same value (readonly)
+        // Both threads should get the same value from this unchanged supplier.
         assert_eq!(v1, 100);
         assert_eq!(v2, 100);
     }
@@ -2046,7 +2045,7 @@ mod test_custom_stateful_supplier_default_impl {
 
         impl StatefulSupplier<String> for IdStatefulSupplier {
             fn get(&mut self) -> String {
-                // For readonly StatefulSupplier, return the same ID
+                // Return the same ID because this implementation does not advance state.
                 format!("ID-{:04}", self.next_id)
             }
         }
@@ -2100,7 +2099,7 @@ mod test_custom_stateful_supplier_default_impl {
 
         impl StatefulSupplier<String> for IdStatefulSupplier {
             fn get(&mut self) -> String {
-                // For readonly StatefulSupplier, return the same ID
+                // Return the same ID because this implementation does not advance state.
                 format!("ID-{:04}", self.next_id)
             }
         }
