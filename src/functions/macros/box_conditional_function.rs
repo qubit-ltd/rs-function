@@ -152,20 +152,20 @@ macro_rules! impl_box_conditional_function {
         impl<$t, $u, $r> $struct_name<$t, $u, $r> {
             /// Provides an alternative function for when the predicate is not satisfied
             ///
-            /// Combines the current conditional bifunction with an alternative bifunction
-            /// into a new bifunction that implements the following semantics:
+            /// Combines the current conditional bi-function with an alternative bi-function
+            /// into a new bi-function that implements the following semantics:
             ///
-            /// When the returned bifunction is called with two arguments:
-            /// - If the predicate is satisfied, it executes the internal bifunction
-            /// - If the predicate is NOT satisfied, it executes the alternative bifunction
+            /// When the returned bi-function is called with two arguments:
+            /// - If the predicate is satisfied, it executes the internal bi-function
+            /// - If the predicate is NOT satisfied, it executes the alternative bi-function
             ///
             /// # Parameters
             ///
-            /// * `else_function` - The alternative bifunction to execute when predicate fails
+            /// * `else_function` - The alternative bi-function to execute when predicate fails
             ///
             /// # Returns
             ///
-            /// Returns a new bifunction that handles both conditional branches
+            /// Returns a new bi-function that handles both conditional branches
             ///
             /// # Examples
             ///

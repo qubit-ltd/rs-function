@@ -23,12 +23,12 @@
 //!   - Two parameters: `BoxBiFunction<T, U, R>`
 //! * `$conditional_type` - The conditional function type for when (e.g.,
 //!   BoxConditionalFunction)
-//! * `$chained_function_trait` - The name of the function trait that chained
+//! * `$chained_function_trait` - The name of the function trait that is chained
 //!   after the execution of this function (e.g., Function, BiFunction)
 //!
 //! # Parameter Usage Comparison
 //!
-//! | Function Type | Struct Signature | `$conditional_type` | `$function_trait` |
+//! | Function Type | Struct Signature | `$conditional_type` | `$chained_function_trait` |
 //! |---------------|-----------------|----------------|------------------|
 //! | **Function** | `BoxFunction<T, R>` | BoxConditionalFunction | Function |
 //! | **FunctionOnce** | `BoxFunctionOnce<T, R>` | BoxConditionalFunctionOnce | FunctionOnce |
@@ -79,19 +79,19 @@
 ///   - Two parameters: `BoxBiFunction<T, U, R>`
 /// * `$conditional_type` - The conditional function type for when (e.g.,
 ///   BoxConditionalFunction)
-/// * `$chained_function_trait` - The name of the function trait that chained
+/// * `$chained_function_trait` - The name of the function trait that is chained
 ///   after the execution of this function (e.g., Function, BiFunction)
 ///
 /// # Parameter Usage Comparison
 ///
-/// | Function Type | Struct Signature | `$conditional_type` | `$function_trait` |
+/// | Function Type | Struct Signature | `$conditional_type` | `$chained_function_trait` |
 /// |---------------|-----------------|----------------|------------------|
 /// | **Function** | `BoxFunction<T, R>` | BoxConditionalFunction | Function |
 /// | **FunctionOnce** | `BoxFunctionOnce<T, R>` | BoxConditionalFunctionOnce | FunctionOnce |
 /// | **StatefulFunction** | `BoxStatefulFunction<T, R>` | BoxConditionalStatefulFunction | StatefulFunction |
-/// | **BiFunction** | `BoxBiFunction<T, U, R>` | BoxConditionalBiFunction | Function |
-/// | **BiFunctionOnce** | `BoxBiFunctionOnce<T, U, R>` | BoxConditionalBiFunctionOnce | FunctionOnce |
-/// | **StatefulBiFunction** | `BoxStatefulBiFunction<T, U, R>` | BoxConditionalStatefulBiFunction | StatefulFunction |
+/// | **BiFunction** | `BoxBiFunction<T, U, R>` | BoxConditionalBiFunction | BiFunction |
+/// | **BiFunctionOnce** | `BoxBiFunctionOnce<T, U, R>` | BoxConditionalBiFunctionOnce | BiFunctionOnce |
+/// | **StatefulBiFunction** | `BoxStatefulBiFunction<T, U, R>` | BoxConditionalStatefulBiFunction | StatefulBiFunction |
 ///
 /// # Examples
 ///

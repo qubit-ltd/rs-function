@@ -22,27 +22,20 @@
 //!   - Single parameter: `BoxTransformer<T, U>`
 //!   - Two parameters: `BoxBiTransformer<T, U, V>`
 //! * `$conditional_type` - The conditional transformer type for when (e.g., BoxConditionalTransformer)
-//! * `$transformer_trait` - Transformer trait name (e.g., Transformer, BiTransformer)
+//! * `$chained_transformer_trait` - The name of the transformer trait that is
+//!   chained after the execution of this transformer (e.g., Transformer,
+//!   BiTransformer)
 //!
 //! # Parameter Usage Comparison
 //!
-//! | Transformer Type | Struct Signature | `$conditional_type` |
-//! |------------------|-----------------|----------------|
-//! | **Transformer** | `BoxTransformer<T, U>` | BoxConditionalTransformer |
-//! | **TransformerOnce** | `BoxTransformerOnce<T, U>` | BoxConditionalTransformerOnce |
-//! | **StatefulTransformer** | `BoxStatefulTransformer<T, U>` | BoxConditionalStatefulTransformer |
-//! | **BiTransformer** | `BoxBiTransformer<T, U, V>` | BoxConditionalBiTransformer |
-//! | **BiTransformerOnce** | `BoxBiTransformerOnce<T, U, V>` | BoxConditionalBiTransformerOnce |
-//! | **StatefulBiTransformer** | `BoxStatefulBiTransformer<T, U, V>` | BoxConditionalStatefulBiTransformer |
-//!
-//! | `$transformer_trait` |
-//! |---------------------|
-//! | Transformer |
-//! | TransformerOnce |
-//! | StatefulTransformer |
-//! | BiTransformer |
-//! | BiTransformerOnce |
-//! | StatefulBiTransformer |
+//! | Transformer Type | Struct Signature | `$conditional_type` | `$chained_transformer_trait` |
+//! |------------------|-----------------|----------------|---------------------|
+//! | **Transformer** | `BoxTransformer<T, U>` | BoxConditionalTransformer | Transformer |
+//! | **TransformerOnce** | `BoxTransformerOnce<T, U>` | BoxConditionalTransformerOnce | TransformerOnce |
+//! | **StatefulTransformer** | `BoxStatefulTransformer<T, U>` | BoxConditionalStatefulTransformer | StatefulTransformer |
+//! | **BiTransformer** | `BoxBiTransformer<T, U, V>` | BoxConditionalBiTransformer | BiTransformer |
+//! | **BiTransformerOnce** | `BoxBiTransformerOnce<T, U, V>` | BoxConditionalBiTransformerOnce | BiTransformerOnce |
+//! | **StatefulBiTransformer** | `BoxStatefulBiTransformer<T, U, V>` | BoxConditionalStatefulBiTransformer | StatefulBiTransformer |
 //!
 //! # Examples
 //!
@@ -83,20 +76,20 @@
 ///   - Two parameters: `BoxBiTransformer<T, U, V>`
 /// * `$conditional_type` - The conditional transformer type for when (e.g.,
 ///   BoxConditionalTransformer)
-/// * `$chained_transformer_trait` - The name of the transformer trait that chained
-///   after the execution of this transformer (e.g., Transformer, BiTransformer)
+/// * `$chained_transformer_trait` - The name of the transformer trait that is
+///   chained after the execution of this transformer (e.g., Transformer, BiTransformer)
 ///
 /// # Parameter Usage Comparison
 ///
 /// | Transformer Type | Struct Signature | `$conditional_type` | `$chained_transformer_trait` |
-// |------------------|-----------------|----------------|---------------------|
-// | **Transformer** | `BoxTransformer<T, U>` | BoxConditionalTransformer | Transformer |
-// | **TransformerOnce** | `BoxTransformerOnce<T, U>` | BoxConditionalTransformerOnce | TransformerOnce |
-// | **StatefulTransformer** | `BoxStatefulTransformer<T, U>` | BoxConditionalStatefulTransformer | StatefulTransformer |
-// | **BiTransformer** | `BoxBiTransformer<T, U, V>` | BoxConditionalBiTransformer | BiTransformer |
-// | **BiTransformerOnce** | `BoxBiTransformerOnce<T, U, V>` | BoxConditionalBiTransformerOnce | BiTransformerOnce |
-// | **StatefulBiTransformer** | `BoxStatefulBiTransformer<T, U, V>` | BoxConditionalStatefulBiTransformer | StatefulBiTransformer |
-//
+/// |------------------|-----------------|----------------|---------------------|
+/// | **Transformer** | `BoxTransformer<T, U>` | BoxConditionalTransformer | Transformer |
+/// | **TransformerOnce** | `BoxTransformerOnce<T, U>` | BoxConditionalTransformerOnce | TransformerOnce |
+/// | **StatefulTransformer** | `BoxStatefulTransformer<T, U>` | BoxConditionalStatefulTransformer | StatefulTransformer |
+/// | **BiTransformer** | `BoxBiTransformer<T, U, V>` | BoxConditionalBiTransformer | BiTransformer |
+/// | **BiTransformerOnce** | `BoxBiTransformerOnce<T, U, V>` | BoxConditionalBiTransformerOnce | BiTransformerOnce |
+/// | **StatefulBiTransformer** | `BoxStatefulBiTransformer<T, U, V>` | BoxConditionalStatefulBiTransformer | StatefulBiTransformer |
+///
 /// # Examples
 ///
 /// ```text

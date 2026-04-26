@@ -24,13 +24,13 @@
 //! * `$conditional_type` - The conditional function type for when (e.g.,
 //!   ArcConditionalFunction)
 //! * `$predicate_conversion` - Method to convert predicate (into_arc or into_rc)
-//! * `$chained_function_trait` - The name of the function trait that chained
+//! * `$chained_function_trait` - The name of the function trait that is chained
 //!   after the execution of this function (e.g., Function, BiFunction)
 //! * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync + 'static for Arc)
 //!
 //! # All Macro Invocations
 //!
-//! | Function Type | Struct Signature | `$conditional_type` | `$predicate_conversion` | `$function_trait` | `$extra_bounds` |
+//! | Function Type | Struct Signature | `$conditional_type` | `$predicate_conversion` | `$chained_function_trait` | `$extra_bounds` |
 //! |---------------|-----------------|----------------|------------------------|------------------|----------------|
 //! | **ArcFunction** | `ArcFunction<T, R>` | ArcConditionalFunction | into_arc | Function | Send + Sync + 'static |
 //! | **RcFunction** | `RcFunction<T, R>` | RcConditionalFunction | into_rc | Function | 'static |
@@ -85,13 +85,13 @@
 ///   - Two parameters: `ArcBiFunction<T, U, R>`
 /// * `$conditional_type` - The conditional function type for when (e.g., ArcConditionalFunction)
 /// * `$predicate_conversion` - Method to convert predicate (into_arc or into_rc)
-/// * `$chained_function_trait` - The name of the function trait that chained
+/// * `$chained_function_trait` - The name of the function trait that is chained
 ///   after the execution of this function (e.g., Function, BiFunction)
 /// * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync + 'static for Arc)
 ///
 /// # All Macro Invocations
 ///
-/// | Function Type | Struct Signature | `$conditional_type` | `$predicate_conversion` | `$function_trait` | `$extra_bounds` |
+/// | Function Type | Struct Signature | `$conditional_type` | `$predicate_conversion` | `$chained_function_trait` | `$extra_bounds` |
 /// |---------------|-----------------|----------------|------------------------|------------------|----------------|
 /// | **ArcFunction** | `ArcFunction<T, R>` | ArcConditionalFunction | into_arc | Function | Send + Sync + 'static |
 /// | **RcFunction** | `RcFunction<T, R>` | RcConditionalFunction | into_rc | Function | 'static |

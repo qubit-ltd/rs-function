@@ -21,14 +21,16 @@
 //! * `$struct_name<$generics>` - The struct name with its generic parameters
 //!   - Two parameters: `ArcTransformer<T, U>`
 //!   - Three parameters: `ArcBiTransformer<T, U, V>`
-//! * `$return_type` - The return type for when (e.g., ArcConditionalTransformer)
+//! * `$conditional_type` - The conditional transformer type returned by `when`
 //! * `$predicate_conversion` - Method to convert predicate (into_arc or into_rc)
-//! * `$transformer_trait` - Transformer trait name (e.g., Transformer, BiTransformer)
+//! * `$chained_transformer_trait` - The name of the transformer trait that is
+//!   chained after the execution of this transformer (e.g., Transformer,
+//!   BiTransformer)
 //! * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync + 'static for Arc)
 //!
 //! # All Macro Invocations
 //!
-//! | Transformer Type | Struct Signature | `$return_type` |
+//! | Transformer Type | Struct Signature | `$conditional_type` |
 //! |------------------|------------------|----------------|
 //! | **ArcTransformer** | `ArcTransformer<T, U>` | ArcConditionalTransformer |
 //! | **RcTransformer** | `RcTransformer<T, U>` | RcConditionalTransformer |
@@ -39,7 +41,7 @@
 //! | **ArcStatefulBiTransformer** | `ArcStatefulBiTransformer<T, U, V>` | ArcConditionalStatefulBiTransformer |
 //! | **RcStatefulBiTransformer** | `RcStatefulBiTransformer<T, U, V>` | RcConditionalStatefulBiTransformer |
 //!
-//! | `$predicate_conversion` | `$transformer_trait` | `$extra_bounds` |
+//! | `$predicate_conversion` | `$chained_transformer_trait` | `$extra_bounds` |
 //! |-------------------------|---------------------|----------------|
 //! | into_arc | Transformer | Send + Sync + 'static |
 //! | into_rc | Transformer | 'static |
@@ -92,14 +94,15 @@
 /// * `$struct_name<$generics>` - The struct name with its generic parameters
 ///   - Two parameters: `ArcTransformer<T, U>`
 ///   - Three parameters: `ArcBiTransformer<T, U, V>`
-/// * `conditional_type` - The return type for when (e.g., ArcConditionalTransformer)
+/// * `$conditional_type` - The conditional transformer type returned by `when`
 /// * `$predicate_conversion` - Method to convert predicate (into_arc or into_rc)
-/// * `$chained_transformer_trait` - Transformer trait name (e.g., Transformer, BiTransformer)
+/// * `$chained_transformer_trait` - The name of the transformer trait that is
+///   chained after the execution of this transformer (e.g., Transformer, BiTransformer)
 /// * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync + 'static for Arc)
 ///
 /// # All Macro Invocations
 ///
-/// | Transformer Type | Struct Signature | `conditional_type` | `$predicate_conversion` | `$chained_transformer_trait` | `$extra_bounds` |
+/// | Transformer Type | Struct Signature | `$conditional_type` | `$predicate_conversion` | `$chained_transformer_trait` | `$extra_bounds` |
 /// |------------------|------------------|----------------|-------------------------|---------------------|----------------|
 /// | **ArcTransformer** | `ArcTransformer<T, U>` | ArcConditionalTransformer | into_arc | Transformer | Send + Sync + 'static |
 /// | **RcTransformer** | `RcTransformer<T, U>` | RcConditionalTransformer | into_rc | Transformer | 'static |

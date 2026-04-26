@@ -17,49 +17,40 @@
 //! # Parameters
 //!
 //! * `$fn_signature` - Closure signature (in parentheses, without constraints)
-//!   Examples: `(Fn(&T) -> R)`, `(FnMut(&T) -> R)`, `(FnMut(&mut T) -> R)`
+//!   Examples: `(Fn(T) -> R)`, `(FnMut(T) -> R)`
 //! * `$trait_name` - Name of the extension trait (e.g., `FnTransformerOps`,
 //!   `FnStatefulTransformerOps`)
 //! * `$box_type` - Box wrapper type (e.g., `BoxTransformer`, `BoxStatefulTransformer`)
-//! * `$chained_transformer_trait` - The name of the transformer trait that chained
-//!   after the execution of this transformer (e.g., Transformer, StatefulBiTransformer)
+//! * `$chained_transformer_trait` - The name of the transformer trait that is
+//!   chained after the execution of this transformer (e.g., Transformer,
+//!   BiTransformer)
 //! * `$conditional_type` - Conditional transformer type (e.g., BoxConditionalTransformer)
 //!
 //! # Implementation Notes
 //!
-//! The macro uses mutable references (`&mut`) uniformly because in Rust,
-//! `&mut T` can be automatically dereferenced to `&T`. This allows both `Fn`
-//! and `FnMut` closures to use the same implementation logic, simplifying
-//! the code and improving performance (avoiding additional boxing operations).
+//! The macro keeps the same composition shape for `Fn` and `FnMut` closures,
+//! simplifying the generated `and_then` and `when` implementations while still
+//! preserving transformer value-passing semantics.
 //!
 //! # Usage Examples
 //!
 //! ```ignore
-//! // Generate extension trait for Fn(&T) -> R
+//! // Generate extension trait for Fn(T) -> R
 //! impl_fn_ops_trait!(
-//!     (Fn(&T) -> R),
+//!     (Fn(T) -> R),
 //!     FnTransformerOps,
-//!     BoxFunction,
+//!     BoxTransformer,
 //!     Transformer,
 //!     BoxConditionalTransformer
 //! );
 //!
-//! // Generate extension trait for FnMut(&T) -> R
+//! // Generate extension trait for FnMut(T) -> R
 //! impl_fn_ops_trait!(
-//!     (FnMut(&T) -> R),
+//!     (FnMut(T) -> R),
 //!     FnStatefulTransformerOps,
 //!     BoxStatefulTransformer,
 //!     StatefulTransformer,
 //!     BoxConditionalStatefulTransformer
-//! );
-//!
-//! // Generate extension trait for FnMut(&mut T) -> R (consuming functions)
-//! impl_fn_ops_trait!(
-//!     (FnMut(&mut T) -> R),
-//!     FnMutatingTransformerOps,
-//!     BoxMutatingTransformer,
-//!     MutatingTransformer,
-//!     BoxConditionalMutatingTransformer
 //! );
 //! ```
 //!
@@ -75,21 +66,19 @@
 ///
 /// # Unified Implementation Strategy
 ///
-/// The macro uses a unified implementation approach, passing intermediate
-/// results using mutable references (`&mut`). This is because:
-/// 1. In Rust, `&mut T` can be automatically dereferenced to `&T`
-/// 2. Avoids code duplication and simplifies the macro implementation
-/// 3. Better performance by avoiding additional boxing operations
-/// 4. Uses `#[allow(unused_mut)]` to suppress unnecessary mutability warnings
+/// The macro uses a unified implementation approach for `Fn` and `FnMut`
+/// transformer closures. This avoids duplicating the generated composition
+/// methods while preserving the by-value input and output flow of transformers.
 ///
 /// # Parameters
 ///
 /// * `$fn_signature` - Closure signature (in parentheses, without constraints)
 /// * `$trait_name` - Name of the extension trait
 /// * `$box_type` - Box wrapper type
-/// * `$chained_function_trait` - The name of the function trait that chained
-///   after the execution of this function (e.g., Function, BiFunction)
-/// * `$conditional_type` - Conditional function type
+/// * `$chained_transformer_trait` - The name of the transformer trait that is
+///   chained after the execution of this transformer (e.g., Transformer,
+///   BiTransformer)
+/// * `$conditional_type` - Conditional transformer type
 ///
 /// # Generated Code
 ///
@@ -100,31 +89,22 @@
 /// # Examples
 ///
 /// ```ignore
-/// // Fn(&T) -> R version
+/// // Fn(T) -> R version
 /// impl_fn_ops_trait!(
-///     (Fn(&T) -> R),
-///     FnFunctionOps,
-///     BoxFunction,
-///     Function,
-///     BoxConditionalFunction
+///     (Fn(T) -> R),
+///     FnTransformerOps,
+///     BoxTransformer,
+///     Transformer,
+///     BoxConditionalTransformer
 /// );
 ///
-/// // FnMut(&T) -> R version
+/// // FnMut(T) -> R version
 /// impl_fn_ops_trait!(
-///     (FnMut(&T) -> R),
-///     FnStatefulFunctionOps,
-///     BoxStatefulFunction,
-///     StatefulFunction,
-///     BoxConditionalStatefulFunction
-/// );
-///
-/// // FnMut(&mut T) -> R version (consuming functions)
-/// impl_fn_ops_trait!(
-///     (FnMut(&mut T) -> R),
-///     FnMutatingFunctionOps,
-///     BoxMutatingFunction,
-///     MutatingFunction,
-///     BoxConditionalMutatingFunction
+///     (FnMut(T) -> R),
+///     FnStatefulTransformerOps,
+///     BoxStatefulTransformer,
+///     StatefulTransformer,
+///     BoxConditionalStatefulTransformer
 /// );
 /// ```
 ///
@@ -138,30 +118,30 @@ macro_rules! impl_fn_ops_trait {
         ($($fn_signature:tt)+),
         $trait_name:ident,
         $box_type:ident,
-        $chained_function_trait:ident,
+        $chained_transformer_trait:ident,
         $conditional_type:ident
     ) => {
-        /// Extension trait for closures implementing the base function trait
+        /// Extension trait for closures implementing the base transformer trait
         ///
         /// Provides composition methods (`and_then`, `when`) for closures
         /// and function pointers without requiring explicit wrapping.
         ///
         /// This trait is automatically implemented for all closures and function
-        /// pointers that implement the base function trait.
+        /// pointers that implement the base transformer trait.
         ///
         /// # Design Rationale
         ///
-        /// While closures automatically implement the base function trait through blanket
+        /// While closures automatically implement the base transformer trait through blanket
         /// implementation, they don't have access to instance methods like `and_then`,
         /// and `when`. This extension trait provides those methods,
-        /// returning the appropriate Box-based function type for maximum flexibility.
+        /// returning the appropriate Box-based transformer type for maximum flexibility.
         ///
         /// # Examples
         ///
         /// ## Chain composition with and_then
         ///
         /// ```rust
-        /// use qubit_function::{Function, FnFunctionOps};
+        /// use qubit_function::{Transformer, FnTransformerOps};
         ///
         /// let double = |x: i32| x * 2;
         /// let to_string = |x: i32| x.to_string();
@@ -173,7 +153,7 @@ macro_rules! impl_fn_ops_trait {
         /// ## Conditional transformation with when
         ///
         /// ```rust
-        /// use qubit_function::{Function, FnFunctionOps};
+        /// use qubit_function::{Transformer, FnTransformerOps};
         ///
         /// let double = |x: i32| x * 2;
         /// let conditional = double.when(|x: &i32| *x > 0).or_else(|x: i32| -x);
@@ -188,41 +168,41 @@ macro_rules! impl_fn_ops_trait {
         pub trait $trait_name<T, R>: $($fn_signature)+ + Sized {
             /// Chain composition - applies self first, then after
             ///
-            /// Creates a new function that applies this function first, then
-            /// applies the after function to the result. Consumes self and returns
-            /// a Box-based function.
+            /// Creates a new transformer that applies this transformer first, then
+            /// applies the after transformer to the result. Consumes self and returns
+            /// a Box-based transformer.
             ///
             /// # Type Parameters
             ///
-            /// * `S` - The output type of the after function
-            /// * `F` - The type of the after function (must implement the function trait)
+            /// * `S` - The output type of the after transformer
+            /// * `F` - The type of the after transformer (must implement the transformer trait)
             ///
             /// # Parameters
             ///
-            /// * `after` - The function to apply after self. **Note: This parameter
+            /// * `after` - The transformer to apply after self. **Note: This parameter
             ///   is passed by value and will transfer ownership.** If you need to
-            ///   preserve the original function, clone it first (if it implements
+            ///   preserve the original transformer, clone it first (if it implements
             ///   `Clone`). Can be:
             ///   - A closure
             ///   - A function pointer
-            ///   - A Box-based function
-            ///   - An Rc-based function
-            ///   - An Arc-based function
-            ///   - Any type implementing the function trait
+            ///   - A Box-based transformer
+            ///   - An Rc-based transformer
+            ///   - An Arc-based transformer
+            ///   - Any type implementing the transformer trait
             ///
             /// # Returns
             ///
-            /// A new Box-based function representing the composition
+            /// A new Box-based transformer representing the composition
             ///
             /// # Examples
             ///
             /// ## Direct value passing (ownership transfer)
             ///
             /// ```rust
-            /// use qubit_function::{Function, FnFunctionOps, BoxFunction};
+            /// use qubit_function::{BoxTransformer, FnTransformerOps, Transformer};
             ///
             /// let double = |x: i32| x * 2;
-            /// let to_string = BoxFunction::new(|x: i32| x.to_string());
+            /// let to_string = BoxTransformer::new(|x: i32| x.to_string());
             ///
             /// // to_string is moved here
             /// let composed = double.and_then(to_string);
@@ -233,10 +213,10 @@ macro_rules! impl_fn_ops_trait {
             /// ## Preserving original with clone
             ///
             /// ```rust
-            /// use qubit_function::{Function, FnFunctionOps, BoxFunction};
+            /// use qubit_function::{BoxTransformer, FnTransformerOps, Transformer};
             ///
             /// let double = |x: i32| x * 2;
-            /// let to_string = BoxFunction::new(|x: i32| x.to_string());
+            /// let to_string = BoxTransformer::new(|x: i32| x.to_string());
             ///
             /// // Clone to preserve original
             /// let composed = double.and_then(to_string.clone());
@@ -251,20 +231,20 @@ macro_rules! impl_fn_ops_trait {
             where
                 Self: 'static,
                 S: 'static,
-                F: $chained_function_trait<R, S> + 'static,
+                F: $chained_transformer_trait<R, S> + 'static,
                 T: 'static,
                 R: 'static,
             {
                 $box_type::new(move |x| {
-                  let mut r = self(x);
-                  after.apply(&mut r)
+                  let r = self(x);
+                  after.apply(r)
                 })
             }
 
-            /// Creates a conditional function
+            /// Creates a conditional transformer
             ///
-            /// Returns a function that only executes when a predicate is satisfied.
-            /// You must call `or_else()` to provide an alternative function for when
+            /// Returns a transformer that only executes when a predicate is satisfied.
+            /// You must call `or_else()` to provide an alternative transformer for when
             /// the condition is not satisfied.
             ///
             /// # Parameters
@@ -281,14 +261,14 @@ macro_rules! impl_fn_ops_trait {
             ///
             /// # Returns
             ///
-            /// Returns the appropriate conditional function type
+            /// Returns the appropriate conditional transformer type
             ///
             /// # Examples
             ///
             /// ## Basic usage with or_else
             ///
             /// ```rust
-            /// use qubit_function::{Function, FnFunctionOps};
+            /// use qubit_function::{Transformer, FnTransformerOps};
             ///
             /// let double = |x: i32| x * 2;
             /// let conditional = double.when(|x: &i32| *x > 0).or_else(|x: i32| -x);
@@ -300,7 +280,7 @@ macro_rules! impl_fn_ops_trait {
             /// ## Preserving predicate with clone
             ///
             /// ```rust
-            /// use qubit_function::{Function, FnFunctionOps, BoxPredicate};
+            /// use qubit_function::{BoxPredicate, FnTransformerOps, Predicate, Transformer};
             ///
             /// let double = |x: i32| x * 2;
             /// let is_positive = BoxPredicate::new(|x: &i32| *x > 0);
@@ -329,7 +309,7 @@ macro_rules! impl_fn_ops_trait {
         /// Blanket implementation for all closures
         ///
         /// Automatically implements the extension trait for any type that
-        /// implements the base function trait.
+        /// implements the base transformer trait.
         ///
         /// # Author
         ///

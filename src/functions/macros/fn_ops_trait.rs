@@ -21,7 +21,7 @@
 //! * `$trait_name` - Name of the extension trait (e.g., `FnFunctionOps`,
 //!   `FnStatefulFunctionOps`)
 //! * `$box_type` - Box wrapper type (e.g., `BoxFunction`, `BoxStatefulFunction`)
-//! * `$chained_function_trait` - The name of the function trait that chained
+//! * `$chained_function_trait` - The name of the function trait that is chained
 //!   after the execution of this function (e.g., Function, BiFunction)
 //! * `$conditional_type` - Conditional function type (e.g., `BoxConditionalFunction`)
 //!
@@ -87,7 +87,7 @@
 /// * `$fn_signature` - Closure signature (in parentheses, without constraints)
 /// * `$trait_name` - Name of the extension trait
 /// * `$box_type` - Box wrapper type
-/// * `$chained_function_trait` - The name of the function trait that chained
+/// * `$chained_function_trait` - The name of the function trait that is chained
 ///   after the execution of this function (e.g., Function, BiFunction)
 /// * `$conditional_type` - Conditional function type
 ///
