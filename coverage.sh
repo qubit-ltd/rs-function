@@ -12,16 +12,107 @@
 # Uses cargo-llvm-cov to generate code coverage reports
 #
 
-set -e
+set -euo pipefail
+
+MIN_FUNCTION_COVERAGE="${MIN_FUNCTION_COVERAGE:-100}"
+MIN_LINE_COVERAGE="${MIN_LINE_COVERAGE:-98}"
+MIN_REGION_COVERAGE="${MIN_REGION_COVERAGE:-98}"
+
+print_usage() {
+    echo "Usage: ./coverage.sh [format] [options]"
+    echo ""
+    echo "Format options:"
+    echo "  html       Generate HTML report and open in browser (default)"
+    echo "  text       Output text format report to terminal"
+    echo "  lcov       Generate LCOV format report"
+    echo "  json       Generate JSON format report and enforce coverage thresholds"
+    echo "  cobertura  Generate Cobertura XML format report"
+    echo "  all        Generate all format reports and enforce coverage thresholds"
+    echo "  help       Show this help information"
+    echo ""
+    echo "Options:"
+    echo "  --clean    Clean old coverage data and build cache before running"
+    echo "             By default, cached builds are used to speed up compilation"
+    echo ""
+    echo "Coverage thresholds for JSON/all:"
+    echo "  functions: ${MIN_FUNCTION_COVERAGE}%"
+    echo "  lines:     > ${MIN_LINE_COVERAGE}%"
+    echo "  regions:   > ${MIN_REGION_COVERAGE}%"
+    echo ""
+    echo "Performance tips:"
+    echo "  • First run will be slower (needs to compile all dependencies)"
+    echo "  • Subsequent runs will be much faster (using cache)"
+    echo "  • Only use --clean when dependencies are updated or major code changes"
+    echo ""
+    echo "Examples:"
+    echo "  ./coverage.sh              # Generate HTML report (using cache)"
+    echo "  ./coverage.sh text         # Output text report (using cache)"
+    echo "  ./coverage.sh json         # Generate JSON and enforce thresholds"
+    echo "  ./coverage.sh --clean      # Clean then generate HTML report"
+    echo "  ./coverage.sh html --clean # Clean then generate HTML report"
+    echo "  ./coverage.sh all --clean  # Clean then generate all formats"
+}
+
+require_command() {
+    if ! command -v "$1" > /dev/null 2>&1; then
+        echo "❌ Error: required command '$1' was not found"
+        exit 1
+    fi
+}
+
+check_json_coverage() {
+    local coverage_json="$1"
+
+    require_command jq
+
+    if [ ! -f "$coverage_json" ]; then
+        echo "❌ Error: coverage JSON not found: $coverage_json"
+        exit 1
+    fi
+
+    local failures
+    failures=$(jq -r \
+        --argjson min_functions "$MIN_FUNCTION_COVERAGE" \
+        --argjson min_lines "$MIN_LINE_COVERAGE" \
+        --argjson min_regions "$MIN_REGION_COVERAGE" \
+        '
+        .data[0].files[]
+        | select(
+            (.summary.functions.percent < $min_functions)
+            or (.summary.lines.percent <= $min_lines)
+            or (.summary.regions.percent <= $min_regions)
+        )
+        | "\(.filename): functions=\(.summary.functions.percent)% lines=\(.summary.lines.percent)% regions=\(.summary.regions.percent)%"
+        ' "$coverage_json")
+
+    if [ -n "$failures" ]; then
+        echo "❌ Coverage thresholds failed:"
+        echo "$failures"
+        echo ""
+        echo "Required: functions = ${MIN_FUNCTION_COVERAGE}%, lines > ${MIN_LINE_COVERAGE}%, regions > ${MIN_REGION_COVERAGE}%"
+        exit 1
+    fi
+
+    echo "✅ Coverage thresholds satisfied"
+    echo "   Required: functions = ${MIN_FUNCTION_COVERAGE}%, lines > ${MIN_LINE_COVERAGE}%, regions > ${MIN_REGION_COVERAGE}%"
+}
+
+require_command cargo
+require_command cargo-llvm-cov
 
 echo "🔍 Starting code coverage testing..."
 
 # Switch to project directory
-cd "$(dirname "$0")"
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+cd "$SCRIPT_DIR"
 
 # Detect package name from Cargo.toml
 if [ -f "Cargo.toml" ]; then
     PACKAGE_NAME=$(grep "^name = " Cargo.toml | head -n 1 | sed 's/name = "\(.*\)"/\1/')
+    if [ -z "$PACKAGE_NAME" ]; then
+        echo "❌ Error: unable to detect package name from Cargo.toml"
+        exit 1
+    fi
     echo "📦 Detected package: $PACKAGE_NAME"
 else
     echo "❌ Error: Cargo.toml not found in current directory"
@@ -52,7 +143,11 @@ done
 
 # Exclude: cargo registry, rustup, and other workspace crates
 # Using simple alternation for clarity
-EXCLUDE_PATTERN="(\.cargo/registry|\.rustup/|/($OTHER_CRATES)/)"
+EXCLUDE_PATTERN="(\.cargo/registry|\.rustup/"
+if [ -n "$OTHER_CRATES" ]; then
+    EXCLUDE_PATTERN="$EXCLUDE_PATTERN|/($OTHER_CRATES)/"
+fi
+EXCLUDE_PATTERN="$EXCLUDE_PATTERN)"
 echo "🚫 Excluding: .cargo/registry, .rustup, and other workspace members"
 
 # Parse arguments, check if cleanup is needed
@@ -64,7 +159,16 @@ for arg in "$@"; do
         --clean)
             CLEAN_FLAG="yes"
             ;;
+        help|--help|-h)
+            print_usage
+            exit 0
+            ;;
         *)
+            if [ -n "$FORMAT_ARG" ]; then
+                echo "❌ Error: multiple formats specified ('$FORMAT_ARG' and '$arg')"
+                print_usage
+                exit 1
+            fi
             FORMAT_ARG="$arg"
             ;;
     esac
@@ -114,6 +218,7 @@ case "$FORMAT_ARG" in
             --ignore-filename-regex "$EXCLUDE_PATTERN"
         echo "✅ JSON report generated"
         echo "   Report location: target/llvm-cov/coverage.json"
+        check_json_coverage target/llvm-cov/coverage.json
         ;;
 
     cobertura)
@@ -141,6 +246,7 @@ case "$FORMAT_ARG" in
         echo "  - Generating JSON report..."
         cargo llvm-cov --package "$PACKAGE_NAME" --json --output-path target/llvm-cov/coverage.json \
             --ignore-filename-regex "$EXCLUDE_PATTERN"
+        check_json_coverage target/llvm-cov/coverage.json
 
         # Cobertura
         echo "  - Generating Cobertura XML report..."
@@ -154,42 +260,11 @@ case "$FORMAT_ARG" in
         echo "   Cobertura: target/llvm-cov/cobertura.xml"
         ;;
 
-    help|--help|-h)
-        echo "Usage: ./coverage.sh [format] [options]"
-        echo ""
-        echo "Format options:"
-        echo "  html       Generate HTML report and open in browser (default)"
-        echo "  text       Output text format report to terminal"
-        echo "  lcov       Generate LCOV format report"
-        echo "  json       Generate JSON format report"
-        echo "  cobertura  Generate Cobertura XML format report"
-        echo "  all        Generate all format reports"
-        echo "  help       Show this help information"
-        echo ""
-        echo "Options:"
-        echo "  --clean    Clean old coverage data and build cache before running"
-        echo "             By default, cached builds are used to speed up compilation"
-        echo ""
-        echo "Performance tips:"
-        echo "  • First run will be slower (needs to compile all dependencies)"
-        echo "  • Subsequent runs will be much faster (using cache)"
-        echo "  • Only use --clean when dependencies are updated or major code changes"
-        echo ""
-        echo "Examples:"
-        echo "  ./coverage.sh              # Generate HTML report (using cache)"
-        echo "  ./coverage.sh text         # Output text report (using cache)"
-        echo "  ./coverage.sh --clean      # Clean then generate HTML report"
-        echo "  ./coverage.sh html --clean # Clean then generate HTML report"
-        echo "  ./coverage.sh all --clean  # Clean then generate all formats"
-        exit 0
-        ;;
-
     *)
         echo "❌ Error: Unknown format '$1'"
-        echo "Run './coverage.sh help' to see available options"
+        print_usage
         exit 1
         ;;
 esac
 
 echo "✅ Code coverage testing completed!"
-

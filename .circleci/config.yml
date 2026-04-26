@@ -109,6 +109,13 @@ jobs:
             fi
             rustup component add llvm-tools-preview
       - run:
+          name: Install jq
+          command: |
+            if ! command -v jq &> /dev/null; then
+              apt-get update
+              apt-get install -y jq
+            fi
+      - run:
           name: Build project (debug)
           command: cargo build --verbose
       - run:
@@ -120,6 +127,10 @@ jobs:
             # Auto-detect package name from Cargo.toml
             PACKAGE_NAME=$(grep "^name = " Cargo.toml | head -n 1 | sed 's/name = "\(.*\)"/\1/')
             echo "📦 Detected package: $PACKAGE_NAME"
+            # Generate JSON report first so coverage.sh enforces per-file thresholds:
+            # functions = 100%, lines > 98%, regions > 98%.
+            ./coverage.sh json
+            cp target/llvm-cov/coverage.json coverage.json
             # Generate LCOV report for Coveralls
             cargo llvm-cov --package "$PACKAGE_NAME" \
               --lcov --output-path coverage.lcov \
@@ -172,6 +183,8 @@ jobs:
           path: coverage.lcov
       - store_artifacts:
           path: coverage.txt
+      - store_artifacts:
+          path: coverage.json
       # Persist the `target` directory to the workspace for downstream jobs
       - persist_to_workspace:
           root: .
@@ -199,7 +212,7 @@ jobs:
           at: .
       - run:
           name: Generate documentation
-          command: cargo doc --no-deps --verbose
+          command: RUSTDOCFLAGS="-D warnings" cargo doc --no-deps --verbose
       # Store the generated documentation as an artifact
       - store_artifacts:
           path: target/doc

@@ -12,9 +12,20 @@
 # Run from repo root: ./align-ci.sh
 #
 
-set -e
+set -euo pipefail
 
-cd "$(dirname "$0")"
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+cd "$SCRIPT_DIR"
+
+if ! command -v cargo > /dev/null 2>&1; then
+    echo "cargo is required but was not found"
+    exit 1
+fi
+
+if ! command -v rustup > /dev/null 2>&1; then
+    echo "rustup is required but was not found"
+    exit 1
+fi
 
 if ! rustup toolchain list | grep -q nightly; then
     echo "Installing nightly toolchain..."
