@@ -9,7 +9,7 @@
 
 #[cfg(test)]
 mod tests {
-    use qubit_function::predicates::bi_predicate::{
+    use qubit_function::predicates::{
         ArcBiPredicate,
         BiPredicate,
         BoxBiPredicate,
@@ -1947,7 +1947,7 @@ mod tests {
 
 #[cfg(test)]
 mod to_fn_tests {
-    use qubit_function::predicates::bi_predicate::{
+    use qubit_function::predicates::{
         ArcBiPredicate,
         BiPredicate,
         RcBiPredicate,

@@ -9,7 +9,7 @@
 
 //! Unit tests for the predicate module.
 
-use qubit_function::predicates::predicate::{
+use qubit_function::predicates::{
     ArcPredicate,
     BoxPredicate,
     FnPredicateOps,

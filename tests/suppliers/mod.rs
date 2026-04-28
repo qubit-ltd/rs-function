@@ -9,4 +9,4 @@
 
 mod stateful_supplier_tests;
 mod supplier_once_tests;
-mod supplier_test;
+mod supplier_tests;
