@@ -19,6 +19,7 @@ This crate provides a complete set of functional programming abstractions inspir
 - **High-Performance Concurrency**: Uses parking_lot Mutex for superior thread synchronization performance
 - **Multiple Ownership Models**: Box-based single ownership, Arc-based thread-safe sharing, and Rc-based single-threaded sharing
 - **Flexible API Design**: Trait-based unified interface with concrete implementations optimized for different scenarios
+- **Type-Oriented Module Layout**: Public source files are organized around a single exported type, keeping modules shorter and easier to scan
 - **Method Chaining**: All types support fluent API and functional composition
 - **Thread-Safety Options**: Choose between thread-safe (Arc) and efficient single-threaded (Rc) implementations
 - **Zero-Cost Abstractions**: Efficient implementations with minimal runtime overhead
@@ -29,7 +30,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-qubit-function = "0.10.5"
+qubit-function = "0.11.0"
 ```
 
 ## Core Abstractions
