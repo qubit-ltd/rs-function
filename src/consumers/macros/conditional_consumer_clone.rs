@@ -22,8 +22,8 @@
 //! # Examples
 //!
 //! ```rust
-//! use qubit_function::consumers::bi_consumer::{ArcConditionalBiConsumer, RcConditionalBiConsumer};
-//! use qubit_function::consumers::consumer::{ArcConditionalConsumer, RcConditionalConsumer};
+//! use qubit_function::consumers::{ArcConditionalBiConsumer, RcConditionalBiConsumer};
+//! use qubit_function::consumers::{ArcConditionalConsumer, RcConditionalConsumer};
 //! macro_rules! impl_conditional_consumer_clone {
 //!     ($struct_name:ident<$t:ident>) => {
 //!         let _ = std::marker::PhantomData::<$t>;
@@ -64,8 +64,8 @@
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::consumers::bi_consumer::{ArcConditionalBiConsumer, RcConditionalBiConsumer};
-/// use qubit_function::consumers::consumer::{ArcConditionalConsumer, RcConditionalConsumer};
+/// use qubit_function::consumers::{ArcConditionalBiConsumer, RcConditionalBiConsumer};
+/// use qubit_function::consumers::{ArcConditionalConsumer, RcConditionalConsumer};
 /// use std::marker::PhantomData;
 /// macro_rules! impl_conditional_consumer_clone {
 ///     ($struct_name:ident<$t:ident>) => {

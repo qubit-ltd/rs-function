@@ -39,8 +39,8 @@
 //!
 //! ```rust
 //! use qubit_function::{BiConsumer, Consumer};
-//! use qubit_function::consumers::consumer::BoxConditionalConsumer;
-//! use qubit_function::consumers::bi_consumer::BoxConditionalBiConsumer;
+//! use qubit_function::consumers::BoxConditionalConsumer;
+//! use qubit_function::consumers::BoxConditionalBiConsumer;
 //! use qubit_function::consumers::{BoxBiConsumer, BoxConsumer};
 //! macro_rules! impl_box_consumer_methods {
 //!     ($struct_name:ty, $conditional_type:ty, $consumer_trait:ident) => {
@@ -90,8 +90,8 @@
 ///
 /// ```rust
 /// use qubit_function::{BiConsumer, Consumer};
-/// use qubit_function::consumers::consumer::BoxConditionalConsumer;
-/// use qubit_function::consumers::bi_consumer::BoxConditionalBiConsumer;
+/// use qubit_function::consumers::BoxConditionalConsumer;
+/// use qubit_function::consumers::BoxConditionalBiConsumer;
 /// use qubit_function::consumers::{BoxBiConsumer, BoxConsumer};
 /// macro_rules! impl_box_consumer_methods {
 ///     ($struct_name:ty, $conditional_type:ty, $consumer_trait:ident) => {

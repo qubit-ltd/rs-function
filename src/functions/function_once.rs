@@ -38,6 +38,13 @@ use crate::predicates::predicate::{
     Predicate,
 };
 
+mod box_function_once;
+pub use box_function_once::BoxFunctionOnce;
+mod box_conditional_function_once;
+pub use box_conditional_function_once::BoxConditionalFunctionOnce;
+mod fn_function_once_ops;
+pub use fn_function_once_ops::FnFunctionOnceOps;
+
 // ============================================================================
 // Core Trait
 // ============================================================================
@@ -180,147 +187,3 @@ pub trait FunctionOnce<T, R> {
         self.clone().into_fn()
     }
 }
-
-// ============================================================================
-// BoxFunctionOnce - Box<dyn FnOnce(&T) -> R>
-// ============================================================================
-
-/// BoxFunctionOnce - consuming transformer wrapper based on
-/// `Box<dyn FnOnce>`
-///
-/// A transformer wrapper that provides single ownership with one-time use
-/// semantics. Consumes both self and the input value.
-///
-/// # Features
-///
-/// - **Based on**: `Box<dyn FnOnce(&T) -> R>`
-/// - **Ownership**: Single ownership, cannot be cloned
-/// - **Reusability**: Can only be called once (consumes self and input)
-/// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
-///
-/// # Author
-///
-/// Haixing Hu
-pub struct BoxFunctionOnce<T, R> {
-    function: Box<dyn FnOnce(&T) -> R>,
-    name: Option<String>,
-}
-
-impl<T, R> BoxFunctionOnce<T, R> {
-    // Generates: new(), new_with_name(), new_with_optional_name(), name(), set_name()
-    impl_function_common_methods!(
-        BoxFunctionOnce<T, R>,
-        (FnOnce(&T) -> R + 'static),
-        |f| Box::new(f)
-    );
-
-    // Generates: when(), and_then(), compose()
-    impl_box_function_methods!(
-        BoxFunctionOnce<T, R>,
-        BoxConditionalFunctionOnce,
-        FunctionOnce
-    );
-}
-
-impl<T, R> FunctionOnce<T, R> for BoxFunctionOnce<T, R> {
-    fn apply(self, input: &T) -> R {
-        (self.function)(input)
-    }
-
-    impl_box_once_conversions!(
-        BoxFunctionOnce<T, R>,
-        FunctionOnce,
-        FnOnce(&T) -> R
-    );
-}
-
-// Generates: constant() method for BoxFunctionOnce<T, R>
-impl_function_constant_method!(BoxFunctionOnce<T, R>, 'static);
-
-// Generates: identity() method for BoxFunctionOnce<T, T>
-impl_function_identity_method!(BoxFunctionOnce<T, T>);
-
-// Generates: Debug and Display implementations for BoxFunctionOnce<T, R>
-impl_function_debug_display!(BoxFunctionOnce<T, R>);
-
-// ============================================================================
-// Blanket implementation for standard FnOnce trait
-// ============================================================================
-
-// Implement FunctionOnce for all FnOnce(&T) -> R using macro
-impl_closure_once_trait!(
-    FunctionOnce<T, R>,
-    apply,
-    BoxFunctionOnce,
-    FnOnce(input: &T) -> R
-);
-
-// ============================================================================
-// FnFunctionOnceOps - Extension trait for FnOnce transformers
-// ============================================================================
-
-// Generates: FnFunctionOnceOps trait and blanket implementation
-impl_fn_ops_trait!(
-    (FnOnce(&T) -> R),
-    FnFunctionOnceOps,
-    BoxFunctionOnce,
-    FunctionOnce,
-    BoxConditionalFunctionOnce
-);
-
-// ============================================================================
-// BoxConditionalFunctionOnce - Box-based Conditional Function
-// ============================================================================
-
-/// BoxConditionalFunctionOnce struct
-///
-/// A conditional consuming transformer that only executes when a predicate is
-/// satisfied. Uses `BoxFunctionOnce` and `BoxPredicate` for single
-/// ownership semantics.
-///
-/// This type is typically created by calling `BoxFunctionOnce::when()` and
-/// is designed to work with the `or_else()` method to create if-then-else
-/// logic.
-///
-/// # Features
-///
-/// - **Single Ownership**: Not cloneable, consumes `self` on use
-/// - **One-time Use**: Can only be called once
-/// - **Conditional Execution**: Only transforms when predicate returns `true`
-/// - **Chainable**: Can add `or_else` branch to create if-then-else logic
-///
-/// # Examples
-///
-/// ## With or_else Branch
-///
-/// ```rust
-/// use qubit_function::{FunctionOnce, BoxFunctionOnce};
-///
-/// let double = BoxFunctionOnce::new(|x: &i32| x * 2);
-/// let negate = BoxFunctionOnce::new(|x: &i32| -x);
-/// let conditional = double.when(|x: &i32| *x > 0).or_else(negate);
-/// assert_eq!(conditional.apply(&5), 10); // when branch executed
-///
-/// let double2 = BoxFunctionOnce::new(|x: &i32| x * 2);
-/// let negate2 = BoxFunctionOnce::new(|x: &i32| -x);
-/// let conditional2 = double2.when(|x: &i32| *x > 0).or_else(negate2);
-/// assert_eq!(conditional2.apply(&-5), 5); // or_else branch executed
-/// ```
-///
-/// # Author
-///
-/// Haixing Hu
-pub struct BoxConditionalFunctionOnce<T, R> {
-    function: BoxFunctionOnce<T, R>,
-    predicate: BoxPredicate<T>,
-}
-
-// Use macro to generate conditional function implementations
-impl_box_conditional_function!(
-    BoxConditionalFunctionOnce<T, R>,
-    BoxFunctionOnce,
-    FunctionOnce
-);
-
-// Use macro to generate conditional function debug and display implementations
-impl_conditional_function_debug_display!(BoxConditionalFunctionOnce<T, R>);
