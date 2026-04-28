@@ -1951,7 +1951,7 @@ mod test_into_fn {
 #[cfg(test)]
 mod test_conditional_execution {
     use super::*;
-    use qubit_function::predicates::predicate::{
+    use qubit_function::predicates::{
         ArcPredicate,
         BoxPredicate,
         RcPredicate,
@@ -2977,7 +2977,7 @@ mod test_conditional_execution {
 
     #[test]
     fn test_combined_predicate_types() {
-        use qubit_function::predicates::predicate::FnPredicateOps;
+        use qubit_function::predicates::FnPredicateOps;
 
         // Combine predicates: x > 0 AND x < 100
         let pred = (|x: &i32| *x > 0).and(|x: &i32| *x < 100);
