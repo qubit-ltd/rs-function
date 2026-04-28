@@ -21,8 +21,8 @@
 //! # Examples
 //!
 //! ```rust
-//! use qubit_function::consumers::bi_consumer::BoxConditionalBiConsumer;
-//! use qubit_function::consumers::consumer::BoxConditionalConsumer;
+//! use qubit_function::consumers::BoxConditionalBiConsumer;
+//! use qubit_function::consumers::BoxConditionalConsumer;
 //! macro_rules! impl_conditional_consumer_debug_display {
 //!     ($struct_name:ident<$t:ident>) => {
 //!         let _ = core::marker::PhantomData::<$t>;
@@ -59,8 +59,8 @@
 ///
 /// ```rust
 /// // For single type parameter
-/// use qubit_function::consumers::bi_consumer::BoxConditionalBiConsumer;
-/// use qubit_function::consumers::consumer::BoxConditionalConsumer;
+/// use qubit_function::consumers::BoxConditionalBiConsumer;
+/// use qubit_function::consumers::BoxConditionalConsumer;
 /// macro_rules! impl_conditional_consumer_debug_display {
 ///     ($struct_name:ident<$t:ident>) => {
 ///         let _ = core::marker::PhantomData::<$t>;

@@ -1,0 +1,129 @@
+/*******************************************************************************
+ *
+ *    Copyright (c) 2025 - 2026.
+ *    Haixing Hu, Qubit Co. Ltd.
+ *
+ *    All rights reserved.
+ *
+ ******************************************************************************/
+//! Defines the `BoxRunnableWith` public type.
+
+#![allow(unused_imports)]
+
+use super::*;
+
+/// Box-based runnable with mutable input.
+///
+/// `BoxRunnableWith<T, E>` stores a
+/// `Box<dyn FnMut(&mut T) -> Result<(), E>>` and can be called repeatedly.
+///
+/// # Author
+///
+/// Haixing Hu
+pub struct BoxRunnableWith<T, E> {
+    /// The stateful closure executed by this runnable.
+    pub(super) function: Box<dyn FnMut(&mut T) -> Result<(), E>>,
+    /// The optional name of this runnable.
+    pub(super) name: Option<String>,
+}
+
+impl<T, E> BoxRunnableWith<T, E> {
+    impl_common_new_methods!(
+        (FnMut(&mut T) -> Result<(), E> + 'static),
+        |function| Box::new(function),
+        "runnable-with"
+    );
+
+    impl_common_name_methods!("runnable-with");
+
+    /// Chains another runnable after this runnable succeeds.
+    ///
+    /// # Parameters
+    ///
+    /// * `next` - The runnable to execute after this runnable succeeds.
+    ///
+    /// # Returns
+    ///
+    /// A runnable executing both actions in sequence.
+    #[inline]
+    pub fn and_then<N>(self, next: N) -> BoxRunnableWith<T, E>
+    where
+        N: RunnableWith<T, E> + 'static,
+        T: 'static,
+        E: 'static,
+    {
+        let name = self.name;
+        let mut function = self.function;
+        let mut next = next;
+        BoxRunnableWith::new_with_optional_name(
+            move |input| {
+                function(input)?;
+                next.run_with(input)
+            },
+            name,
+        )
+    }
+
+    /// Runs this runnable before a callable.
+    ///
+    /// The callable is not executed if this runnable returns `Err`.
+    ///
+    /// # Parameters
+    ///
+    /// * `callable` - The callable to execute after this runnable succeeds.
+    ///
+    /// # Returns
+    ///
+    /// A callable producing the second computation's result.
+    #[inline]
+    pub fn then_callable_with<R, C>(self, callable: C) -> BoxCallableWith<T, R, E>
+    where
+        C: crate::tasks::callable_with::CallableWith<T, R, E> + 'static,
+        T: 'static,
+        R: 'static,
+        E: 'static,
+    {
+        let name = self.name;
+        let mut function = self.function;
+        let mut callable = callable;
+        BoxCallableWith::new_with_optional_name(
+            move |input| {
+                function(input)?;
+                callable.call_with(input)
+            },
+            name,
+        )
+    }
+}
+
+impl<T, E> RunnableWith<T, E> for BoxRunnableWith<T, E> {
+    /// Executes the boxed runnable with mutable input.
+    #[inline]
+    fn run_with(&mut self, input: &mut T) -> Result<(), E> {
+        (self.function)(input)
+    }
+
+    impl_box_conversions!(
+        BoxRunnableWith<T, E>,
+        RcRunnableWith,
+        FnMut(&mut T) -> Result<(), E>
+    );
+
+    /// Converts this boxed runnable into a boxed callable while preserving its
+    /// name.
+    #[inline]
+    fn into_callable_with(self) -> BoxCallableWith<T, (), E>
+    where
+        Self: Sized + 'static,
+    {
+        let name = self.name;
+        let mut function = self.function;
+        BoxCallableWith::new_with_optional_name(
+            move |input| {
+                function(input)?;
+                Ok(())
+            },
+            name,
+        )
+    }
+}

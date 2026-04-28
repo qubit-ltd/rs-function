@@ -24,7 +24,7 @@
 //! ```rust
 //! // For single type parameter
 //! use qubit_function::{ArcConsumer, RcConsumer};
-//! use qubit_function::consumers::bi_consumer::{ArcBiConsumer, RcBiConsumer};
+//! use qubit_function::consumers::{ArcBiConsumer, RcBiConsumer};
 //! macro_rules! impl_consumer_clone {
 //!     ($struct_name:ident<$t:ident>) => {
 //!         let _ = core::marker::PhantomData::<$t>;
@@ -70,7 +70,7 @@
 /// ```rust
 /// // For single type parameter with Arc
 /// use qubit_function::{ArcConsumer, RcConsumer};
-/// use qubit_function::consumers::bi_consumer::{ArcBiConsumer, RcBiConsumer};
+/// use qubit_function::consumers::{ArcBiConsumer, RcBiConsumer};
 /// macro_rules! impl_consumer_clone {
 ///     ($struct_name:ident<$t:ident>) => {
 ///         let _ = core::marker::PhantomData::<$t>;

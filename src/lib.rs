@@ -46,8 +46,8 @@ pub mod tasks;
 pub mod tester;
 pub mod transformers;
 
-// Re-export all types from submodules for backward compatibility
-// Types are organized by functionality and ownership model for better readability
+// Re-export common types from module roots for ergonomic crate-level imports.
+// Types are organized by functionality and ownership model for better readability.
 
 // =============================================================================
 // Core Functional Types
