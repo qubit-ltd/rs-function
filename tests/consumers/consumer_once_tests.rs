@@ -8,10 +8,7 @@
  *
  ******************************************************************************/
 // qubit-style: allow explicit-imports
-/// Copyright (c) 2025.
-/// Haixing Hu, Qubit Co. Ltd.
 ///
-/// All rights reserved.
 /// # ConsumerOnce Tests
 ///
 /// Unit tests for the ConsumerOnce trait and its implementations.

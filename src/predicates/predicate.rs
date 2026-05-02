@@ -170,9 +170,6 @@
 //! assert!(!pred.test(&-3));
 //! ```
 //!
-//! ## Author
-//!
-//! Haixing Hu
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -280,9 +277,6 @@ pub use fn_predicate_ops::FnPredicateOps;
 /// assert!(!counting_pred.test(&-3));
 /// ```
 ///
-/// ## Author
-///
-/// Haixing Hu
 pub trait Predicate<T> {
     /// Tests whether the given value satisfies this predicate.
     ///

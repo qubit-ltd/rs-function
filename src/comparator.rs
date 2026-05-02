@@ -167,9 +167,6 @@
 //! assert_eq!(cmp.compare(&p1, &p2), Ordering::Greater);
 //! ```
 //!
-//! ## Author
-//!
-//! Haixing Hu
 use std::cmp::Ordering;
 use std::rc::Rc;
 use std::sync::Arc;
