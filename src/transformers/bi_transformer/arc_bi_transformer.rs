@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `ArcBiTransformer` public type.
 
 #![allow(unused_imports)]
@@ -30,9 +32,6 @@ use super::*;
 /// - **Thread Safety**: Thread-safe (`Send + Sync` required)
 /// - **Clonable**: Cheap cloning via `Arc::clone`
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct ArcBiTransformer<T, U, R> {
     pub(super) function: Arc<dyn Fn(T, U) -> R + Send + Sync>,
     pub(super) name: Option<String>,
@@ -101,9 +100,6 @@ impl<T, U, R> BiTransformer<T, U, R> for ArcBiTransformer<T, U, R> {
 /// assert_eq!(multiply.apply(6, 7), 42);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 impl<F, T, U, R> BiTransformer<T, U, R> for F
 where
     F: Fn(T, U) -> R,

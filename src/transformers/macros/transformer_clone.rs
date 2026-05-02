@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Transformer Clone Macro
@@ -35,9 +36,6 @@
 //! impl_transformer_clone!(RcBiTransformer<T, U, V>);
 //! ```
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Generates Clone trait implementation for basic Transformer types
 ///
@@ -70,9 +68,6 @@
 /// impl_transformer_clone!(RcBiTransformer<T, U, V>);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 macro_rules! impl_transformer_clone {
     // Two generic parameters
     ($struct_name:ident < $t:ident, $r:ident >) => {

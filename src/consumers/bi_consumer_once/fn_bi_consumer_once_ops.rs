@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `FnBiConsumerOnceOps` public type.
 
 #![allow(unused_imports)]
@@ -50,9 +52,6 @@ use super::*;
 /// assert_eq!(*log.lock().unwrap(), vec![8, 15]);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait FnBiConsumerOnceOps<T, U>: FnOnce(&T, &U) + Sized {
     /// Chains another one-time bi-consumer in sequence
     ///

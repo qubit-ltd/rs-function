@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `FnStatefulTransformerOps` public type.
 
 #![allow(unused_imports)]
@@ -79,9 +81,6 @@ use super::*;
 /// assert_eq!(transformer.apply(-5), 5);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait FnStatefulTransformerOps<T, R>: FnMut(T) -> R + Sized {
     /// Chain composition - applies self first, then after
     ///
@@ -186,7 +185,4 @@ pub trait FnStatefulTransformerOps<T, R>: FnMut(T) -> R + Sized {
 /// Automatically implements `FnStatefulTransformerOps<T, R>` for any type that
 /// implements `FnMut(T) -> R`.
 ///
-/// # Author
-///
-/// Haixing Hu
 impl<T, R, F> FnStatefulTransformerOps<T, R> for F where F: FnMut(T) -> R {}

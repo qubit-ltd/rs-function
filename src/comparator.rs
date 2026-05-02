@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Comparator Abstraction
@@ -207,9 +208,6 @@ pub use fn_comparator_ops::FnComparatorOps;
 /// assert_eq!(cmp.compare(&5, &3), Ordering::Greater);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait Comparator<T> {
     /// Compares two values and returns an ordering.
     ///

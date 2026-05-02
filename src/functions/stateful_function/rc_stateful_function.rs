@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `RcStatefulFunction` public type.
 
 #![allow(unused_imports)]
@@ -31,9 +33,6 @@ use super::*;
 /// - **Clonable**: Cheap cloning via `Rc::clone`
 /// - **Statefulness**: Can modify internal state between calls
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct RcStatefulFunction<T, R> {
     pub(super) function: RcStatefulFn<T, R>,
     pub(super) name: Option<String>,

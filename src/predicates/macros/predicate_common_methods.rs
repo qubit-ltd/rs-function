@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 
@@ -53,9 +54,6 @@
 //! * `set_name()` - Sets the name of the predicate
 //! * `always_true()` - Creates a predicate that always returns true
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Generates common Predicate methods (new, new_with_name, name,
 /// set_name, always_true, always_false)
@@ -103,9 +101,6 @@
 /// * `always_true()` - Creates a predicate that always returns true
 /// * `always_false()` - Creates a predicate that always returns false
 ///
-/// # Author
-///
-/// Haixing Hu
 macro_rules! impl_predicate_common_methods {
     // Single generic parameter - Predicate types
     (

@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulBinaryOperator` public type.
 
 #![allow(unused_imports)]
@@ -30,7 +32,4 @@ use super::*;
 /// assert_eq!(multiply_clone.apply(6, 7), 42);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub type ArcStatefulBinaryOperator<T> = ArcStatefulBiTransformer<T, T, T>;

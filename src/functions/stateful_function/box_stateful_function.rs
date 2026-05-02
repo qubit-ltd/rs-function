@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulFunction` public type.
 
 #![allow(unused_imports)]
@@ -31,9 +33,6 @@ use super::*;
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
 /// - **Statefulness**: Can modify internal state between calls
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct BoxStatefulFunction<T, R> {
     pub(super) function: Box<dyn FnMut(&T) -> R>,
     pub(super) name: Option<String>,

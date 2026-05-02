@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `UnaryOperator` public type.
 
 #![allow(unused_imports)]
@@ -65,9 +67,6 @@ use super::*;
 /// assert_eq!(op.apply(41), 42);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait UnaryOperator<T>: Transformer<T, T> {}
 
 /// Blanket implementation of UnaryOperator for all Transformer<T, T>
@@ -75,9 +74,6 @@ pub trait UnaryOperator<T>: Transformer<T, T> {}
 /// This automatically implements `UnaryOperator<T>` for any type that
 /// implements `Transformer<T, T>`.
 ///
-/// # Author
-///
-/// Haixing Hu
 impl<F, T> UnaryOperator<T> for F
 where
     F: Transformer<T, T>,

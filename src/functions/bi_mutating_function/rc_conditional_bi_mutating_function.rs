@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `RcConditionalBiMutatingFunction` public type.
 
 #![allow(unused_imports)]
@@ -32,9 +34,6 @@ use super::*;
 /// - **Conditional Execution**: Only computes when bi-predicate returns `true`
 /// - **No Lock Overhead**: More efficient than `ArcConditionalBiMutatingFunction`
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct RcConditionalBiMutatingFunction<T, U, R> {
     pub(super) function: RcBiMutatingFunction<T, U, R>,
     pub(super) predicate: RcBiPredicate<T, U>,

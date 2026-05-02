@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 
@@ -18,9 +19,6 @@
 //!
 //! - [`BoxBiMutatingFunctionOnce`]: Single ownership, one-time use
 //!
-//! # Author
-//!
-//! Haixing Hu
 use crate::functions::{
     macros::{
         impl_box_conditional_function,
@@ -65,9 +63,6 @@ pub use box_conditional_bi_mutating_function_once::BoxConditionalBiMutatingFunct
 /// * `U` - The type of the second input value (mutable reference)
 /// * `R` - The type of the output value
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait BiMutatingFunctionOnce<T, U, R> {
     /// Computes output from two mutable references, consuming self
     ///

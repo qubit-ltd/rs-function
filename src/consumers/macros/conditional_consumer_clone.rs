@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Conditional Consumer Clone Macro
@@ -43,9 +44,6 @@
 //! impl_conditional_consumer_clone!(RcConditionalBiConsumer<i32, i32>);
 //! ```
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Generates Clone trait implementation for Conditional Consumer types
 ///
@@ -85,9 +83,6 @@
 /// ```
 ///
 ///
-/// # Author
-///
-/// Haixing Hu
 macro_rules! impl_conditional_consumer_clone {
     // Single generic parameter - Consumer types
     ($struct_name:ident < $t:ident >) => {

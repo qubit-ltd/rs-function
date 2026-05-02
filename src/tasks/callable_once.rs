@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Callable Once Types
@@ -18,9 +19,6 @@
 //! The trait itself does not require `Send`; concurrent executors should add
 //! `+ Send + 'static` at their API boundary.
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 use crate::{
     functions::macros::impl_function_debug_display,
@@ -66,9 +64,6 @@ pub use box_callable_once::BoxCallableOnce;
 /// assert_eq!(task.call(), Ok(42));
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait CallableOnce<R, E> {
     /// Executes the computation, consuming `self`.
     ///

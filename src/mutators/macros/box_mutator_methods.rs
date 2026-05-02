@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Box Mutator Methods Macro
@@ -42,9 +43,6 @@
 //! // );
 //! ```
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Generates when and and_then method implementations for Box-based Mutator
 ///
@@ -87,9 +85,6 @@
 /// // }
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 macro_rules! impl_box_mutator_methods {
     // Single generic parameter - Mutator
     ($struct_name:ident < $t:ident >, $conditional_type:ident, $mutator_trait:ident) => {

@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Callable Types
@@ -18,9 +19,6 @@
 //! The trait itself does not require `Send`; concurrent executors should add
 //! `+ Send + 'static` at their API boundary.
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -80,9 +78,6 @@ pub use arc_callable::ArcCallable;
 /// assert_eq!(task.call().expect("call should succeed"), 42);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait Callable<R, E> {
     /// Executes the computation, borrowing `self` mutably.
     ///

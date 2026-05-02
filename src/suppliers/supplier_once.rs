@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # SupplierOnce Types
@@ -63,9 +64,6 @@
 //! assert_eq!(value, "data");
 //! ```
 //!
-//! # Author
-//!
-//! Haixing Hu
 use crate::macros::{
     impl_box_once_conversions,
     impl_closure_once_trait,
@@ -138,9 +136,6 @@ pub use box_supplier_once::BoxSupplierOnce;
 /// assert_eq!(value, "data");
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait SupplierOnce<T> {
     /// Generates and returns the value, consuming self.
     ///

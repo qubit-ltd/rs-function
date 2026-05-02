@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 
@@ -16,9 +17,6 @@
 //! `into_fn`, `into_once`) for all Rc-based function wrapper types using a
 //! single unified pattern.
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Public interface macro for Rc-based conversions.
 ///
@@ -93,9 +91,6 @@
 /// // impl_rc_conversions!(RcMutatingFunction<i32, i32>, BoxMutatingFunction, BoxMutatingFunctionOnce, Fn(input: &mut i32) -> i32);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 macro_rules! impl_rc_conversions {
     // ==================== Core Macro: Generate Single Method ====================
 

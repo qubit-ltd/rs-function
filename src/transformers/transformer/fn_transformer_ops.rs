@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `FnTransformerOps` public type.
 
 #![allow(unused_imports)]
@@ -70,9 +72,6 @@ use super::*;
 /// assert_eq!(conditional.apply(-5), 5);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait FnTransformerOps<T, R>: Fn(T) -> R + Sized {
     /// Chain composition - applies self first, then after
     ///
@@ -282,7 +281,4 @@ pub trait FnTransformerOps<T, R>: Fn(T) -> R + Sized {
 /// Automatically implements `FnTransformerOps<T, R>` for any type that
 /// implements `Fn(T) -> R`.
 ///
-/// # Author
-///
-/// Haixing Hu
 impl<T, R, F> FnTransformerOps<T, R> for F where F: Fn(T) -> R {}

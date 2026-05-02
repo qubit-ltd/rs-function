@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `BoxMutatorOnce` public type.
 
 #![allow(unused_imports)]
@@ -90,9 +92,6 @@ use super::*;
 /// assert_eq!(target, vec![0, 1, 2, 3, 4]);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct BoxMutatorOnce<T> {
     pub(super) function: Box<dyn FnOnce(&mut T)>,
     pub(super) name: Option<String>,

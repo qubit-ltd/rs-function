@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `RcConditionalConsumer` public type.
 
 #![allow(unused_imports)]
@@ -66,9 +68,6 @@ use super::*;
 /// consumer.accept(&-5); // Prints: Non-positive: -5
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct RcConditionalConsumer<T> {
     pub(super) consumer: RcConsumer<T>,
     pub(super) predicate: RcPredicate<T>,

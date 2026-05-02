@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # FunctionOnce Types
@@ -16,9 +17,6 @@
 //!
 //! - [`BoxFunctionOnce`]: Single ownership, one-time use
 //!
-//! # Author
-//!
-//! Haixing Hu
 use crate::functions::macros::{
     impl_box_conditional_function,
     impl_box_function_methods,
@@ -60,9 +58,6 @@ pub use fn_function_once_ops::FnFunctionOnceOps;
 /// * `T` - The type of the input value (borrowed)
 /// * `R` - The type of the output value
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait FunctionOnce<T, R> {
     /// Applies the function to the input reference, consuming self
     ///

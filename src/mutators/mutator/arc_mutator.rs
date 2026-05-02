@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `ArcMutator` public type.
 
 #![allow(unused_imports)]
@@ -49,9 +51,6 @@ use super::*;
 /// assert_eq!(value, 10);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct ArcMutator<T> {
     pub(super) function: ArcMutatorFn<T>,
     pub(super) name: Option<String>,

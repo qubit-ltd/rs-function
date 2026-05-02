@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `ArcBiConsumer` public type.
 
 #![allow(unused_imports)]
@@ -58,9 +60,6 @@ use super::*;
 /// clone.accept(&10, &20);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct ArcBiConsumer<T, U> {
     pub(super) function: Arc<ThreadSafeBiConsumerFn<T, U>>,
     pub(super) name: Option<String>,

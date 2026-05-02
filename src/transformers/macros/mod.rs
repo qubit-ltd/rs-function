@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Transformer Macros Module
@@ -11,9 +12,6 @@
 //! Provides declarative macros to simplify Transformer implementations and
 //! reduce code duplication.
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 // Module declarations
 mod box_conditional_transformer;

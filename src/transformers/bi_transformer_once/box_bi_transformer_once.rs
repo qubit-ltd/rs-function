@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `BoxBiTransformerOnce` public type.
 
 #![allow(unused_imports)]
@@ -29,9 +31,6 @@ use super::*;
 /// - **Reusability**: Can only be called once (consumes self and inputs)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct BoxBiTransformerOnce<T, U, R> {
     pub(super) function: Box<dyn FnOnce(T, U) -> R>,
     pub(super) name: Option<String>,

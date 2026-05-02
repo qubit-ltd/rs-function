@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Box Consumer Methods Macro
@@ -53,9 +54,6 @@
 //! impl_box_consumer_methods!(BoxBiConsumer<i32, i32>, BoxConditionalBiConsumer<i32, i32>, BiConsumer);
 //! ```
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Generates when and and_then method implementations for Box-based Consumer
 ///
@@ -104,9 +102,6 @@
 /// impl_box_consumer_methods!(BoxBiConsumer<i32, i32>, BoxConditionalBiConsumer<i32, i32>, BiConsumer);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 macro_rules! impl_box_consumer_methods {
     // Single generic parameter - Consumer
     (

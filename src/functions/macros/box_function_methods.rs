@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Box Function Methods Macro
@@ -58,9 +59,6 @@
 //! // );
 //! ```
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Generates when and and_then method implementations for Box-based Function
 ///
@@ -111,9 +109,6 @@
 /// // );
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 macro_rules! impl_box_function_methods {
     // Two generic parameters - Function
     (

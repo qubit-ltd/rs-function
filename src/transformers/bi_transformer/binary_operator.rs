@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `BinaryOperator` public type.
 
 #![allow(unused_imports)]
@@ -64,9 +66,6 @@ use super::*;
 /// assert_eq!(op.apply(20, 22), 42);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait BinaryOperator<T>: BiTransformer<T, T, T> {}
 
 /// Blanket implementation of BinaryOperator for all BiTransformer<T, T, T>
@@ -74,9 +73,6 @@ pub trait BinaryOperator<T>: BiTransformer<T, T, T> {}
 /// This automatically implements `BinaryOperator<T>` for any type that
 /// implements `BiTransformer<T, T, T>`.
 ///
-/// # Author
-///
-/// Haixing Hu
 impl<F, T> BinaryOperator<T> for F
 where
     F: BiTransformer<T, T, T>,

@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Mutator Common Methods Macro
@@ -51,9 +52,6 @@
 //! * `set_name()` - Sets the name of the mutator
 //! * `noop()` - Creates a mutator that performs no operation
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Generates common Mutator methods (new, new_with_name, name,
 /// set_name, noop)
@@ -104,9 +102,6 @@
 /// * `set_name()` - Sets the name of the mutator
 /// * `noop()` - Creates a mutator that performs no operation
 ///
-/// # Author
-///
-/// Haixing Hu
 macro_rules! impl_mutator_common_methods {
     // Single generic parameter - Mutator types
     (

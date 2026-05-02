@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `RcConditionalStatefulTransformer` public type.
 
 #![allow(unused_imports)]
@@ -48,9 +50,6 @@ use super::*;
 /// assert_eq!(transformer_clone.apply(-5), 5);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct RcConditionalStatefulTransformer<T, R> {
     pub(super) transformer: RcStatefulTransformer<T, R>,
     pub(super) predicate: RcPredicate<T>,

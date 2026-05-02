@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `ArcRunnableWith` public type.
 
 #![allow(unused_imports)]
@@ -17,9 +19,6 @@ use super::*;
 /// `ArcRunnableWith<T, E>` stores an
 /// `Arc<Mutex<dyn FnMut(&mut T) -> Result<(), E> + Send>>`.
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct ArcRunnableWith<T, E> {
     /// The stateful closure executed by this runnable.
     pub(super) function: Arc<Mutex<dyn FnMut(&mut T) -> Result<(), E> + Send>>,

@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # StatefulMutatingFunction Types
@@ -117,9 +118,6 @@
 //! assert_eq!(value2, 6);
 //! ```
 //!
-//! # Author
-//!
-//! Haixing Hu
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
@@ -255,9 +253,6 @@ pub use fn_stateful_mutating_function_ops::FnStatefulMutatingFunctionOps;
 /// // let mut arc_func = closure.into_arc(); // closure moved
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait StatefulMutatingFunction<T, R> {
     /// Applies the function to the mutable reference and returns a result
     ///

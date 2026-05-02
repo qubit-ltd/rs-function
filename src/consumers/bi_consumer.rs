@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # BiConsumer Types
@@ -33,9 +34,6 @@
 //! wrapper-level interior mutability (`Mutex`/`RefCell`), making it more
 //! efficient and easier to share.
 //!
-//! # Author
-//!
-//! Haixing Hu
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -141,9 +139,6 @@ pub use rc_conditional_bi_consumer::RcConditionalBiConsumer;
 /// apply_consumer(&box_con, &5, &3);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait BiConsumer<T, U> {
     /// Performs the non-mutating consumption operation
     ///

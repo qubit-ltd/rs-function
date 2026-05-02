@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Conditional Mutator Conversions Macro
@@ -76,9 +77,6 @@
 //! - The `into_fn` method uses the provided `$fn_trait` parameter to match the
 //!   intended trait type
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Generates conversion methods for Conditional Mutator implementations
 ///
@@ -154,9 +152,6 @@
 /// - The `into_fn` method uses the provided `$fn_trait` parameter to match the
 ///   intended trait type
 ///
-/// # Author
-///
-/// Haixing Hu
 macro_rules! impl_conditional_mutator_conversions {
     // Single generic parameter - Mutator
     (

@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 
@@ -33,9 +34,6 @@
 //! impl_box_predicate_methods!(BoxBiPredicate<T, U>);
 //! ```
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Generates logical operation method implementations for Box-based Predicate
 ///
@@ -63,9 +61,6 @@
 /// impl_box_predicate_methods!(BoxBiPredicate<T, U>);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 macro_rules! impl_box_predicate_methods {
     // Internal macro for generating logical operations
     (@logical_ops $struct_name:ident < $t:ident >, $trait_name:ident) => {

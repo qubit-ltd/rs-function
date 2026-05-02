@@ -1,18 +1,16 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # BiTransformer and_then method tests
 //!
 //! Tests the and_then method for BoxBiTransformer, ArcBiTransformer and RcBiTransformer
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 #[cfg(test)]
 mod tests {

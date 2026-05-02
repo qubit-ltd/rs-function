@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # BiConsumerOnce Types
@@ -35,9 +36,6 @@
 //! Unlike BiConsumer, BiConsumerOnce consumes itself on first call. Suitable
 //! for initialization callbacks, cleanup callbacks, etc.
 //!
-//! # Author
-//!
-//! Haixing Hu
 use crate::{
     consumers::macros::{
         impl_box_conditional_consumer,
@@ -121,9 +119,6 @@ pub use box_conditional_bi_consumer_once::BoxConditionalBiConsumerOnce;
 /// assert_eq!(*log.lock().unwrap(), vec![8]);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait BiConsumerOnce<T, U> {
     /// Performs the one-time consumption operation
     ///

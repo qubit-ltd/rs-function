@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `ArcConditionalBiConsumer` public type.
 
 #![allow(unused_imports)]
@@ -29,9 +31,6 @@ use super::*;
 /// - **Implements BiConsumer**: Can be used anywhere a `BiConsumer` is expected
 /// - **Non-mutating**: Neither modifies itself nor input values
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct ArcConditionalBiConsumer<T, U> {
     pub(super) consumer: ArcBiConsumer<T, U>,
     pub(super) predicate: ArcBiPredicate<T, U>,

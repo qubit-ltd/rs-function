@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `BoxCallableWith` public type.
 
 #![allow(unused_imports)]
@@ -17,9 +19,6 @@ use super::*;
 /// `BoxCallableWith<T, R, E>` stores a
 /// `Box<dyn FnMut(&mut T) -> Result<R, E>>` and can be called repeatedly.
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct BoxCallableWith<T, R, E> {
     /// The stateful closure executed by this callable.
     pub(super) function: Box<dyn FnMut(&mut T) -> Result<R, E>>,

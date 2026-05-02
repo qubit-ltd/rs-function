@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulTransformer` public type.
 
 #![allow(unused_imports)]
@@ -32,9 +34,6 @@ use super::*;
 /// - **Clonable**: Cheap cloning via `Arc::clone`
 /// - **Statefulness**: Can modify internal state between calls
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct ArcStatefulTransformer<T, R> {
     pub(super) function: Arc<Mutex<dyn FnMut(T) -> R + Send>>,
     pub(super) name: Option<String>,

@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `FnBiPredicateOps` public type.
 
 #![allow(unused_imports)]
@@ -32,9 +34,6 @@ use super::*;
 /// assert!(!pred.test(&3, &8));
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait FnBiPredicateOps<T, U>: Fn(&T, &U) -> bool + Sized {
     /// Returns a bi-predicate that represents the logical AND of this
     /// bi-predicate and another.
