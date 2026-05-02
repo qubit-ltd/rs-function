@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `FnBiMutatingFunctionOps` public type.
 
 #![allow(unused_imports)]
@@ -80,9 +82,6 @@ use super::*;
 /// assert_eq!(conditional.apply(&mut a, &mut b), -15); // multiply: (-5 * 3)
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait FnBiMutatingFunctionOps<T, U, R>: Fn(&mut T, &mut U) -> R + Sized {
     /// Chain composition - applies self first, then after
     ///
@@ -265,7 +264,4 @@ pub trait FnBiMutatingFunctionOps<T, U, R>: Fn(&mut T, &mut U) -> R + Sized {
 /// Automatically implements `FnBiMutatingFunctionOps<T, U, R>` for any type that
 /// implements `Fn(&mut T, &mut U) -> R`.
 ///
-/// # Author
-///
-/// Haixing Hu
 impl<T, U, R, F> FnBiMutatingFunctionOps<T, U, R> for F where F: Fn(&mut T, &mut U) -> R {}

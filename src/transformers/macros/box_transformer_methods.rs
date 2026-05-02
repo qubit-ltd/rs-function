@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Box Transformer Methods Macro
@@ -55,9 +56,6 @@
 //! // );
 //! ```
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Generates when and and_then method implementations for Box-based Transformer
 ///
@@ -108,9 +106,6 @@
 /// // );
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 macro_rules! impl_box_transformer_methods {
     // Two generic parameter - Transformer
     (

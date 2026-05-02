@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 
@@ -17,14 +18,8 @@
 
 /// Name constant used by the `always_true` method
 ///
-/// # Author
-///
-/// Haixing Hu
 pub const ALWAYS_TRUE_NAME: &str = "always_true";
 
 /// Name constant used by the `always_false` method
 ///
-/// # Author
-///
-/// Haixing Hu
 pub const ALWAYS_FALSE_NAME: &str = "always_false";

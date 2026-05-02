@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 
@@ -62,9 +63,6 @@
 //! }
 //! ```
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Generates constant method implementation for transformer types.
 ///
@@ -90,9 +88,6 @@
 /// assert_eq!(constant.apply(123), "hello");
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 macro_rules! impl_transformer_constant_method {
     // Single-parameter transformer (BoxTransformer, RcTransformer, BoxTransformerOnce)
     ($struct_name:ident < $t:ident, $r:ident >) => {

@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 
@@ -30,9 +31,6 @@
 //! - Return type
 //! - Call mode (Fn → direct, FnMut → lock_unwrap)
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Public interface macro for Arc-based conversions.
 ///
@@ -100,9 +98,6 @@
 /// //                       Fn(input: &mut T) -> R);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 macro_rules! impl_arc_conversions {
     // ==================== Core Macro: Generate Single Method ====================
 

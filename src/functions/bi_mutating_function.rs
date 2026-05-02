@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 
@@ -21,9 +22,6 @@
 //! - [`ArcBiMutatingFunction`]: Thread-safe shared ownership, cloneable
 //! - [`RcBiMutatingFunction`]: Single-threaded shared ownership, cloneable
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 use std::rc::Rc;
 use std::sync::Arc;
@@ -94,9 +92,6 @@ pub use arc_conditional_bi_mutating_function::ArcConditionalBiMutatingFunction;
 /// * `U` - The type of the second input value (mutable reference)
 /// * `R` - The type of the output value
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait BiMutatingFunction<T, U, R> {
     /// Applies the bi-mutating-function to two mutable references and returns a result
     ///

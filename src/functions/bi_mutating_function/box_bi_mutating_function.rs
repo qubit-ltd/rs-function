@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `BoxBiMutatingFunction` public type.
 
 #![allow(unused_imports)]
@@ -28,9 +30,6 @@ use super::*;
 /// - **Reusability**: Can be called multiple times (borrows inputs mutably each time)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct BoxBiMutatingFunction<T, U, R> {
     pub(super) function: Box<dyn Fn(&mut T, &mut U) -> R>,
     pub(super) name: Option<String>,

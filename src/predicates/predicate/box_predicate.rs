@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `BoxPredicate` public type.
 
 #![allow(unused_imports)]
@@ -31,9 +33,6 @@ use super::*;
 /// assert!(combined.test(&4));
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct BoxPredicate<T> {
     pub(super) function: Box<dyn Fn(&T) -> bool>,
     pub(super) name: Option<String>,

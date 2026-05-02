@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `StatefulBinaryOperator` public type.
 
 #![allow(unused_imports)]
@@ -64,9 +66,6 @@ use super::*;
 /// assert_eq!(op.apply(20, 22), 42);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait StatefulBinaryOperator<T>: StatefulBiTransformer<T, T, T> {}
 
 /// Blanket implementation of StatefulBinaryOperator for all StatefulBiTransformer<T, T, T>
@@ -74,9 +73,6 @@ pub trait StatefulBinaryOperator<T>: StatefulBiTransformer<T, T, T> {}
 /// This automatically implements `StatefulBinaryOperator<T>` for any type that
 /// implements `StatefulBiTransformer<T, T, T>`.
 ///
-/// # Author
-///
-/// Haixing Hu
 impl<F, T> StatefulBinaryOperator<T> for F
 where
     F: StatefulBiTransformer<T, T, T>,

@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulSupplier` public type.
 
 #![allow(unused_imports)]
@@ -65,9 +67,6 @@ use super::*;
 /// assert_eq!(pipeline.get(), 25);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct BoxStatefulSupplier<T> {
     pub(super) function: Box<dyn FnMut() -> T>,
     pub(super) name: Option<String>,

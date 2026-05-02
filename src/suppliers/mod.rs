@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Suppliers Module
@@ -11,9 +12,6 @@
 //! This module provides supplier-related functional programming abstractions
 //! for producing values without input parameters.
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 #[doc(hidden)]
 pub mod macros;

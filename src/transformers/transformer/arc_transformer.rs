@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `ArcTransformer` public type.
 
 #![allow(unused_imports)]
@@ -30,9 +32,6 @@ use super::*;
 /// - **Thread Safety**: Thread-safe (`Send + Sync` required)
 /// - **Clonable**: Cheap cloning via `Arc::clone`
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct ArcTransformer<T, R> {
     pub(super) function: Arc<dyn Fn(T) -> R + Send + Sync>,
     pub(super) name: Option<String>,

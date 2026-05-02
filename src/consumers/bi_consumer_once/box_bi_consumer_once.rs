@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `BoxBiConsumerOnce` public type.
 
 #![allow(unused_imports)]
@@ -56,9 +58,6 @@ use super::*;
 /// consumer.accept(&5, &3);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct BoxBiConsumerOnce<T, U> {
     pub(super) function: Box<BiConsumerOnceFn<T, U>>,
     pub(super) name: Option<String>,

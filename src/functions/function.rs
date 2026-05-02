@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Function Types
@@ -21,9 +22,6 @@
 //! - [`ArcFunction`]: Thread-safe shared ownership, cloneable
 //! - [`RcFunction`]: Single-threaded shared ownership, cloneable
 //!
-//! # Author
-//!
-//! Haixing Hu
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -87,9 +85,6 @@ pub use fn_function_ops::FnFunctionOps;
 /// * `T` - The type of the input value (borrowed)
 /// * `R` - The type of the output value
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait Function<T, R> {
     /// Applies the function to the input reference to produce an output value
     ///

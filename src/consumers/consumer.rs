@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Consumer Types
@@ -32,9 +33,6 @@
 //! interior mutability (`Mutex`/`RefCell`), making it more efficient and easier
 //! to share.
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 use std::rc::Rc;
 use std::sync::Arc;
@@ -125,9 +123,6 @@ pub use arc_conditional_consumer::ArcConditionalConsumer;
 /// apply_consumer(&box_con, &5);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait Consumer<T> {
     /// Execute non-mutating consumption operation
     ///

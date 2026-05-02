@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 
@@ -18,9 +19,6 @@
 //!
 //! - [`BoxBiFunctionOnce`]: Single ownership, one-time use
 //!
-//! # Author
-//!
-//! Haixing Hu
 use crate::macros::{
     impl_box_once_conversions,
     impl_closure_once_trait,
@@ -64,9 +62,6 @@ pub use box_conditional_bi_function_once::BoxConditionalBiFunctionOnce;
 /// * `U` - The type of the second input value (borrowed)
 /// * `R` - The type of the output value
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait BiFunctionOnce<T, U, R> {
     /// Computes output from two input references, consuming self
     ///

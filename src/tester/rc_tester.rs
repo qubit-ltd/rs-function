@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `RcTester` public type.
 
 #![allow(unused_imports)]
@@ -51,9 +53,6 @@ use super::*;
 /// let combined = shared.and(&clone1);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct RcTester {
     pub(super) function: Rc<dyn Fn() -> bool>,
 }

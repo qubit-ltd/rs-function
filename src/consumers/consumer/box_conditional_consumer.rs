@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalConsumer` public type.
 
 #![allow(unused_imports)]
@@ -65,9 +67,6 @@ use super::*;
 /// consumer.accept(&-5); // Prints: Non-positive: -5
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct BoxConditionalConsumer<T> {
     pub(super) consumer: BoxConsumer<T>,
     pub(super) predicate: BoxPredicate<T>,

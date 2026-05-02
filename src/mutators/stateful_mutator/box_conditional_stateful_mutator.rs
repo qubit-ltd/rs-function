@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalStatefulMutator` public type.
 
 #![allow(unused_imports)]
@@ -68,9 +70,6 @@ use super::*;
 /// assert_eq!(negative, -6); // or_else branch executed
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct BoxConditionalStatefulMutator<T> {
     pub(super) mutator: BoxStatefulMutator<T>,
     pub(super) predicate: BoxPredicate<T>,

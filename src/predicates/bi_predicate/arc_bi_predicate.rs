@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `ArcBiPredicate` public type.
 
 #![allow(unused_imports)]
@@ -38,9 +40,6 @@ use super::*;
 /// }).join().unwrap();
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct ArcBiPredicate<T, U> {
     pub(super) function: Arc<SendSyncBiPredicateFn<T, U>>,
     pub(super) name: Option<String>,

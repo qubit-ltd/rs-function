@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `RcCallable` public type.
 
 #![allow(unused_imports)]
@@ -26,9 +28,6 @@ use super::*;
 /// * `R` - The success value returned by the computation.
 /// * `E` - The error value returned when the computation fails.
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct RcCallable<R, E> {
     /// The stateful closure executed by this callable.
     pub(super) function: Rc<RefCell<dyn FnMut() -> Result<R, E>>>,

@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `UnaryOperatorOnce` public type.
 
 #![allow(unused_imports)]
@@ -51,9 +53,6 @@ use super::*;
 /// assert_eq!(apply(21, double), 42);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait UnaryOperatorOnce<T>: TransformerOnce<T, T> {}
 
 /// Blanket implementation of UnaryOperatorOnce for all TransformerOnce<T, T>
@@ -61,9 +60,6 @@ pub trait UnaryOperatorOnce<T>: TransformerOnce<T, T> {}
 /// This automatically implements `UnaryOperatorOnce<T>` for any type that
 /// implements `TransformerOnce<T, T>`.
 ///
-/// # Author
-///
-/// Haixing Hu
 impl<F, T> UnaryOperatorOnce<T> for F
 where
     F: TransformerOnce<T, T>,

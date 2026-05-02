@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # BiConsumer Types
@@ -30,9 +31,6 @@
 //! Suitable for statistics, accumulation, and event processing scenarios
 //! involving two parameters.
 //!
-//! # Author
-//!
-//! Haixing Hu
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
@@ -137,9 +135,6 @@ pub use rc_conditional_stateful_bi_consumer::RcConditionalStatefulBiConsumer;
 /// assert_eq!(*log.borrow(), vec![8]);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait StatefulBiConsumer<T, U> {
     /// Performs the consumption operation
     ///

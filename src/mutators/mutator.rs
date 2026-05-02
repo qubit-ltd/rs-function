@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Mutator Types (Stateless)
@@ -197,9 +198,6 @@
 //! assert_eq!(negative, -6); // or_else branch
 //! ```
 //!
-//! # Author
-//!
-//! Haixing Hu
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -324,9 +322,6 @@ pub use arc_conditional_mutator::ArcConditionalMutator;
 /// // let arc_mutator = closure.into_arc(); // closure moved
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait Mutator<T> {
     /// Performs the stateless mutation operation
     ///

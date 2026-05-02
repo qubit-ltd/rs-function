@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 
@@ -60,9 +61,6 @@
 //! * `set_name()` - Sets the name of the function
 //! * `identity()` - Creates an identity function
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Generates common Function methods (new, new_with_name, name,
 /// set_name, identity)
@@ -116,9 +114,6 @@
 /// * `set_name()` - Sets the name of the function
 /// * `identity()` - Creates an identity function
 ///
-/// # Author
-///
-/// Haixing Hu
 macro_rules! impl_function_common_methods {
     // Two generic parameters - Function types
     (

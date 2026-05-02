@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # TransformerOnce Specialized Methods Demo
@@ -11,9 +12,6 @@
 //! Demonstrates the specialized `into_xxx` and `to_xxx` methods for
 //! `ArcTransformer` and `RcTransformer` when implementing `TransformerOnce`.
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 use qubit_function::{
     ArcTransformer,

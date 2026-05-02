@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # CallableWith Types
@@ -18,9 +19,6 @@
 //! The trait itself does not require `Send`; concurrent executors should add
 //! `+ Send + 'static` at their API boundary.
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -60,9 +58,6 @@ pub use arc_callable_with::ArcCallableWith;
 /// * `R` - The success value returned by the computation.
 /// * `E` - The error value returned when the computation fails.
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait CallableWith<T, R, E> {
     /// Executes the computation with mutable input.
     ///

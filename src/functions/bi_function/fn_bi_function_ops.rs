@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `FnBiFunctionOps` public type.
 
 #![allow(unused_imports)]
@@ -60,9 +62,6 @@ use super::*;
 /// assert_eq!(conditional.apply(&-5, &3), -15); // multiply
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait FnBiFunctionOps<T, U, R>: Fn(&T, &U) -> R + Sized {
     /// Chain composition - applies self first, then after
     ///
@@ -212,7 +211,4 @@ pub trait FnBiFunctionOps<T, U, R>: Fn(&T, &U) -> R + Sized {
 /// Automatically implements `FnBiFunctionOps<T, U, R>` for any type that
 /// implements `Fn(&T, &U) -> R`.
 ///
-/// # Author
-///
-/// Haixing Hu
 impl<T, U, R, F> FnBiFunctionOps<T, U, R> for F where F: Fn(&T, &U) -> R {}

@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Shared Function Methods Macro
@@ -63,9 +64,6 @@
 //! // );
 //! ```
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Generates when and and_then method implementations for Arc/Rc-based Function
 ///
@@ -124,9 +122,6 @@
 /// // );
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 macro_rules! impl_shared_function_methods {
     // Two generic parameters - Function types
     (

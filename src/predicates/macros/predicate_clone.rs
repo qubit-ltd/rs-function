@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 
@@ -36,9 +37,6 @@
 //! impl_predicate_clone!(RcBiPredicate<T, U>);
 //! ```
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Generates Clone trait implementation for basic Predicate types
 ///
@@ -69,9 +67,6 @@
 /// impl_predicate_clone!(RcBiPredicate<T, U>);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 macro_rules! impl_predicate_clone {
     // Single generic parameter
     ($struct_name:ident < $t:ident >) => {

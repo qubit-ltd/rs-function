@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `BoxRunnableWith` public type.
 
 #![allow(unused_imports)]
@@ -17,9 +19,6 @@ use super::*;
 /// `BoxRunnableWith<T, E>` stores a
 /// `Box<dyn FnMut(&mut T) -> Result<(), E>>` and can be called repeatedly.
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct BoxRunnableWith<T, E> {
     /// The stateful closure executed by this runnable.
     pub(super) function: Box<dyn FnMut(&mut T) -> Result<(), E>>,

@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # ConsumerOnce Types
@@ -32,9 +33,6 @@
 //! Unlike Consumer, ConsumerOnce consumes itself on first call. Suitable for initialization
 //! callbacks, cleanup callbacks, and similar scenarios.
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 use crate::consumers::macros::{
     impl_box_conditional_consumer,
@@ -102,9 +100,6 @@ pub use box_conditional_consumer_once::BoxConditionalConsumerOnce;
 /// assert_eq!(*log.lock().unwrap(), vec![5]);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait ConsumerOnce<T> {
     /// Execute one-time consumption operation
     ///

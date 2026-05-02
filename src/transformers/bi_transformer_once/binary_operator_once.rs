@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `BinaryOperatorOnce` public type.
 
 #![allow(unused_imports)]
@@ -51,9 +53,6 @@ use super::*;
 /// assert_eq!(combine(6, 7, multiply), 42);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait BinaryOperatorOnce<T>: BiTransformerOnce<T, T, T> {}
 
 /// Blanket implementation of BinaryOperatorOnce for all BiTransformerOnce<T, T, T>
@@ -61,9 +60,6 @@ pub trait BinaryOperatorOnce<T>: BiTransformerOnce<T, T, T> {}
 /// This automatically implements `BinaryOperatorOnce<T>` for any type that
 /// implements `BiTransformerOnce<T, T, T>`.
 ///
-/// # Author
-///
-/// Haixing Hu
 impl<F, T> BinaryOperatorOnce<T> for F
 where
     F: BiTransformerOnce<T, T, T>,

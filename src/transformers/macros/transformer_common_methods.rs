@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Transformer Common Methods Macro
@@ -61,9 +62,6 @@
 //! * `set_name()` - Sets the name of the transformer
 //! * `identity()` - Creates a transformer that returns the input unchanged
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Generates common Transformer methods using shared implementations
 /// (new, new_with_name, new_with_optional_name, name, set_name, identity)
@@ -118,9 +116,6 @@
 /// * `set_name()` - Sets the name of the transformer
 /// * `identity()` - Creates a transformer that returns the input unchanged
 ///
-/// # Author
-///
-/// Haixing Hu
 macro_rules! impl_transformer_common_methods {
     // Single generic parameter - Transformer types
     (

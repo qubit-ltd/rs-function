@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulFunction` public type.
 
 #![allow(unused_imports)]
@@ -32,9 +34,6 @@ use super::*;
 /// - **Clonable**: Cheap cloning via `Arc::clone`
 /// - **Statefulness**: Can modify internal state between calls
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct ArcStatefulFunction<T, R> {
     pub(super) function: ArcStatefulFn<T, R>,
     pub(super) name: Option<String>,
@@ -112,9 +111,6 @@ impl<T, R> StatefulFunction<T, R> for ArcStatefulFunction<T, R> {
 /// assert_eq!(function.apply(&10), 12);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 impl<F, T, R> StatefulFunction<T, R> for F
 where
     F: FnMut(&T) -> R,

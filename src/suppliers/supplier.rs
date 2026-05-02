@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Supplier Types
@@ -119,9 +120,6 @@
 //! faster** than `ArcStatefulSupplier` in high-concurrency stateless
 //! scenarios.
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 use std::rc::Rc;
 use std::sync::Arc;
@@ -219,9 +217,6 @@ pub use rc_supplier::RcSupplier;
 /// // Each call creates a new User instance
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait Supplier<T> {
     /// Generates and returns a value.
     ///

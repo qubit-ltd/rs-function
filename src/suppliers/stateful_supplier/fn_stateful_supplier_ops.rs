@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `FnStatefulSupplierOps` public type.
 
 #![allow(unused_imports)]
@@ -76,9 +78,6 @@ use super::*;
 /// assert_eq!(zipped.get(), (42, "hello"));
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait FnStatefulSupplierOps<T>: FnMut() -> T + Sized {
     /// Maps the output using a transformation function.
     ///

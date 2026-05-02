@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulBiConsumer` public type.
 
 #![allow(unused_imports)]
@@ -68,9 +70,6 @@ use super::*;
 /// assert_eq!(*log.lock().unwrap(), vec![8]);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct ArcStatefulBiConsumer<T, U> {
     pub(super) function: Arc<Mutex<dyn FnMut(&T, &U) + Send>>,
     pub(super) name: Option<String>,

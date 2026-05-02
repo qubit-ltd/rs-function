@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `FnBiFunctionOnceOps` public type.
 
 #![allow(unused_imports)]
@@ -58,9 +60,6 @@ use super::*;
 /// assert_eq!(conditional.apply(&5, &3), 8); // when branch executed
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait FnBiFunctionOnceOps<T, U, R>: FnOnce(&T, &U) -> R + Sized {
     /// Chain composition - applies self first, then after
     ///
@@ -188,9 +187,6 @@ pub trait FnBiFunctionOnceOps<T, U, R>: FnOnce(&T, &U) -> R + Sized {
 /// Automatically implements `FnBiFunctionOnceOps<T, U, R>` for any type that
 /// implements `FnOnce(&T, &U) -> R`.
 ///
-/// # Author
-///
-/// Haixing Hu
 impl<T, U, R, F> FnBiFunctionOnceOps<T, U, R> for F
 where
     F: FnOnce(&T, &U) -> R,

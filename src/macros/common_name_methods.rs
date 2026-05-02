@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 
@@ -11,9 +12,6 @@
 //!
 //! Generates common name management methods for function-like structs.
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Implements common name management methods for function-like structs.
 ///
@@ -31,9 +29,6 @@
 /// * `set_name(&mut self, name: &str)` - Sets a new name for the instance
 /// * `clear_name(&mut self)` - Clears the current name
 ///
-/// # Author
-///
-/// Haixing Hu
 macro_rules! impl_common_name_methods {
     ($type_desc:literal) => {
         #[doc = concat!("Gets the name of this ", $type_desc, ".")]

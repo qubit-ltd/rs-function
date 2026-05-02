@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Shared Conditional Mutator Macro
@@ -50,9 +51,6 @@
 //! );
 //! ```
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Generates Arc/Rc-based Conditional Mutator implementations
 ///
@@ -104,9 +102,6 @@
 /// );
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 macro_rules! impl_shared_conditional_mutator {
     // Single generic parameter - Mutator
     (

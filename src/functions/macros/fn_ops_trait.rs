@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Fn Ops Trait Macro
@@ -63,9 +64,6 @@
 //! );
 //! ```
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Generate extension traits and implementations for closure types
 ///
@@ -128,9 +126,6 @@
 /// );
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 #[macro_export]
 macro_rules! impl_fn_ops_trait {
     // Unified implementation - accepts closure signature (without constraints)
@@ -182,9 +177,6 @@ macro_rules! impl_fn_ops_trait {
         /// assert_eq!(conditional.apply(&-5), 5);
         /// ```
         ///
-        /// # Author
-        ///
-        /// Haixing Hu
         pub trait $trait_name<T, R>: $($fn_signature)+ + Sized {
             /// Chain composition - applies self first, then after
             ///
@@ -334,9 +326,6 @@ macro_rules! impl_fn_ops_trait {
         /// Automatically implements the extension trait for any type that
         /// implements the base function trait.
         ///
-        /// # Author
-        ///
-        /// Haixing Hu
         impl<T, R, F> $trait_name<T, R> for F where F: $($fn_signature)+ {}
     };
 }

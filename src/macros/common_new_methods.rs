@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 
@@ -11,9 +12,6 @@
 //!
 //! Generates common constructor methods for function-like structs.
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Implements common constructor methods for function-like structs.
 ///
@@ -36,9 +34,6 @@
 /// * `new_with_optional_name<F>(f: F, name: Option<String>) -> Self` -
 ///   Creates an instance with an optional name
 ///
-/// # Author
-///
-/// Haixing Hu
 macro_rules! impl_common_new_methods {
     (
         ($($fn_trait_with_bounds:tt)+),

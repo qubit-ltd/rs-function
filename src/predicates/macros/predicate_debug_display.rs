@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 
@@ -29,9 +30,6 @@
 //! impl_predicate_debug_display!(BoxBiPredicate<T, U>);
 //! ```
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Generates Debug and Display trait implementations for Predicate structs
 ///
@@ -55,9 +53,6 @@
 /// impl_predicate_debug_display!(BoxBiPredicate<T, U>);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 macro_rules! impl_predicate_debug_display {
     // Single generic parameter
     ($struct_name:ident < $t:ident >) => {

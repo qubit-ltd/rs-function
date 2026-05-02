@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Mutator Clone Macro
@@ -29,9 +30,6 @@
 //! // impl_mutator_clone!(RcMutator<T>);
 //! ```
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Generates Clone trait implementation for basic Mutator types
 ///
@@ -61,9 +59,6 @@
 /// // impl_mutator_clone!(RcMutator<T>);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 macro_rules! impl_mutator_clone {
     // Single generic parameter
     ($struct_name:ident < $generic:ident >) => {

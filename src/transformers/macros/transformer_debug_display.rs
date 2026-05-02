@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Transformer Debug Display Macro
@@ -28,9 +29,6 @@
 //! impl_transformer_debug_display!(BoxBiTransformer<T, U, V>);
 //! ```
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Generates Debug and Display trait implementations for Transformer structs
 ///
@@ -56,9 +54,6 @@
 /// impl_transformer_debug_display!(BoxBiTransformer<T, U, V>);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 macro_rules! impl_transformer_debug_display {
     // Two generic parameters
     ($struct_name:ident < $t:ident, $r:ident >) => {

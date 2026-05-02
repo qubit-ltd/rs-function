@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 
@@ -47,9 +48,6 @@
 //! }
 //! ```
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Generates identity method implementation for function types.
 ///
@@ -73,9 +71,6 @@
 /// impl_function_identity_method!(BoxStatefulFunction<T, T>);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 macro_rules! impl_function_identity_method {
     ($struct_name:ident < $t:ident , $r:ident >) => {
         // Note: The caller must ensure $t and $r are the same identifier

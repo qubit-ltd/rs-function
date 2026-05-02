@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # MutatingFunctionOnce Types
@@ -130,9 +131,6 @@
 //! assert!(result.is_err());
 //! ```
 //!
-//! # Author
-//!
-//! Haixing Hu
 use crate::functions::{
     function_once::FunctionOnce,
     macros::{
@@ -235,9 +233,6 @@ pub use fn_mutating_function_once_ops::FnMutatingFunctionOnceOps;
 /// let box_func = closure.into_box();
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait MutatingFunctionOnce<T, R> {
     /// Performs the one-time mutating function operation
     ///

@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Predicates Module
@@ -11,9 +12,6 @@
 //! This module provides predicate-related functional programming abstractions
 //! for testing values and returning boolean results.
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 pub mod bi_predicate;
 #[doc(hidden)]

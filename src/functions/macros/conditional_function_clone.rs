@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Conditional Function Clone Macro
@@ -30,9 +31,6 @@
 //! // impl_conditional_function_clone!(RcConditionalBiFunction<T, U, R>);
 //! ```
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Generates Clone trait implementation for Conditional Function types
 ///
@@ -58,9 +56,6 @@
 /// // impl_conditional_function_clone!(RcConditionalBiFunction<T, U, R>);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 macro_rules! impl_conditional_function_clone {
     // Two generic parameters - Function types
     ($struct_name:ident < $t:ident, $r:ident >) => {

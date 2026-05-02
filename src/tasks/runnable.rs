@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Runnable Types
@@ -17,9 +18,6 @@
 //! The trait itself does not require `Send`; concurrent executors should add
 //! `+ Send + 'static` at their API boundary.
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -80,9 +78,6 @@ pub use arc_runnable::ArcRunnable;
 /// assert_eq!(task.run(), Ok(()));
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait Runnable<E> {
     /// Executes the action, borrowing `self` mutably.
     ///

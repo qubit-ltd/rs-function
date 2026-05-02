@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Consumer Types
@@ -30,9 +31,6 @@
 //!
 //! Suitable for statistics, accumulation, event handling, and other scenarios.
 //!
-//! # Author
-//!
-//! Haixing Hu
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
@@ -129,9 +127,6 @@ pub use rc_conditional_stateful_consumer::RcConditionalStatefulConsumer;
 /// assert_eq!(*log.lock().unwrap(), vec![5]);
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait StatefulConsumer<T> {
     /// Execute consumption operation
     ///

@@ -1,11 +1,13 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
+// qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalBiMutatingFunction` public type.
 
 #![allow(unused_imports)]
@@ -32,9 +34,6 @@ use super::*;
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 /// - **Implements BiMutatingFunction**: Can be used anywhere a `BiMutatingFunction` is expected
 ///
-/// # Author
-///
-/// Haixing Hu
 pub struct BoxConditionalBiMutatingFunction<T, U, R> {
     pub(super) function: BoxBiMutatingFunction<T, U, R>,
     pub(super) predicate: BoxBiPredicate<T, U>,

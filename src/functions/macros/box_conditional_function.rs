@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # Box Conditional Function Macro
@@ -41,9 +42,6 @@
 //! // );
 //! ```
 //!
-//! # Author
-//!
-//! Haixing Hu
 
 /// Generates Box-based Conditional Function implementations
 ///
@@ -82,9 +80,6 @@
 /// // );
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 macro_rules! impl_box_conditional_function {
     // Two generic parameters - Function
     (

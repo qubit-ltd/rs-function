@@ -1,9 +1,10 @@
 /*******************************************************************************
  *
- *    Copyright (c) 2025 - 2026.
- *    Haixing Hu, Qubit Co. Ltd.
+ *    Copyright (c) 2025 - 2026 Haixing Hu.
  *
- *    All rights reserved.
+ *    SPDX-License-Identifier: Apache-2.0
+ *
+ *    Licensed under the Apache License, Version 2.0.
  *
  ******************************************************************************/
 //! # MutatingFunction Types
@@ -120,9 +121,6 @@
 //! assert_eq!(cache.get("key"), Some(&42));
 //! ```
 //!
-//! # Author
-//!
-//! Haixing Hu
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -247,9 +245,6 @@ pub use fn_mutating_function_ops::FnMutatingFunctionOps;
 /// // let arc_func = closure.into_arc(); // closure moved
 /// ```
 ///
-/// # Author
-///
-/// Haixing Hu
 pub trait MutatingFunction<T, R> {
     /// Applies the function to the mutable reference and returns a result
     ///
