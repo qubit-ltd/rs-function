@@ -12,9 +12,6 @@
 //!
 //! Defines constants used by Predicate and BiPredicate.
 //!
-//! # Author
-//!
-//! Huxing Hu
 
 /// Name constant used by the `always_true` method
 ///

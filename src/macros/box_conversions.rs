@@ -15,9 +15,6 @@
 //! for all Box-based function wrapper types (into_box, into_rc, into_fn,
 //! into_once).
 //!
-//! # Author
-//!
-//! Hu Haixing
 
 /// Implement common conversion methods for Box types
 ///
@@ -59,9 +56,6 @@
 /// // );
 /// ```
 ///
-/// # Author
-///
-/// Hu Haixing
 macro_rules! impl_box_conversions {
     // 3-parameter pattern: box_type, rc_type, fn_trait (no once_type)
     (
@@ -161,9 +155,6 @@ pub(crate) use impl_box_conversions;
 /// // impl_box_once_conversions!(BoxSupplierOnce<T>, SupplierOnce, FnOnce() -> T);
 /// ```
 ///
-/// # Author
-///
-/// Hu Haixing
 macro_rules! impl_box_once_conversions {
     (
         $box_type:ident < $($generics:ident),* >,

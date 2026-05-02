@@ -142,9 +142,6 @@
 //! assert!(!pred.test(&-8, &-3));
 //! ```
 //!
-//! ## Author
-//!
-//! Haixing Hu
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -273,9 +270,6 @@ pub use fn_bi_predicate_ops::FnBiPredicateOps;
 /// assert!(!counting_pred.test(&-5, &-3));
 /// ```
 ///
-/// ## Author
-///
-/// Haixing Hu
 pub trait BiPredicate<T, U> {
     /// Tests whether the given values satisfy this bi-predicate.
     ///

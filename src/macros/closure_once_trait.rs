@@ -30,9 +30,6 @@
 //! The macro is typically used in trait definitions to provide consistent
 //! conversion methods across different once trait implementations.
 //!
-//! ## Author
-//!
-//! Haixing Hu
 
 /// Implement common conversion methods for closure once traits
 ///
