@@ -1,4 +1,4 @@
-# Rustfmt configuration file for the qubit-function crate
+# Rustfmt configuration for Qubit Rust projects.
 #
 # This configuration requires nightly Rust for imports formatting.
 # Use `cargo +nightly fmt` or run `./align-ci.sh` to format code.
