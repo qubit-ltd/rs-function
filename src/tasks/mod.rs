@@ -38,6 +38,7 @@ pub use callable::{
 pub use callable_once::{
     BoxCallableOnce,
     CallableOnce,
+    LocalBoxCallableOnce,
 };
 pub use callable_with::{
     ArcCallableWith,
@@ -53,6 +54,7 @@ pub use runnable::{
 };
 pub use runnable_once::{
     BoxRunnableOnce,
+    LocalBoxRunnableOnce,
     RunnableOnce,
 };
 pub use runnable_with::{

@@ -24,16 +24,20 @@ use crate::{
     functions::macros::impl_function_debug_display,
     macros::{
         impl_box_once_conversions,
-        impl_closure_once_trait,
         impl_common_name_methods,
         impl_common_new_methods,
     },
     suppliers::supplier_once::SupplierOnce,
-    tasks::runnable_once::BoxRunnableOnce,
+    tasks::runnable_once::{
+        BoxRunnableOnce,
+        LocalBoxRunnableOnce,
+    },
 };
 
 mod box_callable_once;
 pub use box_callable_once::BoxCallableOnce;
+mod local_box_callable_once;
+pub use local_box_callable_once::LocalBoxCallableOnce;
 
 // ============================================================================
 // CallableOnce Trait
@@ -81,9 +85,22 @@ pub trait CallableOnce<R, E> {
     /// invoked.
     fn into_box(self) -> BoxCallableOnce<R, E>
     where
-        Self: Sized + 'static,
+        Self: Sized + Send + 'static,
     {
         BoxCallableOnce::new(move || self.call())
+    }
+
+    /// Converts this callable into a local boxed callable.
+    ///
+    /// # Returns
+    ///
+    /// A `LocalBoxCallableOnce<R, E>` that may hold non-`Send` captures and
+    /// must be executed on the local thread.
+    fn into_local_box(self) -> LocalBoxCallableOnce<R, E>
+    where
+        Self: Sized + 'static,
+    {
+        LocalBoxCallableOnce::new(move || self.call())
     }
 
     /// Converts this callable into a closure.
@@ -108,9 +125,24 @@ pub trait CallableOnce<R, E> {
     /// A new `BoxCallableOnce<R, E>` built from a clone of this callable.
     fn to_box(&self) -> BoxCallableOnce<R, E>
     where
-        Self: Clone + Sized + 'static,
+        Self: Clone + Send + Sized + 'static,
     {
         self.clone().into_box()
+    }
+
+    /// Converts this callable into a local boxed callable without consuming
+    /// `self`.
+    ///
+    /// The method clones `self` and boxes the clone without requiring `Send`.
+    ///
+    /// # Returns
+    ///
+    /// A new `LocalBoxCallableOnce<R, E>` built from a clone of this callable.
+    fn to_local_box(&self) -> LocalBoxCallableOnce<R, E>
+    where
+        Self: Clone + Sized + 'static,
+    {
+        self.clone().into_local_box()
     }
 
     /// Converts this callable into a closure without consuming `self`.
@@ -139,8 +171,22 @@ pub trait CallableOnce<R, E> {
     /// success value.
     fn into_runnable(self) -> BoxRunnableOnce<E>
     where
-        Self: Sized + 'static,
+        Self: Sized + Send + 'static,
     {
         BoxRunnableOnce::new(move || self.call().map(|_| ()))
+    }
+
+    /// Converts this callable into a local runnable by discarding the success
+    /// value.
+    ///
+    /// # Returns
+    ///
+    /// A `LocalBoxRunnableOnce<E>` that may hold non-`Send` captures and maps
+    /// any `Ok(R)` to `Ok(())`.
+    fn into_local_runnable(self) -> LocalBoxRunnableOnce<E>
+    where
+        Self: Sized + 'static,
+    {
+        LocalBoxRunnableOnce::new(move || self.call().map(|_| ()))
     }
 }

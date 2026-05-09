@@ -82,9 +82,30 @@ impl<R, E> Callable<R, E> for RcCallable<R, E> {
     impl_rc_conversions!(
         RcCallable<R, E>,
         BoxCallable,
-        BoxCallableOnce,
         FnMut() -> Result<R, E>
     );
+
+    /// Converts this shared callable into a local boxed one-time callable while
+    /// preserving its name.
+    #[inline]
+    fn into_local_once(self) -> LocalBoxCallableOnce<R, E>
+    where
+        Self: Sized + 'static,
+    {
+        let name = self.name;
+        let function = self.function;
+        LocalBoxCallableOnce::new_with_optional_name(move || (function.borrow_mut())(), name)
+    }
+
+    /// Converts this shared callable into a local boxed one-time callable
+    /// without consuming `self`.
+    #[inline]
+    fn to_local_once(&self) -> LocalBoxCallableOnce<R, E>
+    where
+        Self: Clone + Sized + 'static,
+    {
+        self.clone().into_local_once()
+    }
 
     /// Converts this shared callable into a boxed runnable while preserving its
     /// name.

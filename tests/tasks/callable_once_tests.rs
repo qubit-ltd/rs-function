@@ -10,11 +10,15 @@
 
 //! Unit tests for CallableOnce and BoxCallableOnce.
 
-use std::io;
+use std::{
+    io,
+    rc::Rc,
+};
 
 use qubit_function::{
     BoxCallableOnce,
     CallableOnce,
+    LocalBoxCallableOnce,
     RunnableOnce,
     SupplierOnce,
 };
@@ -29,6 +33,8 @@ impl CallableOnce<i32, io::Error> for ClonedCallableOnce {
         Ok(self.value)
     }
 }
+
+fn assert_send<T: Send>() {}
 
 #[test]
 fn test_callable_once_closure_call_returns_success_value() {
@@ -106,6 +112,24 @@ fn test_callable_once_default_into_runnable_discards_success_value() {
 fn test_box_callable_once_new_and_call() {
     let task = BoxCallableOnce::new(|| Ok::<i32, io::Error>(21));
     assert_eq!(task.call().expect("box callable-once should succeed"), 21);
+}
+
+#[test]
+fn test_box_callable_once_is_send_task_object() {
+    assert_send::<BoxCallableOnce<i32, io::Error>>();
+}
+
+#[test]
+fn test_local_box_callable_once_allows_non_send_capture() {
+    let text = Rc::new(String::from("local"));
+    let captured = Rc::clone(&text);
+    let task = LocalBoxCallableOnce::new(move || Ok::<String, io::Error>(captured.to_string()));
+
+    assert_eq!(
+        task.call()
+            .expect("local callable-once should allow local capture"),
+        "local"
+    );
 }
 
 #[test]
@@ -262,11 +286,49 @@ fn test_callable_once_default_conversions_with_text_error_type() {
         "once"
     );
 
+    let local_boxed = CallableOnce::into_local_box(task.clone());
+    assert_eq!(
+        local_boxed.call().expect("into_local_box should succeed"),
+        "once"
+    );
+
+    let local_boxed_from_ref = task.to_local_box();
+    assert_eq!(
+        local_boxed_from_ref
+            .call()
+            .expect("to_local_box should succeed"),
+        "once"
+    );
+
     let function_from_ref = task.to_fn();
     assert_eq!(function_from_ref().expect("to_fn should succeed"), "once");
 
+    let local_runnable = CallableOnce::into_local_runnable(task.clone());
+    local_runnable
+        .run()
+        .expect("into_local_runnable should succeed");
+
     let runnable = CallableOnce::into_runnable(task);
     runnable.run().expect("into_runnable should succeed");
+}
+
+#[test]
+fn test_box_callable_once_local_conversions_preserve_name() {
+    let task = BoxCallableOnce::new_with_name("compute", || Ok::<i32, io::Error>(9));
+
+    let local = CallableOnce::into_local_box(task);
+
+    assert_eq!(local.name(), Some("compute"));
+    assert_eq!(local.call().expect("local callable should succeed"), 9);
+
+    let task = BoxCallableOnce::new_with_name("compute", || Ok::<i32, io::Error>(9));
+
+    let runnable = CallableOnce::into_local_runnable(task);
+
+    assert_eq!(runnable.name(), Some("compute"));
+    runnable
+        .run()
+        .expect("local runnable conversion should succeed");
 }
 
 #[test]

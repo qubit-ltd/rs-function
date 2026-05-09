@@ -156,9 +156,20 @@ impl<R, E> Callable<R, E> for BoxCallable<R, E> {
     impl_box_conversions!(
         BoxCallable<R, E>,
         RcCallable,
-        FnMut() -> Result<R, E>,
-        BoxCallableOnce
+        FnMut() -> Result<R, E>
     );
+
+    /// Converts this boxed callable into a local boxed one-time callable while
+    /// preserving its name.
+    #[inline]
+    fn into_local_once(self) -> LocalBoxCallableOnce<R, E>
+    where
+        Self: Sized + 'static,
+    {
+        let name = self.name;
+        let function = self.function;
+        LocalBoxCallableOnce::new_with_optional_name(function, name)
+    }
 
     /// Converts this boxed callable into a boxed runnable while preserving its
     /// name.

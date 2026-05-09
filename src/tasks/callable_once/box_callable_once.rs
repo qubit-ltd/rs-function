@@ -20,9 +20,10 @@ use super::*;
 
 /// Box-based one-time callable.
 ///
-/// `BoxCallableOnce<R, E>` stores a `Box<dyn FnOnce() -> Result<R, E>>` and can
-/// be executed only once. It is the boxed concrete implementation of
-/// [`CallableOnce`].
+/// `BoxCallableOnce<R, E>` stores a
+/// `Box<dyn FnOnce() -> Result<R, E> + Send>` and can be executed only once.
+/// It is the boxed concrete implementation of [`CallableOnce`] for task
+/// objects that may be moved across threads.
 ///
 /// # Type Parameters
 ///
@@ -40,14 +41,14 @@ use super::*;
 ///
 pub struct BoxCallableOnce<R, E> {
     /// The one-time closure executed by this callable.
-    pub(super) function: Box<dyn FnOnce() -> Result<R, E>>,
+    pub(super) function: Box<dyn FnOnce() -> Result<R, E> + Send>,
     /// The optional name of this callable.
     pub(super) name: Option<String>,
 }
 
 impl<R, E> BoxCallableOnce<R, E> {
     impl_common_new_methods!(
-        (FnOnce() -> Result<R, E> + 'static),
+        (FnOnce() -> Result<R, E> + Send + 'static),
         |function| Box::new(function),
         "callable"
     );
@@ -67,7 +68,7 @@ impl<R, E> BoxCallableOnce<R, E> {
     #[inline]
     pub fn from_supplier<S>(supplier: S) -> Self
     where
-        S: SupplierOnce<Result<R, E>> + 'static,
+        S: SupplierOnce<Result<R, E>> + Send + 'static,
     {
         Self::new(move || supplier.get())
     }
@@ -86,7 +87,7 @@ impl<R, E> BoxCallableOnce<R, E> {
     #[inline]
     pub fn map<U, M>(self, mapper: M) -> BoxCallableOnce<U, E>
     where
-        M: FnOnce(R) -> U + 'static,
+        M: FnOnce(R) -> U + Send + 'static,
         R: 'static,
         E: 'static,
     {
@@ -107,7 +108,7 @@ impl<R, E> BoxCallableOnce<R, E> {
     #[inline]
     pub fn map_err<E2, M>(self, mapper: M) -> BoxCallableOnce<R, E2>
     where
-        M: FnOnce(E) -> E2 + 'static,
+        M: FnOnce(E) -> E2 + Send + 'static,
         R: 'static,
         E: 'static,
     {
@@ -129,7 +130,7 @@ impl<R, E> BoxCallableOnce<R, E> {
     #[inline]
     pub fn and_then<U, N>(self, next: N) -> BoxCallableOnce<U, E>
     where
-        N: FnOnce(R) -> Result<U, E> + 'static,
+        N: FnOnce(R) -> Result<U, E> + Send + 'static,
         R: 'static,
         E: 'static,
     {
@@ -159,6 +160,30 @@ impl<R, E> CallableOnce<R, E> for BoxCallableOnce<R, E> {
         let function = self.function;
         BoxRunnableOnce::new_with_optional_name(move || function().map(|_| ()), name)
     }
+
+    /// Converts this boxed callable into a local boxed callable while
+    /// preserving its name.
+    #[inline]
+    fn into_local_box(self) -> LocalBoxCallableOnce<R, E>
+    where
+        Self: Sized + 'static,
+    {
+        let name = self.name;
+        let function = self.function;
+        LocalBoxCallableOnce::new_with_optional_name(function, name)
+    }
+
+    /// Converts this boxed callable into a local boxed runnable while
+    /// preserving its name.
+    #[inline]
+    fn into_local_runnable(self) -> LocalBoxRunnableOnce<E>
+    where
+        Self: Sized + 'static,
+    {
+        let name = self.name;
+        let function = self.function;
+        LocalBoxRunnableOnce::new_with_optional_name(move || function().map(|_| ()), name)
+    }
 }
 
 impl<R, E> SupplierOnce<Result<R, E>> for BoxCallableOnce<R, E> {
@@ -169,11 +194,15 @@ impl<R, E> SupplierOnce<Result<R, E>> for BoxCallableOnce<R, E> {
     }
 }
 
-impl_closure_once_trait!(
-    CallableOnce<R, E>,
-    call,
-    BoxCallableOnce,
-    FnOnce() -> Result<R, E>
-);
+impl<F, R, E> CallableOnce<R, E> for F
+where
+    F: FnOnce() -> Result<R, E>,
+{
+    /// Executes the closure as a one-time callable.
+    #[inline]
+    fn call(self) -> Result<R, E> {
+        self()
+    }
+}
 
 impl_function_debug_display!(BoxCallableOnce<R, E>);

@@ -8,54 +8,44 @@
  *
  ******************************************************************************/
 // qubit-style: allow explicit-imports
-//! Defines the `BoxRunnableOnce` public type.
+//! Defines the `LocalBoxRunnableOnce` public type.
 
 #![allow(unused_imports)]
 
 use super::*;
 
 // ============================================================================
-// BoxRunnableOnce
+// LocalBoxRunnableOnce
 // ============================================================================
 
-/// Box-based one-time runnable.
+/// Local box-based one-time runnable.
 ///
-/// `BoxRunnableOnce<E>` stores a
-/// `Box<dyn FnOnce() -> Result<(), E> + Send>` and can be executed only once.
-/// It is the boxed concrete implementation of [`RunnableOnce`] for task
-/// objects that may be moved across threads.
+/// `LocalBoxRunnableOnce<E>` stores a `Box<dyn FnOnce() -> Result<(), E>>` and
+/// can be executed only once on the local thread. Use [`BoxRunnableOnce`] when
+/// the runnable must be movable across threads.
 ///
 /// # Type Parameters
 ///
 /// * `E` - The error value returned when the action fails.
 ///
-/// # Examples
-///
-/// ```rust
-/// use qubit_function::{BoxRunnableOnce, RunnableOnce};
-///
-/// let task = BoxRunnableOnce::new(|| Ok::<(), String>(()));
-/// assert_eq!(task.run(), Ok(()));
-/// ```
-///
-pub struct BoxRunnableOnce<E> {
+pub struct LocalBoxRunnableOnce<E> {
     /// The one-time closure executed by this runnable.
-    pub(super) function: Box<dyn FnOnce() -> Result<(), E> + Send>,
+    pub(super) function: Box<dyn FnOnce() -> Result<(), E>>,
     /// The optional name of this runnable.
     pub(super) name: Option<String>,
 }
 
-impl<E> BoxRunnableOnce<E> {
+impl<E> LocalBoxRunnableOnce<E> {
     impl_common_new_methods!(
-        (FnOnce() -> Result<(), E> + Send + 'static),
+        (FnOnce() -> Result<(), E> + 'static),
         |function| Box::new(function),
-        "runnable"
+        "local runnable"
     );
 
-    /// Creates a boxed runnable from a one-time supplier.
+    /// Creates a local boxed runnable from a one-time supplier.
     ///
     /// This is an explicit bridge from `SupplierOnce<Result<(), E>>` to
-    /// `RunnableOnce<E>`.
+    /// `RunnableOnce<E>` without requiring `Send`.
     ///
     /// # Parameters
     ///
@@ -63,16 +53,16 @@ impl<E> BoxRunnableOnce<E> {
     ///
     /// # Returns
     ///
-    /// A new `BoxRunnableOnce<E>`.
+    /// A new `LocalBoxRunnableOnce<E>`.
     #[inline]
     pub fn from_supplier<S>(supplier: S) -> Self
     where
-        S: SupplierOnce<Result<(), E>> + Send + 'static,
+        S: SupplierOnce<Result<(), E>> + 'static,
     {
         Self::new(move || supplier.get())
     }
 
-    impl_common_name_methods!("runnable");
+    impl_common_name_methods!("local runnable");
 
     /// Chains another runnable after this runnable succeeds.
     ///
@@ -84,16 +74,16 @@ impl<E> BoxRunnableOnce<E> {
     ///
     /// # Returns
     ///
-    /// A new runnable executing both actions in sequence.
+    /// A new local runnable executing both actions in sequence.
     #[inline]
-    pub fn and_then<N>(self, next: N) -> BoxRunnableOnce<E>
+    pub fn and_then<N>(self, next: N) -> LocalBoxRunnableOnce<E>
     where
-        N: RunnableOnce<E> + Send + 'static,
+        N: RunnableOnce<E> + 'static,
         E: 'static,
     {
         let name = self.name;
         let function = self.function;
-        BoxRunnableOnce::new_with_optional_name(
+        LocalBoxRunnableOnce::new_with_optional_name(
             move || {
                 function()?;
                 next.run()
@@ -102,7 +92,7 @@ impl<E> BoxRunnableOnce<E> {
         )
     }
 
-    /// Runs this runnable before a callable.
+    /// Runs this runnable before a local callable.
     ///
     /// The callable is not executed if this runnable returns `Err`.
     ///
@@ -112,17 +102,17 @@ impl<E> BoxRunnableOnce<E> {
     ///
     /// # Returns
     ///
-    /// A callable producing the second computation's result.
+    /// A local callable producing the second computation's result.
     #[inline]
-    pub fn then_callable<R, C>(self, callable: C) -> BoxCallableOnce<R, E>
+    pub fn then_callable<R, C>(self, callable: C) -> LocalBoxCallableOnce<R, E>
     where
-        C: CallableOnce<R, E> + Send + 'static,
+        C: CallableOnce<R, E> + 'static,
         R: 'static,
         E: 'static,
     {
         let name = self.name;
         let function = self.function;
-        BoxCallableOnce::new_with_optional_name(
+        LocalBoxCallableOnce::new_with_optional_name(
             move || {
                 function()?;
                 callable.call()
@@ -132,40 +122,32 @@ impl<E> BoxRunnableOnce<E> {
     }
 }
 
-impl<E> RunnableOnce<E> for BoxRunnableOnce<E> {
-    /// Executes the boxed runnable.
+impl<E> RunnableOnce<E> for LocalBoxRunnableOnce<E> {
+    /// Executes the local boxed runnable.
     #[inline]
     fn run(self) -> Result<(), E> {
         (self.function)()
     }
 
-    impl_box_once_conversions!(BoxRunnableOnce<E>, RunnableOnce, FnOnce() -> Result<(), E>);
-
-    /// Converts this boxed runnable into a boxed callable while preserving its
-    /// name.
-    #[inline]
-    fn into_callable(self) -> BoxCallableOnce<(), E>
-    where
-        Self: Sized + 'static,
-    {
-        let name = self.name;
-        let function = self.function;
-        BoxCallableOnce::new_with_optional_name(function, name)
-    }
-
-    /// Converts this boxed runnable into a local boxed runnable while
-    /// preserving its name.
+    /// Converts this local boxed runnable into itself.
     #[inline]
     fn into_local_box(self) -> LocalBoxRunnableOnce<E>
     where
         Self: Sized + 'static,
     {
-        let name = self.name;
-        let function = self.function;
-        LocalBoxRunnableOnce::new_with_optional_name(function, name)
+        self
     }
 
-    /// Converts this boxed runnable into a local boxed callable while
+    /// Extracts the underlying local one-time closure.
+    #[inline]
+    fn into_fn(self) -> impl FnOnce() -> Result<(), E>
+    where
+        Self: Sized + 'static,
+    {
+        self.function
+    }
+
+    /// Converts this local boxed runnable into a local boxed callable while
     /// preserving its name.
     #[inline]
     fn into_local_callable(self) -> LocalBoxCallableOnce<(), E>
@@ -178,23 +160,13 @@ impl<E> RunnableOnce<E> for BoxRunnableOnce<E> {
     }
 }
 
-impl<E> SupplierOnce<Result<(), E>> for BoxRunnableOnce<E> {
-    /// Executes the boxed runnable as a one-time supplier of `Result<(), E>`.
+impl<E> SupplierOnce<Result<(), E>> for LocalBoxRunnableOnce<E> {
+    /// Executes the local boxed runnable as a one-time supplier of
+    /// `Result<(), E>`.
     #[inline]
     fn get(self) -> Result<(), E> {
         self.run()
     }
 }
 
-impl<F, E> RunnableOnce<E> for F
-where
-    F: FnOnce() -> Result<(), E>,
-{
-    /// Executes the closure as a one-time runnable.
-    #[inline]
-    fn run(self) -> Result<(), E> {
-        self()
-    }
-}
-
-impl_supplier_debug_display!(BoxRunnableOnce<E>);
+impl_supplier_debug_display!(LocalBoxRunnableOnce<E>);

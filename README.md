@@ -346,11 +346,12 @@ or an error (equivalent to `FnOnce() -> Result<R, E>`).
 **Closure Equivalent**: `FnOnce() -> Result<R, E>`
 
 **Implementations**:
-- `BoxCallableOnce<R, E>` - Single ownership, one-time use
+- `BoxCallableOnce<R, E>` - Sendable single ownership, one-time use
+- `LocalBoxCallableOnce<R, E>` - Local single ownership for non-`Send` captures
 
 **Example**:
 ```rust
-use qubit_function::{CallableOnce, BoxCallableOnce};
+use qubit_function::{BoxCallableOnce, CallableOnce};
 
 let task = BoxCallableOnce::new(|| Ok::<i32, String>(42));
 assert_eq!(task.call(), Ok(42));
@@ -366,11 +367,12 @@ Executes a zero-argument action once and reports success or failure
 **Closure Equivalent**: `FnOnce() -> Result<(), E>`
 
 **Implementations**:
-- `BoxRunnableOnce<E>` - Single ownership, one-time use
+- `BoxRunnableOnce<E>` - Sendable single ownership, one-time use
+- `LocalBoxRunnableOnce<E>` - Local single ownership for non-`Send` captures
 
 **Example**:
 ```rust
-use qubit_function::{RunnableOnce, BoxRunnableOnce};
+use qubit_function::{BoxRunnableOnce, RunnableOnce};
 
 let task = BoxRunnableOnce::new(|| Ok::<(), String>(()));
 assert_eq!(task.run(), Ok(()));
@@ -724,10 +726,10 @@ Each trait has multiple implementations based on ownership model:
 | SupplierOnce | BoxSupplierOnce | - | - |
 | Callable | BoxCallable | ArcCallable | RcCallable |
 | CallableWith | BoxCallableWith | ArcCallableWith | RcCallableWith |
-| CallableOnce | BoxCallableOnce | - | - |
+| CallableOnce | BoxCallableOnce, LocalBoxCallableOnce | - | - |
 | Runnable | BoxRunnable | ArcRunnable | RcRunnable |
 | RunnableWith | BoxRunnableWith | ArcRunnableWith | RcRunnableWith |
-| RunnableOnce | BoxRunnableOnce | - | - |
+| RunnableOnce | BoxRunnableOnce, LocalBoxRunnableOnce | - | - |
 | StatefulSupplier | BoxStatefulSupplier | ArcStatefulSupplier | RcStatefulSupplier |
 | Function | BoxFunction | ArcFunction | RcFunction |
 | FunctionOnce | BoxFunctionOnce | - | - |
