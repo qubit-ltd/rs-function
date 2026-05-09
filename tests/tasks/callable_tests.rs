@@ -188,6 +188,16 @@ fn test_box_callable_into_fn_extracts_function() {
 }
 
 #[test]
+fn test_box_callable_into_local_once_preserves_name() {
+    let task = BoxCallable::new_with_name("compute", || Ok::<i32, io::Error>(9));
+
+    let once = Callable::into_local_once(task);
+
+    assert_eq!(once.name(), Some("compute"));
+    assert_eq!(once.call().expect("local once should succeed"), 9);
+}
+
+#[test]
 fn test_box_callable_from_supplier() {
     let supplier = || Ok::<i32, io::Error>(34);
 
@@ -334,10 +344,40 @@ fn test_callable_to_arc_reuses_source_via_clone() {
 }
 
 #[test]
+fn test_arc_callable_local_once_conversions_preserve_name() {
+    let task = ArcCallable::new_with_name("shared", || Ok::<i32, io::Error>(31));
+
+    let once = Callable::into_local_once(task.clone());
+
+    assert_eq!(once.name(), Some("shared"));
+    assert_eq!(once.call().expect("arc local once should succeed"), 31);
+
+    let once = task.to_local_once();
+
+    assert_eq!(once.name(), Some("shared"));
+    assert_eq!(once.call().expect("arc local clone should succeed"), 31);
+}
+
+#[test]
+fn test_rc_callable_local_once_conversions_preserve_name() {
+    let task = RcCallable::new_with_name("shared", || Ok::<i32, io::Error>(37));
+
+    let once = Callable::into_local_once(task.clone());
+
+    assert_eq!(once.name(), Some("shared"));
+    assert_eq!(once.call().expect("rc local once should succeed"), 37);
+
+    let once = task.to_local_once();
+
+    assert_eq!(once.name(), Some("shared"));
+    assert_eq!(once.call().expect("rc local clone should succeed"), 37);
+}
+
+#[test]
 fn test_callable_into_once_from_reusable_callable() {
     let count = Rc::new(Cell::new(0));
     let count_clone = Rc::clone(&count);
-    let once = Callable::into_once(move || {
+    let once = Callable::into_local_once(move || {
         let mut state = count_clone.get() as i32;
         state += 1;
         count_clone.set(state as u32);
@@ -353,8 +393,8 @@ fn test_callable_to_once_produces_repeatable_once_callables() {
     let task = SharedCallable {
         count: Rc::new(Cell::new(0)),
     };
-    let first = task.to_once();
-    let second = task.to_once();
+    let first = task.to_local_once();
+    let second = task.to_local_once();
 
     assert_eq!(first.call().expect("first once should execute"), 1);
     assert_eq!(second.call().expect("second once should execute"), 2);
@@ -443,6 +483,12 @@ fn test_callable_default_conversions_with_text_error_type() {
     let once = Callable::into_once(task.clone());
     assert_eq!(
         once.call().expect("once conversion should succeed"),
+        "payload"
+    );
+
+    let once_from_ref = task.to_once();
+    assert_eq!(
+        once_from_ref.call().expect("to_once should succeed"),
         "payload"
     );
 

@@ -444,6 +444,8 @@ pub use tasks::{
     Callable,
     CallableOnce,
     CallableWith,
+    LocalBoxCallableOnce,
+    LocalBoxRunnableOnce,
     RcCallable,
     RcCallableWith,
     RcRunnable,

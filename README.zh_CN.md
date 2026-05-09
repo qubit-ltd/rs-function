@@ -343,11 +343,12 @@ assert_eq!(value, 42);
 **等价闭包**: `FnOnce() -> Result<R, E>`
 
 **实现类型**:
-- `BoxCallableOnce<R, E>` - 单一所有权,一次性使用
+- `BoxCallableOnce<R, E>` - 可跨线程移动的单一所有权一次性任务
+- `LocalBoxCallableOnce<R, E>` - 支持非 `Send` 捕获的本地一次性任务
 
 **示例**:
 ```rust
-use qubit_function::{CallableOnce, BoxCallableOnce};
+use qubit_function::{BoxCallableOnce, CallableOnce};
 
 let task = BoxCallableOnce::new(|| Ok::<i32, String>(42));
 assert_eq!(task.call(), Ok(42));
@@ -363,11 +364,12 @@ assert_eq!(task.call(), Ok(42));
 **等价闭包**: `FnOnce() -> Result<(), E>`
 
 **实现类型**:
-- `BoxRunnableOnce<E>` - 单一所有权,一次性使用
+- `BoxRunnableOnce<E>` - 可跨线程移动的单一所有权一次性任务
+- `LocalBoxRunnableOnce<E>` - 支持非 `Send` 捕获的本地一次性任务
 
 **示例**:
 ```rust
-use qubit_function::{RunnableOnce, BoxRunnableOnce};
+use qubit_function::{BoxRunnableOnce, RunnableOnce};
 
 let task = BoxRunnableOnce::new(|| Ok::<(), String>(()));
 assert_eq!(task.run(), Ok(()));
@@ -717,10 +719,10 @@ assert!(!tester.test());
 | SupplierOnce | BoxSupplierOnce | - | - |
 | Callable | BoxCallable | ArcCallable | RcCallable |
 | CallableWith | BoxCallableWith | ArcCallableWith | RcCallableWith |
-| CallableOnce | BoxCallableOnce | - | - |
+| CallableOnce | BoxCallableOnce, LocalBoxCallableOnce | - | - |
 | Runnable | BoxRunnable | ArcRunnable | RcRunnable |
 | RunnableWith | BoxRunnableWith | ArcRunnableWith | RcRunnableWith |
-| RunnableOnce | BoxRunnableOnce | - | - |
+| RunnableOnce | BoxRunnableOnce, LocalBoxRunnableOnce | - | - |
 | StatefulSupplier | BoxStatefulSupplier | ArcStatefulSupplier | RcStatefulSupplier |
 | Function | BoxFunction | ArcFunction | RcFunction |
 | FunctionOnce | BoxFunctionOnce | - | - |

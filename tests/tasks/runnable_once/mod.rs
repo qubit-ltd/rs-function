@@ -8,11 +8,4 @@
  *
  ******************************************************************************/
 
-mod callable_once;
-mod callable_once_tests;
-mod callable_tests;
-mod callable_with_tests;
-mod runnable_once;
-mod runnable_once_tests;
-mod runnable_tests;
-mod runnable_with_tests;
+mod local_box_runnable_once_tests;

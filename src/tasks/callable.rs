@@ -37,7 +37,10 @@ use crate::{
         impl_rc_conversions,
     },
     suppliers::supplier::Supplier,
-    tasks::callable_once::BoxCallableOnce,
+    tasks::callable_once::{
+        BoxCallableOnce,
+        LocalBoxCallableOnce,
+    },
     tasks::runnable::BoxRunnable,
 };
 
@@ -203,9 +206,24 @@ pub trait Callable<R, E> {
     /// A `BoxCallableOnce<R, E>`.
     fn into_once(mut self) -> BoxCallableOnce<R, E>
     where
-        Self: Sized + 'static,
+        Self: Sized + Send + 'static,
     {
         BoxCallableOnce::new(move || self.call())
+    }
+
+    /// Converts this callable into a local one-time callable.
+    ///
+    /// The returned callable consumes itself on each invocation and may hold
+    /// non-`Send` captures.
+    ///
+    /// # Returns
+    ///
+    /// A `LocalBoxCallableOnce<R, E>`.
+    fn into_local_once(mut self) -> LocalBoxCallableOnce<R, E>
+    where
+        Self: Sized + 'static,
+    {
+        LocalBoxCallableOnce::new(move || self.call())
     }
 
     /// Converts this callable into a one-time callable without consuming
@@ -218,9 +236,24 @@ pub trait Callable<R, E> {
     /// A `BoxCallableOnce<R, E>`.
     fn to_once(&self) -> BoxCallableOnce<R, E>
     where
-        Self: Clone + Sized + 'static,
+        Self: Clone + Send + Sized + 'static,
     {
         self.clone().into_once()
+    }
+
+    /// Converts this callable into a local one-time callable without consuming
+    /// `self`.
+    ///
+    /// The method clones `self` and returns a local one-time callable.
+    ///
+    /// # Returns
+    ///
+    /// A `LocalBoxCallableOnce<R, E>`.
+    fn to_local_once(&self) -> LocalBoxCallableOnce<R, E>
+    where
+        Self: Clone + Sized + 'static,
+    {
+        self.clone().into_local_once()
     }
 
     /// Converts this callable into a runnable by discarding the success value.
