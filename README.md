@@ -1,6 +1,6 @@
 # Qubit Function
 
-[![CircleCI](https://img.shields.io/circleci/build/github/qubit-ltd/rs-function/main?style=shield&logo=circleci)](https://circleci.com/gh/qubit-ltd/rs-function)
+[![Rust CI](https://github.com/qubit-ltd/rs-function/actions/workflows/ci.yml/badge.svg)](https://github.com/qubit-ltd/rs-function/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/qubit-ltd/rs-function/badge.svg?branch=main)](https://coveralls.io/github/qubit-ltd/rs-function?branch=main)
 [![Crates.io](https://img.shields.io/crates/v/qubit-function.svg?color=blue)](https://crates.io/crates/qubit-function)
 [![Rust](https://img.shields.io/badge/rust-1.94+-blue.svg?logo=rust)](https://www.rust-lang.org)
