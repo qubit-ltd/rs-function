@@ -38,6 +38,7 @@ use crate::{
     suppliers::supplier::Supplier,
     suppliers::supplier_once::SupplierOnce,
     tasks::callable::BoxCallable,
+    tasks::runnable_once::BoxRunnableOnce,
 };
 
 mod box_runnable;
@@ -133,6 +134,22 @@ pub trait Runnable<E> {
         Self: Sized + 'static,
     {
         move || self.run()
+    }
+
+    /// Converts this runnable into a boxed one-time runnable.
+    ///
+    /// The returned runnable consumes itself when `run()` is invoked and
+    /// executes this reusable runnable once. Because `BoxRunnableOnce<E>` is
+    /// sendable, the source runnable must be [`Send`].
+    ///
+    /// # Returns
+    ///
+    /// A `BoxRunnableOnce<E>` that executes this runnable at most once.
+    fn into_once(mut self) -> BoxRunnableOnce<E>
+    where
+        Self: Sized + Send + 'static,
+    {
+        BoxRunnableOnce::new(move || self.run())
     }
 
     /// Converts this runnable into a boxed runnable without consuming `self`.

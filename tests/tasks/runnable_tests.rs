@@ -26,6 +26,7 @@ use std::{
 use qubit_function::{
     ArcRunnable,
     BoxRunnable,
+    BoxRunnableOnce,
     Callable,
     RcRunnable,
     Runnable,
@@ -88,6 +89,34 @@ fn test_runnable_closure_into_fn_returns_fn_once() {
     let mut function = Runnable::into_fn(task);
 
     function().expect("runnable function should succeed");
+}
+
+#[test]
+fn test_runnable_closure_into_once_returns_box_runnable_once() {
+    let count = Arc::new(AtomicUsize::new(0));
+    let captured = Arc::clone(&count);
+    let task = move || {
+        captured.fetch_add(1, Ordering::SeqCst);
+        Ok::<(), io::Error>(())
+    };
+
+    let once: BoxRunnableOnce<io::Error> = Runnable::into_once(task);
+
+    <BoxRunnableOnce<io::Error> as qubit_function::RunnableOnce<io::Error>>::run(once)
+        .expect("runnable-once conversion should succeed");
+    assert_eq!(count.load(Ordering::SeqCst), 1);
+}
+
+#[test]
+fn test_runnable_closure_into_once_preserves_error() {
+    let task = || Err::<(), _>(io::Error::other("failed"));
+
+    let once: BoxRunnableOnce<io::Error> = Runnable::into_once(task);
+    let error = <BoxRunnableOnce<io::Error> as qubit_function::RunnableOnce<io::Error>>::run(once)
+        .expect_err("runnable-once conversion should preserve errors");
+
+    assert_eq!(error.kind(), io::ErrorKind::Other);
+    assert_eq!(error.to_string(), "failed");
 }
 
 #[test]
