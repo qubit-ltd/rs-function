@@ -1,7 +1,7 @@
 # Qubit Function
 
 [![Rust CI](https://github.com/qubit-ltd/rs-function/actions/workflows/ci.yml/badge.svg)](https://github.com/qubit-ltd/rs-function/actions/workflows/ci.yml)
-[![Coverage Status](https://coveralls.io/repos/github/qubit-ltd/rs-function/badge.svg?branch=main)](https://coveralls.io/github/qubit-ltd/rs-function?branch=main)
+[![Coverage](https://img.shields.io/endpoint?url=https://qubit-ltd.github.io/rs-function/coverage-badge.json)](https://qubit-ltd.github.io/rs-function/coverage/)
 [![Crates.io](https://img.shields.io/crates/v/qubit-function.svg?color=blue)](https://crates.io/crates/qubit-function)
 [![Rust](https://img.shields.io/badge/rust-1.94+-blue.svg?logo=rust)](https://www.rust-lang.org)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
@@ -30,7 +30,7 @@
 
 ```toml
 [dependencies]
-qubit-function = "0.11.0"
+qubit-function = "0.13.3"
 ```
 
 ## 核心抽象
