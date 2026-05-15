@@ -10,6 +10,8 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcBiPredicate` public type.
 
+use std::ops::Not;
+
 use super::{
     ALWAYS_FALSE_NAME,
     ALWAYS_TRUE_NAME,
@@ -57,8 +59,34 @@ impl<T, U> RcBiPredicate<T, U> {
         |f| Rc::new(f)
     );
 
-    // Generates: and(), or(), not(), nand(), xor(), nor()
+    // Generates: and(), or(), nand(), xor(), nor()
     impl_shared_predicate_methods!(RcBiPredicate<T, U>, 'static);
+}
+
+impl<T, U> Not for RcBiPredicate<T, U>
+where
+    T: 'static,
+    U: 'static,
+{
+    type Output = RcBiPredicate<T, U>;
+
+    fn not(self) -> Self::Output {
+        let function = self.function;
+        RcBiPredicate::new(move |first, second| !function(first, second))
+    }
+}
+
+impl<T, U> Not for &RcBiPredicate<T, U>
+where
+    T: 'static,
+    U: 'static,
+{
+    type Output = RcBiPredicate<T, U>;
+
+    fn not(self) -> Self::Output {
+        let function = self.function.clone();
+        RcBiPredicate::new(move |first, second| !function(first, second))
+    }
 }
 
 // Generates: impl Clone for RcBiPredicate<T, U>

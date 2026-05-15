@@ -57,7 +57,7 @@ fn demo_arc_tester() {
     let enabled = Arc::new(AtomicBool::new(true));
     let enabled_for_check = Arc::clone(&enabled);
     let enabled_tester = ArcTester::new(move || enabled_for_check.load(Ordering::Relaxed));
-    let disabled_tester = enabled_tester.not();
+    let disabled_tester = !&enabled_tester;
 
     println!("Enabled: {}", enabled_tester.test());
     println!("Disabled: {}", disabled_tester.test());

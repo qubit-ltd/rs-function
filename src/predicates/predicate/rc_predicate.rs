@@ -10,6 +10,8 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcPredicate` public type.
 
+use std::ops::Not;
+
 use super::{
     ALWAYS_FALSE_NAME,
     ALWAYS_TRUE_NAME,
@@ -51,8 +53,32 @@ impl<T> RcPredicate<T> {
     // Generates: new(), new_with_name(), name(), set_name(), always_true(), always_false()
     impl_predicate_common_methods!(RcPredicate<T>, (Fn(&T) -> bool + 'static), |f| Rc::new(f));
 
-    // Generates: and(), or(), not(), nand(), xor(), nor()
+    // Generates: and(), or(), nand(), xor(), nor()
     impl_shared_predicate_methods!(RcPredicate<T>, 'static);
+}
+
+impl<T> Not for RcPredicate<T>
+where
+    T: 'static,
+{
+    type Output = RcPredicate<T>;
+
+    fn not(self) -> Self::Output {
+        let function = self.function;
+        RcPredicate::new(move |value| !function(value))
+    }
+}
+
+impl<T> Not for &RcPredicate<T>
+where
+    T: 'static,
+{
+    type Output = RcPredicate<T>;
+
+    fn not(self) -> Self::Output {
+        let function = self.function.clone();
+        RcPredicate::new(move |value| !function(value))
+    }
 }
 
 // Generates: impl Clone for RcPredicate<T>

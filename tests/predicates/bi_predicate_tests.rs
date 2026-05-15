@@ -63,6 +63,25 @@ mod tests {
         assert!(predicate.to_fn()(&first, &second));
     }
 
+    #[test]
+    fn test_bi_predicate_not_operator() {
+        let boxed = !BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
+        assert!(!boxed.test(&5, &3));
+        assert!(boxed.test(&-5, &-3));
+
+        let rc = RcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
+        let negated_rc = !&rc;
+        assert!(!negated_rc.test(&5, &3));
+        assert!(negated_rc.test(&-5, &-3));
+        assert!(rc.test(&5, &3));
+
+        let arc = ArcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
+        let negated_arc = !&arc;
+        assert!(!negated_arc.test(&5, &3));
+        assert!(negated_arc.test(&-5, &-3));
+        assert!(arc.test(&5, &3));
+    }
+
     mod bi_predicate_trait_tests {
         use super::BiPredicate;
 
@@ -307,7 +326,7 @@ mod tests {
         #[test]
         fn test_not() {
             let sum_positive = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-            let sum_not_positive = sum_positive.not();
+            let sum_not_positive = !sum_positive;
 
             assert!(!sum_not_positive.test(&5, &3));
             assert!(sum_not_positive.test(&-5, &-3));
@@ -539,7 +558,7 @@ mod tests {
         #[test]
         fn test_not() {
             let sum_positive = ArcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-            let sum_not_positive = sum_positive.not();
+            let sum_not_positive = !&sum_positive;
 
             assert!(!sum_not_positive.test(&5, &3));
             assert!(sum_not_positive.test(&-5, &-3));
@@ -800,7 +819,7 @@ mod tests {
         #[test]
         fn test_not() {
             let sum_positive = RcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-            let sum_not_positive = sum_positive.not();
+            let sum_not_positive = !&sum_positive;
 
             assert!(!sum_not_positive.test(&5, &3));
             assert!(sum_not_positive.test(&-5, &-3));
@@ -1894,7 +1913,7 @@ mod tests {
         #[test]
         fn test_double_negation() {
             let sum_positive = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-            let not_not = sum_positive.not().not();
+            let not_not = !(!sum_positive);
             assert!(not_not.test(&5, &3));
             assert!(!not_not.test(&-5, &-3));
         }

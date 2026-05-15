@@ -702,8 +702,8 @@ assert!(!tester.test());
 | `Comparator<T>` | `compare(&self, a: &T, b: &T) -> Ordering` | `Fn(&T, &T) -> Ordering` |
 | `Tester` | `test(&self) -> bool` | `Fn() -> bool` |
 
-For stateful traits, closure conversions support both compatibility names
-(`into_fn` / `to_fn`) and explicit mutable names (`into_mut_fn` / `to_mut_fn`).
+For stateful traits, closure conversions expose `into_fn` / `to_fn`; types that
+return mutable closures also expose `into_mut_fn` / `to_mut_fn` for explicitness.
 
 ## Implementation Types Comparison
 

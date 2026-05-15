@@ -10,6 +10,8 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcTester` public type.
 
+use std::ops::Not;
+
 use super::{
     ArcTester,
     BoxTester,
@@ -32,7 +34,7 @@ use super::{
 /// - **Shared ownership**: Can be cloned
 /// - **Single-threaded**: Cannot be sent across threads
 /// - **Low overhead**: Uses `Fn` without needing `RefCell`
-/// - **Borrowing combination**: `and()`/`or()`/`not()` borrow `&self`
+/// - **Borrowing combination**: `and()`/`or()` borrow `&self`
 ///
 /// # Use Cases
 ///
@@ -156,34 +158,6 @@ impl RcTester {
         }
     }
 
-    /// Negates the result of this tester
-    ///
-    /// Returns a new `RcTester` that returns the opposite value of the
-    /// original test result. Borrows `&self`, so the original tester remains
-    /// available.
-    ///
-    /// # Return Value
-    ///
-    /// A new `RcTester` representing logical NOT
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::{RcTester, Tester};
-    ///
-    /// let original = RcTester::new(|| true);
-    /// let negated = original.not();
-    /// // original is still available
-    /// ```
-    #[allow(clippy::should_implement_trait)]
-    #[inline]
-    pub fn not(&self) -> RcTester {
-        let self_fn = Rc::clone(&self.function);
-        RcTester {
-            function: Rc::new(move || !self_fn()),
-        }
-    }
-
     /// Combines this tester with another tester using logical NAND
     ///
     /// Returns a new `RcTester` that returns `true` unless both tests pass.
@@ -295,6 +269,30 @@ impl RcTester {
         let next_fn = Rc::clone(&next.function);
         RcTester {
             function: Rc::new(move || !(self_fn() || next_fn())),
+        }
+    }
+}
+
+impl Not for RcTester {
+    type Output = RcTester;
+
+    #[inline]
+    fn not(self) -> Self::Output {
+        let func = self.function;
+        RcTester {
+            function: Rc::new(move || !func()),
+        }
+    }
+}
+
+impl Not for &RcTester {
+    type Output = RcTester;
+
+    #[inline]
+    fn not(self) -> Self::Output {
+        let func = Rc::clone(&self.function);
+        RcTester {
+            function: Rc::new(move || !func()),
         }
     }
 }

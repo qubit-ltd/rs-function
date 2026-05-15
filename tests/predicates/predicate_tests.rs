@@ -58,6 +58,25 @@ fn test_predicate_default_conversions_allow_relaxed_generic_types() {
     assert!(predicate.to_fn()(&value));
 }
 
+#[test]
+fn test_predicate_not_operator() {
+    let boxed = !BoxPredicate::new(|x: &i32| *x > 0);
+    assert!(!boxed.test(&5));
+    assert!(boxed.test(&-5));
+
+    let rc = RcPredicate::new(|x: &i32| *x > 0);
+    let negated_rc = !&rc;
+    assert!(!negated_rc.test(&5));
+    assert!(negated_rc.test(&-5));
+    assert!(rc.test(&5));
+
+    let arc = ArcPredicate::new(|x: &i32| *x > 0);
+    let negated_arc = !&arc;
+    assert!(!negated_arc.test(&5));
+    assert!(negated_arc.test(&-5));
+    assert!(arc.test(&5));
+}
+
 #[cfg(test)]
 mod closure_predicate_tests {
     use super::{
@@ -199,7 +218,7 @@ mod box_predicate_tests {
     #[test]
     fn test_not_composition() {
         let pred = BoxPredicate::new(|x: &i32| *x > 0);
-        let negated = pred.not();
+        let negated = !pred;
 
         assert!(!negated.test(&5));
         assert!(negated.test(&-3));
@@ -209,7 +228,7 @@ mod box_predicate_tests {
     #[test]
     fn test_not_with_name() {
         let pred = BoxPredicate::new_with_name("positive", |x: &i32| *x > 0);
-        let negated = pred.not();
+        let negated = !pred;
 
         // Combined predicates do not inherit or generate names
         assert_eq!(negated.name(), None);
@@ -314,7 +333,7 @@ mod rc_predicate_tests {
     #[test]
     fn test_not_composition() {
         let pred = RcPredicate::new(|x: &i32| *x > 0);
-        let negated = pred.not();
+        let negated = !&pred;
 
         // Original predicate is still usable
         assert!(pred.test(&5));
@@ -446,7 +465,7 @@ mod arc_predicate_tests {
     #[test]
     fn test_not_composition() {
         let pred = ArcPredicate::new(|x: &i32| *x > 0);
-        let negated = pred.not();
+        let negated = !&pred;
 
         // Original predicate is still usable
         assert!(pred.test(&5));
@@ -1965,7 +1984,7 @@ mod not_composition_tests {
         let is_positive = BoxPredicate::new(|x: &i32| *x > 0);
         let is_even = BoxPredicate::new(|x: &i32| x % 2 == 0);
 
-        let not_positive = is_positive.not();
+        let not_positive = !is_positive;
         let combined = not_positive.and(is_even);
 
         assert!(combined.test(&-2));
@@ -1978,7 +1997,7 @@ mod not_composition_tests {
         let is_positive = BoxPredicate::new(|x: &i32| *x > 0);
         let is_even = BoxPredicate::new(|x: &i32| x % 2 == 0);
 
-        let not_positive = is_positive.not();
+        let not_positive = !is_positive;
         let combined = not_positive.or(is_even);
 
         assert!(combined.test(&-3));
@@ -1991,7 +2010,7 @@ mod not_composition_tests {
         let is_positive = RcPredicate::new(|x: &i32| *x > 0);
         let is_even = RcPredicate::new(|x: &i32| x % 2 == 0);
 
-        let not_positive = is_positive.not();
+        let not_positive = !&is_positive;
         let combined = not_positive.and(is_even);
 
         assert!(combined.test(&-2));
@@ -2004,7 +2023,7 @@ mod not_composition_tests {
         let is_positive = RcPredicate::new(|x: &i32| *x > 0);
         let is_even = RcPredicate::new(|x: &i32| x % 2 == 0);
 
-        let not_positive = is_positive.not();
+        let not_positive = !&is_positive;
         let combined = not_positive.or(is_even);
 
         assert!(combined.test(&-3));
@@ -2017,7 +2036,7 @@ mod not_composition_tests {
         let is_positive = ArcPredicate::new(|x: &i32| *x > 0);
         let is_even = ArcPredicate::new(|x: &i32| x % 2 == 0);
 
-        let not_positive = is_positive.not();
+        let not_positive = !&is_positive;
         let combined = not_positive.and(is_even);
 
         assert!(combined.test(&-2));
@@ -2030,7 +2049,7 @@ mod not_composition_tests {
         let is_positive = ArcPredicate::new(|x: &i32| *x > 0);
         let is_even = ArcPredicate::new(|x: &i32| x % 2 == 0);
 
-        let not_positive = is_positive.not();
+        let not_positive = !&is_positive;
         let combined = not_positive.or(is_even);
 
         assert!(combined.test(&-3));
@@ -2041,8 +2060,8 @@ mod not_composition_tests {
     #[test]
     fn test_double_not() {
         let is_positive = BoxPredicate::new(|x: &i32| *x > 0);
-        let not_positive = is_positive.not();
-        let double_not = not_positive.not();
+        let not_positive = !is_positive;
+        let double_not = !not_positive;
 
         assert!(double_not.test(&5));
         assert!(!double_not.test(&-5));
@@ -2053,7 +2072,7 @@ mod not_composition_tests {
         let is_positive = BoxPredicate::new(|x: &i32| *x > 0);
         let is_even = BoxPredicate::new(|x: &i32| x % 2 == 0);
 
-        let not_positive = is_positive.not();
+        let not_positive = !is_positive;
         let combined = not_positive.nand(is_even);
 
         assert!(combined.test(&-3));
@@ -2066,7 +2085,7 @@ mod not_composition_tests {
         let is_positive = BoxPredicate::new(|x: &i32| *x > 0);
         let is_even = BoxPredicate::new(|x: &i32| x % 2 == 0);
 
-        let not_positive = is_positive.not();
+        let not_positive = !is_positive;
         let combined = not_positive.xor(is_even);
 
         assert!(combined.test(&-3));
@@ -2080,7 +2099,7 @@ mod not_composition_tests {
         let is_positive = BoxPredicate::new(|x: &i32| *x > 0);
         let is_even = BoxPredicate::new(|x: &i32| x % 2 == 0);
 
-        let not_positive = is_positive.not();
+        let not_positive = !is_positive;
         let combined = not_positive.nor(is_even);
 
         assert!(combined.test(&3));
