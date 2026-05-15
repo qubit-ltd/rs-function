@@ -13,8 +13,7 @@
 //! for modifying values in-place through mutable references.
 //!
 
-#[doc(hidden)]
-pub mod macros;
+pub(crate) mod macros;
 pub mod mutator;
 pub mod mutator_once;
 pub mod stateful_mutator;

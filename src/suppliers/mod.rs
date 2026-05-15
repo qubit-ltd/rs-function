@@ -13,8 +13,7 @@
 //! for producing values without input parameters.
 //!
 
-#[doc(hidden)]
-pub mod macros;
+pub(crate) mod macros;
 pub mod stateful_supplier;
 pub mod supplier;
 pub mod supplier_once;

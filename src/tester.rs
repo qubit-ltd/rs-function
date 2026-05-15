@@ -152,7 +152,7 @@
 //!     clone.test()
 //! });
 //!
-//! assert!(handle.join().unwrap());
+//! assert!(handle.join().expect("thread should not panic"));
 //! ```
 //!
 use std::rc::Rc;

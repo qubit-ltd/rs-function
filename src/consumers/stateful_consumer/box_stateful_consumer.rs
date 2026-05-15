@@ -64,10 +64,10 @@ use super::{
 /// let log = Arc::new(Mutex::new(Vec::new()));
 /// let l = log.clone();
 /// let mut consumer = BoxStatefulConsumer::new(move |x: &i32| {
-///     l.lock().unwrap().push(*x);
+///     l.lock().expect("mutex should not be poisoned").push(*x);
 /// });
 /// consumer.accept(&5);
-/// assert_eq!(*log.lock().unwrap(), vec![5]);
+/// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
 /// ```
 ///
 pub struct BoxStatefulConsumer<T> {

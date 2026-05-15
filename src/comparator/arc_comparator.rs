@@ -40,6 +40,7 @@ use super::{
 ///
 #[derive(Clone)]
 pub struct ArcComparator<T> {
+    #[allow(clippy::type_complexity)]
     pub(super) function: Arc<dyn Fn(&T, &T) -> Ordering + Send + Sync>,
 }
 

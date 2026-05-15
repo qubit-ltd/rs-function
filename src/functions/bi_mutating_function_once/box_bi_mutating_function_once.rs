@@ -41,6 +41,7 @@ use super::{
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
 ///
 pub struct BoxBiMutatingFunctionOnce<T, U, R> {
+    #[allow(clippy::type_complexity)]
     pub(super) function: Box<dyn FnOnce(&mut T, &mut U) -> R>,
     pub(super) name: Option<String>,
 }

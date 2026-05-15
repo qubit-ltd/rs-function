@@ -113,10 +113,10 @@ pub use box_conditional_bi_consumer_once::BoxConditionalBiConsumerOnce;
 /// let log = Arc::new(Mutex::new(Vec::new()));
 /// let l = log.clone();
 /// let box_con = BoxBiConsumerOnce::new(move |x: &i32, y: &i32| {
-///     l.lock().unwrap().push(*x + *y);
+///     l.lock().expect("mutex should not be poisoned").push(*x + *y);
 /// });
 /// apply_consumer(box_con, &5, &3);
-/// assert_eq!(*log.lock().unwrap(), vec![8]);
+/// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
 /// ```
 ///
 pub trait BiConsumerOnce<T, U> {
@@ -161,11 +161,11 @@ pub trait BiConsumerOnce<T, U> {
     /// let log = Arc::new(Mutex::new(Vec::new()));
     /// let l = log.clone();
     /// let closure = move |x: &i32, y: &i32| {
-    ///     l.lock().unwrap().push(*x + *y);
+    ///     l.lock().expect("mutex should not be poisoned").push(*x + *y);
     /// };
     /// let box_consumer = closure.into_box();
     /// box_consumer.accept(&5, &3);
-    /// assert_eq!(*log.lock().unwrap(), vec![8]);
+    /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
     /// ```
     fn into_box(self) -> BoxBiConsumerOnce<T, U>
     where
@@ -211,11 +211,11 @@ pub trait BiConsumerOnce<T, U> {
     /// let log = Arc::new(Mutex::new(Vec::new()));
     /// let l = log.clone();
     /// let closure = move |x: &i32, y: &i32| {
-    ///     l.lock().unwrap().push(*x + *y);
+    ///     l.lock().expect("mutex should not be poisoned").push(*x + *y);
     /// };
     /// let box_consumer = closure.to_box();
     /// box_consumer.accept(&5, &3);
-    /// assert_eq!(*log.lock().unwrap(), vec![8]);
+    /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
     /// ```
     fn to_box(&self) -> BoxBiConsumerOnce<T, U>
     where
@@ -243,11 +243,11 @@ pub trait BiConsumerOnce<T, U> {
     /// let log = Arc::new(Mutex::new(Vec::new()));
     /// let l = log.clone();
     /// let closure = move |x: &i32, y: &i32| {
-    ///     l.lock().unwrap().push(*x + *y);
+    ///     l.lock().expect("mutex should not be poisoned").push(*x + *y);
     /// };
     /// let func = closure.to_fn();
     /// func(&5, &3);
-    /// assert_eq!(*log.lock().unwrap(), vec![8]);
+    /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
     /// ```
     fn to_fn(&self) -> impl FnOnce(&T, &U)
     where

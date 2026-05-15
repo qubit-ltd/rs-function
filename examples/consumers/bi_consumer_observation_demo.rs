@@ -72,8 +72,8 @@ fn main() {
         consumer2.accept(&20, &8);
     });
 
-    handle1.join().unwrap();
-    handle2.join().unwrap();
+    handle1.join().expect("thread should not panic");
+    handle2.join().expect("thread should not panic");
     println!("  Total calls: {}\n", counter.load(Ordering::SeqCst));
 
     // 4. RcBiConsumer - Single-threaded shared ownership

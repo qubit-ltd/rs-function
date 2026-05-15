@@ -61,7 +61,7 @@ use super::{
 /// let counter_clone = Arc::clone(&counter);
 ///
 /// let supplier = ArcStatefulSupplier::new(move || {
-///     let mut c = counter_clone.lock().unwrap();
+///     let mut c = counter_clone.lock().expect("mutex should not be poisoned");
 ///     *c += 1;
 ///     *c
 /// });
@@ -72,8 +72,8 @@ use super::{
 /// let h1 = thread::spawn(move || s1.get());
 /// let h2 = thread::spawn(move || s2.get());
 ///
-/// let v1 = h1.join().unwrap();
-/// let v2 = h2.join().unwrap();
+/// let v1 = h1.join().expect("thread should not panic");
+/// let v2 = h2.join().expect("thread should not panic");
 /// assert!(v1 != v2);
 /// ```
 ///
@@ -167,7 +167,7 @@ impl<T> ArcStatefulSupplier<T> {
     /// let call_count = Arc::new(Mutex::new(0));
     /// let call_count_clone = Arc::clone(&call_count);
     /// let source = ArcStatefulSupplier::new(move || {
-    ///     let mut c = call_count_clone.lock().unwrap();
+    ///     let mut c = call_count_clone.lock().expect("mutex should not be poisoned");
     ///     *c += 1;
     ///     42
     /// });
@@ -176,7 +176,7 @@ impl<T> ArcStatefulSupplier<T> {
     /// let mut s = memoized;
     /// assert_eq!(s.get(), 42); // Calls underlying function
     /// assert_eq!(s.get(), 42); // Returns cached value
-    /// assert_eq!(*call_count.lock().unwrap(), 1);
+    /// assert_eq!(*call_count.lock().expect("mutex should not be poisoned"), 1);
     /// ```
     pub fn memoize(&self) -> ArcStatefulSupplier<T>
     where

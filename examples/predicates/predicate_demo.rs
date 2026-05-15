@@ -156,7 +156,7 @@ fn arc_predicate_examples() {
         .collect();
 
     for handle in handles {
-        handle.join().unwrap();
+        handle.join().expect("thread should not panic");
     }
 
     // Original predicates still usable
@@ -258,7 +258,7 @@ fn interior_mutability_examples() {
     let pred = ArcPredicate::new({
         let counter = Arc::clone(&counter);
         move |x: &i32| {
-            let mut c = counter.lock().unwrap();
+            let mut c = counter.lock().expect("mutex should not be poisoned");
             *c += 1;
             *x > 0
         }
@@ -273,9 +273,12 @@ fn interior_mutability_examples() {
     });
 
     pred.test(&3);
-    handle.join().unwrap();
+    handle.join().expect("thread should not panic");
 
-    println!("  Total call count: {}", counter_clone.lock().unwrap());
+    println!(
+        "  Total call count: {}",
+        counter_clone.lock().expect("mutex should not be poisoned")
+    );
 }
 
 /// Practical use cases

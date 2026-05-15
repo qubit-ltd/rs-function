@@ -36,6 +36,7 @@ use super::{
 /// ```
 ///
 pub struct BoxComparator<T> {
+    #[allow(clippy::type_complexity)]
     pub(super) function: Box<dyn Fn(&T, &T) -> Ordering>,
 }
 

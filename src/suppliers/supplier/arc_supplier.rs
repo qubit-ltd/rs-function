@@ -71,8 +71,8 @@ use super::{
 /// let h1 = thread::spawn(move || f1.get());
 /// let h2 = thread::spawn(move || f2.get());
 ///
-/// assert_eq!(h1.join().unwrap(), "Hello");
-/// assert_eq!(h2.join().unwrap(), "Hello");
+/// assert_eq!(h1.join().expect("thread should not panic"), "Hello");
+/// assert_eq!(h2.join().expect("thread should not panic"), "Hello");
 /// ```
 ///
 /// ## Reusable Transformations

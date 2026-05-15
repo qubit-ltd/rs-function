@@ -14,8 +14,7 @@
 //!
 
 pub mod bi_predicate;
-#[doc(hidden)]
-pub mod macros;
+pub(crate) mod macros;
 pub mod predicate;
 
 pub use bi_predicate::{

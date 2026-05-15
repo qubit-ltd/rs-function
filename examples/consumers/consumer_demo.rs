@@ -62,20 +62,27 @@ fn main() {
     let r3 = results.clone();
 
     let chained = BoxConsumer::new(move |x: &i32| {
-        r1.lock().unwrap().push(*x * 2);
+        r1.lock()
+            .expect("mutex should not be poisoned")
+            .push(*x * 2);
     })
     .and_then(move |x: &i32| {
-        r2.lock().unwrap().push(*x + 10);
+        r2.lock()
+            .expect("mutex should not be poisoned")
+            .push(*x + 10);
     })
     .and_then(move |x: &i32| {
-        r3.lock().unwrap().push(*x);
+        r3.lock().expect("mutex should not be poisoned").push(*x);
         println!("Processing value: {}", x);
     });
 
     let value = 5;
     println!("Initial value: {}", value);
     chained.accept(&value);
-    println!("Collected results: {:?}", *results.lock().unwrap());
+    println!(
+        "Collected results: {:?}",
+        *results.lock().expect("mutex should not be poisoned")
+    );
     println!("Original value: {} (not modified)\n", value);
 
     // ========================================================================
@@ -89,16 +96,19 @@ fn main() {
     let r2 = result.clone();
 
     let closure_chain = (move |x: &i32| {
-        *r1.lock().unwrap() = *x * 2;
+        *r1.lock().expect("mutex should not be poisoned") = *x * 2;
     })
     .and_then(move |_x: &i32| {
-        *r2.lock().unwrap() += 10;
+        *r2.lock().expect("mutex should not be poisoned") += 10;
     });
 
     let value = 5;
     println!("Initial value: {}", value);
     closure_chain.accept(&value);
-    println!("Calculation result: {}", *result.lock().unwrap());
+    println!(
+        "Calculation result: {}",
+        *result.lock().expect("mutex should not be poisoned")
+    );
     println!("Original value: {} (not modified)\n", value);
 
     // ========================================================================
@@ -178,7 +188,7 @@ fn main() {
     let consumer = shared;
     consumer.accept(&value);
 
-    let thread_result = handle.join().unwrap();
+    let thread_result = handle.join().expect("thread should not panic");
     println!("Thread result: {}\n", thread_result);
 
     // ========================================================================
@@ -440,8 +450,8 @@ fn main() {
     let count_clone = count.clone();
 
     let collector = BoxConsumer::new(move |x: &i32| {
-        *sum_clone.lock().unwrap() += *x;
-        *count_clone.lock().unwrap() += 1;
+        *sum_clone.lock().expect("mutex should not be poisoned") += *x;
+        *count_clone.lock().expect("mutex should not be poisoned") += 1;
     });
 
     let numbers = vec![10, 20, 30, 40, 50];
@@ -450,8 +460,8 @@ fn main() {
         collector.accept(num);
     }
 
-    let total = *sum.lock().unwrap();
-    let cnt = *count.lock().unwrap();
+    let total = *sum.lock().expect("mutex should not be poisoned");
+    let cnt = *count.lock().expect("mutex should not be poisoned");
     println!("Sum: {}", total);
     println!("Count: {}", cnt);
     println!("Average: {:.2}\n", total as f64 / cnt as f64);

@@ -32,6 +32,7 @@ use crate::{
 ///
 pub struct BoxCallableWith<T, R, E> {
     /// The stateful closure executed by this callable.
+    #[allow(clippy::type_complexity)]
     pub(super) function: Box<dyn FnMut(&mut T) -> Result<R, E>>,
     /// The optional name of this callable.
     pub(super) name: Option<String>,

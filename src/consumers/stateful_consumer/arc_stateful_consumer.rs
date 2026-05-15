@@ -74,15 +74,16 @@ use super::{
 /// let log = Arc::new(Mutex::new(Vec::new()));
 /// let l = log.clone();
 /// let mut consumer = ArcStatefulConsumer::new(move |x: &i32| {
-///     l.lock().unwrap().push(*x * 2);
+///     l.lock().expect("mutex should not be poisoned").push(*x * 2);
 /// });
 /// let mut clone = consumer.clone();
 ///
 /// consumer.accept(&5);
-/// assert_eq!(*log.lock().unwrap(), vec![10]);
+/// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![10]);
 /// ```
 ///
 pub struct ArcStatefulConsumer<T> {
+    #[allow(clippy::type_complexity)]
     pub(super) function: Arc<Mutex<dyn FnMut(&T) + Send>>,
     pub(super) name: Option<String>,
 }

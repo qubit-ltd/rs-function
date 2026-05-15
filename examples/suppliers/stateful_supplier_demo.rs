@@ -175,7 +175,9 @@ fn demo_arc_supplier() {
     let call_count = Arc::new(Mutex::new(0));
     let call_count_clone = Arc::clone(&call_count);
     let source = ArcStatefulSupplier::new(move || {
-        let mut c = call_count_clone.lock().unwrap();
+        let mut c = call_count_clone
+            .lock()
+            .expect("mutex should not be poisoned");
         *c += 1;
         println!("  Computation #{}", *c);
         42
@@ -186,7 +188,10 @@ fn demo_arc_supplier() {
     let mut m = memoized;
     println!("First call: {}", m.get());
     println!("Second call (cached): {}", m.get());
-    println!("Call count: {}", *call_count.lock().unwrap());
+    println!(
+        "Call count: {}",
+        *call_count.lock().expect("mutex should not be poisoned")
+    );
     println!();
 }
 
@@ -197,7 +202,7 @@ fn demo_arc_supplier_threading() {
     let counter_clone = Arc::clone(&counter);
 
     let supplier = ArcStatefulSupplier::new(move || {
-        let mut c = counter_clone.lock().unwrap();
+        let mut c = counter_clone.lock().expect("mutex should not be poisoned");
         *c += 1;
         *c
     });
@@ -224,10 +229,13 @@ fn demo_arc_supplier_threading() {
     let v2 = s3.get();
     println!("Main thread: {} {}", v1, v2);
 
-    h1.join().unwrap();
-    h2.join().unwrap();
+    h1.join().expect("thread should not panic");
+    h2.join().expect("thread should not panic");
 
-    println!("Final counter: {}", *counter.lock().unwrap());
+    println!(
+        "Final counter: {}",
+        *counter.lock().expect("mutex should not be poisoned")
+    );
     println!();
 }
 

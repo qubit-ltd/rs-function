@@ -95,7 +95,7 @@
 //! let counter_clone = Arc::clone(&counter);
 //!
 //! let supplier = ArcStatefulSupplier::new(move || {
-//!     let mut c = counter_clone.lock().unwrap();
+//!     let mut c = counter_clone.lock().expect("mutex should not be poisoned");
 //!     *c += 1;
 //!     *c
 //! });
@@ -106,11 +106,11 @@
 //! let h1 = thread::spawn(move || s1.get());
 //! let h2 = thread::spawn(move || s2.get());
 //!
-//! let v1 = h1.join().unwrap();
-//! let v2 = h2.join().unwrap();
+//! let v1 = h1.join().expect("thread should not panic");
+//! let v2 = h2.join().expect("thread should not panic");
 //!
 //! assert!(v1 != v2);
-//! assert_eq!(*counter.lock().unwrap(), 2);
+//! assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 2);
 //! ```
 //!
 use std::cell::RefCell;

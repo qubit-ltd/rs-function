@@ -149,7 +149,7 @@
 //!     pred_clone.test(&10)
 //! });
 //!
-//! assert!(handle.join().unwrap());
+//! assert!(handle.join().expect("thread should not panic"));
 //! assert!(pred.test(&5));  // Original still usable
 //! ```
 //!

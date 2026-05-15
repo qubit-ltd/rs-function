@@ -41,12 +41,12 @@ use super::{
 /// let l1 = log.clone();
 /// let l2 = log.clone();
 /// let chained = (move |x: &i32| {
-///     l1.lock().unwrap().push(*x * 2);
+///     l1.lock().expect("mutex should not be poisoned").push(*x * 2);
 /// }).and_then(move |x: &i32| {
-///     l2.lock().unwrap().push(*x + 10);
+///     l2.lock().expect("mutex should not be poisoned").push(*x + 10);
 /// });
 /// chained.accept(&5);
-/// assert_eq!(*log.lock().unwrap(), vec![10, 15]);
+/// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![10, 15]);
 /// ```
 ///
 pub trait FnConsumerOnceOps<T>: FnOnce(&T) + Sized {
@@ -83,13 +83,13 @@ pub trait FnConsumerOnceOps<T>: FnOnce(&T) + Sized {
     /// let l1 = log.clone();
     /// let l2 = log.clone();
     /// let chained = (move |x: &i32| {
-    ///     l1.lock().unwrap().push(*x * 2);
+    ///     l1.lock().expect("mutex should not be poisoned").push(*x * 2);
     /// }).and_then(move |x: &i32| {
-    ///     l2.lock().unwrap().push(*x + 10);
+    ///     l2.lock().expect("mutex should not be poisoned").push(*x + 10);
     /// }).and_then(|x: &i32| println!("Result: {}", x));
     ///
     /// chained.accept(&5);
-    /// assert_eq!(*log.lock().unwrap(), vec![10, 15]);
+    /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![10, 15]);
     /// ```
     fn and_then<C>(self, next: C) -> BoxConsumerOnce<T>
     where

@@ -17,8 +17,7 @@
 
 pub mod bi_transformer;
 pub mod bi_transformer_once;
-#[doc(hidden)]
-pub mod macros;
+pub(crate) mod macros;
 pub mod stateful_bi_transformer;
 pub mod stateful_transformer;
 pub mod transformer;
