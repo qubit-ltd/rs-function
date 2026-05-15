@@ -12,7 +12,7 @@
 //! Generate extension traits and implementations for closure types
 //!
 //! This macro generates extension traits for closure types that implement
-//! `Fn` or `FnMut`, providing `and_then` and `when` methods without requiring
+//! `Fn` or `FnMut`, providing `and_then`, `compose`, and `when` methods without requiring
 //! explicit wrapping as `BoxTransformer`, `RcTransformer`, or `ArcTransformer`.
 //!
 //! # Parameters
@@ -59,7 +59,7 @@
 /// Generate extension traits and implementations for closure types
 ///
 /// This macro generates an extension trait that provides composition methods
-/// (`and_then`, `when`) for closures implementing the specified
+/// (`and_then`, `compose`, `when`) for closures implementing the specified
 /// closure trait, without requiring explicit wrapping.
 ///
 /// # Unified Implementation Strategy
@@ -82,6 +82,7 @@
 ///
 /// Generates a trait definition and a blanket implementation, containing:
 /// - `and_then<S, F>` - Chain composition method
+/// - `compose<S, F>` - Reverse composition method
 /// - `when<P>` - Conditional execution method
 ///
 /// # Examples
@@ -106,8 +107,7 @@
 /// );
 /// ```
 ///
-#[macro_export]
-macro_rules! impl_fn_ops_trait {
+macro_rules! impl_transformer_fn_ops_trait {
     // Unified implementation - accepts closure signature (without constraints)
     (
         ($($fn_signature:tt)+),
@@ -118,7 +118,7 @@ macro_rules! impl_fn_ops_trait {
     ) => {
         /// Extension trait for closures implementing the base transformer trait
         ///
-        /// Provides composition methods (`and_then`, `when`) for closures
+        /// Provides composition methods (`and_then`, `compose`, `when`) for closures
         /// and function pointers without requiring explicit wrapping.
         ///
         /// This trait is automatically implemented for all closures and function
@@ -126,36 +126,11 @@ macro_rules! impl_fn_ops_trait {
         ///
         /// # Design Rationale
         ///
-        /// While closures automatically implement the base transformer trait through blanket
-        /// implementation, they don't have access to instance methods like `and_then`,
-        /// and `when`. This extension trait provides those methods,
-        /// returning the appropriate Box-based transformer type for maximum flexibility.
-        ///
-        /// # Examples
-        ///
-        /// ## Chain composition with and_then
-        ///
-        /// ```rust
-        /// use qubit_function::{Transformer, FnTransformerOps};
-        ///
-        /// let double = |x: i32| x * 2;
-        /// let to_string = |x: i32| x.to_string();
-        ///
-        /// let composed = double.and_then(to_string);
-        /// assert_eq!(composed.apply(21), "42");
-        /// ```
-        ///
-        /// ## Conditional transformation with when
-        ///
-        /// ```rust
-        /// use qubit_function::{Transformer, FnTransformerOps};
-        ///
-        /// let double = |x: i32| x * 2;
-        /// let conditional = double.when(|x: &i32| *x > 0).or_else(|x: i32| -x);
-        ///
-        /// assert_eq!(conditional.apply(5), 10);
-        /// assert_eq!(conditional.apply(-5), 5);
-        /// ```
+        /// While closures automatically implement the base transformer trait
+        /// through blanket implementation, they don't have access to instance
+        /// methods like `and_then`, `compose`, and `when`. This extension trait
+        /// provides those methods, returning the appropriate Box-based
+        /// transformer type for maximum flexibility.
         ///
         pub trait $trait_name<T, R>: $($fn_signature)+ + Sized {
             /// Chain composition - applies self first, then after
@@ -202,20 +177,18 @@ macro_rules! impl_fn_ops_trait {
             /// // to_string.apply(5); // Would not compile - moved
             /// ```
             ///
-            /// ## Preserving original with clone
+            /// ## Preserving behavior with separate closures
             ///
             /// ```rust
             /// use qubit_function::{BoxTransformer, FnTransformerOps, Transformer};
             ///
             /// let double = |x: i32| x * 2;
-            /// let to_string = BoxTransformer::new(|x: i32| x.to_string());
+            /// let to_string_for_validation = |x: i32| x.to_string();
             ///
-            /// // Clone to preserve original
-            /// let composed = double.and_then(to_string.clone());
+            /// let composed = double.and_then(BoxTransformer::new(|x: i32| x.to_string()));
             /// assert_eq!(composed.apply(21), "42");
             ///
-            /// // Original still usable
-            /// assert_eq!(to_string.apply(5), "5");
+            /// assert_eq!(to_string_for_validation(5), "5");
             /// ```
             #[allow(unused_mut)]
             #[inline]
@@ -230,6 +203,41 @@ macro_rules! impl_fn_ops_trait {
                 $box_type::new(move |x| {
                   let r = self(x);
                   after.apply(r)
+                })
+            }
+
+            /// Reverse composition - applies before first, then self.
+            ///
+            /// Creates a new transformer that applies the before transformer
+            /// first, then applies this transformer to the result. Consumes
+            /// self and returns a Box-based transformer.
+            ///
+            /// # Type Parameters
+            ///
+            /// * `S` - The input type of the before transformer
+            /// * `F` - The type of the before transformer
+            ///
+            /// # Parameters
+            ///
+            /// * `before` - The transformer to apply before self.
+            ///
+            /// # Returns
+            ///
+            /// A new Box-based transformer representing the reverse
+            /// composition.
+            #[allow(unused_mut)]
+            #[inline]
+            fn compose<S, F>(mut self, mut before: F) -> $box_type<S, R>
+            where
+                Self: 'static,
+                S: 'static,
+                F: $chained_transformer_trait<S, T> + 'static,
+                T: 'static,
+                R: 'static,
+            {
+                $box_type::new(move |x| {
+                    let t = before.apply(x);
+                    self(t)
                 })
             }
 
@@ -269,22 +277,19 @@ macro_rules! impl_fn_ops_trait {
             /// assert_eq!(conditional.apply(-5), 5);
             /// ```
             ///
-            /// ## Preserving predicate with clone
+            /// ## Reusing equivalent predicate logic
             ///
             /// ```rust
-            /// use qubit_function::{BoxPredicate, FnTransformerOps, Predicate, Transformer};
+            /// use qubit_function::{FnTransformerOps, Transformer};
             ///
             /// let double = |x: i32| x * 2;
-            /// let is_positive = BoxPredicate::new(|x: &i32| *x > 0);
+            /// let is_positive_for_validation = |x: &i32| *x > 0;
             ///
-            /// // Clone to preserve original predicate
-            /// let conditional = double.when(is_positive.clone())
+            /// let conditional = double.when(|x: &i32| *x > 0)
             ///     .or_else(|x: i32| -x);
             ///
             /// assert_eq!(conditional.apply(5), 10);
-            ///
-            /// // Original predicate still usable
-            /// assert!(is_positive.test(&3));
+            /// assert!(is_positive_for_validation(&3));
             /// ```
             #[inline]
             fn when<P>(self, predicate: P) -> $conditional_type<T, R>
@@ -307,4 +312,4 @@ macro_rules! impl_fn_ops_trait {
     };
 }
 
-pub(crate) use impl_fn_ops_trait;
+pub(crate) use impl_transformer_fn_ops_trait;
