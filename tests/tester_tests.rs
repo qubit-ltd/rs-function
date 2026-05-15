@@ -271,7 +271,7 @@ mod tests {
         let handle = std::thread::spawn(move || clone.test());
 
         assert!(tester.test());
-        assert!(handle.join().unwrap());
+        assert!(handle.join().expect("thread should not panic"));
 
         // Both threads successfully tested
         counter.fetch_add(1, Ordering::Relaxed);
@@ -574,7 +574,7 @@ mod tests {
         assert!(arc.test());
         let arc_clone = arc.clone();
         let handle = std::thread::spawn(move || arc_clone.test());
-        assert!(handle.join().unwrap());
+        assert!(handle.join().expect("thread should not panic"));
         assert!(always_true.test());
     }
 
@@ -1170,7 +1170,7 @@ mod tests {
         // Verify that ArcTester can be cloned and sent across threads
         let arc_clone = arc.clone();
         let handle = std::thread::spawn(move || arc_clone.test());
-        assert!(handle.join().unwrap());
+        assert!(handle.join().expect("thread should not panic"));
     }
 
     #[test]
@@ -1284,7 +1284,7 @@ mod tests {
         let arc_clone = arc.clone();
         let handle = std::thread::spawn(move || arc_clone.test());
 
-        assert!(handle.join().unwrap());
+        assert!(handle.join().expect("thread should not panic"));
     }
 
     #[test]
@@ -1359,7 +1359,7 @@ mod tests {
         let tester_clone = tester.clone();
         let handle = std::thread::spawn(move || arc_clone.test() && tester_clone.test());
 
-        assert!(handle.join().unwrap());
+        assert!(handle.join().expect("thread should not panic"));
     }
 
     #[test]

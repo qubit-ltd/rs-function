@@ -92,7 +92,10 @@ fn test_stateful_supplier_default_conversions_allow_relaxed_generic_types() {
 
 #[cfg(test)]
 mod test_stateful_supplier_trait {
-    use super::*;
+    use super::{
+        BoxStatefulSupplier,
+        StatefulSupplier,
+    };
 
     #[test]
     fn test_closure_to_box() {
@@ -233,10 +236,16 @@ mod test_stateful_supplier_trait {
 
 #[cfg(test)]
 mod test_box_stateful_supplier {
-    use super::*;
+    use super::{
+        BoxStatefulSupplier,
+        StatefulSupplier,
+    };
 
     mod test_new {
-        use super::*;
+        use super::{
+            BoxStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_creates_stateful_supplier() {
@@ -270,7 +279,10 @@ mod test_box_stateful_supplier {
     }
 
     mod test_constant {
-        use super::*;
+        use super::{
+            BoxStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_returns_same_value() {
@@ -289,7 +301,10 @@ mod test_box_stateful_supplier {
     }
 
     mod test_get {
-        use super::*;
+        use super::{
+            BoxStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_can_be_called_multiple_times() {
@@ -314,7 +329,10 @@ mod test_box_stateful_supplier {
     }
 
     mod test_map {
-        use super::*;
+        use super::{
+            BoxStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_transforms_value() {
@@ -360,7 +378,10 @@ mod test_box_stateful_supplier {
     }
 
     mod test_filter {
-        use super::*;
+        use super::{
+            BoxStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_filters_even_numbers() {
@@ -386,7 +407,10 @@ mod test_box_stateful_supplier {
     }
 
     mod test_zip {
-        use super::*;
+        use super::{
+            BoxStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_combines_two_stateful_suppliers() {
@@ -417,7 +441,10 @@ mod test_box_stateful_supplier {
     }
 
     mod test_memoize {
-        use super::*;
+        use super::{
+            BoxStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_caches_first_value() {
@@ -451,7 +478,10 @@ mod test_box_stateful_supplier {
     }
 
     mod test_into_box {
-        use super::*;
+        use super::{
+            BoxStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_returns_self() {
@@ -462,7 +492,10 @@ mod test_box_stateful_supplier {
     }
 
     mod test_into_rc {
-        use super::*;
+        use super::{
+            BoxStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_converts_to_rc() {
@@ -473,7 +506,10 @@ mod test_box_stateful_supplier {
     }
 
     mod test_into_fn {
-        use super::*;
+        use super::{
+            BoxStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_converts_to_fn() {
@@ -533,10 +569,19 @@ mod test_box_stateful_supplier {
 
 #[cfg(test)]
 mod test_arc_stateful_supplier {
-    use super::*;
+    use super::{
+        Arc,
+        ArcStatefulSupplier,
+        Mutex,
+        StatefulSupplier,
+        thread,
+    };
 
     mod test_new {
-        use super::*;
+        use super::{
+            ArcStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_creates_stateful_supplier() {
@@ -561,7 +606,10 @@ mod test_arc_stateful_supplier {
     }
 
     mod test_constant {
-        use super::*;
+        use super::{
+            ArcStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_returns_same_value() {
@@ -573,7 +621,12 @@ mod test_arc_stateful_supplier {
     }
 
     mod test_get {
-        use super::*;
+        use super::{
+            Arc,
+            ArcStatefulSupplier,
+            Mutex,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_can_be_called_multiple_times() {
@@ -588,7 +641,7 @@ mod test_arc_stateful_supplier {
             let counter = Arc::new(Mutex::new(0));
             let counter_clone = Arc::clone(&counter);
             let supplier = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone.lock().unwrap();
+                let mut c = counter_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
@@ -601,7 +654,12 @@ mod test_arc_stateful_supplier {
     }
 
     mod test_clone {
-        use super::*;
+        use super::{
+            Arc,
+            ArcStatefulSupplier,
+            Mutex,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_can_be_cloned() {
@@ -620,7 +678,7 @@ mod test_arc_stateful_supplier {
             let counter = Arc::new(Mutex::new(0));
             let counter_clone = Arc::clone(&counter);
             let supplier = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone.lock().unwrap();
+                let mut c = counter_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
@@ -634,7 +692,13 @@ mod test_arc_stateful_supplier {
     }
 
     mod test_map {
-        use super::*;
+        use super::{
+            Arc,
+            ArcStatefulSupplier,
+            Mutex,
+            StatefulSupplier,
+            thread,
+        };
 
         #[test]
         fn test_transforms_value() {
@@ -683,7 +747,7 @@ mod test_arc_stateful_supplier {
             let counter = Arc::new(Mutex::new(0));
             let counter_clone = Arc::clone(&counter);
             let source = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone.lock().unwrap();
+                let mut c = counter_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
@@ -695,8 +759,8 @@ mod test_arc_stateful_supplier {
             let h1 = thread::spawn(move || s1.get());
             let h2 = thread::spawn(move || s2.get());
 
-            let v1 = h1.join().unwrap();
-            let v2 = h2.join().unwrap();
+            let v1 = h1.join().expect("thread should not panic");
+            let v2 = h2.join().expect("thread should not panic");
 
             // Both should get different values (10 and 20)
             assert!(v1 == 10 || v1 == 20);
@@ -706,14 +770,19 @@ mod test_arc_stateful_supplier {
     }
 
     mod test_filter {
-        use super::*;
+        use super::{
+            Arc,
+            ArcStatefulSupplier,
+            Mutex,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_filters_even_numbers() {
             let counter = Arc::new(Mutex::new(0));
             let counter_clone = Arc::clone(&counter);
             let source = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone.lock().unwrap();
+                let mut c = counter_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
@@ -726,7 +795,10 @@ mod test_arc_stateful_supplier {
     }
 
     mod test_zip {
-        use super::*;
+        use super::{
+            ArcStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_combines_two_stateful_suppliers() {
@@ -753,14 +825,21 @@ mod test_arc_stateful_supplier {
     }
 
     mod test_memoize {
-        use super::*;
+        use super::{
+            Arc,
+            ArcStatefulSupplier,
+            Mutex,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_caches_first_value() {
             let call_count = Arc::new(Mutex::new(0));
             let call_count_clone = Arc::clone(&call_count);
             let source = ArcStatefulSupplier::new(move || {
-                let mut c = call_count_clone.lock().unwrap();
+                let mut c = call_count_clone
+                    .lock()
+                    .expect("mutex should not be poisoned");
                 *c += 1;
                 42
             });
@@ -769,19 +848,25 @@ mod test_arc_stateful_supplier {
             let mut s = memoized;
             assert_eq!(s.get(), 42);
             assert_eq!(s.get(), 42);
-            assert_eq!(*call_count.lock().unwrap(), 1);
+            assert_eq!(*call_count.lock().expect("mutex should not be poisoned"), 1);
         }
     }
 
     mod test_thread_safety {
-        use super::*;
+        use super::{
+            Arc,
+            ArcStatefulSupplier,
+            Mutex,
+            StatefulSupplier,
+            thread,
+        };
 
         #[test]
         fn test_can_be_sent_across_threads() {
             let counter = Arc::new(Mutex::new(0));
             let counter_clone = Arc::clone(&counter);
             let supplier = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone.lock().unwrap();
+                let mut c = counter_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
@@ -792,16 +877,19 @@ mod test_arc_stateful_supplier {
             let h1 = thread::spawn(move || s1.get());
             let h2 = thread::spawn(move || s2.get());
 
-            let v1 = h1.join().unwrap();
-            let v2 = h2.join().unwrap();
+            let v1 = h1.join().expect("thread should not panic");
+            let v2 = h2.join().expect("thread should not panic");
 
             assert!(v1 != v2);
-            assert_eq!(*counter.lock().unwrap(), 2);
+            assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 2);
         }
     }
 
     mod test_into_box {
-        use super::*;
+        use super::{
+            ArcStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_converts_to_box() {
@@ -812,7 +900,10 @@ mod test_arc_stateful_supplier {
     }
 
     mod test_into_rc {
-        use super::*;
+        use super::{
+            ArcStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_converts_to_rc() {
@@ -823,7 +914,10 @@ mod test_arc_stateful_supplier {
     }
 
     mod test_into_arc {
-        use super::*;
+        use super::{
+            ArcStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_returns_self() {
@@ -834,7 +928,12 @@ mod test_arc_stateful_supplier {
     }
 
     mod test_into_fn {
-        use super::*;
+        use super::{
+            Arc,
+            ArcStatefulSupplier,
+            Mutex,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_converts_to_fn() {
@@ -849,7 +948,7 @@ mod test_arc_stateful_supplier {
             let counter = Arc::new(Mutex::new(0));
             let counter_clone = Arc::clone(&counter);
             let supplier = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone.lock().unwrap();
+                let mut c = counter_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
@@ -857,7 +956,7 @@ mod test_arc_stateful_supplier {
             assert_eq!(f(), 1);
             assert_eq!(f(), 2);
             assert_eq!(f(), 3);
-            assert_eq!(*counter.lock().unwrap(), 3);
+            assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 3);
         }
 
         #[test]
@@ -894,7 +993,7 @@ mod test_arc_stateful_supplier {
             let counter = Arc::new(Mutex::new(0));
             let counter_clone = Arc::clone(&counter);
             let supplier = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone.lock().unwrap();
+                let mut c = counter_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
@@ -907,12 +1006,15 @@ mod test_arc_stateful_supplier {
             assert_eq!(f(), 3);
 
             // Verify the counter was incremented correctly
-            assert_eq!(*counter.lock().unwrap(), 3);
+            assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 3);
         }
     }
 
     mod test_to_box {
-        use super::*;
+        use super::{
+            ArcStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_creates_box_stateful_supplier() {
@@ -923,7 +1025,10 @@ mod test_arc_stateful_supplier {
     }
 
     mod test_to_rc {
-        use super::*;
+        use super::{
+            ArcStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_creates_rc_stateful_supplier() {
@@ -935,7 +1040,10 @@ mod test_arc_stateful_supplier {
     }
 
     mod test_to_arc {
-        use super::*;
+        use super::{
+            ArcStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_returns_clone() {
@@ -948,7 +1056,10 @@ mod test_arc_stateful_supplier {
     }
 
     mod test_to_fn {
-        use super::*;
+        use super::{
+            ArcStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_creates_fn() {
@@ -966,10 +1077,18 @@ mod test_arc_stateful_supplier {
 
 #[cfg(test)]
 mod test_rc_stateful_supplier {
-    use super::*;
+    use super::{
+        Rc,
+        RcStatefulSupplier,
+        RefCell,
+        StatefulSupplier,
+    };
 
     mod test_new {
-        use super::*;
+        use super::{
+            RcStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_creates_stateful_supplier() {
@@ -994,7 +1113,10 @@ mod test_rc_stateful_supplier {
     }
 
     mod test_constant {
-        use super::*;
+        use super::{
+            RcStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_returns_same_value() {
@@ -1006,7 +1128,12 @@ mod test_rc_stateful_supplier {
     }
 
     mod test_get {
-        use super::*;
+        use super::{
+            Rc,
+            RcStatefulSupplier,
+            RefCell,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_can_be_called_multiple_times() {
@@ -1034,7 +1161,10 @@ mod test_rc_stateful_supplier {
     }
 
     mod test_to_box {
-        use super::*;
+        use super::{
+            RcStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_creates_box_stateful_supplier() {
@@ -1046,7 +1176,10 @@ mod test_rc_stateful_supplier {
     }
 
     mod test_to_rc {
-        use super::*;
+        use super::{
+            RcStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_returns_clone() {
@@ -1059,7 +1192,10 @@ mod test_rc_stateful_supplier {
     }
 
     mod test_to_fn {
-        use super::*;
+        use super::{
+            RcStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_creates_closure() {
@@ -1071,7 +1207,12 @@ mod test_rc_stateful_supplier {
     }
 
     mod test_clone {
-        use super::*;
+        use super::{
+            Rc,
+            RcStatefulSupplier,
+            RefCell,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_can_be_cloned() {
@@ -1104,7 +1245,12 @@ mod test_rc_stateful_supplier {
     }
 
     mod test_map {
-        use super::*;
+        use super::{
+            Rc,
+            RcStatefulSupplier,
+            RefCell,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_transforms_value() {
@@ -1169,7 +1315,12 @@ mod test_rc_stateful_supplier {
     }
 
     mod test_filter {
-        use super::*;
+        use super::{
+            Rc,
+            RcStatefulSupplier,
+            RefCell,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_filters_even_numbers() {
@@ -1189,7 +1340,10 @@ mod test_rc_stateful_supplier {
     }
 
     mod test_zip {
-        use super::*;
+        use super::{
+            RcStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_combines_two_stateful_suppliers() {
@@ -1216,7 +1370,12 @@ mod test_rc_stateful_supplier {
     }
 
     mod test_memoize {
-        use super::*;
+        use super::{
+            Rc,
+            RcStatefulSupplier,
+            RefCell,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_caches_first_value() {
@@ -1237,7 +1396,10 @@ mod test_rc_stateful_supplier {
     }
 
     mod test_into_box {
-        use super::*;
+        use super::{
+            RcStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_converts_to_box() {
@@ -1248,7 +1410,10 @@ mod test_rc_stateful_supplier {
     }
 
     mod test_into_rc {
-        use super::*;
+        use super::{
+            RcStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_returns_self() {
@@ -1259,7 +1424,12 @@ mod test_rc_stateful_supplier {
     }
 
     mod test_into_fn {
-        use super::*;
+        use super::{
+            Rc,
+            RcStatefulSupplier,
+            RefCell,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_converts_to_fn() {
@@ -1347,10 +1517,16 @@ mod test_rc_stateful_supplier {
 
 #[cfg(test)]
 mod test_box_stateful_supplier_once {
-    use super::*;
+    use super::{
+        BoxStatefulSupplier,
+        StatefulSupplier,
+    };
 
     mod test_get {
-        use super::*;
+        use super::{
+            BoxStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_consumes_stateful_supplier() {
@@ -1395,7 +1571,10 @@ mod test_box_stateful_supplier_once {
     }
 
     mod test_into_box {
-        use super::*;
+        use super::{
+            BoxStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_into_box() {
@@ -1421,7 +1600,10 @@ mod test_box_stateful_supplier_once {
     }
 
     mod test_into_fn {
-        use super::*;
+        use super::{
+            BoxStatefulSupplier,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_converts_to_fn() {
@@ -1476,10 +1658,20 @@ mod test_box_stateful_supplier_once {
 
 #[cfg(test)]
 mod test_arc_stateful_supplier_once {
-    use super::*;
+    use super::{
+        Arc,
+        ArcStatefulSupplier,
+        Mutex,
+        StatefulSupplier,
+    };
 
     mod test_get {
-        use super::*;
+        use super::{
+            Arc,
+            ArcStatefulSupplier,
+            Mutex,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_consumes_stateful_supplier() {
@@ -1508,13 +1700,13 @@ mod test_arc_stateful_supplier_once {
             let counter = Arc::new(Mutex::new(0));
             let counter_clone = Arc::clone(&counter);
             let mut supplier = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone.lock().unwrap();
+                let mut c = counter_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
             let value = supplier.get();
             assert_eq!(value, 1);
-            assert_eq!(*counter.lock().unwrap(), 1);
+            assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 1);
         }
 
         #[test]
@@ -1523,7 +1715,7 @@ mod test_arc_stateful_supplier_once {
             let counter_clone1 = Arc::clone(&counter);
 
             let stateful_supplier1 = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone1.lock().unwrap();
+                let mut c = counter_clone1.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
@@ -1537,12 +1729,17 @@ mod test_arc_stateful_supplier_once {
 
             // Both should increment the same counter
             assert_eq!(value1 + value2, 3); // 1 + 2
-            assert_eq!(*counter.lock().unwrap(), 2);
+            assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 2);
         }
     }
 
     mod test_into_box {
-        use super::*;
+        use super::{
+            Arc,
+            ArcStatefulSupplier,
+            Mutex,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_into_box() {
@@ -1563,18 +1760,23 @@ mod test_arc_stateful_supplier_once {
             let counter = Arc::new(Mutex::new(0));
             let counter_clone = Arc::clone(&counter);
             let supplier = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone.lock().unwrap();
+                let mut c = counter_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
             let mut boxed = supplier.into_box();
             assert_eq!(boxed.get(), 1);
-            assert_eq!(*counter.lock().unwrap(), 1);
+            assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 1);
         }
     }
 
     mod test_into_fn {
-        use super::*;
+        use super::{
+            Arc,
+            ArcStatefulSupplier,
+            Mutex,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_converts_to_fn() {
@@ -1595,13 +1797,13 @@ mod test_arc_stateful_supplier_once {
             let counter = Arc::new(Mutex::new(0));
             let counter_clone = Arc::clone(&counter);
             let supplier = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone.lock().unwrap();
+                let mut c = counter_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
             let mut f = supplier.into_fn();
             assert_eq!(f(), 1);
-            assert_eq!(*counter.lock().unwrap(), 1);
+            assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 1);
         }
 
         #[test]
@@ -1609,7 +1811,7 @@ mod test_arc_stateful_supplier_once {
             let counter = Arc::new(Mutex::new(0));
             let counter_clone = Arc::clone(&counter);
             let supplier = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone.lock().unwrap();
+                let mut c = counter_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
@@ -1619,7 +1821,12 @@ mod test_arc_stateful_supplier_once {
     }
 
     mod test_to_box {
-        use super::*;
+        use super::{
+            Arc,
+            ArcStatefulSupplier,
+            Mutex,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_to_box() {
@@ -1642,7 +1849,7 @@ mod test_arc_stateful_supplier_once {
             let counter = Arc::new(Mutex::new(0));
             let counter_clone = Arc::clone(&counter);
             let supplier = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone.lock().unwrap();
+                let mut c = counter_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
@@ -1652,12 +1859,17 @@ mod test_arc_stateful_supplier_once {
 
             // Can still use original
             assert_eq!(supplier.clone().get(), 2);
-            assert_eq!(*counter.lock().unwrap(), 2);
+            assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 2);
         }
     }
 
     mod test_to_fn {
-        use super::*;
+        use super::{
+            Arc,
+            ArcStatefulSupplier,
+            Mutex,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_creates_fn_once() {
@@ -1681,7 +1893,7 @@ mod test_arc_stateful_supplier_once {
             let counter = Arc::new(Mutex::new(0));
             let counter_clone = Arc::clone(&counter);
             let supplier = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone.lock().unwrap();
+                let mut c = counter_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
@@ -1691,7 +1903,7 @@ mod test_arc_stateful_supplier_once {
 
             // Can still use original
             assert_eq!(supplier.clone().get(), 2);
-            assert_eq!(*counter.lock().unwrap(), 2);
+            assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 2);
         }
     }
 }
@@ -1702,10 +1914,20 @@ mod test_arc_stateful_supplier_once {
 
 #[cfg(test)]
 mod test_rc_stateful_supplier_once {
-    use super::*;
+    use super::{
+        Rc,
+        RcStatefulSupplier,
+        RefCell,
+        StatefulSupplier,
+    };
 
     mod test_get {
-        use super::*;
+        use super::{
+            Rc,
+            RcStatefulSupplier,
+            RefCell,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_consumes_stateful_supplier() {
@@ -1768,7 +1990,12 @@ mod test_rc_stateful_supplier_once {
     }
 
     mod test_into_box {
-        use super::*;
+        use super::{
+            Rc,
+            RcStatefulSupplier,
+            RefCell,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_into_box() {
@@ -1800,7 +2027,12 @@ mod test_rc_stateful_supplier_once {
     }
 
     mod test_into_fn {
-        use super::*;
+        use super::{
+            Rc,
+            RcStatefulSupplier,
+            RefCell,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_converts_to_fn() {
@@ -1845,7 +2077,12 @@ mod test_rc_stateful_supplier_once {
     }
 
     mod test_to_box {
-        use super::*;
+        use super::{
+            Rc,
+            RcStatefulSupplier,
+            RefCell,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_to_box() {
@@ -1883,7 +2120,12 @@ mod test_rc_stateful_supplier_once {
     }
 
     mod test_to_fn {
-        use super::*;
+        use super::{
+            Rc,
+            RcStatefulSupplier,
+            RefCell,
+            StatefulSupplier,
+        };
 
         #[test]
         fn test_creates_fn_once() {
@@ -1928,7 +2170,10 @@ mod test_rc_stateful_supplier_once {
 
 #[cfg(test)]
 mod test_custom_stateful_supplier_default_impl {
-    use super::*;
+    use super::{
+        StatefulSupplier,
+        thread,
+    };
 
     /// A custom StatefulSupplier implementation that only implements the
     /// core `get()` method, relying on default implementations for
@@ -2024,8 +2269,8 @@ mod test_custom_stateful_supplier_default_impl {
         let h1 = thread::spawn(move || s1.get());
         let h2 = thread::spawn(move || s2.get());
 
-        let v1 = h1.join().unwrap();
-        let v2 = h2.join().unwrap();
+        let v1 = h1.join().expect("thread should not panic");
+        let v2 = h2.join().expect("thread should not panic");
 
         // Both threads should get the same value from this unchanged supplier.
         assert_eq!(v1, 100);
@@ -2163,7 +2408,11 @@ mod test_custom_stateful_supplier_default_impl {
 
 #[cfg(test)]
 mod test_fn_stateful_supplier_ops {
-    use super::*;
+    use super::{
+        BoxStatefulSupplier,
+        FnStatefulSupplierOps,
+        StatefulSupplier,
+    };
 
     #[test]
     fn test_closure_map() {
@@ -2486,7 +2735,7 @@ mod test_fn_stateful_supplier_ops {
 
 #[cfg(test)]
 mod test_custom_clone_stateful_supplier {
-    use super::*;
+    use super::StatefulSupplier;
 
     #[derive(Clone)]
     struct CustomStatefulSupplier {
@@ -2534,14 +2783,18 @@ mod test_custom_clone_stateful_supplier {
 
 #[cfg(test)]
 mod test_stateful_supplier_debug_display {
-    use super::*;
+    use super::{
+        ArcStatefulSupplier,
+        BoxStatefulSupplier,
+        RcStatefulSupplier,
+    };
 
     // ============================================================
     // BoxStatefulSupplier Debug and Display Tests
     // ============================================================
 
     mod test_box_stateful_supplier_debug_display {
-        use super::*;
+        use super::BoxStatefulSupplier;
 
         #[test]
         fn test_debug_without_name() {
@@ -2585,7 +2838,7 @@ mod test_stateful_supplier_debug_display {
     // ============================================================
 
     mod test_arc_stateful_supplier_debug_display {
-        use super::*;
+        use super::ArcStatefulSupplier;
 
         #[test]
         fn test_debug_without_name() {
@@ -2629,7 +2882,7 @@ mod test_stateful_supplier_debug_display {
     // ============================================================
 
     mod test_rc_stateful_supplier_debug_display {
-        use super::*;
+        use super::RcStatefulSupplier;
 
         #[test]
         fn test_debug_without_name() {
@@ -2675,7 +2928,10 @@ mod test_stateful_supplier_debug_display {
 
 #[cfg(test)]
 mod test_stateful_supplier_trait_default_methods {
-    use super::*;
+    use super::{
+        Arc,
+        StatefulSupplier,
+    };
     use qubit_function::SupplierOnce;
     use std::sync::atomic::{
         AtomicUsize,

@@ -26,6 +26,8 @@ use super::{
     impl_shared_function_methods,
 };
 
+type RcBiMutatingFunctionFn<T, U, R> = Rc<dyn Fn(&mut T, &mut U) -> R>;
+
 // ============================================================================
 // RcBiMutatingFunction - Rc<dyn Fn(&mut T, &mut U) -> R>
 // ============================================================================
@@ -44,8 +46,7 @@ use super::{
 /// - **Clonable**: Cheap cloning via `Rc::clone`
 ///
 pub struct RcBiMutatingFunction<T, U, R> {
-    #[allow(clippy::type_complexity)]
-    pub(super) function: Rc<dyn Fn(&mut T, &mut U) -> R>,
+    pub(super) function: RcBiMutatingFunctionFn<T, U, R>,
     pub(super) name: Option<String>,
 }
 

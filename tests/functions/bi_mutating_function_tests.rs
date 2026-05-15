@@ -569,8 +569,8 @@ fn test_arc_bi_mutating_function_thread_safety() {
         func2.apply(&mut a, &mut b)
     });
 
-    let result1 = handle1.join().unwrap();
-    let result2 = handle2.join().unwrap();
+    let result1 = handle1.join().expect("thread should not panic");
+    let result2 = handle2.join().expect("thread should not panic");
 
     assert_eq!(result1, 33); // (10+1) + (20+2) = 11 + 22 = 33
     assert_eq!(result2, 73); // (30+1) + (40+2) = 31 + 42 = 73
@@ -846,19 +846,12 @@ fn test_arc_conditional_bi_mutating_function_clone() {
 
 #[test]
 fn test_impl_conditional_function_clone_three_params_bi_mutating_macro_coverage() {
-    println!(
-        "Starting test_impl_conditional_function_clone_three_params_bi_mutating_macro_coverage"
-    );
-
     // Test to ensure the three-parameter version of impl_conditional_function_clone macro is covered
     // for bi-mutating functions. This test verifies that the macro generates Clone implementations
     // for RcConditionalBiMutatingFunction<T, U, R> and ArcConditionalBiMutatingFunction<T, U, R>
 
     // Test RcConditionalBiMutatingFunction (three parameters: T, U, R)
     {
-        println!(
-            "Testing RcConditionalBiMutatingFunction with macro-generated Clone (three parameters)"
-        );
         let swap = RcBiMutatingFunction::new(|x: &mut i32, y: &mut i32| {
             std::mem::swap(&mut *x, &mut *y);
             *x + *y
@@ -867,11 +860,7 @@ fn test_impl_conditional_function_clone_three_params_bi_mutating_macro_coverage(
 
         let conditional_rc = swap.when(pred);
 
-        println!(
-            "Calling clone() on RcConditionalBiMutatingFunction - this should trigger macro-generated three-param code"
-        );
         let cloned_rc = conditional_rc.clone();
-        println!("Clone completed for RcConditionalBiMutatingFunction");
 
         // Create or_else to test functionality
         let multiply = RcBiMutatingFunction::new(|x: &mut i32, y: &mut i32| {
@@ -888,14 +877,10 @@ fn test_impl_conditional_function_clone_three_params_bi_mutating_macro_coverage(
         let mut a2 = 2;
         let mut b2 = 7;
         assert_eq!(func.apply(&mut a2, &mut b2), 14); // or_else branch: 2 <= 7, multiplied: 2 * 7 = 14
-        println!("RcConditionalBiMutatingFunction test passed");
     }
 
     // Test ArcConditionalBiMutatingFunction (three parameters: T, U, R)
     {
-        println!(
-            "Testing ArcConditionalBiMutatingFunction with macro-generated Clone (three parameters)"
-        );
         let increment = ArcBiMutatingFunction::new(|x: &mut i32, y: &mut i32| {
             *x += *y;
             *x
@@ -904,11 +889,7 @@ fn test_impl_conditional_function_clone_three_params_bi_mutating_macro_coverage(
 
         let conditional_arc = increment.when(pred);
 
-        println!(
-            "Calling clone() on ArcConditionalBiMutatingFunction - this should trigger macro-generated three-param code"
-        );
         let cloned_arc = conditional_arc.clone();
-        println!("Clone completed for ArcConditionalBiMutatingFunction");
 
         // Create or_else to test functionality
         let decrement = ArcBiMutatingFunction::new(|x: &mut i32, y: &mut i32| {
@@ -925,10 +906,7 @@ fn test_impl_conditional_function_clone_three_params_bi_mutating_macro_coverage(
         let mut c2 = -2;
         let mut d2 = 3;
         assert_eq!(func.apply(&mut c2, &mut d2), -5); // or_else branch: decrement: -2 - 3 = -5
-        println!("ArcConditionalBiMutatingFunction test passed");
     }
-
-    println!("Three-parameter conditional clone macro test for bi-mutating functions passed!");
 }
 
 #[test]

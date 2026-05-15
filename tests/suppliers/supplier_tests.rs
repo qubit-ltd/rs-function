@@ -71,7 +71,10 @@ fn test_supplier_default_conversions_allow_relaxed_generic_types() {
 
 #[cfg(test)]
 mod test_stateless_supplier_trait {
-    use super::*;
+    use super::{
+        BoxSupplier,
+        Supplier,
+    };
 
     #[test]
     fn test_closure_implements_stateless_supplier() {
@@ -173,10 +176,16 @@ mod test_stateless_supplier_trait {
 
 #[cfg(test)]
 mod test_box_stateless_supplier {
-    use super::*;
+    use super::{
+        BoxSupplier,
+        Supplier,
+    };
 
     mod test_new {
-        use super::*;
+        use super::{
+            BoxSupplier,
+            Supplier,
+        };
 
         #[test]
         fn test_new_basic() {
@@ -204,7 +213,10 @@ mod test_box_stateless_supplier {
     }
 
     mod test_constant {
-        use super::*;
+        use super::{
+            BoxSupplier,
+            Supplier,
+        };
 
         #[test]
         fn test_constant_basic() {
@@ -232,7 +244,10 @@ mod test_box_stateless_supplier {
     }
 
     mod test_map {
-        use super::*;
+        use super::{
+            BoxSupplier,
+            Supplier,
+        };
 
         #[test]
         fn test_map_basic() {
@@ -257,7 +272,10 @@ mod test_box_stateless_supplier {
     }
 
     mod test_filter {
-        use super::*;
+        use super::{
+            BoxSupplier,
+            Supplier,
+        };
 
         #[test]
         fn test_filter_passes() {
@@ -284,7 +302,10 @@ mod test_box_stateless_supplier {
     }
 
     mod test_zip {
-        use super::*;
+        use super::{
+            BoxSupplier,
+            Supplier,
+        };
 
         #[test]
         fn test_zip_basic() {
@@ -306,7 +327,10 @@ mod test_box_stateless_supplier {
     }
 
     mod test_trait_methods {
-        use super::*;
+        use super::{
+            BoxSupplier,
+            Supplier,
+        };
 
         #[test]
         fn test_get() {
@@ -372,10 +396,18 @@ mod test_box_stateless_supplier {
 
 #[cfg(test)]
 mod test_arc_stateless_supplier {
-    use super::*;
+    use super::{
+        Arc,
+        ArcSupplier,
+        Supplier,
+        thread,
+    };
 
     mod test_new {
-        use super::*;
+        use super::{
+            ArcSupplier,
+            Supplier,
+        };
 
         #[test]
         fn test_new_basic() {
@@ -403,7 +435,10 @@ mod test_arc_stateless_supplier {
     }
 
     mod test_constant {
-        use super::*;
+        use super::{
+            ArcSupplier,
+            Supplier,
+        };
 
         #[test]
         fn test_constant_basic() {
@@ -423,7 +458,10 @@ mod test_arc_stateless_supplier {
     }
 
     mod test_map {
-        use super::*;
+        use super::{
+            ArcSupplier,
+            Supplier,
+        };
 
         #[test]
         fn test_map_basic() {
@@ -452,7 +490,10 @@ mod test_arc_stateless_supplier {
     }
 
     mod test_filter {
-        use super::*;
+        use super::{
+            ArcSupplier,
+            Supplier,
+        };
 
         #[test]
         fn test_filter_passes() {
@@ -472,7 +513,10 @@ mod test_arc_stateless_supplier {
     }
 
     mod test_zip {
-        use super::*;
+        use super::{
+            ArcSupplier,
+            Supplier,
+        };
 
         #[test]
         fn test_zip_basic() {
@@ -496,7 +540,10 @@ mod test_arc_stateless_supplier {
     }
 
     mod test_clone {
-        use super::*;
+        use super::{
+            ArcSupplier,
+            Supplier,
+        };
 
         #[test]
         fn test_clone_basic() {
@@ -517,14 +564,19 @@ mod test_arc_stateless_supplier {
     }
 
     mod test_thread_safety {
-        use super::*;
+        use super::{
+            Arc,
+            ArcSupplier,
+            Supplier,
+            thread,
+        };
 
         #[test]
         fn test_send_between_threads() {
             // Test that supplier can be sent between threads
             let supplier = ArcSupplier::new(|| 42);
             let handle = thread::spawn(move || supplier.get());
-            assert_eq!(handle.join().unwrap(), 42);
+            assert_eq!(handle.join().expect("thread should not panic"), 42);
         }
 
         #[test]
@@ -540,7 +592,7 @@ mod test_arc_stateless_supplier {
                 .collect();
 
             for h in handles {
-                assert_eq!(h.join().unwrap(), "Hello, World!");
+                assert_eq!(h.join().expect("thread should not panic"), "Hello, World!");
             }
         }
 
@@ -557,13 +609,17 @@ mod test_arc_stateless_supplier {
                 .collect();
 
             for h in handles {
-                assert_eq!(h.join().unwrap(), 100);
+                assert_eq!(h.join().expect("thread should not panic"), 100);
             }
         }
     }
 
     mod test_trait_methods {
-        use super::*;
+        use super::{
+            ArcSupplier,
+            Supplier,
+            thread,
+        };
 
         #[test]
         fn test_get() {
@@ -630,7 +686,7 @@ mod test_arc_stateless_supplier {
             let supplier = ArcSupplier::new(|| 42);
             let func = supplier.into_fn();
             let handle = thread::spawn(func);
-            assert_eq!(handle.join().unwrap(), 42);
+            assert_eq!(handle.join().expect("thread should not panic"), 42);
         }
     }
 }
@@ -641,10 +697,16 @@ mod test_arc_stateless_supplier {
 
 #[cfg(test)]
 mod test_rc_stateless_supplier {
-    use super::*;
+    use super::{
+        RcSupplier,
+        Supplier,
+    };
 
     mod test_new {
-        use super::*;
+        use super::{
+            RcSupplier,
+            Supplier,
+        };
 
         #[test]
         fn test_new_basic() {
@@ -672,7 +734,10 @@ mod test_rc_stateless_supplier {
     }
 
     mod test_constant {
-        use super::*;
+        use super::{
+            RcSupplier,
+            Supplier,
+        };
 
         #[test]
         fn test_constant_basic() {
@@ -692,7 +757,10 @@ mod test_rc_stateless_supplier {
     }
 
     mod test_map {
-        use super::*;
+        use super::{
+            RcSupplier,
+            Supplier,
+        };
 
         #[test]
         fn test_map_basic() {
@@ -721,7 +789,10 @@ mod test_rc_stateless_supplier {
     }
 
     mod test_filter {
-        use super::*;
+        use super::{
+            RcSupplier,
+            Supplier,
+        };
 
         #[test]
         fn test_filter_passes() {
@@ -741,7 +812,10 @@ mod test_rc_stateless_supplier {
     }
 
     mod test_zip {
-        use super::*;
+        use super::{
+            RcSupplier,
+            Supplier,
+        };
 
         #[test]
         fn test_zip_basic() {
@@ -765,7 +839,10 @@ mod test_rc_stateless_supplier {
     }
 
     mod test_clone {
-        use super::*;
+        use super::{
+            RcSupplier,
+            Supplier,
+        };
 
         #[test]
         fn test_clone_basic() {
@@ -786,7 +863,10 @@ mod test_rc_stateless_supplier {
     }
 
     mod test_trait_methods {
-        use super::*;
+        use super::{
+            RcSupplier,
+            Supplier,
+        };
 
         #[test]
         fn test_get() {
@@ -852,7 +932,13 @@ mod test_rc_stateless_supplier {
 
 #[cfg(test)]
 mod test_integration {
-    use super::*;
+    use super::{
+        Arc,
+        ArcSupplier,
+        BoxSupplier,
+        Supplier,
+        thread,
+    };
 
     #[test]
     fn test_usage_in_read_only_context() {
@@ -905,7 +991,10 @@ mod test_integration {
             .collect();
 
         for h in handles {
-            assert_eq!(h.join().unwrap(), vec![1, 2, 3, 4, 5]);
+            assert_eq!(
+                h.join().expect("thread should not panic"),
+                vec![1, 2, 3, 4, 5]
+            );
         }
     }
 
@@ -936,7 +1025,11 @@ mod test_integration {
 
 #[cfg(test)]
 mod test_box_stateless_supplier_map_with_transformer {
-    use super::*;
+    use super::{
+        BoxSupplier,
+        BoxTransformer,
+        Supplier,
+    };
 
     // Helper function pointers
     fn double(x: i32) -> i32 {
@@ -1028,7 +1121,12 @@ mod test_box_stateless_supplier_map_with_transformer {
 
 #[cfg(test)]
 mod test_arc_stateless_supplier_map_with_transformer {
-    use super::*;
+    use super::{
+        ArcSupplier,
+        ArcTransformer,
+        Supplier,
+        thread,
+    };
 
     // Helper function pointers
     fn double(x: i32) -> i32 {
@@ -1110,7 +1208,7 @@ mod test_arc_stateless_supplier_map_with_transformer {
             .collect();
 
         for h in handles {
-            assert_eq!(h.join().unwrap(), 20);
+            assert_eq!(h.join().expect("thread should not panic"), 20);
         }
     }
 
@@ -1150,7 +1248,11 @@ mod test_arc_stateless_supplier_map_with_transformer {
 
 #[cfg(test)]
 mod test_rc_stateless_supplier_map_with_transformer {
-    use super::*;
+    use super::{
+        RcSupplier,
+        RcTransformer,
+        Supplier,
+    };
 
     // Helper function pointers
     fn double(x: i32) -> i32 {
@@ -1253,7 +1355,12 @@ mod test_rc_stateless_supplier_map_with_transformer {
 
 #[cfg(test)]
 mod test_map_transformer_integration {
-    use super::*;
+    use super::{
+        ArcSupplier,
+        ArcTransformer,
+        BoxSupplier,
+        Supplier,
+    };
 
     #[test]
     fn test_mixed_transformer_types_in_pipeline() {
@@ -1330,7 +1437,10 @@ mod test_map_transformer_integration {
 
 #[cfg(test)]
 mod test_custom_stateless_supplier_default_impl {
-    use super::*;
+    use super::{
+        Supplier,
+        thread,
+    };
 
     /// A simple custom type that implements Supplier with
     /// only the core `get` method, relying on default
@@ -1420,7 +1530,7 @@ mod test_custom_stateless_supplier_default_impl {
             .collect();
 
         for h in handles {
-            assert_eq!(h.join().unwrap(), 999);
+            assert_eq!(h.join().expect("thread should not panic"), 999);
         }
     }
 
@@ -1564,7 +1674,7 @@ mod test_custom_stateless_supplier_default_impl {
             .collect();
 
         for h in handles {
-            assert_eq!(h.join().unwrap(), 999);
+            assert_eq!(h.join().expect("thread should not panic"), 999);
         }
     }
 
@@ -1582,14 +1692,23 @@ mod test_custom_stateless_supplier_default_impl {
 
 #[cfg(test)]
 mod test_to_methods {
-    use super::*;
+    use super::{
+        ArcSupplier,
+        RcSupplier,
+        Supplier,
+        thread,
+    };
 
     // ============================================================
     // Tests for ArcSupplier to_* methods
     // ============================================================
 
     mod test_arc_stateless_supplier_to_methods {
-        use super::*;
+        use super::{
+            ArcSupplier,
+            Supplier,
+            thread,
+        };
 
         #[test]
         fn test_arc_to_box() {
@@ -1679,7 +1798,7 @@ mod test_to_methods {
                 .collect();
 
             for h in handles {
-                assert_eq!(h.join().unwrap(), 999);
+                assert_eq!(h.join().expect("thread should not panic"), 999);
             }
         }
     }
@@ -1689,7 +1808,10 @@ mod test_to_methods {
     // ============================================================
 
     mod test_rc_stateless_supplier_to_methods {
-        use super::*;
+        use super::{
+            RcSupplier,
+            Supplier,
+        };
 
         #[test]
         fn test_rc_to_box() {
@@ -1759,7 +1881,10 @@ mod test_to_methods {
     // ============================================================
 
     mod test_closure_to_methods {
-        use super::*;
+        use super::{
+            Supplier,
+            thread,
+        };
 
         #[test]
         fn test_closure_to_box() {
@@ -1849,7 +1974,7 @@ mod test_to_methods {
                 .collect();
 
             for h in handles {
-                assert_eq!(h.join().unwrap(), 999);
+                assert_eq!(h.join().expect("thread should not panic"), 999);
             }
         }
     }
@@ -1875,14 +2000,18 @@ mod test_to_methods {
 
 #[cfg(test)]
 mod test_supplier_debug_display {
-    use super::*;
+    use super::{
+        ArcSupplier,
+        BoxSupplier,
+        RcSupplier,
+    };
 
     // ============================================================
     // BoxSupplier Debug and Display Tests
     // ============================================================
 
     mod test_box_supplier_debug_display {
-        use super::*;
+        use super::BoxSupplier;
 
         #[test]
         fn test_debug_without_name() {
@@ -1926,7 +2055,7 @@ mod test_supplier_debug_display {
     // ============================================================
 
     mod test_arc_supplier_debug_display {
-        use super::*;
+        use super::ArcSupplier;
 
         #[test]
         fn test_debug_without_name() {
@@ -1970,7 +2099,7 @@ mod test_supplier_debug_display {
     // ============================================================
 
     mod test_rc_supplier_debug_display {
-        use super::*;
+        use super::RcSupplier;
 
         #[test]
         fn test_debug_without_name() {
@@ -2016,7 +2145,10 @@ mod test_supplier_debug_display {
 
 #[cfg(test)]
 mod test_supplier_trait_default_methods {
-    use super::*;
+    use super::{
+        Arc,
+        Supplier,
+    };
     use qubit_function::SupplierOnce;
     use std::sync::atomic::{
         AtomicUsize,

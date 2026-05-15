@@ -24,6 +24,8 @@ use super::{
     impl_function_debug_display,
 };
 
+type BoxBiFunctionFn<T, U, R> = Box<dyn Fn(&T, &U) -> R>;
+
 // ============================================================================
 // BoxBiFunction - Box<dyn Fn(&T, &U) -> R>
 // ============================================================================
@@ -41,8 +43,7 @@ use super::{
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
 ///
 pub struct BoxBiFunction<T, U, R> {
-    #[allow(clippy::type_complexity)]
-    pub(super) function: Box<dyn Fn(&T, &U) -> R>,
+    pub(super) function: BoxBiFunctionFn<T, U, R>,
     pub(super) name: Option<String>,
 }
 

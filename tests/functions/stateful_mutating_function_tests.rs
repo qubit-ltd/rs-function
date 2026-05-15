@@ -120,7 +120,10 @@ impl Clone for TestStatefulMutatingFunction {
 
 #[cfg(test)]
 mod test_stateful_mutating_function_default_impl {
-    use super::*;
+    use super::{
+        StatefulMutatingFunction,
+        TestStatefulMutatingFunction,
+    };
 
     #[test]
     fn test_into_box() {
@@ -231,7 +234,10 @@ mod test_stateful_mutating_function_default_impl {
 
 #[cfg(test)]
 mod test_box_stateful_mutating_function {
-    use super::*;
+    use super::{
+        BoxStatefulMutatingFunction,
+        StatefulMutatingFunction,
+    };
 
     #[test]
     fn test_new() {
@@ -353,7 +359,10 @@ mod test_box_stateful_mutating_function {
 
 #[cfg(test)]
 mod test_rc_stateful_mutating_function {
-    use super::*;
+    use super::{
+        RcStatefulMutatingFunction,
+        StatefulMutatingFunction,
+    };
 
     #[test]
     fn test_new() {
@@ -546,7 +555,10 @@ mod test_rc_stateful_mutating_function {
 
 #[cfg(test)]
 mod test_arc_stateful_mutating_function {
-    use super::*;
+    use super::{
+        ArcStatefulMutatingFunction,
+        StatefulMutatingFunction,
+    };
     use std::thread;
 
     #[test]
@@ -605,7 +617,7 @@ mod test_arc_stateful_mutating_function {
             counter_clone.apply(&mut value)
         });
 
-        let result = handle.join().unwrap();
+        let result = handle.join().expect("thread should not panic");
         assert_eq!(result, 1);
     }
 
@@ -801,7 +813,14 @@ mod test_arc_stateful_mutating_function {
 
 #[cfg(test)]
 mod test_closure {
-    use super::*;
+    use super::{
+        BoxMutatingFunctionOnce,
+        FnStatefulMutatingFunctionOps,
+        MutatingFunctionOnce,
+        Rc,
+        RefCell,
+        StatefulMutatingFunction,
+    };
 
     #[test]
     fn test_closure_implements_trait() {
@@ -1430,7 +1449,7 @@ fn test_arc_conditional_stateful_mutating_function_debug_display() {
 
 #[cfg(test)]
 mod test_stateful_mutating_function_trait_default_methods {
-    use super::*;
+    use super::StatefulMutatingFunction;
     use qubit_function::MutatingFunctionOnce;
     use std::sync::{
         Arc,

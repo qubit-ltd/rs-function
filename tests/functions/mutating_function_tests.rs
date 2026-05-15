@@ -65,7 +65,10 @@ fn test_mutating_function_default_conversions_allow_relaxed_generic_types() {
 
 #[cfg(test)]
 mod test_box_mutating_function {
-    use super::*;
+    use super::{
+        BoxMutatingFunction,
+        MutatingFunction,
+    };
 
     #[test]
     fn test_new() {
@@ -206,7 +209,10 @@ mod test_box_mutating_function {
 
 #[cfg(test)]
 mod test_rc_mutating_function {
-    use super::*;
+    use super::{
+        MutatingFunction,
+        RcMutatingFunction,
+    };
 
     #[test]
     fn test_new() {
@@ -350,7 +356,10 @@ mod test_rc_mutating_function {
 
 #[cfg(test)]
 mod test_arc_mutating_function {
-    use super::*;
+    use super::{
+        ArcMutatingFunction,
+        MutatingFunction,
+    };
     use std::thread;
 
     #[test]
@@ -392,7 +401,7 @@ mod test_arc_mutating_function {
             func_clone.apply(&mut value)
         });
 
-        let result = handle.join().unwrap();
+        let result = handle.join().expect("thread should not panic");
         assert_eq!(result, 10);
     }
 
@@ -538,7 +547,11 @@ mod test_arc_mutating_function {
 
 #[cfg(test)]
 mod test_closure {
-    use super::*;
+    use super::{
+        FnMutatingFunctionOps,
+        MutatingFunction,
+        MutatingFunctionOnce,
+    };
 
     #[test]
     fn test_closure_implements_trait() {
@@ -742,7 +755,10 @@ impl Clone for TestMutatingFunction {
 
 #[cfg(test)]
 mod test_mutating_function_default_impl {
-    use super::*;
+    use super::{
+        MutatingFunction,
+        TestMutatingFunction,
+    };
 
     #[test]
     fn test_into_box() {
@@ -1120,7 +1136,7 @@ fn test_arc_conditional_mutating_function_debug_display() {
 
 #[cfg(test)]
 mod test_mutating_function_trait_default_methods {
-    use super::*;
+    use super::MutatingFunction;
     use qubit_function::MutatingFunctionOnce;
     use std::sync::{
         Arc,

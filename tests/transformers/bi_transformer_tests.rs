@@ -74,7 +74,10 @@ fn test_bi_transformer_default_conversions_allow_relaxed_generic_types() {
 
 #[cfg(test)]
 mod box_bi_transformer_tests {
-    use super::*;
+    use super::{
+        BiTransformer,
+        BoxBiTransformer,
+    };
 
     #[test]
     fn test_new_and_transform() {
@@ -155,7 +158,11 @@ mod box_bi_transformer_tests {
 
 #[cfg(test)]
 mod arc_bi_transformer_tests {
-    use super::*;
+    use super::{
+        ArcBiTransformer,
+        BiTransformer,
+        thread,
+    };
 
     #[test]
     fn test_new_and_transform() {
@@ -179,7 +186,7 @@ mod arc_bi_transformer_tests {
 
         let handle = thread::spawn(move || cloned.apply(20, 22));
 
-        assert_eq!(handle.join().unwrap(), 42);
+        assert_eq!(handle.join().expect("thread should not panic"), 42);
         assert_eq!(add.apply(20, 22), 42);
     }
 
@@ -200,7 +207,10 @@ mod arc_bi_transformer_tests {
             })
             .collect();
 
-        let results: Vec<_> = handles.into_iter().map(|h| h.join().unwrap()).collect();
+        let results: Vec<_> = handles
+            .into_iter()
+            .map(|h| h.join().expect("thread should not panic"))
+            .collect();
 
         assert_eq!(results, vec![0, 2, 6, 12]); // 0*1, 1*2, 2*3, 3*4
     }
@@ -232,7 +242,10 @@ mod arc_bi_transformer_tests {
 
 #[cfg(test)]
 mod rc_bi_transformer_tests {
-    use super::*;
+    use super::{
+        BiTransformer,
+        RcBiTransformer,
+    };
 
     #[test]
     fn test_new_and_transform() {
@@ -302,7 +315,10 @@ mod rc_bi_transformer_tests {
 
 #[cfg(test)]
 mod box_conditional_tests {
-    use super::*;
+    use super::{
+        BiTransformer,
+        BoxBiTransformer,
+    };
     use qubit_function::BoxBiPredicate;
 
     #[test]
@@ -331,7 +347,10 @@ mod box_conditional_tests {
 
 #[cfg(test)]
 mod arc_conditional_tests {
-    use super::*;
+    use super::{
+        ArcBiTransformer,
+        BiTransformer,
+    };
     use qubit_function::ArcBiPredicate;
 
     #[test]
@@ -375,7 +394,10 @@ mod arc_conditional_tests {
 
 #[cfg(test)]
 mod rc_conditional_tests {
-    use super::*;
+    use super::{
+        BiTransformer,
+        RcBiTransformer,
+    };
     use qubit_function::RcBiPredicate;
 
     #[test]
@@ -423,7 +445,12 @@ mod rc_conditional_tests {
 
 #[cfg(test)]
 mod conversion_tests {
-    use super::*;
+    use super::{
+        ArcBiTransformer,
+        BiTransformer,
+        BoxBiTransformer,
+        RcBiTransformer,
+    };
 
     #[test]
     fn test_closure_to_box() {
@@ -518,7 +545,10 @@ mod conversion_tests {
 
 #[cfg(test)]
 mod trait_usage_tests {
-    use super::*;
+    use super::{
+        BiTransformer,
+        BoxBiTransformer,
+    };
 
     #[test]
     fn test_bi_transformer_trait() {
@@ -560,7 +590,11 @@ mod trait_usage_tests {
 
 #[cfg(test)]
 mod edge_cases_tests {
-    use super::*;
+    use super::{
+        ArcBiTransformer,
+        BiTransformer,
+        BoxBiTransformer,
+    };
 
     #[test]
     fn test_constant_with_different_types() {
@@ -635,7 +669,12 @@ mod edge_cases_tests {
 
 #[cfg(test)]
 mod type_conversion_tests {
-    use super::*;
+    use super::{
+        ArcBiTransformer,
+        BiTransformer,
+        BoxBiTransformer,
+        RcBiTransformer,
+    };
 
     #[test]
     fn test_box_into_box() {
@@ -714,7 +753,7 @@ mod type_conversion_tests {
 
 #[cfg(test)]
 mod closure_bi_transformer_tests {
-    use super::*;
+    use super::BiTransformer;
 
     #[test]
     fn test_closure_transform() {
@@ -799,7 +838,10 @@ mod closure_bi_transformer_tests {
 
 #[cfg(test)]
 mod custom_bi_transformer_tests {
-    use super::*;
+    use super::{
+        BiTransformer,
+        thread,
+    };
 
     /// Custom BiTransformer implementation for testing default into_xxx() methods
     struct CustomBiTransformer {
@@ -886,7 +928,7 @@ mod custom_bi_transformer_tests {
         // Test cross-thread usage
         let arc_thread = arc.clone();
         let handle = thread::spawn(move || arc_thread.apply(3, 7));
-        assert_eq!(handle.join().unwrap(), 30); // (3 + 7) * 3 = 30
+        assert_eq!(handle.join().expect("thread should not panic"), 30); // (3 + 7) * 3 = 30
 
         // Original arc still usable
         assert_eq!(arc.apply(1, 1), 6); // (1 + 1) * 3 = 6
@@ -1053,7 +1095,7 @@ mod custom_bi_transformer_tests {
         // Test cross-thread usage
         let arc_thread = arc.clone();
         let handle = thread::spawn(move || arc_thread.apply(4, 6));
-        assert_eq!(handle.join().unwrap(), 30); // (4 + 6) * 3 = 30
+        assert_eq!(handle.join().expect("thread should not panic"), 30); // (4 + 6) * 3 = 30
 
         // Original arc still usable
         assert_eq!(arc.apply(1, 1), 6); // (1 + 1) * 3 = 6
@@ -1150,7 +1192,10 @@ mod custom_bi_transformer_tests {
 
 #[cfg(test)]
 mod box_bi_transformer_to_methods_tests {
-    use super::*;
+    use super::{
+        BiTransformer,
+        BoxBiTransformer,
+    };
 
     #[test]
     fn test_box_into_box() {
@@ -1183,7 +1228,10 @@ mod box_bi_transformer_to_methods_tests {
 
 #[cfg(test)]
 mod arc_bi_transformer_to_methods_tests {
-    use super::*;
+    use super::{
+        ArcBiTransformer,
+        BiTransformer,
+    };
 
     #[test]
     fn test_arc_to_arc() {
@@ -1242,7 +1290,10 @@ mod arc_bi_transformer_to_methods_tests {
 
 #[cfg(test)]
 mod rc_bi_transformer_to_methods_tests {
-    use super::*;
+    use super::{
+        BiTransformer,
+        RcBiTransformer,
+    };
 
     #[test]
     fn test_rc_to_rc() {
@@ -1294,7 +1345,7 @@ mod rc_bi_transformer_to_methods_tests {
 
 #[cfg(test)]
 mod closure_bi_transformer_to_methods_tests {
-    use super::*;
+    use super::BiTransformer;
 
     #[test]
     fn test_closure_to_box() {
@@ -1410,7 +1461,11 @@ mod closure_bi_transformer_to_methods_tests {
 
 #[cfg(test)]
 mod complete_to_methods_coverage {
-    use super::*;
+    use super::{
+        ArcBiTransformer,
+        BiTransformer,
+        RcBiTransformer,
+    };
 
     #[test]
     fn test_arc_all_conversions() {
@@ -1471,7 +1526,12 @@ mod complete_to_methods_coverage {
 
 #[cfg(test)]
 mod into_vs_to_comparison_tests {
-    use super::*;
+    use super::{
+        ArcBiTransformer,
+        BiTransformer,
+        BoxBiTransformer,
+        RcBiTransformer,
+    };
 
     #[test]
     fn test_box_into_vs_to_box() {
@@ -1540,7 +1600,12 @@ mod into_vs_to_comparison_tests {
 
 #[cfg(test)]
 mod into_methods_comprehensive_tests {
-    use super::*;
+    use super::{
+        ArcBiTransformer,
+        BiTransformer,
+        BoxBiTransformer,
+        RcBiTransformer,
+    };
 
     #[test]
     fn test_box_into_box_same_type() {
@@ -1633,7 +1698,12 @@ mod into_methods_comprehensive_tests {
 
 #[cfg(test)]
 mod conversion_chain_tests {
-    use super::*;
+    use super::{
+        ArcBiTransformer,
+        BiTransformer,
+        BoxBiTransformer,
+        RcBiTransformer,
+    };
 
     #[test]
     fn test_box_to_rc_to_box_chain() {
@@ -1684,7 +1754,7 @@ mod conversion_chain_tests {
 
 #[cfg(test)]
 mod complex_types_conversion_tests {
-    use super::*;
+    use super::BiTransformer;
 
     #[test]
     fn test_string_concat_to_box() {
@@ -1750,7 +1820,10 @@ mod complex_types_conversion_tests {
 
 #[cfg(test)]
 mod arc_thread_safety_tests {
-    use super::*;
+    use super::{
+        ArcBiTransformer,
+        BiTransformer,
+    };
     use std::thread;
 
     #[test]
@@ -1760,7 +1833,7 @@ mod arc_thread_safety_tests {
 
         let handle = thread::spawn(move || arc2.apply(10, 20));
 
-        assert_eq!(handle.join().unwrap(), 30);
+        assert_eq!(handle.join().expect("thread should not panic"), 30);
         assert_eq!(add.apply(5, 5), 10);
     }
 
@@ -1771,7 +1844,7 @@ mod arc_thread_safety_tests {
 
         let handle = thread::spawn(move || arc.apply(10, 20));
 
-        assert_eq!(handle.join().unwrap(), 30);
+        assert_eq!(handle.join().expect("thread should not panic"), 30);
     }
 
     #[test]
@@ -1781,7 +1854,7 @@ mod arc_thread_safety_tests {
 
         let handle = thread::spawn(move || arc.apply(10, 20));
 
-        assert_eq!(handle.join().unwrap(), 30);
+        assert_eq!(handle.join().expect("thread should not panic"), 30);
     }
 }
 
@@ -1791,7 +1864,10 @@ mod arc_thread_safety_tests {
 
 #[cfg(test)]
 mod box_bi_transformer_once_tests {
-    use super::*;
+    use super::{
+        BiTransformer,
+        BoxBiTransformer,
+    };
 
     #[test]
     fn test_apply() {
@@ -1833,7 +1909,10 @@ mod box_bi_transformer_once_tests {
 
 #[cfg(test)]
 mod rc_bi_transformer_once_tests {
-    use super::*;
+    use super::{
+        BiTransformer,
+        RcBiTransformer,
+    };
 
     #[test]
     fn test_apply() {
@@ -1895,7 +1974,10 @@ mod rc_bi_transformer_once_tests {
 
 #[cfg(test)]
 mod arc_bi_transformer_once_tests {
-    use super::*;
+    use super::{
+        ArcBiTransformer,
+        BiTransformer,
+    };
     use std::thread;
 
     #[test]
@@ -1955,7 +2037,7 @@ mod arc_bi_transformer_once_tests {
     fn test_thread_safety_apply() {
         let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
         let handle = thread::spawn(move || add.apply(10, 20));
-        assert_eq!(handle.join().unwrap(), 30);
+        assert_eq!(handle.join().expect("thread should not panic"), 30);
     }
 
     #[test]
@@ -1982,7 +2064,11 @@ mod arc_bi_transformer_once_tests {
 
 #[cfg(test)]
 mod conditional_transformer_display_debug_tests {
-    use super::*;
+    use super::{
+        ArcBiTransformer,
+        BoxBiTransformer,
+        RcBiTransformer,
+    };
 
     #[test]
     fn test_box_conditional_bi_transformer_display() {
@@ -2072,7 +2158,10 @@ mod conditional_transformer_display_debug_tests {
 
 #[cfg(test)]
 mod custom_bi_transformer_into_tests {
-    use super::*;
+    use super::{
+        BiTransformer,
+        thread,
+    };
     use qubit_function::BiTransformerOnce;
 
     /// Test custom BiTransformer that implements into_* methods by consuming self
@@ -2165,7 +2254,7 @@ mod custom_bi_transformer_into_tests {
         // Test cross-thread usage
         let arc_thread = arc.clone();
         let handle = thread::spawn(move || arc_thread.apply(4, 6));
-        assert_eq!(handle.join().unwrap(), 30); // (4 + 6) * 3 = 30
+        assert_eq!(handle.join().expect("thread should not panic"), 30); // (4 + 6) * 3 = 30
     }
 
     #[test]

@@ -29,6 +29,8 @@ use crate::{
     },
 };
 
+type ArcRunnableWithFn<T, E> = Arc<Mutex<dyn FnMut(&mut T) -> Result<(), E> + Send>>;
+
 /// Thread-safe shared runnable with mutable input.
 ///
 /// `ArcRunnableWith<T, E>` stores an
@@ -36,8 +38,7 @@ use crate::{
 ///
 pub struct ArcRunnableWith<T, E> {
     /// The stateful closure executed by this runnable.
-    #[allow(clippy::type_complexity)]
-    pub(super) function: Arc<Mutex<dyn FnMut(&mut T) -> Result<(), E> + Send>>,
+    pub(super) function: ArcRunnableWithFn<T, E>,
     /// The optional name of this runnable.
     pub(super) name: Option<String>,
 }

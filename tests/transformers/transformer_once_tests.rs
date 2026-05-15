@@ -52,7 +52,10 @@ fn test_transformer_once_default_conversions_allow_relaxed_generic_types() {
 
 #[cfg(test)]
 mod box_transformer_once_tests {
-    use super::*;
+    use super::{
+        BoxTransformerOnce,
+        TransformerOnce,
+    };
 
     #[test]
     fn test_new_and_transform() {
@@ -132,7 +135,10 @@ mod box_transformer_once_tests {
 
 #[cfg(test)]
 mod conditional_tests {
-    use super::*;
+    use super::{
+        BoxTransformerOnce,
+        TransformerOnce,
+    };
     use qubit_function::BoxPredicate;
 
     #[test]
@@ -174,7 +180,10 @@ mod conditional_tests {
 
 #[cfg(test)]
 mod conversion_tests {
-    use super::*;
+    use super::{
+        BoxTransformerOnce,
+        TransformerOnce,
+    };
 
     #[test]
     fn test_closure_to_box() {
@@ -205,7 +214,10 @@ mod conversion_tests {
 
 #[cfg(test)]
 mod complex_composition_tests {
-    use super::*;
+    use super::{
+        BoxTransformerOnce,
+        TransformerOnce,
+    };
 
     #[test]
     fn test_multiple_and_then() {
@@ -241,7 +253,10 @@ mod complex_composition_tests {
 
 #[cfg(test)]
 mod edge_cases_tests {
-    use super::*;
+    use super::{
+        BoxTransformerOnce,
+        TransformerOnce,
+    };
 
     #[test]
     fn test_identity_composition() {
@@ -318,7 +333,10 @@ mod edge_cases_tests {
 
 #[cfg(test)]
 mod trait_usage_tests {
-    use super::*;
+    use super::{
+        BoxTransformerOnce,
+        TransformerOnce,
+    };
 
     #[test]
     fn test_transformer_once_trait() {
@@ -357,7 +375,10 @@ mod trait_usage_tests {
 
 #[cfg(test)]
 mod type_conversion_tests {
-    use super::*;
+    use super::{
+        BoxTransformerOnce,
+        TransformerOnce,
+    };
 
     #[test]
     fn test_box_into_box() {
@@ -434,7 +455,7 @@ mod type_conversion_tests {
 
 #[cfg(test)]
 mod default_implementation_tests {
-    use super::*;
+    use super::TransformerOnce;
 
     // Custom type test default implementation
     struct CustomTransformer {
@@ -477,7 +498,10 @@ mod default_implementation_tests {
 
 #[cfg(test)]
 mod zero_cost_specialization_tests {
-    use super::*;
+    use super::{
+        BoxTransformerOnce,
+        TransformerOnce,
+    };
 
     #[test]
     fn test_box_into_box_is_zero_cost() {
@@ -529,7 +553,7 @@ mod zero_cost_specialization_tests {
 
 #[cfg(test)]
 mod custom_type_default_impl_tests {
-    use super::*;
+    use super::TransformerOnce;
 
     /// Custom cloneable TransformerOnce type
     ///
@@ -873,7 +897,7 @@ mod arc_transformer_transformer_once_tests {
             new_double.apply(21)
         });
 
-        let result = handle.join().unwrap();
+        let result = handle.join().expect("thread should not panic");
         assert_eq!(result, 42);
     }
 
@@ -889,7 +913,7 @@ mod arc_transformer_transformer_once_tests {
             boxed.apply(21)
         });
 
-        let result = handle.join().unwrap();
+        let result = handle.join().expect("thread should not panic");
         assert_eq!(result, 42);
     }
 }

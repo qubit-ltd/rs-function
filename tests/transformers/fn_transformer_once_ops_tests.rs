@@ -19,7 +19,12 @@ use qubit_function::{
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{
+        FnTransformerOnceOps,
+        FnTransformerOps,
+        Transformer,
+        TransformerOnce,
+    };
 
     #[test]
     fn test_and_then_with_closures() {

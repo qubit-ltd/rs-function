@@ -22,6 +22,8 @@ use super::{
     impl_consumer_debug_display,
 };
 
+type BoxStatefulBiConsumerFn<T, U> = Box<dyn FnMut(&T, &U)>;
+
 // =======================================================================
 // 2. BoxStatefulBiConsumer - Single Ownership Implementation
 // =======================================================================
@@ -72,8 +74,7 @@ use super::{
 /// ```
 ///
 pub struct BoxStatefulBiConsumer<T, U> {
-    #[allow(clippy::type_complexity)]
-    pub(super) function: Box<dyn FnMut(&T, &U)>,
+    pub(super) function: BoxStatefulBiConsumerFn<T, U>,
     pub(super) name: Option<String>,
 }
 

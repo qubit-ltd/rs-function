@@ -77,7 +77,10 @@ fn test_stateful_mutator_default_conversions_allow_relaxed_generic_types() {
 
 #[cfg(test)]
 mod test_box_mutator {
-    use super::*;
+    use super::{
+        BoxStatefulMutator,
+        StatefulMutator,
+    };
 
     #[test]
     fn test_new() {
@@ -282,7 +285,10 @@ mod test_box_mutator {
 
 #[cfg(test)]
 mod test_arc_mutator {
-    use super::*;
+    use super::{
+        ArcStatefulMutator,
+        StatefulMutator,
+    };
     use std::thread;
 
     #[test]
@@ -347,7 +353,7 @@ mod test_arc_mutator {
         c.apply(&mut value);
         assert_eq!(value, 6);
 
-        assert_eq!(handle.join().unwrap(), 10);
+        assert_eq!(handle.join().expect("thread should not panic"), 10);
     }
 
     #[test]
@@ -540,7 +546,7 @@ mod test_arc_mutator {
         m.apply(&mut value);
         assert_eq!(value, 6);
 
-        assert_eq!(handle.join().unwrap(), 10);
+        assert_eq!(handle.join().expect("thread should not panic"), 10);
     }
 
     #[test]
@@ -597,7 +603,10 @@ mod test_arc_mutator {
 
 #[cfg(test)]
 mod test_rc_mutator {
-    use super::*;
+    use super::{
+        RcStatefulMutator,
+        StatefulMutator,
+    };
 
     #[test]
     fn test_new() {
@@ -836,7 +845,11 @@ mod test_rc_mutator {
 
 #[cfg(test)]
 mod test_fn_mutator_ops {
-    use super::*;
+    use super::{
+        FnMutStatefulMutatorOps,
+        MutatorOnce,
+        StatefulMutator,
+    };
 
     #[test]
     fn test_closure_accept() {
@@ -1018,7 +1031,7 @@ mod test_fn_mutator_ops {
         m.apply(&mut value);
         assert_eq!(value, 6);
 
-        assert_eq!(handle.join().unwrap(), 10);
+        assert_eq!(handle.join().expect("thread should not panic"), 10);
     }
 }
 
@@ -1028,7 +1041,12 @@ mod test_fn_mutator_ops {
 
 #[cfg(test)]
 mod test_unified_interface {
-    use super::*;
+    use super::{
+        ArcStatefulMutator,
+        BoxStatefulMutator,
+        RcStatefulMutator,
+        StatefulMutator,
+    };
 
     fn apply_mutator<C: StatefulMutator<i32>>(mutator: &mut C, value: i32) -> i32 {
         let mut val = value;
@@ -1067,7 +1085,12 @@ mod test_unified_interface {
 
 #[cfg(test)]
 mod test_complex_scenarios {
-    use super::*;
+    use super::{
+        ArcStatefulMutator,
+        BoxStatefulMutator,
+        RcStatefulMutator,
+        StatefulMutator,
+    };
 
     #[test]
     fn test_data_processing_pipeline() {
@@ -1178,7 +1201,10 @@ mod test_complex_scenarios {
 
 #[cfg(test)]
 mod test_custom_types {
-    use super::*;
+    use super::{
+        BoxStatefulMutator,
+        StatefulMutator,
+    };
 
     #[derive(Debug, Clone, PartialEq)]
     struct Point {
@@ -1241,7 +1267,10 @@ mod test_custom_types {
 
 #[cfg(test)]
 mod test_edge_cases {
-    use super::*;
+    use super::{
+        BoxStatefulMutator,
+        StatefulMutator,
+    };
 
     #[test]
     fn test_with_zero() {
@@ -1306,7 +1335,10 @@ mod test_edge_cases {
 
 #[cfg(test)]
 mod test_custom_mutator_default_impl {
-    use super::*;
+    use super::{
+        MutatorOnce,
+        StatefulMutator,
+    };
 
     /// Custom mutator for testing default implementations
     ///
@@ -1631,7 +1663,7 @@ mod test_custom_mutator_default_impl {
         m.apply(&mut value);
         assert_eq!(value, 20);
 
-        assert_eq!(handle.join().unwrap(), 10);
+        assert_eq!(handle.join().expect("thread should not panic"), 10);
     }
 
     /// Generic custom mutator
@@ -1696,7 +1728,12 @@ mod test_custom_mutator_default_impl {
 
 #[cfg(test)]
 mod test_into_fn {
-    use super::*;
+    use super::{
+        ArcStatefulMutator,
+        BoxStatefulMutator,
+        RcStatefulMutator,
+        StatefulMutator,
+    };
 
     #[test]
     fn test_box_mutator_into_fn() {
@@ -1910,7 +1947,7 @@ mod test_into_fn {
             values
         });
 
-        let result = handle.join().unwrap();
+        let result = handle.join().expect("thread should not panic");
         assert_eq!(result, vec![2, 4, 6]);
     }
 
@@ -1952,7 +1989,12 @@ mod test_into_fn {
 
 #[cfg(test)]
 mod test_conditional_execution {
-    use super::*;
+    use super::{
+        ArcStatefulMutator,
+        BoxStatefulMutator,
+        RcStatefulMutator,
+        StatefulMutator,
+    };
     use qubit_function::predicates::{
         ArcPredicate,
         BoxPredicate,
@@ -2527,7 +2569,7 @@ mod test_conditional_execution {
         m.apply(&mut value);
         assert_eq!(value, -5);
 
-        assert_eq!(handle.join().unwrap(), 10);
+        assert_eq!(handle.join().expect("thread should not panic"), 10);
     }
 
     #[test]
@@ -2552,7 +2594,7 @@ mod test_conditional_execution {
         m.apply(&mut value);
         assert_eq!(value, 10);
 
-        assert_eq!(handle.join().unwrap(), 0);
+        assert_eq!(handle.join().expect("thread should not panic"), 0);
     }
 
     // ========================================================================
@@ -2926,7 +2968,7 @@ mod test_conditional_execution {
         m.apply(&mut value);
         assert_eq!(value, -5);
 
-        assert_eq!(handle.join().unwrap(), 10);
+        assert_eq!(handle.join().expect("thread should not panic"), 10);
     }
 
     // ========================================================================
@@ -3005,7 +3047,11 @@ mod test_conditional_execution {
 
 #[cfg(test)]
 mod test_conditional_stateful_mutator_debug_display {
-    use super::*;
+    use super::{
+        ArcStatefulMutator,
+        BoxStatefulMutator,
+        RcStatefulMutator,
+    };
 
     #[test]
     fn test_box_conditional_stateful_mutator_debug() {

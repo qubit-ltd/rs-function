@@ -130,7 +130,10 @@ mod tests {
             })
             .collect();
 
-        let results: Vec<_> = handles.into_iter().map(|h| h.join().unwrap()).collect();
+        let results: Vec<_> = handles
+            .into_iter()
+            .map(|h| h.join().expect("thread should not panic"))
+            .collect();
 
         assert_eq!(results, vec![2, 6, 10, 14]); // [(0+1)*2, (1+2)*2, (2+3)*2, (3+4)*2]
     }

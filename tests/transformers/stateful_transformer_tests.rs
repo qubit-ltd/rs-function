@@ -1705,7 +1705,11 @@ fn test_box_mapper_apply() {
 
 #[cfg(test)]
 mod conditional_stateful_transformer_display_debug_tests {
-    use super::*;
+    use super::{
+        ArcStatefulTransformer,
+        BoxStatefulTransformer,
+        RcStatefulTransformer,
+    };
 
     #[test]
     fn test_box_conditional_stateful_transformer_display() {
@@ -1901,7 +1905,7 @@ fn test_arc_stateful_transformer_display_without_name() {
 
 #[cfg(test)]
 mod test_stateful_transformer_trait_default_methods {
-    use super::*;
+    use super::StatefulTransformer;
     use qubit_function::TransformerOnce;
     use std::sync::{
         Arc,

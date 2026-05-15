@@ -12,15 +12,14 @@ documentation = "https://docs.rs/qubit-function"
 readme = "README.md"
 keywords = ["functional", "predicate", "function", "consumer", "supplier"]
 categories = ["development-tools", "rust-patterns"]
-exclude = [
-    "align-ci.sh",
-    "ci-check.sh",
-    "coverage.sh",
-    "style-check.sh",
-    "update-submodule.sh",
-    ".github/*",
-    ".llvm-cov.toml",
-    ".cargo-audit.toml.example",
+include = [
+    "/Cargo.toml",
+    "/LICENSE",
+    "/README.md",
+    "/README.zh_CN.md",
+    "/examples/**",
+    "/src/**",
+    "/tests/**",
 ]
 
 [lib]

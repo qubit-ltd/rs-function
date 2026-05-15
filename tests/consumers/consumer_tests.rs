@@ -58,12 +58,17 @@ fn test_consumer_default_conversions_allow_relaxed_generic_types() {
 
 #[cfg(test)]
 mod box_non_mutating_consumer_tests {
-    use super::*;
+    use super::{
+        Arc,
+        ArcConsumer,
+        BoxConsumer,
+        Consumer,
+    };
 
     #[test]
     fn test_new_and_accept() {
         let consumer = BoxConsumer::new(|x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         });
         consumer.accept(&5);
     }
@@ -74,14 +79,14 @@ mod box_non_mutating_consumer_tests {
         let c1 = counter.clone();
         let c2 = counter.clone();
         let chained = BoxConsumer::new(move |_x: &i32| {
-            *c1.lock().unwrap() += 1;
+            *c1.lock().expect("mutex should not be poisoned") += 1;
         })
         .and_then(move |_x: &i32| {
-            *c2.lock().unwrap() += 1;
+            *c2.lock().expect("mutex should not be poisoned") += 1;
         });
 
         chained.accept(&5);
-        assert_eq!(*counter.lock().unwrap(), 2);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 2);
     }
 
     #[test]
@@ -91,16 +96,16 @@ mod box_non_mutating_consumer_tests {
         let c2 = counter.clone();
 
         let first = BoxConsumer::new(move |_x: &i32| {
-            *c1.lock().unwrap() += 1;
+            *c1.lock().expect("mutex should not be poisoned") += 1;
         });
 
         let second = BoxConsumer::new(move |_x: &i32| {
-            *c2.lock().unwrap() += 1;
+            *c2.lock().expect("mutex should not be poisoned") += 1;
         });
 
         let chained = first.and_then(second);
         chained.accept(&5);
-        assert_eq!(*counter.lock().unwrap(), 2);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 2);
     }
 
     #[test]
@@ -111,17 +116,17 @@ mod box_non_mutating_consumer_tests {
         let c3 = counter.clone();
 
         let chained = BoxConsumer::new(move |_x: &i32| {
-            *c1.lock().unwrap() += 1;
+            *c1.lock().expect("mutex should not be poisoned") += 1;
         })
         .and_then(move |_x: &i32| {
-            *c2.lock().unwrap() += 1;
+            *c2.lock().expect("mutex should not be poisoned") += 1;
         })
         .and_then(move |_x: &i32| {
-            *c3.lock().unwrap() += 1;
+            *c3.lock().expect("mutex should not be poisoned") += 1;
         });
 
         chained.accept(&5);
-        assert_eq!(*counter.lock().unwrap(), 3);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 3);
     }
 
     #[test]
@@ -141,7 +146,7 @@ mod box_non_mutating_consumer_tests {
     #[test]
     fn test_into_box() {
         let closure = |x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         };
         let box_consumer = closure.into_box();
         box_consumer.accept(&5);
@@ -150,7 +155,7 @@ mod box_non_mutating_consumer_tests {
     #[test]
     fn test_into_rc() {
         let consumer = BoxConsumer::new(|x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         });
         let rc_consumer = consumer.into_rc();
         rc_consumer.accept(&5);
@@ -159,7 +164,7 @@ mod box_non_mutating_consumer_tests {
     #[test]
     fn test_into_fn() {
         let consumer = BoxConsumer::new(|x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         });
         let func = consumer.into_fn();
         func(&5);
@@ -169,7 +174,7 @@ mod box_non_mutating_consumer_tests {
     fn test_box_consumer_into_box() {
         // Test BoxConsumer's own into_box() method
         let consumer = BoxConsumer::new(|x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         });
         let box_consumer = consumer.into_box();
         box_consumer.accept(&5);
@@ -203,12 +208,12 @@ mod box_non_mutating_consumer_tests {
     #[test]
     fn test_with_different_types() {
         let string_consumer = BoxConsumer::new(|s: &String| {
-            println!("String: {}", s);
+            std::hint::black_box(s);
         });
         string_consumer.accept(&"Hello".to_string());
 
         let vec_consumer = BoxConsumer::new(|v: &Vec<i32>| {
-            println!("Vec length: {}", v.len());
+            std::hint::black_box(v.len());
         });
         vec_consumer.accept(&vec![1, 2, 3]);
     }
@@ -216,12 +221,16 @@ mod box_non_mutating_consumer_tests {
 
 #[cfg(test)]
 mod arc_non_mutating_consumer_tests {
-    use super::*;
+    use super::{
+        Arc,
+        ArcConsumer,
+        Consumer,
+    };
 
     #[test]
     fn test_new_and_accept() {
         let consumer = ArcConsumer::new(|x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         });
         consumer.accept(&5);
     }
@@ -269,7 +278,7 @@ mod arc_non_mutating_consumer_tests {
     #[test]
     fn test_into_box() {
         let consumer = ArcConsumer::new(|x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         });
         let box_consumer = consumer.into_box();
         box_consumer.accept(&5);
@@ -278,7 +287,7 @@ mod arc_non_mutating_consumer_tests {
     #[test]
     fn test_into_rc() {
         let consumer = ArcConsumer::new(|x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         });
         let rc_consumer = consumer.into_rc();
         rc_consumer.accept(&5);
@@ -287,7 +296,7 @@ mod arc_non_mutating_consumer_tests {
     #[test]
     fn test_into_arc() {
         let consumer = ArcConsumer::new(|x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         });
         let arc_consumer = consumer.into_arc();
         arc_consumer.accept(&5);
@@ -296,7 +305,7 @@ mod arc_non_mutating_consumer_tests {
     #[test]
     fn test_into_fn() {
         let consumer = ArcConsumer::new(|x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         });
         let func = consumer.into_fn();
         func(&5);
@@ -305,7 +314,7 @@ mod arc_non_mutating_consumer_tests {
     #[test]
     fn test_to_fn() {
         let consumer = ArcConsumer::new(|x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         });
         let func = consumer.to_fn();
         func(&5);
@@ -357,7 +366,7 @@ mod arc_non_mutating_consumer_tests {
             .collect();
 
         for handle in handles {
-            handle.join().unwrap();
+            handle.join().expect("thread should not panic");
         }
 
         assert_eq!(counter.load(std::sync::atomic::Ordering::SeqCst), 10);
@@ -366,12 +375,16 @@ mod arc_non_mutating_consumer_tests {
 
 #[cfg(test)]
 mod rc_non_mutating_consumer_tests {
-    use super::*;
+    use super::{
+        Consumer,
+        Rc,
+        RcConsumer,
+    };
 
     #[test]
     fn test_new_and_accept() {
         let consumer = RcConsumer::new(|x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         });
         consumer.accept(&5);
     }
@@ -426,7 +439,7 @@ mod rc_non_mutating_consumer_tests {
     #[test]
     fn test_into_box() {
         let consumer = RcConsumer::new(|x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         });
         let box_consumer = consumer.into_box();
         box_consumer.accept(&5);
@@ -435,7 +448,7 @@ mod rc_non_mutating_consumer_tests {
     #[test]
     fn test_into_rc() {
         let consumer = RcConsumer::new(|x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         });
         let rc_consumer = consumer.into_rc();
         rc_consumer.accept(&5);
@@ -444,7 +457,7 @@ mod rc_non_mutating_consumer_tests {
     #[test]
     fn test_into_fn() {
         let consumer = RcConsumer::new(|x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         });
         let func = consumer.into_fn();
         func(&5);
@@ -453,7 +466,7 @@ mod rc_non_mutating_consumer_tests {
     #[test]
     fn test_to_fn() {
         let consumer = RcConsumer::new(|x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         });
         let func = consumer.to_fn();
         func(&5);
@@ -490,12 +503,16 @@ mod rc_non_mutating_consumer_tests {
 
 #[cfg(test)]
 mod closure_tests {
-    use super::*;
+    use super::{
+        Arc,
+        Consumer,
+        FnConsumerOps,
+    };
 
     #[test]
     fn test_closure_accept() {
         let closure = |x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         };
         closure.accept(&5);
     }
@@ -503,7 +520,7 @@ mod closure_tests {
     #[test]
     fn test_closure_into_box() {
         let closure = |x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         };
         let box_consumer = closure.into_box();
         box_consumer.accept(&5);
@@ -512,7 +529,7 @@ mod closure_tests {
     #[test]
     fn test_closure_into_rc() {
         let closure = |x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         };
         let rc_consumer = closure.into_rc();
         rc_consumer.accept(&5);
@@ -521,7 +538,7 @@ mod closure_tests {
     #[test]
     fn test_closure_into_arc() {
         let closure = |x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         };
         let arc_consumer = closure.into_arc();
         arc_consumer.accept(&5);
@@ -530,7 +547,7 @@ mod closure_tests {
     #[test]
     fn test_closure_into_fn() {
         let closure = |x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         };
         let func = closure.into_fn();
         func(&5);
@@ -543,14 +560,14 @@ mod closure_tests {
         let c2 = counter.clone();
 
         let chained = (move |_x: &i32| {
-            *c1.lock().unwrap() += 1;
+            *c1.lock().expect("mutex should not be poisoned") += 1;
         })
         .and_then(move |_x: &i32| {
-            *c2.lock().unwrap() += 1;
+            *c2.lock().expect("mutex should not be poisoned") += 1;
         });
 
         chained.accept(&5);
-        assert_eq!(*counter.lock().unwrap(), 2);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 2);
     }
 
     #[test]
@@ -561,28 +578,33 @@ mod closure_tests {
         let c3 = counter.clone();
 
         let chained = (move |_x: &i32| {
-            *c1.lock().unwrap() += 1;
+            *c1.lock().expect("mutex should not be poisoned") += 1;
         })
         .and_then(move |_x: &i32| {
-            *c2.lock().unwrap() += 1;
+            *c2.lock().expect("mutex should not be poisoned") += 1;
         })
         .and_then(move |_x: &i32| {
-            *c3.lock().unwrap() += 1;
+            *c3.lock().expect("mutex should not be poisoned") += 1;
         });
 
         chained.accept(&5);
-        assert_eq!(*counter.lock().unwrap(), 3);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 3);
     }
 }
 
 #[cfg(test)]
 mod conversion_tests {
-    use super::*;
+    use super::{
+        ArcConsumer,
+        BoxConsumer,
+        Consumer,
+        RcConsumer,
+    };
 
     #[test]
     fn test_box_to_rc() {
         let box_consumer = BoxConsumer::new(|x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         });
         let rc_consumer = box_consumer.into_rc();
         rc_consumer.accept(&5);
@@ -591,7 +613,7 @@ mod conversion_tests {
     #[test]
     fn test_arc_to_box() {
         let arc_consumer = ArcConsumer::new(|x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         });
         let box_consumer = arc_consumer.into_box();
         box_consumer.accept(&5);
@@ -600,7 +622,7 @@ mod conversion_tests {
     #[test]
     fn test_arc_to_rc() {
         let arc_consumer = ArcConsumer::new(|x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         });
         let rc_consumer = arc_consumer.into_rc();
         rc_consumer.accept(&5);
@@ -609,7 +631,7 @@ mod conversion_tests {
     #[test]
     fn test_rc_to_box() {
         let rc_consumer = RcConsumer::new(|x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         });
         let box_consumer = rc_consumer.into_box();
         box_consumer.accept(&5);
@@ -621,7 +643,12 @@ mod conversion_tests {
 
 #[cfg(test)]
 mod generic_tests {
-    use super::*;
+    use super::{
+        ArcConsumer,
+        BoxConsumer,
+        Consumer,
+        RcConsumer,
+    };
 
     fn apply_consumer<C: Consumer<i32>>(consumer: &C, value: &i32) {
         consumer.accept(value);
@@ -630,7 +657,7 @@ mod generic_tests {
     #[test]
     fn test_with_box_consumer() {
         let box_consumer = BoxConsumer::new(|x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         });
         apply_consumer(&box_consumer, &5);
     }
@@ -638,7 +665,7 @@ mod generic_tests {
     #[test]
     fn test_with_arc_consumer() {
         let arc_consumer = ArcConsumer::new(|x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         });
         apply_consumer(&arc_consumer, &5);
     }
@@ -646,7 +673,7 @@ mod generic_tests {
     #[test]
     fn test_with_rc_consumer() {
         let rc_consumer = RcConsumer::new(|x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         });
         apply_consumer(&rc_consumer, &5);
     }
@@ -654,7 +681,7 @@ mod generic_tests {
     #[test]
     fn test_with_closure() {
         let closure = |x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         };
         apply_consumer(&closure, &5);
     }
@@ -666,12 +693,17 @@ mod generic_tests {
 
 #[cfg(test)]
 mod name_tests {
-    use super::*;
+    use super::{
+        ArcConsumer,
+        BoxConsumer,
+        Consumer,
+        RcConsumer,
+    };
 
     #[test]
     fn test_box_consumer_name() {
         let mut consumer = BoxConsumer::new(|x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         });
         assert_eq!(consumer.name(), None);
 
@@ -682,7 +714,7 @@ mod name_tests {
     #[test]
     fn test_arc_consumer_name() {
         let mut consumer = ArcConsumer::new(|x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         });
         assert_eq!(consumer.name(), None);
 
@@ -693,7 +725,7 @@ mod name_tests {
     #[test]
     fn test_rc_consumer_name() {
         let mut consumer = RcConsumer::new(|x: &i32| {
-            println!("Value: {}", x);
+            std::hint::black_box(x);
         });
         assert_eq!(consumer.name(), None);
 
@@ -805,7 +837,11 @@ mod name_tests {
 
 #[cfg(test)]
 mod display_debug_tests {
-    use super::*;
+    use super::{
+        ArcConsumer,
+        BoxConsumer,
+        RcConsumer,
+    };
 
     #[test]
     fn test_box_consumer_debug() {
@@ -882,7 +918,7 @@ mod display_debug_tests {
 
 #[cfg(test)]
 mod custom_struct_tests {
-    use super::*;
+    use super::Consumer;
     use std::sync::Arc;
     use std::sync::atomic::{
         AtomicUsize,
@@ -980,7 +1016,13 @@ mod custom_struct_tests {
 
 #[cfg(test)]
 mod to_xxx_methods_tests {
-    use super::*;
+    use super::{
+        Arc,
+        ArcConsumer,
+        Consumer,
+        Rc,
+        RcConsumer,
+    };
     use std::sync::atomic::{
         AtomicUsize,
         Ordering,
@@ -1298,7 +1340,10 @@ mod to_xxx_methods_tests {
 
 #[cfg(test)]
 mod to_once_tests {
-    use super::*;
+    use super::{
+        Arc,
+        Consumer,
+    };
     use qubit_function::ConsumerOnce;
     use std::sync::atomic::{
         AtomicUsize,
@@ -1372,7 +1417,11 @@ mod to_once_tests {
 
 #[cfg(test)]
 mod box_conditional_consumer_tests {
-    use super::*;
+    use super::{
+        Arc,
+        BoxConsumer,
+        Consumer,
+    };
     use std::sync::Mutex;
 
     #[test]
@@ -1382,19 +1431,27 @@ mod box_conditional_consumer_tests {
         let l2 = log.clone();
 
         let consumer = BoxConsumer::new(move |x: &i32| {
-            l1.lock().unwrap().push(*x);
+            l1.lock().expect("mutex should not be poisoned").push(*x);
         });
 
         let conditional = consumer.when(|x: &i32| *x > 0);
         let chained = conditional.and_then(move |x: &i32| {
-            l2.lock().unwrap().push(*x * 2);
+            l2.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x * 2);
         });
 
         chained.accept(&5);
-        assert_eq!(*log.lock().unwrap(), vec![5, 10]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![5, 10]
+        );
 
         chained.accept(&-5);
-        assert_eq!(*log.lock().unwrap(), vec![5, 10, -10]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![5, 10, -10]
+        );
     }
 
     #[test]
@@ -1404,18 +1461,23 @@ mod box_conditional_consumer_tests {
         let l2 = log.clone();
 
         let consumer = BoxConsumer::new(move |x: &i32| {
-            l1.lock().unwrap().push(*x);
+            l1.lock().expect("mutex should not be poisoned").push(*x);
         });
 
         let conditional = consumer.when(|x: &i32| *x > 0).or_else(move |x: &i32| {
-            l2.lock().unwrap().push(*x * 10);
+            l2.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x * 10);
         });
 
         conditional.accept(&5);
-        assert_eq!(*log.lock().unwrap(), vec![5]);
+        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
 
         conditional.accept(&-5);
-        assert_eq!(*log.lock().unwrap(), vec![5, -50]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![5, -50]
+        );
     }
 
     #[test]
@@ -1424,16 +1486,16 @@ mod box_conditional_consumer_tests {
         let l = log.clone();
 
         let consumer = BoxConsumer::new(move |x: &i32| {
-            l.lock().unwrap().push(*x);
+            l.lock().expect("mutex should not be poisoned").push(*x);
         });
 
         let conditional = consumer.when(|x: &i32| *x > 0);
 
         conditional.accept(&5);
-        assert_eq!(*log.lock().unwrap(), vec![5]);
+        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
 
         conditional.accept(&-5);
-        assert_eq!(*log.lock().unwrap(), vec![5]);
+        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
     }
 
     #[test]
@@ -1442,17 +1504,17 @@ mod box_conditional_consumer_tests {
         let l = log.clone();
 
         let consumer = BoxConsumer::new(move |x: &i32| {
-            l.lock().unwrap().push(*x);
+            l.lock().expect("mutex should not be poisoned").push(*x);
         });
 
         let conditional = consumer.when(|x: &i32| *x > 0);
         let boxed = conditional.into_box();
 
         boxed.accept(&5);
-        assert_eq!(*log.lock().unwrap(), vec![5]);
+        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
 
         boxed.accept(&-5);
-        assert_eq!(*log.lock().unwrap(), vec![5]);
+        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
     }
 
     #[test]
@@ -1461,17 +1523,17 @@ mod box_conditional_consumer_tests {
         let l = log.clone();
 
         let consumer = BoxConsumer::new(move |x: &i32| {
-            l.lock().unwrap().push(*x);
+            l.lock().expect("mutex should not be poisoned").push(*x);
         });
 
         let conditional = consumer.when(|x: &i32| *x > 0);
         let rc = conditional.into_rc();
 
         rc.accept(&5);
-        assert_eq!(*log.lock().unwrap(), vec![5]);
+        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
 
         rc.accept(&-5);
-        assert_eq!(*log.lock().unwrap(), vec![5]);
+        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
     }
 
     #[test]
@@ -1480,23 +1542,27 @@ mod box_conditional_consumer_tests {
         let l = log.clone();
 
         let consumer = BoxConsumer::new(move |x: &i32| {
-            l.lock().unwrap().push(*x);
+            l.lock().expect("mutex should not be poisoned").push(*x);
         });
 
         let conditional = consumer.when(|x: &i32| *x > 0);
         let func = conditional.into_fn();
 
         func(&5);
-        assert_eq!(*log.lock().unwrap(), vec![5]);
+        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
 
         func(&-5);
-        assert_eq!(*log.lock().unwrap(), vec![5]);
+        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
     }
 }
 
 #[cfg(test)]
 mod arc_conditional_consumer_tests {
-    use super::*;
+    use super::{
+        Arc,
+        ArcConsumer,
+        Consumer,
+    };
     use std::sync::atomic::{
         AtomicUsize,
         Ordering,
@@ -1722,7 +1788,11 @@ mod arc_conditional_consumer_tests {
 
 #[cfg(test)]
 mod rc_conditional_consumer_tests {
-    use super::*;
+    use super::{
+        Consumer,
+        Rc,
+        RcConsumer,
+    };
     use std::cell::RefCell;
 
     #[test]

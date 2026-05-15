@@ -50,7 +50,7 @@ fn test_arc_binary_operator_thread_safety() {
     let handle = thread::spawn(move || multiply_clone.apply(6, 7));
 
     assert_eq!(multiply.apply(8, 5), 40);
-    assert_eq!(handle.join().unwrap(), 42);
+    assert_eq!(handle.join().expect("thread should not panic"), 42);
 }
 
 #[test]

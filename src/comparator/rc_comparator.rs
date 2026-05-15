@@ -16,6 +16,8 @@ use super::{
     Rc,
 };
 
+type RcComparatorFn<T> = Rc<dyn Fn(&T, &T) -> Ordering>;
+
 /// An Rc-based single-threaded comparator with shared ownership.
 ///
 /// `RcComparator` wraps a comparator function in an `Rc`, providing
@@ -40,8 +42,7 @@ use super::{
 ///
 #[derive(Clone)]
 pub struct RcComparator<T> {
-    #[allow(clippy::type_complexity)]
-    pub(super) function: Rc<dyn Fn(&T, &T) -> Ordering>,
+    pub(super) function: RcComparatorFn<T>,
 }
 
 impl<T> RcComparator<T> {

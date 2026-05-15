@@ -25,6 +25,8 @@ use crate::{
     },
 };
 
+type RcRunnableWithFn<T, E> = Rc<RefCell<dyn FnMut(&mut T) -> Result<(), E>>>;
+
 /// Single-threaded shared runnable with mutable input.
 ///
 /// `RcRunnableWith<T, E>` stores a
@@ -32,8 +34,7 @@ use crate::{
 ///
 pub struct RcRunnableWith<T, E> {
     /// The stateful closure executed by this runnable.
-    #[allow(clippy::type_complexity)]
-    pub(super) function: Rc<RefCell<dyn FnMut(&mut T) -> Result<(), E>>>,
+    pub(super) function: RcRunnableWithFn<T, E>,
     /// The optional name of this runnable.
     pub(super) name: Option<String>,
 }

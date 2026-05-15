@@ -25,6 +25,8 @@ use crate::{
     },
 };
 
+type BoxRunnableWithFn<T, E> = Box<dyn FnMut(&mut T) -> Result<(), E>>;
+
 /// Box-based runnable with mutable input.
 ///
 /// `BoxRunnableWith<T, E>` stores a
@@ -32,8 +34,7 @@ use crate::{
 ///
 pub struct BoxRunnableWith<T, E> {
     /// The stateful closure executed by this runnable.
-    #[allow(clippy::type_complexity)]
-    pub(super) function: Box<dyn FnMut(&mut T) -> Result<(), E>>,
+    pub(super) function: BoxRunnableWithFn<T, E>,
     /// The optional name of this runnable.
     pub(super) name: Option<String>,
 }

@@ -105,7 +105,8 @@ macro_rules! impl_shared_predicate_methods {
         /// Returns a predicate that represents the logical AND of this predicate
         /// and another.
         ///
-        /// This method consumes `self` due to single-ownership semantics.
+        /// This method borrows `self`; the original shared predicate remains
+        /// usable.
         ///
         /// # Parameters
         ///
@@ -127,7 +128,8 @@ macro_rules! impl_shared_predicate_methods {
         /// Returns a predicate that represents the logical OR of this predicate
         /// and another.
         ///
-        /// This method consumes `self` due to single-ownership semantics.
+        /// This method borrows `self`; the original shared predicate remains
+        /// usable.
         ///
         /// # Parameters
         ///
@@ -149,7 +151,8 @@ macro_rules! impl_shared_predicate_methods {
         /// Returns a predicate that represents the logical negation of this
         /// predicate.
         ///
-        /// This method consumes `self` due to single-ownership semantics.
+        /// This method borrows `self`; the original shared predicate remains
+        /// usable.
         ///
         /// # Returns
         ///
@@ -170,7 +173,8 @@ macro_rules! impl_shared_predicate_methods {
         /// NAND returns `true` unless both predicates are `true`.
         /// Equivalent to `!(self AND other)`.
         ///
-        /// This method consumes `self` due to single-ownership semantics.
+        /// This method borrows `self`; the original shared predicate remains
+        /// usable.
         ///
         /// # Parameters
         ///
@@ -194,7 +198,8 @@ macro_rules! impl_shared_predicate_methods {
         ///
         /// XOR returns `true` if exactly one of the predicates is `true`.
         ///
-        /// This method consumes `self` due to single-ownership semantics.
+        /// This method borrows `self`; the original shared predicate remains
+        /// usable.
         ///
         /// # Parameters
         ///
@@ -219,7 +224,8 @@ macro_rules! impl_shared_predicate_methods {
         /// NOR returns `true` only when both predicates are `false`.
         /// Equivalent to `!(self OR other)`.
         ///
-        /// This method consumes `self` due to single-ownership semantics.
+        /// This method borrows `self`; the original shared predicate remains
+        /// usable.
         ///
         /// # Parameters
         ///
@@ -249,7 +255,8 @@ macro_rules! impl_shared_predicate_methods {
         /// Returns a bi-predicate that represents the logical AND of this
         /// bi-predicate and another.
         ///
-        /// This method consumes `self` due to single-ownership semantics.
+        /// This method borrows `self`; the original shared bi-predicate remains
+        /// usable.
         ///
         /// # Parameters
         ///
@@ -272,7 +279,8 @@ macro_rules! impl_shared_predicate_methods {
         /// Returns a bi-predicate that represents the logical OR of this
         /// bi-predicate and another.
         ///
-        /// This method consumes `self` due to single-ownership semantics.
+        /// This method borrows `self`; the original shared bi-predicate remains
+        /// usable.
         ///
         /// # Parameters
         ///
@@ -295,7 +303,8 @@ macro_rules! impl_shared_predicate_methods {
         /// Returns a bi-predicate that represents the logical negation of
         /// this bi-predicate.
         ///
-        /// This method consumes `self` due to single-ownership semantics.
+        /// This method borrows `self`; the original shared bi-predicate remains
+        /// usable.
         ///
         /// # Returns
         ///
@@ -317,7 +326,8 @@ macro_rules! impl_shared_predicate_methods {
         /// NAND returns `true` unless both bi-predicates are `true`.
         /// Equivalent to `!(self AND other)`.
         ///
-        /// This method consumes `self` due to single-ownership semantics.
+        /// This method borrows `self`; the original shared bi-predicate remains
+        /// usable.
         ///
         /// # Parameters
         ///
@@ -343,7 +353,8 @@ macro_rules! impl_shared_predicate_methods {
         /// XOR returns `true` if exactly one of the bi-predicates is
         /// `true`.
         ///
-        /// This method consumes `self` due to single-ownership semantics.
+        /// This method borrows `self`; the original shared bi-predicate remains
+        /// usable.
         ///
         /// # Parameters
         ///
@@ -369,7 +380,8 @@ macro_rules! impl_shared_predicate_methods {
         /// NOR returns `true` only when both bi-predicates are `false`.
         /// Equivalent to `!(self OR other)`.
         ///
-        /// This method consumes `self` due to single-ownership semantics.
+        /// This method borrows `self`; the original shared bi-predicate remains
+        /// usable.
         ///
         /// # Parameters
         ///

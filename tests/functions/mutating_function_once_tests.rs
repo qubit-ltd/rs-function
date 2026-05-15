@@ -43,7 +43,10 @@ impl MutatingFunctionOnce<i32, i32> for TestMutatingFunctionOnce {
 
 #[cfg(test)]
 mod test_mutating_function_once_default_impl {
-    use super::*;
+    use super::{
+        MutatingFunctionOnce,
+        TestMutatingFunctionOnce,
+    };
 
     #[test]
     fn test_into_box() {
@@ -124,7 +127,10 @@ mod test_mutating_function_once_default_impl {
 
 #[cfg(test)]
 mod test_box_mutating_function_once {
-    use super::*;
+    use super::{
+        BoxMutatingFunctionOnce,
+        MutatingFunctionOnce,
+    };
 
     #[test]
     fn test_new() {
@@ -296,7 +302,11 @@ mod test_box_mutating_function_once {
 
 #[cfg(test)]
 mod test_closure {
-    use super::*;
+    use super::{
+        BoxMutatingFunctionOnce,
+        FnMutatingFunctionOnceOps,
+        MutatingFunctionOnce,
+    };
 
     #[test]
     fn test_closure_implements_trait() {

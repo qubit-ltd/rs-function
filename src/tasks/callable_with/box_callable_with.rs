@@ -25,6 +25,8 @@ use crate::{
     },
 };
 
+type BoxCallableWithFn<T, R, E> = Box<dyn FnMut(&mut T) -> Result<R, E>>;
+
 /// Box-based callable with mutable input.
 ///
 /// `BoxCallableWith<T, R, E>` stores a
@@ -32,8 +34,7 @@ use crate::{
 ///
 pub struct BoxCallableWith<T, R, E> {
     /// The stateful closure executed by this callable.
-    #[allow(clippy::type_complexity)]
-    pub(super) function: Box<dyn FnMut(&mut T) -> Result<R, E>>,
+    pub(super) function: BoxCallableWithFn<T, R, E>,
     /// The optional name of this callable.
     pub(super) name: Option<String>,
 }

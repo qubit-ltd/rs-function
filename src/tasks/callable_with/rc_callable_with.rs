@@ -28,6 +28,8 @@ use crate::{
     },
 };
 
+type RcCallableWithFn<T, R, E> = Rc<RefCell<dyn FnMut(&mut T) -> Result<R, E>>>;
+
 /// Single-threaded shared callable with mutable input.
 ///
 /// `RcCallableWith<T, R, E>` stores a
@@ -35,8 +37,7 @@ use crate::{
 ///
 pub struct RcCallableWith<T, R, E> {
     /// The stateful closure executed by this callable.
-    #[allow(clippy::type_complexity)]
-    pub(super) function: Rc<RefCell<dyn FnMut(&mut T) -> Result<R, E>>>,
+    pub(super) function: RcCallableWithFn<T, R, E>,
     /// The optional name of this callable.
     pub(super) name: Option<String>,
 }
