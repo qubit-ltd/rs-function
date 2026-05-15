@@ -147,6 +147,22 @@
 /// ```
 ///
 macro_rules! impl_shared_conditional_consumer {
+    (@let_consumer Consumer, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_consumer StatefulConsumer, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_consumer BiConsumer, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_consumer StatefulBiConsumer, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
     // Single generic parameter - Consumer types
     (
         $struct_name:ident < $t:ident >,
@@ -204,14 +220,14 @@ macro_rules! impl_shared_conditional_consumer {
             /// chained.accept(&-5); // result = 0 + (2*-5) = -10 (not -15!)
             /// assert_eq!(result.load(Ordering::SeqCst), -10);
             /// ```
-            #[allow(unused_mut)]
-            pub fn and_then<C>(&self, mut next: C) -> $consumer_type<$t>
+            pub fn and_then<C>(&self, next: C) -> $consumer_type<$t>
             where
                 $t: 'static,
                 C: $consumer_trait<$t> + $($extra_bounds)+,
             {
                 let first_predicate = self.predicate.clone();
-                let mut first_consumer = self.consumer.clone();
+                impl_shared_conditional_consumer!(@let_consumer $consumer_trait, first_consumer, self.consumer.clone());
+                impl_shared_conditional_consumer!(@let_consumer $consumer_trait, next, next);
                 $consumer_type::new(move |t| {
                     if first_predicate.test(t) {
                         first_consumer.accept(t);
@@ -232,14 +248,14 @@ macro_rules! impl_shared_conditional_consumer {
             /// # Returns
             ///
             /// Returns a new consumer with if-then-else logic
-            #[allow(unused_mut)]
-            pub fn or_else<C>(&self, mut else_consumer: C) -> $consumer_type<$t>
+            pub fn or_else<C>(&self, else_consumer: C) -> $consumer_type<$t>
             where
                 $t: 'static,
                 C: $consumer_trait<$t> + $($extra_bounds)+,
             {
                 let predicate = self.predicate.clone();
-                let mut then_consumer = self.consumer.clone();
+                impl_shared_conditional_consumer!(@let_consumer $consumer_trait, then_consumer, self.consumer.clone());
+                impl_shared_conditional_consumer!(@let_consumer $consumer_trait, else_consumer, else_consumer);
                 $consumer_type::new(move |t| {
                     if predicate.test(t) {
                         then_consumer.accept(t);
@@ -311,15 +327,15 @@ macro_rules! impl_shared_conditional_consumer {
             /// chained.accept(&-5, &3); // result = 0 + 2*(-5+3) = -4 (not -8!)
             /// assert_eq!(result.load(Ordering::SeqCst), -4);
             /// ```
-            #[allow(unused_mut)]
-            pub fn and_then<C>(&self, mut next: C) -> $consumer_type<$t, $u>
+            pub fn and_then<C>(&self, next: C) -> $consumer_type<$t, $u>
             where
                 $t: 'static,
                 $u: 'static,
                 C: $consumer_trait<$t, $u> + $($extra_bounds)+,
             {
                 let first_predicate = self.predicate.clone();
-                let mut first_consumer = self.consumer.clone();
+                impl_shared_conditional_consumer!(@let_consumer $consumer_trait, first_consumer, self.consumer.clone());
+                impl_shared_conditional_consumer!(@let_consumer $consumer_trait, next, next);
                 $consumer_type::new(move |t, u| {
                     if first_predicate.test(t, u) {
                         first_consumer.accept(t, u);
@@ -340,15 +356,15 @@ macro_rules! impl_shared_conditional_consumer {
             /// # Returns
             ///
             /// Returns a new bi-consumer with if-then-else logic
-            #[allow(unused_mut)]
-            pub fn or_else<C>(&self, mut else_consumer: C) -> $consumer_type<$t, $u>
+            pub fn or_else<C>(&self, else_consumer: C) -> $consumer_type<$t, $u>
             where
                 $t: 'static,
                 $u: 'static,
                 C: $consumer_trait<$t, $u> + $($extra_bounds)+,
             {
                 let predicate = self.predicate.clone();
-                let mut then_consumer = self.consumer.clone();
+                impl_shared_conditional_consumer!(@let_consumer $consumer_trait, then_consumer, self.consumer.clone());
+                impl_shared_conditional_consumer!(@let_consumer $consumer_trait, else_consumer, else_consumer);
                 $consumer_type::new(move |t, u| {
                     if predicate.test(t, u) {
                         then_consumer.accept(t, u);

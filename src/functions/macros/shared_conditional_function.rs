@@ -123,6 +123,38 @@
 /// ```
 ///
 macro_rules! impl_shared_conditional_function {
+    (@let_function Function, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_function StatefulFunction, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_function MutatingFunction, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_function StatefulMutatingFunction, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_function BiFunction, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_function StatefulBiFunction, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_function BiMutatingFunction, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_function StatefulBiMutatingFunction, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
     // Two generic parameters - Function types
     (
         $struct_name:ident < $t:ident, $r:ident >,
@@ -154,15 +186,15 @@ macro_rules! impl_shared_conditional_function {
             /// // Macro internals are crate-private; usage example is documented at
             /// // the macro expansion site.
             /// ```
-            #[allow(unused_mut)]
-            pub fn or_else<F>(&self, mut else_function: F) -> $shared_function_type<$t, $r>
+            pub fn or_else<F>(&self, else_function: F) -> $shared_function_type<$t, $r>
             where
                 $t: 'static,
                 $r: 'static,
                 F: $else_function_trait<$t, $r> + $($extra_bounds)+,
             {
                 let predicate = self.predicate.clone();
-                let mut then_function = self.function.clone();
+                impl_shared_conditional_function!(@let_function $else_function_trait, then_function, self.function.clone());
+                impl_shared_conditional_function!(@let_function $else_function_trait, else_function, else_function);
                 $shared_function_type::new(move |t| {
                     if predicate.test(t) {
                         then_function.apply(t)
@@ -206,8 +238,7 @@ macro_rules! impl_shared_conditional_function {
             /// // Macro internals are crate-private; usage example is documented at
             /// // the macro expansion site.
             /// ```
-            #[allow(unused_mut)]
-            pub fn or_else<F>(&self, mut else_function: F) -> $shared_function_type<$t, $u, $r>
+            pub fn or_else<F>(&self, else_function: F) -> $shared_function_type<$t, $u, $r>
             where
                 $t: 'static,
                 $u: 'static,
@@ -215,7 +246,8 @@ macro_rules! impl_shared_conditional_function {
                 F: $else_function_trait<$t, $u, $r> + 'static,
             {
                 let predicate = self.predicate.clone();
-                let mut then_function = self.function.clone();
+                impl_shared_conditional_function!(@let_function $else_function_trait, then_function, self.function.clone());
+                impl_shared_conditional_function!(@let_function $else_function_trait, else_function, else_function);
                 $shared_function_type::new(move |t, u| {
                     if predicate.test(t, u) {
                         then_function.apply(t, u)
@@ -259,8 +291,7 @@ macro_rules! impl_shared_conditional_function {
             /// // Macro internals are crate-private; usage example is documented at
             /// // the macro expansion site.
             /// ```
-            #[allow(unused_mut)]
-            pub fn or_else<F>(&self, mut else_function: F) -> $shared_function_type<$t, $u, $r>
+            pub fn or_else<F>(&self, else_function: F) -> $shared_function_type<$t, $u, $r>
             where
                 $t: 'static,
                 $u: 'static,
@@ -268,7 +299,8 @@ macro_rules! impl_shared_conditional_function {
                 F: $else_function_trait<$t, $u, $r> + Send + Sync + 'static,
             {
                 let predicate = self.predicate.clone();
-                let mut then_function = self.function.clone();
+                impl_shared_conditional_function!(@let_function $else_function_trait, then_function, self.function.clone());
+                impl_shared_conditional_function!(@let_function $else_function_trait, else_function, else_function);
                 $shared_function_type::new(move |t, u| {
                     if predicate.test(t, u) {
                         then_function.apply(t, u)

@@ -1285,18 +1285,14 @@ mod closure_to_methods_tests {
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
     }
 
-    /// Test that we can call into_box() on non-cloneable closures
     #[test]
-    fn test_closure_to_box_does_not_compile() {
+    fn test_non_cloneable_closure_into_box_consumes_self() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
         let closure = move |x: &i32| {
             l.lock().expect("mutex should not be poisoned").push(*x * 2);
         };
 
-        // This will NOT compile because closure doesn't implement Clone:
-        // let boxed = closure.to_box();  // Compile error!
-        // Workaround: Use into_box() instead
         let boxed = closure.into_box();
         boxed.accept(&5);
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![10]);

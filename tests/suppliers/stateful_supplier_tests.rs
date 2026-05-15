@@ -1646,10 +1646,6 @@ mod test_box_stateful_supplier_once {
             assert_eq!(f(), 1);
         }
     }
-
-    // Note: BoxStatefulSupplier does not implement Clone, so it cannot have
-    // to_box and to_fn implementations that borrow &self. Attempting
-    // to call these methods will result in a compiler error.
 }
 
 // ==========================================================================

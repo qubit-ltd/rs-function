@@ -1496,15 +1496,4 @@ mod tests {
         value.store(false, Ordering::Relaxed);
         assert!(!func());
     }
-
-    // Note: The following tests would fail to compile if uncommented,
-    // demonstrating that to_xxx methods correctly require Clone:
-    //
-    // #[test]
-    // fn test_non_clone_tester_to_box_compile_error() {
-    //     let value = Arc::new(AtomicBool::new(true));
-    //     let tester = NonCloneTester { value };
-    //     let _boxed = tester.to_box(); // Compile error: NonCloneTester
-    //                                    // doesn't implement Clone
-    // }
 }

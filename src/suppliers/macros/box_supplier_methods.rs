@@ -75,6 +75,30 @@
 /// ```
 ///
 macro_rules! impl_box_supplier_methods {
+    (@let_supplier_fn Supplier, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_supplier_fn SupplierOnce, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_supplier_fn StatefulSupplier, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_supplier Supplier, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_supplier SupplierOnce, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_supplier StatefulSupplier, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
     // Single generic parameter - Supplier
     (
         $struct_name:ident < $t:ident >,
@@ -106,14 +130,13 @@ macro_rules! impl_box_supplier_methods {
         ///     .map(|x| x + 5);
         /// assert_eq!(mapped.get(), 25);
         /// ```
-        #[allow(unused_mut)]
         pub fn map<U, M>(self, mapper: M) -> $struct_name<U>
         where
             $t: 'static,
             M: Transformer<$t, U> + 'static,
             U: 'static,
         {
-            let mut self_fn = self.function;
+            impl_box_supplier_methods!(@let_supplier_fn $supplier_trait, self_fn, self.function);
             $struct_name::new(move || mapper.apply(self_fn()))
         }
 
@@ -142,13 +165,12 @@ macro_rules! impl_box_supplier_methods {
         ///
         /// assert_eq!(filtered.get(), Some(42));
         /// ```
-        #[allow(unused_mut)]
         pub fn filter<P>(self, predicate: P) -> $struct_name<Option<$t>>
         where
             $t: 'static,
             P: Predicate<$t> + 'static,
         {
-            let mut self_fn = self.function;
+            impl_box_supplier_methods!(@let_supplier_fn $supplier_trait, self_fn, self.function);
             $struct_name::new(move || {
                 let value = self_fn();
                 if predicate.test(&value) {
@@ -183,14 +205,14 @@ macro_rules! impl_box_supplier_methods {
         ///
         /// assert_eq!(zipped.get(), (42, "hello"));
         /// ```
-        #[allow(unused_mut)]
-        pub fn zip<U, S>(self, mut other: S) -> $struct_name<($t, U)>
+        pub fn zip<U, S>(self, other: S) -> $struct_name<($t, U)>
         where
             $t: 'static,
             S: $supplier_trait<U> + 'static,
             U: 'static,
         {
-            let mut self_fn = self.function;
+            impl_box_supplier_methods!(@let_supplier_fn $supplier_trait, self_fn, self.function);
+            impl_box_supplier_methods!(@let_supplier $supplier_trait, other, other);
             $struct_name::new(move || (self_fn(), other.get()))
         }
     };

@@ -66,9 +66,9 @@
 /// ```
 ///
 macro_rules! impl_closure_trait {
-  // ==================== 辅助宏：生成 into_once 方法 ====================
+  // ==================== Helper macro: generate into_once methods ====================
 
-  // Fn trait: into_once 方法
+  // Fn trait: into_once method
   (@into_once_fn_method $once_type:ident, ($($generics:ident),*)) => {
       #[inline]
       fn into_once(self) -> $once_type<$($generics),*>
@@ -79,7 +79,7 @@ macro_rules! impl_closure_trait {
       }
   };
 
-  // FnMut trait: into_once 方法
+  // FnMut trait: into_once method
   (@into_once_fnmut_method $once_type:ident, ($($generics:ident),*), ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?) => {
       #[inline]
       fn into_once(mut self) -> $once_type<$($generics),*>
@@ -90,9 +90,9 @@ macro_rules! impl_closure_trait {
       }
   };
 
-  // ==================== 辅助宏：生成 to_once 方法 ====================
+  // ==================== Helper macro: generate to_once methods ====================
 
-  // Fn trait: to_once 方法
+  // Fn trait: to_once method
   (@to_once_fn_method $once_type:ident, ($($generics:ident),*)) => {
       #[inline]
       fn to_once(&self) -> $once_type<$($generics),*>
@@ -103,7 +103,7 @@ macro_rules! impl_closure_trait {
       }
   };
 
-  // FnMut trait: to_once 方法
+  // FnMut trait: to_once method
   (@to_once_fnmut_method $once_type:ident, ($($generics:ident),*), ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?) => {
       #[inline]
       fn to_once(&self) -> $once_type<$($generics),*>
@@ -115,7 +115,7 @@ macro_rules! impl_closure_trait {
       }
   };
 
-  // ==================== 内部实现：通用部分（Fn trait）====================
+  // ==================== Internal implementation: common Fn trait methods ====================
 
   (
       @impl_common_fn
@@ -124,13 +124,13 @@ macro_rules! impl_closure_trait {
       $closure_trait:path,
       ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
   ) => {
-      // 核心方法：直接调用闭包
+      // Core method: call the closure directly.
       #[inline]
       fn $method_name(&self, $($arg: $arg_ty),*) $(-> $ret)? {
           self($($arg),*)
       }
 
-      // ===== 转换方法：使用 paste 自动推导类型名 =====
+      // ===== Conversion methods: derive wrapper type names with paste. =====
 
       #[inline]
       fn into_box(self) -> paste::paste! { [<Box $trait_name>] < $($generics),* > }
@@ -156,7 +156,7 @@ macro_rules! impl_closure_trait {
           self
       }
 
-      // into_arc: Fn trait 需要 Send + Sync
+      // into_arc: Fn wrappers require Send + Sync.
       #[inline]
       fn into_arc(self) -> paste::paste! { [<Arc $trait_name>] < $($generics),* > }
       where
@@ -165,7 +165,7 @@ macro_rules! impl_closure_trait {
           paste::paste! { [<Arc $trait_name>]::new(self) }
       }
 
-      // ===== to_* 方法：克隆版本 =====
+      // ===== to_* methods: clone-based conversions. =====
 
       #[inline]
       fn to_box(&self) -> paste::paste! { [<Box $trait_name>] < $($generics),* > }
@@ -191,7 +191,7 @@ macro_rules! impl_closure_trait {
           self.clone()
       }
 
-      // to_arc: Fn trait 需要 Send + Sync
+      // to_arc: Fn wrappers require Send + Sync.
       #[inline]
       fn to_arc(&self) -> paste::paste! { [<Arc $trait_name>] < $($generics),* > }
       where
@@ -201,7 +201,7 @@ macro_rules! impl_closure_trait {
       }
   };
 
-  // ==================== 内部实现：通用部分（FnMut trait）====================
+  // ==================== Internal implementation: common FnMut trait methods ====================
 
   (
       @impl_common_fnmut
@@ -210,13 +210,13 @@ macro_rules! impl_closure_trait {
       $closure_trait:path,
       ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
   ) => {
-      // 核心方法：直接调用闭包
+      // Core method: call the closure directly.
       #[inline]
       fn $method_name(&mut self, $($arg: $arg_ty),*) $(-> $ret)? {
           self($($arg),*)
       }
 
-      // ===== 转换方法：使用 paste 自动推导类型名 =====
+      // ===== Conversion methods: derive wrapper type names with paste. =====
 
       #[inline]
       fn into_box(self) -> paste::paste! { [<Box $trait_name>] < $($generics),* > }
@@ -242,7 +242,7 @@ macro_rules! impl_closure_trait {
           self
       }
 
-      // into_arc: FnMut trait 只需要 Send
+      // into_arc: FnMut wrappers only require Send.
       #[inline]
       fn into_arc(self) -> paste::paste! { [<Arc $trait_name>] < $($generics),* > }
       where
@@ -251,7 +251,7 @@ macro_rules! impl_closure_trait {
           paste::paste! { [<Arc $trait_name>]::new(self) }
       }
 
-      // ===== to_* 方法：克隆版本 =====
+      // ===== to_* methods: clone-based conversions. =====
 
       #[inline]
       fn to_box(&self) -> paste::paste! { [<Box $trait_name>] < $($generics),* > }
@@ -277,7 +277,7 @@ macro_rules! impl_closure_trait {
           self.clone()
       }
 
-      // to_arc: FnMut trait 只需要 Send
+      // to_arc: FnMut wrappers only require Send.
       #[inline]
       fn to_arc(&self) -> paste::paste! { [<Arc $trait_name>] < $($generics),* > }
       where
@@ -289,7 +289,7 @@ macro_rules! impl_closure_trait {
   };
 
 
-  // ==================== 公共接口：参考 impl_rc_conversions 的模式 ====================
+  // ==================== Public interface: matches the impl_rc_conversions pattern ====================
 
   // Regular trait (Fn) - with once conversion
   (
@@ -302,7 +302,7 @@ macro_rules! impl_closure_trait {
       where
           F: Fn($($arg_ty),*) $(-> $ret)?,
       {
-          // 生成通用方法
+          // Generate common methods.
           impl_closure_trait!(
               @impl_common_fn
               $trait_name<$($generics),*>,
@@ -311,7 +311,7 @@ macro_rules! impl_closure_trait {
               ($($arg : $arg_ty),*) $(-> $ret)?
           );
 
-          // 生成 into_once 和 to_once 方法
+          // Generate into_once and to_once methods.
           impl_closure_trait!(@into_once_fn_method $once_type, ($($generics),*));
           impl_closure_trait!(@to_once_fn_method $once_type, ($($generics),*));
       }
@@ -327,7 +327,7 @@ macro_rules! impl_closure_trait {
       where
           F: Fn($($arg_ty),*) $(-> $ret)?,
       {
-          // 生成通用方法（不包含 into_once/to_once）
+          // Generate common methods without into_once/to_once.
           impl_closure_trait!(
               @impl_common_fn
               $trait_name<$($generics),*>,
@@ -349,7 +349,7 @@ macro_rules! impl_closure_trait {
       where
           F: FnMut($($arg_ty),*) $(-> $ret)?,
       {
-          // 生成通用方法
+          // Generate common methods.
           impl_closure_trait!(
               @impl_common_fnmut
               $trait_name<$($generics),*>,
@@ -358,7 +358,7 @@ macro_rules! impl_closure_trait {
               ($($arg : $arg_ty),*) $(-> $ret)?
           );
 
-          // 生成 into_once 和 to_once 方法
+          // Generate into_once and to_once methods.
           impl_closure_trait!(@into_once_fnmut_method $once_type, ($($generics),*), ($($arg : $arg_ty),*) $(-> $ret)?);
           impl_closure_trait!(@to_once_fnmut_method $once_type, ($($generics),*), ($($arg : $arg_ty),*) $(-> $ret)?);
       }
@@ -374,7 +374,7 @@ macro_rules! impl_closure_trait {
       where
           F: FnMut($($arg_ty),*) $(-> $ret)?,
       {
-          // 生成通用方法（不包含 into_once/to_once）
+          // Generate common methods without into_once/to_once.
           impl_closure_trait!(
               @impl_common_fnmut
               $trait_name<$($generics),*>,

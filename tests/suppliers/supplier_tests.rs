@@ -1978,20 +1978,6 @@ mod test_to_methods {
             }
         }
     }
-
-    // ============================================================
-    // Note: BoxSupplier does not implement to_* methods
-    // ============================================================
-    //
-    // BoxSupplier cannot implement to_* methods because
-    // it does not implement Clone. Box provides unique ownership
-    // and cannot be cloned unless the inner type implements Clone,
-    // which dyn Fn() -> T does not.
-    //
-    // If you try to call to_box, to_rc, to_arc, or to_fn on
-    // BoxSupplier, the compiler will fail with an error
-    // indicating that BoxSupplier<T> does not implement
-    // Clone, which is required by the default implementations.
 }
 
 // ======================================================================

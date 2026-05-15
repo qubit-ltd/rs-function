@@ -86,6 +86,33 @@
 /// ```
 ///
 macro_rules! impl_box_mutator_methods {
+    (@and_then Mutator, $struct_name:ident, $first:expr, $after:expr, $t:ident) => {{
+        let first = $first;
+        let after = $after;
+        $struct_name::new(move |t: &mut $t| {
+            first.apply(t);
+            after.apply(t);
+        })
+    }};
+
+    (@and_then MutatorOnce, $struct_name:ident, $first:expr, $after:expr, $t:ident) => {{
+        let first = $first;
+        let after = $after;
+        $struct_name::new(move |t: &mut $t| {
+            first.apply(t);
+            after.apply(t);
+        })
+    }};
+
+    (@and_then StatefulMutator, $struct_name:ident, $first:expr, $after:expr, $t:ident) => {{
+        let mut first = $first;
+        let mut after = $after;
+        $struct_name::new(move |t: &mut $t| {
+            first.apply(t);
+            after.apply(t);
+        })
+    }};
+
     // Single generic parameter - Mutator
     ($struct_name:ident < $t:ident >, $conditional_type:ident, $mutator_trait:ident) => {
         /// Creates a conditional mutator that executes based on predicate
@@ -175,18 +202,13 @@ macro_rules! impl_box_mutator_methods {
         /// chained.apply(&mut val);
         /// // val = 2 (0 + 1 + 1)
         /// ```
-        #[allow(unused_mut)]
-        pub fn and_then<M>(self, mut after: M) -> $struct_name<$t>
+        pub fn and_then<M>(self, after: M) -> $struct_name<$t>
         where
             Self: Sized + 'static,
             $t: 'static,
             M: $mutator_trait<$t> + 'static,
         {
-            let mut first = self;
-            $struct_name::new(move |t: &mut $t| {
-                first.apply(t);
-                after.apply(t);
-            })
+            impl_box_mutator_methods!(@and_then $mutator_trait, $struct_name, self, after, $t)
         }
     };
 }

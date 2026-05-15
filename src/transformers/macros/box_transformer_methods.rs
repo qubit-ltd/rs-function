@@ -107,6 +107,26 @@
 /// ```
 ///
 macro_rules! impl_box_transformer_methods {
+    (@let_before BoxStatefulTransformer, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_before BoxStatefulBiTransformer, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_before $struct_name:ident, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_after StatefulTransformer, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_after $transformer_trait:ident, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
     // Two generic parameter - Transformer
     (
         $struct_name:ident < $t:ident, $r:ident >,
@@ -183,16 +203,16 @@ macro_rules! impl_box_transformer_methods {
         /// let chained = transformer1.and_then(transformer2);
         /// assert_eq!(chained.apply(5), 12); // (5 + 1) * 2 = 12
         /// ```
-        #[allow(unused_mut)]
         #[inline]
-        pub fn and_then<S, F>(self, mut after: F) -> $struct_name<$t, S>
+        pub fn and_then<S, F>(self, after: F) -> $struct_name<$t, S>
         where
             $t: 'static,
             $r: 'static,
             S: 'static,
             F: $chained_transformer_trait<$r, S> + 'static,
         {
-            let mut before = self.function;
+            impl_box_transformer_methods!(@let_before $struct_name, before, self.function);
+            impl_box_transformer_methods!(@let_after $chained_transformer_trait, after, after);
             $struct_name::new(move |t| {
                 let r = before(t);
                 after.apply(r)
@@ -278,9 +298,8 @@ macro_rules! impl_box_transformer_methods {
         /// let result = chained.apply("test".to_string(), 5);
         /// assert_eq!(result, "test: 6"); // (value + 1) = 6
         /// ```
-        #[allow(unused_mut)]
         #[inline]
-        pub fn and_then<S, F>(self, mut after: F) -> $struct_name<$t, $u, S>
+        pub fn and_then<S, F>(self, after: F) -> $struct_name<$t, $u, S>
         where
             $t: 'static,
             $u: 'static,
@@ -288,9 +307,10 @@ macro_rules! impl_box_transformer_methods {
             S: 'static,
             F: $chained_transformer_trait<$r, S> + 'static,
         {
-            let mut before = self.function;
+            impl_box_transformer_methods!(@let_before $struct_name, before, self.function);
+            impl_box_transformer_methods!(@let_after $chained_transformer_trait, after, after);
             $struct_name::new(move |t, u| {
-                let mut r = before(t, u);
+                let r = before(t, u);
                 after.apply(r)
             })
         }

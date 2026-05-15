@@ -281,16 +281,9 @@ fn test_box_function_once_into_fn() {
 }
 
 #[test]
-fn test_box_function_once_to_box_unavailable() {
-    // Test that to_box method is not available for BoxFunctionOnce
-    // BoxFunctionOnce doesn't implement Clone, so to_box method is not generated
-    // by impl_box_once_conversions macro due to trait bounds
+fn test_box_function_once_into_box_consumes_self() {
     let func = BoxFunctionOnce::new(|x: &i32| x * 2);
 
-    // This would not compile: func.to_box()
-    // The method is not available because BoxFunctionOnce doesn't implement Clone
-
-    // Instead, use into_box() which consumes self
     let boxed = func.into_box();
     assert_eq!(boxed.apply(&21), 42);
 }

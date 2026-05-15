@@ -118,6 +118,42 @@
 /// ```
 ///
 macro_rules! impl_shared_consumer_methods {
+    (@and_then Consumer, $struct_name:ident, $first:expr, $after:expr, $t:ident) => {{
+        let first = $first;
+        let after = $after;
+        $struct_name::new(move |t: &$t| {
+            first.accept(t);
+            after.accept(t);
+        })
+    }};
+
+    (@and_then StatefulConsumer, $struct_name:ident, $first:expr, $after:expr, $t:ident) => {{
+        let mut first = $first;
+        let mut after = $after;
+        $struct_name::new(move |t: &$t| {
+            first.accept(t);
+            after.accept(t);
+        })
+    }};
+
+    (@and_then_bi BiConsumer, $struct_name:ident, $first:expr, $after:expr, $t:ident, $u:ident) => {{
+        let first = $first;
+        let after = $after;
+        $struct_name::new(move |t: &$t, u: &$u| {
+            first.accept(t, u);
+            after.accept(t, u);
+        })
+    }};
+
+    (@and_then_bi StatefulBiConsumer, $struct_name:ident, $first:expr, $after:expr, $t:ident, $u:ident) => {{
+        let mut first = $first;
+        let mut after = $after;
+        $struct_name::new(move |t: &$t, u: &$u| {
+            first.accept(t, u);
+            after.accept(t, u);
+        })
+    }};
+
     // Single generic parameter - Consumer types
     (
         $struct_name:ident < $t:ident >,
@@ -190,18 +226,13 @@ macro_rules! impl_shared_consumer_methods {
         ///
         /// chained.accept(&5);  // prints: first: 5 second: 5
         /// ```
-        #[allow(unused_mut)]
         #[inline]
-        pub fn and_then<C>(&self, mut after: C) -> $struct_name<$t>
+        pub fn and_then<C>(&self, after: C) -> $struct_name<$t>
         where
             $t: 'static,
             C: $consumer_trait<$t> + $($extra_bounds)+,
         {
-            let mut first = self.clone();
-            $struct_name::new(move |t: &$t| {
-                first.accept(t);
-                after.accept(t);
-            })
+            impl_shared_consumer_methods!(@and_then $consumer_trait, $struct_name, self.clone(), after, $t)
         }
     };
 
@@ -278,19 +309,14 @@ macro_rules! impl_shared_consumer_methods {
         ///
         /// chained.accept(&5, &3);  // prints: first: 8 second: 15
         /// ```
-        #[allow(unused_mut)]
         #[inline]
-        pub fn and_then<C>(&self, mut after: C) -> $struct_name<$t, $u>
+        pub fn and_then<C>(&self, after: C) -> $struct_name<$t, $u>
         where
             $t: 'static,
             $u: 'static,
             C: $consumer_trait<$t, $u> + $($extra_bounds)+,
         {
-            let mut first = self.clone();
-            $struct_name::new(move |t: &$t, u: &$u| {
-                first.accept(t, u);
-                after.accept(t, u);
-            })
+            impl_shared_consumer_methods!(@and_then_bi $consumer_trait, $struct_name, self.clone(), after, $t, $u)
         }
     };
 }
