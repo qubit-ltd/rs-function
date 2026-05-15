@@ -126,7 +126,6 @@
 /// );
 /// ```
 ///
-#[macro_export]
 macro_rules! impl_fn_ops_trait {
     // Unified implementation - accepts closure signature (without constraints)
     (
