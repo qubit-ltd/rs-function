@@ -10,6 +10,8 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcBiPredicate` public type.
 
+use std::ops::Not;
+
 use super::{
     ALWAYS_FALSE_NAME,
     ALWAYS_TRUE_NAME,
@@ -65,11 +67,37 @@ impl<T, U> ArcBiPredicate<T, U> {
         |f| Arc::new(f)
     );
 
-    // Generates: and(), or(), not(), nand(), xor(), nor()
+    // Generates: and(), or(), nand(), xor(), nor()
     impl_shared_predicate_methods!(
         ArcBiPredicate<T, U>,
         Send + Sync + 'static
     );
+}
+
+impl<T, U> Not for ArcBiPredicate<T, U>
+where
+    T: 'static,
+    U: 'static,
+{
+    type Output = ArcBiPredicate<T, U>;
+
+    fn not(self) -> Self::Output {
+        let function = self.function;
+        ArcBiPredicate::new(move |first, second| !function(first, second))
+    }
+}
+
+impl<T, U> Not for &ArcBiPredicate<T, U>
+where
+    T: 'static,
+    U: 'static,
+{
+    type Output = ArcBiPredicate<T, U>;
+
+    fn not(self) -> Self::Output {
+        let function = self.function.clone();
+        ArcBiPredicate::new(move |first, second| !function(first, second))
+    }
 }
 
 // Generates: impl Clone for ArcBiPredicate<T, U>

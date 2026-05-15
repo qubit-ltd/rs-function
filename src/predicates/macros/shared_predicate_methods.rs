@@ -148,25 +148,6 @@ macro_rules! impl_shared_predicate_methods {
             $struct_name::new(move |x| self_fn(x) || other.test(x))
         }
 
-        /// Returns a predicate that represents the logical negation of this
-        /// predicate.
-        ///
-        /// This method borrows `self`; the original shared predicate remains
-        /// usable.
-        ///
-        /// # Returns
-        ///
-        /// A new predicate representing the logical negation.
-        #[allow(clippy::should_implement_trait)]
-        #[inline]
-        pub fn not(&self) -> $struct_name<$t>
-        where
-            $t: 'static,
-        {
-            let self_fn = self.function.clone();
-            $struct_name::new(move |x| !(self_fn(x)))
-        }
-
         /// Returns a predicate that represents the logical NAND (NOT AND) of this
         /// predicate and another.
         ///
@@ -298,26 +279,6 @@ macro_rules! impl_shared_predicate_methods {
         {
             let self_fn = self.function.clone();
             $struct_name::new(move |x, y| self_fn(x, y) || other.test(x, y))
-        }
-
-        /// Returns a bi-predicate that represents the logical negation of
-        /// this bi-predicate.
-        ///
-        /// This method borrows `self`; the original shared bi-predicate remains
-        /// usable.
-        ///
-        /// # Returns
-        ///
-        /// A new bi-predicate representing the logical negation.
-        #[allow(clippy::should_implement_trait)]
-        #[inline]
-        pub fn not(&self) -> $struct_name<$t, $u>
-        where
-            $t: 'static,
-            $u: 'static,
-        {
-            let self_fn = self.function.clone();
-            $struct_name::new(move |x, y| !(self_fn(x, y)))
         }
 
         /// Returns a bi-predicate that represents the logical NAND (NOT

@@ -12,7 +12,7 @@
 //!
 //! Generates logical operation method implementations for Box-based Predicate
 //!
-//! Generates basic logical operations (and, or, not, nand, xor, nor) for Box-based
+//! Generates basic logical operations (and, or, nand, xor, nor) for Box-based
 //! predicates that consume self (because Box cannot be cloned).
 //!
 //! This macro supports both single-parameter and two-parameter predicates through
@@ -39,7 +39,7 @@
 ///
 /// This macro should be used at the top level (outside of any impl block) as
 /// it generates a complete impl block with methods for the specified struct.
-/// Generates basic logical operations (and, or, not, nand, xor, nor) for Box-based
+/// Generates basic logical operations (and, or, nand, xor, nor) for Box-based
 /// predicates that consume self (because Box cannot be cloned).
 ///
 /// This macro supports both single-parameter and two-parameter predicates through
@@ -104,23 +104,6 @@ macro_rules! impl_box_predicate_methods {
             $t: 'static,
         {
             $struct_name::new(move |x| (self.function)(x) || other.test(x))
-        }
-
-        /// Returns a predicate that represents the logical negation of this
-        /// predicate.
-        ///
-        /// This method consumes `self` due to single-ownership semantics.
-        ///
-        /// # Returns
-        ///
-        /// A new predicate representing the logical negation.
-        #[allow(clippy::should_implement_trait)]
-        #[inline]
-        pub fn not(self) -> $struct_name<$t>
-        where
-            $t: 'static,
-        {
-            $struct_name::new(move |x| !(self.function)(x))
         }
 
         /// Returns a predicate that represents the logical NAND (NOT AND) of this
@@ -239,24 +222,6 @@ macro_rules! impl_box_predicate_methods {
             $u: 'static,
         {
             $struct_name::new(move |x, y| (self.function)(x, y) || other.test(x, y))
-        }
-
-        /// Returns a bi-predicate that represents the logical negation of
-        /// this bi-predicate.
-        ///
-        /// This method consumes `self` due to single-ownership semantics.
-        ///
-        /// # Returns
-        ///
-        /// A new bi-predicate representing the logical negation.
-        #[allow(clippy::should_implement_trait)]
-        #[inline]
-        pub fn not(self) -> $struct_name<$t, $u>
-        where
-            $t: 'static,
-            $u: 'static,
-        {
-            $struct_name::new(move |x, y| !(self.function)(x, y))
         }
 
         /// Returns a bi-predicate that represents the logical NAND (NOT

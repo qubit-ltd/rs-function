@@ -694,9 +694,8 @@ assert!(!tester.test());
 | `Comparator<T>` | `compare(&self, a: &T, b: &T) -> Ordering` | `Fn(&T, &T) -> Ordering` |
 | `Tester` | `test(&self) -> bool` | `Fn() -> bool` |
 
-对于有状态 trait，闭包转换同时支持兼容命名
-`into_fn` / `to_fn`，以及更明确的可变闭包命名
-`into_mut_fn` / `to_mut_fn`。
+对于有状态 trait，闭包转换提供 `into_fn` / `to_fn`；返回可变闭包的类型
+还提供 `into_mut_fn` / `to_mut_fn`，用于在调用点显式表达可变闭包语义。
 
 ## 实现类型对比
 

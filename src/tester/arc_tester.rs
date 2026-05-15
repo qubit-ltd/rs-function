@@ -10,6 +10,8 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcTester` public type.
 
+use std::ops::Not;
+
 use super::{
     Arc,
     BoxTester,
@@ -32,7 +34,7 @@ use super::{
 /// - **Shared ownership**: Can be cloned
 /// - **Thread-safe**: Can be sent across threads
 /// - **Lock-free overhead**: Uses `Fn` without needing `Mutex`
-/// - **Borrowing combination**: `and()`/`or()`/`not()` borrow `&self`
+/// - **Borrowing combination**: `and()`/`or()` borrow `&self`
 ///
 /// # Use Cases
 ///
@@ -253,68 +255,6 @@ impl ArcTester {
         }
     }
 
-    /// Negates the result of this tester
-    ///
-    /// Returns a new `ArcTester` that returns the opposite value of the
-    /// original test result. Borrows `&self`, so the original tester remains
-    /// available.
-    ///
-    /// # Return Value
-    ///
-    /// A new `ArcTester` representing logical NOT
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::{ArcTester, Tester};
-    /// use std::sync::{Arc, atomic::{AtomicUsize, Ordering}};
-    /// use std::thread;
-    ///
-    /// // Simulate task queue status
-    /// let pending_tasks = Arc::new(AtomicUsize::new(0));
-    /// let max_queue_size = 100;
-    ///
-    /// let tasks_clone = Arc::clone(&pending_tasks);
-    ///
-    /// // Queue not full
-    /// let queue_available = ArcTester::new(move || {
-    ///     tasks_clone.load(Ordering::Relaxed) < max_queue_size
-    /// });
-    ///
-    /// // Queue full (negated)
-    /// let queue_full = queue_available.not();
-    ///
-    /// // Multi-threaded test
-    /// let queue_full_clone = queue_full.clone();
-    /// let handle = thread::spawn(move || {
-    ///     queue_full_clone.test()
-    /// });
-    ///
-    /// // Initial state: queue not full
-    /// pending_tasks.store(50, Ordering::Relaxed);
-    /// assert!(queue_available.test());
-    /// assert!(!handle.join().expect("thread should not panic"));
-    /// assert!(!queue_full.test());
-    ///
-    /// // Queue near full
-    /// pending_tasks.store(95, Ordering::Relaxed);
-    /// assert!(queue_available.test());
-    /// assert!(!queue_full.test());
-    ///
-    /// // Queue full
-    /// pending_tasks.store(120, Ordering::Relaxed);
-    /// assert!(!queue_available.test());
-    /// assert!(queue_full.test());
-    /// ```
-    #[allow(clippy::should_implement_trait)]
-    #[inline]
-    pub fn not(&self) -> ArcTester {
-        let func = Arc::clone(&self.function);
-        ArcTester {
-            function: Arc::new(move || !func()),
-        }
-    }
-
     /// Combines this tester with another tester using logical NAND
     ///
     /// Returns a new `ArcTester` that returns `true` unless both tests pass.
@@ -485,6 +425,30 @@ impl ArcTester {
         let next_fn = Arc::clone(&next.function);
         ArcTester {
             function: Arc::new(move || !(self_fn() || next_fn())),
+        }
+    }
+}
+
+impl Not for ArcTester {
+    type Output = ArcTester;
+
+    #[inline]
+    fn not(self) -> Self::Output {
+        let func = self.function;
+        ArcTester {
+            function: Arc::new(move || !func()),
+        }
+    }
+}
+
+impl Not for &ArcTester {
+    type Output = ArcTester;
+
+    #[inline]
+    fn not(self) -> Self::Output {
+        let func = Arc::clone(&self.function);
+        ArcTester {
+            function: Arc::new(move || !func()),
         }
     }
 }

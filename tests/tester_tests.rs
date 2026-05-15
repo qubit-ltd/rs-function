@@ -115,19 +115,19 @@ mod tests {
 
     #[test]
     fn test_box_tester_not_true() {
-        let negated = BoxTester::new(|| true).not();
+        let negated = !BoxTester::new(|| true);
         assert!(!negated.test());
     }
 
     #[test]
     fn test_box_tester_not_false() {
-        let negated = BoxTester::new(|| false).not();
+        let negated = !BoxTester::new(|| false);
         assert!(negated.test());
     }
 
     #[test]
     fn test_box_tester_complex_composition() {
-        let combined = BoxTester::new(|| true).and(|| true).or(|| false).not();
+        let combined = !(BoxTester::new(|| true).and(|| true).or(|| false));
         assert!(!combined.test());
     }
 
@@ -253,7 +253,7 @@ mod tests {
     #[test]
     fn test_arc_tester_not() {
         let original = ArcTester::new(|| true);
-        let negated = original.not();
+        let negated = !&original;
         assert!(!negated.test());
 
         // Verify that the original tester is still available
@@ -436,7 +436,7 @@ mod tests {
     #[test]
     fn test_rc_tester_not() {
         let original = RcTester::new(|| true);
-        let negated = original.not();
+        let negated = !&original;
         assert!(!negated.test());
 
         // Verify that the original tester is still available
@@ -783,7 +783,7 @@ mod tests {
 
     #[test]
     fn test_multiple_not() {
-        let tester = BoxTester::new(|| true).not().not();
+        let tester = !(!BoxTester::new(|| true));
         assert!(tester.test());
     }
 

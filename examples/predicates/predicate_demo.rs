@@ -185,7 +185,7 @@ fn logical_composition_examples() {
     println!("  Test 5: {}", positive_or_even.test(&5));
 
     // NOT composition
-    let not_positive = positive.not();
+    let not_positive = !&positive;
     println!("NOT positive: name={:?}", not_positive.name());
     println!("  Test 5: {}", not_positive.test(&5));
     println!("  Test -3: {}", not_positive.test(&-3));

@@ -10,6 +10,8 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcPredicate` public type.
 
+use std::ops::Not;
+
 use super::{
     ALWAYS_FALSE_NAME,
     ALWAYS_TRUE_NAME,
@@ -63,8 +65,32 @@ impl<T> ArcPredicate<T> {
         |f| Arc::new(f)
     );
 
-    // Generates: and(), or(), not(), nand(), xor(), nor()
+    // Generates: and(), or(), nand(), xor(), nor()
     impl_shared_predicate_methods!(ArcPredicate<T>, Send + Sync + 'static);
+}
+
+impl<T> Not for ArcPredicate<T>
+where
+    T: 'static,
+{
+    type Output = ArcPredicate<T>;
+
+    fn not(self) -> Self::Output {
+        let function = self.function;
+        ArcPredicate::new(move |value| !function(value))
+    }
+}
+
+impl<T> Not for &ArcPredicate<T>
+where
+    T: 'static,
+{
+    type Output = ArcPredicate<T>;
+
+    fn not(self) -> Self::Output {
+        let function = self.function.clone();
+        ArcPredicate::new(move |value| !function(value))
+    }
 }
 
 // Generates: impl Clone for ArcPredicate<T>

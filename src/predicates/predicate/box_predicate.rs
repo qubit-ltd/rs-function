@@ -10,6 +10,8 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxPredicate` public type.
 
+use std::ops::Not;
+
 use super::{
     ALWAYS_FALSE_NAME,
     ALWAYS_TRUE_NAME,
@@ -49,8 +51,19 @@ impl<T> BoxPredicate<T> {
     // Generates: new(), new_with_name(), name(), set_name(), always_true(), always_false()
     impl_predicate_common_methods!(BoxPredicate<T>, (Fn(&T) -> bool + 'static), |f| Box::new(f));
 
-    // Generates: and(), or(), not(), nand(), xor(), nor()
+    // Generates: and(), or(), nand(), xor(), nor()
     impl_box_predicate_methods!(BoxPredicate<T>);
+}
+
+impl<T> Not for BoxPredicate<T>
+where
+    T: 'static,
+{
+    type Output = BoxPredicate<T>;
+
+    fn not(self) -> Self::Output {
+        BoxPredicate::new(move |value| !(self.function)(value))
+    }
 }
 
 // Generates: impl Debug for BoxPredicate<T> and impl Display for BoxPredicate<T>

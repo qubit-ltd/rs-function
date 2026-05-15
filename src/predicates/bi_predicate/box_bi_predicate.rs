@@ -10,6 +10,8 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxBiPredicate` public type.
 
+use std::ops::Not;
+
 use super::{
     ALWAYS_FALSE_NAME,
     ALWAYS_TRUE_NAME,
@@ -54,8 +56,20 @@ impl<T, U> BoxBiPredicate<T, U> {
         |f| Box::new(f)
     );
 
-    // Generates: and(), or(), not(), nand(), xor(), nor()
+    // Generates: and(), or(), nand(), xor(), nor()
     impl_box_predicate_methods!(BoxBiPredicate<T, U>);
+}
+
+impl<T, U> Not for BoxBiPredicate<T, U>
+where
+    T: 'static,
+    U: 'static,
+{
+    type Output = BoxBiPredicate<T, U>;
+
+    fn not(self) -> Self::Output {
+        BoxBiPredicate::new(move |first, second| !(self.function)(first, second))
+    }
 }
 
 // Generates: impl Debug for BoxBiPredicate<T, U> and impl Display for BoxBiPredicate<T, U>

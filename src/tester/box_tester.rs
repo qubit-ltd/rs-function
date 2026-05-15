@@ -10,6 +10,8 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxTester` public type.
 
+use std::ops::Not;
+
 use super::{
     Rc,
     RcTester,
@@ -30,7 +32,7 @@ use super::{
 ///
 /// - **Single ownership**: Cannot be cloned
 /// - **Zero overhead**: Single heap allocation
-/// - **Consuming combination**: `and()`/`or()`/`not()` consume `self`
+/// - **Consuming combination**: `and()`/`or()` consume `self`
 /// - **Type flexibility**: Accepts any `Tester` implementation
 ///
 /// # Use Cases
@@ -240,51 +242,6 @@ impl BoxTester {
         BoxTester::new(move || self_fn() || next_tester.test())
     }
 
-    /// Negates the result of this tester
-    ///
-    /// Returns a new `BoxTester` that returns the opposite value of the
-    /// original test result.
-    ///
-    /// # Return Value
-    ///
-    /// A new `BoxTester` representing logical NOT
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::{BoxTester, Tester};
-    /// use std::sync::{Arc, atomic::{AtomicUsize, Ordering}};
-    ///
-    /// // Simulate resource usage
-    /// let memory_usage = Arc::new(AtomicUsize::new(0));
-    /// let max_memory = 1024; // MB
-    ///
-    /// let memory_clone = Arc::clone(&memory_usage);
-    ///
-    /// // Memory usage not exceeded
-    /// let memory_ok = BoxTester::new(move || {
-    ///     memory_clone.load(Ordering::Relaxed) <= max_memory
-    /// });
-    ///
-    /// // Initial state: normal memory usage
-    /// memory_usage.store(512, Ordering::Relaxed);
-    /// assert!(memory_ok.test());
-    ///
-    /// // Memory usage exceeded (negated)
-    /// let memory_critical = memory_ok.not();
-    /// assert!(!memory_critical.test());
-    ///
-    /// // Memory usage exceeded
-    /// memory_usage.store(2048, Ordering::Relaxed);
-    /// assert!(memory_critical.test());
-    /// ```
-    #[allow(clippy::should_implement_trait)]
-    #[inline]
-    pub fn not(self) -> BoxTester {
-        let self_fn = self.function;
-        BoxTester::new(move || !self_fn())
-    }
-
     /// Combines this tester with another tester using logical NAND
     ///
     /// Returns a new `BoxTester` that returns `true` unless both tests pass.
@@ -447,6 +404,16 @@ impl BoxTester {
         let self_fn = self.function;
         let next_tester = next;
         BoxTester::new(move || !(self_fn() || next_tester.test()))
+    }
+}
+
+impl Not for BoxTester {
+    type Output = BoxTester;
+
+    #[inline]
+    fn not(self) -> Self::Output {
+        let self_fn = self.function;
+        BoxTester::new(move || !self_fn())
     }
 }
 
