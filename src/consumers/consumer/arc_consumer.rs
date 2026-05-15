@@ -10,9 +10,21 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcConsumer` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    Arc,
+    ArcConditionalConsumer,
+    BoxConsumer,
+    BoxConsumerOnce,
+    Consumer,
+    Predicate,
+    RcConsumer,
+    impl_arc_conversions,
+    impl_closure_trait,
+    impl_consumer_clone,
+    impl_consumer_common_methods,
+    impl_consumer_debug_display,
+    impl_shared_consumer_methods,
+};
 
 // ============================================================================
 // 4. ArcConsumer - Thread-safe Shared Ownership Implementation

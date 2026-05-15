@@ -10,9 +10,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxUnaryOperatorOnce` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::BoxTransformerOnce;
 
 // ============================================================================
 // Type Aliases for UnaryOperatorOnce (TransformerOnce<T, T>)

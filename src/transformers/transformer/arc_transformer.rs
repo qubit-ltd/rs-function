@@ -10,9 +10,22 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcTransformer` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    Arc,
+    ArcConditionalTransformer,
+    BoxTransformer,
+    BoxTransformerOnce,
+    Predicate,
+    RcTransformer,
+    Transformer,
+    impl_arc_conversions,
+    impl_closure_trait,
+    impl_shared_transformer_methods,
+    impl_transformer_clone,
+    impl_transformer_common_methods,
+    impl_transformer_constant_method,
+    impl_transformer_debug_display,
+};
 
 // ============================================================================
 // ArcTransformer - Arc<dyn Fn(T) -> R + Send + Sync>

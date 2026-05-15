@@ -10,9 +10,14 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalBiFunctionOnce` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BiFunctionOnce,
+    BiPredicate,
+    BoxBiFunctionOnce,
+    BoxBiPredicate,
+    impl_box_conditional_function,
+    impl_conditional_function_debug_display,
+};
 
 // ============================================================================
 // BoxConditionalBiFunctionOnce - Box-based Conditional BiFunction

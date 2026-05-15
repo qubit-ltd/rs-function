@@ -10,9 +10,21 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcBiTransformer` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BiPredicate,
+    BiTransformer,
+    BoxBiTransformer,
+    BoxBiTransformerOnce,
+    Rc,
+    RcConditionalBiTransformer,
+    Transformer,
+    impl_rc_conversions,
+    impl_shared_transformer_methods,
+    impl_transformer_clone,
+    impl_transformer_common_methods,
+    impl_transformer_constant_method,
+    impl_transformer_debug_display,
+};
 
 // ============================================================================
 // RcBiTransformer - Rc<dyn Fn(T, U) -> R>

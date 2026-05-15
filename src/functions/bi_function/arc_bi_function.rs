@@ -10,9 +10,23 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcBiFunction` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    Arc,
+    ArcConditionalBiFunction,
+    BiFunction,
+    BiPredicate,
+    BoxBiFunction,
+    BoxBiFunctionOnce,
+    Function,
+    RcBiFunction,
+    impl_arc_conversions,
+    impl_closure_trait,
+    impl_function_clone,
+    impl_function_common_methods,
+    impl_function_constant_method,
+    impl_function_debug_display,
+    impl_shared_function_methods,
+};
 
 // ============================================================================
 // ArcBiFunction - Arc<dyn Fn(&T, &U) -> R + Send + Sync>

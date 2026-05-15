@@ -20,23 +20,7 @@
 //! `+ Send + 'static` at their API boundary.
 //!
 
-use std::cell::RefCell;
-use std::rc::Rc;
-use std::sync::Arc;
-
-use parking_lot::Mutex;
-
 use crate::{
-    functions::macros::impl_function_debug_display,
-    macros::{
-        impl_arc_conversions,
-        impl_box_conversions,
-        impl_closure_trait,
-        impl_common_name_methods,
-        impl_common_new_methods,
-        impl_rc_conversions,
-    },
-    suppliers::supplier::Supplier,
     tasks::callable_once::{
         BoxCallableOnce,
         LocalBoxCallableOnce,
@@ -59,9 +43,9 @@ pub use arc_callable::ArcCallable;
 ///
 /// Conceptually this is the same shape as `FnMut() -> Result<R, E>`: `call` takes
 /// `&mut self` and returns `Result<R, E>`, but the API uses task-oriented naming
-/// and helpers. In this crate it aligns with [`Supplier`] of `Result<R, E>`—a
-/// fallible supplier—while emphasizing executable work rather than plain value
-/// production.
+/// and helpers. In this crate it aligns with
+/// [`Supplier`](crate::suppliers::Supplier) of `Result<R, E>`—a fallible
+/// supplier—while emphasizing executable work rather than plain value production.
 ///
 /// Choose **`Callable`** when callers need the success value `R`. When only
 /// success or failure matters, use [`Runnable`](crate::tasks::Runnable), whose

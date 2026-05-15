@@ -10,9 +10,15 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcConditionalFunction` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    Function,
+    Predicate,
+    RcFunction,
+    RcPredicate,
+    impl_conditional_function_clone,
+    impl_conditional_function_debug_display,
+    impl_shared_conditional_function,
+};
 
 // ============================================================================
 // RcConditionalFunction - Rc-based Conditional Function

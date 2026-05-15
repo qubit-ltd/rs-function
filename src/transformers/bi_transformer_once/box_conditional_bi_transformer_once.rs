@@ -10,9 +10,14 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalBiTransformerOnce` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BiPredicate,
+    BiTransformerOnce,
+    BoxBiPredicate,
+    BoxBiTransformerOnce,
+    impl_box_conditional_transformer,
+    impl_conditional_transformer_debug_display,
+};
 
 // ============================================================================
 // BoxConditionalBiTransformerOnce - Box-based Conditional BiTransformer

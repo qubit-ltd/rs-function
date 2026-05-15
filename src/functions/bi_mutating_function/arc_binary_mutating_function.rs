@@ -10,9 +10,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcBinaryMutatingFunction` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::ArcBiMutatingFunction;
 
 /// Type alias for `ArcBiMutatingFunction<T, T, R>`
 ///

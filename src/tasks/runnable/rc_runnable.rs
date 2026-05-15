@@ -10,9 +10,24 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcRunnable` public type.
 
-#![allow(unused_imports)]
+use std::cell::RefCell;
+use std::rc::Rc;
 
-use super::*;
+use crate::{
+    macros::{
+        impl_common_name_methods,
+        impl_common_new_methods,
+        impl_rc_conversions,
+    },
+    suppliers::{
+        macros::impl_supplier_debug_display,
+        supplier::Supplier,
+    },
+    tasks::runnable::{
+        BoxRunnable,
+        Runnable,
+    },
+};
 
 // ============================================================================
 // RcRunnable

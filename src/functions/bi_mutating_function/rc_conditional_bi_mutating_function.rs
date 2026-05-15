@@ -10,9 +10,15 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcConditionalBiMutatingFunction` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BiMutatingFunction,
+    BiPredicate,
+    RcBiMutatingFunction,
+    RcBiPredicate,
+    impl_conditional_function_clone,
+    impl_conditional_function_debug_display,
+    impl_shared_conditional_function,
+};
 
 // ============================================================================
 // RcConditionalBiMutatingFunction - Rc-based Conditional BiMutatingFunction

@@ -10,9 +10,13 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnMutatingFunctionOnceOps` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxConditionalMutatingFunctionOnce,
+    BoxMutatingFunctionOnce,
+    FunctionOnce,
+    Predicate,
+    impl_fn_ops_trait,
+};
 
 // =======================================================================
 // 4. Provide extension methods for closures

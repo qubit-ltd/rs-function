@@ -10,9 +10,17 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxMutator` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxConditionalMutator,
+    BoxMutatorOnce,
+    Mutator,
+    Predicate,
+    RcMutator,
+    impl_box_conversions,
+    impl_box_mutator_methods,
+    impl_mutator_common_methods,
+    impl_mutator_debug_display,
+};
 
 // ============================================================================
 // 3. BoxMutator - Single Ownership Implementation

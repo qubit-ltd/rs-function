@@ -10,9 +10,13 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnStatefulFunctionOps` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxConditionalStatefulFunction,
+    BoxStatefulFunction,
+    Predicate,
+    StatefulFunction,
+    impl_fn_ops_trait,
+};
 
 // ============================================================================
 // FnStatefulFunctionOps - Extension trait for closure functions

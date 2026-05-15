@@ -10,9 +10,14 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalStatefulFunction` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxPredicate,
+    BoxStatefulFunction,
+    Predicate,
+    StatefulFunction,
+    impl_box_conditional_function,
+    impl_conditional_function_debug_display,
+};
 
 // ============================================================================
 // BoxConditionalStatefulFunction - Box-based Conditional StatefulFunction

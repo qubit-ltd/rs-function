@@ -10,9 +10,22 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulConsumer` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    Arc,
+    ArcConditionalStatefulConsumer,
+    BoxConsumerOnce,
+    BoxStatefulConsumer,
+    Mutex,
+    Predicate,
+    RcStatefulConsumer,
+    StatefulConsumer,
+    impl_arc_conversions,
+    impl_closure_trait,
+    impl_consumer_clone,
+    impl_consumer_common_methods,
+    impl_consumer_debug_display,
+    impl_shared_consumer_methods,
+};
 
 // ============================================================================
 // 4. ArcStatefulConsumer - Thread-Safe Shared Ownership Implementation

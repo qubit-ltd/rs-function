@@ -10,9 +10,20 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxRunnableWith` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use crate::{
+    macros::{
+        impl_box_conversions,
+        impl_common_name_methods,
+        impl_common_new_methods,
+    },
+    tasks::{
+        callable_with::BoxCallableWith,
+        runnable_with::{
+            RcRunnableWith,
+            RunnableWith,
+        },
+    },
+};
 
 /// Box-based runnable with mutable input.
 ///

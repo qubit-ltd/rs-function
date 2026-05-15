@@ -10,9 +10,10 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxComparator` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    Comparator,
+    Ordering,
+};
 
 /// A boxed comparator with single ownership.
 ///

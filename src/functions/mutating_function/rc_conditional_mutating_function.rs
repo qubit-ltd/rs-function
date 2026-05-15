@@ -10,9 +10,15 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcConditionalMutatingFunction` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    MutatingFunction,
+    Predicate,
+    RcMutatingFunction,
+    RcPredicate,
+    impl_conditional_function_clone,
+    impl_conditional_function_debug_display,
+    impl_shared_conditional_function,
+};
 
 // ============================================================================
 // RcConditionalMutatingFunction - Rc-based Conditional Mutating Function

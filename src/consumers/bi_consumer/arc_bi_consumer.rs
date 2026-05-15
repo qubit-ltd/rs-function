@@ -10,9 +10,22 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcBiConsumer` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    Arc,
+    ArcConditionalBiConsumer,
+    BiConsumer,
+    BiPredicate,
+    BoxBiConsumer,
+    BoxBiConsumerOnce,
+    RcBiConsumer,
+    ThreadSafeBiConsumerFn,
+    impl_arc_conversions,
+    impl_closure_trait,
+    impl_consumer_clone,
+    impl_consumer_common_methods,
+    impl_consumer_debug_display,
+    impl_shared_consumer_methods,
+};
 
 // =======================================================================
 // 4. ArcBiConsumer - Thread-Safe Shared Ownership

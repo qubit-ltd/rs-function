@@ -10,9 +10,17 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxBiConsumerOnce` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BiConsumerOnce,
+    BiConsumerOnceFn,
+    BiPredicate,
+    BoxConditionalBiConsumerOnce,
+    impl_box_consumer_methods,
+    impl_box_once_conversions,
+    impl_closure_once_trait,
+    impl_consumer_common_methods,
+    impl_consumer_debug_display,
+};
 
 // =======================================================================
 // 2. BoxBiConsumerOnce - Single Ownership Implementation

@@ -10,9 +10,14 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalBiConsumerOnce` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BiConsumerOnce,
+    BiPredicate,
+    BoxBiConsumerOnce,
+    BoxBiPredicate,
+    impl_box_conditional_consumer,
+    impl_conditional_consumer_debug_display,
+};
 
 // =======================================================================
 // 5. BoxConditionalBiConsumerOnce - Box-based Conditional BiConsumerOnce

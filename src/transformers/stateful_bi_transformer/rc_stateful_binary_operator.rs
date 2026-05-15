@@ -10,9 +10,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcStatefulBinaryOperator` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::RcStatefulBiTransformer;
 
 /// Type alias for `RcStatefulBiTransformer<T, T, T>`
 ///

@@ -10,9 +10,12 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnStatefulBiTransformerOps` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BiPredicate,
+    BoxConditionalStatefulBiTransformer,
+    BoxStatefulBiTransformer,
+    StatefulTransformer,
+};
 
 // ============================================================================
 // FnStatefulBiTransformerOps - Extension trait for FnMut(T, U) -> R bi-transformers

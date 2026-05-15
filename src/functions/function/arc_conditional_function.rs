@@ -10,9 +10,15 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcConditionalFunction` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    ArcFunction,
+    ArcPredicate,
+    Function,
+    Predicate,
+    impl_conditional_function_clone,
+    impl_conditional_function_debug_display,
+    impl_shared_conditional_function,
+};
 
 // ============================================================================
 // ArcConditionalFunction - Arc-based Conditional Function

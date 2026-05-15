@@ -10,9 +10,15 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcConditionalStatefulBiTransformer` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    ArcBiPredicate,
+    ArcStatefulBiTransformer,
+    BiPredicate,
+    StatefulBiTransformer,
+    impl_conditional_transformer_clone,
+    impl_conditional_transformer_debug_display,
+    impl_shared_conditional_transformer,
+};
 
 // ============================================================================
 // ArcConditionalStatefulBiTransformer - Arc-based Conditional StatefulBiTransformer

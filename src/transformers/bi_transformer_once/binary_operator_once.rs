@@ -10,9 +10,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BinaryOperatorOnce` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::BiTransformerOnce;
 
 // ============================================================================
 // BinaryOperatorOnce Trait - Marker trait for BiTransformerOnce<T, T, T>

@@ -10,9 +10,11 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnBiTransformerOps` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BiPredicate,
+    BoxBiTransformer,
+    BoxConditionalBiTransformer,
+};
 
 // ============================================================================
 // FnBiTransformerOps - Extension trait for Fn(T, U) -> R bi-transformers

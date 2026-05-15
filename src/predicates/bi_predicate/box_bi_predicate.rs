@@ -10,9 +10,17 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxBiPredicate` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    ALWAYS_FALSE_NAME,
+    ALWAYS_TRUE_NAME,
+    BiPredicate,
+    BiPredicateFn,
+    RcBiPredicate,
+    impl_box_conversions,
+    impl_box_predicate_methods,
+    impl_predicate_common_methods,
+    impl_predicate_debug_display,
+};
 
 /// A Box-based bi-predicate with single ownership.
 ///

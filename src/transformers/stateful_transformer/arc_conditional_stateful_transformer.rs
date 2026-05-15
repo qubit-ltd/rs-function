@@ -10,9 +10,15 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcConditionalStatefulTransformer` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    ArcPredicate,
+    ArcStatefulTransformer,
+    Predicate,
+    StatefulTransformer,
+    impl_conditional_transformer_clone,
+    impl_conditional_transformer_debug_display,
+    impl_shared_conditional_transformer,
+};
 
 // ============================================================================
 // ArcConditionalStatefulTransformer - Arc-based Conditional StatefulTransformer

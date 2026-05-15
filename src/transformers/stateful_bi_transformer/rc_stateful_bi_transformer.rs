@@ -10,9 +10,22 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcStatefulBiTransformer` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BiPredicate,
+    BoxBiTransformerOnce,
+    BoxStatefulBiTransformer,
+    Rc,
+    RcConditionalStatefulBiTransformer,
+    RefCell,
+    StatefulBiTransformer,
+    StatefulTransformer,
+    impl_rc_conversions,
+    impl_shared_transformer_methods,
+    impl_transformer_clone,
+    impl_transformer_common_methods,
+    impl_transformer_constant_method,
+    impl_transformer_debug_display,
+};
 
 // ============================================================================
 // RcStatefulBiTransformer - Rc<dyn FnMut(T, U) -> R>

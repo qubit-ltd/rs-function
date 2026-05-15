@@ -10,9 +10,21 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcSupplier` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    ArcSupplier,
+    BoxSupplier,
+    BoxSupplierOnce,
+    Predicate,
+    Rc,
+    Supplier,
+    Transformer,
+    impl_closure_trait,
+    impl_rc_conversions,
+    impl_shared_supplier_methods,
+    impl_supplier_clone,
+    impl_supplier_common_methods,
+    impl_supplier_debug_display,
+};
 
 // ======================================================================
 // RcSupplier - Single-threaded Shared Ownership

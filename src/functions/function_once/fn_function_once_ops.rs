@@ -10,9 +10,13 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnFunctionOnceOps` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxConditionalFunctionOnce,
+    BoxFunctionOnce,
+    FunctionOnce,
+    Predicate,
+    impl_fn_ops_trait,
+};
 
 // ============================================================================
 // FnFunctionOnceOps - Extension trait for FnOnce transformers

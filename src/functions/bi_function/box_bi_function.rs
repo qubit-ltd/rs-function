@@ -10,9 +10,19 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxBiFunction` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BiFunction,
+    BiPredicate,
+    BoxBiFunctionOnce,
+    BoxConditionalBiFunction,
+    Function,
+    RcBiFunction,
+    impl_box_conversions,
+    impl_box_function_methods,
+    impl_function_common_methods,
+    impl_function_constant_method,
+    impl_function_debug_display,
+};
 
 // ============================================================================
 // BoxBiFunction - Box<dyn Fn(&T, &U) -> R>

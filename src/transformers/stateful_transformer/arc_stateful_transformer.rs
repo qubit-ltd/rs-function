@@ -10,9 +10,23 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulTransformer` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    Arc,
+    ArcConditionalStatefulTransformer,
+    BoxStatefulTransformer,
+    BoxTransformerOnce,
+    Mutex,
+    Predicate,
+    RcStatefulTransformer,
+    StatefulTransformer,
+    impl_arc_conversions,
+    impl_closure_trait,
+    impl_shared_transformer_methods,
+    impl_transformer_clone,
+    impl_transformer_common_methods,
+    impl_transformer_constant_method,
+    impl_transformer_debug_display,
+};
 
 // ============================================================================
 // ArcStatefulTransformer - Arc<Mutex<dyn FnMut(T) -> R + Send>>

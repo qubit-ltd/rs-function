@@ -10,9 +10,12 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnStatefulTransformerOps` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxConditionalStatefulTransformer,
+    BoxStatefulTransformer,
+    Predicate,
+    StatefulTransformer,
+};
 use crate::transformers::macros::impl_transformer_fn_ops_trait;
 
 // ============================================================================

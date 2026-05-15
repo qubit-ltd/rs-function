@@ -10,9 +10,20 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcBiConsumer` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BiConsumer,
+    BiConsumerFn,
+    BiPredicate,
+    BoxBiConsumer,
+    BoxBiConsumerOnce,
+    Rc,
+    RcConditionalBiConsumer,
+    impl_consumer_clone,
+    impl_consumer_common_methods,
+    impl_consumer_debug_display,
+    impl_rc_conversions,
+    impl_shared_consumer_methods,
+};
 
 // =======================================================================
 // 3. RcBiConsumer - Single-Threaded Shared Ownership

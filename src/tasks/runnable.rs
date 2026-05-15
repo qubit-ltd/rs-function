@@ -19,24 +19,8 @@
 //! `+ Send + 'static` at their API boundary.
 //!
 
-use std::cell::RefCell;
-use std::rc::Rc;
-use std::sync::Arc;
-
-use parking_lot::Mutex;
-
 use crate::{
-    macros::{
-        impl_arc_conversions,
-        impl_box_conversions,
-        impl_closure_trait,
-        impl_common_name_methods,
-        impl_common_new_methods,
-        impl_rc_conversions,
-    },
-    suppliers::macros::impl_supplier_debug_display,
-    suppliers::supplier::Supplier,
-    suppliers::supplier_once::SupplierOnce,
+    macros::impl_closure_trait,
     tasks::callable::BoxCallable,
     tasks::runnable_once::BoxRunnableOnce,
 };
@@ -60,8 +44,8 @@ pub use arc_runnable::ArcRunnable;
 ///
 /// Each call borrows `self` mutably and returns [`Result::Ok`] with unit or
 /// [`Result::Err`] with `E`. Semantically, this is a specialization of
-/// [`SupplierOnce`]`<Result<(), E>>` for executable actions and deferred side
-/// effects.
+/// [`SupplierOnce`](crate::suppliers::SupplierOnce)`<Result<(), E>>` for
+/// executable actions and deferred side effects.
 ///
 /// The trait does not require [`Send`]. Concurrent executors should require
 /// `Runnable<E> + Send + 'static` (or similar) at their API boundary.

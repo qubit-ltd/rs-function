@@ -10,9 +10,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcUnaryOperator` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::RcTransformer;
 
 /// Type alias for `RcTransformer<T, T>`
 ///

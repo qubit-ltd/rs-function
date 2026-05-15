@@ -10,9 +10,23 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcMutatingFunction` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    Arc,
+    ArcConditionalMutatingFunction,
+    BoxMutatingFunction,
+    BoxMutatingFunctionOnce,
+    Function,
+    MutatingFunction,
+    Predicate,
+    RcMutatingFunction,
+    impl_arc_conversions,
+    impl_closure_trait,
+    impl_function_clone,
+    impl_function_common_methods,
+    impl_function_debug_display,
+    impl_function_identity_method,
+    impl_shared_function_methods,
+};
 
 // =======================================================================
 // 5. ArcMutatingFunction - Thread-Safe Shared Ownership

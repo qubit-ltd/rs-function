@@ -10,9 +10,20 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcStatefulConsumer` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxConsumerOnce,
+    BoxStatefulConsumer,
+    Predicate,
+    Rc,
+    RcConditionalStatefulConsumer,
+    RefCell,
+    StatefulConsumer,
+    impl_consumer_clone,
+    impl_consumer_common_methods,
+    impl_consumer_debug_display,
+    impl_rc_conversions,
+    impl_shared_consumer_methods,
+};
 
 // ============================================================================
 // 3. RcStatefulConsumer - Single-Threaded Shared Ownership Implementation

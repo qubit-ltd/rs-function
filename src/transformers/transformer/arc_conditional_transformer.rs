@@ -10,9 +10,15 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcConditionalTransformer` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    ArcPredicate,
+    ArcTransformer,
+    Predicate,
+    Transformer,
+    impl_conditional_transformer_clone,
+    impl_conditional_transformer_debug_display,
+    impl_shared_conditional_transformer,
+};
 
 // ============================================================================
 // ArcConditionalTransformer - Arc-based Conditional Transformer

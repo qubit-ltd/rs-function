@@ -10,9 +10,18 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcConditionalConsumer` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    ArcConsumer,
+    ArcPredicate,
+    BoxConsumer,
+    Consumer,
+    Predicate,
+    RcConsumer,
+    impl_conditional_consumer_clone,
+    impl_conditional_consumer_conversions,
+    impl_conditional_consumer_debug_display,
+    impl_shared_conditional_consumer,
+};
 
 // ============================================================================
 // 9. ArcConditionalConsumer - Arc-based Conditional Consumer

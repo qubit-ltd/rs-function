@@ -10,9 +10,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulBinaryOperator` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::BoxStatefulBiTransformer;
 
 // ============================================================================
 // Type Aliases for StatefulBinaryOperator (StatefulBiTransformer<T, T, T>)

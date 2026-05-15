@@ -10,9 +10,23 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulFunction` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    Arc,
+    ArcConditionalStatefulFunction,
+    BoxFunctionOnce,
+    BoxStatefulFunction,
+    Mutex,
+    Predicate,
+    RcStatefulFunction,
+    StatefulFunction,
+    impl_arc_conversions,
+    impl_function_clone,
+    impl_function_common_methods,
+    impl_function_constant_method,
+    impl_function_debug_display,
+    impl_function_identity_method,
+    impl_shared_function_methods,
+};
 
 // ============================================================================
 // ArcStatefulFunction - Arc<Mutex<dyn FnMut(&T) -> R + Send>>

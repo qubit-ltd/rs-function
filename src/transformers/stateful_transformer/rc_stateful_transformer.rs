@@ -10,9 +10,21 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcStatefulTransformer` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxStatefulTransformer,
+    BoxTransformerOnce,
+    Predicate,
+    Rc,
+    RcConditionalStatefulTransformer,
+    RefCell,
+    StatefulTransformer,
+    impl_rc_conversions,
+    impl_shared_transformer_methods,
+    impl_transformer_clone,
+    impl_transformer_common_methods,
+    impl_transformer_constant_method,
+    impl_transformer_debug_display,
+};
 
 // ============================================================================
 // RcStatefulTransformer - Rc<RefCell<dyn FnMut(T) -> R>>

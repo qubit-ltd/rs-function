@@ -10,9 +10,19 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxFunction` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxConditionalFunction,
+    BoxFunctionOnce,
+    Function,
+    Predicate,
+    RcFunction,
+    impl_box_conversions,
+    impl_box_function_methods,
+    impl_function_common_methods,
+    impl_function_constant_method,
+    impl_function_debug_display,
+    impl_function_identity_method,
+};
 
 // ============================================================================
 // BoxFunction - Box<dyn Fn(&T) -> R>

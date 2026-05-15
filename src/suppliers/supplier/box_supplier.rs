@@ -10,9 +10,17 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxSupplier` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxSupplierOnce,
+    Predicate,
+    RcSupplier,
+    Supplier,
+    Transformer,
+    impl_box_conversions,
+    impl_box_supplier_methods,
+    impl_supplier_common_methods,
+    impl_supplier_debug_display,
+};
 
 // ======================================================================
 // BoxSupplier - Single Ownership Implementation

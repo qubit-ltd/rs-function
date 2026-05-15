@@ -10,9 +10,14 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalMutatingFunction` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxMutatingFunction,
+    BoxPredicate,
+    MutatingFunction,
+    Predicate,
+    impl_box_conditional_function,
+    impl_conditional_function_debug_display,
+};
 
 // ============================================================================
 // BoxConditionalMutatingFunction - Box-based Conditional Mutating Function

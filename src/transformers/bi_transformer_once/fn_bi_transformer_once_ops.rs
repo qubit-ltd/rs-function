@@ -10,9 +10,11 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnBiTransformerOnceOps` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BiPredicate,
+    BoxBiTransformerOnce,
+    BoxConditionalBiTransformerOnce,
+};
 
 // ============================================================================
 // FnBiTransformerOnceOps - Extension trait for FnOnce(T, U) -> R bi-transformers

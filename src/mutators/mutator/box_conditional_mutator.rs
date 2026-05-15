@@ -10,9 +10,16 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalMutator` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxMutator,
+    BoxPredicate,
+    Mutator,
+    Predicate,
+    RcMutator,
+    impl_box_conditional_mutator,
+    impl_conditional_mutator_conversions,
+    impl_conditional_mutator_debug_display,
+};
 
 // ============================================================================
 // 8. BoxConditionalMutator - Box-based Conditional Mutator

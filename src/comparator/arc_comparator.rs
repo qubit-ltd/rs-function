@@ -10,9 +10,11 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcComparator` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    Arc,
+    Comparator,
+    Ordering,
+};
 
 /// An Arc-based thread-safe comparator with shared ownership.
 ///

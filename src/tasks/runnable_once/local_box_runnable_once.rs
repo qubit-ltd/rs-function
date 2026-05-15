@@ -10,9 +10,23 @@
 // qubit-style: allow explicit-imports
 //! Defines the `LocalBoxRunnableOnce` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use crate::{
+    macros::{
+        impl_common_name_methods,
+        impl_common_new_methods,
+    },
+    suppliers::{
+        macros::impl_supplier_debug_display,
+        supplier_once::SupplierOnce,
+    },
+    tasks::{
+        callable_once::{
+            CallableOnce,
+            LocalBoxCallableOnce,
+        },
+        runnable_once::RunnableOnce,
+    },
+};
 
 // ============================================================================
 // LocalBoxRunnableOnce
@@ -21,8 +35,9 @@ use super::*;
 /// Local box-based one-time runnable.
 ///
 /// `LocalBoxRunnableOnce<E>` stores a `Box<dyn FnOnce() -> Result<(), E>>` and
-/// can be executed only once on the local thread. Use [`BoxRunnableOnce`] when
-/// the runnable must be movable across threads.
+/// can be executed only once on the local thread. Use
+/// [`BoxRunnableOnce`](crate::tasks::runnable_once::BoxRunnableOnce) when the
+/// runnable must be movable across threads.
 ///
 /// # Type Parameters
 ///

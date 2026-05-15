@@ -10,9 +10,24 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcRunnableWith` public type.
 
-#![allow(unused_imports)]
+use std::sync::Arc;
 
-use super::*;
+use parking_lot::Mutex;
+
+use crate::{
+    functions::macros::impl_function_debug_display,
+    macros::{
+        impl_arc_conversions,
+        impl_closure_trait,
+        impl_common_name_methods,
+        impl_common_new_methods,
+    },
+    tasks::runnable_with::{
+        BoxRunnableWith,
+        RcRunnableWith,
+        RunnableWith,
+    },
+};
 
 /// Thread-safe shared runnable with mutable input.
 ///

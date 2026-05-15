@@ -10,9 +10,17 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcConditionalMutator` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxMutator,
+    Mutator,
+    Predicate,
+    RcMutator,
+    RcPredicate,
+    impl_conditional_mutator_clone,
+    impl_conditional_mutator_conversions,
+    impl_conditional_mutator_debug_display,
+    impl_shared_conditional_mutator,
+};
 
 // ============================================================================
 // 9. RcConditionalMutator - Rc-based Conditional Mutator

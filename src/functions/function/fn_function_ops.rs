@@ -10,9 +10,13 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnFunctionOps` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxConditionalFunction,
+    BoxFunction,
+    Function,
+    Predicate,
+    impl_fn_ops_trait,
+};
 
 // ============================================================================
 // FnFunctionOps - Extension trait for closure functions

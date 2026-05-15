@@ -19,19 +19,9 @@
 //! `+ Send + 'static` at their API boundary.
 //!
 
-use crate::{
-    macros::{
-        impl_box_once_conversions,
-        impl_common_name_methods,
-        impl_common_new_methods,
-    },
-    suppliers::macros::impl_supplier_debug_display,
-    suppliers::supplier_once::SupplierOnce,
-    tasks::callable_once::{
-        BoxCallableOnce,
-        CallableOnce,
-        LocalBoxCallableOnce,
-    },
+use crate::tasks::callable_once::{
+    BoxCallableOnce,
+    LocalBoxCallableOnce,
 };
 
 mod box_runnable_once;
@@ -52,7 +42,7 @@ pub use local_box_runnable_once::LocalBoxRunnableOnce;
 ///
 /// Choose **`RunnableOnce`** when only success or failure matters; the success
 /// type is `()`. When callers need the success value `R`, use
-/// [`CallableOnce`].
+/// [`CallableOnce`](crate::tasks::callable_once::CallableOnce).
 ///
 /// # Type Parameters
 ///

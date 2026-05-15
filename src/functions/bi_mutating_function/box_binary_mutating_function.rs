@@ -10,9 +10,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxBinaryMutatingFunction` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::BoxBiMutatingFunction;
 
 // ============================================================================
 // Type Aliases for BinaryMutatingOperator (BiMutatingFunction<T, U, R> where T == U)

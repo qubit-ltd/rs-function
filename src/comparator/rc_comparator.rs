@@ -10,9 +10,11 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcComparator` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    Comparator,
+    Ordering,
+    Rc,
+};
 
 /// An Rc-based single-threaded comparator with shared ownership.
 ///

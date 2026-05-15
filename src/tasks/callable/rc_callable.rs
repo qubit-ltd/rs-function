@@ -10,9 +10,25 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcCallable` public type.
 
-#![allow(unused_imports)]
+use std::cell::RefCell;
+use std::rc::Rc;
 
-use super::*;
+use crate::{
+    macros::{
+        impl_common_name_methods,
+        impl_common_new_methods,
+        impl_rc_conversions,
+    },
+    suppliers::supplier::Supplier,
+    tasks::{
+        callable::{
+            BoxCallable,
+            Callable,
+        },
+        callable_once::LocalBoxCallableOnce,
+        runnable::BoxRunnable,
+    },
+};
 
 // ============================================================================
 // RcCallable

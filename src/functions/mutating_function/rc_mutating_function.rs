@@ -10,9 +10,21 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcMutatingFunction` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxMutatingFunction,
+    BoxMutatingFunctionOnce,
+    Function,
+    MutatingFunction,
+    Predicate,
+    Rc,
+    RcConditionalMutatingFunction,
+    impl_function_clone,
+    impl_function_common_methods,
+    impl_function_debug_display,
+    impl_function_identity_method,
+    impl_rc_conversions,
+    impl_shared_function_methods,
+};
 
 // =======================================================================
 // 4. RcMutatingFunction - Single-Threaded Shared Ownership

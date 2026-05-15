@@ -10,9 +10,15 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcConditionalStatefulBiTransformer` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BiPredicate,
+    RcBiPredicate,
+    RcStatefulBiTransformer,
+    StatefulBiTransformer,
+    impl_conditional_transformer_clone,
+    impl_conditional_transformer_debug_display,
+    impl_shared_conditional_transformer,
+};
 
 // ============================================================================
 // RcConditionalStatefulBiTransformer - Rc-based Conditional StatefulBiTransformer

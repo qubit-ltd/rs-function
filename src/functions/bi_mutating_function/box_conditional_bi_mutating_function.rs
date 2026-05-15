@@ -10,9 +10,14 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalBiMutatingFunction` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BiMutatingFunction,
+    BiPredicate,
+    BoxBiMutatingFunction,
+    BoxBiPredicate,
+    impl_box_conditional_function,
+    impl_conditional_function_debug_display,
+};
 
 // ============================================================================
 // BoxConditionalBiMutatingFunction - Box-based Conditional BiMutatingFunction

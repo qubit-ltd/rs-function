@@ -10,9 +10,19 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulMutatingFunction` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxConditionalStatefulMutatingFunction,
+    BoxMutatingFunctionOnce,
+    Function,
+    Predicate,
+    RcStatefulMutatingFunction,
+    StatefulMutatingFunction,
+    impl_box_conversions,
+    impl_box_function_methods,
+    impl_function_common_methods,
+    impl_function_debug_display,
+    impl_function_identity_method,
+};
 
 // =======================================================================
 // 3. BoxStatefulMutatingFunction - Single Ownership Implementation

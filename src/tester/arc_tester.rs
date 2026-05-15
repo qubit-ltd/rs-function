@@ -10,9 +10,13 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcTester` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    Arc,
+    BoxTester,
+    Rc,
+    RcTester,
+    Tester,
+};
 
 // ============================================================================
 // ArcTester: Thread-Safe Shared Ownership Implementation
