@@ -69,7 +69,7 @@ fn test_box_binary_operator_once() {
 }
 
 #[test]
-fn test_binary_operator_compatibility() {
+fn test_binary_operator_implements_bi_transformer() {
     fn use_bi_transformer<T: BiTransformer<i32, i32, i32>>(t: T, a: i32, b: i32) -> i32 {
         t.apply(a, b)
     }
