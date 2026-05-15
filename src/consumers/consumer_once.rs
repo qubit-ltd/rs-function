@@ -23,8 +23,8 @@
 //! Unlike reusable [`Consumer`](crate::consumers::Consumer) implementations,
 //! this module does **not** provide `ArcConsumerOnce` or `RcConsumerOnce`
 //! implementations. This is a design decision based on the fact that `FnOnce`
-//! semantics are fundamentally incompatible with shared ownership. See design
-//! docs for details.
+//! semantics require single ownership at the call site, while `Arc` and `Rc`
+//! are meant to preserve shared ownership across clones.
 //!
 //! # Design Philosophy
 //!

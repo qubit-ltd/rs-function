@@ -25,8 +25,8 @@
 //! Unlike reusable [`BiConsumer`](crate::consumers::BiConsumer)
 //! implementations, this module does **not** provide `ArcBiConsumerOnce` or
 //! `RcBiConsumerOnce` implementations. This is a design decision based on the
-//! fundamental incompatibility between `FnOnce` semantics and shared ownership.
-//! See the design documentation for details.
+//! fact that `FnOnce` semantics require single ownership at the call site,
+//! while `Arc` and `Rc` are meant to preserve shared ownership across clones.
 //!
 //! # Design Philosophy
 //!

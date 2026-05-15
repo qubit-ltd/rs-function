@@ -789,9 +789,7 @@ cargo run --example tester_demo
 
 ## Documentation
 
-Historical design notes are available in the repository `doc/` directory. They
-are excluded from published crate packages; the README and rustdoc are the
-authoritative user-facing API references.
+The README and rustdoc are the authoritative user-facing API references.
 
 ## License
 

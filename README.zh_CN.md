@@ -780,8 +780,7 @@ cargo run --example tester_demo
 
 ## 文档
 
-仓库的 `doc/` 目录保留历史设计说明。这些文档不会打入发布包；面向用户的
-API 参考以 README 和 rustdoc 为准。
+面向用户的 API 参考以 README 和 rustdoc 为准。
 
 ## 许可证
 

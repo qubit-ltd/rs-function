@@ -2808,7 +2808,7 @@ mod to_methods_comprehensive_tests {
     }
 
     // ========================================================================
-    // Custom Predicate with Send + Sync for Arc compatibility
+    // Custom Predicate with Send + Sync for Arc conversion
     // ========================================================================
 
     #[derive(Clone)]
