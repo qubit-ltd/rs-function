@@ -413,7 +413,10 @@ fn test_closure_and_then() {
 
 #[cfg(test)]
 mod test_box_conditional_mutator_once_debug_display {
-    use super::*;
+    use super::{
+        BoxMutatorOnce,
+        MutatorOnce,
+    };
 
     #[test]
     fn test_box_conditional_mutator_once_debug() {
@@ -487,7 +490,7 @@ mod test_box_conditional_mutator_once_debug_display {
 // Tests for to_box() method
 #[cfg(test)]
 mod custom_mutator_to_methods_tests {
-    use super::*;
+    use super::MutatorOnce;
     use std::sync::{
         Arc,
         Mutex,
@@ -509,7 +512,10 @@ mod custom_mutator_to_methods_tests {
     impl MutatorOnce<i32> for CloneableMutator {
         fn apply(self, value: &mut i32) {
             *value *= self.multiplier;
-            self.log.lock().unwrap().push(*value);
+            self.log
+                .lock()
+                .expect("mutex should not be poisoned")
+                .push(*value);
         }
     }
 
@@ -521,7 +527,7 @@ mod custom_mutator_to_methods_tests {
         let mut value = 7;
         boxed.apply(&mut value);
         assert_eq!(value, 14);
-        assert_eq!(*log.lock().unwrap(), vec![14]);
+        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![14]);
     }
 
     #[test]
@@ -541,7 +547,10 @@ mod custom_mutator_to_methods_tests {
         boxed2.apply(&mut value2);
         assert_eq!(value2, 12);
 
-        assert_eq!(*log.lock().unwrap(), vec![18, 12]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![18, 12]
+        );
     }
 
     #[test]
@@ -559,6 +568,9 @@ mod custom_mutator_to_methods_tests {
         mutator.apply(&mut value2);
         assert_eq!(value2, 20);
 
-        assert_eq!(*log.lock().unwrap(), vec![10, 20]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![10, 20]
+        );
     }
 }

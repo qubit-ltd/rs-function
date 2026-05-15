@@ -546,8 +546,8 @@ fn test_arc_stateful_bi_transformer_thread_safe() {
         t.apply(5, 5)
     });
 
-    let result1 = handle1.join().unwrap();
-    let result2 = handle2.join().unwrap();
+    let result1 = handle1.join().expect("thread should not panic");
+    let result2 = handle2.join().expect("thread should not panic");
 
     // Results depend on execution order, but both should be valid
     assert!((31..=32).contains(&result1));
@@ -1162,7 +1162,11 @@ fn test_arc_stateful_bi_transformer_to_fn() {
 
 #[cfg(test)]
 mod conditional_stateful_bi_transformer_display_debug_tests {
-    use super::*;
+    use super::{
+        ArcStatefulBiTransformer,
+        BoxStatefulBiTransformer,
+        RcStatefulBiTransformer,
+    };
 
     #[test]
     fn test_box_conditional_stateful_bi_transformer_display() {
@@ -1288,7 +1292,7 @@ mod conditional_stateful_bi_transformer_display_debug_tests {
 
 #[cfg(test)]
 mod stateful_bi_transformer_trait_default_methods_tests {
-    use super::*;
+    use super::StatefulBiTransformer;
     use qubit_function::BiTransformerOnce;
 
     // Custom struct implementing StatefulBiTransformer to test default methods

@@ -28,6 +28,8 @@ use super::{
     impl_shared_function_methods,
 };
 
+type ArcBiFunctionFn<T, U, R> = Arc<dyn Fn(&T, &U) -> R + Send + Sync>;
+
 // ============================================================================
 // ArcBiFunction - Arc<dyn Fn(&T, &U) -> R + Send + Sync>
 // ============================================================================
@@ -46,8 +48,7 @@ use super::{
 /// - **Clonable**: Cheap cloning via `Arc::clone`
 ///
 pub struct ArcBiFunction<T, U, R> {
-    #[allow(clippy::type_complexity)]
-    pub(super) function: Arc<dyn Fn(&T, &U) -> R + Send + Sync>,
+    pub(super) function: ArcBiFunctionFn<T, U, R>,
     pub(super) name: Option<String>,
 }
 

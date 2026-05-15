@@ -25,6 +25,8 @@ use super::{
     impl_shared_consumer_methods,
 };
 
+type RcStatefulConsumerFn<T> = Rc<RefCell<dyn FnMut(&T)>>;
+
 // ============================================================================
 // 3. RcStatefulConsumer - Single-Threaded Shared Ownership Implementation
 // ============================================================================
@@ -91,8 +93,7 @@ use super::{
 /// ```
 ///
 pub struct RcStatefulConsumer<T> {
-    #[allow(clippy::type_complexity)]
-    pub(super) function: Rc<RefCell<dyn FnMut(&T)>>,
+    pub(super) function: RcStatefulConsumerFn<T>,
     pub(super) name: Option<String>,
 }
 

@@ -60,7 +60,10 @@ fn test_predicate_default_conversions_allow_relaxed_generic_types() {
 
 #[cfg(test)]
 mod closure_predicate_tests {
-    use super::*;
+    use super::{
+        FnPredicateOps,
+        Predicate,
+    };
 
     #[test]
     fn test_closure_implements_predicate() {
@@ -115,7 +118,10 @@ mod closure_predicate_tests {
 
 #[cfg(test)]
 mod box_predicate_tests {
-    use super::*;
+    use super::{
+        BoxPredicate,
+        Predicate,
+    };
 
     #[test]
     fn test_new() {
@@ -234,7 +240,10 @@ mod box_predicate_tests {
 
 #[cfg(test)]
 mod rc_predicate_tests {
-    use super::*;
+    use super::{
+        Predicate,
+        RcPredicate,
+    };
 
     #[test]
     fn test_new() {
@@ -351,7 +360,10 @@ mod rc_predicate_tests {
 
 #[cfg(test)]
 mod arc_predicate_tests {
-    use super::*;
+    use super::{
+        ArcPredicate,
+        Predicate,
+    };
 
     #[test]
     fn test_new() {
@@ -395,7 +407,7 @@ mod arc_predicate_tests {
             assert!(!pred.test(&-3));
         })
         .join()
-        .unwrap();
+        .expect("thread should not panic");
     }
 
     #[test]
@@ -458,7 +470,7 @@ mod arc_predicate_tests {
         });
 
         assert!(combined.test(&4));
-        handle.join().unwrap();
+        handle.join().expect("thread should not panic");
     }
 
     #[test]
@@ -492,7 +504,15 @@ mod arc_predicate_tests {
 
 #[cfg(test)]
 mod interior_mutability_tests {
-    use super::*;
+    use super::{
+        Arc,
+        ArcPredicate,
+        BoxPredicate,
+        Mutex,
+        Predicate,
+        RcPredicate,
+        RefCell,
+    };
 
     #[test]
     fn test_box_predicate_with_refcell_counter() {
@@ -513,7 +533,7 @@ mod interior_mutability_tests {
         let count_clone = Arc::clone(&count);
 
         let pred = ArcPredicate::new(move |x: &i32| {
-            let mut c = count_clone.lock().unwrap();
+            let mut c = count_clone.lock().expect("mutex should not be poisoned");
             *c += 1;
             *x > 0
         });
@@ -522,7 +542,7 @@ mod interior_mutability_tests {
         assert!(pred.test(&10));
         assert!(!pred.test(&-3));
 
-        assert_eq!(*count.lock().unwrap(), 3);
+        assert_eq!(*count.lock().expect("mutex should not be poisoned"), 3);
     }
 
     #[test]
@@ -548,7 +568,7 @@ mod interior_mutability_tests {
         let pred = ArcPredicate::new({
             let count = Arc::clone(&count);
             move |x: &i32| {
-                let mut c = count.lock().unwrap();
+                let mut c = count.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *x > 0
             }
@@ -563,15 +583,23 @@ mod interior_mutability_tests {
         });
 
         assert!(pred.test(&3));
-        handle.join().unwrap();
+        handle.join().expect("thread should not panic");
 
-        assert_eq!(*count_clone.lock().unwrap(), 3);
+        assert_eq!(
+            *count_clone.lock().expect("mutex should not be poisoned"),
+            3
+        );
     }
 }
 
 #[cfg(test)]
 mod type_conversion_tests {
-    use super::*;
+    use super::{
+        ArcPredicate,
+        BoxPredicate,
+        Predicate,
+        RcPredicate,
+    };
 
     #[test]
     fn test_closure_to_box() {
@@ -618,7 +646,10 @@ mod type_conversion_tests {
 
 #[cfg(test)]
 mod different_types_tests {
-    use super::*;
+    use super::{
+        BoxPredicate,
+        Predicate,
+    };
 
     #[test]
     fn test_string_predicate() {
@@ -658,7 +689,12 @@ mod different_types_tests {
 
 #[cfg(test)]
 mod generic_function_tests {
-    use super::*;
+    use super::{
+        ArcPredicate,
+        BoxPredicate,
+        Predicate,
+        RcPredicate,
+    };
 
     fn filter_by_predicate<T, P>(items: Vec<T>, pred: P) -> Vec<T>
     where
@@ -706,7 +742,13 @@ mod generic_function_tests {
 
 #[cfg(test)]
 mod logical_operations_tests {
-    use super::*;
+    use super::{
+        ArcPredicate,
+        BoxPredicate,
+        FnPredicateOps,
+        Predicate,
+        RcPredicate,
+    };
 
     // BoxPredicate NAND tests
     #[test]
@@ -983,7 +1025,13 @@ mod logical_operations_tests {
 
 #[cfg(test)]
 mod parameter_types_tests {
-    use super::*;
+    use super::{
+        ArcPredicate,
+        BoxPredicate,
+        FnPredicateOps,
+        Predicate,
+        RcPredicate,
+    };
 
     // Helper functions
     fn is_even(x: &i32) -> bool {
@@ -1720,7 +1768,12 @@ mod parameter_types_tests {
 
 #[cfg(test)]
 mod always_predicates_tests {
-    use super::*;
+    use super::{
+        ArcPredicate,
+        BoxPredicate,
+        Predicate,
+        RcPredicate,
+    };
 
     #[test]
     fn test_box_always_true() {
@@ -1823,7 +1876,11 @@ mod always_predicates_tests {
 
 #[cfg(test)]
 mod to_fn_tests {
-    use super::*;
+    use super::{
+        ArcPredicate,
+        Predicate,
+        RcPredicate,
+    };
 
     #[test]
     fn test_rc_to_fn() {
@@ -1896,7 +1953,12 @@ mod to_fn_tests {
 
 #[cfg(test)]
 mod not_composition_tests {
-    use super::*;
+    use super::{
+        ArcPredicate,
+        BoxPredicate,
+        Predicate,
+        RcPredicate,
+    };
 
     #[test]
     fn test_box_not_and_composition() {
@@ -2034,7 +2096,12 @@ mod not_composition_tests {
 
 #[cfg(test)]
 mod additional_type_conversion_tests {
-    use super::*;
+    use super::{
+        ArcPredicate,
+        BoxPredicate,
+        Predicate,
+        RcPredicate,
+    };
 
     #[test]
     fn test_box_into_box() {
@@ -2123,7 +2190,11 @@ mod additional_type_conversion_tests {
 
 #[cfg(test)]
 mod custom_predicate_tests {
-    use super::*;
+    use super::{
+        BoxPredicate,
+        Predicate,
+        RcPredicate,
+    };
 
     // Custom predicate struct that only implements the test method,
     // relying on default implementations for into_xxx methods.
@@ -2228,7 +2299,7 @@ mod custom_predicate_tests {
 
         let handle = std::thread::spawn(move || arc_clone.test(&10) && !arc_clone.test(&-10));
 
-        assert!(handle.join().unwrap());
+        assert!(handle.join().expect("thread should not panic"));
         assert!(arc.test(&5));
     }
 
@@ -2305,7 +2376,11 @@ mod custom_predicate_tests {
 
 #[cfg(test)]
 mod display_debug_tests {
-    use super::*;
+    use super::{
+        ArcPredicate,
+        BoxPredicate,
+        RcPredicate,
+    };
 
     #[test]
     fn test_box_display_unnamed() {
@@ -2380,7 +2455,12 @@ mod display_debug_tests {
 
 #[cfg(test)]
 mod to_methods_comprehensive_tests {
-    use super::*;
+    use super::{
+        ArcPredicate,
+        BoxPredicate,
+        Predicate,
+        RcPredicate,
+    };
 
     // ========================================================================
     // RcPredicate to_xxx methods
@@ -2510,7 +2590,7 @@ mod to_methods_comprehensive_tests {
 
         let handle = std::thread::spawn(move || arc_pred2.test(&10) && !arc_pred2.test(&-10));
 
-        assert!(handle.join().unwrap());
+        assert!(handle.join().expect("thread should not panic"));
         assert!(arc_pred.test(&5));
     }
 
@@ -2681,7 +2761,7 @@ mod to_methods_comprehensive_tests {
         let arc_clone = arc_pred.clone();
         let handle = std::thread::spawn(move || arc_clone.test(&10) && !arc_clone.test(&-10));
 
-        assert!(handle.join().unwrap());
+        assert!(handle.join().expect("thread should not panic"));
         assert!(arc_pred.test(&5));
         assert!(pred.test(&3));
     }
@@ -2750,8 +2830,8 @@ mod to_methods_comprehensive_tests {
 
         let handle2 = std::thread::spawn(move || !arc2.test(&-5) && !arc2.test(&150));
 
-        assert!(handle1.join().unwrap());
-        assert!(handle2.join().unwrap());
+        assert!(handle1.join().expect("thread should not panic"));
+        assert!(handle2.join().expect("thread should not panic"));
         assert!(pred.test(&50));
     }
 

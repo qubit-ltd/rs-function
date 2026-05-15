@@ -64,7 +64,7 @@ mod tests {
     }
 
     mod bi_predicate_trait_tests {
-        use super::*;
+        use super::BiPredicate;
 
         #[test]
         fn test_closure_implements_bi_predicate() {
@@ -116,7 +116,10 @@ mod tests {
     // ========================================================================
 
     mod bi_predicate_ext_tests {
-        use super::*;
+        use super::{
+            BiPredicate,
+            FnBiPredicateOps,
+        };
 
         #[test]
         fn test_closure_and() {
@@ -204,7 +207,10 @@ mod tests {
     // ========================================================================
 
     mod box_bi_predicate_tests {
-        use super::*;
+        use super::{
+            BiPredicate,
+            BoxBiPredicate,
+        };
 
         #[test]
         fn test_new() {
@@ -400,7 +406,11 @@ mod tests {
     // ========================================================================
 
     mod arc_bi_predicate_tests {
-        use super::*;
+        use super::{
+            ArcBiPredicate,
+            BiPredicate,
+            thread,
+        };
 
         #[test]
         fn test_new() {
@@ -636,7 +646,7 @@ mod tests {
             let handle = thread::spawn(move || pred_clone.test(&5, &3));
 
             assert!(pred.test(&10, &-5));
-            assert!(handle.join().unwrap());
+            assert!(handle.join().expect("thread should not panic"));
         }
 
         #[test]
@@ -651,7 +661,7 @@ mod tests {
                 .collect();
 
             for handle in handles {
-                let _ = handle.join().unwrap();
+                let _ = handle.join().expect("thread should not panic");
             }
         }
     }
@@ -661,7 +671,10 @@ mod tests {
     // ========================================================================
 
     mod rc_bi_predicate_tests {
-        use super::*;
+        use super::{
+            BiPredicate,
+            RcBiPredicate,
+        };
 
         #[test]
         fn test_new() {
@@ -940,7 +953,13 @@ mod tests {
     // ========================================================================
 
     mod conversion_tests {
-        use super::*;
+        use super::{
+            ArcBiPredicate,
+            BiPredicate,
+            BoxBiPredicate,
+            RcBiPredicate,
+            thread,
+        };
 
         #[test]
         fn test_closure_into_box() {
@@ -1107,7 +1126,7 @@ mod tests {
             let arc_clone = arc_pred.clone();
             let handle = thread::spawn(move || arc_clone.test(&5, &3));
 
-            assert!(handle.join().unwrap());
+            assert!(handle.join().expect("thread should not panic"));
         }
 
         #[test]
@@ -1142,7 +1161,12 @@ mod tests {
     // ========================================================================
 
     mod into_fn_tests {
-        use super::*;
+        use super::{
+            ArcBiPredicate,
+            BiPredicate,
+            BoxBiPredicate,
+            RcBiPredicate,
+        };
 
         #[test]
         fn test_closure_into_fn_with_filter() {
@@ -1280,7 +1304,13 @@ mod tests {
     // ========================================================================
 
     mod generic_constraint_tests {
-        use super::*;
+        use super::{
+            ArcBiPredicate,
+            BiPredicate,
+            BoxBiPredicate,
+            RcBiPredicate,
+            thread,
+        };
 
         fn filter_pairs<P>(pairs: Vec<(i32, i32)>, predicate: &P) -> Vec<(i32, i32)>
         where
@@ -1432,7 +1462,9 @@ mod tests {
             where
                 P: BiPredicate<i32, i32> + Send + 'static,
             {
-                thread::spawn(move || pred.test(&x, &y)).join().unwrap()
+                thread::spawn(move || pred.test(&x, &y))
+                    .join()
+                    .expect("thread should not panic")
             }
 
             let pred = ArcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
@@ -1489,7 +1521,10 @@ mod tests {
     // ========================================================================
 
     mod default_implementation_tests {
-        use super::*;
+        use super::{
+            BiPredicate,
+            thread,
+        };
 
         // Custom bi-predicate type that only implements the core
         // test method and relies on default implementations for
@@ -1599,7 +1634,7 @@ mod tests {
             let arc_clone = arc_pred.clone();
             let handle = thread::spawn(move || arc_clone.test(&6, &5));
 
-            assert!(handle.join().unwrap());
+            assert!(handle.join().expect("thread should not panic"));
             assert!(arc_pred.test(&10, &1));
         }
 
@@ -1745,7 +1780,7 @@ mod tests {
             let arc_clone = arc_pred.clone();
             let handle = thread::spawn(move || arc_clone.test(&6, &5));
 
-            assert!(handle.join().unwrap());
+            assert!(handle.join().expect("thread should not panic"));
             assert!(arc_pred.test(&10, &1));
         }
 
@@ -1827,7 +1862,10 @@ mod tests {
     // ========================================================================
 
     mod edge_case_tests {
-        use super::*;
+        use super::{
+            BiPredicate,
+            BoxBiPredicate,
+        };
 
         #[test]
         fn test_with_zero() {
@@ -1903,7 +1941,13 @@ mod tests {
     // ========================================================================
 
     mod mixed_type_combination_tests {
-        use super::*;
+        use super::{
+            ArcBiPredicate,
+            BiPredicate,
+            BoxBiPredicate,
+            FnBiPredicateOps,
+            RcBiPredicate,
+        };
 
         #[test]
         fn test_closure_to_box() {
@@ -2130,7 +2174,7 @@ mod to_fn_tests {
         let handle = std::thread::spawn(move || arc_clone.test(&5, &3));
 
         assert!(arc_pred.test(&10, &5));
-        assert!(handle.join().unwrap());
+        assert!(handle.join().expect("thread should not panic"));
     }
 
     #[test]

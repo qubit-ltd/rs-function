@@ -27,6 +27,8 @@ use super::{
     impl_shared_consumer_methods,
 };
 
+type ArcStatefulConsumerFn<T> = Arc<Mutex<dyn FnMut(&T) + Send>>;
+
 // ============================================================================
 // 4. ArcStatefulConsumer - Thread-Safe Shared Ownership Implementation
 // ============================================================================
@@ -83,8 +85,7 @@ use super::{
 /// ```
 ///
 pub struct ArcStatefulConsumer<T> {
-    #[allow(clippy::type_complexity)]
-    pub(super) function: Arc<Mutex<dyn FnMut(&T) + Send>>,
+    pub(super) function: ArcStatefulConsumerFn<T>,
     pub(super) name: Option<String>,
 }
 

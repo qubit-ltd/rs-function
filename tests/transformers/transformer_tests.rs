@@ -174,7 +174,7 @@ mod arc_transformer_tests {
 
         let handle = thread::spawn(move || cloned.apply(21));
 
-        assert_eq!(handle.join().unwrap(), 42);
+        assert_eq!(handle.join().expect("thread should not panic"), 42);
         assert_eq!(double.apply(21), 42);
     }
 
@@ -201,7 +201,10 @@ mod arc_transformer_tests {
             })
             .collect();
 
-        let results: Vec<_> = handles.into_iter().map(|h| h.join().unwrap()).collect();
+        let results: Vec<_> = handles
+            .into_iter()
+            .map(|h| h.join().expect("thread should not panic"))
+            .collect();
 
         assert_eq!(results, vec![0, 1, 4, 9]);
     }
@@ -685,8 +688,8 @@ mod to_conversion_tests {
             func(10)
         });
 
-        assert_eq!(handle1.join().unwrap(), 42);
-        assert_eq!(handle2.join().unwrap(), 20);
+        assert_eq!(handle1.join().expect("thread should not panic"), 42);
+        assert_eq!(handle2.join().expect("thread should not panic"), 20);
 
         // Original still usable
         assert_eq!(double.apply(5), 10);
@@ -1060,7 +1063,7 @@ mod default_implementation_tests {
         // Test thread safety
         let arc2 = arc.clone();
         let handle = thread::spawn(move || arc2.apply(7));
-        assert_eq!(handle.join().unwrap(), 28);
+        assert_eq!(handle.join().expect("thread should not panic"), 28);
         assert_eq!(arc.apply(3), 12);
     }
 }
@@ -1146,7 +1149,7 @@ mod specialized_into_fn_tests {
         let func = square.into_fn();
 
         let handle = thread::spawn(move || func(7));
-        assert_eq!(handle.join().unwrap(), 49);
+        assert_eq!(handle.join().expect("thread should not panic"), 49);
     }
 
     #[test]
@@ -1502,7 +1505,7 @@ mod transformer_default_to_methods_tests {
 
         let handle = thread::spawn(move || arc.apply(99));
 
-        assert_eq!(handle.join().unwrap(), 100);
+        assert_eq!(handle.join().expect("thread should not panic"), 100);
         assert_eq!(increment.apply(41), 42);
     }
 
@@ -1942,7 +1945,7 @@ mod custom_transformer_to_methods_tests {
 
         let handle = thread::spawn(move || arc.apply(6));
 
-        assert_eq!(handle.join().unwrap(), 42);
+        assert_eq!(handle.join().expect("thread should not panic"), 42);
         assert_eq!(multiply.apply(6), 42);
     }
 
@@ -2207,7 +2210,10 @@ mod transformer_once_tests {
     // BoxTransformer TransformerOnce Tests
     #[cfg(test)]
     mod box_transformer_once_tests {
-        use super::*;
+        use super::{
+            BoxTransformer,
+            Transformer,
+        };
 
         #[test]
         fn test_box_transformer_apply() {
@@ -2265,7 +2271,10 @@ mod transformer_once_tests {
     // RcTransformer TransformerOnce Tests
     #[cfg(test)]
     mod rc_transformer_once_tests {
-        use super::*;
+        use super::{
+            RcTransformer,
+            Transformer,
+        };
 
         #[test]
         fn test_rc_transformer_apply() {
@@ -2399,7 +2408,12 @@ mod transformer_once_tests {
     // ArcTransformer TransformerOnce Tests
     #[cfg(test)]
     mod arc_transformer_once_tests {
-        use super::*;
+        use super::{
+            Arc,
+            ArcTransformer,
+            Transformer,
+            thread,
+        };
 
         #[test]
         fn test_arc_transformer_apply() {
@@ -2500,7 +2514,7 @@ mod transformer_once_tests {
                 boxed.apply(21)
             });
 
-            let result = handle.join().unwrap();
+            let result = handle.join().expect("thread should not panic");
             assert_eq!(result, 42);
         }
 
@@ -2517,7 +2531,7 @@ mod transformer_once_tests {
                 func(7)
             });
 
-            let result = handle.join().unwrap();
+            let result = handle.join().expect("thread should not panic");
             assert_eq!(result, 49);
         }
 
@@ -2575,7 +2589,7 @@ mod transformer_once_tests {
                 new_double.apply(21)
             });
 
-            let result = handle.join().unwrap();
+            let result = handle.join().expect("thread should not panic");
             assert_eq!(result, 42);
         }
 
@@ -2592,7 +2606,7 @@ mod transformer_once_tests {
                 boxed.apply(21)
             });
 
-            let result = handle.join().unwrap();
+            let result = handle.join().expect("thread should not panic");
             assert_eq!(result, 42);
         }
     }
@@ -2600,7 +2614,12 @@ mod transformer_once_tests {
     // Cross-type TransformerOnce Tests
     #[cfg(test)]
     mod cross_type_transformer_once_tests {
-        use super::*;
+        use super::{
+            ArcTransformer,
+            BoxTransformer,
+            RcTransformer,
+            Transformer,
+        };
 
         #[test]
         fn test_all_types_apply() {

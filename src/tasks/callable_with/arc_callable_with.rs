@@ -32,6 +32,8 @@ use crate::{
     },
 };
 
+type ArcCallableWithFn<T, R, E> = Arc<Mutex<dyn FnMut(&mut T) -> Result<R, E> + Send>>;
+
 /// Thread-safe shared callable with mutable input.
 ///
 /// `ArcCallableWith<T, R, E>` stores an
@@ -39,8 +41,7 @@ use crate::{
 ///
 pub struct ArcCallableWith<T, R, E> {
     /// The stateful closure executed by this callable.
-    #[allow(clippy::type_complexity)]
-    pub(super) function: Arc<Mutex<dyn FnMut(&mut T) -> Result<R, E> + Send>>,
+    pub(super) function: ArcCallableWithFn<T, R, E>,
     /// The optional name of this callable.
     pub(super) name: Option<String>,
 }

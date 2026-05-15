@@ -86,7 +86,10 @@ impl Clone for TestMutator {
 
 #[cfg(test)]
 mod test_mutator_default_impl {
-    use super::*;
+    use super::{
+        Mutator,
+        TestMutator,
+    };
 
     #[test]
     fn test_into_box() {
@@ -195,7 +198,10 @@ mod test_mutator_default_impl {
 
 #[cfg(test)]
 mod test_box_mutator {
-    use super::*;
+    use super::{
+        BoxMutator,
+        Mutator,
+    };
 
     #[test]
     fn test_new() {
@@ -473,7 +479,10 @@ mod test_box_mutator {
 
 #[cfg(test)]
 mod test_arc_mutator {
-    use super::*;
+    use super::{
+        ArcMutator,
+        Mutator,
+    };
     use std::thread;
 
     #[test]
@@ -531,7 +540,7 @@ mod test_arc_mutator {
         mutator.apply(&mut value);
         assert_eq!(value, 6);
 
-        assert_eq!(handle.join().unwrap(), 10);
+        assert_eq!(handle.join().expect("thread should not panic"), 10);
     }
 
     #[test]
@@ -712,7 +721,7 @@ mod test_arc_mutator {
         arc.apply(&mut value);
         assert_eq!(value, 6);
 
-        assert_eq!(handle.join().unwrap(), 10);
+        assert_eq!(handle.join().expect("thread should not panic"), 10);
     }
 
     #[test]
@@ -901,7 +910,10 @@ mod test_arc_mutator {
 
 #[cfg(test)]
 mod test_rc_mutator {
-    use super::*;
+    use super::{
+        Mutator,
+        RcMutator,
+    };
 
     #[test]
     fn test_new() {
@@ -1238,7 +1250,12 @@ mod test_rc_mutator {
 
 #[cfg(test)]
 mod test_fn_mutator_ops {
-    use super::*;
+    use super::{
+        FnMutatorOps,
+        Mutator,
+        MutatorOnce,
+        TestMutator,
+    };
 
     #[test]
     fn test_closure_mutate() {
@@ -1396,7 +1413,7 @@ mod test_fn_mutator_ops {
         arc.apply(&mut value);
         assert_eq!(value, 6);
 
-        assert_eq!(handle.join().unwrap(), 10);
+        assert_eq!(handle.join().expect("thread should not panic"), 10);
     }
 
     #[test]
@@ -1424,7 +1441,12 @@ mod test_fn_mutator_ops {
 
 #[cfg(test)]
 mod test_unified_interface {
-    use super::*;
+    use super::{
+        ArcMutator,
+        BoxMutator,
+        Mutator,
+        RcMutator,
+    };
 
     fn apply_mutator<C: Mutator<i32>>(mutator: &C, value: i32) -> i32 {
         let mut val = value;
@@ -1463,7 +1485,12 @@ mod test_unified_interface {
 
 #[cfg(test)]
 mod test_conditional_mutator_and_then {
-    use super::*;
+    use super::{
+        ArcMutator,
+        BoxMutator,
+        Mutator,
+        RcMutator,
+    };
 
     #[test]
     fn test_box_conditional_mutator_and_then_with_closure() {
@@ -1565,7 +1592,11 @@ mod test_conditional_mutator_and_then {
 
 #[cfg(test)]
 mod test_conditional_mutator_debug_display {
-    use super::*;
+    use super::{
+        ArcMutator,
+        BoxMutator,
+        RcMutator,
+    };
 
     #[test]
     fn test_box_conditional_mutator_debug() {

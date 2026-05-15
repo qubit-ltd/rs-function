@@ -15,6 +15,8 @@ use super::{
     Ordering,
 };
 
+type BoxComparatorFn<T> = Box<dyn Fn(&T, &T) -> Ordering>;
+
 /// A boxed comparator with single ownership.
 ///
 /// `BoxComparator` wraps a comparator function in a `Box`, providing single
@@ -36,8 +38,7 @@ use super::{
 /// ```
 ///
 pub struct BoxComparator<T> {
-    #[allow(clippy::type_complexity)]
-    pub(super) function: Box<dyn Fn(&T, &T) -> Ordering>,
+    pub(super) function: BoxComparatorFn<T>,
 }
 
 impl<T> BoxComparator<T> {

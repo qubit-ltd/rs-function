@@ -62,12 +62,16 @@ fn test_bi_consumer_default_conversions_allow_relaxed_generic_types() {
 
 #[cfg(test)]
 mod box_non_mutating_bi_consumer_tests {
-    use super::*;
+    use super::{
+        Arc,
+        BiConsumer,
+        BoxBiConsumer,
+    };
 
     #[test]
     fn test_new_and_accept() {
         let consumer = BoxBiConsumer::new(|x: &i32, y: &i32| {
-            println!("Sum: {}", x + y);
+            std::hint::black_box(x + y);
         });
         consumer.accept(&5, &3);
     }
@@ -78,14 +82,14 @@ mod box_non_mutating_bi_consumer_tests {
         let c1 = counter.clone();
         let c2 = counter.clone();
         let chained = BoxBiConsumer::new(move |_x: &i32, _y: &i32| {
-            *c1.lock().unwrap() += 1;
+            *c1.lock().expect("mutex should not be poisoned") += 1;
         })
         .and_then(move |_x: &i32, _y: &i32| {
-            *c2.lock().unwrap() += 1;
+            *c2.lock().expect("mutex should not be poisoned") += 1;
         });
 
         chained.accept(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 2);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 2);
     }
 
     #[test]
@@ -98,7 +102,7 @@ mod box_non_mutating_bi_consumer_tests {
     #[test]
     fn test_into_box() {
         let closure = |x: &i32, y: &i32| {
-            println!("Sum: {}", x + y);
+            std::hint::black_box(x + y);
         };
         let box_consumer = closure.into_box();
         box_consumer.accept(&5, &3);
@@ -107,7 +111,7 @@ mod box_non_mutating_bi_consumer_tests {
     #[test]
     fn test_into_fn() {
         let consumer = BoxBiConsumer::new(|x: &i32, y: &i32| {
-            println!("Sum: {}", x + y);
+            std::hint::black_box(x + y);
         });
         let func = consumer.into_fn();
         func(&5, &3);
@@ -116,7 +120,7 @@ mod box_non_mutating_bi_consumer_tests {
     #[test]
     fn test_box_into_box() {
         let consumer = BoxBiConsumer::new(|x: &i32, y: &i32| {
-            println!("Sum: {}", x + y);
+            std::hint::black_box(x + y);
         });
         let box_consumer = consumer.into_box();
         box_consumer.accept(&5, &3);
@@ -156,7 +160,7 @@ mod box_non_mutating_bi_consumer_tests {
     #[test]
     fn test_into_rc() {
         let consumer = BoxBiConsumer::new(|x: &i32, y: &i32| {
-            println!("Sum: {}", x + y);
+            std::hint::black_box(x + y);
         });
         let rc_consumer = consumer.into_rc();
         rc_consumer.accept(&5, &3);
@@ -165,12 +169,16 @@ mod box_non_mutating_bi_consumer_tests {
 
 #[cfg(test)]
 mod arc_non_mutating_bi_consumer_tests {
-    use super::*;
+    use super::{
+        Arc,
+        ArcBiConsumer,
+        BiConsumer,
+    };
 
     #[test]
     fn test_new_and_accept() {
         let consumer = ArcBiConsumer::new(|x: &i32, y: &i32| {
-            println!("Sum: {}", x + y);
+            std::hint::black_box(x + y);
         });
         consumer.accept(&5, &3);
     }
@@ -227,7 +235,7 @@ mod arc_non_mutating_bi_consumer_tests {
     #[test]
     fn test_into_box() {
         let consumer = ArcBiConsumer::new(|x: &i32, y: &i32| {
-            println!("Sum: {}", x + y);
+            std::hint::black_box(x + y);
         });
         let box_consumer = consumer.into_box();
         box_consumer.accept(&5, &3);
@@ -236,7 +244,7 @@ mod arc_non_mutating_bi_consumer_tests {
     #[test]
     fn test_into_rc() {
         let consumer = ArcBiConsumer::new(|x: &i32, y: &i32| {
-            println!("Sum: {}", x + y);
+            std::hint::black_box(x + y);
         });
         let rc_consumer = consumer.into_rc();
         rc_consumer.accept(&5, &3);
@@ -276,7 +284,7 @@ mod arc_non_mutating_bi_consumer_tests {
     #[test]
     fn test_into_fn() {
         let consumer = ArcBiConsumer::new(|x: &i32, y: &i32| {
-            println!("Sum: {}", x + y);
+            std::hint::black_box(x + y);
         });
         let func = consumer.into_fn();
         func(&5, &3);
@@ -288,18 +296,23 @@ mod arc_non_mutating_bi_consumer_tests {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
         let consumer = ArcBiConsumer::new(move |x: &i32, y: &i32| {
-            l.lock().unwrap().push(*x + *y);
+            l.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x + *y);
         });
         let func = consumer.into_fn();
         func(&5, &3);
         func(&10, &20);
-        assert_eq!(*log.lock().unwrap(), vec![8, 30]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![8, 30]
+        );
     }
 
     #[test]
     fn test_into_arc() {
         let consumer = ArcBiConsumer::new(|x: &i32, y: &i32| {
-            println!("Sum: {}", x + y);
+            std::hint::black_box(x + y);
         });
         let arc_consumer = consumer.into_arc();
         arc_consumer.accept(&5, &3);
@@ -308,12 +321,16 @@ mod arc_non_mutating_bi_consumer_tests {
 
 #[cfg(test)]
 mod rc_non_mutating_bi_consumer_tests {
-    use super::*;
+    use super::{
+        BiConsumer,
+        Rc,
+        RcBiConsumer,
+    };
 
     #[test]
     fn test_new_and_accept() {
         let consumer = RcBiConsumer::new(|x: &i32, y: &i32| {
-            println!("Sum: {}", x + y);
+            std::hint::black_box(x + y);
         });
         consumer.accept(&5, &3);
     }
@@ -370,7 +387,7 @@ mod rc_non_mutating_bi_consumer_tests {
     #[test]
     fn test_into_box() {
         let consumer = RcBiConsumer::new(|x: &i32, y: &i32| {
-            println!("Sum: {}", x + y);
+            std::hint::black_box(x + y);
         });
         let box_consumer = consumer.into_box();
         box_consumer.accept(&5, &3);
@@ -410,7 +427,7 @@ mod rc_non_mutating_bi_consumer_tests {
     #[test]
     fn test_into_fn() {
         let consumer = RcBiConsumer::new(|x: &i32, y: &i32| {
-            println!("Sum: {}", x + y);
+            std::hint::black_box(x + y);
         });
         let func = consumer.into_fn();
         func(&5, &3);
@@ -419,7 +436,7 @@ mod rc_non_mutating_bi_consumer_tests {
     #[test]
     fn test_into_rc() {
         let consumer = RcBiConsumer::new(|x: &i32, y: &i32| {
-            println!("Sum: {}", x + y);
+            std::hint::black_box(x + y);
         });
         let rc_consumer = consumer.into_rc();
         rc_consumer.accept(&5, &3);
@@ -428,12 +445,17 @@ mod rc_non_mutating_bi_consumer_tests {
 
 #[cfg(test)]
 mod closure_tests {
-    use super::*;
+    use super::{
+        Arc,
+        BiConsumer,
+        FnBiConsumerOps,
+        Rc,
+    };
 
     #[test]
     fn test_closure_accept() {
         let closure = |x: &i32, y: &i32| {
-            println!("Sum: {}", x + y);
+            std::hint::black_box(x + y);
         };
         closure.accept(&5, &3);
     }
@@ -444,21 +466,21 @@ mod closure_tests {
         let c1 = counter.clone();
         let c2 = counter.clone();
         let chained = (move |_x: &i32, _y: &i32| {
-            *c1.lock().unwrap() += 1;
+            *c1.lock().expect("mutex should not be poisoned") += 1;
         })
         .and_then(move |_x: &i32, _y: &i32| {
-            *c2.lock().unwrap() += 1;
+            *c2.lock().expect("mutex should not be poisoned") += 1;
         });
 
         chained.accept(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 2);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 2);
     }
 
     #[test]
     fn test_closure_into_fn() {
         // Test into_fn in impl<T, U, F> BiConsumer<T, U> for F
         let closure = |x: &i32, y: &i32| {
-            println!("Sum: {}", x + y);
+            std::hint::black_box(x + y);
         };
         let func = closure.into_fn();
         func(&5, &3);
@@ -470,7 +492,7 @@ mod closure_tests {
         let counter = Arc::new(std::sync::Mutex::new(0));
         let c = counter.clone();
         let closure = move |x: &i32, y: &i32| {
-            *c.lock().unwrap() += x + y;
+            *c.lock().expect("mutex should not be poisoned") += x + y;
         };
 
         // Use default into_box
@@ -490,15 +512,15 @@ mod closure_tests {
         let counter3 = Arc::new(std::sync::Mutex::new(0));
         let c3 = counter3.clone();
         let closure3 = move |x: &i32, y: &i32| {
-            *c3.lock().unwrap() += x + y;
+            *c3.lock().expect("mutex should not be poisoned") += x + y;
         };
         let arc_consumer = closure3.into_arc();
         arc_consumer.accept(&1, &1);
 
         // Verify increments
-        assert_eq!(*counter.lock().unwrap(), 8); // 5+3
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 8); // 5+3
         assert_eq!(*counter2.borrow(), 5); // 2+3
-        assert_eq!(*counter3.lock().unwrap(), 2); // 1+1
+        assert_eq!(*counter3.lock().expect("mutex should not be poisoned"), 2); // 1+1
     }
 }
 
@@ -508,7 +530,15 @@ mod closure_tests {
 
 #[cfg(test)]
 mod edge_cases_tests {
-    use super::*;
+    use super::{
+        Arc,
+        ArcBiConsumer,
+        BiConsumer,
+        BoxBiConsumer,
+        Rc,
+        RcBiConsumer,
+        RefCell,
+    };
 
     #[test]
     fn test_noop_multiple_calls() {
@@ -524,11 +554,11 @@ mod edge_cases_tests {
         let counter = Arc::new(std::sync::Mutex::new(0));
         let c = counter.clone();
         let consumer = BoxBiConsumer::new(move |_x: &i32, _y: &i32| {
-            *c.lock().unwrap() += 1;
+            *c.lock().expect("mutex should not be poisoned") += 1;
         })
         .and_then(BoxBiConsumer::noop());
         consumer.accept(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 1);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 1);
     }
 
     #[test]
@@ -538,17 +568,17 @@ mod edge_cases_tests {
         let c2 = counter.clone();
         let c3 = counter.clone();
         let consumer = BoxBiConsumer::new(move |_x: &i32, _y: &i32| {
-            *c1.lock().unwrap() += 1;
+            *c1.lock().expect("mutex should not be poisoned") += 1;
         })
         .and_then(move |_x: &i32, _y: &i32| {
-            *c2.lock().unwrap() += 1;
+            *c2.lock().expect("mutex should not be poisoned") += 1;
         })
         .and_then(BoxBiConsumer::noop())
         .and_then(move |_x: &i32, _y: &i32| {
-            *c3.lock().unwrap() += 1;
+            *c3.lock().expect("mutex should not be poisoned") += 1;
         });
         consumer.accept(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 3);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 3);
     }
 
     #[test]
@@ -556,10 +586,13 @@ mod edge_cases_tests {
         let counter = Arc::new(std::sync::Mutex::new(String::new()));
         let c = counter.clone();
         let consumer = BoxBiConsumer::new(move |s: &String, n: &i32| {
-            *c.lock().unwrap() = format!("{}: {}", s, n);
+            *c.lock().expect("mutex should not be poisoned") = format!("{}: {}", s, n);
         });
         consumer.accept(&"Count".to_string(), &42);
-        assert_eq!(*counter.lock().unwrap(), "Count: 42");
+        assert_eq!(
+            *counter.lock().expect("mutex should not be poisoned"),
+            "Count: 42"
+        );
     }
 
     #[test]
@@ -567,7 +600,7 @@ mod edge_cases_tests {
         let counter = Arc::new(std::sync::Mutex::new(0));
         let c = counter.clone();
         let consumer = ArcBiConsumer::new(move |x: &i32, y: &i32| {
-            *c.lock().unwrap() += x + y;
+            *c.lock().expect("mutex should not be poisoned") += x + y;
         });
 
         let handles: Vec<_> = (0..10)
@@ -580,11 +613,11 @@ mod edge_cases_tests {
             .collect();
 
         for handle in handles {
-            handle.join().unwrap();
+            handle.join().expect("thread should not panic");
         }
 
         // Sum of (0+1) + (1+1) + ... + (9+1) = 55
-        assert_eq!(*counter.lock().unwrap(), 55);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 55);
     }
 
     #[test]
@@ -621,13 +654,13 @@ mod edge_cases_tests {
         let counter = Arc::new(std::sync::Mutex::new(0));
         let c = counter.clone();
         let consumer = ArcBiConsumer::new(move |x: &i32, y: &i32| {
-            *c.lock().unwrap() += x + y;
+            *c.lock().expect("mutex should not be poisoned") += x + y;
         });
         let func = consumer.to_fn();
         func(&1, &2);
         func(&3, &4);
         func(&5, &6);
-        assert_eq!(*counter.lock().unwrap(), 21); // 3 + 7 + 11
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 21); // 3 + 7 + 11
     }
 
     #[test]
@@ -651,18 +684,25 @@ mod edge_cases_tests {
 
 #[cfg(test)]
 mod conversion_tests {
-    use super::*;
+    use super::{
+        Arc,
+        ArcBiConsumer,
+        BiConsumer,
+        Rc,
+        RcBiConsumer,
+        RefCell,
+    };
 
     #[test]
     fn test_arc_to_box() {
         let counter = Arc::new(std::sync::Mutex::new(0));
         let c = counter.clone();
         let arc_consumer = ArcBiConsumer::new(move |x: &i32, y: &i32| {
-            *c.lock().unwrap() += x + y;
+            *c.lock().expect("mutex should not be poisoned") += x + y;
         });
         let box_consumer = arc_consumer.into_box();
         box_consumer.accept(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 8);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 8);
     }
 
     #[test]
@@ -670,11 +710,11 @@ mod conversion_tests {
         let counter = Arc::new(std::sync::Mutex::new(0));
         let c = counter.clone();
         let arc_consumer = ArcBiConsumer::new(move |x: &i32, y: &i32| {
-            *c.lock().unwrap() += x + y;
+            *c.lock().expect("mutex should not be poisoned") += x + y;
         });
         let rc_consumer = arc_consumer.into_rc();
         rc_consumer.accept(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 8);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 8);
     }
 
     #[test]
@@ -694,11 +734,11 @@ mod conversion_tests {
         let counter = Arc::new(std::sync::Mutex::new(0));
         let c = counter.clone();
         let closure = move |x: &i32, y: &i32| {
-            *c.lock().unwrap() += x + y;
+            *c.lock().expect("mutex should not be poisoned") += x + y;
         };
         let box_consumer = closure.into_box();
         box_consumer.accept(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 8);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 8);
     }
 
     #[test]
@@ -706,11 +746,11 @@ mod conversion_tests {
         let counter = Arc::new(std::sync::Mutex::new(0));
         let c = counter.clone();
         let closure = move |x: &i32, y: &i32| {
-            *c.lock().unwrap() += x + y;
+            *c.lock().expect("mutex should not be poisoned") += x + y;
         };
         let arc_consumer = closure.into_arc();
         arc_consumer.accept(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 8);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 8);
     }
 
     #[test]
@@ -732,12 +772,17 @@ mod conversion_tests {
 
 #[cfg(test)]
 mod name_tests {
-    use super::*;
+    use super::{
+        ArcBiConsumer,
+        BiConsumer,
+        BoxBiConsumer,
+        RcBiConsumer,
+    };
 
     #[test]
     fn test_box_consumer_name() {
         let mut consumer = BoxBiConsumer::new(|x: &i32, y: &i32| {
-            println!("{} + {} = {}", x, y, x + y);
+            std::hint::black_box(x + y);
         });
         assert_eq!(consumer.name(), None);
 
@@ -748,7 +793,7 @@ mod name_tests {
     #[test]
     fn test_arc_consumer_name() {
         let mut consumer = ArcBiConsumer::new(|x: &i32, y: &i32| {
-            println!("{} + {} = {}", x, y, x + y);
+            std::hint::black_box(x + y);
         });
         assert_eq!(consumer.name(), None);
 
@@ -759,7 +804,7 @@ mod name_tests {
     #[test]
     fn test_rc_consumer_name() {
         let mut consumer = RcBiConsumer::new(|x: &i32, y: &i32| {
-            println!("{} + {} = {}", x, y, x + y);
+            std::hint::black_box(x + y);
         });
         assert_eq!(consumer.name(), None);
 
@@ -898,7 +943,11 @@ mod name_tests {
 
 #[cfg(test)]
 mod display_debug_tests {
-    use super::*;
+    use super::{
+        ArcBiConsumer,
+        BoxBiConsumer,
+        RcBiConsumer,
+    };
 
     #[test]
     fn test_box_consumer_debug() {
@@ -979,7 +1028,12 @@ mod display_debug_tests {
 
 #[cfg(test)]
 mod custom_non_mutating_bi_consumer_tests {
-    use super::*;
+    use super::{
+        Arc,
+        ArcBiConsumer,
+        BiConsumer,
+        RcBiConsumer,
+    };
 
     /// Custom BiConsumer implementation for testing trait's default methods
     struct CustomBiConsumer<T, U> {
@@ -998,7 +1052,7 @@ mod custom_non_mutating_bi_consumer_tests {
 
     impl<T, U> BiConsumer<T, U> for CustomBiConsumer<T, U> {
         fn accept(&self, _first: &T, _second: &U) {
-            *self.counter.lock().unwrap() += 1;
+            *self.counter.lock().expect("mutex should not be poisoned") += 1;
         }
         // Use default into_xxx implementations from the trait
     }
@@ -1011,10 +1065,10 @@ mod custom_non_mutating_bi_consumer_tests {
         // Test default into_box implementation
         let box_consumer = custom.into_box();
         box_consumer.accept(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 1);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 1);
 
         box_consumer.accept(&10, &20);
-        assert_eq!(*counter.lock().unwrap(), 2);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 2);
     }
 
     #[test]
@@ -1025,15 +1079,15 @@ mod custom_non_mutating_bi_consumer_tests {
         // Test default into_rc implementation
         let rc_consumer = custom.into_rc();
         rc_consumer.accept(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 1);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 1);
 
         // Test RcBiConsumer's clone
         let rc_clone = rc_consumer.clone();
         rc_consumer.accept(&10, &20);
-        assert_eq!(*counter.lock().unwrap(), 2);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 2);
 
         rc_clone.accept(&15, &25);
-        assert_eq!(*counter.lock().unwrap(), 3);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 3);
     }
 
     #[test]
@@ -1044,15 +1098,15 @@ mod custom_non_mutating_bi_consumer_tests {
         // Test default into_arc implementation (requires Send + Sync)
         let arc_consumer = custom.into_arc();
         arc_consumer.accept(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 1);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 1);
 
         // Test ArcBiConsumer's clone
         let arc_clone = arc_consumer.clone();
         arc_consumer.accept(&10, &20);
-        assert_eq!(*counter.lock().unwrap(), 2);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 2);
 
         arc_clone.accept(&15, &25);
-        assert_eq!(*counter.lock().unwrap(), 3);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 3);
     }
 
     #[test]
@@ -1063,13 +1117,13 @@ mod custom_non_mutating_bi_consumer_tests {
         // Test default into_fn implementation
         let func = custom.into_fn();
         func(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 1);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 1);
 
         func(&10, &20);
-        assert_eq!(*counter.lock().unwrap(), 2);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 2);
 
         func(&15, &25);
-        assert_eq!(*counter.lock().unwrap(), 3);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 3);
     }
 
     #[test]
@@ -1081,11 +1135,11 @@ mod custom_non_mutating_bi_consumer_tests {
         let box_consumer = custom.into_box();
         let c2 = counter.clone();
         let chained = box_consumer.and_then(move |_: &i32, _: &i32| {
-            *c2.lock().unwrap() += 10;
+            *c2.lock().expect("mutex should not be poisoned") += 10;
         });
 
         chained.accept(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 11); // 1 + 10
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 11); // 1 + 10
     }
 
     #[test]
@@ -1097,13 +1151,13 @@ mod custom_non_mutating_bi_consumer_tests {
         let rc_consumer = custom.into_rc();
         let c2 = counter.clone();
         let second = RcBiConsumer::new(move |_: &i32, _: &i32| {
-            *c2.lock().unwrap() += 10;
+            *c2.lock().expect("mutex should not be poisoned") += 10;
         });
 
         let chained = rc_consumer.and_then(second);
 
         chained.accept(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 11); // 1 + 10
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 11); // 1 + 10
     }
 
     #[test]
@@ -1115,13 +1169,13 @@ mod custom_non_mutating_bi_consumer_tests {
         let arc_consumer = custom.into_arc();
         let c2 = counter.clone();
         let second = ArcBiConsumer::new(move |_: &i32, _: &i32| {
-            *c2.lock().unwrap() += 10;
+            *c2.lock().expect("mutex should not be poisoned") += 10;
         });
 
         let chained = arc_consumer.and_then(second);
 
         chained.accept(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 11); // 1 + 10
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 11); // 1 + 10
     }
 
     #[test]
@@ -1131,19 +1185,19 @@ mod custom_non_mutating_bi_consumer_tests {
         let custom1 = CustomBiConsumer::new(counter1.clone());
         let box_consumer = custom1.into_box();
         box_consumer.accept(&5, &3);
-        assert_eq!(*counter1.lock().unwrap(), 1);
+        assert_eq!(*counter1.lock().expect("mutex should not be poisoned"), 1);
 
         let counter2 = Arc::new(std::sync::Mutex::new(0));
         let custom2 = CustomBiConsumer::new(counter2.clone());
         let rc_consumer = custom2.into_rc();
         rc_consumer.accept(&10, &20);
-        assert_eq!(*counter2.lock().unwrap(), 1);
+        assert_eq!(*counter2.lock().expect("mutex should not be poisoned"), 1);
 
         let counter3 = Arc::new(std::sync::Mutex::new(0));
         let custom3 = CustomBiConsumer::new(counter3.clone());
         let arc_consumer = custom3.into_arc();
         arc_consumer.accept(&15, &25);
-        assert_eq!(*counter3.lock().unwrap(), 1);
+        assert_eq!(*counter3.lock().expect("mutex should not be poisoned"), 1);
     }
 
     #[test]
@@ -1157,7 +1211,7 @@ mod custom_non_mutating_bi_consumer_tests {
 
         impl BiConsumer<String, i32> for StringIntConsumer {
             fn accept(&self, _first: &String, second: &i32) {
-                *self.counter.lock().unwrap() += second;
+                *self.counter.lock().expect("mutex should not be poisoned") += second;
             }
         }
 
@@ -1167,10 +1221,10 @@ mod custom_non_mutating_bi_consumer_tests {
 
         let box_consumer = custom.into_box();
         box_consumer.accept(&"test".to_string(), &5);
-        assert_eq!(*counter.lock().unwrap(), 5);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 5);
 
         box_consumer.accept(&"hello".to_string(), &10);
-        assert_eq!(*counter.lock().unwrap(), 15);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 15);
     }
 
     #[test]
@@ -1188,10 +1242,10 @@ mod custom_non_mutating_bi_consumer_tests {
         };
 
         simulate_usage(&func);
-        assert_eq!(*counter.lock().unwrap(), 2);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 2);
 
         func(&5, &6);
-        assert_eq!(*counter.lock().unwrap(), 3);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 3);
     }
 
     #[test]
@@ -1211,16 +1265,23 @@ mod custom_non_mutating_bi_consumer_tests {
             .collect();
 
         for handle in handles {
-            handle.join().unwrap();
+            handle.join().expect("thread should not panic");
         }
 
-        assert_eq!(*counter.lock().unwrap(), 5);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 5);
     }
 }
 
 #[cfg(test)]
 mod noop_tests {
-    use super::*;
+    use super::{
+        Arc,
+        ArcBiConsumer,
+        BiConsumer,
+        BoxBiConsumer,
+        Rc,
+        RcBiConsumer,
+    };
 
     #[test]
     fn test_box_noop_multiple_accepts() {
@@ -1254,11 +1315,11 @@ mod noop_tests {
         let counter = Arc::new(std::sync::Mutex::new(0));
         let c = counter.clone();
         let active = BoxBiConsumer::new(move |_x: &i32, _y: &i32| {
-            *c.lock().unwrap() += 1;
+            *c.lock().expect("mutex should not be poisoned") += 1;
         });
         let chained = active.and_then(BoxBiConsumer::noop());
         chained.accept(&1, &2);
-        assert_eq!(*counter.lock().unwrap(), 1);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 1);
     }
 
     #[test]
@@ -1293,7 +1354,14 @@ mod noop_tests {
 
 #[cfg(test)]
 mod to_methods_tests {
-    use super::*;
+    use super::{
+        Arc,
+        ArcBiConsumer,
+        BiConsumer,
+        Rc,
+        RcBiConsumer,
+        RefCell,
+    };
 
     // ========================================================================
     // ArcBiConsumer to_xxx tests
@@ -1304,16 +1372,16 @@ mod to_methods_tests {
         let counter = Arc::new(std::sync::Mutex::new(0));
         let c = counter.clone();
         let arc_consumer = ArcBiConsumer::new(move |x: &i32, y: &i32| {
-            *c.lock().unwrap() += x + y;
+            *c.lock().expect("mutex should not be poisoned") += x + y;
         });
 
         let box_consumer = arc_consumer.to_box();
         box_consumer.accept(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 8);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 8);
 
         // Original arc_consumer is still usable
         arc_consumer.accept(&10, &20);
-        assert_eq!(*counter.lock().unwrap(), 38); // 8 + 30
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 38); // 8 + 30
     }
 
     #[test]
@@ -1321,16 +1389,16 @@ mod to_methods_tests {
         let counter = Arc::new(std::sync::Mutex::new(0));
         let c = counter.clone();
         let arc_consumer = ArcBiConsumer::new(move |x: &i32, y: &i32| {
-            *c.lock().unwrap() += x + y;
+            *c.lock().expect("mutex should not be poisoned") += x + y;
         });
 
         let rc_consumer = arc_consumer.to_rc();
         rc_consumer.accept(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 8);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 8);
 
         // Original arc_consumer is still usable
         arc_consumer.accept(&10, &20);
-        assert_eq!(*counter.lock().unwrap(), 38); // 8 + 30
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 38); // 8 + 30
     }
 
     #[test]
@@ -1338,16 +1406,16 @@ mod to_methods_tests {
         let counter = Arc::new(std::sync::Mutex::new(0));
         let c = counter.clone();
         let arc_consumer = ArcBiConsumer::new(move |x: &i32, y: &i32| {
-            *c.lock().unwrap() += x + y;
+            *c.lock().expect("mutex should not be poisoned") += x + y;
         });
 
         let arc_consumer2 = arc_consumer.to_arc();
         arc_consumer2.accept(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 8);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 8);
 
         // Original arc_consumer is still usable
         arc_consumer.accept(&10, &20);
-        assert_eq!(*counter.lock().unwrap(), 38); // 8 + 30
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 38); // 8 + 30
     }
 
     #[test]
@@ -1355,16 +1423,16 @@ mod to_methods_tests {
         let counter = Arc::new(std::sync::Mutex::new(0));
         let c = counter.clone();
         let arc_consumer = ArcBiConsumer::new(move |x: &i32, y: &i32| {
-            *c.lock().unwrap() += x + y;
+            *c.lock().expect("mutex should not be poisoned") += x + y;
         });
 
         let func = arc_consumer.to_fn();
         func(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 8);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 8);
 
         // Original arc_consumer is still usable
         arc_consumer.accept(&10, &20);
-        assert_eq!(*counter.lock().unwrap(), 38); // 8 + 30
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 38); // 8 + 30
     }
 
     #[test]
@@ -1372,14 +1440,14 @@ mod to_methods_tests {
         let counter = Arc::new(std::sync::Mutex::new(0));
         let c = counter.clone();
         let arc_consumer = ArcBiConsumer::new(move |x: &i32, y: &i32| {
-            *c.lock().unwrap() += x + y;
+            *c.lock().expect("mutex should not be poisoned") += x + y;
         });
 
         let func = arc_consumer.to_fn();
         func(&1, &2);
         func(&3, &4);
         func(&5, &6);
-        assert_eq!(*counter.lock().unwrap(), 21); // 3 + 7 + 11
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 21); // 3 + 7 + 11
     }
 
     // ========================================================================
@@ -1461,16 +1529,16 @@ mod to_methods_tests {
         let counter = Arc::new(std::sync::Mutex::new(0));
         let c = counter.clone();
         let closure = move |x: &i32, y: &i32| {
-            *c.lock().unwrap() += x + y;
+            *c.lock().expect("mutex should not be poisoned") += x + y;
         };
 
         let box_consumer = closure.to_box();
         box_consumer.accept(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 8);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 8);
 
         // Original closure is still usable
         closure(&10, &20);
-        assert_eq!(*counter.lock().unwrap(), 38); // 8 + 30
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 38); // 8 + 30
     }
 
     #[test]
@@ -1495,16 +1563,16 @@ mod to_methods_tests {
         let counter = Arc::new(std::sync::Mutex::new(0));
         let c = counter.clone();
         let closure = move |x: &i32, y: &i32| {
-            *c.lock().unwrap() += x + y;
+            *c.lock().expect("mutex should not be poisoned") += x + y;
         };
 
         let arc_consumer = closure.to_arc();
         arc_consumer.accept(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 8);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 8);
 
         // Original closure is still usable
         closure(&10, &20);
-        assert_eq!(*counter.lock().unwrap(), 38); // 8 + 30
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 38); // 8 + 30
     }
 
     #[test]
@@ -1512,16 +1580,16 @@ mod to_methods_tests {
         let counter = Arc::new(std::sync::Mutex::new(0));
         let c = counter.clone();
         let closure = move |x: &i32, y: &i32| {
-            *c.lock().unwrap() += x + y;
+            *c.lock().expect("mutex should not be poisoned") += x + y;
         };
 
         let func = closure.to_fn();
         func(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 8);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 8);
 
         // Original closure is still usable
         closure(&10, &20);
-        assert_eq!(*counter.lock().unwrap(), 38); // 8 + 30
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 38); // 8 + 30
     }
 
     // ========================================================================
@@ -1542,7 +1610,7 @@ mod to_methods_tests {
 
     impl BiConsumer<i32, i32> for CustomConsumer {
         fn accept(&self, first: &i32, second: &i32) {
-            *self.counter.lock().unwrap() += first + second;
+            *self.counter.lock().expect("mutex should not be poisoned") += first + second;
         }
         // Use default to_xxx implementations from the trait
     }
@@ -1557,11 +1625,11 @@ mod to_methods_tests {
 
         let box_consumer = custom.to_box();
         box_consumer.accept(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 8);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 8);
 
         // Original custom is still usable
         custom.accept(&10, &20);
-        assert_eq!(*counter.lock().unwrap(), 38); // 8 + 30
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 38); // 8 + 30
     }
 
     #[test]
@@ -1571,11 +1639,11 @@ mod to_methods_tests {
 
         let rc_consumer = custom.to_rc();
         rc_consumer.accept(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 8);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 8);
 
         // Original custom is still usable
         custom.accept(&10, &20);
-        assert_eq!(*counter.lock().unwrap(), 38); // 8 + 30
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 38); // 8 + 30
     }
 
     #[test]
@@ -1585,11 +1653,11 @@ mod to_methods_tests {
 
         let arc_consumer = custom.to_arc();
         arc_consumer.accept(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 8);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 8);
 
         // Original custom is still usable
         custom.accept(&10, &20);
-        assert_eq!(*counter.lock().unwrap(), 38); // 8 + 30
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 38); // 8 + 30
     }
 
     #[test]
@@ -1599,11 +1667,11 @@ mod to_methods_tests {
 
         let func = custom.to_fn();
         func(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 8);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 8);
 
         // Original custom is still usable
         custom.accept(&10, &20);
-        assert_eq!(*counter.lock().unwrap(), 38); // 8 + 30
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 38); // 8 + 30
     }
 
     #[test]
@@ -1615,11 +1683,11 @@ mod to_methods_tests {
         func(&1, &2);
         func(&3, &4);
         func(&5, &6);
-        assert_eq!(*counter.lock().unwrap(), 21); // 3 + 7 + 11
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 21); // 3 + 7 + 11
 
         // Original custom is still usable
         custom.accept(&10, &10);
-        assert_eq!(*counter.lock().unwrap(), 41); // 21 + 20
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 41); // 21 + 20
     }
 
     #[test]
@@ -1630,15 +1698,15 @@ mod to_methods_tests {
         let box_consumer = custom.to_box();
         let c2 = counter.clone();
         let chained = box_consumer.and_then(move |x: &i32, y: &i32| {
-            *c2.lock().unwrap() += x * y;
+            *c2.lock().expect("mutex should not be poisoned") += x * y;
         });
 
         chained.accept(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 23); // (5 + 3) + (5 * 3) = 8 + 15
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 23); // (5 + 3) + (5 * 3) = 8 + 15
 
         // Original custom is still usable
         custom.accept(&2, &2);
-        assert_eq!(*counter.lock().unwrap(), 27); // 23 + 4
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 27); // 23 + 4
     }
 
     #[test]
@@ -1650,14 +1718,14 @@ mod to_methods_tests {
         let rc_clone = rc_consumer.clone();
 
         rc_consumer.accept(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 8);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 8);
 
         rc_clone.accept(&10, &20);
-        assert_eq!(*counter.lock().unwrap(), 38); // 8 + 30
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 38); // 8 + 30
 
         // Original custom is still usable
         custom.accept(&1, &1);
-        assert_eq!(*counter.lock().unwrap(), 40); // 38 + 2
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 40); // 38 + 2
     }
 
     #[test]
@@ -1669,14 +1737,14 @@ mod to_methods_tests {
         let arc_clone = arc_consumer.clone();
 
         arc_consumer.accept(&5, &3);
-        assert_eq!(*counter.lock().unwrap(), 8);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 8);
 
         arc_clone.accept(&10, &20);
-        assert_eq!(*counter.lock().unwrap(), 38); // 8 + 30
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 38); // 8 + 30
 
         // Original custom is still usable
         custom.accept(&1, &1);
-        assert_eq!(*counter.lock().unwrap(), 40); // 38 + 2
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 40); // 38 + 2
     }
 
     #[test]
@@ -1696,15 +1764,15 @@ mod to_methods_tests {
             .collect();
 
         for handle in handles {
-            handle.join().unwrap();
+            handle.join().expect("thread should not panic");
         }
 
         // Sum of (0+1) + (1+1) + ... + (9+1) = 55
-        assert_eq!(*counter.lock().unwrap(), 55);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 55);
 
         // Original custom is still usable
         custom.accept(&5, &5);
-        assert_eq!(*counter.lock().unwrap(), 65); // 55 + 10
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 65); // 55 + 10
     }
 
     #[test]
@@ -1719,20 +1787,20 @@ mod to_methods_tests {
         let func = custom.to_fn();
 
         box_consumer.accept(&1, &1);
-        assert_eq!(*counter.lock().unwrap(), 2);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 2);
 
         rc_consumer.accept(&2, &2);
-        assert_eq!(*counter.lock().unwrap(), 6); // 2 + 4
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 6); // 2 + 4
 
         arc_consumer.accept(&3, &3);
-        assert_eq!(*counter.lock().unwrap(), 12); // 6 + 6
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 12); // 6 + 6
 
         func(&4, &4);
-        assert_eq!(*counter.lock().unwrap(), 20); // 12 + 8
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 20); // 12 + 8
 
         // Original custom is still usable
         custom.accept(&5, &5);
-        assert_eq!(*counter.lock().unwrap(), 30); // 20 + 10
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 30); // 20 + 10
     }
 
     #[test]
@@ -1746,7 +1814,7 @@ mod to_methods_tests {
 
         impl BiConsumer<String, i32> for StringConsumer {
             fn accept(&self, first: &String, second: &i32) {
-                let mut c = self.counter.lock().unwrap();
+                let mut c = self.counter.lock().expect("mutex should not be poisoned");
                 if !c.is_empty() {
                     c.push(',');
                 }
@@ -1763,19 +1831,31 @@ mod to_methods_tests {
 
         let box_consumer = custom.to_box();
         box_consumer.accept(&"a".to_string(), &1);
-        assert_eq!(*counter.lock().unwrap(), "a:1");
+        assert_eq!(
+            *counter.lock().expect("mutex should not be poisoned"),
+            "a:1"
+        );
 
         let rc_consumer = custom.to_rc();
         rc_consumer.accept(&"b".to_string(), &2);
-        assert_eq!(*counter.lock().unwrap(), "a:1,b:2");
+        assert_eq!(
+            *counter.lock().expect("mutex should not be poisoned"),
+            "a:1,b:2"
+        );
 
         let arc_consumer = custom.to_arc();
         arc_consumer.accept(&"c".to_string(), &3);
-        assert_eq!(*counter.lock().unwrap(), "a:1,b:2,c:3");
+        assert_eq!(
+            *counter.lock().expect("mutex should not be poisoned"),
+            "a:1,b:2,c:3"
+        );
 
         // Original custom is still usable
         custom.accept(&"d".to_string(), &4);
-        assert_eq!(*counter.lock().unwrap(), "a:1,b:2,c:3,d:4");
+        assert_eq!(
+            *counter.lock().expect("mutex should not be poisoned"),
+            "a:1,b:2,c:3,d:4"
+        );
     }
 }
 
@@ -1785,7 +1865,10 @@ mod to_methods_tests {
 
 #[cfg(test)]
 mod to_once_tests {
-    use super::*;
+    use super::{
+        Arc,
+        BiConsumer,
+    };
     use qubit_function::BiConsumerOnce;
     use std::sync::Mutex;
 
@@ -1797,11 +1880,11 @@ mod to_once_tests {
         // Test to_once() - should not consume the original
         let once_consumer = custom.to_once();
         once_consumer.accept(&1, &2);
-        assert_eq!(*counter.lock().unwrap(), 3);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 3);
 
         // Original consumer should still be usable
         custom.accept(&3, &4);
-        assert_eq!(*counter.lock().unwrap(), 10);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 10);
     }
 
     #[test]
@@ -1812,7 +1895,7 @@ mod to_once_tests {
         // Test into_once() - should consume the original
         let once_consumer = custom.into_once();
         once_consumer.accept(&1, &2);
-        assert_eq!(*counter.lock().unwrap(), 3);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 3);
     }
 }
 
@@ -1822,7 +1905,11 @@ mod to_once_tests {
 
 #[cfg(test)]
 mod box_conditional_bi_consumer_tests {
-    use super::*;
+    use super::{
+        Arc,
+        BiConsumer,
+        BoxBiConsumer,
+    };
     use std::sync::Mutex;
 
     #[test]
@@ -1832,19 +1919,29 @@ mod box_conditional_bi_consumer_tests {
         let l2 = log.clone();
 
         let consumer = BoxBiConsumer::new(move |x: &i32, y: &i32| {
-            l1.lock().unwrap().push(*x + *y);
+            l1.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x + *y);
         });
 
         let conditional = consumer.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
         let chained = conditional.and_then(move |x: &i32, y: &i32| {
-            l2.lock().unwrap().push(*x * *y);
+            l2.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x * *y);
         });
 
         chained.accept(&5, &3);
-        assert_eq!(*log.lock().unwrap(), vec![8, 15]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![8, 15]
+        );
 
         chained.accept(&-5, &3);
-        assert_eq!(*log.lock().unwrap(), vec![8, 15, -15]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![8, 15, -15]
+        );
     }
 
     #[test]
@@ -1854,21 +1951,28 @@ mod box_conditional_bi_consumer_tests {
         let l2 = log.clone();
 
         let consumer = BoxBiConsumer::new(move |x: &i32, y: &i32| {
-            l1.lock().unwrap().push(*x + *y);
+            l1.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x + *y);
         });
 
         let conditional =
             consumer
                 .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
                 .or_else(move |x: &i32, y: &i32| {
-                    l2.lock().unwrap().push(*x * *y);
+                    l2.lock()
+                        .expect("mutex should not be poisoned")
+                        .push(*x * *y);
                 });
 
         conditional.accept(&5, &3);
-        assert_eq!(*log.lock().unwrap(), vec![8]);
+        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
 
         conditional.accept(&-5, &3);
-        assert_eq!(*log.lock().unwrap(), vec![8, -15]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![8, -15]
+        );
     }
 
     #[test]
@@ -1877,16 +1981,18 @@ mod box_conditional_bi_consumer_tests {
         let l = log.clone();
 
         let consumer = BoxBiConsumer::new(move |x: &i32, y: &i32| {
-            l.lock().unwrap().push(*x + *y);
+            l.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x + *y);
         });
 
         let conditional = consumer.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
 
         conditional.accept(&5, &3);
-        assert_eq!(*log.lock().unwrap(), vec![8]);
+        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
 
         conditional.accept(&-5, &3);
-        assert_eq!(*log.lock().unwrap(), vec![8]);
+        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
     }
 
     #[test]
@@ -1895,17 +2001,19 @@ mod box_conditional_bi_consumer_tests {
         let l = log.clone();
 
         let consumer = BoxBiConsumer::new(move |x: &i32, y: &i32| {
-            l.lock().unwrap().push(*x + *y);
+            l.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x + *y);
         });
 
         let conditional = consumer.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
         let boxed = conditional.into_box();
 
         boxed.accept(&5, &3);
-        assert_eq!(*log.lock().unwrap(), vec![8]);
+        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
 
         boxed.accept(&-5, &3);
-        assert_eq!(*log.lock().unwrap(), vec![8]);
+        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
     }
 
     #[test]
@@ -1914,17 +2022,19 @@ mod box_conditional_bi_consumer_tests {
         let l = log.clone();
 
         let consumer = BoxBiConsumer::new(move |x: &i32, y: &i32| {
-            l.lock().unwrap().push(*x + *y);
+            l.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x + *y);
         });
 
         let conditional = consumer.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
         let rc = conditional.into_rc();
 
         rc.accept(&5, &3);
-        assert_eq!(*log.lock().unwrap(), vec![8]);
+        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
 
         rc.accept(&-5, &3);
-        assert_eq!(*log.lock().unwrap(), vec![8]);
+        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
     }
 
     #[test]
@@ -1933,23 +2043,29 @@ mod box_conditional_bi_consumer_tests {
         let l = log.clone();
 
         let consumer = BoxBiConsumer::new(move |x: &i32, y: &i32| {
-            l.lock().unwrap().push(*x + *y);
+            l.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x + *y);
         });
 
         let conditional = consumer.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
         let func = conditional.into_fn();
 
         func(&5, &3);
-        assert_eq!(*log.lock().unwrap(), vec![8]);
+        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
 
         func(&-5, &3);
-        assert_eq!(*log.lock().unwrap(), vec![8]);
+        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
     }
 }
 
 #[cfg(test)]
 mod arc_conditional_bi_consumer_tests {
-    use super::*;
+    use super::{
+        Arc,
+        ArcBiConsumer,
+        BiConsumer,
+    };
     use std::sync::atomic::{
         AtomicUsize,
         Ordering,
@@ -2177,7 +2293,11 @@ mod arc_conditional_bi_consumer_tests {
 
 #[cfg(test)]
 mod rc_conditional_bi_consumer_tests {
-    use super::*;
+    use super::{
+        BiConsumer,
+        Rc,
+        RcBiConsumer,
+    };
     use std::cell::RefCell;
 
     #[test]

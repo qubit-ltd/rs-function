@@ -49,7 +49,7 @@ fn test_arc_unary_operator_thread_safety() {
     let handle = thread::spawn(move || square_clone.apply(5));
 
     assert_eq!(square.apply(3), 9);
-    assert_eq!(handle.join().unwrap(), 25);
+    assert_eq!(handle.join().expect("thread should not panic"), 25);
 }
 
 #[test]

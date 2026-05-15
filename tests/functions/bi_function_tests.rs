@@ -884,25 +884,18 @@ fn test_arc_conditional_bi_function_clone() {
 
 #[test]
 fn test_impl_conditional_function_clone_three_params_macro_coverage() {
-    println!("Starting test_impl_conditional_function_clone_three_params_macro_coverage");
-
     // Test to ensure the three-parameter version of impl_conditional_function_clone macro is covered
     // This test verifies that the macro generates Clone implementations for three-parameter structs
     // by testing that RcConditionalBiFunction and ArcConditionalBiFunction implement Clone
 
     // Test RcConditionalBiFunction (three parameters: T, U, R)
     {
-        println!("Testing RcConditionalBiFunction with macro-generated Clone (three parameters)");
         let add = RcBiFunction::new(|x: &i32, y: &i32| *x + *y);
         let pred = RcBiPredicate::new(|x: &i32, y: &i32| *x > 0 && *y > 0);
 
         let conditional_rc = add.when(pred);
 
-        println!(
-            "Calling clone() on RcConditionalBiFunction - this should trigger macro-generated three-param code"
-        );
         let cloned_rc = conditional_rc.clone();
-        println!("Clone completed for RcConditionalBiFunction");
 
         // Create or_else to test functionality
         let multiply = RcBiFunction::new(|x: &i32, y: &i32| *x * *y);
@@ -911,22 +904,16 @@ fn test_impl_conditional_function_clone_three_params_macro_coverage() {
         // Verify functionality
         assert_eq!(func.apply(&3, &4), 7); // when branch
         assert_eq!(func.apply(&-3, &4), -12); // or_else branch: -3 * 4 = -12
-        println!("RcConditionalBiFunction test passed");
     }
 
     // Test ArcConditionalBiFunction (three parameters: T, U, R)
     {
-        println!("Testing ArcConditionalBiFunction with macro-generated Clone (three parameters)");
         let subtract = ArcBiFunction::new(|x: &i32, y: &i32| *x - *y);
         let pred = ArcBiPredicate::new(|x: &i32, y: &i32| *x >= *y);
 
         let conditional_arc = subtract.when(pred);
 
-        println!(
-            "Calling clone() on ArcConditionalBiFunction - this should trigger macro-generated three-param code"
-        );
         let cloned_arc = conditional_arc.clone();
-        println!("Clone completed for ArcConditionalBiFunction");
 
         // Create or_else to test functionality
         let negate = ArcBiFunction::new(|x: &i32, y: &i32| -*x - *y);
@@ -935,10 +922,7 @@ fn test_impl_conditional_function_clone_three_params_macro_coverage() {
         // Verify functionality
         assert_eq!(func.apply(&5, &3), 2); // when branch: 5 - 3 = 2
         assert_eq!(func.apply(&3, &5), -8); // or_else branch: -(3 + 5) = -8
-        println!("ArcConditionalBiFunction test passed");
     }
-
-    println!("Three-parameter conditional clone macro test passed!");
 }
 
 // ============================================================================
@@ -996,7 +980,7 @@ fn test_arc_bi_function_thread_safety() {
 
     let handle = thread::spawn(move || func_clone.apply(&10, &20));
 
-    let result = handle.join().unwrap();
+    let result = handle.join().expect("thread should not panic");
     assert_eq!(result, 30);
     assert_eq!(func.apply(&10, &20), 30);
 }

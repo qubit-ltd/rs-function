@@ -23,7 +23,12 @@ use qubit_function::{
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::{
+        FnTransformerOnceOps,
+        FnTransformerOps,
+        Transformer,
+        TransformerOnce,
+    };
 
     #[test]
     fn test_closure_and_then() {
@@ -61,7 +66,11 @@ mod tests {
 
 #[cfg(test)]
 mod composition_with_box_tests {
-    use super::*;
+    use super::{
+        BoxTransformerOnce,
+        FnTransformerOnceOps,
+        TransformerOnce,
+    };
 
     #[test]
     fn test_closure_and_then_box() {
@@ -108,7 +117,10 @@ mod composition_with_box_tests {
 
 #[cfg(test)]
 mod multiple_composition_tests {
-    use super::*;
+    use super::{
+        FnTransformerOnceOps,
+        TransformerOnce,
+    };
 
     #[test]
     fn test_multiple_closures_and_then() {
@@ -153,7 +165,10 @@ mod multiple_composition_tests {
 
 #[cfg(test)]
 mod conditional_mapping_tests {
-    use super::*;
+    use super::{
+        FnTransformerOnceOps,
+        TransformerOnce,
+    };
     use qubit_function::{
         Predicate,
         RcPredicate,
@@ -202,7 +217,10 @@ mod conditional_mapping_tests {
 
 #[cfg(test)]
 mod complex_pipeline_tests {
-    use super::*;
+    use super::{
+        FnTransformerOnceOps,
+        TransformerOnce,
+    };
 
     #[test]
     fn test_parse_transform_format_pipeline() {
@@ -257,7 +275,12 @@ mod complex_pipeline_tests {
 
 #[cfg(test)]
 mod function_pointer_tests {
-    use super::*;
+    use super::{
+        FnTransformerOnceOps,
+        FnTransformerOps,
+        Transformer,
+        TransformerOnce,
+    };
 
     fn double(x: i32) -> i32 {
         x * 2
@@ -305,7 +328,10 @@ mod function_pointer_tests {
 
 #[cfg(test)]
 mod captured_state_tests {
-    use super::*;
+    use super::{
+        FnTransformerOnceOps,
+        TransformerOnce,
+    };
 
     #[test]
     fn test_closure_with_captured_value() {
@@ -343,7 +369,10 @@ mod captured_state_tests {
 
 #[cfg(test)]
 mod type_conversion_tests {
-    use super::*;
+    use super::{
+        FnTransformerOnceOps,
+        TransformerOnce,
+    };
 
     #[test]
     fn test_i32_to_string() {
@@ -396,7 +425,10 @@ mod type_conversion_tests {
 
 #[cfg(test)]
 mod edge_cases_tests {
-    use super::*;
+    use super::{
+        FnTransformerOnceOps,
+        TransformerOnce,
+    };
 
     #[test]
     fn test_identity_composition() {
@@ -450,7 +482,10 @@ mod edge_cases_tests {
 
 #[cfg(test)]
 mod advanced_usage_tests {
-    use super::*;
+    use super::{
+        FnTransformerOnceOps,
+        TransformerOnce,
+    };
 
     #[test]
     fn test_vec_transformation() {

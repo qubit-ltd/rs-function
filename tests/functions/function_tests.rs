@@ -550,7 +550,7 @@ fn test_arc_function_send_sync() {
 
     let handle = std::thread::spawn(move || double_clone.apply(&21));
 
-    assert_eq!(handle.join().unwrap(), 42);
+    assert_eq!(handle.join().expect("thread should not panic"), 42);
     assert_eq!(double.apply(&10), 20);
 }
 

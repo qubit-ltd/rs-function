@@ -56,7 +56,11 @@ fn test_comparator_default_conversions_allow_relaxed_generic_types() {
 
 #[cfg(test)]
 mod box_comparator_tests {
-    use super::*;
+    use super::{
+        BoxComparator,
+        Comparator,
+        Ordering,
+    };
 
     #[test]
     fn test_new_and_compare() {
@@ -172,7 +176,11 @@ mod box_comparator_tests {
 
 #[cfg(test)]
 mod arc_comparator_tests {
-    use super::*;
+    use super::{
+        ArcComparator,
+        Comparator,
+        Ordering,
+    };
 
     #[test]
     fn test_new_and_compare() {
@@ -296,14 +304,18 @@ mod arc_comparator_tests {
             .collect();
 
         for handle in handles {
-            handle.join().unwrap();
+            handle.join().expect("thread should not panic");
         }
     }
 }
 
 #[cfg(test)]
 mod rc_comparator_tests {
-    use super::*;
+    use super::{
+        Comparator,
+        Ordering,
+        RcComparator,
+    };
 
     #[test]
     fn test_new_and_compare() {
@@ -410,7 +422,10 @@ mod rc_comparator_tests {
 
 #[cfg(test)]
 mod closure_tests {
-    use super::*;
+    use super::{
+        Comparator,
+        Ordering,
+    };
 
     #[test]
     fn test_closure_as_comparator() {
@@ -451,7 +466,12 @@ mod closure_tests {
 
 #[cfg(test)]
 mod fn_ops_tests {
-    use super::*;
+    use super::{
+        BoxComparator,
+        Comparator,
+        FnComparatorOps,
+        Ordering,
+    };
 
     #[test]
     fn test_reversed() {
@@ -477,7 +497,13 @@ mod fn_ops_tests {
 
 #[cfg(test)]
 mod conversion_tests {
-    use super::*;
+    use super::{
+        ArcComparator,
+        BoxComparator,
+        Comparator,
+        Ordering,
+        RcComparator,
+    };
 
     #[test]
     fn test_box_to_rc() {
@@ -510,7 +536,12 @@ mod conversion_tests {
 
 #[cfg(test)]
 mod generic_tests {
-    use super::*;
+    use super::{
+        ArcComparator,
+        BoxComparator,
+        Comparator,
+        RcComparator,
+    };
 
     fn sort_with_comparator<C: Comparator<i32>>(cmp: &C, mut vec: Vec<i32>) -> Vec<i32> {
         vec.sort_by(|a, b| cmp.compare(a, b));
@@ -548,7 +579,11 @@ mod generic_tests {
 
 #[cfg(test)]
 mod edge_cases {
-    use super::*;
+    use super::{
+        BoxComparator,
+        Comparator,
+        Ordering,
+    };
 
     #[test]
     fn test_with_empty_values() {

@@ -21,7 +21,10 @@ use qubit_function::{
 
 #[cfg(test)]
 mod trait_tests {
-    use super::*;
+    use super::{
+        BiTransformerOnce,
+        BoxBiTransformerOnce,
+    };
 
     #[test]
     fn test_default_conversions_allow_relaxed_generic_types() {
@@ -210,7 +213,7 @@ mod trait_tests {
 
 #[cfg(test)]
 mod trait_default_impl_tests {
-    use super::*;
+    use super::BiTransformerOnce;
 
     // Create a cloneable custom type that implements BiTransformerOnce
     #[derive(Clone)]
@@ -327,7 +330,10 @@ mod trait_default_impl_tests {
 
 #[cfg(test)]
 mod box_bi_transformer_once_tests {
-    use super::*;
+    use super::{
+        BiTransformerOnce,
+        BoxBiTransformerOnce,
+    };
 
     #[test]
     fn test_new() {
@@ -445,7 +451,10 @@ mod box_bi_transformer_once_tests {
 
 #[cfg(test)]
 mod conditional_tests {
-    use super::*;
+    use super::{
+        BiTransformerOnce,
+        BoxBiTransformerOnce,
+    };
 
     #[test]
     fn test_when_with_or_else_condition_true() {
@@ -542,7 +551,10 @@ mod conditional_tests {
 
 #[cfg(test)]
 mod type_tests {
-    use super::*;
+    use super::{
+        BiTransformerOnce,
+        BoxBiTransformerOnce,
+    };
 
     #[test]
     fn test_with_integers() {
@@ -614,7 +626,10 @@ mod type_tests {
 
 #[cfg(test)]
 mod edge_case_tests {
-    use super::*;
+    use super::{
+        BiTransformerOnce,
+        BoxBiTransformerOnce,
+    };
 
     #[test]
     fn test_with_empty_strings() {
@@ -662,7 +677,10 @@ mod edge_case_tests {
 
 #[cfg(test)]
 mod complex_transformation_tests {
-    use super::*;
+    use super::{
+        BiTransformerOnce,
+        BoxBiTransformerOnce,
+    };
 
     #[test]
     fn test_nested_structure_transformation() {
@@ -728,7 +746,10 @@ mod complex_transformation_tests {
 
 #[cfg(test)]
 mod ownership_tests {
-    use super::*;
+    use super::{
+        BiTransformerOnce,
+        BoxBiTransformerOnce,
+    };
 
     #[test]
     fn test_consumes_owned_values() {
@@ -770,7 +791,7 @@ mod ownership_tests {
 
 #[cfg(test)]
 mod conditional_bi_transformer_once_display_debug_tests {
-    use super::*;
+    use super::BoxBiTransformerOnce;
 
     #[test]
     fn test_box_conditional_bi_transformer_once_display() {

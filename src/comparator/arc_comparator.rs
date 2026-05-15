@@ -16,6 +16,8 @@ use super::{
     Ordering,
 };
 
+type ArcComparatorFn<T> = Arc<dyn Fn(&T, &T) -> Ordering + Send + Sync>;
+
 /// An Arc-based thread-safe comparator with shared ownership.
 ///
 /// `ArcComparator` wraps a comparator function in an `Arc`, providing
@@ -40,8 +42,7 @@ use super::{
 ///
 #[derive(Clone)]
 pub struct ArcComparator<T> {
-    #[allow(clippy::type_complexity)]
-    pub(super) function: Arc<dyn Fn(&T, &T) -> Ordering + Send + Sync>,
+    pub(super) function: ArcComparatorFn<T>,
 }
 
 impl<T> ArcComparator<T> {

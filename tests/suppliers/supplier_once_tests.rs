@@ -56,7 +56,7 @@ fn test_supplier_once_default_conversions_allow_relaxed_generic_types() {
 
 #[cfg(test)]
 mod test_supplier_once_trait {
-    use super::*;
+    use super::SupplierOnce;
 
     #[test]
     fn test_closure_implements_supplier_once() {
@@ -139,10 +139,16 @@ mod test_supplier_once_trait {
 
 #[cfg(test)]
 mod test_box_supplier_once {
-    use super::*;
+    use super::{
+        BoxSupplierOnce,
+        SupplierOnce,
+    };
 
     mod test_new {
-        use super::*;
+        use super::{
+            BoxSupplierOnce,
+            SupplierOnce,
+        };
 
         #[test]
         fn test_creates_supplier() {
@@ -164,7 +170,10 @@ mod test_box_supplier_once {
     }
 
     mod test_get {
-        use super::*;
+        use super::{
+            BoxSupplierOnce,
+            SupplierOnce,
+        };
 
         #[test]
         fn test_consumes_supplier() {
@@ -200,7 +209,10 @@ mod test_box_supplier_once {
     }
 
     mod test_into_box {
-        use super::*;
+        use super::{
+            BoxSupplierOnce,
+            SupplierOnce,
+        };
 
         #[test]
         fn test_returns_self() {
@@ -211,7 +223,10 @@ mod test_box_supplier_once {
     }
 
     mod test_into_fn {
-        use super::*;
+        use super::{
+            BoxSupplierOnce,
+            SupplierOnce,
+        };
 
         #[test]
         fn test_basic_conversion() {
@@ -244,7 +259,10 @@ mod test_box_supplier_once {
     }
 
     mod test_use_cases {
-        use super::*;
+        use super::{
+            BoxSupplierOnce,
+            SupplierOnce,
+        };
 
         #[test]
         fn test_lazy_initialization() {
@@ -291,7 +309,10 @@ mod test_box_supplier_once {
     }
 
     mod test_into_box_conversion {
-        use super::*;
+        use super::{
+            BoxSupplierOnce,
+            SupplierOnce,
+        };
 
         #[test]
         fn test_returns_self() {
@@ -317,7 +338,10 @@ mod test_box_supplier_once {
     }
 
     mod test_edge_cases {
-        use super::*;
+        use super::{
+            BoxSupplierOnce,
+            SupplierOnce,
+        };
 
         #[test]
         fn test_with_unit_type() {
@@ -364,7 +388,7 @@ mod test_box_supplier_once {
 
 #[cfg(test)]
 mod test_custom_supplier_once_default_implementation {
-    use super::*;
+    use super::SupplierOnce;
 
     // A custom type that implements SupplierOnce by only providing
     // the core get() method. The into_box() method will use
@@ -476,7 +500,7 @@ mod test_custom_supplier_once_default_implementation {
 
 #[cfg(test)]
 mod test_to_box_and_to_fn {
-    use super::*;
+    use super::SupplierOnce;
     use std::sync::{
         Arc,
         Mutex,
@@ -493,7 +517,7 @@ mod test_to_box_and_to_fn {
         fn get(self) -> i32 {
             self.value
                 .lock()
-                .unwrap()
+                .expect("mutex should not be poisoned")
                 .take()
                 .expect("CloneableSupplier already consumed")
         }
@@ -506,7 +530,13 @@ mod test_to_box_and_to_fn {
         };
         let fn_once = supplier.to_fn();
         // The original supplier is not consumed
-        assert!(supplier.value.lock().unwrap().is_some());
+        assert!(
+            supplier
+                .value
+                .lock()
+                .expect("mutex should not be poisoned")
+                .is_some()
+        );
         // The returned FnOnce can be called
         assert_eq!(fn_once(), 42);
     }
@@ -518,7 +548,13 @@ mod test_to_box_and_to_fn {
         };
         let boxed = supplier.to_box();
         // The original supplier is not consumed
-        assert!(supplier.value.lock().unwrap().is_some());
+        assert!(
+            supplier
+                .value
+                .lock()
+                .expect("mutex should not be poisoned")
+                .is_some()
+        );
         // The returned BoxSupplierOnce can be consumed
         assert_eq!(boxed.get(), 42);
     }
@@ -528,12 +564,12 @@ mod test_to_box_and_to_fn {
         let counter = Arc::new(Mutex::new(0));
         let counter_clone = counter.clone();
         let closure = move || {
-            *counter_clone.lock().unwrap() += 1;
+            *counter_clone.lock().expect("mutex should not be poisoned") += 1;
             42
         };
         let fn_once = closure.to_fn();
         fn_once();
-        assert_eq!(*counter.lock().unwrap(), 1);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 1);
     }
 
     #[test]
@@ -541,12 +577,12 @@ mod test_to_box_and_to_fn {
         let counter = Arc::new(Mutex::new(0));
         let counter_clone = counter.clone();
         let closure = move || {
-            *counter_clone.lock().unwrap() += 1;
+            *counter_clone.lock().expect("mutex should not be poisoned") += 1;
             42
         };
         let boxed = closure.to_box();
         boxed.get();
-        assert_eq!(*counter.lock().unwrap(), 1);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 1);
     }
 
     #[test]
@@ -708,7 +744,7 @@ mod test_to_box_and_to_fn {
 /*
 #[cfg(test)]
 mod test_arc_supplier_supplier_once {
-    use super::*;
+    use super::{BorrowedRcSupplierOnce, BoxSupplierOnce, SupplierOnce, test_supplier_once_default_conversions_allow_relaxed_generic_types};
 
     #[test]
     fn test_get_consumes_supplier() {
@@ -737,7 +773,7 @@ mod test_arc_supplier_supplier_once {
         let counter = Arc::new(Mutex::new(0));
         let counter_clone = Arc::clone(&counter);
         let supplier = ArcSupplier::new(move || {
-            let mut c = counter_clone.lock().unwrap();
+            let mut c = counter_clone.lock().expect("mutex should not be poisoned");
             *c += 1;
             *c
         });
@@ -815,7 +851,7 @@ mod test_arc_supplier_supplier_once {
         let counter = Arc::new(Mutex::new(0));
         let counter_clone = Arc::clone(&counter);
         let supplier = ArcSupplier::new(move || {
-            let mut c = counter_clone.lock().unwrap();
+            let mut c = counter_clone.lock().expect("mutex should not be poisoned");
             *c += 1;
             *c
         });
@@ -829,7 +865,7 @@ mod test_arc_supplier_supplier_once {
         let call_count = Arc::new(Mutex::new(0));
         let call_count_clone = Arc::clone(&call_count);
         let supplier = ArcSupplier::new(move || {
-            let mut c = call_count_clone.lock().unwrap();
+            let mut c = call_count_clone.lock().expect("mutex should not be poisoned");
             *c += 1;
             42
         });
@@ -843,7 +879,7 @@ mod test_arc_supplier_supplier_once {
         let counter = Arc::new(Mutex::new(0));
         let counter_clone = Arc::clone(&counter);
         let supplier = ArcSupplier::new(move || {
-            let mut c = counter_clone.lock().unwrap();
+            let mut c = counter_clone.lock().expect("mutex should not be poisoned");
             *c += 1;
             *c
         });
@@ -855,8 +891,8 @@ mod test_arc_supplier_supplier_once {
         let h1 = thread::spawn(move || SupplierOnce::get(s1));
         let h2 = thread::spawn(move || SupplierOnce::get(s2));
 
-        let v1 = h1.join().unwrap();
-        let v2 = h2.join().unwrap();
+        let v1 = h1.join().expect("thread should not panic");
+        let v2 = h2.join().expect("thread should not panic");
 
         // Both should get different values
         assert!(v1 != v2);
@@ -869,14 +905,14 @@ mod test_arc_supplier_supplier_once {
         let counter = Arc::new(Mutex::new(0));
         let counter_clone = Arc::clone(&counter);
         let supplier = ArcSupplier::new(move || {
-            let mut c = counter_clone.lock().unwrap();
+            let mut c = counter_clone.lock().expect("mutex should not be poisoned");
             *c += 1;
             *c
         });
 
         let once = supplier.to_box();
         assert_eq!(once.get(), 1);
-        assert_eq!(*counter.lock().unwrap(), 1);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 1);
     }
 
     #[test]
@@ -884,14 +920,14 @@ mod test_arc_supplier_supplier_once {
         let counter = Arc::new(Mutex::new(0));
         let counter_clone = Arc::clone(&counter);
         let supplier = ArcSupplier::new(move || {
-            let mut c = counter_clone.lock().unwrap();
+            let mut c = counter_clone.lock().expect("mutex should not be poisoned");
             *c += 1;
             *c
         });
 
         let fn_once = supplier.to_fn();
         assert_eq!(fn_once(), 1);
-        assert_eq!(*counter.lock().unwrap(), 1);
+        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 1);
     }
 }
 
@@ -901,7 +937,7 @@ mod test_arc_supplier_supplier_once {
 
 #[cfg(test)]
 mod test_rc_supplier_supplier_once {
-    use super::*;
+    use super::{BorrowedRcSupplierOnce, BoxSupplierOnce, SupplierOnce, test_supplier_once_default_conversions_allow_relaxed_generic_types};
 
     #[test]
     fn test_get_consumes_supplier() {
@@ -1102,14 +1138,14 @@ mod test_rc_supplier_supplier_once {
 
 #[cfg(test)]
 mod test_supplier_once_debug_display {
-    use super::*;
+    use super::BoxSupplierOnce;
 
     // ============================================================
     // BoxSupplierOnce Debug and Display Tests
     // ============================================================
 
     mod test_box_supplier_once_debug_display {
-        use super::*;
+        use super::BoxSupplierOnce;
 
         #[test]
         fn test_debug_without_name() {
