@@ -37,7 +37,7 @@
 //!
 //! ```ignore
 //! // Generate extension trait for Fn(T) -> R
-//! impl_fn_ops_trait!(
+//! impl_transformer_fn_ops_trait!(
 //!     (Fn(T) -> R),
 //!     FnTransformerOps,
 //!     BoxTransformer,
@@ -46,7 +46,7 @@
 //! );
 //!
 //! // Generate extension trait for FnMut(T) -> R
-//! impl_fn_ops_trait!(
+//! impl_transformer_fn_ops_trait!(
 //!     (FnMut(T) -> R),
 //!     FnStatefulTransformerOps,
 //!     BoxStatefulTransformer,
@@ -89,7 +89,7 @@
 ///
 /// ```ignore
 /// // Fn(T) -> R version
-/// impl_fn_ops_trait!(
+/// impl_transformer_fn_ops_trait!(
 ///     (Fn(T) -> R),
 ///     FnTransformerOps,
 ///     BoxTransformer,
@@ -98,7 +98,7 @@
 /// );
 ///
 /// // FnMut(T) -> R version
-/// impl_fn_ops_trait!(
+/// impl_transformer_fn_ops_trait!(
 ///     (FnMut(T) -> R),
 ///     FnStatefulTransformerOps,
 ///     BoxStatefulTransformer,

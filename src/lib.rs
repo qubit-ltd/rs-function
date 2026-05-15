@@ -472,7 +472,7 @@ pub use comparator::{
     RcComparator,
 };
 
-// ---- Tester Types (FnMut() -> bool) ----
+// ---- Tester Types (Fn() -> bool) ----
 pub use tester::{
     // Arc-based (shared multi-threaded ownership)
     ArcTester,
