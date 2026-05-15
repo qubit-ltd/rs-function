@@ -36,7 +36,7 @@
 //!
 //! | Type | Input | Modifies Input? | Modifies Self? | Use Cases |
 //! |------|-------|----------------|----------------|-----------|
-//! | **Consumer** | `&T` | ❌ | ✅ | Observe, log, count, notify |
+//! | **Consumer** | `&T` | ❌ | ❌ | Observe, log, notify |
 //! | **Mutator** | `&mut T` | ✅ | ❌ | Pure transform, validate, normalize |
 //! | **StatefulMutator** | `&mut T` | ✅ | ✅ | Stateful transform, accumulate |
 //!

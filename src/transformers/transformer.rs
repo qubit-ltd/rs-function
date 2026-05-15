@@ -12,7 +12,7 @@
 //! Provides Rust implementations of transformer traits for type conversion
 //! and value transformation. Transformers consume input values (taking
 //! ownership) and produce output values. This is analogous to
-//！ `Fn(T) -> R` in Rust's standard library.
+//! `Fn(T) -> R` in Rust's standard library.
 //!
 //! This module provides the `Transformer<T, R>` trait and three
 //! implementations:

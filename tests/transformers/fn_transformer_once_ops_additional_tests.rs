@@ -18,7 +18,7 @@ use qubit_function::{
 };
 
 // ============================================================================
-// FnTransformerOnceOps Tests - Extension trait for closure transformers
+// Additional FnTransformerOnceOps tests - extension trait for closure transformers
 // ============================================================================
 
 #[cfg(test)]
