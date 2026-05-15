@@ -10,9 +10,23 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcCallableWith` public type.
 
-#![allow(unused_imports)]
+use std::cell::RefCell;
+use std::rc::Rc;
 
-use super::*;
+use crate::{
+    macros::{
+        impl_common_name_methods,
+        impl_common_new_methods,
+        impl_rc_conversions,
+    },
+    tasks::{
+        callable_with::{
+            BoxCallableWith,
+            CallableWith,
+        },
+        runnable_with::BoxRunnableWith,
+    },
+};
 
 /// Single-threaded shared callable with mutable input.
 ///

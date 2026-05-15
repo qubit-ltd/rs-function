@@ -10,9 +10,16 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxPredicate` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    ALWAYS_FALSE_NAME,
+    ALWAYS_TRUE_NAME,
+    Predicate,
+    RcPredicate,
+    impl_box_conversions,
+    impl_box_predicate_methods,
+    impl_predicate_common_methods,
+    impl_predicate_debug_display,
+};
 
 /// A Box-based predicate with single ownership.
 ///

@@ -10,9 +10,15 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcConditionalMutatingFunction` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    ArcMutatingFunction,
+    ArcPredicate,
+    MutatingFunction,
+    Predicate,
+    impl_conditional_function_clone,
+    impl_conditional_function_debug_display,
+    impl_shared_conditional_function,
+};
 
 // ============================================================================
 // ArcConditionalMutatingFunction - Arc-based Conditional Mutating Function

@@ -10,9 +10,21 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcBiMutatingFunction` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BiMutatingFunction,
+    BiPredicate,
+    BoxBiMutatingFunction,
+    BoxBiMutatingFunctionOnce,
+    MutatingFunction,
+    Rc,
+    RcConditionalBiMutatingFunction,
+    impl_function_clone,
+    impl_function_common_methods,
+    impl_function_constant_method,
+    impl_function_debug_display,
+    impl_rc_conversions,
+    impl_shared_function_methods,
+};
 
 // ============================================================================
 // RcBiMutatingFunction - Rc<dyn Fn(&mut T, &mut U) -> R>

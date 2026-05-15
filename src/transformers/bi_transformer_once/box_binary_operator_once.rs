@@ -10,9 +10,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxBinaryOperatorOnce` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::BoxBiTransformerOnce;
 
 // ============================================================================
 // Type Aliases for BinaryOperatorOnce (BiTransformerOnce<T, T, T>)

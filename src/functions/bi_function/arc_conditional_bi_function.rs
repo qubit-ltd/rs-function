@@ -10,9 +10,15 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcConditionalBiFunction` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    ArcBiFunction,
+    ArcBiPredicate,
+    BiFunction,
+    BiPredicate,
+    impl_conditional_function_clone,
+    impl_conditional_function_debug_display,
+    impl_shared_conditional_function,
+};
 
 // ============================================================================
 // ArcConditionalBiFunction - Arc-based Conditional BiFunction

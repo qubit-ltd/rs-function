@@ -10,9 +10,18 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulTransformer` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxConditionalStatefulTransformer,
+    BoxTransformerOnce,
+    Predicate,
+    RcStatefulTransformer,
+    StatefulTransformer,
+    impl_box_conversions,
+    impl_box_transformer_methods,
+    impl_transformer_common_methods,
+    impl_transformer_constant_method,
+    impl_transformer_debug_display,
+};
 
 // ============================================================================
 // BoxStatefulTransformer - Box<dyn FnMut(T) -> R>

@@ -10,9 +10,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcUnaryOperator` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::ArcTransformer;
 
 /// Type alias for `ArcTransformer<T, T>`
 ///

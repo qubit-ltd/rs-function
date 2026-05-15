@@ -10,9 +10,15 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcConditionalTransformer` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    Predicate,
+    RcPredicate,
+    RcTransformer,
+    Transformer,
+    impl_conditional_transformer_clone,
+    impl_conditional_transformer_debug_display,
+    impl_shared_conditional_transformer,
+};
 
 // ============================================================================
 // RcConditionalTransformer - Rc-based Conditional Transformer

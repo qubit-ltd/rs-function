@@ -10,9 +10,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcBinaryFunction` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::RcBiFunction;
 
 /// Type alias for `RcBiFunction<T, T, R>`
 ///

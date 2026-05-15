@@ -10,9 +10,16 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConsumerOnce` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxConditionalConsumerOnce,
+    ConsumerOnce,
+    Predicate,
+    impl_box_consumer_methods,
+    impl_box_once_conversions,
+    impl_closure_once_trait,
+    impl_consumer_common_methods,
+    impl_consumer_debug_display,
+};
 
 // ============================================================================
 // 2. BoxConsumerOnce - Single Ownership Implementation

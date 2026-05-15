@@ -10,9 +10,14 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalTransformerOnce` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxPredicate,
+    BoxTransformerOnce,
+    Predicate,
+    TransformerOnce,
+    impl_box_conditional_transformer,
+    impl_conditional_transformer_debug_display,
+};
 
 // ============================================================================
 // BoxConditionalTransformerOnce - Box-based Conditional Transformer

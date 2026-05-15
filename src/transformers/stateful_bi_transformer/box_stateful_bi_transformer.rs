@@ -10,9 +10,17 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulBiTransformer` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BiPredicate,
+    BoxConditionalStatefulBiTransformer,
+    RcStatefulBiTransformer,
+    StatefulBiTransformer,
+    StatefulTransformer,
+    impl_box_transformer_methods,
+    impl_transformer_common_methods,
+    impl_transformer_constant_method,
+    impl_transformer_debug_display,
+};
 
 // ============================================================================
 // BoxStatefulBiTransformer - Box<dyn FnMut(T, U) -> R>

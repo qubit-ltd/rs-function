@@ -10,9 +10,18 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcPredicate` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    ALWAYS_FALSE_NAME,
+    ALWAYS_TRUE_NAME,
+    BoxPredicate,
+    Predicate,
+    Rc,
+    impl_predicate_clone,
+    impl_predicate_common_methods,
+    impl_predicate_debug_display,
+    impl_rc_conversions,
+    impl_shared_predicate_methods,
+};
 
 /// An Rc-based predicate with single-threaded shared ownership.
 ///

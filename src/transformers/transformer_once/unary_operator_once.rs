@@ -10,9 +10,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `UnaryOperatorOnce` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::TransformerOnce;
 
 // ============================================================================
 // UnaryOperatorOnce Trait - Marker trait for TransformerOnce<T, T>

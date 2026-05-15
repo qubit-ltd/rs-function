@@ -10,9 +10,20 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcTransformer` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxTransformer,
+    BoxTransformerOnce,
+    Predicate,
+    Rc,
+    RcConditionalTransformer,
+    Transformer,
+    impl_rc_conversions,
+    impl_shared_transformer_methods,
+    impl_transformer_clone,
+    impl_transformer_common_methods,
+    impl_transformer_constant_method,
+    impl_transformer_debug_display,
+};
 
 // ============================================================================
 // RcTransformer - Rc<dyn Fn(T) -> R>

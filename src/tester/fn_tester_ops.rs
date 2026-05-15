@@ -10,9 +10,10 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnTesterOps` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxTester,
+    Tester,
+};
 
 // ============================================================================
 // Extension Trait for Convenient Closure Conversion

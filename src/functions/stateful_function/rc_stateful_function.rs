@@ -10,9 +10,22 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcStatefulFunction` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxFunctionOnce,
+    BoxStatefulFunction,
+    Predicate,
+    Rc,
+    RcConditionalStatefulFunction,
+    RefCell,
+    StatefulFunction,
+    impl_function_clone,
+    impl_function_common_methods,
+    impl_function_constant_method,
+    impl_function_debug_display,
+    impl_function_identity_method,
+    impl_rc_conversions,
+    impl_shared_function_methods,
+};
 
 // ============================================================================
 // RcStatefulFunction - Rc<RefCell<dyn FnMut(&T) -> R>>

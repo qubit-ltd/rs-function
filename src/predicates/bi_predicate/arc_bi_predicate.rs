@@ -10,9 +10,21 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcBiPredicate` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    ALWAYS_FALSE_NAME,
+    ALWAYS_TRUE_NAME,
+    Arc,
+    BiPredicate,
+    BoxBiPredicate,
+    RcBiPredicate,
+    SendSyncBiPredicateFn,
+    impl_arc_conversions,
+    impl_closure_trait,
+    impl_predicate_clone,
+    impl_predicate_common_methods,
+    impl_predicate_debug_display,
+    impl_shared_predicate_methods,
+};
 
 /// An Arc-based bi-predicate with thread-safe shared ownership.
 ///

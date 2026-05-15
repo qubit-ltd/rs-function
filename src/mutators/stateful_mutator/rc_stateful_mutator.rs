@@ -10,9 +10,21 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcStatefulMutator` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxMutatorOnce,
+    BoxStatefulMutator,
+    Predicate,
+    Rc,
+    RcConditionalStatefulMutator,
+    RcMutMutatorFn,
+    RefCell,
+    StatefulMutator,
+    impl_mutator_clone,
+    impl_mutator_common_methods,
+    impl_mutator_debug_display,
+    impl_rc_conversions,
+    impl_shared_mutator_methods,
+};
 
 // ============================================================================
 // 3. RcMutator - Single-Threaded Shared Ownership Implementation

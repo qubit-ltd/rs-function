@@ -10,9 +10,20 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcRunnableWith` public type.
 
-#![allow(unused_imports)]
+use std::cell::RefCell;
+use std::rc::Rc;
 
-use super::*;
+use crate::{
+    macros::{
+        impl_common_name_methods,
+        impl_common_new_methods,
+        impl_rc_conversions,
+    },
+    tasks::runnable_with::{
+        BoxRunnableWith,
+        RunnableWith,
+    },
+};
 
 /// Single-threaded shared runnable with mutable input.
 ///

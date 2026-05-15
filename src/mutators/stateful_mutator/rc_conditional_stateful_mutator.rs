@@ -10,9 +10,17 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcConditionalStatefulMutator` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxStatefulMutator,
+    Predicate,
+    RcPredicate,
+    RcStatefulMutator,
+    StatefulMutator,
+    impl_conditional_mutator_clone,
+    impl_conditional_mutator_conversions,
+    impl_conditional_mutator_debug_display,
+    impl_shared_conditional_mutator,
+};
 
 // ============================================================================
 // 8. RcConditionalMutator - Rc-based Conditional Mutator

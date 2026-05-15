@@ -10,9 +10,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxUnaryOperator` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::BoxTransformer;
 
 // ============================================================================
 // Type Aliases for UnaryOperator (Transformer<T, T>)

@@ -10,9 +10,10 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnStatefulBiConsumerOps` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxStatefulBiConsumer,
+    StatefulBiConsumer,
+};
 
 // =======================================================================
 // 6. Provide extension methods for closures

@@ -10,9 +10,17 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcConditionalBiConsumer` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BiConsumer,
+    BiPredicate,
+    BoxBiConsumer,
+    RcBiConsumer,
+    RcBiPredicate,
+    impl_conditional_consumer_clone,
+    impl_conditional_consumer_conversions,
+    impl_conditional_consumer_debug_display,
+    impl_shared_conditional_consumer,
+};
 
 // =======================================================================
 // 9. RcConditionalBiConsumer - Rc-based Conditional BiConsumer

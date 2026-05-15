@@ -10,9 +10,17 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcConditionalConsumer` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxConsumer,
+    Consumer,
+    Predicate,
+    RcConsumer,
+    RcPredicate,
+    impl_conditional_consumer_clone,
+    impl_conditional_consumer_conversions,
+    impl_conditional_consumer_debug_display,
+    impl_shared_conditional_consumer,
+};
 
 // ============================================================================
 // 8. RcConditionalConsumer - Rc-based Conditional Consumer

@@ -10,9 +10,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcBinaryMutatingFunction` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::RcBiMutatingFunction;
 
 /// Type alias for `RcBiMutatingFunction<T, T, R>`
 ///

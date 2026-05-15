@@ -10,9 +10,18 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxTransformer` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxConditionalTransformer,
+    BoxTransformerOnce,
+    Predicate,
+    RcTransformer,
+    Transformer,
+    impl_box_conversions,
+    impl_box_transformer_methods,
+    impl_transformer_common_methods,
+    impl_transformer_constant_method,
+    impl_transformer_debug_display,
+};
 
 // ============================================================================
 // BoxTransformer - Box<dyn Fn(T) -> R>

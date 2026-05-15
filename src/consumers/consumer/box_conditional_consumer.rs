@@ -10,9 +10,16 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalConsumer` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxConsumer,
+    BoxPredicate,
+    Consumer,
+    Predicate,
+    RcConsumer,
+    impl_box_conditional_consumer,
+    impl_conditional_consumer_conversions,
+    impl_conditional_consumer_debug_display,
+};
 
 // ============================================================================
 // 7. BoxConditionalConsumer - Box-based Conditional Consumer

@@ -10,9 +10,13 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnStatefulMutatingFunctionOps` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxConditionalStatefulMutatingFunction,
+    BoxStatefulMutatingFunction,
+    Predicate,
+    StatefulMutatingFunction,
+    impl_fn_ops_trait,
+};
 
 // =======================================================================
 // 7. Provide extension methods for closures

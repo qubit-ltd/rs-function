@@ -10,9 +10,19 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulFunction` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxConditionalStatefulFunction,
+    BoxFunctionOnce,
+    Predicate,
+    RcStatefulFunction,
+    StatefulFunction,
+    impl_box_conversions,
+    impl_box_function_methods,
+    impl_function_common_methods,
+    impl_function_constant_method,
+    impl_function_debug_display,
+    impl_function_identity_method,
+};
 
 // ============================================================================
 // BoxStatefulFunction - Box<dyn FnMut(&T) -> R>

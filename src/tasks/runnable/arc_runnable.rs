@@ -10,9 +10,26 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcRunnable` public type.
 
-#![allow(unused_imports)]
+use std::sync::Arc;
 
-use super::*;
+use parking_lot::Mutex;
+
+use crate::{
+    macros::{
+        impl_arc_conversions,
+        impl_common_name_methods,
+        impl_common_new_methods,
+    },
+    suppliers::{
+        macros::impl_supplier_debug_display,
+        supplier::Supplier,
+    },
+    tasks::runnable::{
+        BoxRunnable,
+        RcRunnable,
+        Runnable,
+    },
+};
 
 // ============================================================================
 // ArcRunnable

@@ -10,9 +10,23 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcBiMutatingFunction` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    Arc,
+    ArcConditionalBiMutatingFunction,
+    BiMutatingFunction,
+    BiPredicate,
+    BoxBiMutatingFunction,
+    BoxBiMutatingFunctionOnce,
+    MutatingFunction,
+    RcBiMutatingFunction,
+    impl_arc_conversions,
+    impl_closure_trait,
+    impl_function_clone,
+    impl_function_common_methods,
+    impl_function_constant_method,
+    impl_function_debug_display,
+    impl_shared_function_methods,
+};
 
 // ============================================================================
 // ArcBiMutatingFunction - Arc<dyn Fn(&mut T, &mut U) -> R + Send + Sync>

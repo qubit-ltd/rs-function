@@ -10,9 +10,10 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnPredicateOps` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxPredicate,
+    Predicate,
+};
 
 /// Extension trait providing logical composition methods for closures.
 ///

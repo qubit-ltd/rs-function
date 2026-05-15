@@ -10,9 +10,17 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulConsumer` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxConditionalStatefulConsumer,
+    BoxConsumerOnce,
+    Predicate,
+    RcStatefulConsumer,
+    StatefulConsumer,
+    impl_box_consumer_methods,
+    impl_box_conversions,
+    impl_consumer_common_methods,
+    impl_consumer_debug_display,
+};
 
 // ============================================================================
 // 2. BoxStatefulConsumer - Single Ownership Implementation

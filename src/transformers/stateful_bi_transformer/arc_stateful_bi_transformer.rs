@@ -10,9 +10,24 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulBiTransformer` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    Arc,
+    ArcConditionalStatefulBiTransformer,
+    BiPredicate,
+    BoxBiTransformerOnce,
+    BoxStatefulBiTransformer,
+    Mutex,
+    RcStatefulBiTransformer,
+    StatefulBiTransformer,
+    StatefulTransformer,
+    impl_arc_conversions,
+    impl_closure_trait,
+    impl_shared_transformer_methods,
+    impl_transformer_clone,
+    impl_transformer_common_methods,
+    impl_transformer_constant_method,
+    impl_transformer_debug_display,
+};
 
 // ============================================================================
 // ArcStatefulBiTransformer - Arc<dyn FnMut(T, U) -> R + Send + Sync>

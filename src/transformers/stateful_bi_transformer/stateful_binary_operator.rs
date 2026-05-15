@@ -10,9 +10,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `StatefulBinaryOperator` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::StatefulBiTransformer;
 
 // ============================================================================
 // StatefulBinaryOperator Trait - Marker trait for StatefulBiTransformer<T, T, T>

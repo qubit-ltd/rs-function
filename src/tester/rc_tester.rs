@@ -10,9 +10,12 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcTester` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    ArcTester,
+    BoxTester,
+    Rc,
+    Tester,
+};
 
 // ============================================================================
 // RcTester: Single-Threaded Shared Ownership Implementation

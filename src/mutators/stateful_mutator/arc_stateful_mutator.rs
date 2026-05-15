@@ -10,9 +10,23 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulMutator` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    Arc,
+    ArcConditionalStatefulMutator,
+    ArcMutMutatorFn,
+    BoxMutatorOnce,
+    BoxStatefulMutator,
+    Mutex,
+    Predicate,
+    RcStatefulMutator,
+    StatefulMutator,
+    impl_arc_conversions,
+    impl_closure_trait,
+    impl_mutator_clone,
+    impl_mutator_common_methods,
+    impl_mutator_debug_display,
+    impl_shared_mutator_methods,
+};
 
 // ============================================================================
 // 4. ArcMutator - Thread-Safe Shared Ownership Implementation

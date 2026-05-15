@@ -10,9 +10,18 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcConditionalBiConsumer` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    ArcBiConsumer,
+    ArcBiPredicate,
+    BiConsumer,
+    BiPredicate,
+    BoxBiConsumer,
+    RcBiConsumer,
+    impl_conditional_consumer_clone,
+    impl_conditional_consumer_conversions,
+    impl_conditional_consumer_debug_display,
+    impl_shared_conditional_consumer,
+};
 
 // =======================================================================
 // 8. ArcConditionalBiConsumer - Arc-based Conditional BiConsumer

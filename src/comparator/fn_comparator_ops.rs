@@ -10,9 +10,10 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnComparatorOps` public type.
 
-#![allow(unused_imports)]
-
-use super::*;
+use super::{
+    BoxComparator,
+    Ordering,
+};
 
 /// Extension trait providing composition methods for closures and function
 /// pointers.
