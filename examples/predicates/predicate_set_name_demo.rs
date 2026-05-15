@@ -108,7 +108,7 @@ fn demo_arc_predicate() {
         (name, result)
     });
 
-    let (name, result) = handle.join().unwrap();
+    let (name, result) = handle.join().expect("thread should not panic");
     println!("\n   Accessing from thread:");
     println!("     Name in thread: {:?}", name);
     println!("     Test 'Threading' in thread: {}", result);

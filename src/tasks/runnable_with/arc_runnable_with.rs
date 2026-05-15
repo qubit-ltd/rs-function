@@ -36,6 +36,7 @@ use crate::{
 ///
 pub struct ArcRunnableWith<T, E> {
     /// The stateful closure executed by this runnable.
+    #[allow(clippy::type_complexity)]
     pub(super) function: Arc<Mutex<dyn FnMut(&mut T) -> Result<(), E> + Send>>,
     /// The optional name of this runnable.
     pub(super) name: Option<String>,

@@ -79,7 +79,7 @@ fn main() {
         new_double.apply(21)
     });
 
-    let result = handle.join().unwrap();
+    let result = handle.join().expect("thread should not panic");
     println!("   Executed in thread: new_double.apply(21) = {}", result);
 
     println!("\n=== Demo completed ===");

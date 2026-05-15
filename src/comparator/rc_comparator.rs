@@ -40,6 +40,7 @@ use super::{
 ///
 #[derive(Clone)]
 pub struct RcComparator<T> {
+    #[allow(clippy::type_complexity)]
     pub(super) function: Rc<dyn Fn(&T, &T) -> Ordering>,
 }
 

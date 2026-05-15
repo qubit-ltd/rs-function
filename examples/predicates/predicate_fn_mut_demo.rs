@@ -96,7 +96,7 @@ fn demo_thread_safe() {
         numbers.iter().copied().filter(closure).count()
     });
 
-    let count = handle.join().unwrap();
+    let count = handle.join().expect("thread should not panic");
     println!("   Filtered result count in thread: {}", count);
     assert_eq!(count, 3);
 

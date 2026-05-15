@@ -85,7 +85,7 @@
 //!     .collect();
 //!
 //! for h in handles {
-//!     assert_eq!(h.join().unwrap(), "Hello, World!");
+//!     assert_eq!(h.join().expect("thread should not panic"), "Hello, World!");
 //! }
 //! ```
 //!

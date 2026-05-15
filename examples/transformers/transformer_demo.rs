@@ -53,7 +53,10 @@ fn main() {
         "In main thread: arc_double.apply(50) = {}",
         arc_double.apply(50)
     );
-    println!("In child thread: result = {}", handle.join().unwrap());
+    println!(
+        "In child thread: result = {}",
+        handle.join().expect("thread should not panic")
+    );
     println!();
 
     // ====================================================================

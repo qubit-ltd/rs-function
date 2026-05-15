@@ -46,6 +46,7 @@ use super::{
 /// - **Clonable**: Cheap cloning via `Arc::clone`
 ///
 pub struct ArcBiMutatingFunction<T, U, R> {
+    #[allow(clippy::type_complexity)]
     pub(super) function: Arc<dyn Fn(&mut T, &mut U) -> R + Send + Sync>,
     pub(super) name: Option<String>,
 }

@@ -30,11 +30,16 @@ fn main() {
     let log = Arc::new(Mutex::new(Vec::new()));
     let l = log.clone();
     let consumer = BoxBiConsumerOnce::new(move |x: &i32, y: &i32| {
-        l.lock().unwrap().push(*x + *y);
+        l.lock()
+            .expect("mutex should not be poisoned")
+            .push(*x + *y);
         println!("  Sum: {}", x + y);
     });
     consumer.accept(&10, &5);
-    println!("  Log: {:?}\n", *log.lock().unwrap());
+    println!(
+        "  Log: {:?}\n",
+        *log.lock().expect("mutex should not be poisoned")
+    );
 
     // 2. Method chaining
     println!("2. Method chaining:");
@@ -42,37 +47,54 @@ fn main() {
     let l1 = log.clone();
     let l2 = log.clone();
     let chained = BoxBiConsumerOnce::new(move |x: &i32, y: &i32| {
-        l1.lock().unwrap().push(*x + *y);
+        l1.lock()
+            .expect("mutex should not be poisoned")
+            .push(*x + *y);
         println!("  First: sum={}", x + y);
     })
     .and_then(move |x: &i32, y: &i32| {
-        l2.lock().unwrap().push(*x * *y);
+        l2.lock()
+            .expect("mutex should not be poisoned")
+            .push(*x * *y);
         println!("  Second: product={}", x * y);
     });
     chained.accept(&5, &3);
-    println!("  Log: {:?}\n", *log.lock().unwrap());
+    println!(
+        "  Log: {:?}\n",
+        *log.lock().expect("mutex should not be poisoned")
+    );
 
     // 3. Conditional execution - true case
     println!("3. Conditional execution - true case:");
     let log = Arc::new(Mutex::new(Vec::new()));
     let l = log.clone();
     let conditional = BoxBiConsumerOnce::new(move |x: &i32, y: &i32| {
-        l.lock().unwrap().push(*x + *y);
+        l.lock()
+            .expect("mutex should not be poisoned")
+            .push(*x + *y);
     })
     .when(|x: &i32, y: &i32| *x > 0 && *y > 0);
     conditional.accept(&5, &3);
-    println!("  Positive values: {:?}\n", *log.lock().unwrap());
+    println!(
+        "  Positive values: {:?}\n",
+        *log.lock().expect("mutex should not be poisoned")
+    );
 
     // 4. Conditional execution - false case
     println!("4. Conditional execution - false case:");
     let log = Arc::new(Mutex::new(Vec::new()));
     let l = log.clone();
     let conditional = BoxBiConsumerOnce::new(move |x: &i32, y: &i32| {
-        l.lock().unwrap().push(*x + *y);
+        l.lock()
+            .expect("mutex should not be poisoned")
+            .push(*x + *y);
     })
     .when(|x: &i32, y: &i32| *x > 0 && *y > 0);
     conditional.accept(&-5, &3);
-    println!("  Negative value (unchanged): {:?}\n", *log.lock().unwrap());
+    println!(
+        "  Negative value (unchanged): {:?}\n",
+        *log.lock().expect("mutex should not be poisoned")
+    );
 
     // 5. Conditional branching
     println!("5. Conditional branching:");
@@ -80,25 +102,33 @@ fn main() {
     let l1 = log.clone();
     let l2 = log.clone();
     let branch = BoxBiConsumerOnce::new(move |x: &i32, _y: &i32| {
-        l1.lock().unwrap().push(*x);
+        l1.lock().expect("mutex should not be poisoned").push(*x);
     })
     .when(|x: &i32, y: &i32| *x > *y)
     .or_else(move |_x: &i32, y: &i32| {
-        l2.lock().unwrap().push(*y);
+        l2.lock().expect("mutex should not be poisoned").push(*y);
     });
     branch.accept(&15, &10);
-    println!("  When x > y: {:?}\n", *log.lock().unwrap());
+    println!(
+        "  When x > y: {:?}\n",
+        *log.lock().expect("mutex should not be poisoned")
+    );
 
     // 6. Working with closures directly
     println!("6. Working with closures directly:");
     let log = Arc::new(Mutex::new(Vec::new()));
     let l = log.clone();
     let closure = move |x: &i32, y: &i32| {
-        l.lock().unwrap().push(*x + *y);
+        l.lock()
+            .expect("mutex should not be poisoned")
+            .push(*x + *y);
         println!("  Processed: {}", x + y);
     };
     closure.accept(&10, &20);
-    println!("  Log: {:?}\n", *log.lock().unwrap());
+    println!(
+        "  Log: {:?}\n",
+        *log.lock().expect("mutex should not be poisoned")
+    );
 
     // 7. Moving captured values
     println!("7. Moving captured values:");
@@ -118,10 +148,15 @@ fn main() {
     let l = log.clone();
     let init_callback = BoxBiConsumerOnce::new(move |width: &i32, height: &i32| {
         println!("  Initializing with dimensions: {}x{}", width, height);
-        l.lock().unwrap().push(*width * *height);
+        l.lock()
+            .expect("mutex should not be poisoned")
+            .push(*width * *height);
     });
     init_callback.accept(&800, &600);
-    println!("  Areas: {:?}\n", *log.lock().unwrap());
+    println!(
+        "  Areas: {:?}\n",
+        *log.lock().expect("mutex should not be poisoned")
+    );
 
     // 9. Cleanup callback
     println!("9. Cleanup callback:");
@@ -161,11 +196,16 @@ fn main() {
     let log = Arc::new(Mutex::new(Vec::new()));
     let l = log.clone();
     let consumer = BoxBiConsumerOnce::new(move |x: &i32, y: &i32| {
-        l.lock().unwrap().push(*x + *y);
+        l.lock()
+            .expect("mutex should not be poisoned")
+            .push(*x + *y);
     });
     let func = consumer.into_fn();
     func(&7, &3);
-    println!("  Log: {:?}\n", *log.lock().unwrap());
+    println!(
+        "  Log: {:?}\n",
+        *log.lock().expect("mutex should not be poisoned")
+    );
 
     println!("=== Demo Complete ===");
 }

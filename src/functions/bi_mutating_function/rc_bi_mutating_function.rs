@@ -44,6 +44,7 @@ use super::{
 /// - **Clonable**: Cheap cloning via `Rc::clone`
 ///
 pub struct RcBiMutatingFunction<T, U, R> {
+    #[allow(clippy::type_complexity)]
     pub(super) function: Rc<dyn Fn(&mut T, &mut U) -> R>,
     pub(super) name: Option<String>,
 }

@@ -47,7 +47,7 @@ use super::{
 /// let pred_clone = pred.clone();
 /// std::thread::spawn(move || {
 ///     assert!(pred_clone.test(&10));
-/// }).join().unwrap();
+/// }).join().expect("thread should not panic");
 /// ```
 ///
 pub struct ArcPredicate<T> {

@@ -49,12 +49,12 @@ use super::{
 /// let log = Arc::new(Mutex::new(Vec::new()));
 /// let l = log.clone();
 /// let consumer = BoxConsumerOnce::new(move |x: &i32| {
-///     l.lock().unwrap().push(*x);
+///     l.lock().expect("mutex should not be poisoned").push(*x);
 /// });
 /// let conditional = consumer.when(|x: &i32| *x > 0);
 ///
 /// conditional.accept(&5);
-/// assert_eq!(*log.lock().unwrap(), vec![5]); // Executed
+/// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]); // Executed
 /// ```
 ///
 /// ## With or_else Branch
@@ -67,15 +67,15 @@ use super::{
 /// let l1 = log.clone();
 /// let l2 = log.clone();
 /// let consumer = BoxConsumerOnce::new(move |x: &i32| {
-///     l1.lock().unwrap().push(*x);
+///     l1.lock().expect("mutex should not be poisoned").push(*x);
 /// })
 /// .when(|x: &i32| *x > 0)
 /// .or_else(move |x: &i32| {
-///     l2.lock().unwrap().push(-*x);
+///     l2.lock().expect("mutex should not be poisoned").push(-*x);
 /// });
 ///
 /// consumer.accept(&5);
-/// assert_eq!(*log.lock().unwrap(), vec![5]); // when branch executed
+/// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]); // when branch executed
 /// ```
 ///
 pub struct BoxConditionalConsumerOnce<T> {

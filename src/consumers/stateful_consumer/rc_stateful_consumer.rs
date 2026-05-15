@@ -91,6 +91,7 @@ use super::{
 /// ```
 ///
 pub struct RcStatefulConsumer<T> {
+    #[allow(clippy::type_complexity)]
     pub(super) function: Rc<RefCell<dyn FnMut(&T)>>,
     pub(super) name: Option<String>,
 }

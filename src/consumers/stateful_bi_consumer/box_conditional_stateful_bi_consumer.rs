@@ -51,15 +51,15 @@ use super::{
 /// let log = Arc::new(Mutex::new(Vec::new()));
 /// let l = log.clone();
 /// let mut consumer = BoxStatefulBiConsumer::new(move |x: &i32, y: &i32| {
-///     l.lock().unwrap().push(*x + *y);
+///     l.lock().expect("mutex should not be poisoned").push(*x + *y);
 /// });
 /// let mut conditional = consumer.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
 ///
 /// conditional.accept(&5, &3);
-/// assert_eq!(*log.lock().unwrap(), vec![8]); // Executed
+/// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]); // Executed
 ///
 /// conditional.accept(&-5, &3);
-/// assert_eq!(*log.lock().unwrap(), vec![8]); // Not executed
+/// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]); // Not executed
 /// ```
 ///
 /// ## With or_else Branch
@@ -72,17 +72,17 @@ use super::{
 /// let l1 = log.clone();
 /// let l2 = log.clone();
 /// let mut consumer = BoxStatefulBiConsumer::new(move |x: &i32, y: &i32| {
-///     l1.lock().unwrap().push(*x + *y);
+///     l1.lock().expect("mutex should not be poisoned").push(*x + *y);
 /// }).when(|x: &i32, y: &i32| *x > 0 && *y > 0)
 ///   .or_else(move |x: &i32, y: &i32| {
-///     l2.lock().unwrap().push(*x * *y);
+///     l2.lock().expect("mutex should not be poisoned").push(*x * *y);
 /// });
 ///
 /// consumer.accept(&5, &3);
-/// assert_eq!(*log.lock().unwrap(), vec![8]); // when branch executed
+/// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]); // when branch executed
 ///
 /// consumer.accept(&-5, &3);
-/// assert_eq!(*log.lock().unwrap(), vec![8, -15]); // or_else branch executed
+/// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8, -15]); // or_else branch executed
 /// ```
 ///
 pub struct BoxConditionalStatefulBiConsumer<T, U> {

@@ -32,6 +32,7 @@ use crate::{
 ///
 pub struct RcRunnableWith<T, E> {
     /// The stateful closure executed by this runnable.
+    #[allow(clippy::type_complexity)]
     pub(super) function: Rc<RefCell<dyn FnMut(&mut T) -> Result<(), E>>>,
     /// The optional name of this runnable.
     pub(super) name: Option<String>,

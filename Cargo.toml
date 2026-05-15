@@ -162,6 +162,3 @@ path = "examples/transformers/transformer_once_demo.rs"
 [[example]]
 name = "transformer_once_specialized_methods_demo"
 path = "examples/transformers/transformer_once_specialized_methods_demo.rs"
-
-[lints.clippy]
-type_complexity = "allow"

@@ -50,12 +50,12 @@ use super::{
 /// let l1 = log.clone();
 /// let l2 = log.clone();
 /// let mut chained = (move |x: &i32| {
-///     l1.lock().unwrap().push(*x * 2);
+///     l1.lock().expect("mutex should not be poisoned").push(*x * 2);
 /// }).and_then(move |x: &i32| {
-///     l2.lock().unwrap().push(*x + 10);
+///     l2.lock().expect("mutex should not be poisoned").push(*x + 10);
 /// });
 /// chained.accept(&5);
-/// assert_eq!(*log.lock().unwrap(), vec![10, 15]);
+/// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![10, 15]);
 /// // (5 * 2), (5 + 10)
 /// ```
 ///
@@ -97,16 +97,16 @@ pub trait FnStatefulConsumerOps<T>: FnMut(&T) + Sized {
     /// let l1 = log.clone();
     /// let l2 = log.clone();
     /// let second = BoxStatefulConsumer::new(move |x: &i32| {
-    ///     l2.lock().unwrap().push(*x + 10);
+    ///     l2.lock().expect("mutex should not be poisoned").push(*x + 10);
     /// });
     ///
     /// // second is moved here
     /// let mut chained = (move |x: &i32| {
-    ///     l1.lock().unwrap().push(*x * 2);
+    ///     l1.lock().expect("mutex should not be poisoned").push(*x * 2);
     /// }).and_then(second);
     ///
     /// chained.accept(&5);
-    /// assert_eq!(*log.lock().unwrap(), vec![10, 15]);
+    /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![10, 15]);
     /// // second.accept(&3); // Would not compile - moved
     /// ```
     ///
@@ -120,20 +120,20 @@ pub trait FnStatefulConsumerOps<T>: FnMut(&T) + Sized {
     /// let l1 = log.clone();
     /// let l2 = log.clone();
     /// let mut second = RcStatefulConsumer::new(move |x: &i32| {
-    ///     l2.lock().unwrap().push(*x + 10);
+    ///     l2.lock().expect("mutex should not be poisoned").push(*x + 10);
     /// });
     ///
     /// // Clone to preserve original
     /// let mut chained = (move |x: &i32| {
-    ///     l1.lock().unwrap().push(*x * 2);
+    ///     l1.lock().expect("mutex should not be poisoned").push(*x * 2);
     /// }).and_then(second.clone());
     ///
     /// chained.accept(&5);
-    /// assert_eq!(*log.lock().unwrap(), vec![10, 15]);
+    /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![10, 15]);
     ///
     /// // Original still usable
     /// second.accept(&3);
-    /// assert_eq!(*log.lock().unwrap(), vec![10, 15, 13]);
+    /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![10, 15, 13]);
     /// ```
     fn and_then<C>(self, next: C) -> BoxStatefulConsumer<T>
     where

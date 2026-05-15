@@ -152,7 +152,7 @@ fn main() {
     mutator.apply(&mut value);
     println!("Main thread: 3 * 2 = {}", value);
 
-    let thread_result = handle.join().unwrap();
+    let thread_result = handle.join().expect("thread should not panic");
     println!("Thread result: {}\n", thread_result);
 
     // ========================================================================

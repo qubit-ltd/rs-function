@@ -30,11 +30,14 @@ fn main() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
         let consumer = BoxConsumerOnce::new(move |x: &i32| {
-            l.lock().unwrap().push(*x);
+            l.lock().expect("mutex should not be poisoned").push(*x);
             println!("  BoxConsumerOnce consumed: {}", x);
         });
         consumer.accept(&42);
-        println!("  Log: {:?}\n", *log.lock().unwrap());
+        println!(
+            "  Log: {:?}\n",
+            *log.lock().expect("mutex should not be poisoned")
+        );
     }
 
     // 2. BoxConsumerOnce - Method chaining
@@ -45,19 +48,28 @@ fn main() {
         let l2 = log.clone();
         let l3 = log.clone();
         let chained = BoxConsumerOnce::new(move |x: &i32| {
-            l1.lock().unwrap().push(*x * 2);
+            l1.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x * 2);
             println!("  Step 1: {} * 2 = {}", x, x * 2);
         })
         .and_then(move |x: &i32| {
-            l2.lock().unwrap().push(*x + 10);
+            l2.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x + 10);
             println!("  Step 2: {} + 10 = {}", x, x + 10);
         })
         .and_then(move |x: &i32| {
-            l3.lock().unwrap().push(*x - 1);
+            l3.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x - 1);
             println!("  Step 3: {} - 1 = {}", x, x - 1);
         });
         chained.accept(&5);
-        println!("  Log: {:?}\n", *log.lock().unwrap());
+        println!(
+            "  Log: {:?}\n",
+            *log.lock().expect("mutex should not be poisoned")
+        );
     }
 
     // 3. BoxConsumerOnce - Factory methods
@@ -82,20 +94,26 @@ fn main() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
         let conditional = BoxConsumerOnce::new(move |x: &i32| {
-            l.lock().unwrap().push(*x * 2);
+            l.lock().expect("mutex should not be poisoned").push(*x * 2);
         })
         .when(|x: &i32| *x > 0);
         conditional.accept(&5);
-        println!("  Conditional (positive): {:?}", *log.lock().unwrap());
+        println!(
+            "  Conditional (positive): {:?}",
+            *log.lock().expect("mutex should not be poisoned")
+        );
 
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
         let conditional = BoxConsumerOnce::new(move |x: &i32| {
-            l.lock().unwrap().push(*x * 2);
+            l.lock().expect("mutex should not be poisoned").push(*x * 2);
         })
         .when(|x: &i32| *x > 0);
         conditional.accept(&-5);
-        println!("  Conditional (negative): {:?}\n", *log.lock().unwrap());
+        println!(
+            "  Conditional (negative): {:?}\n",
+            *log.lock().expect("mutex should not be poisoned")
+        );
     }
 
     // 4. Closure usage
@@ -104,11 +122,14 @@ fn main() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
         let closure = move |x: &i32| {
-            l.lock().unwrap().push(*x * 2);
+            l.lock().expect("mutex should not be poisoned").push(*x * 2);
             println!("  Closure consumed: {}", x);
         };
         closure.accept(&42);
-        println!("  Log: {:?}\n", *log.lock().unwrap());
+        println!(
+            "  Log: {:?}\n",
+            *log.lock().expect("mutex should not be poisoned")
+        );
     }
 
     // 5. Closure chaining
@@ -118,15 +139,22 @@ fn main() {
         let l1 = log.clone();
         let l2 = log.clone();
         let chained = (move |x: &i32| {
-            l1.lock().unwrap().push(*x * 2);
+            l1.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x * 2);
             println!("  Closure 1: {} * 2 = {}", x, x * 2);
         })
         .and_then(move |x: &i32| {
-            l2.lock().unwrap().push(*x + 10);
+            l2.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x + 10);
             println!("  Closure 2: {} + 10 = {}", x, x + 10);
         });
         chained.accept(&5);
-        println!("  Log: {:?}\n", *log.lock().unwrap());
+        println!(
+            "  Log: {:?}\n",
+            *log.lock().expect("mutex should not be poisoned")
+        );
     }
 
     // 6. Type conversions
@@ -137,11 +165,14 @@ fn main() {
         // Closure to BoxConsumerOnce
         let l = log.clone();
         let closure = move |x: &i32| {
-            l.lock().unwrap().push(*x);
+            l.lock().expect("mutex should not be poisoned").push(*x);
         };
         let box_consumer = closure.into_box();
         box_consumer.accept(&1);
-        println!("  BoxConsumerOnce: {:?}", *log.lock().unwrap());
+        println!(
+            "  BoxConsumerOnce: {:?}",
+            *log.lock().expect("mutex should not be poisoned")
+        );
     }
 
     // 7. Using with iterators (BoxConsumerOnce)
@@ -150,14 +181,14 @@ fn main() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
         let consumer = BoxConsumerOnce::new(move |x: &i32| {
-            l.lock().unwrap().push(*x * 2);
+            l.lock().expect("mutex should not be poisoned").push(*x * 2);
         });
         // Note: This will panic because BoxConsumerOnce can only be called once
         // vec![1, 2, 3, 4, 5].iter().for_each(consumer.into_fn());
         consumer.accept(&1);
         println!(
             "  BoxConsumerOnce with single value: {:?}\n",
-            *log.lock().unwrap()
+            *log.lock().expect("mutex should not be poisoned")
         );
     }
 

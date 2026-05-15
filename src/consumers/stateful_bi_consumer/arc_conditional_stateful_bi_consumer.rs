@@ -52,7 +52,7 @@ use super::{
 /// let log = Arc::new(Mutex::new(Vec::new()));
 /// let l = log.clone();
 /// let conditional = ArcStatefulBiConsumer::new(move |x: &i32, y: &i32| {
-///     l.lock().unwrap().push(*x + *y);
+///     l.lock().expect("mutex should not be poisoned").push(*x + *y);
 /// }).when(|x: &i32, y: &i32| *x > 0 && *y > 0);
 ///
 /// let conditional_clone = conditional.clone();
@@ -60,7 +60,7 @@ use super::{
 /// let mut value = 5;
 /// let mut m = conditional;
 /// m.accept(&value, &3);
-/// assert_eq!(*log.lock().unwrap(), vec![8]);
+/// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
 /// ```
 ///
 pub struct ArcConditionalStatefulBiConsumer<T, U> {

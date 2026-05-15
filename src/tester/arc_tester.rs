@@ -61,7 +61,7 @@ use super::{
 ///     clone.test()
 /// });
 ///
-/// assert!(handle.join().unwrap());
+/// assert!(handle.join().expect("thread should not panic"));
 /// counter.fetch_add(1, Ordering::Relaxed);
 /// assert!(shared.test());
 /// ```
@@ -150,7 +150,7 @@ impl ArcTester {
     /// });
     ///
     /// // Initial state should pass
-    /// assert!(handle.join().unwrap());
+    /// assert!(handle.join().expect("thread should not panic"));
     /// assert!(pool_ready.test());
     ///
     /// // Connection count exceeded
@@ -228,7 +228,7 @@ impl ArcTester {
     /// });
     ///
     /// // Initial state: low load and healthy
-    /// assert!(handle.join().unwrap());
+    /// assert!(handle.join().expect("thread should not panic"));
     /// assert!(should_route_here.test());
     ///
     /// // High load but server healthy
@@ -293,7 +293,7 @@ impl ArcTester {
     /// // Initial state: queue not full
     /// pending_tasks.store(50, Ordering::Relaxed);
     /// assert!(queue_available.test());
-    /// assert!(!handle.join().unwrap());
+    /// assert!(!handle.join().expect("thread should not panic"));
     /// assert!(!queue_full.test());
     ///
     /// // Queue near full

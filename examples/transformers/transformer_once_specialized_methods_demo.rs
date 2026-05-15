@@ -127,7 +127,7 @@ fn main() {
         boxed.apply(50)
     });
 
-    let result = handle.join().unwrap();
+    let result = handle.join().expect("thread should not panic");
     println!("   Thread-safe ArcTransformer result: {}", result);
 
     // Original still usable
