@@ -18,7 +18,7 @@ use qubit_function::{
 };
 
 fn main() {
-    println!("=== Demonstrating Predicate compatibility with FnMut ===\n");
+    println!("=== Demonstrating Predicate interop with FnMut ===\n");
 
     demo_with_iterator_filter();
     demo_with_vec_retain();

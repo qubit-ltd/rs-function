@@ -60,7 +60,7 @@ use super::{
 /// semantics:
 /// - Arc/Rc implies multiple owners might need to call
 /// - FnOnce is consumed after calling, cannot be called again
-/// - This semantic incompatibility makes Arc/Rc variants meaningless
+/// - These semantics make Arc/Rc variants meaningless
 ///
 /// # Examples
 ///
