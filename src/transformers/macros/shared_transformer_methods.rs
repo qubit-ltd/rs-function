@@ -134,6 +134,34 @@
 /// ```
 ///
 macro_rules! impl_shared_transformer_methods {
+    (@let_before ArcStatefulTransformer, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_before RcStatefulTransformer, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_before ArcStatefulBiTransformer, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_before RcStatefulBiTransformer, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_before $struct_name:ident, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_after StatefulTransformer, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_after $transformer_trait:ident, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
     // Two generic parameters
     (
         $struct_name:ident < $t:ident, $r:ident >,
@@ -155,16 +183,16 @@ macro_rules! impl_shared_transformer_methods {
             }
         }
 
-        #[allow(unused_mut)]
         #[inline]
-        pub fn and_then<S, F>(&self, mut after: F) -> $struct_name<$t, S>
+        pub fn and_then<S, F>(&self, after: F) -> $struct_name<$t, S>
         where
             $t: 'static,
             $r: 'static,
             S: 'static,
             F: $chained_transformer_trait<$r, S> + $($extra_bounds)+,
         {
-            let mut before = self.clone();
+            impl_shared_transformer_methods!(@let_before $struct_name, before, self.clone());
+            impl_shared_transformer_methods!(@let_after $chained_transformer_trait, after, after);
             $struct_name::new(move |t| {
                 let r = before.apply(t);
                 after.apply(r)
@@ -194,9 +222,8 @@ macro_rules! impl_shared_transformer_methods {
             }
         }
 
-        #[allow(unused_mut)]
         #[inline]
-        pub fn and_then<S, F>(&self, mut after: F) -> $struct_name<$t, $u, S>
+        pub fn and_then<S, F>(&self, after: F) -> $struct_name<$t, $u, S>
         where
             $t: 'static,
             $u: 'static,
@@ -204,9 +231,10 @@ macro_rules! impl_shared_transformer_methods {
             S: 'static,
             F: $chained_transformer_trait<$r, S> + $($extra_bounds)+,
         {
-            let mut before = self.clone();
+            impl_shared_transformer_methods!(@let_before $struct_name, before, self.clone());
+            impl_shared_transformer_methods!(@let_after $chained_transformer_trait, after, after);
             $struct_name::new(move |t, u| {
-                let mut r = before.apply(t, u);
+                let r = before.apply(t, u);
                 after.apply(r)
             })
         }

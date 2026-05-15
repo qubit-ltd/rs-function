@@ -12,12 +12,8 @@
 //! Generates conversion methods for Conditional Consumer implementations
 //!
 //! This macro generates the conversion methods (`into_box`, `into_rc`, `into_fn`) for
-//! conditional consumer types. It handles both immutable (Consumer) and mutable
-//! (StatefulConsumer) cases using the `#[allow(unused_mut)]` annotation.
-//!
-//! The macro works by always declaring variables as `mut`, which is necessary for
-//! StatefulConsumer cases, while suppressing unused_mut warnings for Consumer cases
-//! where the mutability is not needed.
+//! conditional consumer types. It selects immutable or mutable captures from the
+//! generated closure trait (`Fn` or `FnMut`).
 //!
 //! # Parameters
 //!
@@ -49,9 +45,9 @@
 //!
 //! # Implementation Details
 //!
-//! - Uses `#[allow(unused_mut)]` to handle Consumer cases where `mut` is not needed
-//! - The closures inside `into_box` and `into_rc` will automatically capture as `Fn`
-//!   or `FnMut` based on their internal operations
+//! - Uses the `$fn_trait` parameter to choose immutable or mutable captures.
+//! - The closures inside `into_box` and `into_rc` capture as `Fn` or `FnMut`
+//!   according to the generated operation.
 //! - The `into_fn` method uses the provided `$fn_trait` parameter to match the
 //!   intended trait type
 //!
@@ -62,12 +58,8 @@
 /// a trait implementation block). It generates individual conversion methods
 /// but does not create a complete impl block itself. This macro generates the
 /// conversion methods (`into_box`, `into_rc`, `into_fn`) for conditional consumer
-/// types. It handles both immutable (Consumer) and mutable (StatefulConsumer)
-/// cases using the `#[allow(unused_mut)]` annotation.
-///
-/// The macro works by always declaring variables as `mut`, which is necessary for
-/// StatefulConsumer cases, while suppressing unused_mut warnings for Consumer cases
-/// where the mutability is not needed.
+/// types. It selects immutable or mutable captures from the generated closure
+/// trait (`Fn` or `FnMut`).
 ///
 /// # Parameters
 ///
@@ -100,27 +92,34 @@
 ///
 /// # Implementation Details
 ///
-/// - Uses `#[allow(unused_mut)]` to handle Consumer cases where `mut` is not needed
-/// - The closures inside `into_box` and `into_rc` will automatically capture as `Fn`
-///   or `FnMut` based on their internal operations
+/// - Uses the `$fn_trait` parameter to choose immutable or mutable captures.
+/// - The closures inside `into_box` and `into_rc` capture as `Fn` or `FnMut`
+///   according to the generated operation.
 /// - The `into_fn` method uses the provided `$fn_trait` parameter to match the
 ///   intended trait type
 ///
 ///
 macro_rules! impl_conditional_consumer_conversions {
+    (@let_consumer Fn, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_consumer FnMut, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
     // Single generic parameter - Consumer
     (
         $box_type:ident < $t:ident >,
         $rc_type:ident,
         $fn_trait:ident
     ) => {
-        #[allow(unused_mut)]
         fn into_box(self) -> $box_type<$t>
         where
             Self: 'static,
         {
             let pred = self.predicate;
-            let mut consumer = self.consumer;
+            impl_conditional_consumer_conversions!(@let_consumer $fn_trait, consumer, self.consumer);
             $box_type::new(move |t| {
                 if pred.test(t) {
                     consumer.accept(t);
@@ -128,13 +127,12 @@ macro_rules! impl_conditional_consumer_conversions {
             })
         }
 
-        #[allow(unused_mut)]
         fn into_rc(self) -> $rc_type<$t>
         where
             Self: 'static,
         {
             let pred = self.predicate.into_rc();
-            let mut consumer = self.consumer.into_rc();
+            impl_conditional_consumer_conversions!(@let_consumer $fn_trait, consumer, self.consumer.into_rc());
             $rc_type::new(move |t| {
                 if pred.test(t) {
                     consumer.accept(t);
@@ -142,10 +140,9 @@ macro_rules! impl_conditional_consumer_conversions {
             })
         }
 
-        #[allow(unused_mut)]
         fn into_fn(self) -> impl $fn_trait(&$t) {
             let pred = self.predicate;
-            let mut consumer = self.consumer;
+            impl_conditional_consumer_conversions!(@let_consumer $fn_trait, consumer, self.consumer);
             move |t: &$t| {
                 if pred.test(t) {
                     consumer.accept(t);
@@ -160,13 +157,12 @@ macro_rules! impl_conditional_consumer_conversions {
         $rc_type:ident,
         $fn_trait:ident
     ) => {
-        #[allow(unused_mut)]
         fn into_box(self) -> $box_type<$t, $u>
         where
             Self: 'static,
         {
             let pred = self.predicate;
-            let mut consumer = self.consumer;
+            impl_conditional_consumer_conversions!(@let_consumer $fn_trait, consumer, self.consumer);
             $box_type::new(move |t, u| {
                 if pred.test(t, u) {
                     consumer.accept(t, u);
@@ -174,13 +170,12 @@ macro_rules! impl_conditional_consumer_conversions {
             })
         }
 
-        #[allow(unused_mut)]
         fn into_rc(self) -> $rc_type<$t, $u>
         where
             Self: 'static,
         {
             let pred = self.predicate.into_rc();
-            let mut consumer = self.consumer.into_rc();
+            impl_conditional_consumer_conversions!(@let_consumer $fn_trait, consumer, self.consumer.into_rc());
             $rc_type::new_with_optional_name(
                 move |t, u| {
                     if pred.test(t, u) {
@@ -191,10 +186,9 @@ macro_rules! impl_conditional_consumer_conversions {
             )
         }
 
-        #[allow(unused_mut)]
         fn into_fn(self) -> impl $fn_trait(&$t, &$u) {
             let pred = self.predicate;
-            let mut consumer = self.consumer;
+            impl_conditional_consumer_conversions!(@let_consumer $fn_trait, consumer, self.consumer);
             move |t: &$t, u: &$u| {
                 if pred.test(t, u) {
                     consumer.accept(t, u);

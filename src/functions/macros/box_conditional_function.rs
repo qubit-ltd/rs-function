@@ -81,6 +81,54 @@
 /// ```
 ///
 macro_rules! impl_box_conditional_function {
+    (@let_function Function, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_function FunctionOnce, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_function StatefulFunction, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_function MutatingFunction, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_function MutatingFunctionOnce, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_function StatefulMutatingFunction, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_function BiFunction, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_function BiFunctionOnce, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_function StatefulBiFunction, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_function BiMutatingFunction, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_function BiMutatingFunctionOnce, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_function StatefulBiMutatingFunction, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
     // Two generic parameters - Function
     (
         $struct_name:ident<$t:ident, $r:ident>,
@@ -118,15 +166,15 @@ macro_rules! impl_box_conditional_function {
             /// assert_eq!(conditional.apply(&5), 10);  // 5 * 2 = 10
             /// assert_eq!(conditional.apply(&-3), 7);  // -3 + 10 = 7
             /// ```
-            #[allow(unused_mut)]
-            pub fn or_else<F>(self, mut else_function: F) -> $box_function_type<$t, $r>
+            pub fn or_else<F>(self, else_function: F) -> $box_function_type<$t, $r>
             where
                 $t: 'static,
                 $r: 'static,
                 F: $else_function_trait<$t, $r> + 'static,
             {
                 let predicate = self.predicate;
-                let mut then_function = self.function;
+                impl_box_conditional_function!(@let_function $else_function_trait, then_function, self.function);
+                impl_box_conditional_function!(@let_function $else_function_trait, else_function, else_function);
                 $box_function_type::new(move |t| {
                     if predicate.test(t) {
                         then_function.apply(t)
@@ -175,8 +223,7 @@ macro_rules! impl_box_conditional_function {
             /// assert_eq!(conditional.apply(&3, &4), 7);   // 3 + 4 = 7 (predicate satisfied)
             /// assert_eq!(conditional.apply(&-2, &4), -8); // -2 * 4 = -8 (predicate failed)
             /// ```
-            #[allow(unused_mut)]
-            pub fn or_else<F>(self, mut else_function: F) -> $box_function_type<$t, $u, $r>
+            pub fn or_else<F>(self, else_function: F) -> $box_function_type<$t, $u, $r>
             where
                 $t: 'static,
                 $u: 'static,
@@ -184,7 +231,8 @@ macro_rules! impl_box_conditional_function {
                 F: $else_function_trait<$t, $u, $r> + 'static,
             {
                 let predicate = self.predicate;
-                let mut then_function = self.function;
+                impl_box_conditional_function!(@let_function $else_function_trait, then_function, self.function);
+                impl_box_conditional_function!(@let_function $else_function_trait, else_function, else_function);
                 $box_function_type::new(move |t, u| {
                     if predicate.test(t, u) {
                         then_function.apply(t, u)

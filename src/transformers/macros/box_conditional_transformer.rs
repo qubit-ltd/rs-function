@@ -82,6 +82,30 @@
 /// ```
 ///
 macro_rules! impl_box_conditional_transformer {
+    (@let_transformer Transformer, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_transformer TransformerOnce, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_transformer StatefulTransformer, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_transformer BiTransformer, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_transformer BiTransformerOnce, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_transformer StatefulBiTransformer, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
     // Two generic parameters - Transformer
     (
         $struct_name:ident<$t:ident, $r:ident>,
@@ -101,15 +125,15 @@ macro_rules! impl_box_conditional_transformer {
             /// # Returns
             ///
             /// Returns a new transformer with if-then-else logic
-            #[allow(unused_mut)]
-            pub fn or_else<F>(self, mut else_transformer: F) -> $transformer_type<$t, $r>
+            pub fn or_else<F>(self, else_transformer: F) -> $transformer_type<$t, $r>
             where
                 $t: 'static,
                 $r: 'static,
                 F: $transformer_trait<$t, $r> + 'static,
             {
                 let predicate = self.predicate;
-                let mut then_transformer = self.transformer;
+                impl_box_conditional_transformer!(@let_transformer $transformer_trait, then_transformer, self.transformer);
+                impl_box_conditional_transformer!(@let_transformer $transformer_trait, else_transformer, else_transformer);
                 $transformer_type::new(move |t| {
                     if predicate.test(&t) {
                         then_transformer.apply(t)
@@ -140,8 +164,7 @@ macro_rules! impl_box_conditional_transformer {
             /// # Returns
             ///
             /// Returns a new bi-transformer with if-then-else logic
-            #[allow(unused_mut)]
-            pub fn or_else<F>(self, mut else_transformer: F) -> $transformer_type<$t, $u, $r>
+            pub fn or_else<F>(self, else_transformer: F) -> $transformer_type<$t, $u, $r>
             where
                 $t: 'static,
                 $u: 'static,
@@ -149,7 +172,8 @@ macro_rules! impl_box_conditional_transformer {
                 F: $transformer_trait<$t, $u, $r> + 'static,
             {
                 let predicate = self.predicate;
-                let mut then_transformer = self.transformer;
+                impl_box_conditional_transformer!(@let_transformer $transformer_trait, then_transformer, self.transformer);
+                impl_box_conditional_transformer!(@let_transformer $transformer_trait, else_transformer, else_transformer);
                 $transformer_type::new(move |t, u| {
                     if predicate.test(&t, &u) {
                         then_transformer.apply(t, u)

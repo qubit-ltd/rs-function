@@ -1334,15 +1334,13 @@ fn test_rc_conditional_stateful_function_clone() {
 // StatefulFunction Debug and Display Tests
 // ============================================================================
 
-// Allow unused variables in debug/display tests since they are used in closures
-#[allow(unused_variables)]
 #[test]
 fn test_box_stateful_function_debug_display() {
     // Test Debug and Display for BoxStatefulFunction without name
 
     let mut double = BoxStatefulFunction::new(move |x: &i32| x * 2);
     // Call apply to test the function
-    let _result1 = double.apply(&5);
+    assert_eq!(double.apply(&5), 10);
 
     let debug_str = format!("{:?}", double);
     assert!(debug_str.contains("BoxStatefulFunction"));
@@ -1355,7 +1353,7 @@ fn test_box_stateful_function_debug_display() {
     // Test Debug and Display for BoxStatefulFunction with name
     let mut named_double = BoxStatefulFunction::new_with_name("stateful_double", |x: &i32| x * 2);
     // Call apply to test the function
-    let _result2 = named_double.apply(&3);
+    assert_eq!(named_double.apply(&3), 6);
 
     let named_debug_str = format!("{:?}", named_double);
     assert!(named_debug_str.contains("BoxStatefulFunction"));
@@ -1366,15 +1364,13 @@ fn test_box_stateful_function_debug_display() {
     assert_eq!(named_display_str, "BoxStatefulFunction(stateful_double)");
 }
 
-// Allow unused variables in debug/display tests since they are used in closures
-#[allow(unused_variables)]
 #[test]
 fn test_rc_stateful_function_debug_display() {
     // Test Debug and Display for RcStatefulFunction without name
 
     let mut double = RcStatefulFunction::new(move |x: &i32| x * 2);
     // Call apply to test the function
-    let _result1 = double.apply(&5);
+    assert_eq!(double.apply(&5), 10);
 
     let debug_str = format!("{:?}", double);
     assert!(debug_str.contains("RcStatefulFunction"));
@@ -1387,7 +1383,7 @@ fn test_rc_stateful_function_debug_display() {
     // Test Debug and Display for RcStatefulFunction with name
     let mut named_double = RcStatefulFunction::new_with_name("rc_stateful_double", |x: &i32| x * 2);
     // Call apply to test the function
-    let _result2 = named_double.apply(&3);
+    assert_eq!(named_double.apply(&3), 6);
 
     let named_debug_str = format!("{:?}", named_double);
     assert!(named_debug_str.contains("RcStatefulFunction"));
@@ -1398,15 +1394,13 @@ fn test_rc_stateful_function_debug_display() {
     assert_eq!(named_display_str, "RcStatefulFunction(rc_stateful_double)");
 }
 
-// Allow unused variables in debug/display tests since they are used in closures
-#[allow(unused_variables)]
 #[test]
 fn test_arc_stateful_function_debug_display() {
     // Test Debug and Display for ArcStatefulFunction without name
 
     let mut double = ArcStatefulFunction::new(move |x: &i32| x * 2);
     // Call apply to test the function
-    let _result1 = double.apply(&5);
+    assert_eq!(double.apply(&5), 10);
 
     let debug_str = format!("{:?}", double);
     assert!(debug_str.contains("ArcStatefulFunction"));
@@ -1417,14 +1411,10 @@ fn test_arc_stateful_function_debug_display() {
     assert_eq!(display_str, "ArcStatefulFunction");
 
     // Test Debug and Display for ArcStatefulFunction with name
-    let mut counter2 = 0;
     let mut named_double =
-        ArcStatefulFunction::new_with_name("arc_stateful_double", move |x: &i32| {
-            counter2 += 1;
-            x * 2
-        });
+        ArcStatefulFunction::new_with_name("arc_stateful_double", |x: &i32| x * 2);
     // Call apply to test the function
-    let _result2 = named_double.apply(&3);
+    assert_eq!(named_double.apply(&3), 6);
 
     let named_debug_str = format!("{:?}", named_double);
     assert!(named_debug_str.contains("ArcStatefulFunction"));
@@ -1442,8 +1432,6 @@ fn test_arc_stateful_function_debug_display() {
 // StatefulFunction Name Management Tests
 // ============================================================================
 
-// Allow unused variables in tests since they are used in closures
-#[allow(unused_variables)]
 #[test]
 fn test_box_stateful_function_name_methods() {
     // Test new_with_name, name(), and set_name()
@@ -1461,8 +1449,6 @@ fn test_box_stateful_function_name_methods() {
     assert_eq!(double.apply(&5), 10);
 }
 
-// Allow unused variables in tests since they are used in closures
-#[allow(unused_variables)]
 #[test]
 fn test_rc_stateful_function_name_methods() {
     // Test new_with_name, name(), and set_name()
@@ -1485,8 +1471,6 @@ fn test_rc_stateful_function_name_methods() {
     assert_eq!(cloned.apply(&3), 6);
 }
 
-// Allow unused variables in tests since they are used in closures
-#[allow(unused_variables)]
 #[test]
 fn test_arc_stateful_function_name_methods() {
     // Test new_with_name, name(), and set_name()
@@ -1513,15 +1497,13 @@ fn test_arc_stateful_function_name_methods() {
 // ConditionalStatefulFunction Debug and Display Tests
 // ============================================================================
 
-// Allow unused variables in debug/display tests since they are used in closures
-#[allow(unused_variables)]
 #[test]
 fn test_box_conditional_stateful_function_debug_display() {
     // Test Debug and Display for BoxConditionalStatefulFunction without name
 
     let mut double = BoxStatefulFunction::new(move |x: &i32| x * 2);
     // Call apply to test the function
-    let _result1 = double.apply(&5);
+    assert_eq!(double.apply(&5), 10);
 
     let conditional = double.when(|x: &i32| *x > 0);
 
@@ -1538,13 +1520,9 @@ fn test_box_conditional_stateful_function_debug_display() {
     assert!(display_str.ends_with(")"));
 
     // Test Debug and Display for BoxConditionalStatefulFunction with name
-    let mut counter2 = 0;
-    let mut named_double = BoxStatefulFunction::new_with_name("stateful_double", move |x: &i32| {
-        counter2 += 1;
-        x * 2
-    });
+    let mut named_double = BoxStatefulFunction::new_with_name("stateful_double", |x: &i32| x * 2);
     // Call apply to test the function
-    let _result2 = named_double.apply(&3);
+    assert_eq!(named_double.apply(&3), 6);
 
     let named_conditional = named_double.when(|x: &i32| *x % 2 == 0);
 
@@ -1561,15 +1539,13 @@ fn test_box_conditional_stateful_function_debug_display() {
     assert!(named_display_str.ends_with(")"));
 }
 
-// Allow unused variables in debug/display tests since they are used in closures
-#[allow(unused_variables)]
 #[test]
 fn test_rc_conditional_stateful_function_debug_display() {
     // Test Debug and Display for RcConditionalStatefulFunction without name
 
     let mut double = RcStatefulFunction::new(move |x: &i32| x * 2);
     // Call apply to test the function
-    let _result1 = double.apply(&5);
+    assert_eq!(double.apply(&5), 10);
 
     let conditional = double.when(|x: &i32| *x > 0);
 
@@ -1586,14 +1562,9 @@ fn test_rc_conditional_stateful_function_debug_display() {
     assert!(display_str.ends_with(")"));
 
     // Test Debug and Display for RcConditionalStatefulFunction with name
-    let mut counter2 = 0;
-    let mut named_double =
-        RcStatefulFunction::new_with_name("rc_stateful_double", move |x: &i32| {
-            counter2 += 1;
-            x * 2
-        });
+    let mut named_double = RcStatefulFunction::new_with_name("rc_stateful_double", |x: &i32| x * 2);
     // Call apply to test the function
-    let _result2 = named_double.apply(&3);
+    assert_eq!(named_double.apply(&3), 6);
 
     let named_conditional = named_double.when(|x: &i32| *x % 2 == 0);
 
@@ -1610,15 +1581,13 @@ fn test_rc_conditional_stateful_function_debug_display() {
     assert!(named_display_str.ends_with(")"));
 }
 
-// Allow unused variables in debug/display tests since they are used in closures
-#[allow(unused_variables)]
 #[test]
 fn test_arc_conditional_stateful_function_debug_display() {
     // Test Debug and Display for ArcConditionalStatefulFunction without name
 
     let mut double = ArcStatefulFunction::new(move |x: &i32| x * 2);
     // Call apply to test the function
-    let _result1 = double.apply(&5);
+    assert_eq!(double.apply(&5), 10);
 
     let conditional = double.when(|x: &i32| *x > 0);
 
@@ -1635,14 +1604,10 @@ fn test_arc_conditional_stateful_function_debug_display() {
     assert!(display_str.ends_with(")"));
 
     // Test Debug and Display for ArcConditionalStatefulFunction with name
-    let mut counter2 = 0;
     let mut named_double =
-        ArcStatefulFunction::new_with_name("arc_stateful_double", move |x: &i32| {
-            counter2 += 1;
-            x * 2
-        });
+        ArcStatefulFunction::new_with_name("arc_stateful_double", |x: &i32| x * 2);
     // Call apply to test the function
-    let _result2 = named_double.apply(&3);
+    assert_eq!(named_double.apply(&3), 6);
 
     let named_conditional = named_double.when(|x: &i32| *x % 2 == 0);
 

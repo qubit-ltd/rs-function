@@ -708,12 +708,8 @@ mod test_arc_consumer {
             l.lock().expect("mutex should not be poisoned").push(*x);
         });
 
-        // This should compile - accept_once consumes self
         consumer.accept(&5);
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
-
-        // This would not compile - consumer is moved
-        // consumer.accept(&3); // Would not compile
     }
 
     /// Test that ArcConsumer can work with non-Send + non-Sync types
@@ -1232,12 +1228,8 @@ mod test_conversions {
             l.borrow_mut().push(*x);
         });
 
-        // This should compile - accept_once consumes self
         consumer.accept(&5);
         assert_eq!(*log.borrow(), vec![5]);
-
-        // This would not compile - consumer is moved
-        // consumer.accept(&3); // Would not compile
     }
 }
 
@@ -2852,12 +2844,8 @@ mod test_closure_to_methods {
             l.lock().expect("mutex should not be poisoned").push(*x);
         });
 
-        // This should compile - accept_once consumes self
         consumer.accept(&5);
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
-
-        // This would not compile - consumer is moved
-        // consumer.accept(&3); // Would not compile
     }
 }
 

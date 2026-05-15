@@ -341,26 +341,6 @@ fn test_box_function_once_impl_apply() {
     assert_eq!(result, 42);
 }
 
-// Note: BoxFunction doesn't implement Clone, so to_box() and
-// to_fn() are not available for BoxFunction. These tests are
-// intentionally commented out.
-
-// #[test]
-// fn test_box_function_to_box() {
-//     // BoxFunction doesn't implement Clone, so to_box() is not available
-//     let double = BoxFunction::new(|x: &i32| x * 2);
-//     let boxed_once = double.to_box();
-//     assert_eq!(boxed_once.apply(&21), 42);
-// }
-
-// #[test]
-// fn test_box_function_to_fn() {
-//     // BoxFunction doesn't implement Clone, so to_fn() is not available
-//     let double = BoxFunction::new(|x: &i32| x * 2);
-//     let func_once = double.to_fn();
-//     assert_eq!(func_once(&21), 42);
-// }
-
 // ============================================================================
 // ArcFunction Tests - Constructor and Basic Operations
 // ============================================================================

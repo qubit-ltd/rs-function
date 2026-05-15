@@ -103,6 +103,60 @@
 /// ```
 ///
 macro_rules! impl_box_consumer_methods {
+    (@and_then Consumer, $struct_name:ident, $first:expr, $after:expr, $t:ident) => {{
+        let first = $first;
+        let after = $after;
+        $struct_name::new(move |t: &$t| {
+            first.accept(t);
+            after.accept(t);
+        })
+    }};
+
+    (@and_then ConsumerOnce, $struct_name:ident, $first:expr, $after:expr, $t:ident) => {{
+        let first = $first;
+        let after = $after;
+        $struct_name::new(move |t: &$t| {
+            first.accept(t);
+            after.accept(t);
+        })
+    }};
+
+    (@and_then StatefulConsumer, $struct_name:ident, $first:expr, $after:expr, $t:ident) => {{
+        let mut first = $first;
+        let mut after = $after;
+        $struct_name::new(move |t: &$t| {
+            first.accept(t);
+            after.accept(t);
+        })
+    }};
+
+    (@and_then_bi BiConsumer, $struct_name:ident, $first:expr, $after:expr, $t:ident, $u:ident) => {{
+        let first = $first;
+        let after = $after;
+        $struct_name::new(move |t: &$t, u: &$u| {
+            first.accept(t, u);
+            after.accept(t, u);
+        })
+    }};
+
+    (@and_then_bi BiConsumerOnce, $struct_name:ident, $first:expr, $after:expr, $t:ident, $u:ident) => {{
+        let first = $first;
+        let after = $after;
+        $struct_name::new(move |t: &$t, u: &$u| {
+            first.accept(t, u);
+            after.accept(t, u);
+        })
+    }};
+
+    (@and_then_bi StatefulBiConsumer, $struct_name:ident, $first:expr, $after:expr, $t:ident, $u:ident) => {{
+        let mut first = $first;
+        let mut after = $after;
+        $struct_name::new(move |t: &$t, u: &$u| {
+            first.accept(t, u);
+            after.accept(t, u);
+        })
+    }};
+
     // Single generic parameter - Consumer
     (
         $struct_name:ident < $t:ident >,
@@ -193,18 +247,13 @@ macro_rules! impl_box_consumer_methods {
         /// chained.accept(&5);
         /// // counter1 = 5, counter2 = 10
         /// ```
-        #[allow(unused_mut)]
-        pub fn and_then<C>(self, mut after: C) -> $struct_name<$t>
+        pub fn and_then<C>(self, after: C) -> $struct_name<$t>
         where
             Self: Sized + 'static,
             $t: 'static,
             C: $consumer_trait<$t> + 'static,
         {
-            let mut first = self;
-            $struct_name::new(move |t: &$t| {
-                first.accept(t);
-                after.accept(t);
-            })
+            impl_box_consumer_methods!(@and_then $consumer_trait, $struct_name, self, after, $t)
         }
     };
 
@@ -301,19 +350,14 @@ macro_rules! impl_box_consumer_methods {
         /// chained.accept(&"test".to_string(), &3);
         /// // counter1 = 3, counter2 = 6
         /// ```
-        #[allow(unused_mut)]
-        pub fn and_then<C>(self, mut after: C) -> $struct_name<$t, $u>
+        pub fn and_then<C>(self, after: C) -> $struct_name<$t, $u>
         where
             Self: Sized + 'static,
             $t: 'static,
             $u: 'static,
             C: $consumer_trait<$t, $u> + 'static,
         {
-            let mut first = self;
-            $struct_name::new(move |t: &$t, u: &$u| {
-                first.accept(t, u);
-                after.accept(t, u);
-            })
+            impl_box_consumer_methods!(@and_then_bi $consumer_trait, $struct_name, self, after, $t, $u)
         }
     };
 }

@@ -101,6 +101,14 @@
 /// assert_eq!(zipped.get(), ("hello".to_string(), 1));
 /// ```
 macro_rules! impl_shared_supplier_methods {
+    (@let_supplier Supplier, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_supplier StatefulSupplier, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
     // Special case for Arc: T only needs 'static, but zip's S parameter needs Send + Sync
     (
         $struct_name:ident < $t:ident >,
@@ -127,7 +135,6 @@ macro_rules! impl_shared_supplier_methods {
         /// // source is still usable
         /// assert_eq!(mapped.get(), 20);
         /// ```
-        #[allow(unused_mut)]
         #[inline]
         pub fn map<U, M>(&self, mapper: M) -> $struct_name<U>
         where
@@ -135,7 +142,7 @@ macro_rules! impl_shared_supplier_methods {
             M: Transformer<$t, U> + Send + Sync + 'static,
             U: 'static,
         {
-            let mut self_cloned = self.clone();
+            impl_shared_supplier_methods!(@let_supplier $supplier_trait, self_cloned, self.clone());
             $struct_name::new(move || {
                 let value = self_cloned.get();
                 mapper.apply(value)
@@ -162,14 +169,13 @@ macro_rules! impl_shared_supplier_methods {
         ///
         /// assert_eq!(filtered.get(), Some(42));
         /// ```
-        #[allow(unused_mut)]
         #[inline]
         pub fn filter<P>(&self, predicate: P) -> $struct_name<Option<$t>>
         where
             $t: 'static,
             P: Predicate<$t> + Send + Sync + 'static,
         {
-            let mut self_cloned = self.clone();
+            impl_shared_supplier_methods!(@let_supplier $supplier_trait, self_cloned, self.clone());
             $struct_name::new(move || {
                 let value = self_cloned.get();
                 if predicate.test(&value) {
@@ -202,15 +208,15 @@ macro_rules! impl_shared_supplier_methods {
         ///
         /// assert_eq!(zipped.get(), (42, "hello"));
         /// ```
-        #[allow(unused_mut)]
         #[inline]
-        pub fn zip<U, S>(&self, mut other: S) -> $struct_name<($t, U)>
+        pub fn zip<U, S>(&self, other: S) -> $struct_name<($t, U)>
         where
             $t: 'static,
             S: $supplier_trait<U> + Send + Sync + 'static,
             U: 'static,
         {
-            let mut self_cloned = self.clone();
+            impl_shared_supplier_methods!(@let_supplier $supplier_trait, self_cloned, self.clone());
+            impl_shared_supplier_methods!(@let_supplier $supplier_trait, other, other);
             $struct_name::new(move || {
                 let first = self_cloned.get();
                 let second = other.get();
@@ -245,7 +251,6 @@ macro_rules! impl_shared_supplier_methods {
         /// // source is still usable
         /// assert_eq!(mapped.get(), 20);
         /// ```
-        #[allow(unused_mut)]
         #[inline]
         pub fn map<U, M>(&self, mapper: M) -> $struct_name<U>
         where
@@ -253,7 +258,7 @@ macro_rules! impl_shared_supplier_methods {
             M: Transformer<$t, U> + $($extra_bounds)+,
             U: $($extra_bounds)+,
         {
-            let mut self_cloned = self.clone();
+            impl_shared_supplier_methods!(@let_supplier $supplier_trait, self_cloned, self.clone());
             $struct_name::new(move || {
                 let value = self_cloned.get();
                 mapper.apply(value)
@@ -280,14 +285,13 @@ macro_rules! impl_shared_supplier_methods {
         ///
         /// assert_eq!(filtered.get(), Some(42));
         /// ```
-        #[allow(unused_mut)]
         #[inline]
         pub fn filter<P>(&self, predicate: P) -> $struct_name<Option<$t>>
         where
             $t: 'static,
             P: Predicate<$t> + $($extra_bounds)+,
         {
-            let mut self_cloned = self.clone();
+            impl_shared_supplier_methods!(@let_supplier $supplier_trait, self_cloned, self.clone());
             $struct_name::new(move || {
                 let value = self_cloned.get();
                 if predicate.test(&value) {
@@ -320,15 +324,15 @@ macro_rules! impl_shared_supplier_methods {
         ///
         /// assert_eq!(zipped.get(), (42, "hello"));
         /// ```
-        #[allow(unused_mut)]
         #[inline]
-        pub fn zip<U, S>(&self, mut other: S) -> $struct_name<($t, U)>
+        pub fn zip<U, S>(&self, other: S) -> $struct_name<($t, U)>
         where
             $t: 'static,
             S: $supplier_trait<U> + $($extra_bounds)+,
             U: $($extra_bounds)+,
         {
-            let mut self_cloned = self.clone();
+            impl_shared_supplier_methods!(@let_supplier $supplier_trait, self_cloned, self.clone());
+            impl_shared_supplier_methods!(@let_supplier $supplier_trait, other, other);
             $struct_name::new(move || {
                 let first = self_cloned.get();
                 let second = other.get();

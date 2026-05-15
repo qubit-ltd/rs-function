@@ -26,13 +26,6 @@
 //!   after the execution of this function (e.g., Function, BiFunction)
 //! * `$conditional_type` - Conditional function type (e.g., `BoxConditionalFunction`)
 //!
-//! # Implementation Notes
-//!
-//! The macro uses mutable references (`&mut`) uniformly because in Rust,
-//! `&mut T` can be automatically dereferenced to `&T`. This allows both `Fn`
-//! and `FnMut` closures to use the same implementation logic, simplifying
-//! the code and improving performance (avoiding additional boxing operations).
-//!
 //! # Usage Examples
 //!
 //! ```ignore
@@ -70,15 +63,6 @@
 /// This macro generates an extension trait that provides composition methods
 /// (`and_then`, `when`) for closures implementing the specified
 /// closure trait, without requiring explicit wrapping.
-///
-/// # Unified Implementation Strategy
-///
-/// The macro uses a unified implementation approach, passing intermediate
-/// results using mutable references (`&mut`). This is because:
-/// 1. In Rust, `&mut T` can be automatically dereferenced to `&T`
-/// 2. Avoids code duplication and simplifies the macro implementation
-/// 3. Better performance by avoiding additional boxing operations
-/// 4. Uses `#[allow(unused_mut)]` to suppress unnecessary mutability warnings
 ///
 /// # Parameters
 ///
@@ -127,6 +111,60 @@
 /// ```
 ///
 macro_rules! impl_fn_ops_trait {
+    (@let_self BoxStatefulFunction, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_self BoxStatefulMutatingFunction, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_self $box_type:ident, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_after StatefulFunction, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_after StatefulMutatingFunction, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_after $function_trait:ident, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@apply_after Function, $after:ident, $value:expr) => {{
+        let value = $value;
+        $after.apply(&value)
+    }};
+
+    (@apply_after FunctionOnce, $after:ident, $value:expr) => {{
+        let value = $value;
+        $after.apply(&value)
+    }};
+
+    (@apply_after StatefulFunction, $after:ident, $value:expr) => {{
+        let value = $value;
+        $after.apply(&value)
+    }};
+
+    (@apply_after MutatingFunction, $after:ident, $value:expr) => {{
+        let mut value = $value;
+        $after.apply(&mut value)
+    }};
+
+    (@apply_after MutatingFunctionOnce, $after:ident, $value:expr) => {{
+        let mut value = $value;
+        $after.apply(&mut value)
+    }};
+
+    (@apply_after StatefulMutatingFunction, $after:ident, $value:expr) => {{
+        let mut value = $value;
+        $after.apply(&mut value)
+    }};
+
     // Unified implementation - accepts closure signature (without constraints)
     (
         ($($fn_signature:tt)+),
@@ -237,9 +275,8 @@ macro_rules! impl_fn_ops_trait {
         /// // Original still usable
         /// assert_eq!(to_string_reuse.apply(&5), "5");
         /// ```
-            #[allow(unused_mut)]
             #[inline]
-            fn and_then<S, F>(mut self, mut after: F) -> $box_type<T, S>
+            fn and_then<S, F>(self, after: F) -> $box_type<T, S>
             where
                 Self: 'static,
                 S: 'static,
@@ -247,9 +284,10 @@ macro_rules! impl_fn_ops_trait {
                 T: 'static,
                 R: 'static,
             {
+                impl_fn_ops_trait!(@let_self $box_type, this, self);
+                impl_fn_ops_trait!(@let_after $chained_function_trait, after, after);
                 $box_type::new(move |x| {
-                  let mut r = self(x);
-                  after.apply(&mut r)
+                  impl_fn_ops_trait!(@apply_after $chained_function_trait, after, this(x))
                 })
             }
 

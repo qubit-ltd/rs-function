@@ -123,6 +123,66 @@
 /// ```
 ///
 macro_rules! impl_shared_function_methods {
+    (@let_before ArcStatefulFunction, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_before RcStatefulFunction, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_before ArcStatefulMutatingFunction, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_before RcStatefulMutatingFunction, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_before ArcStatefulBiFunction, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_before RcStatefulBiFunction, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_before $struct_name:ident, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_after StatefulFunction, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_after StatefulMutatingFunction, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_after $function_trait:ident, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@apply_after Function, $after:ident, $value:expr) => {{
+        let value = $value;
+        $after.apply(&value)
+    }};
+
+    (@apply_after StatefulFunction, $after:ident, $value:expr) => {{
+        let value = $value;
+        $after.apply(&value)
+    }};
+
+    (@apply_after MutatingFunction, $after:ident, $value:expr) => {{
+        let mut value = $value;
+        $after.apply(&mut value)
+    }};
+
+    (@apply_after StatefulMutatingFunction, $after:ident, $value:expr) => {{
+        let mut value = $value;
+        $after.apply(&mut value)
+    }};
+
     // Two generic parameters - Function types
     (
         $struct_name:ident < $t:ident, $r:ident >,
@@ -193,19 +253,18 @@ macro_rules! impl_shared_function_methods {
         /// let chained = double.and_then(to_string);
         /// assert_eq!(chained.apply(&5), "10".to_string());
         /// ```
-        #[allow(unused_mut)]
         #[inline]
-        pub fn and_then<S, F>(&self, mut after: F) -> $struct_name<$t, S>
+        pub fn and_then<S, F>(&self, after: F) -> $struct_name<$t, S>
         where
             $t: 'static,
             $r: 'static,
             S: 'static,
             F: $chained_function_trait<$r, S> + $($extra_bounds)+,
         {
-            let mut before = self.clone();
+            impl_shared_function_methods!(@let_before $struct_name, before, self.clone());
+            impl_shared_function_methods!(@let_after $chained_function_trait, after, after);
             $struct_name::new(move |t| {
-                let mut r = before.apply(t);
-                after.apply(&mut r)
+                impl_shared_function_methods!(@apply_after $chained_function_trait, after, before.apply(t))
             })
         }
     };
@@ -281,9 +340,8 @@ macro_rules! impl_shared_function_methods {
         /// let chained = add.and_then(multiply_by_two);
         /// assert_eq!(chained.apply(&2, &3), 10); // (2+3) * 2 = 10
         /// ```
-        #[allow(unused_mut)]
         #[inline]
-        pub fn and_then<S, F>(&self, mut after: F) -> $struct_name<$t, $u, S>
+        pub fn and_then<S, F>(&self, after: F) -> $struct_name<$t, $u, S>
         where
             $t: 'static,
             $u: 'static,
@@ -291,10 +349,10 @@ macro_rules! impl_shared_function_methods {
             S: 'static,
             F: $chained_function_trait<$r, S> + $($extra_bounds)+,
         {
-            let mut before = self.clone();
+            impl_shared_function_methods!(@let_before $struct_name, before, self.clone());
+            impl_shared_function_methods!(@let_after $chained_function_trait, after, after);
             $struct_name::new(move |t, u| {
-                let mut r = before.apply(t, u);
-                after.apply(&mut r)
+                impl_shared_function_methods!(@apply_after $chained_function_trait, after, before.apply(t, u))
             })
         }
     };

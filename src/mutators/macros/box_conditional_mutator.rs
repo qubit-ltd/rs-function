@@ -73,6 +73,18 @@
 /// ```
 ///
 macro_rules! impl_box_conditional_mutator {
+    (@let_mutator Mutator, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_mutator MutatorOnce, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_mutator StatefulMutator, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
     // Single generic parameter - Mutator
     (
         $struct_name:ident<$t:ident>,
@@ -127,14 +139,14 @@ macro_rules! impl_box_conditional_mutator {
             /// // let mut val2 = -1;
             /// // chained.apply(&mut val2); // val2 = -1 + 2 = 1 (not -1 + 1 + 2!)
             /// // ```
-            #[allow(unused_mut)]
-            pub fn and_then<M>(self, mut next: M) -> $mutator_type<$t>
+            pub fn and_then<M>(self, next: M) -> $mutator_type<$t>
             where
                 $t: 'static,
                 M: $mutator_trait<$t> + 'static,
             {
                 let first_predicate = self.predicate;
-                let mut first_mutator = self.mutator;
+                impl_box_conditional_mutator!(@let_mutator $mutator_trait, first_mutator, self.mutator);
+                impl_box_conditional_mutator!(@let_mutator $mutator_trait, next, next);
                 $mutator_type::new(move |t| {
                     if first_predicate.test(t) {
                         first_mutator.apply(t);
@@ -155,14 +167,14 @@ macro_rules! impl_box_conditional_mutator {
             /// # Returns
             ///
             /// Returns a new mutator with if-then-else logic
-            #[allow(unused_mut)]
-            pub fn or_else<M>(self, mut else_mutator: M) -> $mutator_type<$t>
+            pub fn or_else<M>(self, else_mutator: M) -> $mutator_type<$t>
             where
                 $t: 'static,
                 M: $mutator_trait<$t> + 'static,
             {
                 let predicate = self.predicate;
-                let mut then_mutator = self.mutator;
+                impl_box_conditional_mutator!(@let_mutator $mutator_trait, then_mutator, self.mutator);
+                impl_box_conditional_mutator!(@let_mutator $mutator_trait, else_mutator, else_mutator);
                 $mutator_type::new(move |t| {
                     if predicate.test(t) {
                         then_mutator.apply(t);

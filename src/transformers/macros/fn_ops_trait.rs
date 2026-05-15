@@ -108,6 +108,22 @@
 /// ```
 ///
 macro_rules! impl_transformer_fn_ops_trait {
+    (@let_self BoxStatefulTransformer, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_self $box_type:ident, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
+    (@let_transformer StatefulTransformer, $name:ident, $value:expr) => {
+        let mut $name = $value;
+    };
+
+    (@let_transformer $transformer_trait:ident, $name:ident, $value:expr) => {
+        let $name = $value;
+    };
+
     // Unified implementation - accepts closure signature (without constraints)
     (
         ($($fn_signature:tt)+),
@@ -190,9 +206,8 @@ macro_rules! impl_transformer_fn_ops_trait {
             ///
             /// assert_eq!(to_string_for_validation(5), "5");
             /// ```
-            #[allow(unused_mut)]
             #[inline]
-            fn and_then<S, F>(mut self, mut after: F) -> $box_type<T, S>
+            fn and_then<S, F>(self, after: F) -> $box_type<T, S>
             where
                 Self: 'static,
                 S: 'static,
@@ -200,8 +215,10 @@ macro_rules! impl_transformer_fn_ops_trait {
                 T: 'static,
                 R: 'static,
             {
+                impl_transformer_fn_ops_trait!(@let_self $box_type, this, self);
+                impl_transformer_fn_ops_trait!(@let_transformer $chained_transformer_trait, after, after);
                 $box_type::new(move |x| {
-                  let r = self(x);
+                  let r = this(x);
                   after.apply(r)
                 })
             }
@@ -225,9 +242,8 @@ macro_rules! impl_transformer_fn_ops_trait {
             ///
             /// A new Box-based transformer representing the reverse
             /// composition.
-            #[allow(unused_mut)]
             #[inline]
-            fn compose<S, F>(mut self, mut before: F) -> $box_type<S, R>
+            fn compose<S, F>(self, before: F) -> $box_type<S, R>
             where
                 Self: 'static,
                 S: 'static,
@@ -235,9 +251,11 @@ macro_rules! impl_transformer_fn_ops_trait {
                 T: 'static,
                 R: 'static,
             {
+                impl_transformer_fn_ops_trait!(@let_self $box_type, this, self);
+                impl_transformer_fn_ops_trait!(@let_transformer $chained_transformer_trait, before, before);
                 $box_type::new(move |x| {
                     let t = before.apply(x);
-                    self(t)
+                    this(t)
                 })
             }
 

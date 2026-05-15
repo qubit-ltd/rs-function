@@ -242,26 +242,11 @@ fn test_box_bi_function_once_into_fn() {
 }
 
 #[test]
-fn test_box_bi_function_once_to_box_unavailable() {
-    // Test that to_box method is not available for BoxBiFunctionOnce
-    // BoxBiFunctionOnce doesn't implement Clone, so to_box method is not generated
-    // by impl_box_once_conversions macro due to trait bounds
+fn test_box_bi_function_once_into_box_consumes_self() {
     let func = BoxBiFunctionOnce::new(|x: &i32, y: &i32| *x + *y);
 
-    // This would not compile: func.to_box()
-    // The method is not available because BoxBiFunctionOnce doesn't implement Clone
-
-    // Instead, use into_box() which consumes self
     let boxed = func.into_box();
     assert_eq!(boxed.apply(&5, &7), 12);
-}
-
-#[test]
-fn test_box_bi_function_once_to_fn() {
-    // Test to_fn method (requires Clone, but BoxBiFunctionOnce doesn't implement Clone)
-    // This test verifies that the method is not available
-    // let func = BoxBiFunctionOnce::new(|x: &i32, y: &i32| *x + *y);
-    // let closure = func.to_fn(); // This would not compile
 }
 
 // ============================================================================
@@ -738,8 +723,6 @@ fn test_custom_bi_function_once_default_methods() {
     // Test default into_box method
     let boxed = custom_func.into_box();
     assert_eq!(boxed.apply(&2, &4), 24); // 2 * 4 * 3 = 24
-
-    // Note: to_box and to_fn cannot be tested here because CustomBiFunctionOnce doesn't implement Clone
 }
 
 #[test]

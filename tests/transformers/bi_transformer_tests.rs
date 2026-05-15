@@ -1186,10 +1186,6 @@ mod custom_bi_transformer_tests {
 // BiTransformer Default Methods - to_xxx() Non-consuming Conversions
 // ============================================================================
 
-// Note: BoxBiTransformer does not implement Clone, so to_xxx() methods are not available
-// The to_xxx() methods require Clone trait bound, which BoxBiTransformer intentionally
-// does not implement to maintain single ownership semantics.
-
 #[cfg(test)]
 mod box_bi_transformer_to_methods_tests {
     use super::{
@@ -1539,10 +1535,6 @@ mod into_vs_to_comparison_tests {
         let add1 = BoxBiTransformer::new(|x: i32, y: i32| x + y);
         let boxed1 = add1.into_box();
         assert_eq!(boxed1.apply(10, 20), 30);
-        // add1 no longer usable (moved)
-
-        // to_box: non-consuming, original still usable (but BoxBiTransformer does not implement to_xxx)
-        // BoxBiTransformer does not implement Clone, so does not support to_xxx() methods
     }
 
     #[test]

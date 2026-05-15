@@ -253,15 +253,6 @@ fn test_box_bi_function_constant() {
     assert_eq!(constant.apply(&100, &200), 42);
 }
 
-// BoxBiFunction doesn't implement Clone
-// #[test]
-// fn test_box_bi_function_clone() {
-//     let original = BoxBiFunction::new(|x: &i32, y: &i32| *x * *y);
-//     let cloned = original.clone();
-//     assert_eq!(original.apply(&6, &7), 42);
-//     assert_eq!(cloned.apply(&6, &7), 42);
-// }
-
 #[test]
 fn test_box_bi_function_debug_display() {
     let func = BoxBiFunction::new(|x: &i32, y: &i32| *x + *y);
@@ -571,11 +562,6 @@ fn test_box_bi_function_into_rc() {
     let rc = func.into_rc();
     assert_eq!(rc.apply(&1, &2), 3);
 }
-
-// BoxBiFunction doesn't implement Clone, so to_* methods are not available
-// The following methods are tested via the trait implementations:
-// - into_box() is tested above
-// - to_box(), to_rc(), to_arc(), to_fn(), to_once() require Clone trait
 
 // ============================================================================
 // RcBiFunction Extended Tests

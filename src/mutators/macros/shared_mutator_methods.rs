@@ -116,6 +116,24 @@
 /// ```
 ///
 macro_rules! impl_shared_mutator_methods {
+    (@and_then Mutator, $struct_name:ident, $first:expr, $after:expr, $t:ident) => {{
+        let first = $first;
+        let after = $after;
+        $struct_name::new(move |t: &mut $t| {
+            first.apply(t);
+            after.apply(t);
+        })
+    }};
+
+    (@and_then StatefulMutator, $struct_name:ident, $first:expr, $after:expr, $t:ident) => {{
+        let mut first = $first;
+        let mut after = $after;
+        $struct_name::new(move |t: &mut $t| {
+            first.apply(t);
+            after.apply(t);
+        })
+    }};
+
     // Single generic parameter
     ($struct_name:ident < $t:ident >, $return_type:ident, $predicate_conversion:ident, $mutator_trait:ident, $($extra_bounds:tt)+) => {
         /// Creates a conditional mutator that executes based on predicate
@@ -206,18 +224,13 @@ macro_rules! impl_shared_mutator_methods {
         /// chained.apply(&mut val);
         /// // val = 2 (0 + 1 + 1)
         /// ```
-        #[allow(unused_mut)]
         #[inline]
-        pub fn and_then<M>(&self, mut after: M) -> $struct_name<$t>
+        pub fn and_then<M>(&self, after: M) -> $struct_name<$t>
         where
             $t: 'static,
             M: $mutator_trait<$t> + $($extra_bounds)+,
         {
-            let mut first = self.clone();
-            $struct_name::new(move |t: &mut $t| {
-                first.apply(t);
-                after.apply(t);
-            })
+            impl_shared_mutator_methods!(@and_then $mutator_trait, $struct_name, self.clone(), after, $t)
         }
     };
 }
