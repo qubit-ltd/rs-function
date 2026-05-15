@@ -164,3 +164,13 @@ impl<E> Runnable<E> for BoxRunnable<E> {
         )
     }
 }
+
+impl<E> SupplierOnce<Result<(), E>> for BoxRunnable<E> {
+    /// Executes the boxed runnable as a one-time supplier of `Result<(), E>`.
+    #[inline]
+    fn get(mut self) -> Result<(), E> {
+        self.run()
+    }
+}
+
+impl_supplier_debug_display!(BoxRunnable<E>);

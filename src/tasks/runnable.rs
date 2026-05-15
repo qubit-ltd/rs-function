@@ -226,3 +226,9 @@ pub trait Runnable<E> {
         BoxCallable::new(move || runnable.run())
     }
 }
+
+impl_closure_trait!(
+    Runnable<E>,
+    run,
+    FnMut() -> Result<(), E>
+);
