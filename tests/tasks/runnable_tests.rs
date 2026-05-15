@@ -330,6 +330,17 @@ fn test_box_runnable_name_management() {
 }
 
 #[test]
+fn test_shared_runnable_name_display_and_debug() {
+    let rc = RcRunnable::<io::Error>::new_with_name("cleanup", || Ok(()));
+    let arc = ArcRunnable::<io::Error>::new_with_name("cleanup", || Ok(()));
+
+    assert_eq!(rc.to_string(), "RcRunnable(cleanup)");
+    assert!(format!("{rc:?}").contains("cleanup"));
+    assert_eq!(arc.to_string(), "ArcRunnable(cleanup)");
+    assert!(format!("{arc:?}").contains("cleanup"));
+}
+
+#[test]
 fn test_box_runnable_set_name_handles_empty_and_same_name() {
     let mut task = BoxRunnable::<io::Error>::new(|| Ok(()));
 

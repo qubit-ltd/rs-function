@@ -86,18 +86,4 @@ impl<E> Runnable<E> for ArcRunnable<E> {
     );
 }
 
-impl<E> SupplierOnce<Result<(), E>> for BoxRunnable<E> {
-    /// Executes the boxed runnable as a one-time supplier of `Result<(), E>`.
-    #[inline]
-    fn get(mut self) -> Result<(), E> {
-        self.run()
-    }
-}
-
-impl_closure_trait!(
-    Runnable<E>,
-    run,
-    FnMut() -> Result<(), E>
-);
-
-impl_supplier_debug_display!(BoxRunnable<E>);
+impl_supplier_debug_display!(ArcRunnable<E>);

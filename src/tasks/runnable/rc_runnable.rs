@@ -84,3 +84,5 @@ impl<E> Runnable<E> for RcRunnable<E> {
         FnMut() -> Result<(), E>
     );
 }
+
+impl_supplier_debug_display!(RcRunnable<E>);
