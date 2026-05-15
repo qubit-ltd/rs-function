@@ -2854,7 +2854,7 @@ mod test_closure_to_methods {
 // ============================================================================
 
 #[cfg(test)]
-mod consumer_once_compat_tests {
+mod consumer_once_trait_tests {
     use super::{
         Arc,
         ArcConsumer,
