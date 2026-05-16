@@ -30,7 +30,7 @@
 
 ```toml
 [dependencies]
-qubit-function = "0.13.3"
+qubit-function = "0.14.0"
 ```
 
 ## 核心抽象

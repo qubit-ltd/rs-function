@@ -11,8 +11,6 @@
 // qubit-style: allow explicit-imports
 //! Comprehensive tests for StatefulFunction trait and its implementations
 
-#![allow(unused_assignments)]
-
 use std::cell::{
     Cell,
     RefCell,
