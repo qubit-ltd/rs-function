@@ -10,4 +10,5 @@
 
 mod bi_predicate_tests;
 mod predicate_tests;
+mod stateful_bi_predicate_tests;
 mod stateful_predicate_tests;

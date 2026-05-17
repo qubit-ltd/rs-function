@@ -130,3 +130,16 @@ fn test_module_roots_export_conditional_types() {
         qubit_function::transformers::RcConditionalBiTransformer<i32, i64, String>,
     >("RcConditionalBiTransformer");
 }
+
+#[test]
+fn test_root_exports_stateful_bi_predicate_types() {
+    assert_type_is_exported::<qubit_function::BoxStatefulBiPredicate<i32, i64>>(
+        "BoxStatefulBiPredicate",
+    );
+    assert_type_is_exported::<qubit_function::RcStatefulBiPredicate<i32, i64>>(
+        "RcStatefulBiPredicate",
+    );
+    assert_type_is_exported::<qubit_function::ArcStatefulBiPredicate<i32, i64>>(
+        "ArcStatefulBiPredicate",
+    );
+}
