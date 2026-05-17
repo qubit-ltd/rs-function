@@ -16,6 +16,7 @@
 pub mod bi_predicate;
 pub(crate) mod macros;
 pub mod predicate;
+pub mod stateful_bi_predicate;
 pub mod stateful_predicate;
 
 pub use bi_predicate::{
@@ -31,6 +32,13 @@ pub use predicate::{
     FnPredicateOps,
     Predicate,
     RcPredicate,
+};
+pub use stateful_bi_predicate::{
+    ArcStatefulBiPredicate,
+    BoxStatefulBiPredicate,
+    FnStatefulBiPredicateOps,
+    RcStatefulBiPredicate,
+    StatefulBiPredicate,
 };
 pub use stateful_predicate::{
     ArcStatefulPredicate,

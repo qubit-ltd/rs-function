@@ -25,6 +25,7 @@
 //! - **Predicate types**: Functions that test values and return boolean
 //! - **StatefulPredicate types**: Stateful functions that test values and return boolean
 //! - **BiPredicate types**: Functions that test two values and return boolean
+//! - **StatefulBiPredicate types**: Stateful functions that test two values and return boolean
 //! - **Supplier types**: Functions that produce values without input
 //! - **Mutator types**: Functions that mutate values in place
 //! - **Task types**: Fallible zero-argument and mutable-input actions and computations
@@ -396,17 +397,25 @@ pub use predicates::{
 pub use predicates::{
     // Arc-based (shared multi-threaded ownership)
     ArcBiPredicate,
+    ArcStatefulBiPredicate,
 
     // Core traits
     BiPredicate,
 
     // Box-based (single ownership)
     BoxBiPredicate,
+    BoxStatefulBiPredicate,
 
     // Extension traits
     FnBiPredicateOps,
+    FnStatefulBiPredicateOps,
+
     // Rc-based (shared single-threaded ownership)
     RcBiPredicate,
+    RcStatefulBiPredicate,
+
+    // Stateful core trait
+    StatefulBiPredicate,
 };
 
 // ---- Supplier Types (Fn() -> R) ----
