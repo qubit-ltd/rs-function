@@ -62,6 +62,34 @@ assert!(combined.test(&4));
 assert!(!combined.test(&-2));
 ```
 
+#### StatefulPredicate - 有状态单参数谓词
+
+当谓词需要原生 `FnMut(&T) -> bool` 语义,并且在判断值时更新自身状态,
+使用 `StatefulPredicate<T>`。
+
+**Trait**: `StatefulPredicate<T>`
+**核心方法**: `test(&mut self, value: &T) -> bool`
+**等价闭包**: `FnMut(&T) -> bool`
+
+**实现类型**:
+- `BoxStatefulPredicate<T>` - 单一所有权
+- `ArcStatefulPredicate<T>` - 线程安全(使用 parking_lot::Mutex)
+- `RcStatefulPredicate<T>` - 单线程(使用 RefCell)
+
+**示例**:
+```rust
+use qubit_function::{StatefulPredicate, BoxStatefulPredicate};
+
+let mut seen = 0;
+let mut every_other_positive = BoxStatefulPredicate::new(move |x: &i32| {
+    seen += 1;
+    seen % 2 == 0 && *x > 0
+});
+
+assert!(!every_other_positive.test(&5));
+assert!(every_other_positive.test(&5));
+```
+
 ### 2. BiPredicate - 双参数谓词
 
 判断两个值是否满足条件,返回 `bool`。
@@ -656,6 +684,7 @@ assert!(!tester.test());
 | Trait | 核心方法签名 | 等价闭包类型 |
 |-------|------------|-------------|
 | `Predicate<T>` | `test(&self, value: &T) -> bool` | `Fn(&T) -> bool` |
+| `StatefulPredicate<T>` | `test(&mut self, value: &T) -> bool` | `FnMut(&T) -> bool` |
 | `BiPredicate<T, U>` | `test(&self, first: &T, second: &U) -> bool` | `Fn(&T, &U) -> bool` |
 | `Consumer<T>` | `accept(&self, value: &T)` | `Fn(&T)` |
 | `ConsumerOnce<T>` | `accept(self, value: &T)` | `FnOnce(&T)` |
@@ -704,6 +733,7 @@ assert!(!tester.test());
 | Trait | Box(单一所有权) | Arc(线程安全) | Rc(单线程) |
 |-------|----------------|--------------|-----------|
 | Predicate | BoxPredicate | ArcPredicate | RcPredicate |
+| StatefulPredicate | BoxStatefulPredicate | ArcStatefulPredicate | RcStatefulPredicate |
 | BiPredicate | BoxBiPredicate | ArcBiPredicate | RcBiPredicate |
 | Consumer | BoxConsumer | ArcConsumer | RcConsumer |
 | ConsumerOnce | BoxConsumerOnce | - | - |

@@ -31,8 +31,9 @@
 //!
 //! 1. **Single Trait**: Only one `Predicate<T>` trait with `&self`, keeping
 //!    the API simple and semantically clear
-//! 2. **No PredicateMut**: All stateful scenarios use interior mutability
-//!    (`RefCell`, `Cell`, `Mutex`) instead of `&mut self`
+//! 2. **Dedicated Stateful API**: Use
+//!    [`StatefulPredicate`](crate::StatefulPredicate) for `FnMut(&T) -> bool`
+//!    closures that need `&mut self`
 //! 3. **No PredicateOnce**: Violates predicate semantics - judgments should
 //!    be repeatable
 //! 4. **Three Implementations**: `BoxPredicate`, `RcPredicate`, and
@@ -45,7 +46,8 @@
 //! | One-time use | `BoxPredicate` | Single ownership, no overhead |
 //! | Multi-threaded | `ArcPredicate` | Thread-safe, clonable |
 //! | Single-threaded reuse | `RcPredicate` | Better performance |
-//! | Stateful predicate | Any type + `RefCell`/`Cell`/`Mutex` | Interior mutability |
+//! | Stateful closure | `BoxStatefulPredicate`, `RcStatefulPredicate`, or `ArcStatefulPredicate` | Native `FnMut(&T) -> bool` support |
+//! | Immutable API with state | Any `Predicate` type + `RefCell`/`Cell`/`Mutex` | Preserve `Predicate`'s `&self` API |
 //!
 //! ## Examples
 //!
@@ -153,19 +155,17 @@
 //! assert!(pred.test(&5));  // Original still usable
 //! ```
 //!
-//! ### Stateful Predicates with Interior Mutability
+//! ### Stateful Predicate Closures
 //!
 //! ```rust
-//! use qubit_function::{Predicate, BoxPredicate};
-//! use std::cell::Cell;
+//! use qubit_function::{StatefulPredicate, BoxStatefulPredicate};
 //!
-//! let count = Cell::new(0);
-//! let pred = BoxPredicate::new(move |x: &i32| {
-//!     count.set(count.get() + 1);
+//! let mut count = 0;
+//! let mut pred = BoxStatefulPredicate::new(move |x: &i32| {
+//!     count += 1;
 //!     *x > 0
 //! });
 //!
-//! // No need for `mut` - interior mutability handles state
 //! assert!(pred.test(&5));
 //! assert!(!pred.test(&-3));
 //! ```
@@ -230,8 +230,9 @@ pub use fn_predicate_ops::FnPredicateOps;
 /// 1. **Semantic Clarity**: A predicate is a judgment, not a mutation
 /// 2. **Flexibility**: Can be used in immutable contexts
 /// 3. **Simplicity**: No need for `mut` in user code
-/// 4. **Interior Mutability**: State (if needed) can be managed with
-///    `RefCell`, `Cell`, or `Mutex`
+/// 4. **Explicit Stateful Alternative**: Use
+///    [`StatefulPredicate`](crate::StatefulPredicate) when the predicate
+///    closure needs native `FnMut(&T) -> bool` semantics
 ///
 /// ## Automatic Implementation for Closures
 ///
@@ -260,19 +261,17 @@ pub use fn_predicate_ops::FnPredicateOps;
 /// assert!(boxed.test(&5));
 /// ```
 ///
-/// ### Stateful Predicate with Interior Mutability
+/// ### Stateful Predicate Alternative
 ///
 /// ```rust
-/// use qubit_function::{Predicate, BoxPredicate};
-/// use std::cell::Cell;
+/// use qubit_function::{StatefulPredicate, BoxStatefulPredicate};
 ///
-/// let count = Cell::new(0);
-/// let counting_pred = BoxPredicate::new(move |x: &i32| {
-///     count.set(count.get() + 1);
+/// let mut count = 0;
+/// let mut counting_pred = BoxStatefulPredicate::new(move |x: &i32| {
+///     count += 1;
 ///     *x > 0
 /// });
 ///
-/// // Note: No `mut` needed - interior mutability handles state
 /// assert!(counting_pred.test(&5));
 /// assert!(!counting_pred.test(&-3));
 /// ```
