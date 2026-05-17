@@ -27,7 +27,7 @@
 //! - **Supplier types**: Functions that produce values without input
 //! - **Mutator types**: Functions that mutate values in place
 //! - **Task types**: Fallible zero-argument and mutable-input actions and computations
-//! - **Tester types**: Functions that test conditions without input
+//! - **Tester types**: Functions that test zero-argument conditions
 //! - **Comparator types**: Functions that compare values and return ordering
 //!
 
@@ -40,7 +40,7 @@ pub mod mutators;
 pub mod predicates;
 pub mod suppliers;
 pub mod tasks;
-pub mod tester;
+pub mod testers;
 pub mod transformers;
 
 // Re-export common types from module roots for ergonomic crate-level imports.
@@ -471,8 +471,8 @@ pub use comparator::{
     RcComparator,
 };
 
-// ---- Tester Types (Fn() -> bool) ----
-pub use tester::{
+// ---- Tester Types (Fn() -> bool and FnMut() -> bool) ----
+pub use testers::{
     // Arc-based (shared multi-threaded ownership)
     ArcTester,
 
@@ -485,5 +485,6 @@ pub use tester::{
     RcTester,
 
     // Core traits
+    StatefulTester,
     Tester,
 };
