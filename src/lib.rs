@@ -23,6 +23,7 @@
 //! - **Consumer types**: Functions that consume values without returning
 //! - **BiConsumer types**: Functions that consume two values without returning
 //! - **Predicate types**: Functions that test values and return boolean
+//! - **StatefulPredicate types**: Stateful functions that test values and return boolean
 //! - **BiPredicate types**: Functions that test two values and return boolean
 //! - **Supplier types**: Functions that produce values without input
 //! - **Mutator types**: Functions that mutate values in place
@@ -374,17 +375,21 @@ pub use mutators::{
 pub use predicates::{
     // Arc-based (shared multi-threaded ownership)
     ArcPredicate,
+    ArcStatefulPredicate,
 
     // Box-based (single ownership)
     BoxPredicate,
+    BoxStatefulPredicate,
 
     // Extension traits
     FnPredicateOps,
+    FnStatefulPredicateOps,
     // Core traits
     Predicate,
-
     // Rc-based (shared single-threaded ownership)
     RcPredicate,
+    RcStatefulPredicate,
+    StatefulPredicate,
 };
 
 // ---- BiPredicate Types (Fn(&T, &U) -> bool) ----

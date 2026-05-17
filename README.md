@@ -62,6 +62,34 @@ assert!(combined.test(&4));
 assert!(!combined.test(&-2));
 ```
 
+#### StatefulPredicate - Stateful Single-Argument Predicate
+
+Use `StatefulPredicate<T>` when the predicate needs native
+`FnMut(&T) -> bool` semantics and updates its own state while testing values.
+
+**Trait**: `StatefulPredicate<T>`
+**Core Method**: `test(&mut self, value: &T) -> bool`
+**Closure Equivalent**: `FnMut(&T) -> bool`
+
+**Implementations**:
+- `BoxStatefulPredicate<T>` - Single ownership
+- `ArcStatefulPredicate<T>` - Thread-safe with parking_lot::Mutex
+- `RcStatefulPredicate<T>` - Single-threaded with RefCell
+
+**Example**:
+```rust
+use qubit_function::{StatefulPredicate, BoxStatefulPredicate};
+
+let mut seen = 0;
+let mut every_other_positive = BoxStatefulPredicate::new(move |x: &i32| {
+    seen += 1;
+    seen % 2 == 0 && *x > 0
+});
+
+assert!(!every_other_positive.test(&5));
+assert!(every_other_positive.test(&5));
+```
+
 ### 2. BiPredicate - Two-Argument Predicate
 
 Tests whether two values satisfy a condition, returning `bool`.
@@ -664,6 +692,7 @@ assert!(!tester.test());
 | Trait | Core Method Signature | Equivalent Closure Type |
 |-------|----------------------|------------------------|
 | `Predicate<T>` | `test(&self, value: &T) -> bool` | `Fn(&T) -> bool` |
+| `StatefulPredicate<T>` | `test(&mut self, value: &T) -> bool` | `FnMut(&T) -> bool` |
 | `BiPredicate<T, U>` | `test(&self, first: &T, second: &U) -> bool` | `Fn(&T, &U) -> bool` |
 | `Consumer<T>` | `accept(&self, value: &T)` | `Fn(&T)` |
 | `ConsumerOnce<T>` | `accept(self, value: &T)` | `FnOnce(&T)` |
@@ -712,6 +741,7 @@ Each trait has multiple implementations based on ownership model:
 | Trait | Box (Single) | Arc (Thread-Safe) | Rc (Single-Thread) |
 |-------|--------------|-------------------|-------------------|
 | Predicate | BoxPredicate | ArcPredicate | RcPredicate |
+| StatefulPredicate | BoxStatefulPredicate | ArcStatefulPredicate | RcStatefulPredicate |
 | BiPredicate | BoxBiPredicate | ArcBiPredicate | RcBiPredicate |
 | Consumer | BoxConsumer | ArcConsumer | RcConsumer |
 | ConsumerOnce | BoxConsumerOnce | - | - |
