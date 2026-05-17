@@ -33,17 +33,17 @@
 //!
 //! # Three Implementations
 //!
-//! - **`BoxTester`**: Single ownership using `Box<dyn Fn() -> bool>`.
-//!   Zero overhead, cannot be cloned. Best for one-time use and builder
-//!   patterns.
+//! - **`BoxTester`** / **`BoxStatefulTester`**: Single ownership using
+//!   `Box<dyn Fn() -> bool>` or `Box<dyn FnMut() -> bool>`. Best for one-time
+//!   use and builder patterns.
 //!
-//! - **`ArcTester`**: Thread-safe shared ownership using
-//!   `Arc<dyn Fn() -> bool + Send + Sync>`. Can be cloned and sent across
-//!   threads. Lock-free overhead.
+//! - **`ArcTester`** / **`ArcStatefulTester`**: Thread-safe shared ownership.
+//!   Stateless testers use `Arc<dyn Fn() -> bool + Send + Sync>`, while
+//!   stateful testers use `Arc<Mutex<dyn FnMut() -> bool + Send>>`.
 //!
-//! - **`RcTester`**: Single-threaded shared ownership using
-//!   `Rc<dyn Fn() -> bool>`. Can be cloned but cannot be sent across
-//!   threads. Lower overhead than `ArcTester`.
+//! - **`RcTester`** / **`RcStatefulTester`**: Single-threaded shared ownership.
+//!   Stateless testers use `Rc<dyn Fn() -> bool>`, while stateful testers use
+//!   `Rc<RefCell<dyn FnMut() -> bool>>`.
 //!
 //! # Comparison with Other Functional Abstractions
 //!
@@ -159,15 +159,5 @@
 use std::rc::Rc;
 use std::sync::Arc;
 
-mod tester;
-pub use tester::Tester;
-mod box_tester;
-pub use box_tester::BoxTester;
-mod arc_tester;
-pub use arc_tester::ArcTester;
-mod rc_tester;
-pub use rc_tester::RcTester;
-mod fn_tester_ops;
-pub use fn_tester_ops::FnTesterOps;
-mod stateful_tester;
-pub use stateful_tester::StatefulTester;
+pub mod stateful_tester;
+pub mod tester;

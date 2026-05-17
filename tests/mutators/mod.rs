@@ -8,6 +8,10 @@
  *
  ******************************************************************************/
 
+mod macros;
+mod mutator;
+mod mutator_once;
 mod mutator_once_tests;
 mod mutator_tests;
+mod stateful_mutator;
 mod stateful_mutator_tests;

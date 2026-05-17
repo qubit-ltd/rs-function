@@ -8,9 +8,9 @@
  *
  ******************************************************************************/
 
-use qubit_function::{
-    RcTester,
+use qubit_function::testers::tester::{
     Tester,
+    rc_tester::RcTester,
 };
 
 #[test]

@@ -14,10 +14,10 @@ use std::ops::Not;
 
 use super::{
     Arc,
-    BoxTester,
     Rc,
-    RcTester,
     Tester,
+    box_tester::BoxTester,
+    rc_tester::RcTester,
 };
 
 // ============================================================================

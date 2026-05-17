@@ -8,6 +8,10 @@
  *
  ******************************************************************************/
 
+mod macros;
+mod stateful_supplier;
 mod stateful_supplier_tests;
+mod supplier;
+mod supplier_once;
 mod supplier_once_tests;
 mod supplier_tests;

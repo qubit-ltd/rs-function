@@ -8,11 +8,15 @@
  *
  ******************************************************************************/
 
+mod callable;
 mod callable_once;
 mod callable_once_tests;
 mod callable_tests;
+mod callable_with;
 mod callable_with_tests;
+mod runnable;
 mod runnable_once;
 mod runnable_once_tests;
 mod runnable_tests;
+mod runnable_with;
 mod runnable_with_tests;

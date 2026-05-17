@@ -11,11 +11,19 @@
 
 use super::{
     Arc,
-    ArcTester,
-    BoxTester,
     Rc,
-    RcTester,
 };
+
+use self::{
+    arc_tester::ArcTester,
+    box_tester::BoxTester,
+    rc_tester::RcTester,
+};
+
+pub mod arc_tester;
+pub mod box_tester;
+pub mod fn_tester_ops;
+pub mod rc_tester;
 
 /// Tests whether a zero-argument condition holds.
 ///
@@ -31,7 +39,7 @@ use super::{
 ///   access to its own state
 /// - **Repeatable calls**: The same Tester can call `test()` multiple times
 /// - **Stateless closure shape**: For `FnMut() -> bool`, use
-///   [`StatefulTester`](super::StatefulTester)
+///   [`StatefulTester`](super::stateful_tester::StatefulTester)
 ///
 /// # Use Cases
 ///

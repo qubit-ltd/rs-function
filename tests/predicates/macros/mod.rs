@@ -8,13 +8,9 @@
  *
  ******************************************************************************/
 
-use qubit_function::FnTesterOps;
-
-#[test]
-fn test_fn_tester_ops_observable_behavior() {
-    fn assert_ops<F: FnTesterOps>(_: &F) {}
-
-    let tester = || true;
-    assert_ops(&tester);
-    assert!(tester());
-}
+mod box_predicate_methods_tests;
+mod constants_tests;
+mod predicate_clone_tests;
+mod predicate_common_methods_tests;
+mod predicate_debug_display_tests;
+mod shared_predicate_methods_tests;

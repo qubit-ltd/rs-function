@@ -9,9 +9,26 @@
  ******************************************************************************/
 //! Defines the `StatefulTester` public trait.
 
+use super::{
+    Arc,
+    Rc,
+};
+
+use self::{
+    arc_stateful_tester::ArcStatefulTester,
+    box_stateful_tester::BoxStatefulTester,
+    rc_stateful_tester::RcStatefulTester,
+};
+
+pub mod arc_stateful_tester;
+pub mod box_stateful_tester;
+pub mod fn_stateful_tester_ops;
+pub mod rc_stateful_tester;
+
 /// Tests whether a zero-argument condition holds while allowing state mutation.
 ///
-/// `StatefulTester` is the stateful counterpart of [`Tester`](super::Tester).
+/// `StatefulTester` is the stateful counterpart of
+/// [`Tester`](super::tester::Tester).
 /// It is equivalent to `FnMut() -> bool`: callers execute it through
 /// `&mut self`, so the implementation may update captured or internal state
 /// between calls.
@@ -41,6 +58,33 @@ pub trait StatefulTester {
     /// Returns `true` if the condition holds, otherwise returns `false`.
     fn test(&mut self) -> bool;
 
+    /// Converts this tester to `BoxStatefulTester`.
+    #[inline]
+    fn into_box(mut self) -> BoxStatefulTester
+    where
+        Self: Sized + 'static,
+    {
+        BoxStatefulTester::new(move || self.test())
+    }
+
+    /// Converts this tester to `RcStatefulTester`.
+    #[inline]
+    fn into_rc(mut self) -> RcStatefulTester
+    where
+        Self: Sized + 'static,
+    {
+        RcStatefulTester::new(move || self.test())
+    }
+
+    /// Converts this tester to `ArcStatefulTester`.
+    #[inline]
+    fn into_arc(mut self) -> ArcStatefulTester
+    where
+        Self: Sized + Send + 'static,
+    {
+        ArcStatefulTester::new(move || self.test())
+    }
+
     /// Converts this tester to a mutable closure.
     ///
     /// # Return Value
@@ -63,6 +107,33 @@ pub trait StatefulTester {
         Self: Sized + 'static,
     {
         self.into_fn()
+    }
+
+    /// Converts a clone of this tester to `BoxStatefulTester`.
+    #[inline]
+    fn to_box(&self) -> BoxStatefulTester
+    where
+        Self: Clone + Sized + 'static,
+    {
+        self.clone().into_box()
+    }
+
+    /// Converts a clone of this tester to `RcStatefulTester`.
+    #[inline]
+    fn to_rc(&self) -> RcStatefulTester
+    where
+        Self: Clone + Sized + 'static,
+    {
+        self.clone().into_rc()
+    }
+
+    /// Converts a clone of this tester to `ArcStatefulTester`.
+    #[inline]
+    fn to_arc(&self) -> ArcStatefulTester
+    where
+        Self: Clone + Sized + Send + 'static,
+    {
+        self.clone().into_arc()
     }
 
     /// Creates a mutable closure from a cloned tester.

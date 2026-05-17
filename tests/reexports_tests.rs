@@ -143,3 +143,27 @@ fn test_root_exports_stateful_bi_predicate_types() {
         "ArcStatefulBiPredicate",
     );
 }
+
+#[test]
+fn test_root_exports_tester_types() {
+    fn assert_tester<T: qubit_function::Tester>() {}
+
+    assert_tester::<qubit_function::BoxTester>();
+    assert_tester::<qubit_function::RcTester>();
+    assert_tester::<qubit_function::ArcTester>();
+    assert_type_is_exported::<qubit_function::BoxTester>("BoxTester");
+    assert_type_is_exported::<qubit_function::RcTester>("RcTester");
+    assert_type_is_exported::<qubit_function::ArcTester>("ArcTester");
+}
+
+#[test]
+fn test_root_exports_stateful_tester_types() {
+    fn assert_stateful_tester<T: qubit_function::StatefulTester>() {}
+
+    assert_stateful_tester::<qubit_function::BoxStatefulTester>();
+    assert_stateful_tester::<qubit_function::RcStatefulTester>();
+    assert_stateful_tester::<qubit_function::ArcStatefulTester>();
+    assert_type_is_exported::<qubit_function::BoxStatefulTester>("BoxStatefulTester");
+    assert_type_is_exported::<qubit_function::RcStatefulTester>("RcStatefulTester");
+    assert_type_is_exported::<qubit_function::ArcStatefulTester>("ArcStatefulTester");
+}
