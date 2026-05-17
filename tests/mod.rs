@@ -8,8 +8,10 @@
  *
  ******************************************************************************/
 
+mod comparator;
 mod consumers;
 mod functions;
+mod macros;
 mod mutators;
 mod predicates;
 mod suppliers;

@@ -11,8 +11,8 @@
 //! Defines the `FnTesterOps` public type.
 
 use super::{
-    BoxTester,
     Tester,
+    box_tester::BoxTester,
 };
 
 // ============================================================================

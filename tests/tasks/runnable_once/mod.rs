@@ -8,4 +8,5 @@
  *
  ******************************************************************************/
 
+mod box_runnable_once_tests;
 mod local_box_runnable_once_tests;

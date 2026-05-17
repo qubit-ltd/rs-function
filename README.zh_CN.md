@@ -30,7 +30,7 @@
 
 ```toml
 [dependencies]
-qubit-function = "0.14"
+qubit-function = "0.15"
 ```
 
 ## 核心抽象
@@ -696,7 +696,7 @@ assert_eq!(cmp.compare(&5, &3), Ordering::Greater);
 
 **示例**:
 ```rust
-use qubit_function::{Tester, BoxTester};
+use qubit_function::{BoxTester, Tester};
 use std::sync::{Arc, atomic::{AtomicBool, Ordering}};
 
 let flag = Arc::new(AtomicBool::new(true));
@@ -706,6 +706,35 @@ let tester = BoxTester::new(move || flag_clone.load(Ordering::Relaxed));
 assert!(tester.test());
 flag.store(false, Ordering::Relaxed);
 assert!(!tester.test());
+```
+
+#### StatefulTester - 有状态无参条件判定器
+
+当无参条件判断需要原生 `FnMut() -> bool` 语义,并且在判断时更新自身状态,
+使用 `StatefulTester`。
+
+**Trait**: `StatefulTester`
+**核心方法**: `test(&mut self) -> bool`
+**等价闭包**: `FnMut() -> bool`
+
+**实现类型**:
+- `BoxStatefulTester` - 单一所有权
+- `ArcStatefulTester` - 线程安全(使用 parking_lot::Mutex)
+- `RcStatefulTester` - 单线程(使用 RefCell)
+- `FnStatefulTesterOps` - 面向 `FnMut() -> bool` 的逻辑组合辅助方法
+
+**示例**:
+```rust
+use qubit_function::{BoxStatefulTester, StatefulTester};
+
+let mut calls = 0;
+let mut every_second_call = BoxStatefulTester::new(move || {
+    calls += 1;
+    calls % 2 == 0
+});
+
+assert!(!every_second_call.test());
+assert!(every_second_call.test());
 ```
 
 ## Trait 与闭包对应表
@@ -752,6 +781,7 @@ assert!(!tester.test());
 | `BiTransformerOnce<T, U, R>` | `apply(self, first: T, second: U) -> R` | `FnOnce(T, U) -> R` |
 | `Comparator<T>` | `compare(&self, a: &T, b: &T) -> Ordering` | `Fn(&T, &T) -> Ordering` |
 | `Tester` | `test(&self) -> bool` | `Fn() -> bool` |
+| `StatefulTester` | `test(&mut self) -> bool` | `FnMut() -> bool` |
 
 对于有状态 trait，闭包转换提供 `into_fn` / `to_fn`；返回可变闭包的类型
 还提供 `into_mut_fn` / `to_mut_fn`，用于在调用点显式表达可变闭包语义。
@@ -807,6 +837,7 @@ assert!(!tester.test());
 | BiTransformerOnce | BoxBiTransformerOnce | - | - |
 | Comparator | BoxComparator | ArcComparator | RcComparator |
 | Tester | BoxTester | ArcTester | RcTester |
+| StatefulTester | BoxStatefulTester | ArcStatefulTester | RcStatefulTester |
 
 **图例**:
 - **Box**: 单一所有权,不可克隆,消耗 self

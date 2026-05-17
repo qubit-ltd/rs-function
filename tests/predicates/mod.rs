@@ -8,7 +8,10 @@
  *
  ******************************************************************************/
 
+mod bi_predicate;
 mod bi_predicate_tests;
+mod macros;
+mod predicate;
 mod predicate_tests;
 mod stateful_bi_predicate_tests;
 mod stateful_predicate_tests;

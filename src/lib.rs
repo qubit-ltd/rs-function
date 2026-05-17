@@ -487,18 +487,18 @@ pub use comparator::{
 
 // ---- Tester Types (Fn() -> bool and FnMut() -> bool) ----
 pub use testers::{
-    // Arc-based (shared multi-threaded ownership)
-    ArcTester,
-
-    // Box-based (single ownership)
-    BoxTester,
-
-    // Extension traits
-    FnTesterOps,
-    // Rc-based (shared single-threaded ownership)
-    RcTester,
-
-    // Core traits
-    StatefulTester,
-    Tester,
+    stateful_tester::{
+        StatefulTester,
+        arc_stateful_tester::ArcStatefulTester,
+        box_stateful_tester::BoxStatefulTester,
+        fn_stateful_tester_ops::FnStatefulTesterOps,
+        rc_stateful_tester::RcStatefulTester,
+    },
+    tester::{
+        Tester,
+        arc_tester::ArcTester,
+        box_tester::BoxTester,
+        fn_tester_ops::FnTesterOps,
+        rc_tester::RcTester,
+    },
 };

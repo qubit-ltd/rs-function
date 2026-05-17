@@ -30,7 +30,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-qubit-function = "0.14"
+qubit-function = "0.15"
 ```
 
 ## Core Abstractions
@@ -705,7 +705,7 @@ Checks whether a condition or state holds without taking input.
 
 **Example**:
 ```rust
-use qubit_function::{Tester, BoxTester};
+use qubit_function::{BoxTester, Tester};
 use std::sync::{Arc, atomic::{AtomicBool, Ordering}};
 
 let flag = Arc::new(AtomicBool::new(true));
@@ -715,6 +715,35 @@ let tester = BoxTester::new(move || flag_clone.load(Ordering::Relaxed));
 assert!(tester.test());
 flag.store(false, Ordering::Relaxed);
 assert!(!tester.test());
+```
+
+#### StatefulTester - Stateful Zero-Argument Condition Checker
+
+Use `StatefulTester` when a zero-argument condition needs native
+`FnMut() -> bool` semantics and updates its own state while testing.
+
+**Trait**: `StatefulTester`
+**Core Method**: `test(&mut self) -> bool`
+**Closure Equivalent**: `FnMut() -> bool`
+
+**Implementations**:
+- `BoxStatefulTester` - Single ownership
+- `ArcStatefulTester` - Thread-safe with parking_lot::Mutex
+- `RcStatefulTester` - Single-threaded with RefCell
+- `FnStatefulTesterOps` - Logical composition helpers for `FnMut() -> bool`
+
+**Example**:
+```rust
+use qubit_function::{BoxStatefulTester, StatefulTester};
+
+let mut calls = 0;
+let mut every_second_call = BoxStatefulTester::new(move || {
+    calls += 1;
+    calls % 2 == 0
+});
+
+assert!(!every_second_call.test());
+assert!(every_second_call.test());
 ```
 
 ## Trait and Closure Correspondence Table
@@ -761,6 +790,7 @@ assert!(!tester.test());
 | `BiTransformerOnce<T, U, R>` | `apply(self, first: T, second: U) -> R` | `FnOnce(T, U) -> R` |
 | `Comparator<T>` | `compare(&self, a: &T, b: &T) -> Ordering` | `Fn(&T, &T) -> Ordering` |
 | `Tester` | `test(&self) -> bool` | `Fn() -> bool` |
+| `StatefulTester` | `test(&mut self) -> bool` | `FnMut() -> bool` |
 
 For stateful traits, closure conversions expose `into_fn` / `to_fn`; types that
 return mutable closures also expose `into_mut_fn` / `to_mut_fn` for explicitness.
@@ -816,6 +846,7 @@ Each trait has multiple implementations based on ownership model:
 | BiTransformerOnce | BoxBiTransformerOnce | - | - |
 | Comparator | BoxComparator | ArcComparator | RcComparator |
 | Tester | BoxTester | ArcTester | RcTester |
+| StatefulTester | BoxStatefulTester | ArcStatefulTester | RcStatefulTester |
 
 **Legend**:
 - **Box**: Single ownership, cannot be cloned, consumes self

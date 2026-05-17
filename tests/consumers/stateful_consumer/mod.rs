@@ -8,10 +8,10 @@
  *
  ******************************************************************************/
 
-use qubit_function::BoxTester;
-
-#[test]
-fn test_box_tester_observable_behavior() {
-    let type_name = std::any::type_name::<BoxTester>();
-    assert!(type_name.contains("BoxTester"), "{type_name}");
-}
+mod arc_conditional_stateful_consumer_tests;
+mod arc_stateful_consumer_tests;
+mod box_conditional_stateful_consumer_tests;
+mod box_stateful_consumer_tests;
+mod fn_stateful_consumer_ops_tests;
+mod rc_conditional_stateful_consumer_tests;
+mod rc_stateful_consumer_tests;

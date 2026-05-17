@@ -11,12 +11,12 @@
 
 #[cfg(test)]
 mod tests {
-    use qubit_function::{
-        ArcTester,
-        BoxTester,
-        FnTesterOps,
-        RcTester,
+    use qubit_function::testers::tester::{
         Tester,
+        arc_tester::ArcTester,
+        box_tester::BoxTester,
+        fn_tester_ops::FnTesterOps,
+        rc_tester::RcTester,
     };
     use std::sync::{
         Arc,

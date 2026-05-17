@@ -8,9 +8,9 @@
  *
  ******************************************************************************/
 
-use qubit_function::{
-    ArcTester,
+use qubit_function::testers::tester::{
     Tester,
+    arc_tester::ArcTester,
 };
 
 #[test]

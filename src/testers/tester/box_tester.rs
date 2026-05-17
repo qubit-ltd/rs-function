@@ -14,8 +14,8 @@ use std::ops::Not;
 
 use super::{
     Rc,
-    RcTester,
     Tester,
+    rc_tester::RcTester,
 };
 
 // ============================================================================

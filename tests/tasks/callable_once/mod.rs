@@ -8,4 +8,5 @@
  *
  ******************************************************************************/
 
+mod box_callable_once_tests;
 mod local_box_callable_once_tests;
