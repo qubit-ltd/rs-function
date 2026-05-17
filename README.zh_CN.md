@@ -112,6 +112,35 @@ assert!(sum_positive.test(&3, &4));
 assert!(!sum_positive.test(&-5, &2));
 ```
 
+#### StatefulBiPredicate - 有状态双参数谓词
+
+当谓词需要原生 `FnMut(&T, &U) -> bool` 语义,并且在判断两个借用值时更新自身状态,
+使用 `StatefulBiPredicate<T, U>`。
+
+**Trait**: `StatefulBiPredicate<T, U>`
+**核心方法**: `test(&mut self, first: &T, second: &U) -> bool`
+**等价闭包**: `FnMut(&T, &U) -> bool`
+
+**实现类型**:
+- `BoxStatefulBiPredicate<T, U>` - 单一所有权
+- `ArcStatefulBiPredicate<T, U>` - 线程安全(使用 parking_lot::Mutex)
+- `RcStatefulBiPredicate<T, U>` - 单线程(使用 RefCell)
+
+**示例**:
+```rust
+use qubit_function::{StatefulBiPredicate, BoxStatefulBiPredicate};
+
+let mut seen = 0;
+let mut every_other_positive_sum =
+    BoxStatefulBiPredicate::new(move |x: &i32, y: &i32| {
+        seen += 1;
+        seen % 2 == 0 && x + y > 0
+    });
+
+assert!(!every_other_positive_sum.test(&3, &4));
+assert!(every_other_positive_sum.test(&3, &4));
+```
+
 ### 3. Consumer - 非修改型消费者
 
 接受值引用并执行带副作用的操作,不返回结果。API 使用共享引用,
@@ -686,6 +715,7 @@ assert!(!tester.test());
 | `Predicate<T>` | `test(&self, value: &T) -> bool` | `Fn(&T) -> bool` |
 | `StatefulPredicate<T>` | `test(&mut self, value: &T) -> bool` | `FnMut(&T) -> bool` |
 | `BiPredicate<T, U>` | `test(&self, first: &T, second: &U) -> bool` | `Fn(&T, &U) -> bool` |
+| `StatefulBiPredicate<T, U>` | `test(&mut self, first: &T, second: &U) -> bool` | `FnMut(&T, &U) -> bool` |
 | `Consumer<T>` | `accept(&self, value: &T)` | `Fn(&T)` |
 | `ConsumerOnce<T>` | `accept(self, value: &T)` | `FnOnce(&T)` |
 | `StatefulConsumer<T>` | `accept(&mut self, value: &T)` | `FnMut(&T)` |
@@ -735,6 +765,7 @@ assert!(!tester.test());
 | Predicate | BoxPredicate | ArcPredicate | RcPredicate |
 | StatefulPredicate | BoxStatefulPredicate | ArcStatefulPredicate | RcStatefulPredicate |
 | BiPredicate | BoxBiPredicate | ArcBiPredicate | RcBiPredicate |
+| StatefulBiPredicate | BoxStatefulBiPredicate | ArcStatefulBiPredicate | RcStatefulBiPredicate |
 | Consumer | BoxConsumer | ArcConsumer | RcConsumer |
 | ConsumerOnce | BoxConsumerOnce | - | - |
 | StatefulConsumer | BoxStatefulConsumer | ArcStatefulConsumer | RcStatefulConsumer |

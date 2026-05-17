@@ -112,6 +112,36 @@ assert!(sum_positive.test(&3, &4));
 assert!(!sum_positive.test(&-5, &2));
 ```
 
+#### StatefulBiPredicate - Stateful Two-Argument Predicate
+
+Use `StatefulBiPredicate<T, U>` when the predicate needs native
+`FnMut(&T, &U) -> bool` semantics and updates its own state while testing
+two borrowed values.
+
+**Trait**: `StatefulBiPredicate<T, U>`
+**Core Method**: `test(&mut self, first: &T, second: &U) -> bool`
+**Closure Equivalent**: `FnMut(&T, &U) -> bool`
+
+**Implementations**:
+- `BoxStatefulBiPredicate<T, U>` - Single ownership
+- `ArcStatefulBiPredicate<T, U>` - Thread-safe with parking_lot::Mutex
+- `RcStatefulBiPredicate<T, U>` - Single-threaded with RefCell
+
+**Example**:
+```rust
+use qubit_function::{StatefulBiPredicate, BoxStatefulBiPredicate};
+
+let mut seen = 0;
+let mut every_other_positive_sum =
+    BoxStatefulBiPredicate::new(move |x: &i32, y: &i32| {
+        seen += 1;
+        seen % 2 == 0 && x + y > 0
+    });
+
+assert!(!every_other_positive_sum.test(&3, &4));
+assert!(every_other_positive_sum.test(&3, &4));
+```
+
 ### 3. Consumer - Non-Mutating Consumer
 
 Accepts a value reference and performs side effects without returning a
@@ -694,6 +724,7 @@ assert!(!tester.test());
 | `Predicate<T>` | `test(&self, value: &T) -> bool` | `Fn(&T) -> bool` |
 | `StatefulPredicate<T>` | `test(&mut self, value: &T) -> bool` | `FnMut(&T) -> bool` |
 | `BiPredicate<T, U>` | `test(&self, first: &T, second: &U) -> bool` | `Fn(&T, &U) -> bool` |
+| `StatefulBiPredicate<T, U>` | `test(&mut self, first: &T, second: &U) -> bool` | `FnMut(&T, &U) -> bool` |
 | `Consumer<T>` | `accept(&self, value: &T)` | `Fn(&T)` |
 | `ConsumerOnce<T>` | `accept(self, value: &T)` | `FnOnce(&T)` |
 | `StatefulConsumer<T>` | `accept(&mut self, value: &T)` | `FnMut(&T)` |
@@ -743,6 +774,7 @@ Each trait has multiple implementations based on ownership model:
 | Predicate | BoxPredicate | ArcPredicate | RcPredicate |
 | StatefulPredicate | BoxStatefulPredicate | ArcStatefulPredicate | RcStatefulPredicate |
 | BiPredicate | BoxBiPredicate | ArcBiPredicate | RcBiPredicate |
+| StatefulBiPredicate | BoxStatefulBiPredicate | ArcStatefulBiPredicate | RcStatefulBiPredicate |
 | Consumer | BoxConsumer | ArcConsumer | RcConsumer |
 | ConsumerOnce | BoxConsumerOnce | - | - |
 | StatefulConsumer | BoxStatefulConsumer | ArcStatefulConsumer | RcStatefulConsumer |
