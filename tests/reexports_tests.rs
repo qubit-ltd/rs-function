@@ -20,37 +20,17 @@ fn assert_type_is_exported<T>(expected_name: &str) {
 
 #[test]
 fn test_root_exports_conditional_consumer_types() {
-    assert_type_is_exported::<qubit_function::BoxConditionalConsumer<i32>>(
-        "BoxConditionalConsumer",
-    );
+    assert_type_is_exported::<qubit_function::BoxConditionalConsumer<i32>>("BoxConditionalConsumer");
     assert_type_is_exported::<qubit_function::RcConditionalConsumer<i32>>("RcConditionalConsumer");
-    assert_type_is_exported::<qubit_function::ArcConditionalConsumer<i32>>(
-        "ArcConditionalConsumer",
-    );
-    assert_type_is_exported::<qubit_function::BoxConditionalConsumerOnce<i32>>(
-        "BoxConditionalConsumerOnce",
-    );
-    assert_type_is_exported::<qubit_function::BoxConditionalBiConsumer<i32, i64>>(
-        "BoxConditionalBiConsumer",
-    );
-    assert_type_is_exported::<qubit_function::RcConditionalBiConsumer<i32, i64>>(
-        "RcConditionalBiConsumer",
-    );
-    assert_type_is_exported::<qubit_function::ArcConditionalBiConsumer<i32, i64>>(
-        "ArcConditionalBiConsumer",
-    );
-    assert_type_is_exported::<qubit_function::BoxConditionalBiConsumerOnce<i32, i64>>(
-        "BoxConditionalBiConsumerOnce",
-    );
-    assert_type_is_exported::<qubit_function::BoxConditionalStatefulConsumer<i32>>(
-        "BoxConditionalStatefulConsumer",
-    );
-    assert_type_is_exported::<qubit_function::RcConditionalStatefulConsumer<i32>>(
-        "RcConditionalStatefulConsumer",
-    );
-    assert_type_is_exported::<qubit_function::ArcConditionalStatefulConsumer<i32>>(
-        "ArcConditionalStatefulConsumer",
-    );
+    assert_type_is_exported::<qubit_function::ArcConditionalConsumer<i32>>("ArcConditionalConsumer");
+    assert_type_is_exported::<qubit_function::BoxConditionalConsumerOnce<i32>>("BoxConditionalConsumerOnce");
+    assert_type_is_exported::<qubit_function::BoxConditionalBiConsumer<i32, i64>>("BoxConditionalBiConsumer");
+    assert_type_is_exported::<qubit_function::RcConditionalBiConsumer<i32, i64>>("RcConditionalBiConsumer");
+    assert_type_is_exported::<qubit_function::ArcConditionalBiConsumer<i32, i64>>("ArcConditionalBiConsumer");
+    assert_type_is_exported::<qubit_function::BoxConditionalBiConsumerOnce<i32, i64>>("BoxConditionalBiConsumerOnce");
+    assert_type_is_exported::<qubit_function::BoxConditionalStatefulConsumer<i32>>("BoxConditionalStatefulConsumer");
+    assert_type_is_exported::<qubit_function::RcConditionalStatefulConsumer<i32>>("RcConditionalStatefulConsumer");
+    assert_type_is_exported::<qubit_function::ArcConditionalStatefulConsumer<i32>>("ArcConditionalStatefulConsumer");
     assert_type_is_exported::<qubit_function::BoxConditionalStatefulBiConsumer<i32, i64>>(
         "BoxConditionalStatefulBiConsumer",
     );
@@ -64,18 +44,14 @@ fn test_root_exports_conditional_consumer_types() {
 
 #[test]
 fn test_root_exports_conditional_function_types() {
-    assert_type_is_exported::<qubit_function::BoxConditionalFunctionOnce<i32, i64>>(
-        "BoxConditionalFunctionOnce",
-    );
+    assert_type_is_exported::<qubit_function::BoxConditionalFunctionOnce<i32, i64>>("BoxConditionalFunctionOnce");
     assert_type_is_exported::<qubit_function::BoxConditionalBiFunctionOnce<i32, i64, String>>(
         "BoxConditionalBiFunctionOnce",
     );
     assert_type_is_exported::<qubit_function::BoxConditionalMutatingFunction<i32, i64>>(
         "BoxConditionalMutatingFunction",
     );
-    assert_type_is_exported::<qubit_function::RcConditionalMutatingFunction<i32, i64>>(
-        "RcConditionalMutatingFunction",
-    );
+    assert_type_is_exported::<qubit_function::RcConditionalMutatingFunction<i32, i64>>("RcConditionalMutatingFunction");
     assert_type_is_exported::<qubit_function::ArcConditionalMutatingFunction<i32, i64>>(
         "ArcConditionalMutatingFunction",
     );
@@ -111,37 +87,29 @@ fn test_root_exports_conditional_transformer_types() {
 
 #[test]
 fn test_module_roots_export_conditional_types() {
-    assert_type_is_exported::<qubit_function::consumers::BoxConditionalConsumer<i32>>(
-        "BoxConditionalConsumer",
-    );
+    assert_type_is_exported::<qubit_function::consumers::BoxConditionalConsumer<i32>>("BoxConditionalConsumer");
     assert_type_is_exported::<qubit_function::consumers::ArcConditionalStatefulBiConsumer<i32, i64>>(
         "ArcConditionalStatefulBiConsumer",
     );
     assert_type_is_exported::<qubit_function::functions::BoxConditionalFunctionOnce<i32, i64>>(
         "BoxConditionalFunctionOnce",
     );
-    assert_type_is_exported::<
-        qubit_function::functions::ArcConditionalStatefulMutatingFunction<i32, i64>,
-    >("ArcConditionalStatefulMutatingFunction");
-    assert_type_is_exported::<
-        qubit_function::transformers::BoxConditionalBiTransformerOnce<i32, i64, String>,
-    >("BoxConditionalBiTransformerOnce");
-    assert_type_is_exported::<
-        qubit_function::transformers::RcConditionalBiTransformer<i32, i64, String>,
-    >("RcConditionalBiTransformer");
+    assert_type_is_exported::<qubit_function::functions::ArcConditionalStatefulMutatingFunction<i32, i64>>(
+        "ArcConditionalStatefulMutatingFunction",
+    );
+    assert_type_is_exported::<qubit_function::transformers::BoxConditionalBiTransformerOnce<i32, i64, String>>(
+        "BoxConditionalBiTransformerOnce",
+    );
+    assert_type_is_exported::<qubit_function::transformers::RcConditionalBiTransformer<i32, i64, String>>(
+        "RcConditionalBiTransformer",
+    );
 }
 
 #[test]
 fn test_root_exports_stateful_bi_predicate_types() {
-    assert_type_is_exported::<qubit_function::BoxStatefulBiPredicate<i32, i64>>(
-        "BoxStatefulBiPredicate",
-    );
-    assert_type_is_exported::<qubit_function::RcStatefulBiPredicate<i32, i64>>(
-        "RcStatefulBiPredicate",
-    );
-    assert_type_is_exported::<qubit_function::ArcStatefulBiPredicate<i32, i64>>(
-        "ArcStatefulBiPredicate",
-    );
+    assert_type_is_exported::<qubit_function::BoxStatefulBiPredicate<i32, i64>>("BoxStatefulBiPredicate");
+    assert_type_is_exported::<qubit_function::RcStatefulBiPredicate<i32, i64>>("RcStatefulBiPredicate");
+    assert_type_is_exported::<qubit_function::ArcStatefulBiPredicate<i32, i64>>("ArcStatefulBiPredicate");
 }
 
 #[test]

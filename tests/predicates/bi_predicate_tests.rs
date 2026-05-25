@@ -44,12 +44,8 @@ mod tests {
 
         let left = String::from("left");
         let right = String::from("right");
-        let first = BorrowedRc {
-            value: left.as_str(),
-        };
-        let second = BorrowedRc {
-            value: right.as_str(),
-        };
+        let first = BorrowedRc { value: left.as_str() };
+        let second = BorrowedRc { value: right.as_str() };
         let predicate = BorrowedRcBiPredicate;
 
         assert!(predicate.clone().into_box().test(&first, &second));
@@ -1207,11 +1203,7 @@ mod tests {
             let predicate = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
 
             let pred_fn = predicate.into_fn();
-            let result: Vec<_> = pairs
-                .iter()
-                .filter(|(x, y)| pred_fn(x, y))
-                .copied()
-                .collect();
+            let result: Vec<_> = pairs.iter().filter(|(x, y)| pred_fn(x, y)).copied().collect();
 
             assert_eq!(result, vec![(1, 2), (-1, 3), (3, 4)]);
         }
@@ -1222,11 +1214,7 @@ mod tests {
             let predicate = ArcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
 
             let pred_fn = predicate.into_fn();
-            let result: Vec<_> = pairs
-                .iter()
-                .filter(|(x, y)| pred_fn(x, y))
-                .copied()
-                .collect();
+            let result: Vec<_> = pairs.iter().filter(|(x, y)| pred_fn(x, y)).copied().collect();
 
             assert_eq!(result, vec![(1, 2), (-1, 3), (3, 4)]);
         }
@@ -1237,11 +1225,7 @@ mod tests {
             let predicate = RcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
 
             let pred_fn = predicate.into_fn();
-            let result: Vec<_> = pairs
-                .iter()
-                .filter(|(x, y)| pred_fn(x, y))
-                .copied()
-                .collect();
+            let result: Vec<_> = pairs.iter().filter(|(x, y)| pred_fn(x, y)).copied().collect();
 
             assert_eq!(result, vec![(1, 2), (-1, 3), (3, 4)]);
         }
@@ -1254,11 +1238,7 @@ mod tests {
 
             let pairs = [(1, 2), (-1, 3), (5, -6), (3, 4)];
             let pred_fn = predicate.into_fn();
-            let result: Vec<_> = pairs
-                .iter()
-                .filter(|(x, y)| pred_fn(x, y))
-                .copied()
-                .collect();
+            let result: Vec<_> = pairs.iter().filter(|(x, y)| pred_fn(x, y)).copied().collect();
 
             assert_eq!(result, vec![(1, 2), (3, 4)]);
         }
@@ -1335,10 +1315,7 @@ mod tests {
         where
             P: BiPredicate<i32, i32>,
         {
-            pairs
-                .into_iter()
-                .filter(|(x, y)| predicate.test(x, y))
-                .collect()
+            pairs.into_iter().filter(|(x, y)| predicate.test(x, y)).collect()
         }
 
         #[test]
@@ -1417,17 +1394,11 @@ mod tests {
 
         #[test]
         fn test_generic_with_string_bi_predicates() {
-            fn filter_string_pairs<P>(
-                pairs: Vec<(String, usize)>,
-                predicate: &P,
-            ) -> Vec<(String, usize)>
+            fn filter_string_pairs<P>(pairs: Vec<(String, usize)>, predicate: &P) -> Vec<(String, usize)>
             where
                 P: BiPredicate<String, usize>,
             {
-                pairs
-                    .into_iter()
-                    .filter(|(s, len)| predicate.test(s, len))
-                    .collect()
+                pairs.into_iter().filter(|(s, len)| predicate.test(s, len)).collect()
             }
 
             let pairs = vec![
@@ -1517,10 +1488,7 @@ mod tests {
             where
                 P: BiPredicate<Point, Point>,
             {
-                points
-                    .into_iter()
-                    .filter(|(p1, p2)| pred.test(p1, p2))
-                    .collect()
+                points.into_iter().filter(|(p1, p2)| pred.test(p1, p2)).collect()
             }
 
             let points = vec![
@@ -1920,16 +1888,14 @@ mod tests {
 
         #[test]
         fn test_with_empty_string() {
-            let is_empty =
-                BoxBiPredicate::new(|s1: &String, s2: &String| s1.is_empty() && s2.is_empty());
+            let is_empty = BoxBiPredicate::new(|s1: &String, s2: &String| s1.is_empty() && s2.is_empty());
             assert!(is_empty.test(&String::new(), &String::new()));
             assert!(!is_empty.test(&String::from("a"), &String::new()));
         }
 
         #[test]
         fn test_with_large_numbers() {
-            let sum_overflow_safe =
-                BoxBiPredicate::new(|x: &i64, y: &i64| x.checked_add(*y).is_some());
+            let sum_overflow_safe = BoxBiPredicate::new(|x: &i64, y: &i64| x.checked_add(*y).is_some());
             let max_minus_one = i64::MAX - 1;
             assert!(sum_overflow_safe.test(&max_minus_one, &1));
             assert!(!sum_overflow_safe.test(&i64::MAX, &1));

@@ -67,11 +67,7 @@ fn test_bi_mutating_function_default_conversions_allow_relaxed_generic_types() {
     struct BorrowedRcSelector;
 
     impl<'a> BiMutatingFunction<BorrowedRc<'a>, BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcSelector {
-        fn apply(
-            &self,
-            first: &mut BorrowedRc<'a>,
-            _second: &mut BorrowedRc<'a>,
-        ) -> BorrowedRc<'a> {
+        fn apply(&self, first: &mut BorrowedRc<'a>, _second: &mut BorrowedRc<'a>) -> BorrowedRc<'a> {
             first.clone()
         }
     }
@@ -335,11 +331,10 @@ fn test_box_bi_mutating_function_new() {
 
 #[test]
 fn test_box_bi_mutating_function_new_with_name() {
-    let swap_sum =
-        BoxBiMutatingFunction::new_with_name("swap_and_sum", |x: &mut i32, y: &mut i32| {
-            std::mem::swap(&mut *x, &mut *y);
-            *x + *y
-        });
+    let swap_sum = BoxBiMutatingFunction::new_with_name("swap_and_sum", |x: &mut i32, y: &mut i32| {
+        std::mem::swap(&mut *x, &mut *y);
+        *x + *y
+    });
     assert_eq!(swap_sum.name(), Some("swap_and_sum"));
     let mut a = 10;
     let mut b = 15;
@@ -357,8 +352,7 @@ fn test_box_bi_mutating_function_new_with_optional_name() {
     );
     assert_eq!(swap_sum.name(), Some("test_function"));
 
-    let no_name =
-        BoxBiMutatingFunction::new_with_optional_name(|x: &mut i32, y: &mut i32| *x + *y, None);
+    let no_name = BoxBiMutatingFunction::new_with_optional_name(|x: &mut i32, y: &mut i32| *x + *y, None);
     assert_eq!(no_name.name(), None);
 }
 
@@ -467,11 +461,10 @@ fn test_rc_bi_mutating_function_clone() {
 
 #[test]
 fn test_rc_bi_mutating_function_name_and_set_name() {
-    let mut swap_sum =
-        RcBiMutatingFunction::new_with_name("rc_function", |x: &mut i32, y: &mut i32| {
-            std::mem::swap(&mut *x, &mut *y);
-            *x + *y
-        });
+    let mut swap_sum = RcBiMutatingFunction::new_with_name("rc_function", |x: &mut i32, y: &mut i32| {
+        std::mem::swap(&mut *x, &mut *y);
+        *x + *y
+    });
 
     assert_eq!(swap_sum.name(), Some("rc_function"));
     swap_sum.set_name("modified_rc");
@@ -578,11 +571,10 @@ fn test_arc_bi_mutating_function_thread_safety() {
 
 #[test]
 fn test_arc_bi_mutating_function_name_and_set_name() {
-    let mut swap_sum =
-        ArcBiMutatingFunction::new_with_name("arc_function", |x: &mut i32, y: &mut i32| {
-            std::mem::swap(&mut *x, &mut *y);
-            *x + *y
-        });
+    let mut swap_sum = ArcBiMutatingFunction::new_with_name("arc_function", |x: &mut i32, y: &mut i32| {
+        std::mem::swap(&mut *x, &mut *y);
+        *x + *y
+    });
 
     assert_eq!(swap_sum.name(), Some("arc_function"));
     swap_sum.set_name("modified_arc");
@@ -683,9 +675,7 @@ fn test_fn_bi_mutating_function_ops_when_or_else() {
         *x
     };
 
-    let conditional = swap_and_sum
-        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-        .or_else(multiply);
+    let conditional = swap_and_sum.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply);
 
     // Test when condition is true
     let mut a = 5;
@@ -695,9 +685,7 @@ fn test_fn_bi_mutating_function_ops_when_or_else() {
     assert_eq!(b, 5); // swapped from 3
 
     // Test when condition is false (negative numbers)
-    let conditional2 = swap_and_sum
-        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-        .or_else(multiply);
+    let conditional2 = swap_and_sum.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply);
     let mut c = -5;
     let mut d = 3;
     assert_eq!(conditional2.apply(&mut c, &mut d), -15); // multiply: (-5 * 3) = -15
@@ -717,9 +705,7 @@ fn test_box_conditional_bi_mutating_function() {
         *x
     });
 
-    let conditional = swap_and_sum
-        .when(|x: &i32, _y: &i32| *x > 0)
-        .or_else(multiply);
+    let conditional = swap_and_sum.when(|x: &i32, _y: &i32| *x > 0).or_else(multiply);
 
     // Test when condition is true
     let mut a = 5;
@@ -744,9 +730,7 @@ fn test_rc_conditional_bi_mutating_function() {
         *x
     });
 
-    let conditional = swap_and_sum
-        .when(|x: &i32, _y: &i32| *x > 0)
-        .or_else(multiply);
+    let conditional = swap_and_sum.when(|x: &i32, _y: &i32| *x > 0).or_else(multiply);
     let cloned = conditional.clone();
 
     // Test when condition is true
@@ -772,9 +756,7 @@ fn test_arc_conditional_bi_mutating_function() {
         *x
     });
 
-    let conditional = swap_and_sum
-        .when(|x: &i32, _y: &i32| *x > 0)
-        .or_else(multiply);
+    let conditional = swap_and_sum.when(|x: &i32, _y: &i32| *x > 0).or_else(multiply);
     let cloned = conditional.clone();
 
     // Test when condition is true
@@ -800,9 +782,7 @@ fn test_rc_conditional_bi_mutating_function_clone() {
         *x
     });
 
-    let conditional = swap_and_sum
-        .when(|x: &i32, _y: &i32| *x > 0)
-        .or_else(multiply);
+    let conditional = swap_and_sum.when(|x: &i32, _y: &i32| *x > 0).or_else(multiply);
     let cloned = conditional.clone();
 
     // Test original
@@ -828,9 +808,7 @@ fn test_arc_conditional_bi_mutating_function_clone() {
         *x
     });
 
-    let conditional = swap_and_sum
-        .when(|x: &i32, _y: &i32| *x > 0)
-        .or_else(multiply);
+    let conditional = swap_and_sum.when(|x: &i32, _y: &i32| *x > 0).or_else(multiply);
     let cloned = conditional.clone();
 
     // Test original

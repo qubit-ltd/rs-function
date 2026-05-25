@@ -662,8 +662,7 @@ mod tests {
         let attempts_clone = Arc::clone(&attempts);
         let max_attempts = 3;
 
-        let rate_limiter =
-            BoxTester::new(move || attempts_clone.load(Ordering::Relaxed) <= max_attempts);
+        let rate_limiter = BoxTester::new(move || attempts_clone.load(Ordering::Relaxed) <= max_attempts);
 
         assert!(rate_limiter.test());
         attempts.fetch_add(1, Ordering::Relaxed);

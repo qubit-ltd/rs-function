@@ -13,8 +13,5 @@ use qubit_function::ArcConditionalBiMutatingFunction;
 #[test]
 fn test_arc_conditional_bi_mutating_function_observable_behavior() {
     let type_name = std::any::type_name::<ArcConditionalBiMutatingFunction<i32, i32, i32>>();
-    assert!(
-        type_name.contains("ArcConditionalBiMutatingFunction"),
-        "{type_name}"
-    );
+    assert!(type_name.contains("ArcConditionalBiMutatingFunction"), "{type_name}");
 }

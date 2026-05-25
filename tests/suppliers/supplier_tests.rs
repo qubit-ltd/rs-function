@@ -53,9 +53,7 @@ fn test_supplier_default_conversions_allow_relaxed_generic_types() {
         assert_left(supplier.clone().into_box().get());
         assert_left(supplier.clone().into_rc().get());
         assert_left(supplier.clone().into_arc().get());
-        assert_left(qubit_function::SupplierOnce::get(
-            supplier.clone().into_once(),
-        ));
+        assert_left(qubit_function::SupplierOnce::get(supplier.clone().into_once()));
         assert_left(supplier.clone().into_fn()());
 
         assert_left(supplier.to_box().get());
@@ -294,9 +292,7 @@ mod test_box_stateless_supplier {
         #[test]
         fn test_filter_with_map() {
             // Test combining filter and map
-            let pipeline = BoxSupplier::new(|| 10)
-                .map(|x| x * 2)
-                .filter(|x: &i32| *x > 15);
+            let pipeline = BoxSupplier::new(|| 10).map(|x| x * 2).filter(|x: &i32| *x > 15);
             assert_eq!(pipeline.get(), Some(20));
         }
     }
@@ -991,10 +987,7 @@ mod test_integration {
             .collect();
 
         for h in handles {
-            assert_eq!(
-                h.join().expect("thread should not panic"),
-                vec![1, 2, 3, 4, 5]
-            );
+            assert_eq!(h.join().expect("thread should not panic"), vec![1, 2, 3, 4, 5]);
         }
     }
 

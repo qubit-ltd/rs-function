@@ -47,9 +47,7 @@ mod tests {
         let add = |x: i32, y: i32| x + y;
         let multiply = |x: i32, y: i32| x * y;
 
-        let conditional = add
-            .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-            .or_else(multiply);
+        let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply);
 
         assert_eq!(conditional.apply(5, 3), 8); // Condition met, execute addition
         assert_eq!(conditional.apply(-5, 3), -15); // Condition not met, execute multiplication
@@ -119,10 +117,7 @@ mod tests {
         let uppercase = |s: String| s.to_uppercase();
 
         let composed = concat.and_then(uppercase);
-        assert_eq!(
-            composed.apply("hello".to_string(), "world".to_string()),
-            "HELLOWORLD"
-        );
+        assert_eq!(composed.apply("hello".to_string(), "world".to_string()), "HELLOWORLD");
     }
 
     #[test]

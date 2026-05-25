@@ -256,8 +256,7 @@ fn test_suppliers_allow_non_static_generic_on_new() {
     let n = 21;
 
     let box_supplier: BoxSupplier<PhantomData<&i32>> = make_box_supplier_with_lifetime(&n);
-    let box_supplier_once: BoxSupplierOnce<PhantomData<&i32>> =
-        make_box_supplier_once_with_lifetime(&n);
+    let box_supplier_once: BoxSupplierOnce<PhantomData<&i32>> = make_box_supplier_once_with_lifetime(&n);
     let arc_supplier: ArcSupplier<PhantomData<&i32>> = make_arc_supplier_with_lifetime(&n);
 
     assert_eq!(box_supplier.get(), PhantomData);
@@ -349,8 +348,7 @@ fn test_fn_ops_traits_allow_non_static_closure_implementations() {
     let stateful_function = |value: &Borrowed<'_>| *value.value;
     assert_stateful_function_impl(&a, stateful_function);
 
-    let bi_transformer_with_borrow =
-        |left: Borrowed<'_>, right: Borrowed<'_>| *left.value + *right.value;
+    let bi_transformer_with_borrow = |left: Borrowed<'_>, right: Borrowed<'_>| *left.value + *right.value;
     assert_bi_transformer_impl(&a, bi_transformer_with_borrow);
 
     assert_unary_operator_impl(&a, BorrowedUnaryOp);

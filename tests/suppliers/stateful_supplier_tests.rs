@@ -65,16 +65,12 @@ fn test_stateful_supplier_default_conversions_allow_relaxed_generic_types() {
     }
 
     fn exercise(_marker: &str) {
-        let supplier = BorrowedRcStatefulSupplier {
-            count: Cell::new(0),
-        };
+        let supplier = BorrowedRcStatefulSupplier { count: Cell::new(0) };
 
         assert_left(supplier.clone().into_box().get());
         assert_left(supplier.clone().into_rc().get());
         assert_left(supplier.clone().into_arc().get());
-        assert_left(qubit_function::SupplierOnce::get(
-            supplier.clone().into_once(),
-        ));
+        assert_left(qubit_function::SupplierOnce::get(supplier.clone().into_once()));
         let mut into_fn = supplier.clone().into_fn();
         assert_left(into_fn());
 
@@ -837,9 +833,7 @@ mod test_arc_stateful_supplier {
             let call_count = Arc::new(Mutex::new(0));
             let call_count_clone = Arc::clone(&call_count);
             let source = ArcStatefulSupplier::new(move || {
-                let mut c = call_count_clone
-                    .lock()
-                    .expect("mutex should not be poisoned");
+                let mut c = call_count_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 42
             });
@@ -2687,12 +2681,11 @@ mod test_fn_stateful_supplier_ops {
     #[test]
     fn test_closure_result_operations() {
         // Test with Result type
-        let mut mapped =
-            (|| Ok::<i32, String>(42)).map(|res: Result<i32, String>| res.unwrap_or(0));
+        let mut mapped = (|| Ok::<i32, String>(42)).map(|res: Result<i32, String>| res.unwrap_or(0));
         assert_eq!(mapped.get(), 42);
 
-        let mut mapped_err = (|| Err::<i32, String>("error".to_string()))
-            .map(|res: Result<i32, String>| res.unwrap_or(0));
+        let mut mapped_err =
+            (|| Err::<i32, String>("error".to_string())).map(|res: Result<i32, String>| res.unwrap_or(0));
         assert_eq!(mapped_err.get(), 0);
     }
 
@@ -2706,11 +2699,7 @@ mod test_fn_stateful_supplier_ops {
     #[test]
     fn test_closure_nested_map() {
         // Test nested map operations
-        let mut mapped = (|| 5)
-            .map(|x| x + 1)
-            .map(|x| x * 2)
-            .map(|x| x - 3)
-            .map(|x| x / 2);
+        let mut mapped = (|| 5).map(|x| x + 1).map(|x| x * 2).map(|x| x - 3).map(|x| x / 2);
         assert_eq!(mapped.get(), 4); // (5+1)*2-3 = 9, 9/2 = 4
     }
 

@@ -25,10 +25,7 @@ fn main() {
     let double = |x: i32| x * 2;
     let to_string = |x: i32| x.to_string();
     let composed = double.and_then(to_string);
-    println!(
-        "   double.and_then(to_string).apply(21) = {}",
-        composed.apply(21)
-    );
+    println!("   double.and_then(to_string).apply(21) = {}", composed.apply(21));
     println!();
 
     // 2. Chained and_then composition
@@ -48,10 +45,7 @@ fn main() {
     let double = |x: i32| x * 2;
     let add_one = |x: i32| x + 1;
     let composed = double.compose(add_one);
-    println!(
-        "   double.compose(add_one).apply(5) = {}",
-        composed.apply(5)
-    ); // (5 + 1) * 2 = 12
+    println!("   double.compose(add_one).apply(5) = {}", composed.apply(5)); // (5 + 1) * 2 = 12
     println!();
 
     // 4. Conditional transformation when
@@ -97,10 +91,7 @@ fn main() {
     let multiply = move |x: i32| x * multiplier;
     let add_ten = |x: i32| x + 10;
     let with_capture = multiply.and_then(add_ten);
-    println!(
-        "   multiply(3).and_then(add_ten).apply(5) = {}",
-        with_capture.apply(5)
-    ); // 5 * 3 + 10 = 25
+    println!("   multiply(3).and_then(add_ten).apply(5) = {}", with_capture.apply(5)); // 5 * 3 + 10 = 25
     println!();
 
     // 8. Function pointers
@@ -112,10 +103,7 @@ fn main() {
         x + 1
     }
     let fn_composed = double_fn.and_then(add_one_fn);
-    println!(
-        "   double_fn.and_then(add_one_fn).apply(5) = {}",
-        fn_composed.apply(5)
-    ); // 5 * 2 + 1 = 11
+    println!("   double_fn.and_then(add_one_fn).apply(5) = {}", fn_composed.apply(5)); // 5 * 2 + 1 = 11
     println!();
 
     // 9. Multi-conditional transformation

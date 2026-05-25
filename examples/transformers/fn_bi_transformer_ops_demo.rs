@@ -45,9 +45,7 @@ fn main() {
     let add = |x: i32, y: i32| x + y;
     let multiply = |x: i32, y: i32| x * y;
 
-    let conditional = add
-        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-        .or_else(multiply);
+    let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply);
 
     println!("   When both numbers are positive, perform addition, otherwise multiplication:");
     println!("   conditional(5, 3) = {}", conditional.apply(5, 3));
@@ -59,9 +57,7 @@ fn main() {
     let add = |x: i32, y: i32| x + y;
     let subtract = |x: i32, y: i32| x - y;
 
-    let conditional = add
-        .when(|x: &i32, y: &i32| (*x + *y) < 100)
-        .or_else(subtract);
+    let conditional = add.when(|x: &i32, y: &i32| (*x + *y) < 100).or_else(subtract);
 
     println!("   When sum is less than 100, perform addition, otherwise subtraction:");
     println!("   conditional(30, 40) = {}", conditional.apply(30, 40));

@@ -98,11 +98,7 @@ pub struct ArcSupplier<T> {
 impl<T> ArcSupplier<T> {
     // Generates: new(), new_with_name(), name(), set_name()
     // Note: constant() is NOT generated here, implemented separately below
-    crate::macros::impl_common_new_methods!(
-        (Fn() -> T + Send + Sync + 'static),
-        |f| Arc::new(f),
-        "supplier"
-    );
+    crate::macros::impl_common_new_methods!((Fn() -> T + Send + Sync + 'static), |f| Arc::new(f), "supplier");
 
     crate::macros::impl_common_name_methods!("supplier");
 

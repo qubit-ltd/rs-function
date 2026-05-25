@@ -405,9 +405,7 @@ mod test_custom_supplier_once_default_implementation {
 
     impl<T> SupplierOnce<T> for CustomSupplierOnce<T> {
         fn get(mut self) -> T {
-            self.value
-                .take()
-                .expect("CustomSupplierOnce already consumed")
+            self.value.take().expect("CustomSupplierOnce already consumed")
         }
         // Note: into_box() is NOT implemented here, so the
         // default implementation from the trait will be used
@@ -530,13 +528,7 @@ mod test_to_box_and_to_fn {
         };
         let fn_once = supplier.to_fn();
         // The original supplier is not consumed
-        assert!(
-            supplier
-                .value
-                .lock()
-                .expect("mutex should not be poisoned")
-                .is_some()
-        );
+        assert!(supplier.value.lock().expect("mutex should not be poisoned").is_some());
         // The returned FnOnce can be called
         assert_eq!(fn_once(), 42);
     }
@@ -548,13 +540,7 @@ mod test_to_box_and_to_fn {
         };
         let boxed = supplier.to_box();
         // The original supplier is not consumed
-        assert!(
-            supplier
-                .value
-                .lock()
-                .expect("mutex should not be poisoned")
-                .is_some()
-        );
+        assert!(supplier.value.lock().expect("mutex should not be poisoned").is_some());
         // The returned BoxSupplierOnce can be consumed
         assert_eq!(boxed.get(), 42);
     }

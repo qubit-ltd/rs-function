@@ -13,8 +13,5 @@ use qubit_function::BoxConditionalBiTransformerOnce;
 #[test]
 fn test_box_conditional_bi_transformer_once_observable_behavior() {
     let type_name = std::any::type_name::<BoxConditionalBiTransformerOnce<i32, i32, i32>>();
-    assert!(
-        type_name.contains("BoxConditionalBiTransformerOnce"),
-        "{type_name}"
-    );
+    assert!(type_name.contains("BoxConditionalBiTransformerOnce"), "{type_name}");
 }

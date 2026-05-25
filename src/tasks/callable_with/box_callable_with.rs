@@ -89,10 +89,7 @@ impl<T, R, E> BoxCallableWith<T, R, E> {
     {
         let name = self.name;
         let mut function = self.function;
-        BoxCallableWith::new_with_optional_name(
-            move |input| function(input).map_err(&mut mapper),
-            name,
-        )
+        BoxCallableWith::new_with_optional_name(move |input| function(input).map_err(&mut mapper), name)
     }
 
     /// Chains another fallible computation after this callable succeeds.

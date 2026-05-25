@@ -64,9 +64,7 @@ impl<T> BoxComparator<T> {
     where
         F: Fn(&T, &T) -> Ordering + 'static,
     {
-        Self {
-            function: Box::new(f),
-        }
+        Self { function: Box::new(f) }
     }
 
     /// Returns a comparator that imposes the reverse ordering.

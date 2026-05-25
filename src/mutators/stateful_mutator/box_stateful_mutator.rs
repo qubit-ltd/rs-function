@@ -73,16 +73,10 @@ pub struct BoxStatefulMutator<T> {
 }
 
 impl<T> BoxStatefulMutator<T> {
-    impl_mutator_common_methods!(BoxStatefulMutator<T>, (FnMut(&mut T) + 'static), |f| {
-        Box::new(f)
-    });
+    impl_mutator_common_methods!(BoxStatefulMutator<T>, (FnMut(&mut T) + 'static), |f| { Box::new(f) });
 
     // Generate box mutator methods (when, and_then, or_else, etc.)
-    impl_box_mutator_methods!(
-        BoxStatefulMutator<T>,
-        BoxConditionalStatefulMutator,
-        StatefulMutator
-    );
+    impl_box_mutator_methods!(BoxStatefulMutator<T>, BoxConditionalStatefulMutator, StatefulMutator);
 }
 
 impl<T> StatefulMutator<T> for BoxStatefulMutator<T> {
@@ -91,12 +85,7 @@ impl<T> StatefulMutator<T> for BoxStatefulMutator<T> {
     }
 
     // Generates: into_box(), into_rc(), into_fn(), into_once()
-    impl_box_conversions!(
-        BoxStatefulMutator<T>,
-        RcStatefulMutator,
-        FnMut(&mut T),
-        BoxMutatorOnce
-    );
+    impl_box_conversions!(BoxStatefulMutator<T>, RcStatefulMutator, FnMut(&mut T), BoxMutatorOnce);
 }
 
 // Generate Debug and Display trait implementations

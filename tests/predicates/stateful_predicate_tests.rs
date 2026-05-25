@@ -60,12 +60,8 @@ fn test_stateful_predicate_default_conversions_allow_relaxed_generic_types() {
     }
 
     let text = String::from("left");
-    let value = BorrowedRc {
-        value: text.as_str(),
-    };
-    let predicate = BorrowedRcStatefulPredicate {
-        count: Cell::new(0),
-    };
+    let value = BorrowedRc { value: text.as_str() };
+    let predicate = BorrowedRcStatefulPredicate { count: Cell::new(0) };
 
     assert!(predicate.clone().into_box().test(&value));
     assert!(predicate.clone().into_rc().test(&value));
@@ -142,33 +138,28 @@ fn test_box_stateful_predicate_composition_preserves_state() {
 
 #[test]
 fn test_box_stateful_predicate_logical_operations_cover_all_branches() {
-    let mut and_pred =
-        BoxStatefulPredicate::new(|value: &i32| *value > 0).and(|value: &i32| value % 2 == 0);
+    let mut and_pred = BoxStatefulPredicate::new(|value: &i32| *value > 0).and(|value: &i32| value % 2 == 0);
     assert!(and_pred.test(&4));
     assert!(!and_pred.test(&3));
     assert!(!and_pred.test(&-2));
 
-    let mut or_pred =
-        BoxStatefulPredicate::new(|value: &i32| *value > 0).or(|value: &i32| value % 2 == 0);
+    let mut or_pred = BoxStatefulPredicate::new(|value: &i32| *value > 0).or(|value: &i32| value % 2 == 0);
     assert!(or_pred.test(&4));
     assert!(or_pred.test(&-2));
     assert!(!or_pred.test(&-3));
 
-    let mut nand_pred =
-        BoxStatefulPredicate::new(|value: &i32| *value > 0).nand(|value: &i32| value % 2 == 0);
+    let mut nand_pred = BoxStatefulPredicate::new(|value: &i32| *value > 0).nand(|value: &i32| value % 2 == 0);
     assert!(!nand_pred.test(&4));
     assert!(nand_pred.test(&3));
     assert!(nand_pred.test(&-2));
 
-    let mut xor_pred =
-        BoxStatefulPredicate::new(|value: &i32| *value > 0).xor(|value: &i32| value % 2 == 0);
+    let mut xor_pred = BoxStatefulPredicate::new(|value: &i32| *value > 0).xor(|value: &i32| value % 2 == 0);
     assert!(!xor_pred.test(&4));
     assert!(xor_pred.test(&3));
     assert!(xor_pred.test(&-2));
     assert!(!xor_pred.test(&-3));
 
-    let mut nor_pred =
-        BoxStatefulPredicate::new(|value: &i32| *value > 0).nor(|value: &i32| value % 2 == 0);
+    let mut nor_pred = BoxStatefulPredicate::new(|value: &i32| *value > 0).nor(|value: &i32| value % 2 == 0);
     assert!(!nor_pred.test(&4));
     assert!(!nor_pred.test(&-2));
     assert!(nor_pred.test(&-3));

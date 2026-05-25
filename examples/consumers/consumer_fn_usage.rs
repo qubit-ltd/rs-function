@@ -35,19 +35,14 @@ fn main() {
 
     // Convert consumer to closure and pass to for_each
     [1, 2, 3, 4, 5].iter().for_each(consumer.into_fn());
-    println!(
-        "   Result: {:?}\n",
-        *log.lock().expect("mutex should not be poisoned")
-    );
+    println!("   Result: {:?}\n", *log.lock().expect("mutex should not be poisoned"));
 
     // Example 2: Using ArcConsumer::to_fn can be used multiple times
     println!("2. ArcConsumer::to_fn can be used multiple times");
     let log2 = Arc::new(Mutex::new(Vec::new()));
     let l2 = log2.clone();
     let consumer2 = ArcConsumer::new(move |x: &i32| {
-        l2.lock()
-            .expect("mutex should not be poisoned")
-            .push(*x + 10);
+        l2.lock().expect("mutex should not be poisoned").push(*x + 10);
     });
 
     // to_fn doesn't consume consumer, can be called multiple times
@@ -86,17 +81,12 @@ fn main() {
     let log4 = Arc::new(Mutex::new(Vec::new()));
     let l4 = log4.clone();
     let consumer4 = BoxConsumer::new(move |x: &i32| {
-        l4.lock()
-            .expect("mutex should not be poisoned")
-            .push(*x * 5);
+        l4.lock().expect("mutex should not be poisoned").push(*x * 5);
     });
 
     // Use into_fn to convert Consumer to closure and pass to function
     process_items(vec![1, 2, 3], consumer4.into_fn());
-    println!(
-        "   Result: {:?}\n",
-        *log4.lock().expect("mutex should not be poisoned")
-    );
+    println!("   Result: {:?}\n", *log4.lock().expect("mutex should not be poisoned"));
 
     // Example 5: Using into_fn after chained operations
     println!("5. Using into_fn after chained operations");
@@ -116,10 +106,7 @@ fn main() {
     });
 
     [1, 2].iter().for_each(chained.into_fn());
-    println!(
-        "   Result: {:?}\n",
-        *log5.lock().expect("mutex should not be poisoned")
-    );
+    println!("   Result: {:?}\n", *log5.lock().expect("mutex should not be poisoned"));
 
     println!("=== Demo Complete ===");
 }

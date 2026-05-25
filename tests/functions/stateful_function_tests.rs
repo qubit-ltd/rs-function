@@ -68,12 +68,8 @@ fn test_stateful_function_default_conversions_allow_relaxed_generic_types() {
     }
 
     let text = String::from("left");
-    let value = BorrowedRc {
-        value: text.as_str(),
-    };
-    let function = BorrowedRcStatefulFunction {
-        count: Cell::new(0),
-    };
+    let value = BorrowedRc { value: text.as_str() };
+    let function = BorrowedRcStatefulFunction { count: Cell::new(0) };
 
     assert_left(function.clone().into_box().apply(&value));
     assert_left(function.clone().into_rc().apply(&value));
@@ -1409,8 +1405,7 @@ fn test_arc_stateful_function_debug_display() {
     assert_eq!(display_str, "ArcStatefulFunction");
 
     // Test Debug and Display for ArcStatefulFunction with name
-    let mut named_double =
-        ArcStatefulFunction::new_with_name("arc_stateful_double", |x: &i32| x * 2);
+    let mut named_double = ArcStatefulFunction::new_with_name("arc_stateful_double", |x: &i32| x * 2);
     // Call apply to test the function
     assert_eq!(named_double.apply(&3), 6);
 
@@ -1420,10 +1415,7 @@ fn test_arc_stateful_function_debug_display() {
     assert!(named_debug_str.contains("function"));
 
     let named_display_str = format!("{}", named_double);
-    assert_eq!(
-        named_display_str,
-        "ArcStatefulFunction(arc_stateful_double)"
-    );
+    assert_eq!(named_display_str, "ArcStatefulFunction(arc_stateful_double)");
 }
 
 // ============================================================================
@@ -1602,8 +1594,7 @@ fn test_arc_conditional_stateful_function_debug_display() {
     assert!(display_str.ends_with(")"));
 
     // Test Debug and Display for ArcConditionalStatefulFunction with name
-    let mut named_double =
-        ArcStatefulFunction::new_with_name("arc_stateful_double", |x: &i32| x * 2);
+    let mut named_double = ArcStatefulFunction::new_with_name("arc_stateful_double", |x: &i32| x * 2);
     // Call apply to test the function
     assert_eq!(named_double.apply(&3), 6);
 

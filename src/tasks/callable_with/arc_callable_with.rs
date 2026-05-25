@@ -89,10 +89,7 @@ impl<T, R, E> CallableWith<T, R, E> for ArcCallableWith<T, R, E> {
     {
         let name = self.name;
         let function = self.function;
-        BoxRunnableWith::new_with_optional_name(
-            move |input| (function.lock())(input).map(|_| ()),
-            name,
-        )
+        BoxRunnableWith::new_with_optional_name(move |input| (function.lock())(input).map(|_| ()), name)
     }
 }
 

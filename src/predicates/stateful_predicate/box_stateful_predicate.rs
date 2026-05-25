@@ -34,11 +34,7 @@ pub struct BoxStatefulPredicate<T> {
 
 impl<T> BoxStatefulPredicate<T> {
     // Generates: new(), new_with_name(), name(), set_name(), always_true(), always_false()
-    impl_predicate_common_methods!(
-        BoxStatefulPredicate<T>,
-        (FnMut(&T) -> bool + 'static),
-        |f| Box::new(f)
-    );
+    impl_predicate_common_methods!(BoxStatefulPredicate<T>, (FnMut(&T) -> bool + 'static), |f| Box::new(f));
 
     /// Returns a predicate representing logical AND with another predicate.
     ///

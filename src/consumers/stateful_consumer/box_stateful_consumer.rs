@@ -77,16 +77,10 @@ pub struct BoxStatefulConsumer<T> {
 
 impl<T> BoxStatefulConsumer<T> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
-    impl_consumer_common_methods!(BoxStatefulConsumer<T>, (FnMut(&T) + 'static), |f| Box::new(
-        f
-    ));
+    impl_consumer_common_methods!(BoxStatefulConsumer<T>, (FnMut(&T) + 'static), |f| Box::new(f));
 
     // Generates: when() and and_then() methods that consume self
-    impl_box_consumer_methods!(
-        BoxStatefulConsumer<T>,
-        BoxConditionalStatefulConsumer,
-        StatefulConsumer
-    );
+    impl_box_consumer_methods!(BoxStatefulConsumer<T>, BoxConditionalStatefulConsumer, StatefulConsumer);
 }
 
 impl<T> StatefulConsumer<T> for BoxStatefulConsumer<T> {
@@ -95,12 +89,7 @@ impl<T> StatefulConsumer<T> for BoxStatefulConsumer<T> {
     }
 
     // Generates: into_box(), into_rc(), into_fn(), into_once()
-    impl_box_conversions!(
-        BoxStatefulConsumer<T>,
-        RcStatefulConsumer,
-        FnMut(&T),
-        BoxConsumerOnce
-    );
+    impl_box_conversions!(BoxStatefulConsumer<T>, RcStatefulConsumer, FnMut(&T), BoxConsumerOnce);
 }
 
 // Use macro to generate Debug and Display implementations

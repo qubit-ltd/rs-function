@@ -147,10 +147,7 @@ fn main() {
     // 6. Resource transfer scenario
     println!("6. Resource transfer scenario");
     let large_data = vec![1; 10];
-    println!(
-        "   Preparing to transfer large data (length: {})",
-        large_data.len()
-    );
+    println!("   Preparing to transfer large data (length: {})", large_data.len());
 
     let mutator = BoxMutatorOnce::new(move |x: &mut Vec<i32>| {
         println!("   Transferring data (moving, not cloning)");
@@ -189,9 +186,7 @@ fn main() {
 
     impl Config {
         fn new() -> Self {
-            Self {
-                options: Vec::new(),
-            }
+            Self { options: Vec::new() }
         }
 
         fn with_defaults(mut self) -> Self {

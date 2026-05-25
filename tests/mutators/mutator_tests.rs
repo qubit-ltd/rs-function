@@ -41,9 +41,7 @@ fn test_mutator_default_conversions_allow_relaxed_generic_types() {
     }
 
     let text = String::from("left");
-    let mut value = BorrowedRc {
-        value: text.as_str(),
-    };
+    let mut value = BorrowedRc { value: text.as_str() };
     let mutator = BorrowedRcMutator;
 
     mutator.clone().into_box().apply(&mut value);
@@ -415,10 +413,7 @@ mod test_box_mutator {
 
     #[test]
     fn test_new_with_optional_name_some() {
-        let mutator = BoxMutator::new_with_optional_name(
-            |x: &mut i32| *x += 1,
-            Some("optional_name".to_string()),
-        );
+        let mutator = BoxMutator::new_with_optional_name(|x: &mut i32| *x += 1, Some("optional_name".to_string()));
         assert_eq!(mutator.name(), Some("optional_name"));
 
         let mut value = 5;
@@ -869,10 +864,7 @@ mod test_arc_mutator {
 
     #[test]
     fn test_new_with_optional_name_some() {
-        let mutator = ArcMutator::new_with_optional_name(
-            |x: &mut i32| *x += 1,
-            Some("arc_optional".to_string()),
-        );
+        let mutator = ArcMutator::new_with_optional_name(|x: &mut i32| *x += 1, Some("arc_optional".to_string()));
         assert_eq!(mutator.name(), Some("arc_optional"));
 
         let mut value = 5;
@@ -1209,10 +1201,7 @@ mod test_rc_mutator {
 
     #[test]
     fn test_new_with_optional_name_some() {
-        let mutator = RcMutator::new_with_optional_name(
-            |x: &mut i32| *x += 1,
-            Some("rc_optional".to_string()),
-        );
+        let mutator = RcMutator::new_with_optional_name(|x: &mut i32| *x += 1, Some("rc_optional".to_string()));
         assert_eq!(mutator.name(), Some("rc_optional"));
 
         let mut value = 5;
