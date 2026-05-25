@@ -32,9 +32,7 @@ impl BoxStatefulTester {
     where
         F: FnMut() -> bool + 'static,
     {
-        BoxStatefulTester {
-            function: Box::new(f),
-        }
+        BoxStatefulTester { function: Box::new(f) }
     }
 
     /// Combines this tester with another stateful tester using logical AND.

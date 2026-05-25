@@ -59,11 +59,9 @@ pub struct ArcPredicate<T> {
 
 impl<T> ArcPredicate<T> {
     // Generates: new(), new_with_name(), name(), set_name(), always_true(), always_false()
-    impl_predicate_common_methods!(
-        ArcPredicate<T>,
-        (Fn(&T) -> bool + Send + Sync + 'static),
-        |f| Arc::new(f)
-    );
+    impl_predicate_common_methods!(ArcPredicate<T>, (Fn(&T) -> bool + Send + Sync + 'static), |f| Arc::new(
+        f
+    ));
 
     // Generates: and(), or(), nand(), xor(), nor()
     impl_shared_predicate_methods!(ArcPredicate<T>, Send + Sync + 'static);

@@ -65,8 +65,7 @@ fn test_callable_with_closure_call_with_returns_success_value() {
     };
 
     assert_eq!(
-        CallableWith::call_with(&mut task, &mut value)
-            .expect("callable-with closure should succeed"),
+        CallableWith::call_with(&mut task, &mut value).expect("callable-with closure should succeed"),
         15
     );
     assert_eq!(value, 15);
@@ -77,8 +76,7 @@ fn test_callable_with_closure_call_with_returns_error() {
     let mut value = 10;
     let mut task = |_input: &mut i32| Err::<i32, _>(io::Error::other("failed"));
 
-    let error = CallableWith::call_with(&mut task, &mut value)
-        .expect_err("callable-with closure should fail");
+    let error = CallableWith::call_with(&mut task, &mut value).expect_err("callable-with closure should fail");
 
     assert_eq!(error.kind(), io::ErrorKind::Other);
     assert_eq!(error.to_string(), "failed");
@@ -94,8 +92,7 @@ fn test_callable_with_closure_into_box_executes_repeatedly() {
     let mut value = 1;
 
     assert_eq!(
-        task.call_with(&mut value)
-            .expect("boxed callable-with should succeed"),
+        task.call_with(&mut value).expect("boxed callable-with should succeed"),
         2
     );
     assert_eq!(
@@ -123,12 +120,7 @@ fn test_callable_with_to_box_clones_callable() {
     let mut task = AddWith { amount: 3 };
     let mut boxed = task.to_box();
 
-    assert_eq!(
-        boxed
-            .call_with(&mut value)
-            .expect("boxed clone should succeed"),
-        13
-    );
+    assert_eq!(boxed.call_with(&mut value).expect("boxed clone should succeed"), 13);
     assert_eq!(
         task.call_with(&mut value)
             .expect("original callable-with should remain usable"),
@@ -151,10 +143,7 @@ fn test_callable_with_default_into_runnable_discards_success_value() {
 
 #[test]
 fn test_box_callable_with_name_management() {
-    let mut task =
-        BoxCallableWith::<i32, i32, io::Error>::new_with_name("adjust", |input: &mut i32| {
-            Ok(*input + 1)
-        });
+    let mut task = BoxCallableWith::<i32, i32, io::Error>::new_with_name("adjust", |input: &mut i32| Ok(*input + 1));
 
     assert_eq!(task.name(), Some("adjust"));
     assert_eq!(task.to_string(), "BoxCallableWith(adjust)");
@@ -189,9 +178,7 @@ fn test_box_callable_with_map_transforms_success_value() {
 
 #[test]
 fn test_box_callable_with_map_err_transforms_error() {
-    let task = BoxCallableWith::<i32, i32, io::Error>::new(|_input: &mut i32| {
-        Err(io::Error::other("original"))
-    });
+    let task = BoxCallableWith::<i32, i32, io::Error>::new(|_input: &mut i32| Err(io::Error::other("original")));
     let mut mapped = task.map_err(|error| error.to_string());
     let mut input = 0;
 
@@ -258,17 +245,10 @@ fn test_callable_with_to_rc_clones_source() {
         1
     );
     assert_eq!(
-        shared_clone
-            .call_with(&mut input)
-            .expect("shared clone should succeed"),
+        shared_clone.call_with(&mut input).expect("shared clone should succeed"),
         2
     );
-    assert_eq!(
-        source
-            .call_with(&mut input)
-            .expect("original should remain usable"),
-        3
-    );
+    assert_eq!(source.call_with(&mut input).expect("original should remain usable"), 3);
     assert_eq!(input, 3);
 }
 
@@ -352,9 +332,7 @@ fn test_box_callable_with_conversions_preserve_behavior_and_name() {
     });
     let mut runnable = CallableWith::into_runnable_with(boxed);
     assert_eq!(runnable.name(), Some("runnable"));
-    runnable
-        .run_with(&mut input)
-        .expect("runnable conversion should run");
+    runnable.run_with(&mut input).expect("runnable conversion should run");
     assert_eq!(input, 10);
 }
 
@@ -393,9 +371,7 @@ fn test_rc_callable_with_conversions_preserve_shared_state() {
 
     let mut runnable = shared.into_runnable_with();
     assert_eq!(runnable.name(), Some("shared"));
-    runnable
-        .run_with(&mut input)
-        .expect("runnable conversion should run");
+    runnable.run_with(&mut input).expect("runnable conversion should run");
 
     assert_eq!(count.get(), 7);
     assert_eq!(input, 7);
@@ -443,9 +419,7 @@ fn test_arc_callable_with_conversions_preserve_shared_state() {
 
     let mut runnable = shared.into_runnable_with();
     assert_eq!(runnable.name(), Some("shared"));
-    runnable
-        .run_with(&mut input)
-        .expect("runnable conversion should run");
+    runnable.run_with(&mut input).expect("runnable conversion should run");
 
     assert_eq!(count.load(Ordering::SeqCst), 9);
     assert_eq!(input, 18);
@@ -454,18 +428,15 @@ fn test_arc_callable_with_conversions_preserve_shared_state() {
 #[test]
 fn test_box_callable_with_combinators_cover_error_branches() {
     let mut input = 0;
-    let mut mapped = BoxCallableWith::<i32, i32, io::Error>::new(|_value| {
-        Err(io::Error::other("map source failed"))
-    })
-    .map(|value| value + 1);
+    let mut mapped = BoxCallableWith::<i32, i32, io::Error>::new(|_value| Err(io::Error::other("map source failed")))
+        .map(|value| value + 1);
     let error = mapped
         .call_with(&mut input)
         .expect_err("map should propagate source errors");
     assert_eq!(error.to_string(), "map source failed");
 
     let mut map_err_success =
-        BoxCallableWith::<i32, i32, io::Error>::new(|value: &mut i32| Ok(*value))
-            .map_err(|error| error.to_string());
+        BoxCallableWith::<i32, i32, io::Error>::new(|value: &mut i32| Ok(*value)).map_err(|error| error.to_string());
     assert_eq!(
         map_err_success
             .call_with(&mut input)
@@ -475,13 +446,12 @@ fn test_box_callable_with_combinators_cover_error_branches() {
 
     let next_ran = Rc::new(Cell::new(false));
     let next_ran_capture = Rc::clone(&next_ran);
-    let mut chained =
-        BoxCallableWith::<i32, i32, io::Error>::new(|_value| Err(io::Error::other("first failed")))
-            .and_then(move |value, input| {
-                *input += value;
-                next_ran_capture.set(true);
-                Ok::<i32, io::Error>(*input)
-            });
+    let mut chained = BoxCallableWith::<i32, i32, io::Error>::new(|_value| Err(io::Error::other("first failed")))
+        .and_then(move |value, input| {
+            *input += value;
+            next_ran_capture.set(true);
+            Ok::<i32, io::Error>(*input)
+        });
     let error = chained
         .call_with(&mut input)
         .expect_err("and_then should short-circuit");

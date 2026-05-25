@@ -84,9 +84,6 @@ impl<T, R, E> CallableWith<T, R, E> for RcCallableWith<T, R, E> {
     {
         let name = self.name;
         let function = self.function;
-        BoxRunnableWith::new_with_optional_name(
-            move |input| (function.borrow_mut())(input).map(|_| ()),
-            name,
-        )
+        BoxRunnableWith::new_with_optional_name(move |input| (function.borrow_mut())(input).map(|_| ()), name)
     }
 }

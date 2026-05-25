@@ -48,10 +48,7 @@ fn main() {
     let double = |x: i32| x * 2;
     let to_string = |x: i32| x.to_string();
     let composed = double.and_then(to_string);
-    println!(
-        "   double.and_then(to_string).apply(21) = {}",
-        composed.apply(21)
-    ); // (21 * 2).to_string() = "42"
+    println!("   double.and_then(to_string).apply(21) = {}", composed.apply(21)); // (21 * 2).to_string() = "42"
     println!();
 
     // 4. Conditional transformation when
@@ -87,10 +84,7 @@ fn main() {
     let complex2 = parse2
         .and_then(double2.when(|x: &i32| *x > 5).or_else(triple2))
         .and_then(to_string2);
-    println!(
-        "     transform(\"10\") = {}",
-        complex2.apply("10".to_string())
-    ); // 10 > 5, so 10 * 2 = 20
+    println!("     transform(\"10\") = {}", complex2.apply("10".to_string())); // 10 > 5, so 10 * 2 = 20
     println!();
 
     // 6. Type conversion
@@ -110,10 +104,7 @@ fn main() {
     let multiply = move |x: i32| x * multiplier;
     let add_ten = |x: i32| x + 10;
     let with_capture = multiply.and_then(add_ten);
-    println!(
-        "   multiply(3).and_then(add_ten).apply(5) = {}",
-        with_capture.apply(5)
-    ); // 5 * 3 + 10 = 25
+    println!("   multiply(3).and_then(add_ten).apply(5) = {}", with_capture.apply(5)); // 5 * 3 + 10 = 25
     println!();
 
     // 8. Function pointers

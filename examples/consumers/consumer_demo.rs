@@ -62,14 +62,10 @@ fn main() {
     let r3 = results.clone();
 
     let chained = BoxConsumer::new(move |x: &i32| {
-        r1.lock()
-            .expect("mutex should not be poisoned")
-            .push(*x * 2);
+        r1.lock().expect("mutex should not be poisoned").push(*x * 2);
     })
     .and_then(move |x: &i32| {
-        r2.lock()
-            .expect("mutex should not be poisoned")
-            .push(*x + 10);
+        r2.lock().expect("mutex should not be poisoned").push(*x + 10);
     })
     .and_then(move |x: &i32| {
         r3.lock().expect("mutex should not be poisoned").push(*x);
@@ -144,8 +140,7 @@ fn main() {
     println!("{}", "-".repeat(50));
 
     // when
-    let mut check_positive =
-        BoxStatefulConsumer::new(|x: &i32| println!("Positive: {}", x)).when(|x: &i32| *x > 0);
+    let mut check_positive = BoxStatefulConsumer::new(|x: &i32| println!("Positive: {}", x)).when(|x: &i32| *x > 0);
 
     let positive = 5;
     let negative = -5;
@@ -313,11 +308,7 @@ fn main() {
     println!("{}", "-".repeat(50));
 
     let validator = BoxConsumer::new(|x: &i32| {
-        let status = if *x >= 0 && *x <= 100 {
-            "valid"
-        } else {
-            "out of range"
-        };
+        let status = if *x >= 0 && *x <= 100 { "valid" } else { "out of range" };
         println!("Validate {}: {}", x, status);
     });
 

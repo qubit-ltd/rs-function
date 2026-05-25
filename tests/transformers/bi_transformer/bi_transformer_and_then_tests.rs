@@ -235,16 +235,12 @@ mod tests {
 
         let composed = create_person.and_then(get_description);
 
-        assert_eq!(
-            composed.apply("Alice".to_string(), 30),
-            "Alice is 30 years old"
-        );
+        assert_eq!(composed.apply("Alice".to_string(), 30), "Alice is 30 years old");
     }
 
     #[test]
     fn test_bi_transformer_and_then_with_option() {
-        let divide =
-            BoxBiTransformer::new(|x: i32, y: i32| if y == 0 { None } else { Some(x / y) });
+        let divide = BoxBiTransformer::new(|x: i32, y: i32| if y == 0 { None } else { Some(x / y) });
 
         let unwrap_or_zero = |opt: Option<i32>| opt.unwrap_or(0);
 

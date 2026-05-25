@@ -108,27 +108,15 @@ fn main() {
     let sum_positive = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
     let combined_and_false = sum_positive.and(BoxBiPredicate::always_false());
     println!("\nsum_positive AND always_false:");
-    println!(
-        "  test(&5, &3): {} (always false)",
-        combined_and_false.test(&5, &3)
-    );
-    println!(
-        "  test(&-3, &-5): {} (always false)",
-        combined_and_false.test(&-3, &-5)
-    );
+    println!("  test(&5, &3): {} (always false)", combined_and_false.test(&5, &3));
+    println!("  test(&-3, &-5): {} (always false)", combined_and_false.test(&-3, &-5));
 
     // Combining with always_true (OR)
     let sum_positive = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
     let combined_or_true = sum_positive.or(BoxBiPredicate::always_true());
     println!("\nsum_positive OR always_true:");
-    println!(
-        "  test(&5, &3): {} (always true)",
-        combined_or_true.test(&5, &3)
-    );
-    println!(
-        "  test(&-3, &-5): {} (always true)",
-        combined_or_true.test(&-3, &-5)
-    );
+    println!("  test(&5, &3): {} (always true)", combined_or_true.test(&5, &3));
+    println!("  test(&-3, &-5): {} (always true)", combined_or_true.test(&-3, &-5));
 
     // Combining with always_false (OR)
     let sum_positive = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);

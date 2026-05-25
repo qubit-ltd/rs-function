@@ -35,9 +35,7 @@ fn test_mutator_once_default_conversions_allow_relaxed_generic_types() {
     }
 
     let text = String::from("left");
-    let mut value = BorrowedRc {
-        value: text.as_str(),
-    };
+    let mut value = BorrowedRc { value: text.as_str() };
     let mutator = BorrowedRcMutatorOnce;
 
     mutator.clone().into_box().apply(&mut value);
@@ -386,8 +384,7 @@ fn test_closure_and_then() {
     let data1 = vec![1, 2];
     let data2 = vec![3, 4];
 
-    let chained =
-        (move |x: &mut Vec<i32>| x.extend(data1)).and_then(move |x: &mut Vec<i32>| x.extend(data2));
+    let chained = (move |x: &mut Vec<i32>| x.extend(data1)).and_then(move |x: &mut Vec<i32>| x.extend(data2));
 
     let mut target = vec![0];
     chained.apply(&mut target);
@@ -452,10 +449,7 @@ mod test_box_conditional_mutator_once_debug_display {
 
     #[test]
     fn test_box_mutator_once_new_with_optional_name_some() {
-        let mutator = BoxMutatorOnce::new_with_optional_name(
-            |x: &mut i32| *x += 1,
-            Some("optional_once".to_string()),
-        );
+        let mutator = BoxMutatorOnce::new_with_optional_name(|x: &mut i32| *x += 1, Some("optional_once".to_string()));
         assert_eq!(mutator.name(), Some("optional_once"));
 
         let mut value = 5;
@@ -512,10 +506,7 @@ mod custom_mutator_to_methods_tests {
     impl MutatorOnce<i32> for CloneableMutator {
         fn apply(self, value: &mut i32) {
             *value *= self.multiplier;
-            self.log
-                .lock()
-                .expect("mutex should not be poisoned")
-                .push(*value);
+            self.log.lock().expect("mutex should not be poisoned").push(*value);
         }
     }
 
@@ -547,10 +538,7 @@ mod custom_mutator_to_methods_tests {
         boxed2.apply(&mut value2);
         assert_eq!(value2, 12);
 
-        assert_eq!(
-            *log.lock().expect("mutex should not be poisoned"),
-            vec![18, 12]
-        );
+        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![18, 12]);
     }
 
     #[test]
@@ -568,9 +556,6 @@ mod custom_mutator_to_methods_tests {
         mutator.apply(&mut value2);
         assert_eq!(value2, 20);
 
-        assert_eq!(
-            *log.lock().expect("mutex should not be poisoned"),
-            vec![10, 20]
-        );
+        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![10, 20]);
     }
 }

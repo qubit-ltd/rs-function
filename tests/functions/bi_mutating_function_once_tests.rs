@@ -61,9 +61,7 @@ fn test_bi_mutating_function_once_default_conversions_allow_relaxed_generic_type
     #[derive(Clone, Copy, Debug, Eq, PartialEq)]
     struct BorrowedRcSelectorOnce;
 
-    impl<'a> BiMutatingFunctionOnce<BorrowedRc<'a>, BorrowedRc<'a>, BorrowedRc<'a>>
-        for BorrowedRcSelectorOnce
-    {
+    impl<'a> BiMutatingFunctionOnce<BorrowedRc<'a>, BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcSelectorOnce {
         fn apply(self, first: &mut BorrowedRc<'a>, _second: &mut BorrowedRc<'a>) -> BorrowedRc<'a> {
             first.clone()
         }
@@ -252,13 +250,10 @@ fn test_box_bi_mutating_function_once_new_allows_non_static_r() {
 
 #[test]
 fn test_box_bi_mutating_function_once_new_with_name() {
-    let swap_sum = BoxBiMutatingFunctionOnce::new_with_name(
-        "swap_and_sum_once",
-        |x: &mut i32, y: &mut i32| {
-            std::mem::swap(&mut *x, &mut *y);
-            *x + *y
-        },
-    );
+    let swap_sum = BoxBiMutatingFunctionOnce::new_with_name("swap_and_sum_once", |x: &mut i32, y: &mut i32| {
+        std::mem::swap(&mut *x, &mut *y);
+        *x + *y
+    });
     assert_eq!(swap_sum.name(), Some("swap_and_sum_once"));
     let mut a = 10;
     let mut b = 15;
@@ -276,8 +271,7 @@ fn test_box_bi_mutating_function_once_new_with_optional_name() {
     );
     assert_eq!(swap_sum.name(), Some("test_function_once"));
 
-    let no_name =
-        BoxBiMutatingFunctionOnce::new_with_optional_name(|x: &mut i32, y: &mut i32| *x + *y, None);
+    let no_name = BoxBiMutatingFunctionOnce::new_with_optional_name(|x: &mut i32, y: &mut i32| *x + *y, None);
     assert_eq!(no_name.name(), None);
 }
 
@@ -431,9 +425,7 @@ fn test_fn_bi_mutating_function_once_ops_when_or_else() {
         *x
     };
 
-    let conditional = swap_and_sum
-        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-        .or_else(multiply);
+    let conditional = swap_and_sum.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply);
 
     // Test when condition is true
     let mut a = 5;
@@ -443,9 +435,7 @@ fn test_fn_bi_mutating_function_once_ops_when_or_else() {
     assert_eq!(b, 5); // swapped from 3
 
     // Test when condition is false (negative numbers) - create separate conditional
-    let conditional_false = swap_and_sum
-        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-        .or_else(multiply);
+    let conditional_false = swap_and_sum.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply);
     let mut c = -5;
     let mut d = 3;
     assert_eq!(conditional_false.apply(&mut c, &mut d), -15); // multiply: (-5 * 3) = -15
@@ -465,9 +455,7 @@ fn test_box_conditional_bi_mutating_function_once() {
         *x
     });
 
-    let conditional = swap_and_sum
-        .when(|x: &i32, _y: &i32| *x > 0)
-        .or_else(multiply);
+    let conditional = swap_and_sum.when(|x: &i32, _y: &i32| *x > 0).or_else(multiply);
 
     // Test when condition is true
     let mut a = 5;
@@ -480,12 +468,10 @@ fn test_box_conditional_bi_mutating_function_once() {
         *x + *y
     })
     .when(|x: &i32, _y: &i32| *x > 0)
-    .or_else(BoxBiMutatingFunctionOnce::new(
-        |x: &mut i32, y: &mut i32| {
-            *x *= *y;
-            *x
-        },
-    ));
+    .or_else(BoxBiMutatingFunctionOnce::new(|x: &mut i32, y: &mut i32| {
+        *x *= *y;
+        *x
+    }));
     let mut c = -5;
     let mut d = 3;
     assert_eq!(conditional2.apply(&mut c, &mut d), -15); // multiply executed

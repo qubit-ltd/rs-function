@@ -69,10 +69,7 @@ fn demo_mutating_functions() {
         items.len()
     });
     let mut items = vec![1, 2, 3];
-    println!(
-        "MutatingFunction new length: {}",
-        push_answer.apply(&mut items)
-    );
+    println!("MutatingFunction new length: {}", push_answer.apply(&mut items));
     println!("Items after mutation: {items:?}");
 
     let append_once = BoxMutatingFunctionOnce::new(|text: &mut String| {
@@ -80,10 +77,7 @@ fn demo_mutating_functions() {
         text.len()
     });
     let mut text = String::from("called");
-    println!(
-        "MutatingFunctionOnce length: {}",
-        append_once.apply(&mut text)
-    );
+    println!("MutatingFunctionOnce length: {}", append_once.apply(&mut text));
     println!("Text after one-time mutation: {text}");
 
     let mut step = 0;
@@ -93,22 +87,15 @@ fn demo_mutating_functions() {
         *value
     });
     let mut value = 40;
-    println!(
-        "StatefulMutatingFunction first call: {}",
-        stateful.apply(&mut value)
-    );
-    println!(
-        "StatefulMutatingFunction second call: {}",
-        stateful.apply(&mut value)
-    );
+    println!("StatefulMutatingFunction first call: {}", stateful.apply(&mut value));
+    println!("StatefulMutatingFunction second call: {}", stateful.apply(&mut value));
     println!();
 }
 
 fn demo_bi_functions() {
     println!("--- Bi-functions ---");
 
-    let describe =
-        BoxBiFunction::new(|name: &String, score: &i32| format!("{name} scored {score}"));
+    let describe = BoxBiFunction::new(|name: &String, score: &i32| format!("{name} scored {score}"));
     let name = String::from("Alice");
     let score = 98;
     println!("BiFunction: {}", describe.apply(&name, &score));

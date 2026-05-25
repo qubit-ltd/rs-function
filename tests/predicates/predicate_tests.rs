@@ -42,9 +42,7 @@ fn test_predicate_default_conversions_allow_relaxed_generic_types() {
     }
 
     let text = String::from("left");
-    let value = BorrowedRc {
-        value: text.as_str(),
-    };
+    let value = BorrowedRc { value: text.as_str() };
     let predicate = BorrowedRcPredicate;
 
     assert!(predicate.clone().into_box().test(&value));
@@ -604,10 +602,7 @@ mod interior_mutability_tests {
         assert!(pred.test(&3));
         handle.join().expect("thread should not panic");
 
-        assert_eq!(
-            *count_clone.lock().expect("mutex should not be poisoned"),
-            3
-        );
+        assert_eq!(*count_clone.lock().expect("mutex should not be poisoned"), 3);
     }
 }
 

@@ -60,15 +60,9 @@ fn test_stateful_bi_predicate_default_conversions_allow_relaxed_generic_types() 
 
     let left = String::from("left");
     let right = String::from("right");
-    let first = Borrowed {
-        value: left.as_str(),
-    };
-    let second = Borrowed {
-        value: right.as_str(),
-    };
-    let predicate = BorrowedStatefulBiPredicate {
-        count: Cell::new(0),
-    };
+    let first = Borrowed { value: left.as_str() };
+    let second = Borrowed { value: right.as_str() };
+    let predicate = BorrowedStatefulBiPredicate { count: Cell::new(0) };
 
     assert!(predicate.clone().into_box().test(&first, &second));
     assert!(predicate.clone().into_rc().test(&first, &second));
@@ -88,13 +82,11 @@ fn test_stateful_bi_predicate_default_conversions_allow_relaxed_generic_types() 
 #[test]
 fn test_box_stateful_bi_predicate_tracks_state_and_short_circuits() {
     let mut calls = 0;
-    let mut predicate = BoxStatefulBiPredicate::new_with_name(
-        "every_second_positive_sum",
-        move |first: &i32, second: &i32| {
+    let mut predicate =
+        BoxStatefulBiPredicate::new_with_name("every_second_positive_sum", move |first: &i32, second: &i32| {
             calls += 1;
             calls % 2 == 0 && first + second > 0
-        },
-    );
+        });
 
     assert_eq!(predicate.name(), Some("every_second_positive_sum"));
     assert!(!predicate.test(&5, &3));
@@ -102,24 +94,24 @@ fn test_box_stateful_bi_predicate_tracks_state_and_short_circuits() {
 
     let rhs_calls = Rc::new(Cell::new(0));
     let rhs_seen = rhs_calls.clone();
-    let mut and_predicate = BoxStatefulBiPredicate::new(|_: &i32, _: &i32| false).and(
-        BoxStatefulBiPredicate::new(move |_: &i32, _: &i32| {
+    let mut and_predicate = BoxStatefulBiPredicate::new(|_: &i32, _: &i32| false).and(BoxStatefulBiPredicate::new(
+        move |_: &i32, _: &i32| {
             rhs_seen.set(rhs_seen.get() + 1);
             true
-        }),
-    );
+        },
+    ));
 
     assert!(!and_predicate.test(&1, &2));
     assert_eq!(rhs_calls.get(), 0);
 
     let rhs_calls = Rc::new(Cell::new(0));
     let rhs_seen = rhs_calls.clone();
-    let mut or_predicate = BoxStatefulBiPredicate::new(|_: &i32, _: &i32| true).or(
-        BoxStatefulBiPredicate::new(move |_: &i32, _: &i32| {
+    let mut or_predicate = BoxStatefulBiPredicate::new(|_: &i32, _: &i32| true).or(BoxStatefulBiPredicate::new(
+        move |_: &i32, _: &i32| {
             rhs_seen.set(rhs_seen.get() + 1);
             false
-        }),
-    );
+        },
+    ));
 
     assert!(or_predicate.test(&1, &2));
     assert_eq!(rhs_calls.get(), 0);
@@ -149,10 +141,7 @@ fn test_arc_stateful_bi_predicate_can_be_shared_across_threads() {
     let observed = log.clone();
     let predicate = ArcStatefulBiPredicate::new(move |first: &i32, second: &i32| {
         let sum = first + second;
-        observed
-            .lock()
-            .expect("mutex should not be poisoned")
-            .push(sum);
+        observed.lock().expect("mutex should not be poisoned").push(sum);
         sum > 0
     });
 
@@ -162,10 +151,7 @@ fn test_arc_stateful_bi_predicate_can_be_shared_across_threads() {
 
     let mut local_predicate = predicate.clone();
     assert!(!local_predicate.test(&-10, &2));
-    assert_eq!(
-        *log.lock().expect("mutex should not be poisoned"),
-        vec![8, -8]
-    );
+    assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8, -8]);
 }
 
 #[test]
@@ -210,10 +196,7 @@ fn test_box_stateful_bi_predicate_common_methods_and_conversions() {
     assert_eq!(format!("{unnamed}"), "BoxStatefulBiPredicate(unnamed)");
     assert!(format!("{unnamed:?}").contains("BoxStatefulBiPredicate"));
 
-    let mut named =
-        BoxStatefulBiPredicate::new_with_name("less_than", |first: &i32, second: &i32| {
-            first < second
-        });
+    let mut named = BoxStatefulBiPredicate::new_with_name("less_than", |first: &i32, second: &i32| first < second);
     assert_eq!(named.name(), Some("less_than"));
     named.set_name("ordered");
     assert_eq!(named.name(), Some("ordered"));
@@ -228,26 +211,24 @@ fn test_box_stateful_bi_predicate_common_methods_and_conversions() {
     assert!(!always_false.test(&10, &-10));
     assert_eq!(always_false.name(), Some("always_false"));
 
-    let mut boxed =
-        BoxStatefulBiPredicate::new(|first: &i32, second: &i32| first == second).into_box();
+    let mut boxed = BoxStatefulBiPredicate::new(|first: &i32, second: &i32| first == second).into_box();
     assert!(boxed.test(&3, &3));
 
     let mut rc = BoxStatefulBiPredicate::new(|first: &i32, second: &i32| first > second).into_rc();
     assert!(rc.test(&3, &1));
 
-    let mut function =
-        BoxStatefulBiPredicate::new(|first: &i32, second: &i32| first + second == 5).into_fn();
+    let mut function = BoxStatefulBiPredicate::new(|first: &i32, second: &i32| first + second == 5).into_fn();
     assert!(function(&2, &3));
 }
 
 #[test]
 fn test_box_stateful_bi_predicate_logical_methods() {
-    let mut nand = BoxStatefulBiPredicate::new(|_: &i32, _: &i32| true)
-        .nand(BoxStatefulBiPredicate::new(|_: &i32, _: &i32| true));
+    let mut nand =
+        BoxStatefulBiPredicate::new(|_: &i32, _: &i32| true).nand(BoxStatefulBiPredicate::new(|_: &i32, _: &i32| true));
     assert!(!nand.test(&1, &2));
 
-    let mut xor = BoxStatefulBiPredicate::new(|_: &i32, _: &i32| true)
-        .xor(BoxStatefulBiPredicate::new(|_: &i32, _: &i32| false));
+    let mut xor =
+        BoxStatefulBiPredicate::new(|_: &i32, _: &i32| true).xor(BoxStatefulBiPredicate::new(|_: &i32, _: &i32| false));
     assert!(xor.test(&1, &2));
 
     let mut nor = BoxStatefulBiPredicate::new(|_: &i32, _: &i32| false)
@@ -266,8 +247,7 @@ fn test_box_stateful_bi_predicate_logical_truth_tables() {
         (false, true, false),
         (false, false, false),
     ] {
-        let mut predicate = box_stateful_bi_predicate_returning(left)
-            .and(box_stateful_bi_predicate_returning(right));
+        let mut predicate = box_stateful_bi_predicate_returning(left).and(box_stateful_bi_predicate_returning(right));
         assert_eq!(predicate.test(&1, &2), expected);
     }
 
@@ -277,8 +257,7 @@ fn test_box_stateful_bi_predicate_logical_truth_tables() {
         (false, true, true),
         (false, false, false),
     ] {
-        let mut predicate = box_stateful_bi_predicate_returning(left)
-            .or(box_stateful_bi_predicate_returning(right));
+        let mut predicate = box_stateful_bi_predicate_returning(left).or(box_stateful_bi_predicate_returning(right));
         assert_eq!(predicate.test(&1, &2), expected);
     }
 
@@ -288,8 +267,7 @@ fn test_box_stateful_bi_predicate_logical_truth_tables() {
         (false, true, true),
         (false, false, true),
     ] {
-        let mut predicate = box_stateful_bi_predicate_returning(left)
-            .nand(box_stateful_bi_predicate_returning(right));
+        let mut predicate = box_stateful_bi_predicate_returning(left).nand(box_stateful_bi_predicate_returning(right));
         assert_eq!(predicate.test(&1, &2), expected);
     }
 
@@ -299,8 +277,7 @@ fn test_box_stateful_bi_predicate_logical_truth_tables() {
         (false, true, true),
         (false, false, false),
     ] {
-        let mut predicate = box_stateful_bi_predicate_returning(left)
-            .xor(box_stateful_bi_predicate_returning(right));
+        let mut predicate = box_stateful_bi_predicate_returning(left).xor(box_stateful_bi_predicate_returning(right));
         assert_eq!(predicate.test(&1, &2), expected);
     }
 
@@ -310,8 +287,7 @@ fn test_box_stateful_bi_predicate_logical_truth_tables() {
         (false, true, false),
         (false, false, true),
     ] {
-        let mut predicate = box_stateful_bi_predicate_returning(left)
-            .nor(box_stateful_bi_predicate_returning(right));
+        let mut predicate = box_stateful_bi_predicate_returning(left).nor(box_stateful_bi_predicate_returning(right));
         assert_eq!(predicate.test(&1, &2), expected);
     }
 
@@ -321,10 +297,7 @@ fn test_box_stateful_bi_predicate_logical_truth_tables() {
 
 #[test]
 fn test_rc_stateful_bi_predicate_common_methods_logical_methods_and_conversions() {
-    let mut named =
-        RcStatefulBiPredicate::new_with_name("less_than", |first: &i32, second: &i32| {
-            first < second
-        });
+    let mut named = RcStatefulBiPredicate::new_with_name("less_than", |first: &i32, second: &i32| first < second);
     assert!(named.test(&1, &2));
     assert_eq!(named.name(), Some("less_than"));
     named.set_name("ordered");
@@ -338,36 +311,31 @@ fn test_rc_stateful_bi_predicate_common_methods_logical_methods_and_conversions(
     let mut always_false = RcStatefulBiPredicate::<i32, i32>::always_false();
     assert!(!always_false.test(&1, &2));
 
-    let mut and_predicate = RcStatefulBiPredicate::new(|first: &i32, second: &i32| first < second)
-        .and(RcStatefulBiPredicate::new(|first: &i32, second: &i32| {
-            first + second > 0
-        }));
+    let mut and_predicate = RcStatefulBiPredicate::new(|first: &i32, second: &i32| first < second).and(
+        RcStatefulBiPredicate::new(|first: &i32, second: &i32| first + second > 0),
+    );
     assert!(and_predicate.test(&1, &2));
 
-    let mut or_predicate = RcStatefulBiPredicate::new(|_: &i32, _: &i32| false).or(
-        RcStatefulBiPredicate::new(|first: &i32, second: &i32| first < second),
-    );
+    let mut or_predicate = RcStatefulBiPredicate::new(|_: &i32, _: &i32| false)
+        .or(RcStatefulBiPredicate::new(|first: &i32, second: &i32| first < second));
     assert!(or_predicate.test(&1, &2));
 
-    let mut nand_predicate = RcStatefulBiPredicate::new(|_: &i32, _: &i32| true)
-        .nand(RcStatefulBiPredicate::new(|_: &i32, _: &i32| true));
+    let mut nand_predicate =
+        RcStatefulBiPredicate::new(|_: &i32, _: &i32| true).nand(RcStatefulBiPredicate::new(|_: &i32, _: &i32| true));
     assert!(!nand_predicate.test(&1, &2));
 
-    let mut xor_predicate = RcStatefulBiPredicate::new(|_: &i32, _: &i32| true)
-        .xor(RcStatefulBiPredicate::new(|_: &i32, _: &i32| false));
+    let mut xor_predicate =
+        RcStatefulBiPredicate::new(|_: &i32, _: &i32| true).xor(RcStatefulBiPredicate::new(|_: &i32, _: &i32| false));
     assert!(xor_predicate.test(&1, &2));
 
-    let mut nor_predicate = RcStatefulBiPredicate::new(|_: &i32, _: &i32| false)
-        .nor(RcStatefulBiPredicate::new(|_: &i32, _: &i32| false));
+    let mut nor_predicate =
+        RcStatefulBiPredicate::new(|_: &i32, _: &i32| false).nor(RcStatefulBiPredicate::new(|_: &i32, _: &i32| false));
     assert!(nor_predicate.test(&1, &2));
 
     let mut negated_value = !RcStatefulBiPredicate::new(|_: &i32, _: &i32| true);
     assert!(!negated_value.test(&1, &2));
 
-    let source =
-        RcStatefulBiPredicate::new_with_name("convertible", |first: &i32, second: &i32| {
-            first + second == 5
-        });
+    let source = RcStatefulBiPredicate::new_with_name("convertible", |first: &i32, second: &i32| first + second == 5);
     let mut boxed = source.to_box();
     assert!(boxed.test(&2, &3));
     assert_eq!(boxed.name(), Some("convertible"));
@@ -393,9 +361,7 @@ fn test_rc_stateful_bi_predicate_common_methods_logical_methods_and_conversions(
 #[test]
 fn test_arc_stateful_bi_predicate_common_methods_logical_methods_and_conversions() {
     let mut named =
-        ArcStatefulBiPredicate::new_with_name("positive_sum", |first: &i32, second: &i32| {
-            first + second > 0
-        });
+        ArcStatefulBiPredicate::new_with_name("positive_sum", |first: &i32, second: &i32| first + second > 0);
     assert!(named.test(&1, &2));
     assert_eq!(named.name(), Some("positive_sum"));
     named.set_name("sum_positive");
@@ -434,10 +400,7 @@ fn test_arc_stateful_bi_predicate_common_methods_logical_methods_and_conversions
     let mut negated_value = !ArcStatefulBiPredicate::new(|_: &i32, _: &i32| true);
     assert!(!negated_value.test(&1, &2));
 
-    let source =
-        ArcStatefulBiPredicate::new_with_name("convertible", |first: &i32, second: &i32| {
-            first + second == 5
-        });
+    let source = ArcStatefulBiPredicate::new_with_name("convertible", |first: &i32, second: &i32| first + second == 5);
     let mut boxed = source.to_box();
     assert!(boxed.test(&2, &3));
     assert_eq!(boxed.name(), Some("convertible"));
@@ -469,20 +432,15 @@ fn test_arc_stateful_bi_predicate_common_methods_logical_methods_and_conversions
 #[test]
 fn test_fn_stateful_bi_predicate_ops_cover_all_logical_methods() {
     let mut or_predicate =
-        (|_: &i32, _: &i32| false).or(BoxStatefulBiPredicate::new(|first: &i32, second: &i32| {
-            first < second
-        }));
+        (|_: &i32, _: &i32| false).or(BoxStatefulBiPredicate::new(|first: &i32, second: &i32| first < second));
     assert!(or_predicate.test(&1, &2));
 
-    let mut nand_predicate =
-        (|_: &i32, _: &i32| true).nand(BoxStatefulBiPredicate::new(|_: &i32, _: &i32| true));
+    let mut nand_predicate = (|_: &i32, _: &i32| true).nand(BoxStatefulBiPredicate::new(|_: &i32, _: &i32| true));
     assert!(!nand_predicate.test(&1, &2));
 
-    let mut xor_predicate =
-        (|_: &i32, _: &i32| true).xor(BoxStatefulBiPredicate::new(|_: &i32, _: &i32| false));
+    let mut xor_predicate = (|_: &i32, _: &i32| true).xor(BoxStatefulBiPredicate::new(|_: &i32, _: &i32| false));
     assert!(xor_predicate.test(&1, &2));
 
-    let mut nor_predicate =
-        (|_: &i32, _: &i32| false).nor(BoxStatefulBiPredicate::new(|_: &i32, _: &i32| false));
+    let mut nor_predicate = (|_: &i32, _: &i32| false).nor(BoxStatefulBiPredicate::new(|_: &i32, _: &i32| false));
     assert!(nor_predicate.test(&1, &2));
 }

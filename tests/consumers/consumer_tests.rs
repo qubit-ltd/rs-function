@@ -38,9 +38,7 @@ fn test_consumer_default_conversions_allow_relaxed_generic_types() {
     }
 
     let text = String::from("left");
-    let value = BorrowedRc {
-        value: text.as_str(),
-    };
+    let value = BorrowedRc { value: text.as_str() };
     let consumer = BorrowedRcConsumer;
 
     consumer.clone().into_box().accept(&value);
@@ -1436,22 +1434,14 @@ mod box_conditional_consumer_tests {
 
         let conditional = consumer.when(|x: &i32| *x > 0);
         let chained = conditional.and_then(move |x: &i32| {
-            l2.lock()
-                .expect("mutex should not be poisoned")
-                .push(*x * 2);
+            l2.lock().expect("mutex should not be poisoned").push(*x * 2);
         });
 
         chained.accept(&5);
-        assert_eq!(
-            *log.lock().expect("mutex should not be poisoned"),
-            vec![5, 10]
-        );
+        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5, 10]);
 
         chained.accept(&-5);
-        assert_eq!(
-            *log.lock().expect("mutex should not be poisoned"),
-            vec![5, 10, -10]
-        );
+        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5, 10, -10]);
     }
 
     #[test]
@@ -1465,19 +1455,14 @@ mod box_conditional_consumer_tests {
         });
 
         let conditional = consumer.when(|x: &i32| *x > 0).or_else(move |x: &i32| {
-            l2.lock()
-                .expect("mutex should not be poisoned")
-                .push(*x * 10);
+            l2.lock().expect("mutex should not be poisoned").push(*x * 10);
         });
 
         conditional.accept(&5);
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
 
         conditional.accept(&-5);
-        assert_eq!(
-            *log.lock().expect("mutex should not be poisoned"),
-            vec![5, -50]
-        );
+        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5, -50]);
     }
 
     #[test]

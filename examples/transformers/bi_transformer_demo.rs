@@ -37,10 +37,7 @@ fn main() {
     let arc_add_clone = arc_add.clone();
 
     println!("   arc_add.apply(10, 15) = {}", arc_add.apply(10, 15));
-    println!(
-        "   arc_add_clone.apply(5, 8) = {}",
-        arc_add_clone.apply(5, 8)
-    );
+    println!("   arc_add_clone.apply(5, 8) = {}", arc_add_clone.apply(5, 8));
     println!();
 
     // 3. RcBiTransformer - Single-threaded, cloneable
@@ -49,10 +46,7 @@ fn main() {
     let rc_multiply_clone = rc_multiply.clone();
 
     println!("   rc_multiply.apply(3, 4) = {}", rc_multiply.apply(3, 4));
-    println!(
-        "   rc_multiply_clone.apply(5, 6) = {}",
-        rc_multiply_clone.apply(5, 6)
-    );
+    println!("   rc_multiply_clone.apply(5, 6) = {}", rc_multiply_clone.apply(5, 6));
     println!();
 
     // 4. Conditional BiTransformer
@@ -75,8 +69,7 @@ fn main() {
 
     // 5. Working with different types
     println!("5. Working with different types");
-    let format =
-        BoxBiTransformer::new(|name: String, age: i32| format!("{} is {} years old", name, age));
+    let format = BoxBiTransformer::new(|name: String, age: i32| format!("{} is {} years old", name, age));
     println!(
         "   format.apply(\"Alice\", 30) = {}",
         format.apply("Alice".to_string(), 30)
@@ -99,16 +92,9 @@ fn main() {
 
     // 8. Safe division with Option
     println!("8. Safe division with Option");
-    let safe_divide =
-        BoxBiTransformer::new(|x: i32, y: i32| if y == 0 { None } else { Some(x / y) });
-    println!(
-        "   safe_divide.apply(42, 2) = {:?}",
-        safe_divide.apply(42, 2)
-    );
-    println!(
-        "   safe_divide.apply(42, 0) = {:?}",
-        safe_divide.apply(42, 0)
-    );
+    let safe_divide = BoxBiTransformer::new(|x: i32, y: i32| if y == 0 { None } else { Some(x / y) });
+    println!("   safe_divide.apply(42, 2) = {:?}", safe_divide.apply(42, 2));
+    println!("   safe_divide.apply(42, 0) = {:?}", safe_divide.apply(42, 0));
     println!();
 
     // 9. String concatenation

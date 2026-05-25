@@ -39,11 +39,9 @@ pub struct ArcStatefulPredicate<T> {
 
 impl<T> ArcStatefulPredicate<T> {
     // Generates: new(), new_with_name(), name(), set_name(), always_true(), always_false()
-    impl_predicate_common_methods!(
-        ArcStatefulPredicate<T>,
-        (FnMut(&T) -> bool + Send + 'static),
-        |f| Arc::new(Mutex::new(f))
-    );
+    impl_predicate_common_methods!(ArcStatefulPredicate<T>, (FnMut(&T) -> bool + Send + 'static), |f| {
+        Arc::new(Mutex::new(f))
+    });
 
     /// Returns a predicate representing logical AND with another predicate.
     ///

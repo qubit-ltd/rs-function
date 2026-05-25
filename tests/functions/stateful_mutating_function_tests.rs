@@ -51,9 +51,7 @@ fn test_stateful_mutating_function_default_conversions_allow_relaxed_generic_typ
         }
     }
 
-    impl<'a> StatefulMutatingFunction<BorrowedRc<'a>, BorrowedRc<'a>>
-        for BorrowedRcStatefulMutatingFunction
-    {
+    impl<'a> StatefulMutatingFunction<BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcStatefulMutatingFunction {
         fn apply(&mut self, value: &mut BorrowedRc<'a>) -> BorrowedRc<'a> {
             self.count.set(self.count.get() + 1);
             value.clone()
@@ -65,12 +63,8 @@ fn test_stateful_mutating_function_default_conversions_allow_relaxed_generic_typ
     }
 
     let text = String::from("left");
-    let mut value = BorrowedRc {
-        value: text.as_str(),
-    };
-    let function = BorrowedRcStatefulMutatingFunction {
-        count: Cell::new(0),
-    };
+    let mut value = BorrowedRc { value: text.as_str() };
+    let function = BorrowedRcStatefulMutatingFunction { count: Cell::new(0) };
 
     assert_left(function.clone().into_box().apply(&mut value));
     assert_left(function.clone().into_rc().apply(&mut value));
@@ -946,8 +940,7 @@ mod test_closure {
             *current
         };
 
-        let once_func: BoxMutatingFunctionOnce<i32, i32> =
-            StatefulMutatingFunction::to_once(&closure);
+        let once_func: BoxMutatingFunctionOnce<i32, i32> = StatefulMutatingFunction::to_once(&closure);
 
         let mut value = 5;
         assert_eq!(once_func.apply(&mut value), 1);
@@ -1087,8 +1080,7 @@ fn test_box_stateful_mutating_function_debug_display() {
     assert_eq!(display_str, "BoxStatefulMutatingFunction");
 
     // Test Debug and Display for BoxStatefulMutatingFunction with name
-    let mut named_double =
-        BoxStatefulMutatingFunction::new_with_name("box_stateful_mutating", |x: &mut i32| *x * 2);
+    let mut named_double = BoxStatefulMutatingFunction::new_with_name("box_stateful_mutating", |x: &mut i32| *x * 2);
     // Call apply to ensure the function works
     let mut value2 = 3;
     let _result2 = named_double.apply(&mut value2);
@@ -1099,10 +1091,7 @@ fn test_box_stateful_mutating_function_debug_display() {
     assert!(named_debug_str.contains("function"));
 
     let named_display_str = format!("{}", named_double);
-    assert_eq!(
-        named_display_str,
-        "BoxStatefulMutatingFunction(box_stateful_mutating)"
-    );
+    assert_eq!(named_display_str, "BoxStatefulMutatingFunction(box_stateful_mutating)");
 }
 
 #[test]
@@ -1123,8 +1112,7 @@ fn test_rc_stateful_mutating_function_debug_display() {
     assert_eq!(display_str, "RcStatefulMutatingFunction");
 
     // Test Debug and Display for RcStatefulMutatingFunction with name
-    let mut named_double =
-        RcStatefulMutatingFunction::new_with_name("rc_stateful_mutating", |x: &mut i32| *x * 2);
+    let mut named_double = RcStatefulMutatingFunction::new_with_name("rc_stateful_mutating", |x: &mut i32| *x * 2);
     // Call apply to ensure the function works
     let mut value2 = 3;
     let _result2 = named_double.apply(&mut value2);
@@ -1135,10 +1123,7 @@ fn test_rc_stateful_mutating_function_debug_display() {
     assert!(named_debug_str.contains("function"));
 
     let named_display_str = format!("{}", named_double);
-    assert_eq!(
-        named_display_str,
-        "RcStatefulMutatingFunction(rc_stateful_mutating)"
-    );
+    assert_eq!(named_display_str, "RcStatefulMutatingFunction(rc_stateful_mutating)");
 }
 
 #[test]
@@ -1159,8 +1144,7 @@ fn test_arc_stateful_mutating_function_debug_display() {
     assert_eq!(display_str, "ArcStatefulMutatingFunction");
 
     // Test Debug and Display for ArcStatefulMutatingFunction with name
-    let mut named_double =
-        ArcStatefulMutatingFunction::new_with_name("arc_stateful_mutating", |x: &mut i32| *x * 2);
+    let mut named_double = ArcStatefulMutatingFunction::new_with_name("arc_stateful_mutating", |x: &mut i32| *x * 2);
     // Call apply to ensure the function works
     let mut value2 = 3;
     let _result2 = named_double.apply(&mut value2);
@@ -1171,10 +1155,7 @@ fn test_arc_stateful_mutating_function_debug_display() {
     assert!(named_debug_str.contains("function"));
 
     let named_display_str = format!("{}", named_double);
-    assert_eq!(
-        named_display_str,
-        "ArcStatefulMutatingFunction(arc_stateful_mutating)"
-    );
+    assert_eq!(named_display_str, "ArcStatefulMutatingFunction(arc_stateful_mutating)");
 }
 
 // ============================================================================
@@ -1185,13 +1166,10 @@ fn test_arc_stateful_mutating_function_debug_display() {
 fn test_box_stateful_mutating_function_name_methods() {
     // Test new_with_name, name(), and set_name()
 
-    let mut double = BoxStatefulMutatingFunction::new_with_name(
-        "box_stateful_mutating_func",
-        move |x: &mut i32| {
-            *x *= 2;
-            *x
-        },
-    );
+    let mut double = BoxStatefulMutatingFunction::new_with_name("box_stateful_mutating_func", move |x: &mut i32| {
+        *x *= 2;
+        *x
+    });
 
     // Test name() returns the initial name
     assert_eq!(double.name(), Some("box_stateful_mutating_func"));
@@ -1210,13 +1188,10 @@ fn test_box_stateful_mutating_function_name_methods() {
 fn test_rc_stateful_mutating_function_name_methods() {
     // Test new_with_name, name(), and set_name()
 
-    let mut double = RcStatefulMutatingFunction::new_with_name(
-        "rc_stateful_mutating_func",
-        move |x: &mut i32| {
-            *x *= 2;
-            *x
-        },
-    );
+    let mut double = RcStatefulMutatingFunction::new_with_name("rc_stateful_mutating_func", move |x: &mut i32| {
+        *x *= 2;
+        *x
+    });
 
     // Test name() returns the initial name
     assert_eq!(double.name(), Some("rc_stateful_mutating_func"));
@@ -1242,13 +1217,10 @@ fn test_rc_stateful_mutating_function_name_methods() {
 fn test_arc_stateful_mutating_function_name_methods() {
     // Test new_with_name, name(), and set_name()
 
-    let mut double = ArcStatefulMutatingFunction::new_with_name(
-        "arc_stateful_mutating_func",
-        move |x: &mut i32| {
-            *x *= 2;
-            *x
-        },
-    );
+    let mut double = ArcStatefulMutatingFunction::new_with_name("arc_stateful_mutating_func", move |x: &mut i32| {
+        *x *= 2;
+        *x
+    });
 
     // Test name() returns the initial name
     assert_eq!(double.name(), Some("arc_stateful_mutating_func"));
@@ -1302,11 +1274,10 @@ fn test_box_conditional_stateful_mutating_function_debug_display() {
     assert!(display_str.ends_with(")"));
 
     // Test Debug and Display for BoxConditionalStatefulMutatingFunction with name
-    let mut named_double =
-        BoxStatefulMutatingFunction::new_with_name("stateful_mutating_double", |x: &mut i32| {
-            *x *= 2;
-            *x
-        });
+    let mut named_double = BoxStatefulMutatingFunction::new_with_name("stateful_mutating_double", |x: &mut i32| {
+        *x *= 2;
+        *x
+    });
     // Call apply to ensure the function works
     let mut test_val2 = 3;
     assert_eq!(named_double.apply(&mut test_val2), 6);
@@ -1355,11 +1326,10 @@ fn test_rc_conditional_stateful_mutating_function_debug_display() {
     assert!(display_str.ends_with(")"));
 
     // Test Debug and Display for RcConditionalStatefulMutatingFunction with name
-    let mut named_double =
-        RcStatefulMutatingFunction::new_with_name("rc_stateful_mutating_double", |x: &mut i32| {
-            *x *= 2;
-            *x
-        });
+    let mut named_double = RcStatefulMutatingFunction::new_with_name("rc_stateful_mutating_double", |x: &mut i32| {
+        *x *= 2;
+        *x
+    });
     // Call apply to ensure the function works
     let mut test_val2 = 3;
     assert_eq!(named_double.apply(&mut test_val2), 6);
@@ -1408,13 +1378,10 @@ fn test_arc_conditional_stateful_mutating_function_debug_display() {
     assert!(display_str.ends_with(")"));
 
     // Test Debug and Display for ArcConditionalStatefulMutatingFunction with name
-    let mut named_double = ArcStatefulMutatingFunction::new_with_name(
-        "arc_stateful_mutating_double",
-        |x: &mut i32| {
-            *x *= 2;
-            *x
-        },
-    );
+    let mut named_double = ArcStatefulMutatingFunction::new_with_name("arc_stateful_mutating_double", |x: &mut i32| {
+        *x *= 2;
+        *x
+    });
     // Call apply to ensure the function works
     let mut test_val2 = 3;
     assert_eq!(named_double.apply(&mut test_val2), 6);
@@ -1430,9 +1397,7 @@ fn test_arc_conditional_stateful_mutating_function_debug_display() {
 
     let named_display_str = format!("{}", named_conditional);
     assert!(named_display_str.starts_with("ArcConditionalStatefulMutatingFunction("));
-    assert!(
-        named_display_str.contains("ArcStatefulMutatingFunction(arc_stateful_mutating_double)")
-    );
+    assert!(named_display_str.contains("ArcStatefulMutatingFunction(arc_stateful_mutating_double)"));
     assert!(named_display_str.contains("ArcPredicate"));
     assert!(named_display_str.ends_with(")"));
 }

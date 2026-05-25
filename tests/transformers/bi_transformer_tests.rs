@@ -39,12 +39,8 @@ fn test_bi_transformer_default_conversions_allow_relaxed_generic_types() {
 
     let left = String::from("left");
     let right = String::from("right");
-    let first = || BorrowedRc {
-        value: left.as_str(),
-    };
-    let second = || BorrowedRc {
-        value: right.as_str(),
-    };
+    let first = || BorrowedRc { value: left.as_str() };
+    let second = || BorrowedRc { value: right.as_str() };
     let transformer = BorrowedRcBiTransformer;
 
     assert_left(transformer.clone().into_box().apply(first(), second()));
@@ -109,17 +105,13 @@ mod box_bi_transformer_tests {
     #[test]
     fn test_with_string() {
         let concat = BoxBiTransformer::new(|s1: String, s2: String| format!("{}{}", s1, s2));
-        assert_eq!(
-            concat.apply("hello".to_string(), "world".to_string()),
-            "helloworld"
-        );
+        assert_eq!(concat.apply("hello".to_string(), "world".to_string()), "helloworld");
     }
 
     #[test]
     fn test_captured_variable() {
         let multiplier = 3;
-        let weighted_sum =
-            BoxBiTransformer::new(move |x: i32, y: i32| x * multiplier + y * multiplier);
+        let weighted_sum = BoxBiTransformer::new(move |x: i32, y: i32| x * multiplier + y * multiplier);
         assert_eq!(weighted_sum.apply(2, 3), 15); // (2 * 3) + (3 * 3) = 15
     }
 
@@ -131,8 +123,7 @@ mod box_bi_transformer_tests {
 
     #[test]
     fn test_with_option() {
-        let safe_divide =
-            BoxBiTransformer::new(|x: i32, y: i32| if y == 0 { None } else { Some(x / y) });
+        let safe_divide = BoxBiTransformer::new(|x: i32, y: i32| if y == 0 { None } else { Some(x / y) });
         assert_eq!(safe_divide.apply(42, 2), Some(21));
         assert_eq!(safe_divide.apply(42, 0), None);
     }
@@ -275,15 +266,9 @@ mod rc_bi_transformer_tests {
         let func1 = concat.clone();
         let func2 = concat.clone();
 
-        assert_eq!(
-            concat.apply("hello".to_string(), "world".to_string()),
-            "helloworld"
-        );
+        assert_eq!(concat.apply("hello".to_string(), "world".to_string()), "helloworld");
         assert_eq!(func1.apply("foo".to_string(), "bar".to_string()), "foobar");
-        assert_eq!(
-            func2.apply("rust".to_string(), "lang".to_string()),
-            "rustlang"
-        );
+        assert_eq!(func2.apply("rust".to_string(), "lang".to_string()), "rustlang");
     }
 
     #[test]
@@ -294,9 +279,7 @@ mod rc_bi_transformer_tests {
 
     #[test]
     fn test_display_with_name() {
-        let transformer = RcBiTransformer::new_with_name("concat", |s1: String, s2: String| {
-            format!("{}{}", s1, s2)
-        });
+        let transformer = RcBiTransformer::new_with_name("concat", |s1: String, s2: String| format!("{}{}", s1, s2));
         let display_str = format!("{}", transformer);
         assert_eq!(display_str, "RcBiTransformer(concat)");
     }
@@ -577,10 +560,7 @@ mod trait_usage_tests {
         }
 
         let format = BoxBiTransformer::new(|name: String, age: i32| format!("{} is {}", name, age));
-        assert_eq!(
-            apply_bi_transformer(&format, "Alice".to_string(), 30),
-            "Alice is 30"
-        );
+        assert_eq!(apply_bi_transformer(&format, "Alice".to_string(), 30), "Alice is 30");
     }
 }
 
@@ -605,8 +585,7 @@ mod edge_cases_tests {
 
     #[test]
     fn test_with_option() {
-        let safe_divide =
-            BoxBiTransformer::new(|x: i32, y: i32| if y == 0 { None } else { Some(x / y) });
+        let safe_divide = BoxBiTransformer::new(|x: i32, y: i32| if y == 0 { None } else { Some(x / y) });
         assert_eq!(safe_divide.apply(42, 2), Some(21));
         assert_eq!(safe_divide.apply(42, 0), None);
     }
@@ -631,17 +610,13 @@ mod edge_cases_tests {
             result.extend(v2);
             result
         });
-        assert_eq!(
-            combine.apply(vec![1, 2, 3], vec![4, 5, 6]),
-            vec![1, 2, 3, 4, 5, 6]
-        );
+        assert_eq!(combine.apply(vec![1, 2, 3], vec![4, 5, 6]), vec![1, 2, 3, 4, 5, 6]);
     }
 
     #[test]
     fn test_arc_with_large_data() {
-        let sum_vecs = ArcBiTransformer::new(|v1: Vec<i32>, v2: Vec<i32>| {
-            v1.iter().sum::<i32>() + v2.iter().sum::<i32>()
-        });
+        let sum_vecs =
+            ArcBiTransformer::new(|v1: Vec<i32>, v2: Vec<i32>| v1.iter().sum::<i32>() + v2.iter().sum::<i32>());
         let data1 = (1..=50).collect::<Vec<_>>();
         let data2 = (51..=100).collect::<Vec<_>>();
         assert_eq!(sum_vecs.apply(data1, data2), 5050);
@@ -656,10 +631,7 @@ mod edge_cases_tests {
     #[test]
     fn test_string_operations() {
         let join = BoxBiTransformer::new(|s1: String, s2: String| format!("{} {}", s1, s2));
-        assert_eq!(
-            join.apply("Hello".to_string(), "World".to_string()),
-            "Hello World"
-        );
+        assert_eq!(join.apply("Hello".to_string(), "World".to_string()), "Hello World");
     }
 }
 
@@ -764,10 +736,7 @@ mod closure_bi_transformer_tests {
     #[test]
     fn test_closure_transform_with_string() {
         let concat = |s1: String, s2: String| format!("{}{}", s1, s2);
-        assert_eq!(
-            concat.apply("Hello".to_string(), "World".to_string()),
-            "HelloWorld"
-        );
+        assert_eq!(concat.apply("Hello".to_string(), "World".to_string()), "HelloWorld");
     }
 
     #[test]
@@ -968,10 +937,7 @@ mod custom_bi_transformer_tests {
     fn test_custom_string_bi_transformer_into_box() {
         let combiner = StringCombiner::new(" - ");
         let boxed = combiner.into_box();
-        assert_eq!(
-            boxed.apply("Hello".to_string(), "World".to_string()),
-            "Hello - World"
-        );
+        assert_eq!(boxed.apply("Hello".to_string(), "World".to_string()), "Hello - World");
         assert_eq!(
             boxed.apply("Rust".to_string(), "Language".to_string()),
             "Rust - Language"
@@ -1142,16 +1108,10 @@ mod custom_bi_transformer_tests {
     fn test_custom_string_bi_transformer_default_to_box() {
         let combiner = CloneableStringCombiner::new(" - ");
         let boxed = combiner.to_box();
-        assert_eq!(
-            boxed.apply("Hello".to_string(), "World".to_string()),
-            "Hello - World"
-        );
+        assert_eq!(boxed.apply("Hello".to_string(), "World".to_string()), "Hello - World");
 
         // Original still usable
-        assert_eq!(
-            combiner.apply("Rust".to_string(), "Lang".to_string()),
-            "Rust - Lang"
-        );
+        assert_eq!(combiner.apply("Rust".to_string(), "Lang".to_string()), "Rust - Lang");
     }
 
     #[test]
@@ -1175,10 +1135,7 @@ mod custom_bi_transformer_tests {
         assert_eq!(func("Cat".to_string(), "Dog".to_string()), "Cat & Dog");
 
         // Original still usable
-        assert_eq!(
-            combiner.apply("One".to_string(), "Two".to_string()),
-            "One & Two"
-        );
+        assert_eq!(combiner.apply("One".to_string(), "Two".to_string()), "One & Two");
     }
 }
 
@@ -1753,10 +1710,7 @@ mod complex_types_conversion_tests {
         let concat = |s1: String, s2: String| format!("{}{}", s1, s2);
         let boxed = concat.to_box();
 
-        assert_eq!(
-            boxed.apply("Hello".to_string(), "World".to_string()),
-            "HelloWorld"
-        );
+        assert_eq!(boxed.apply("Hello".to_string(), "World".to_string()), "HelloWorld");
         // Original still usable
         assert_eq!(concat.apply("Foo".to_string(), "Bar".to_string()), "FooBar");
     }
@@ -1766,16 +1720,10 @@ mod complex_types_conversion_tests {
         let concat = |s1: String, s2: String| format!("{}{}", s1, s2);
         let rc = concat.to_rc();
 
-        assert_eq!(
-            rc.apply("Hello".to_string(), "World".to_string()),
-            "HelloWorld"
-        );
+        assert_eq!(rc.apply("Hello".to_string(), "World".to_string()), "HelloWorld");
 
         let rc_clone = rc.clone();
-        assert_eq!(
-            rc_clone.apply("Foo".to_string(), "Bar".to_string()),
-            "FooBar"
-        );
+        assert_eq!(rc_clone.apply("Foo".to_string(), "Bar".to_string()), "FooBar");
     }
 
     #[test]

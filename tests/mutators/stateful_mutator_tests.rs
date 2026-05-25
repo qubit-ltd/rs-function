@@ -53,12 +53,8 @@ fn test_stateful_mutator_default_conversions_allow_relaxed_generic_types() {
     }
 
     let text = String::from("left");
-    let mut value = BorrowedRc {
-        value: text.as_str(),
-    };
-    let mutator = BorrowedRcStatefulMutator {
-        count: Cell::new(0),
-    };
+    let mut value = BorrowedRc { value: text.as_str() };
+    let mutator = BorrowedRcStatefulMutator { count: Cell::new(0) };
 
     mutator.clone().into_box().apply(&mut value);
     mutator.clone().into_rc().apply(&mut value);
@@ -113,8 +109,7 @@ mod test_box_mutator {
 
     #[test]
     fn test_and_then() {
-        let mut mutator =
-            BoxStatefulMutator::new(|x: &mut i32| *x *= 2).and_then(|x: &mut i32| *x += 10);
+        let mut mutator = BoxStatefulMutator::new(|x: &mut i32| *x *= 2).and_then(|x: &mut i32| *x += 10);
 
         let mut value = 5;
         mutator.apply(&mut value);
@@ -230,8 +225,7 @@ mod test_box_mutator {
 
     #[test]
     fn test_new_with_name() {
-        let mut mutator =
-            BoxStatefulMutator::new_with_name("box_stateful_test", |x: &mut i32| *x += 1);
+        let mut mutator = BoxStatefulMutator::new_with_name("box_stateful_test", |x: &mut i32| *x += 1);
         assert_eq!(mutator.name(), Some("box_stateful_test"));
 
         let mut value = 5;
@@ -241,10 +235,8 @@ mod test_box_mutator {
 
     #[test]
     fn test_new_with_optional_name_some() {
-        let mut mutator = BoxStatefulMutator::new_with_optional_name(
-            |x: &mut i32| *x += 1,
-            Some("box_optional".to_string()),
-        );
+        let mut mutator =
+            BoxStatefulMutator::new_with_optional_name(|x: &mut i32| *x += 1, Some("box_optional".to_string()));
         assert_eq!(mutator.name(), Some("box_optional"));
 
         let mut value = 5;
@@ -551,8 +543,7 @@ mod test_arc_mutator {
 
     #[test]
     fn test_new_with_name() {
-        let mut mutator =
-            ArcStatefulMutator::new_with_name("arc_stateful_test", |x: &mut i32| *x += 1);
+        let mut mutator = ArcStatefulMutator::new_with_name("arc_stateful_test", |x: &mut i32| *x += 1);
         assert_eq!(mutator.name(), Some("arc_stateful_test"));
 
         let mut value = 5;
@@ -793,8 +784,7 @@ mod test_rc_mutator {
 
     #[test]
     fn test_new_with_name() {
-        let mut mutator =
-            RcStatefulMutator::new_with_name("rc_stateful_test", |x: &mut i32| *x += 1);
+        let mut mutator = RcStatefulMutator::new_with_name("rc_stateful_test", |x: &mut i32| *x += 1);
         assert_eq!(mutator.name(), Some("rc_stateful_test"));
 
         let mut value = 5;
@@ -804,10 +794,8 @@ mod test_rc_mutator {
 
     #[test]
     fn test_new_with_optional_name_some() {
-        let mut mutator = RcStatefulMutator::new_with_optional_name(
-            |x: &mut i32| *x += 1,
-            Some("rc_stateful_optional".to_string()),
-        );
+        let mut mutator =
+            RcStatefulMutator::new_with_optional_name(|x: &mut i32| *x += 1, Some("rc_stateful_optional".to_string()));
         assert_eq!(mutator.name(), Some("rc_stateful_optional"));
 
         let mut value = 5;
@@ -1115,10 +1103,9 @@ mod test_complex_scenarios {
 
     #[test]
     fn test_string_processing() {
-        let mut processor =
-            BoxStatefulMutator::new(|s: &mut String| s.retain(|c| !c.is_whitespace()))
-                .and_then(|s: &mut String| *s = s.to_lowercase())
-                .and_then(|s: &mut String| s.push_str("!!!"));
+        let mut processor = BoxStatefulMutator::new(|s: &mut String| s.retain(|c| !c.is_whitespace()))
+            .and_then(|s: &mut String| *s = s.to_lowercase())
+            .and_then(|s: &mut String| s.push_str("!!!"));
 
         let mut text = String::from("Hello World");
         processor.apply(&mut text);
@@ -1625,21 +1612,13 @@ mod test_custom_mutator_default_impl {
     #[test]
     fn test_custom_mutator_complex_type_into_fn() {
         let mutator = OffsetStatefulMutator::new(10, 20);
-        let mut points = vec![
-            Point { x: 0, y: 0 },
-            Point { x: 5, y: 10 },
-            Point { x: -5, y: -10 },
-        ];
+        let mut points = vec![Point { x: 0, y: 0 }, Point { x: 5, y: 10 }, Point { x: -5, y: -10 }];
 
         points.iter_mut().for_each(mutator.into_fn());
 
         assert_eq!(
             points,
-            vec![
-                Point { x: 10, y: 20 },
-                Point { x: 15, y: 30 },
-                Point { x: 5, y: 10 },
-            ]
+            vec![Point { x: 10, y: 20 }, Point { x: 15, y: 30 }, Point { x: 5, y: 10 },]
         );
     }
 
@@ -1747,8 +1726,7 @@ mod test_into_fn {
 
     #[test]
     fn test_box_mutator_into_fn_complex() {
-        let processor =
-            BoxStatefulMutator::new(|x: &mut i32| *x *= 2).and_then(|x: &mut i32| *x += 10);
+        let processor = BoxStatefulMutator::new(|x: &mut i32| *x *= 2).and_then(|x: &mut i32| *x += 10);
 
         let mut values = vec![1, 2, 3];
         values.iter_mut().for_each(processor.into_fn());
@@ -1809,9 +1787,7 @@ mod test_into_fn {
         let closure = |x: &mut i32| *x *= 2;
         let mut values = vec![1, 2, 3, 4];
 
-        values
-            .iter_mut()
-            .for_each(StatefulMutator::into_fn(closure));
+        values.iter_mut().for_each(StatefulMutator::into_fn(closure));
 
         assert_eq!(values, vec![2, 4, 6, 8]);
     }
@@ -1855,21 +1831,13 @@ mod test_into_fn {
     #[test]
     fn test_into_fn_with_strings() {
         let mutator = BoxStatefulMutator::new(|s: &mut String| s.push('!'));
-        let mut strings = vec![
-            String::from("hello"),
-            String::from("world"),
-            String::from("rust"),
-        ];
+        let mut strings = vec![String::from("hello"), String::from("world"), String::from("rust")];
 
         strings.iter_mut().for_each(mutator.into_fn());
 
         assert_eq!(
             strings,
-            vec![
-                String::from("hello!"),
-                String::from("world!"),
-                String::from("rust!")
-            ]
+            vec![String::from("hello!"), String::from("world!"), String::from("rust!")]
         );
     }
 
@@ -2029,8 +1997,7 @@ mod test_conditional_execution {
 
     #[test]
     fn test_box_when_with_function_pointer() {
-        let mut mutator =
-            BoxStatefulMutator::new(|x: &mut i32| *x *= 2).when(is_positive as fn(&i32) -> bool);
+        let mut mutator = BoxStatefulMutator::new(|x: &mut i32| *x *= 2).when(is_positive as fn(&i32) -> bool);
 
         let mut positive = 5;
         mutator.apply(&mut positive);
@@ -2299,8 +2266,7 @@ mod test_conditional_execution {
 
     #[test]
     fn test_rc_when_with_function_pointer() {
-        let conditional =
-            RcStatefulMutator::new(|x: &mut i32| *x *= 2).when(is_positive as fn(&i32) -> bool);
+        let conditional = RcStatefulMutator::new(|x: &mut i32| *x *= 2).when(is_positive as fn(&i32) -> bool);
         let mut m = conditional.clone();
 
         let mut positive = 5;
@@ -2447,8 +2413,7 @@ mod test_conditional_execution {
 
     #[test]
     fn test_arc_when_with_function_pointer() {
-        let conditional =
-            ArcStatefulMutator::new(|x: &mut i32| *x *= 2).when(is_positive as fn(&i32) -> bool);
+        let conditional = ArcStatefulMutator::new(|x: &mut i32| *x *= 2).when(is_positive as fn(&i32) -> bool);
         let mut m = conditional.clone();
 
         let mut positive = 5;

@@ -93,9 +93,7 @@ fn test_function_once_default_conversions_allow_relaxed_generic_types() {
     }
 
     let text = String::from("left");
-    let value = BorrowedRc {
-        value: text.as_str(),
-    };
+    let value = BorrowedRc { value: text.as_str() };
     let identity = BorrowedRcIdentityOnce;
 
     assert_left(identity.into_box().apply(&value));
@@ -395,11 +393,7 @@ fn test_function_once_with_complex_closure() {
     // Test function with complex closure logic
     let threshold = 10;
     let multiplier = 2;
-    let func = BoxFunctionOnce::new(
-        move |x: &i32| {
-            if *x > threshold { x * multiplier } else { *x }
-        },
-    );
+    let func = BoxFunctionOnce::new(move |x: &i32| if *x > threshold { x * multiplier } else { *x });
     assert_eq!(func.apply(&15), 30);
 }
 
@@ -408,11 +402,7 @@ fn test_function_once_with_complex_closure_below_threshold() {
     // Test complex closure with value below threshold
     let threshold = 10;
     let multiplier = 2;
-    let func = BoxFunctionOnce::new(
-        move |x: &i32| {
-            if *x > threshold { x * multiplier } else { *x }
-        },
-    );
+    let func = BoxFunctionOnce::new(move |x: &i32| if *x > threshold { x * multiplier } else { *x });
     assert_eq!(func.apply(&5), 5);
 }
 

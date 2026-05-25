@@ -47,17 +47,13 @@ mod tests {
         let add = |x: i32, y: i32| x + y;
         let multiply = |x: i32, y: i32| x * y;
 
-        let conditional = add
-            .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-            .or_else(multiply);
+        let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply);
         assert_eq!(conditional.apply(5, 3), 8); // Condition met, execute addition
 
         // Need to recreate because it's FnOnce
         let add2 = |x: i32, y: i32| x + y;
         let multiply2 = |x: i32, y: i32| x * y;
-        let conditional2 = add2
-            .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-            .or_else(multiply2);
+        let conditional2 = add2.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply2);
         assert_eq!(conditional2.apply(-5, 3), -15); // Condition not met, execute multiplication
     }
 

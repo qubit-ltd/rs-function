@@ -128,9 +128,7 @@ fn test_function_default_conversions_allow_relaxed_generic_types() {
     }
 
     let text = String::from("left");
-    let value = BorrowedRc {
-        value: text.as_str(),
-    };
+    let value = BorrowedRc { value: text.as_str() };
     let identity = BorrowedRcIdentity;
 
     assert_left(identity.into_box().apply(&value));
@@ -434,9 +432,7 @@ fn test_arc_function_when_with_predicate() {
     // Test when with ArcPredicate
     let double = ArcFunction::new(|x: &i32| x * 2);
     let is_positive = ArcPredicate::new(|x: &i32| *x > 0);
-    let conditional = double
-        .when(is_positive.clone())
-        .or_else(ArcFunction::identity());
+    let conditional = double.when(is_positive.clone()).or_else(ArcFunction::identity());
 
     assert_eq!(conditional.apply(&5), 10);
     assert!(is_positive.test(&3));
@@ -1328,16 +1324,10 @@ fn test_box_function_clear_name() {
 #[test]
 fn test_box_function_set_name_same_value_keeps_storage() {
     let mut function = BoxFunction::new_with_name("stable_name", |x: &i32| x * 2);
-    let ptr_before = function
-        .name()
-        .expect("name should be initialized")
-        .as_ptr();
+    let ptr_before = function.name().expect("name should be initialized").as_ptr();
 
     function.set_name("stable_name");
-    let ptr_after = function
-        .name()
-        .expect("name should remain initialized")
-        .as_ptr();
+    let ptr_after = function.name().expect("name should remain initialized").as_ptr();
 
     assert_eq!(function.name(), Some("stable_name"));
     assert_eq!(ptr_before, ptr_after);

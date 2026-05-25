@@ -29,8 +29,7 @@ fn test_local_box_callable_once_new_allows_non_send_capture() {
     let task = LocalBoxCallableOnce::new(move || Ok::<String, io::Error>(captured.to_string()));
 
     assert_eq!(
-        task.call()
-            .expect("local callable-once should allow non-send capture"),
+        task.call().expect("local callable-once should allow non-send capture"),
         "local"
     );
 }
@@ -60,9 +59,7 @@ fn test_local_box_callable_once_map_and_then_support_local_captures() {
     let chained = task.and_then(move |value| Ok(format!("{value}{next_suffix}")));
 
     assert_eq!(
-        chained
-            .call()
-            .expect("chained local callable should succeed"),
+        chained.call().expect("chained local callable should succeed"),
         "local-mapped-mapped"
     );
 }
@@ -76,9 +73,7 @@ fn test_local_box_callable_once_map_err_transforms_local_error() {
     let mapped = task.map_err(move |error| format!("{captured}: {error}"));
 
     assert_eq!(
-        mapped
-            .call()
-            .expect_err("local map_err should transform error"),
+        mapped.call().expect_err("local map_err should transform error"),
         "local: raw"
     );
 }
@@ -99,10 +94,7 @@ fn test_local_box_callable_once_into_fn_extracts_function() {
 
     let function = CallableOnce::into_fn(task);
 
-    assert_eq!(
-        function().expect("local callable function should run"),
-        "local"
-    );
+    assert_eq!(function().expect("local callable function should run"), "local");
 }
 
 #[test]

@@ -32,9 +32,7 @@ fn test_transformer_default_conversions_allow_relaxed_generic_types() {
     }
 
     let text = String::from("left");
-    let value = || BorrowedRc {
-        value: text.as_str(),
-    };
+    let value = || BorrowedRc { value: text.as_str() };
     let transformer = BorrowedRcTransformer;
 
     assert_left(transformer.clone().into_box().apply(value()));
@@ -49,10 +47,7 @@ fn test_transformer_default_conversions_allow_relaxed_generic_types() {
     assert_left(transformer.to_box().apply(value()));
     assert_left(transformer.to_rc().apply(value()));
     assert_left(transformer.to_arc().apply(value()));
-    assert_left(qubit_function::TransformerOnce::apply(
-        transformer.to_once(),
-        value(),
-    ));
+    assert_left(qubit_function::TransformerOnce::apply(transformer.to_once(), value()));
     assert_left(transformer.to_fn()(value()));
 }
 
@@ -912,9 +907,7 @@ mod edge_cases_tests {
 
     #[test]
     fn test_with_vec() {
-        let split = BoxTransformer::new(|s: String| {
-            s.split(',').map(|s| s.to_string()).collect::<Vec<_>>()
-        });
+        let split = BoxTransformer::new(|s: String| s.split(',').map(|s| s.to_string()).collect::<Vec<_>>());
         assert_eq!(
             split.apply("a,b,c".to_string()),
             vec!["a".to_string(), "b".to_string(), "c".to_string()]
@@ -1708,13 +1701,7 @@ mod transformer_default_to_methods_tests {
 
     #[test]
     fn test_rc_to_fn_with_result() {
-        let divide = RcTransformer::new(|x: i32| {
-            if x == 0 {
-                Err("Division by zero")
-            } else {
-                Ok(100 / x)
-            }
-        });
+        let divide = RcTransformer::new(|x: i32| if x == 0 { Err("Division by zero") } else { Ok(100 / x) });
         let func = divide.to_fn();
 
         assert_eq!(func(10), Ok(10));
@@ -2247,8 +2234,7 @@ mod transformer_once_tests {
 
         #[test]
         fn test_box_transformer_complex_transformation() {
-            let parse_and_double =
-                BoxTransformer::new(|s: String| s.parse::<i32>().unwrap_or(0) * 2);
+            let parse_and_double = BoxTransformer::new(|s: String| s.parse::<i32>().unwrap_or(0) * 2);
             let result = parse_and_double.apply("21".to_string());
             assert_eq!(result, 42);
         }
@@ -2308,8 +2294,7 @@ mod transformer_once_tests {
 
         #[test]
         fn test_rc_transformer_complex_transformation() {
-            let parse_and_double =
-                RcTransformer::new(|s: String| s.parse::<i32>().unwrap_or(0) * 2);
+            let parse_and_double = RcTransformer::new(|s: String| s.parse::<i32>().unwrap_or(0) * 2);
             let result = parse_and_double.apply("21".to_string());
             assert_eq!(result, 42);
         }
@@ -2544,8 +2529,7 @@ mod transformer_once_tests {
 
         #[test]
         fn test_arc_transformer_complex_transformation() {
-            let parse_and_double =
-                ArcTransformer::new(|s: String| s.parse::<i32>().unwrap_or(0) * 2);
+            let parse_and_double = ArcTransformer::new(|s: String| s.parse::<i32>().unwrap_or(0) * 2);
             let result = parse_and_double.apply("21".to_string());
             assert_eq!(result, 42);
         }

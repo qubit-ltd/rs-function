@@ -99,16 +99,10 @@ fn main() {
 
     let mut positive = 5;
     let mut negative = -5;
-    println!(
-        "Before when - positive: {}, negative: {}",
-        positive, negative
-    );
+    println!("Before when - positive: {}, negative: {}", positive, negative);
     increment_if_positive.apply(&mut positive);
     increment_if_positive.apply(&mut negative);
-    println!(
-        "After when - positive: {}, negative: {}\n",
-        positive, negative
-    );
+    println!("After when - positive: {}, negative: {}\n", positive, negative);
 
     // when().or_else() (conditional branching)
     let adjust = BoxMutator::new(|x: &mut i32| *x *= 2)

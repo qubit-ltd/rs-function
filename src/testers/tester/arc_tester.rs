@@ -99,9 +99,7 @@ impl ArcTester {
     where
         F: Fn() -> bool + Send + Sync + 'static,
     {
-        ArcTester {
-            function: Arc::new(f),
-        }
+        ArcTester { function: Arc::new(f) }
     }
 
     /// Combines this tester with another tester using logical AND

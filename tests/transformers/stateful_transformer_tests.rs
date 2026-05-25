@@ -55,12 +55,8 @@ fn test_stateful_transformer_default_conversions_allow_relaxed_generic_types() {
     }
 
     let text = String::from("left");
-    let value = || BorrowedRc {
-        value: text.as_str(),
-    };
-    let transformer = BorrowedRcStatefulTransformer {
-        count: Cell::new(0),
-    };
+    let value = || BorrowedRc { value: text.as_str() };
+    let transformer = BorrowedRcStatefulTransformer { count: Cell::new(0) };
 
     assert_left(transformer.clone().into_box().apply(value()));
     assert_left(transformer.clone().into_rc().apply(value()));
@@ -77,10 +73,7 @@ fn test_stateful_transformer_default_conversions_allow_relaxed_generic_types() {
     assert_left(transformer.to_box().apply(value()));
     assert_left(transformer.to_rc().apply(value()));
     assert_left(transformer.to_arc().apply(value()));
-    assert_left(qubit_function::TransformerOnce::apply(
-        transformer.to_once(),
-        value(),
-    ));
+    assert_left(qubit_function::TransformerOnce::apply(transformer.to_once(), value()));
     let mut to_fn = transformer.to_fn();
     assert_left(to_fn(value()));
     let mut to_mut_fn = transformer.to_mut_fn();
@@ -816,8 +809,7 @@ fn test_fn_mapper_ops_and_then() {
 
 #[test]
 fn test_fn_mapper_ops_when() {
-    let mut mapper =
-        FnStatefulTransformerOps::when(|x: i32| x * 2, |x: &i32| *x > 0).or_else(|x: i32| -x);
+    let mut mapper = FnStatefulTransformerOps::when(|x: i32| x * 2, |x: &i32| *x > 0).or_else(|x: i32| -x);
 
     assert_eq!(mapper.apply(5), 10);
     assert_eq!(mapper.apply(-5), 5);

@@ -35,9 +35,7 @@ fn test_transformer_once_default_conversions_allow_relaxed_generic_types() {
     }
 
     let text = String::from("left");
-    let value = || BorrowedRc {
-        value: text.as_str(),
-    };
+    let value = || BorrowedRc { value: text.as_str() };
     let transformer = BorrowedRcTransformerOnce;
 
     assert_left(transformer.clone().into_box().apply(value()));
@@ -115,8 +113,7 @@ mod box_transformer_once_tests {
 
     #[test]
     fn test_display_with_name() {
-        let transformer =
-            BoxTransformerOnce::new_with_name("parse", |s: String| s.parse::<i32>().unwrap_or(0));
+        let transformer = BoxTransformerOnce::new_with_name("parse", |s: String| s.parse::<i32>().unwrap_or(0));
         let display_str = format!("{}", transformer);
         assert_eq!(display_str, "BoxTransformerOnce(parse)");
     }
@@ -295,9 +292,7 @@ mod edge_cases_tests {
 
     #[test]
     fn test_with_vec() {
-        let split = BoxTransformerOnce::new(|s: String| {
-            s.split(',').map(|s| s.to_string()).collect::<Vec<_>>()
-        });
+        let split = BoxTransformerOnce::new(|s: String| s.split(',').map(|s| s.to_string()).collect::<Vec<_>>());
         assert_eq!(
             split.apply("a,b,c".to_string()),
             vec!["a".to_string(), "b".to_string(), "c".to_string()]
