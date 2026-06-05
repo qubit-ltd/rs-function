@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulTransformer` public type.
 
@@ -42,12 +40,11 @@ use super::{
 ///
 /// - **Based on**: `Arc<Mutex<dyn FnMut(T) -> R + Send>>`
 /// - **Ownership**: Shared ownership via reference counting
-/// - **Reusability**: Can be called multiple times (each call consumes
-///   its input)
+/// - **Reusability**: Can be called multiple times (each call consumes its
+///   input)
 /// - **Thread Safety**: Thread-safe (`Send` required)
 /// - **Clonable**: Cheap cloning via `Arc::clone`
 /// - **Statefulness**: Can modify internal state between calls
-///
 pub struct ArcStatefulTransformer<T, R> {
     pub(super) function: Arc<Mutex<dyn FnMut(T) -> R + Send>>,
     pub(super) name: Option<String>,
@@ -98,7 +95,8 @@ impl<T, R> StatefulTransformer<T, R> for ArcStatefulTransformer<T, R> {
 // Blanket implementation for standard FnMut trait
 // ============================================================================
 
-// Implement StatefulTransformer<T, R> for any type that implements FnMut(T) -> R
+// Implement StatefulTransformer<T, R> for any type that implements FnMut(T) ->
+// R
 impl_closure_trait!(
     StatefulTransformer<T, R>,
     apply,

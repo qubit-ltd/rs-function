@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Supplier Types
 //!
 //! Provides stateless supplier implementations that generate and
@@ -35,18 +33,16 @@
 //!
 //! # Three Implementations
 //!
-//! - **`BoxSupplier<T>`**: Single ownership using `Box<dyn
-//!   Fn() -> T>`. Zero overhead, cannot be cloned. Best for
-//!   one-time use in read-only contexts.
+//! - **`BoxSupplier<T>`**: Single ownership using `Box<dyn Fn() -> T>`. Zero
+//!   overhead, cannot be cloned. Best for one-time use in read-only contexts.
 //!
-//! - **`ArcSupplier<T>`**: Thread-safe shared ownership
-//!   using `Arc<dyn Fn() -> T + Send + Sync>`. **Lock-free** - no
-//!   Mutex needed! Can be cloned and sent across threads with
-//!   excellent performance.
+//! - **`ArcSupplier<T>`**: Thread-safe shared ownership using `Arc<dyn Fn() ->
+//!   T + Send + Sync>`. **Lock-free** - no Mutex needed! Can be cloned and sent
+//!   across threads with excellent performance.
 //!
-//! - **`RcSupplier<T>`**: Single-threaded shared ownership
-//!   using `Rc<dyn Fn() -> T>`. Can be cloned but not sent across
-//!   threads. Lightweight alternative to `ArcSupplier`.
+//! - **`RcSupplier<T>`**: Single-threaded shared ownership using `Rc<dyn Fn()
+//!   -> T>`. Can be cloned but not sent across threads. Lightweight alternative
+//!   to `ArcSupplier`.
 //!
 //! # Use Cases
 //!
@@ -111,15 +107,14 @@
 //!
 //! For stateless scenarios in multi-threaded environments:
 //!
-//! - `ArcStatefulSupplier<T>`: Requires `Mutex`, lock contention on
-//!   every `get()` call.
-//! - `ArcSupplier<T>`: Lock-free, can call `get()`
-//!   concurrently without contention.
+//! - `ArcStatefulSupplier<T>`: Requires `Mutex`, lock contention on every
+//!   `get()` call.
+//! - `ArcSupplier<T>`: Lock-free, can call `get()` concurrently without
+//!   contention.
 //!
 //! Benchmark results show `ArcSupplier` can be **10x
 //! faster** than `ArcStatefulSupplier` in high-concurrency stateless
 //! scenarios.
-//!
 
 use std::rc::Rc;
 use std::sync::Arc;
@@ -163,10 +158,8 @@ pub use rc_supplier::RcSupplier;
 ///
 /// - **No input parameters**: Pure value generation
 /// - **Read-only access**: Uses `&self`, doesn't modify state
-/// - **Returns ownership**: Returns `T` (not `&T`) to avoid
-///   lifetime issues
-/// - **Lock-free concurrency**: `Arc` implementation doesn't need
-///   `Mutex`
+/// - **Returns ownership**: Returns `T` (not `&T`) to avoid lifetime issues
+/// - **Lock-free concurrency**: `Arc` implementation doesn't need `Mutex`
 ///
 /// # Automatically Implemented for Closures
 ///
@@ -216,7 +209,6 @@ pub use rc_supplier::RcSupplier;
 /// let user2 = factory.get();
 /// // Each call creates a new User instance
 /// ```
-///
 pub trait Supplier<T> {
     /// Generates and returns a value.
     ///
@@ -479,7 +471,8 @@ pub trait Supplier<T> {
     /// Converts to `BoxSupplierOnce` without consuming self
     ///
     /// **⚠️ Requires Clone**: This method requires `Self` to implement `Clone`.
-    /// Clones the current supplier and converts the clone to a one-time supplier.
+    /// Clones the current supplier and converts the clone to a one-time
+    /// supplier.
     ///
     /// # Returns
     ///

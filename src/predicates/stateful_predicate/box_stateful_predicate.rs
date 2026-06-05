@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulPredicate` public type.
 
@@ -33,7 +31,8 @@ pub struct BoxStatefulPredicate<T> {
 }
 
 impl<T> BoxStatefulPredicate<T> {
-    // Generates: new(), new_with_name(), name(), set_name(), always_true(), always_false()
+    // Generates: new(), new_with_name(), name(), set_name(), always_true(),
+    // always_false()
     impl_predicate_common_methods!(
         BoxStatefulPredicate<T>,
         (FnMut(&T) -> bool + 'static),
@@ -58,7 +57,9 @@ impl<T> BoxStatefulPredicate<T> {
         P: StatefulPredicate<T> + 'static,
         T: 'static,
     {
-        BoxStatefulPredicate::new(move |value| self.test(value) && other.test(value))
+        BoxStatefulPredicate::new(move |value| {
+            self.test(value) && other.test(value)
+        })
     }
 
     /// Returns a predicate representing logical OR with another predicate.
@@ -79,7 +80,9 @@ impl<T> BoxStatefulPredicate<T> {
         P: StatefulPredicate<T> + 'static,
         T: 'static,
     {
-        BoxStatefulPredicate::new(move |value| self.test(value) || other.test(value))
+        BoxStatefulPredicate::new(move |value| {
+            self.test(value) || other.test(value)
+        })
     }
 
     /// Returns a predicate representing logical NAND with another predicate.
@@ -99,7 +102,9 @@ impl<T> BoxStatefulPredicate<T> {
         P: StatefulPredicate<T> + 'static,
         T: 'static,
     {
-        BoxStatefulPredicate::new(move |value| !(self.test(value) && other.test(value)))
+        BoxStatefulPredicate::new(move |value| {
+            !(self.test(value) && other.test(value))
+        })
     }
 
     /// Returns a predicate representing logical XOR with another predicate.
@@ -120,7 +125,9 @@ impl<T> BoxStatefulPredicate<T> {
         P: StatefulPredicate<T> + 'static,
         T: 'static,
     {
-        BoxStatefulPredicate::new(move |value| self.test(value) ^ other.test(value))
+        BoxStatefulPredicate::new(move |value| {
+            self.test(value) ^ other.test(value)
+        })
     }
 
     /// Returns a predicate representing logical NOR with another predicate.
@@ -140,7 +147,9 @@ impl<T> BoxStatefulPredicate<T> {
         P: StatefulPredicate<T> + 'static,
         T: 'static,
     {
-        BoxStatefulPredicate::new(move |value| !(self.test(value) || other.test(value)))
+        BoxStatefulPredicate::new(move |value| {
+            !(self.test(value) || other.test(value))
+        })
     }
 }
 
@@ -155,7 +164,8 @@ where
     }
 }
 
-// Generates: impl Debug for BoxStatefulPredicate<T> and impl Display for BoxStatefulPredicate<T>
+// Generates: impl Debug for BoxStatefulPredicate<T> and impl Display for
+// BoxStatefulPredicate<T>
 impl_predicate_debug_display!(BoxStatefulPredicate<T>);
 
 // Implements StatefulPredicate trait for BoxStatefulPredicate<T>

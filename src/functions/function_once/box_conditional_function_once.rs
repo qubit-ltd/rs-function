@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalFunctionOnce` public type.
 
@@ -57,7 +55,6 @@ use super::{
 /// let conditional2 = double2.when(|x: &i32| *x > 0).or_else(negate2);
 /// assert_eq!(conditional2.apply(&-5), 5); // or_else branch executed
 /// ```
-///
 pub struct BoxConditionalFunctionOnce<T, R> {
     pub(super) function: BoxFunctionOnce<T, R>,
     pub(super) predicate: BoxPredicate<T>,

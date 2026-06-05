@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `FnConsumerOps` public type.
 
@@ -19,7 +17,8 @@ use super::{
 // 6. Provide extension methods for closures
 // ============================================================================
 
-/// Extension trait providing non-mutating consumer composition methods for closures
+/// Extension trait providing non-mutating consumer composition methods for
+/// closures
 ///
 /// Provides `and_then` and other composition methods for all closures
 /// implementing `Fn(&T)`, allowing closures to directly chain methods without
@@ -45,12 +44,11 @@ use super::{
 /// });
 /// chained.accept(&5);
 /// ```
-///
 pub trait FnConsumerOps<T>: Fn(&T) + Sized {
     /// Sequentially chain another non-mutating consumer
     ///
-    /// Returns a new consumer that executes the current operation first, then the
-    /// next operation. Consumes the current closure and returns
+    /// Returns a new consumer that executes the current operation first, then
+    /// the next operation. Consumes the current closure and returns
     /// `BoxConsumer<T>`.
     ///
     /// # Type Parameters

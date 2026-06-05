@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 // qubit-style: allow explicit-imports
 //! Unit tests for MutatingFunctionOnce types (one-time FnOnce(&mut T) -> R)
@@ -98,7 +96,9 @@ mod test_mutating_function_once_default_impl {
         #[derive(Clone, Copy, Debug, Eq, PartialEq)]
         struct BorrowedRcMutatorOnce;
 
-        impl<'a> MutatingFunctionOnce<BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcMutatorOnce {
+        impl<'a> MutatingFunctionOnce<BorrowedRc<'a>, BorrowedRc<'a>>
+            for BorrowedRcMutatorOnce
+        {
             fn apply(self, value: &mut BorrowedRc<'a>) -> BorrowedRc<'a> {
                 value.clone()
             }
@@ -250,8 +250,9 @@ mod test_box_mutating_function_once {
             x.extend(data);
             old_len
         });
-        let mapped =
-            func.and_then::<String, _>(|old_len: &usize| format!("Old length: {}", *old_len));
+        let mapped = func.and_then::<String, _>(|old_len: &usize| {
+            format!("Old length: {}", *old_len)
+        });
 
         let mut target = vec![0];
         let result = mapped.apply(&mut target);
@@ -351,7 +352,9 @@ mod test_closure {
             x.extend(data);
             old_len
         })
-        .and_then::<String, _>(|old_len: &usize| format!("Old length: {}", *old_len));
+        .and_then::<String, _>(|old_len: &usize| {
+            format!("Old length: {}", *old_len)
+        });
 
         let mut target = vec![0];
         let result = mapped.apply(&mut target);
@@ -491,8 +494,10 @@ fn test_box_mutating_function_once_debug_display() {
     assert_eq!(display_str, "BoxMutatingFunctionOnce");
 
     // Test Debug and Display for BoxMutatingFunctionOnce with name
-    let named_double =
-        BoxMutatingFunctionOnce::new_with_name("mutating_once_double", |x: &mut i32| *x * 2);
+    let named_double = BoxMutatingFunctionOnce::new_with_name(
+        "mutating_once_double",
+        |x: &mut i32| *x * 2,
+    );
     let named_debug_str = format!("{:?}", named_double);
     assert!(named_debug_str.contains("BoxMutatingFunctionOnce"));
     assert!(named_debug_str.contains("name"));
@@ -512,11 +517,13 @@ fn test_box_mutating_function_once_debug_display() {
 #[test]
 fn test_box_mutating_function_once_name_methods() {
     // Test new_with_name, name(), and set_name()
-    let mut double =
-        BoxMutatingFunctionOnce::new_with_name("box_mutating_once_func", |x: &mut i32| {
+    let mut double = BoxMutatingFunctionOnce::new_with_name(
+        "box_mutating_once_func",
+        |x: &mut i32| {
             *x *= 2;
             *x
-        });
+        },
+    );
 
     // Test name() returns the initial name
     assert_eq!(double.name(), Some("box_mutating_once_func"));
@@ -537,7 +544,8 @@ fn test_box_mutating_function_once_name_methods() {
 
 #[test]
 fn test_box_conditional_mutating_function_once_debug_display() {
-    // Test Debug and Display for BoxConditionalMutatingFunctionOnce without name
+    // Test Debug and Display for BoxConditionalMutatingFunctionOnce without
+    // name
     let double = BoxMutatingFunctionOnce::new(|x: &mut i32| *x * 2);
     let conditional = double.when(|x: &i32| *x > 0);
 
@@ -554,8 +562,10 @@ fn test_box_conditional_mutating_function_once_debug_display() {
     assert!(display_str.ends_with(")"));
 
     // Test Debug and Display for BoxConditionalMutatingFunctionOnce with name
-    let triple =
-        BoxMutatingFunctionOnce::new_with_name("triple_mutating_once_func", |x: &mut i32| *x * 3);
+    let triple = BoxMutatingFunctionOnce::new_with_name(
+        "triple_mutating_once_func",
+        |x: &mut i32| *x * 3,
+    );
     let named_conditional = triple.when(|x: &i32| *x % 2 == 0);
 
     let named_debug_str = format!("{:?}", named_conditional);
@@ -565,15 +575,21 @@ fn test_box_conditional_mutating_function_once_debug_display() {
     assert!(named_debug_str.contains("predicate"));
 
     let named_display_str = format!("{}", named_conditional);
-    assert!(named_display_str.starts_with("BoxConditionalMutatingFunctionOnce("));
-    assert!(named_display_str.contains("BoxMutatingFunctionOnce(triple_mutating_once_func)"));
+    assert!(
+        named_display_str.starts_with("BoxConditionalMutatingFunctionOnce(")
+    );
+    assert!(
+        named_display_str
+            .contains("BoxMutatingFunctionOnce(triple_mutating_once_func)")
+    );
     assert!(named_display_str.contains("BoxPredicate"));
     assert!(named_display_str.ends_with(")"));
 }
 
 #[test]
 fn test_custom_cloneable_mutating_function_once_to_box() {
-    // Test to_box method on a custom struct that implements both MutatingFunctionOnce and Clone
+    // Test to_box method on a custom struct that implements both
+    // MutatingFunctionOnce and Clone
     #[derive(Clone, Debug)]
     struct MyCloneableMutatingFunction {
         multiplier: i32,

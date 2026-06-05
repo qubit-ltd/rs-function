@@ -1,19 +1,18 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! # BiMutatingFunction Types
 //!
 //! Provides Rust implementations of bi-mutating-function traits for performing
 //! operations that accept two mutable references and return a result.
 //!
-//! It is similar to the `Fn(&mut T, &mut U) -> R` trait in the standard library.
+//! It is similar to the `Fn(&mut T, &mut U) -> R` trait in the standard
+//! library.
 //!
 //! This module provides the `BiMutatingFunction<T, U, R>` trait and three
 //! implementations:
@@ -21,7 +20,6 @@
 //! - [`BoxBiMutatingFunction`]: Single ownership, not cloneable
 //! - [`ArcBiMutatingFunction`]: Thread-safe shared ownership, cloneable
 //! - [`RcBiMutatingFunction`]: Single-threaded shared ownership, cloneable
-//!
 
 use std::rc::Rc;
 use std::sync::Arc;
@@ -82,18 +80,19 @@ pub use arc_conditional_bi_mutating_function::ArcConditionalBiMutatingFunction;
 
 /// BiMutatingFunction trait - performs operations on two mutable references
 ///
-/// Defines the behavior of a bi-mutating-function: computing a value of type `R`
-/// from mutable references to types `T` and `U`, potentially modifying both inputs.
-/// This is analogous to `Fn(&mut T, &mut U) -> R` in Rust's standard library.
+/// Defines the behavior of a bi-mutating-function: computing a value of type
+/// `R` from mutable references to types `T` and `U`, potentially modifying both
+/// inputs. This is analogous to `Fn(&mut T, &mut U) -> R` in Rust's standard
+/// library.
 ///
 /// # Type Parameters
 ///
 /// * `T` - The type of the first input value (mutable reference)
 /// * `U` - The type of the second input value (mutable reference)
 /// * `R` - The type of the output value
-///
 pub trait BiMutatingFunction<T, U, R> {
-    /// Applies the bi-mutating-function to two mutable references and returns a result
+    /// Applies the bi-mutating-function to two mutable references and returns a
+    /// result
     ///
     /// # Parameters
     ///
@@ -191,10 +190,13 @@ pub trait BiMutatingFunction<T, U, R> {
 
     /// Converts to BiMutatingFunctionOnce
     ///
-    /// **⚠️ Consumes `self`**: The original bi-function becomes unavailable after calling this method.
+    /// **⚠️ Consumes `self`**: The original bi-function becomes unavailable
+    /// after calling this method.
     ///
-    /// Converts a reusable bi-mutating-function to a one-time bi-mutating-function that consumes itself on use.
-    /// This enables passing `BiMutatingFunction` to functions that require `BiMutatingFunctionOnce`.
+    /// Converts a reusable bi-mutating-function to a one-time
+    /// bi-mutating-function that consumes itself on use. This enables
+    /// passing `BiMutatingFunction` to functions that require
+    /// `BiMutatingFunctionOnce`.
     ///
     /// # Returns
     ///
@@ -238,8 +240,8 @@ pub trait BiMutatingFunction<T, U, R> {
 
     /// Non-consuming conversion to a boxed function using `&self`.
     ///
-    /// Returns a `Box<dyn Fn(&mut T, &mut U) -> R>` that clones `self` and calls
-    /// `apply` inside the boxed closure.
+    /// Returns a `Box<dyn Fn(&mut T, &mut U) -> R>` that clones `self` and
+    /// calls `apply` inside the boxed closure.
     fn to_fn(&self) -> impl Fn(&mut T, &mut U) -> R
     where
         Self: Sized + Clone + 'static,
@@ -250,7 +252,8 @@ pub trait BiMutatingFunction<T, U, R> {
     /// Convert to BiMutatingFunctionOnce without consuming self
     ///
     /// **⚠️ Requires Clone**: This method requires `Self` to implement `Clone`.
-    /// Clones the current bi-function and converts the clone to a one-time bi-function.
+    /// Clones the current bi-function and converts the clone to a one-time
+    /// bi-function.
     ///
     /// # Returns
     ///

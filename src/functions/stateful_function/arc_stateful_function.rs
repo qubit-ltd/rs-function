@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulFunction` public type.
 
@@ -42,12 +40,11 @@ use super::{
 ///
 /// - **Based on**: `Arc<Mutex<dyn FnMut(&T) -> R + Send>>`
 /// - **Ownership**: Shared ownership via reference counting
-/// - **Reusability**: Can be called multiple times (each call consumes
-///   its input)
+/// - **Reusability**: Can be called multiple times (each call consumes its
+///   input)
 /// - **Thread Safety**: Thread-safe (`Send` required)
 /// - **Clonable**: Cheap cloning via `Arc::clone`
 /// - **Statefulness**: Can modify internal state between calls
-///
 pub struct ArcStatefulFunction<T, R> {
     pub(super) function: ArcStatefulFn<T, R>,
     pub(super) name: Option<String>,
@@ -56,7 +53,8 @@ pub struct ArcStatefulFunction<T, R> {
 type ArcStatefulFn<T, R> = Arc<Mutex<dyn FnMut(&T) -> R + Send + 'static>>;
 
 impl<T, R> ArcStatefulFunction<T, R> {
-    // Generates: new(), new_with_name(), new_with_optional_name(), name(), set_name()
+    // Generates: new(), new_with_name(), new_with_optional_name(), name(),
+    // set_name()
     impl_function_common_methods!(
         ArcStatefulFunction<T, R>,
         (FnMut(&T) -> R + Send + 'static),
@@ -124,7 +122,6 @@ impl<T, R> StatefulFunction<T, R> for ArcStatefulFunction<T, R> {
 /// assert_eq!(function.apply(&10), 11);
 /// assert_eq!(function.apply(&10), 12);
 /// ```
-///
 impl<F, T, R> StatefulFunction<T, R> for F
 where
     F: FnMut(&T) -> R,

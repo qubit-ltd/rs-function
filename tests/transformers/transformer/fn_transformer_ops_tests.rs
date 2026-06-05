@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Tests for FnTransformerOps extension trait
 
@@ -82,7 +80,8 @@ mod tests {
 
     #[test]
     fn test_complex_composition() {
-        // Complex composition: add 1, then if > 5 multiply by 2, otherwise multiply by 3, finally convert to string
+        // Complex composition: add 1, then if > 5 multiply by 2, otherwise
+        // multiply by 3, finally convert to string
         let add_one = |x: i32| x + 1;
         let double = |x: i32| x * 2;
         let triple = |x: i32| x * 3;

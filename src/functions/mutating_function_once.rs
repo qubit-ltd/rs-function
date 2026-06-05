@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # MutatingFunctionOnce Types
 //!
 //! Provides Java-like one-time `MutatingFunction` interface implementations
@@ -26,8 +24,8 @@
 //! The key difference between `MutatingFunctionOnce` and
 //! `MutatingFunction`:
 //!
-//! - **MutatingFunction**: `&self`, can be called multiple times, uses
-//!   `Fn(&mut T) -> R`
+//! - **MutatingFunction**: `&self`, can be called multiple times, uses `Fn(&mut
+//!   T) -> R`
 //! - **MutatingFunctionOnce**: `self`, can only be called once, uses
 //!   `FnOnce(&mut T) -> R`
 //!
@@ -56,8 +54,8 @@
 //!
 //! - **Arc/Rc conflicts with FnOnce semantics**: FnOnce can only be called
 //!   once, while shared ownership implies multiple references
-//! - **Box is perfect match**: Single ownership aligns perfectly with
-//!   one-time call semantics
+//! - **Box is perfect match**: Single ownership aligns perfectly with one-time
+//!   call semantics
 //!
 //! # Use Cases
 //!
@@ -130,7 +128,6 @@
 //! assert_eq!(data.value, 0);
 //! assert!(result.is_err());
 //! ```
-//!
 use crate::functions::{
     function_once::FunctionOnce,
     macros::{
@@ -186,8 +183,8 @@ pub use fn_mutating_function_once_ops::FnMutatingFunctionOnceOps;
 ///
 /// - **Unified Interface**: All one-time mutating functions share the same
 ///   `apply` method signature
-/// - **Automatic Implementation**: Closures automatically implement this
-///   trait with zero overhead
+/// - **Automatic Implementation**: Closures automatically implement this trait
+///   with zero overhead
 /// - **Type Conversions**: Provides `into_box` method for type conversion
 /// - **Generic Programming**: Write functions that work with any one-time
 ///   mutating function type
@@ -232,7 +229,6 @@ pub use fn_mutating_function_once_ops::FnMutatingFunctionOnceOps;
 /// };
 /// let box_func = closure.into_box();
 /// ```
-///
 pub trait MutatingFunctionOnce<T, R> {
     /// Performs the one-time mutating function operation
     ///
@@ -280,8 +276,7 @@ pub trait MutatingFunctionOnce<T, R> {
     ///
     /// - This method consumes the source value.
     /// - Implementors may return `self` directly when `Self` is already a
-    ///   `BoxMutatingFunctionOnce<T, R>` to avoid the extra wrapper
-    ///   allocation.
+    ///   `BoxMutatingFunctionOnce<T, R>` to avoid the extra wrapper allocation.
     fn into_box(self) -> BoxMutatingFunctionOnce<T, R>
     where
         Self: Sized + 'static,

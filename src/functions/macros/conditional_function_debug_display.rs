@@ -1,18 +1,18 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Conditional Function Debug Display Macro
 //!
-//! Generates Debug and Display trait implementations for Conditional Function structs
+//! Generates Debug and Display trait implementations for Conditional Function
+//! structs
 //!
 //! Generates standard Debug and Display trait implementations for Conditional
-//! Function structs that have `function` and `predicate` fields but no `name` field.
+//! Function structs that have `function` and `predicate` fields but no `name`
+//! field.
 //!
 //! # Parameters
 //!
@@ -27,9 +27,9 @@
 //! // impl_conditional_function_debug_display!(BoxConditionalFunction<T, R>);
 //! // impl_conditional_function_debug_display!(BoxConditionalBiFunction<T, U, R>);
 //! ```
-//!
 
-/// Generates Debug and Display trait implementations for Conditional Function structs
+/// Generates Debug and Display trait implementations for Conditional Function
+/// structs
 ///
 /// This macro should be used at the top level (outside of any impl block) as
 /// it generates complete `impl Debug` and `impl Display` blocks for the
@@ -51,7 +51,6 @@
 /// // For three type parameters
 /// // impl_conditional_function_debug_display!(BoxConditionalBiFunction<T, U, R>);
 /// ```
-///
 macro_rules! impl_conditional_function_debug_display {
     // Two generic parameters - Function types
     ($struct_name:ident < $t:ident, $r:ident >) => {

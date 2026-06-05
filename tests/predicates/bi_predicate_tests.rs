@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 // qubit-style: allow explicit-imports
 #[cfg(test)]
@@ -21,7 +19,8 @@ mod tests {
     use std::thread;
 
     // ========================================================================
-    // BiPredicate Trait Tests - Test closure and function pointer implementations
+    // BiPredicate Trait Tests - Test closure and function pointer
+    // implementations
     // ========================================================================
 
     #[test]
@@ -35,7 +34,11 @@ mod tests {
         struct BorrowedRcBiPredicate;
 
         impl<'a> BiPredicate<BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcBiPredicate {
-            fn test(&self, first: &BorrowedRc<'a>, second: &BorrowedRc<'a>) -> bool {
+            fn test(
+                &self,
+                first: &BorrowedRc<'a>,
+                second: &BorrowedRc<'a>,
+            ) -> bool {
                 assert_eq!(first.value, "left");
                 assert_eq!(second.value, "right");
                 true
@@ -111,12 +114,14 @@ mod tests {
             assert!(!str_length_greater.test(&String::from("hi"), &5));
 
             // Test with mixed types
-            let contains_prefix = |s: &&str, prefix: &&str| s.starts_with(*prefix);
+            let contains_prefix =
+                |s: &&str, prefix: &&str| s.starts_with(*prefix);
             assert!(contains_prefix.test(&"hello", &"hel"));
             assert!(!contains_prefix.test(&"world", &"wor1"));
 
             // Test with numeric types
-            let within_range = |value: &f64, max: &f64| *value <= *max && *value >= 0.0;
+            let within_range =
+                |value: &f64, max: &f64| *value <= *max && *value >= 0.0;
             assert!(within_range.test(&5.5, &10.0));
             assert!(!within_range.test(&15.5, &10.0));
         }
@@ -240,7 +245,10 @@ mod tests {
 
         #[test]
         fn test_with_name() {
-            let pred = BoxBiPredicate::new_with_name("sum_positive", |x: &i32, y: &i32| x + y > 0);
+            let pred = BoxBiPredicate::new_with_name(
+                "sum_positive",
+                |x: &i32, y: &i32| x + y > 0,
+            );
 
             assert_eq!(pred.name(), Some("sum_positive"));
             assert!(pred.test(&5, &3));
@@ -268,8 +276,10 @@ mod tests {
 
         #[test]
         fn test_always_true_with_composition() {
-            let always_true: BoxBiPredicate<i32, i32> = BoxBiPredicate::always_true();
-            let positive_sum = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
+            let always_true: BoxBiPredicate<i32, i32> =
+                BoxBiPredicate::always_true();
+            let positive_sum =
+                BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
 
             // always_true AND something = something
             let combined = always_true.and(positive_sum);
@@ -279,8 +289,10 @@ mod tests {
 
         #[test]
         fn test_always_false_with_composition() {
-            let always_false: BoxBiPredicate<i32, i32> = BoxBiPredicate::always_false();
-            let positive_sum = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
+            let always_false: BoxBiPredicate<i32, i32> =
+                BoxBiPredicate::always_false();
+            let positive_sum =
+                BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
 
             // always_false OR something = something
             let combined = always_false.or(positive_sum);
@@ -304,7 +316,8 @@ mod tests {
 
         #[test]
         fn test_and() {
-            let sum_positive = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
+            let sum_positive =
+                BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
             let first_positive = |x: &i32, _y: &i32| *x > 0;
 
             let combined = sum_positive.and(first_positive);
@@ -314,8 +327,10 @@ mod tests {
 
         #[test]
         fn test_or() {
-            let sum_positive = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-            let first_positive = BoxBiPredicate::new(|x: &i32, _y: &i32| *x > 0);
+            let sum_positive =
+                BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
+            let first_positive =
+                BoxBiPredicate::new(|x: &i32, _y: &i32| *x > 0);
 
             let combined = sum_positive.or(first_positive);
             assert!(combined.test(&5, &3));
@@ -325,7 +340,8 @@ mod tests {
 
         #[test]
         fn test_not() {
-            let sum_positive = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
+            let sum_positive =
+                BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
             let sum_not_positive = !sum_positive;
 
             assert!(!sum_not_positive.test(&5, &3));
@@ -334,8 +350,10 @@ mod tests {
 
         #[test]
         fn test_xor() {
-            let first_positive = BoxBiPredicate::new(|x: &i32, _y: &i32| *x > 0);
-            let second_positive = BoxBiPredicate::new(|_x: &i32, y: &i32| *y > 0);
+            let first_positive =
+                BoxBiPredicate::new(|x: &i32, _y: &i32| *x > 0);
+            let second_positive =
+                BoxBiPredicate::new(|_x: &i32, y: &i32| *y > 0);
 
             let combined = first_positive.xor(second_positive);
             assert!(combined.test(&5, &-3));
@@ -345,8 +363,10 @@ mod tests {
 
         #[test]
         fn test_nand() {
-            let first_positive = BoxBiPredicate::new(|x: &i32, _y: &i32| *x > 0);
-            let second_positive = BoxBiPredicate::new(|_x: &i32, y: &i32| *y > 0);
+            let first_positive =
+                BoxBiPredicate::new(|x: &i32, _y: &i32| *x > 0);
+            let second_positive =
+                BoxBiPredicate::new(|_x: &i32, y: &i32| *y > 0);
 
             let combined = first_positive.nand(second_positive);
             assert!(!combined.test(&5, &3));
@@ -355,8 +375,10 @@ mod tests {
 
         #[test]
         fn test_nor() {
-            let first_positive = BoxBiPredicate::new(|x: &i32, _y: &i32| *x > 0);
-            let second_positive = BoxBiPredicate::new(|_x: &i32, y: &i32| *y > 0);
+            let first_positive =
+                BoxBiPredicate::new(|x: &i32, _y: &i32| *x > 0);
+            let second_positive =
+                BoxBiPredicate::new(|_x: &i32, y: &i32| *y > 0);
 
             let combined = first_positive.nor(second_positive);
             assert!(!combined.test(&5, &3));
@@ -375,7 +397,10 @@ mod tests {
 
         #[test]
         fn test_display() {
-            let pred = BoxBiPredicate::new_with_name("sum_positive", |x: &i32, y: &i32| x + y > 0);
+            let pred = BoxBiPredicate::new_with_name(
+                "sum_positive",
+                |x: &i32, y: &i32| x + y > 0,
+            );
             let display_str = format!("{}", pred);
             assert_eq!(display_str, "BoxBiPredicate(sum_positive)");
 
@@ -385,7 +410,10 @@ mod tests {
 
         #[test]
         fn test_debug() {
-            let pred = BoxBiPredicate::new_with_name("test_pred", |x: &i32, y: &i32| x + y > 0);
+            let pred = BoxBiPredicate::new_with_name(
+                "test_pred",
+                |x: &i32, y: &i32| x + y > 0,
+            );
             let debug_str = format!("{:?}", pred);
             assert!(debug_str.contains("BoxBiPredicate"));
             assert!(debug_str.contains("test_pred"));
@@ -393,14 +421,16 @@ mod tests {
 
         #[test]
         fn test_with_different_types() {
-            let str_len_greater = BoxBiPredicate::new(|s: &String, len: &usize| s.len() > *len);
+            let str_len_greater =
+                BoxBiPredicate::new(|s: &String, len: &usize| s.len() > *len);
             assert!(str_len_greater.test(&String::from("hello"), &3));
             assert!(!str_len_greater.test(&String::from("hi"), &5));
         }
 
         #[test]
         fn test_and_with_closure() {
-            let sum_positive = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
+            let sum_positive =
+                BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
             let combined = sum_positive.and(|x: &i32, _y: &i32| *x > 0);
             assert!(combined.test(&5, &3));
             assert!(!combined.test(&-5, &10));
@@ -440,7 +470,10 @@ mod tests {
 
         #[test]
         fn test_with_name() {
-            let pred = ArcBiPredicate::new_with_name("sum_positive", |x: &i32, y: &i32| x + y > 0);
+            let pred = ArcBiPredicate::new_with_name(
+                "sum_positive",
+                |x: &i32, y: &i32| x + y > 0,
+            );
 
             assert_eq!(pred.name(), Some("sum_positive"));
             assert!(pred.test(&5, &3));
@@ -468,7 +501,8 @@ mod tests {
 
         #[test]
         fn test_always_true_with_composition() {
-            let always_true: ArcBiPredicate<i32, i32> = ArcBiPredicate::always_true();
+            let always_true: ArcBiPredicate<i32, i32> =
+                ArcBiPredicate::always_true();
             let positive_sum = |x: &i32, y: &i32| x + y > 0;
 
             // always_true AND something = something
@@ -479,7 +513,8 @@ mod tests {
 
         #[test]
         fn test_always_false_with_composition() {
-            let always_false: ArcBiPredicate<i32, i32> = ArcBiPredicate::always_false();
+            let always_false: ArcBiPredicate<i32, i32> =
+                ArcBiPredicate::always_false();
             let positive_sum = |x: &i32, y: &i32| x + y > 0;
 
             // always_false OR something = something
@@ -524,7 +559,10 @@ mod tests {
 
         #[test]
         fn test_clone_preserves_name() {
-            let pred = ArcBiPredicate::new_with_name("original", |x: &i32, y: &i32| x + y > 0);
+            let pred = ArcBiPredicate::new_with_name(
+                "original",
+                |x: &i32, y: &i32| x + y > 0,
+            );
             let cloned = pred.clone();
 
             assert_eq!(pred.name(), Some("original"));
@@ -533,8 +571,10 @@ mod tests {
 
         #[test]
         fn test_and() {
-            let sum_positive = ArcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-            let first_positive = ArcBiPredicate::new(|x: &i32, _y: &i32| *x > 0);
+            let sum_positive =
+                ArcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
+            let first_positive =
+                ArcBiPredicate::new(|x: &i32, _y: &i32| *x > 0);
 
             let combined = sum_positive.clone().and(first_positive.clone());
             assert!(combined.test(&5, &3));
@@ -547,8 +587,10 @@ mod tests {
 
         #[test]
         fn test_or() {
-            let sum_positive = ArcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-            let first_positive = ArcBiPredicate::new(|x: &i32, _y: &i32| *x > 0);
+            let sum_positive =
+                ArcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
+            let first_positive =
+                ArcBiPredicate::new(|x: &i32, _y: &i32| *x > 0);
 
             let combined = sum_positive.or(first_positive.clone());
             assert!(combined.test(&5, &3));
@@ -557,7 +599,8 @@ mod tests {
 
         #[test]
         fn test_not() {
-            let sum_positive = ArcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
+            let sum_positive =
+                ArcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
             let sum_not_positive = !&sum_positive;
 
             assert!(!sum_not_positive.test(&5, &3));
@@ -569,8 +612,10 @@ mod tests {
 
         #[test]
         fn test_xor() {
-            let first_positive = ArcBiPredicate::new(|x: &i32, _y: &i32| *x > 0);
-            let second_positive = ArcBiPredicate::new(|_x: &i32, y: &i32| *y > 0);
+            let first_positive =
+                ArcBiPredicate::new(|x: &i32, _y: &i32| *x > 0);
+            let second_positive =
+                ArcBiPredicate::new(|_x: &i32, y: &i32| *y > 0);
 
             let combined = first_positive.xor(second_positive);
             assert!(combined.test(&5, &-3));
@@ -579,8 +624,10 @@ mod tests {
 
         #[test]
         fn test_nand() {
-            let first_positive = ArcBiPredicate::new(|x: &i32, _y: &i32| *x > 0);
-            let second_positive = ArcBiPredicate::new(|_x: &i32, y: &i32| *y > 0);
+            let first_positive =
+                ArcBiPredicate::new(|x: &i32, _y: &i32| *x > 0);
+            let second_positive =
+                ArcBiPredicate::new(|_x: &i32, y: &i32| *y > 0);
 
             let combined = first_positive.nand(second_positive);
             assert!(!combined.test(&5, &3));
@@ -589,8 +636,10 @@ mod tests {
 
         #[test]
         fn test_nor() {
-            let first_positive = ArcBiPredicate::new(|x: &i32, _y: &i32| *x > 0);
-            let second_positive = ArcBiPredicate::new(|_x: &i32, y: &i32| *y > 0);
+            let first_positive =
+                ArcBiPredicate::new(|x: &i32, _y: &i32| *x > 0);
+            let second_positive =
+                ArcBiPredicate::new(|_x: &i32, y: &i32| *y > 0);
 
             let combined = first_positive.nor(second_positive);
             assert!(!combined.test(&5, &3));
@@ -610,20 +659,27 @@ mod tests {
 
         #[test]
         fn test_display() {
-            let pred = ArcBiPredicate::new_with_name("sum_positive", |x: &i32, y: &i32| x + y > 0);
+            let pred = ArcBiPredicate::new_with_name(
+                "sum_positive",
+                |x: &i32, y: &i32| x + y > 0,
+            );
             assert_eq!(format!("{}", pred), "ArcBiPredicate(sum_positive)");
         }
 
         #[test]
         fn test_debug() {
-            let pred = ArcBiPredicate::new_with_name("test_pred", |x: &i32, y: &i32| x + y > 0);
+            let pred = ArcBiPredicate::new_with_name(
+                "test_pred",
+                |x: &i32, y: &i32| x + y > 0,
+            );
             let debug_str = format!("{:?}", pred);
             assert!(debug_str.contains("ArcBiPredicate"));
         }
 
         #[test]
         fn test_with_different_types() {
-            let str_len_greater = ArcBiPredicate::new(|s: &String, len: &usize| s.len() > *len);
+            let str_len_greater =
+                ArcBiPredicate::new(|s: &String, len: &usize| s.len() > *len);
             assert!(str_len_greater.test(&String::from("hello"), &3));
             assert!(!str_len_greater.test(&String::from("hi"), &5));
         }
@@ -651,7 +707,10 @@ mod tests {
 
         #[test]
         fn test_to_box_preserves_name() {
-            let arc_pred = ArcBiPredicate::new_with_name("test", |x: &i32, y: &i32| x + y > 0);
+            let arc_pred =
+                ArcBiPredicate::new_with_name("test", |x: &i32, y: &i32| {
+                    x + y > 0
+                });
             let box_pred = arc_pred.to_box();
             assert_eq!(box_pred.name(), Some("test"));
             assert!(box_pred.test(&5, &3));
@@ -704,7 +763,10 @@ mod tests {
 
         #[test]
         fn test_with_name() {
-            let pred = RcBiPredicate::new_with_name("sum_positive", |x: &i32, y: &i32| x + y > 0);
+            let pred = RcBiPredicate::new_with_name(
+                "sum_positive",
+                |x: &i32, y: &i32| x + y > 0,
+            );
 
             assert_eq!(pred.name(), Some("sum_positive"));
             assert!(pred.test(&5, &3));
@@ -732,7 +794,8 @@ mod tests {
 
         #[test]
         fn test_always_true_with_composition() {
-            let always_true: RcBiPredicate<i32, i32> = RcBiPredicate::always_true();
+            let always_true: RcBiPredicate<i32, i32> =
+                RcBiPredicate::always_true();
             let positive_sum = |x: &i32, y: &i32| x + y > 0;
 
             // always_true AND something = something
@@ -743,7 +806,8 @@ mod tests {
 
         #[test]
         fn test_always_false_with_composition() {
-            let always_false: RcBiPredicate<i32, i32> = RcBiPredicate::always_false();
+            let always_false: RcBiPredicate<i32, i32> =
+                RcBiPredicate::always_false();
             let positive_sum = |x: &i32, y: &i32| x + y > 0;
 
             // always_false OR something = something
@@ -786,7 +850,10 @@ mod tests {
 
         #[test]
         fn test_clone_preserves_name() {
-            let pred = RcBiPredicate::new_with_name("original", |x: &i32, y: &i32| x + y > 0);
+            let pred =
+                RcBiPredicate::new_with_name("original", |x: &i32, y: &i32| {
+                    x + y > 0
+                });
             let cloned = pred.clone();
 
             assert_eq!(pred.name(), Some("original"));
@@ -828,7 +895,8 @@ mod tests {
         #[test]
         fn test_xor() {
             let first_positive = RcBiPredicate::new(|x: &i32, _y: &i32| *x > 0);
-            let second_positive = RcBiPredicate::new(|_x: &i32, y: &i32| *y > 0);
+            let second_positive =
+                RcBiPredicate::new(|_x: &i32, y: &i32| *y > 0);
 
             let combined = first_positive.xor(second_positive);
             assert!(combined.test(&5, &-3));
@@ -838,7 +906,8 @@ mod tests {
         #[test]
         fn test_nand() {
             let first_positive = RcBiPredicate::new(|x: &i32, _y: &i32| *x > 0);
-            let second_positive = RcBiPredicate::new(|_x: &i32, y: &i32| *y > 0);
+            let second_positive =
+                RcBiPredicate::new(|_x: &i32, y: &i32| *y > 0);
 
             let combined = first_positive.nand(second_positive);
             assert!(!combined.test(&5, &3));
@@ -848,7 +917,8 @@ mod tests {
         #[test]
         fn test_nor() {
             let first_positive = RcBiPredicate::new(|x: &i32, _y: &i32| *x > 0);
-            let second_positive = RcBiPredicate::new(|_x: &i32, y: &i32| *y > 0);
+            let second_positive =
+                RcBiPredicate::new(|_x: &i32, y: &i32| *y > 0);
 
             let combined = first_positive.nor(second_positive);
             assert!(!combined.test(&5, &3));
@@ -867,20 +937,27 @@ mod tests {
 
         #[test]
         fn test_display() {
-            let pred = RcBiPredicate::new_with_name("sum_positive", |x: &i32, y: &i32| x + y > 0);
+            let pred = RcBiPredicate::new_with_name(
+                "sum_positive",
+                |x: &i32, y: &i32| x + y > 0,
+            );
             assert_eq!(format!("{}", pred), "RcBiPredicate(sum_positive)");
         }
 
         #[test]
         fn test_debug() {
-            let pred = RcBiPredicate::new_with_name("test_pred", |x: &i32, y: &i32| x + y > 0);
+            let pred = RcBiPredicate::new_with_name(
+                "test_pred",
+                |x: &i32, y: &i32| x + y > 0,
+            );
             let debug_str = format!("{:?}", pred);
             assert!(debug_str.contains("RcBiPredicate"));
         }
 
         #[test]
         fn test_with_different_types() {
-            let str_len_greater = RcBiPredicate::new(|s: &String, len: &usize| s.len() > *len);
+            let str_len_greater =
+                RcBiPredicate::new(|s: &String, len: &usize| s.len() > *len);
             assert!(str_len_greater.test(&String::from("hello"), &3));
             assert!(!str_len_greater.test(&String::from("hi"), &5));
         }
@@ -908,7 +985,10 @@ mod tests {
 
         #[test]
         fn test_to_box_preserves_name() {
-            let rc_pred = RcBiPredicate::new_with_name("test", |x: &i32, y: &i32| x + y > 0);
+            let rc_pred =
+                RcBiPredicate::new_with_name("test", |x: &i32, y: &i32| {
+                    x + y > 0
+                });
             let box_pred = rc_pred.to_box();
             assert_eq!(box_pred.name(), Some("test"));
             assert!(box_pred.test(&5, &3));
@@ -919,14 +999,16 @@ mod tests {
             let rc_pred = RcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
             let _box_pred = rc_pred.to_box();
 
-            // Original rc_pred should still be usable because to_box() doesn't consume it
+            // Original rc_pred should still be usable because to_box() doesn't
+            // consume it
             assert!(rc_pred.test(&5, &3));
             assert!(!rc_pred.test(&-5, &-3));
         }
 
         #[test]
         fn test_to_box_multiple_calls() {
-            let rc_pred = RcBiPredicate::new(|x: &i32, y: &i32| x % 2 == 0 && y % 2 == 0);
+            let rc_pred =
+                RcBiPredicate::new(|x: &i32, y: &i32| x % 2 == 0 && y % 2 == 0);
 
             // Can call to_box() multiple times
             let box_pred1 = rc_pred.to_box();
@@ -943,7 +1025,8 @@ mod tests {
 
         #[test]
         fn test_to_box_with_different_types() {
-            let rc_pred = RcBiPredicate::new(|s: &String, len: &usize| s.len() > *len);
+            let rc_pred =
+                RcBiPredicate::new(|s: &String, len: &usize| s.len() > *len);
             let box_pred = rc_pred.to_box();
 
             assert!(box_pred.test(&String::from("hello"), &3));
@@ -1017,7 +1100,10 @@ mod tests {
 
         #[test]
         fn test_box_to_rc_preserves_name() {
-            let box_pred = BoxBiPredicate::new_with_name("test", |x: &i32, y: &i32| x + y > 0);
+            let box_pred =
+                BoxBiPredicate::new_with_name("test", |x: &i32, y: &i32| {
+                    x + y > 0
+                });
             let rc_pred = box_pred.into_rc();
             assert_eq!(rc_pred.name(), Some("test"));
         }
@@ -1038,7 +1124,10 @@ mod tests {
 
         #[test]
         fn test_arc_to_box_preserves_name() {
-            let arc_pred = ArcBiPredicate::new_with_name("test", |x: &i32, y: &i32| x + y > 0);
+            let arc_pred =
+                ArcBiPredicate::new_with_name("test", |x: &i32, y: &i32| {
+                    x + y > 0
+                });
             let box_pred = arc_pred.into_box();
             assert_eq!(box_pred.name(), Some("test"));
         }
@@ -1052,7 +1141,10 @@ mod tests {
 
         #[test]
         fn test_arc_to_rc_preserves_name() {
-            let arc_pred = ArcBiPredicate::new_with_name("test", |x: &i32, y: &i32| x + y > 0);
+            let arc_pred =
+                ArcBiPredicate::new_with_name("test", |x: &i32, y: &i32| {
+                    x + y > 0
+                });
             let rc_pred = arc_pred.into_rc();
             assert_eq!(rc_pred.name(), Some("test"));
         }
@@ -1068,7 +1160,10 @@ mod tests {
 
         #[test]
         fn test_arc_to_rc_non_consuming_preserves_name() {
-            let arc_pred = ArcBiPredicate::new_with_name("test", |x: &i32, y: &i32| x + y > 0);
+            let arc_pred =
+                ArcBiPredicate::new_with_name("test", |x: &i32, y: &i32| {
+                    x + y > 0
+                });
             let rc_pred = arc_pred.to_rc();
             assert_eq!(rc_pred.name(), Some("test"));
             assert_eq!(arc_pred.name(), Some("test"));
@@ -1090,7 +1185,10 @@ mod tests {
 
         #[test]
         fn test_rc_to_box_preserves_name() {
-            let rc_pred = RcBiPredicate::new_with_name("test", |x: &i32, y: &i32| x + y > 0);
+            let rc_pred =
+                RcBiPredicate::new_with_name("test", |x: &i32, y: &i32| {
+                    x + y > 0
+                });
             let box_pred = rc_pred.into_box();
             assert_eq!(box_pred.name(), Some("test"));
         }
@@ -1111,7 +1209,10 @@ mod tests {
 
         #[test]
         fn test_conversion_chain() {
-            let arc_pred = ArcBiPredicate::new_with_name("original", |x: &i32, y: &i32| x + y > 0);
+            let arc_pred = ArcBiPredicate::new_with_name(
+                "original",
+                |x: &i32, y: &i32| x + y > 0,
+            );
 
             // Arc -> Rc
             let rc_pred = arc_pred.clone().into_rc();
@@ -1279,8 +1380,10 @@ mod tests {
             let predicate = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
 
             let pred_fn = predicate.into_fn();
-            let positive: Vec<_> = pairs.iter().filter(|(x, y)| pred_fn(x, y)).collect();
-            let negative: Vec<_> = pairs.iter().filter(|(x, y)| !pred_fn(x, y)).collect();
+            let positive: Vec<_> =
+                pairs.iter().filter(|(x, y)| pred_fn(x, y)).collect();
+            let negative: Vec<_> =
+                pairs.iter().filter(|(x, y)| !pred_fn(x, y)).collect();
 
             assert_eq!(positive, vec![&(1, 2), &(-1, 3), &(3, 4)]);
             assert_eq!(negative, vec![&(5, -6)]);
@@ -1294,7 +1397,8 @@ mod tests {
                 (String::from("world"), 4),
             ]);
 
-            let predicate = BoxBiPredicate::new(|s: &String, len: &usize| s.len() > *len);
+            let predicate =
+                BoxBiPredicate::new(|s: &String, len: &usize| s.len() > *len);
             let pred_fn = predicate.into_fn();
 
             let result: Vec<_> = pairs
@@ -1303,7 +1407,10 @@ mod tests {
                 .map(|(s, _)| s.clone())
                 .collect();
 
-            assert_eq!(result, vec![String::from("hello"), String::from("world")]);
+            assert_eq!(
+                result,
+                vec![String::from("hello"), String::from("world")]
+            );
         }
 
         #[test]
@@ -1331,7 +1438,10 @@ mod tests {
             thread,
         };
 
-        fn filter_pairs<P>(pairs: Vec<(i32, i32)>, predicate: &P) -> Vec<(i32, i32)>
+        fn filter_pairs<P>(
+            pairs: Vec<(i32, i32)>,
+            predicate: &P,
+        ) -> Vec<(i32, i32)>
         where
             P: BiPredicate<i32, i32>,
         {
@@ -1436,7 +1546,8 @@ mod tests {
                 (String::from("world"), 4),
             ];
 
-            let pred = BoxBiPredicate::new(|s: &String, len: &usize| s.len() > *len);
+            let pred =
+                BoxBiPredicate::new(|s: &String, len: &usize| s.len() > *len);
             let result = filter_string_pairs(pairs, &pred);
             assert_eq!(result.len(), 2);
         }
@@ -1466,7 +1577,9 @@ mod tests {
 
         #[test]
         fn test_returning_bi_predicate_from_function() {
-            fn create_sum_checker(threshold: i32) -> impl BiPredicate<i32, i32> {
+            fn create_sum_checker(
+                threshold: i32,
+            ) -> impl BiPredicate<i32, i32> {
                 move |x: &i32, y: &i32| x + y > threshold
             }
 
@@ -1496,10 +1609,12 @@ mod tests {
 
             // Use different types in sequence
             let box_pred = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-            let count1 = pairs.iter().filter(|(x, y)| box_pred.test(x, y)).count();
+            let count1 =
+                pairs.iter().filter(|(x, y)| box_pred.test(x, y)).count();
 
             let arc_pred = ArcBiPredicate::new(|x: &i32, _y: &i32| *x > 0);
-            let count2 = pairs.iter().filter(|(x, y)| arc_pred.test(x, y)).count();
+            let count2 =
+                pairs.iter().filter(|(x, y)| arc_pred.test(x, y)).count();
 
             assert_eq!(count1, 3);
             assert_eq!(count2, 3);
@@ -1513,7 +1628,10 @@ mod tests {
                 y: i32,
             }
 
-            fn filter_points<P>(points: Vec<(Point, Point)>, pred: &P) -> Vec<(Point, Point)>
+            fn filter_points<P>(
+                points: Vec<(Point, Point)>,
+                pred: &P,
+            ) -> Vec<(Point, Point)>
             where
                 P: BiPredicate<Point, Point>,
             {
@@ -1528,7 +1646,8 @@ mod tests {
                 (Point { x: -1, y: 2 }, Point { x: 1, y: -4 }),
             ];
 
-            let pred = BoxBiPredicate::new(|p1: &Point, p2: &Point| p1.x + p2.x > 0);
+            let pred =
+                BoxBiPredicate::new(|p1: &Point, p2: &Point| p1.x + p2.x > 0);
             let result = filter_points(points, &pred);
             assert_eq!(result.len(), 1);
         }
@@ -1575,7 +1694,8 @@ mod tests {
             }
 
             // All other methods (into_box, into_rc, into_arc, into_fn,
-            // to_box, to_rc, to_arc, to_fn) use default implementations automatically
+            // to_box, to_rc, to_arc, to_fn) use default implementations
+            // automatically
         }
 
         #[test]
@@ -1675,7 +1795,8 @@ mod tests {
             let func = pred.into_fn();
 
             let pairs = [(6, 5), (3, 4), (10, 1), (5, 5)];
-            let result: Vec<_> = pairs.iter().filter(|(x, y)| func(x, y)).collect();
+            let result: Vec<_> =
+                pairs.iter().filter(|(x, y)| func(x, y)).collect();
 
             assert_eq!(result, vec![&(6, 5), &(10, 1)]);
         }
@@ -1821,7 +1942,8 @@ mod tests {
             let func = pred.to_fn();
 
             let pairs = [(6, 5), (3, 4), (10, 1), (5, 5)];
-            let result: Vec<_> = pairs.iter().filter(|(x, y)| func(x, y)).collect();
+            let result: Vec<_> =
+                pairs.iter().filter(|(x, y)| func(x, y)).collect();
 
             assert_eq!(result, vec![&(6, 5), &(10, 1)]);
         }
@@ -1888,7 +2010,8 @@ mod tests {
 
         #[test]
         fn test_with_zero() {
-            let sum_positive = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
+            let sum_positive =
+                BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
             assert!(!sum_positive.test(&0, &0));
             assert!(sum_positive.test(&1, &0));
             assert!(sum_positive.test(&0, &1));
@@ -1912,7 +2035,8 @@ mod tests {
 
         #[test]
         fn test_double_negation() {
-            let sum_positive = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
+            let sum_positive =
+                BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
             let not_not = !(!sum_positive);
             assert!(not_not.test(&5, &3));
             assert!(!not_not.test(&-5, &-3));
@@ -1920,16 +2044,18 @@ mod tests {
 
         #[test]
         fn test_with_empty_string() {
-            let is_empty =
-                BoxBiPredicate::new(|s1: &String, s2: &String| s1.is_empty() && s2.is_empty());
+            let is_empty = BoxBiPredicate::new(|s1: &String, s2: &String| {
+                s1.is_empty() && s2.is_empty()
+            });
             assert!(is_empty.test(&String::new(), &String::new()));
             assert!(!is_empty.test(&String::from("a"), &String::new()));
         }
 
         #[test]
         fn test_with_large_numbers() {
-            let sum_overflow_safe =
-                BoxBiPredicate::new(|x: &i64, y: &i64| x.checked_add(*y).is_some());
+            let sum_overflow_safe = BoxBiPredicate::new(|x: &i64, y: &i64| {
+                x.checked_add(*y).is_some()
+            });
             let max_minus_one = i64::MAX - 1;
             assert!(sum_overflow_safe.test(&max_minus_one, &1));
             assert!(!sum_overflow_safe.test(&i64::MAX, &1));
@@ -1937,7 +2063,8 @@ mod tests {
 
         #[test]
         fn test_with_floating_point() {
-            let close_enough = BoxBiPredicate::new(|x: &f64, y: &f64| (*x - *y).abs() < 0.01);
+            let close_enough =
+                BoxBiPredicate::new(|x: &f64, y: &f64| (*x - *y).abs() < 0.01);
             assert!(close_enough.test(&1.0, &1.005));
             assert!(!close_enough.test(&1.0, &1.02));
         }
@@ -2030,7 +2157,8 @@ mod to_fn_tests {
 
     #[test]
     fn test_rc_to_fn_multiple_calls() {
-        let pred = RcBiPredicate::new(|x: &i32, y: &i32| x % 2 == 0 && y % 2 == 0);
+        let pred =
+            RcBiPredicate::new(|x: &i32, y: &i32| x % 2 == 0 && y % 2 == 0);
         let func = pred.to_fn();
 
         assert!(func(&2, &4));
@@ -2051,7 +2179,8 @@ mod to_fn_tests {
 
     #[test]
     fn test_arc_to_fn_multiple_calls() {
-        let pred = ArcBiPredicate::new(|x: &i32, y: &i32| x % 2 == 0 && y % 2 == 0);
+        let pred =
+            ArcBiPredicate::new(|x: &i32, y: &i32| x % 2 == 0 && y % 2 == 0);
         let func = pred.to_fn();
 
         assert!(func(&2, &4));
@@ -2063,7 +2192,8 @@ mod to_fn_tests {
     #[test]
     fn test_rc_to_fn_with_composition() {
         let is_sum_positive = RcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-        let is_both_even = RcBiPredicate::new(|x: &i32, y: &i32| x % 2 == 0 && y % 2 == 0);
+        let is_both_even =
+            RcBiPredicate::new(|x: &i32, y: &i32| x % 2 == 0 && y % 2 == 0);
 
         let combined = is_sum_positive.and(is_both_even);
         let func = combined.to_fn();
@@ -2076,7 +2206,8 @@ mod to_fn_tests {
     #[test]
     fn test_arc_to_fn_with_composition() {
         let is_sum_positive = ArcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-        let is_both_even = ArcBiPredicate::new(|x: &i32, y: &i32| x % 2 == 0 && y % 2 == 0);
+        let is_both_even =
+            ArcBiPredicate::new(|x: &i32, y: &i32| x % 2 == 0 && y % 2 == 0);
 
         let combined = is_sum_positive.and(is_both_even);
         let func = combined.to_fn();
@@ -2108,7 +2239,10 @@ mod to_fn_tests {
 
     #[test]
     fn test_rc_to_rc_preserves_name() {
-        let pred = RcBiPredicate::new_with_name("test_pred", |x: &i32, y: &i32| x + y > 0);
+        let pred =
+            RcBiPredicate::new_with_name("test_pred", |x: &i32, y: &i32| {
+                x + y > 0
+            });
         let rc_pred = pred.to_rc();
 
         assert_eq!(rc_pred.name(), Some("test_pred"));
@@ -2117,7 +2251,10 @@ mod to_fn_tests {
 
     #[test]
     fn test_arc_to_arc_preserves_name() {
-        let pred = ArcBiPredicate::new_with_name("test_pred", |x: &i32, y: &i32| x + y > 0);
+        let pred =
+            ArcBiPredicate::new_with_name("test_pred", |x: &i32, y: &i32| {
+                x + y > 0
+            });
         let arc_pred = pred.to_arc();
 
         assert_eq!(arc_pred.name(), Some("test_pred"));

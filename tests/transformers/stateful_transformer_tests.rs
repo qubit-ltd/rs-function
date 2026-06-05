@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 // qubit-style: allow explicit-imports
 use std::cell::Cell;
@@ -43,7 +41,9 @@ fn test_stateful_transformer_default_conversions_allow_relaxed_generic_types() {
         }
     }
 
-    impl<'a> StatefulTransformer<BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcStatefulTransformer {
+    impl<'a> StatefulTransformer<BorrowedRc<'a>, BorrowedRc<'a>>
+        for BorrowedRcStatefulTransformer
+    {
         fn apply(&mut self, value: BorrowedRc<'a>) -> BorrowedRc<'a> {
             self.count.set(self.count.get() + 1);
             value
@@ -817,7 +817,8 @@ fn test_fn_mapper_ops_and_then() {
 #[test]
 fn test_fn_mapper_ops_when() {
     let mut mapper =
-        FnStatefulTransformerOps::when(|x: i32| x * 2, |x: &i32| *x > 0).or_else(|x: i32| -x);
+        FnStatefulTransformerOps::when(|x: i32| x * 2, |x: &i32| *x > 0)
+            .or_else(|x: i32| -x);
 
     assert_eq!(mapper.apply(5), 10);
     assert_eq!(mapper.apply(-5), 5);
@@ -841,7 +842,8 @@ fn test_box_conditional_mapper_with_predicate() {
 
 #[test]
 fn test_arc_conditional_mapper_clone() {
-    let conditional = ArcStatefulTransformer::new(|x: i32| x * 2).when(|x: &i32| *x > 0);
+    let conditional =
+        ArcStatefulTransformer::new(|x: i32| x * 2).when(|x: &i32| *x > 0);
 
     // Clone the ArcConditionalStatefulTransformer before calling or_else
     let conditional_clone = conditional.clone();
@@ -858,7 +860,8 @@ fn test_arc_conditional_mapper_clone() {
 
 #[test]
 fn test_rc_conditional_mapper_clone() {
-    let conditional = RcStatefulTransformer::new(|x: i32| x * 2).when(|x: &i32| *x > 0);
+    let conditional =
+        RcStatefulTransformer::new(|x: i32| x * 2).when(|x: &i32| *x > 0);
 
     // Clone the RcConditionalStatefulTransformer before calling or_else
     let conditional_clone = conditional.clone();
@@ -1058,7 +1061,8 @@ impl StatefulTransformer<i32, i32> for CustomSendStatefulTransformer {
     }
 }
 
-// Implement Send for CustomSendStatefulTransformer to allow conversion to ArcStatefulTransformer
+// Implement Send for CustomSendStatefulTransformer to allow conversion to
+// ArcStatefulTransformer
 unsafe impl Send for CustomSendStatefulTransformer {}
 unsafe impl Sync for CustomSendStatefulTransformer {}
 
@@ -1194,7 +1198,9 @@ struct StatefulStatefulTransformer {
     history: Vec<i32>,
 }
 
-impl StatefulTransformer<i32, (i32, i32, usize)> for StatefulStatefulTransformer {
+impl StatefulTransformer<i32, (i32, i32, usize)>
+    for StatefulStatefulTransformer
+{
     fn apply(&mut self, input: i32) -> (i32, i32, usize) {
         self.count += 1;
         self.sum += input;
@@ -1431,7 +1437,8 @@ fn test_into_fn_after_conversion() {
 
 #[test]
 fn test_into_fn_with_string_return() {
-    let mapper = BoxStatefulTransformer::new(|x: i32| format!("Value: {}", x * 2));
+    let mapper =
+        BoxStatefulTransformer::new(|x: i32| format!("Value: {}", x * 2));
     let mut closure = StatefulTransformer::into_fn(mapper);
 
     assert_eq!(closure(5), "Value: 10");
@@ -1440,7 +1447,8 @@ fn test_into_fn_with_string_return() {
 
 #[test]
 fn test_into_fn_chained_usage() {
-    // Test chained calls: StatefulTransformer -> into_box -> and_then -> into_fn
+    // Test chained calls: StatefulTransformer -> into_box -> and_then ->
+    // into_fn
     let mut counter = 0;
     let mapper1 = move |x: i32| {
         counter += 1;
@@ -1836,10 +1844,11 @@ mod conditional_stateful_transformer_display_debug_tests {
 #[test]
 fn test_box_stateful_transformer_display_with_name() {
     let mut counter = 0;
-    let transformer = BoxStatefulTransformer::new_with_name("counter", move |x: i32| {
-        counter += 1;
-        x + counter
-    });
+    let transformer =
+        BoxStatefulTransformer::new_with_name("counter", move |x: i32| {
+            counter += 1;
+            x + counter
+        });
     let display_str = format!("{}", transformer);
     assert_eq!(display_str, "BoxStatefulTransformer(counter)");
 }
@@ -1858,10 +1867,11 @@ fn test_box_stateful_transformer_display_without_name() {
 #[test]
 fn test_rc_stateful_transformer_display_with_name() {
     let mut counter = 0;
-    let transformer = RcStatefulTransformer::new_with_name("counter", move |x: i32| {
-        counter += 1;
-        x + counter
-    });
+    let transformer =
+        RcStatefulTransformer::new_with_name("counter", move |x: i32| {
+            counter += 1;
+            x + counter
+        });
     let display_str = format!("{}", transformer);
     assert_eq!(display_str, "RcStatefulTransformer(counter)");
 }
@@ -1880,10 +1890,11 @@ fn test_rc_stateful_transformer_display_without_name() {
 #[test]
 fn test_arc_stateful_transformer_display_with_name() {
     let mut counter = 0;
-    let transformer = ArcStatefulTransformer::new_with_name("counter", move |x: i32| {
-        counter += 1;
-        x + counter
-    });
+    let transformer =
+        ArcStatefulTransformer::new_with_name("counter", move |x: i32| {
+            counter += 1;
+            x + counter
+        });
     let display_str = format!("{}", transformer);
     assert_eq!(display_str, "ArcStatefulTransformer(counter)");
 }

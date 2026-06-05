@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcMutator` public type.
 
@@ -46,7 +44,8 @@ use super::{
 /// # Use Cases
 ///
 /// Choose `RcMutator` when:
-/// - The mutator needs to be shared within a single thread for stateless operations
+/// - The mutator needs to be shared within a single thread for stateless
+///   operations
 /// - Thread safety is not required
 /// - Performance is important (avoiding lock overhead)
 ///
@@ -62,15 +61,17 @@ use super::{
 /// mutator.apply(&mut value);
 /// assert_eq!(value, 10);
 /// ```
-///
 pub struct RcMutator<T> {
     pub(super) function: RcMutatorFn<T>,
     pub(super) name: Option<String>,
 }
 
 impl<T> RcMutator<T> {
-    // Generate common mutator methods (new, new_with_name, name, set_name, noop)
-    impl_mutator_common_methods!(RcMutator<T>, (Fn(&mut T) + 'static), |f| Rc::new(f));
+    // Generate common mutator methods (new, new_with_name, name, set_name,
+    // noop)
+    impl_mutator_common_methods!(RcMutator<T>, (Fn(&mut T) + 'static), |f| {
+        Rc::new(f)
+    });
 
     // Generate shared mutator methods (when, and_then, or_else, conversions)
     impl_shared_mutator_methods!(

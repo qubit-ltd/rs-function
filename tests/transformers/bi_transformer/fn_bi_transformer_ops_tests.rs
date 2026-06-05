@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 // qubit-style: allow explicit-imports
 use qubit_function::{
@@ -61,7 +59,8 @@ mod tests {
         let add = |x: i32, y: i32| x + y;
         let subtract = |x: i32, y: i32| x - y;
 
-        let conditional = add.when(|x: &i32, _y: &i32| *x > 0).or_else(subtract);
+        let conditional =
+            add.when(|x: &i32, _y: &i32| *x > 0).or_else(subtract);
 
         assert_eq!(conditional.apply(10, 3), 13); // x > 0, execute addition
         assert_eq!(conditional.apply(-10, 3), -13); // x <= 0, execute subtraction
@@ -102,8 +101,9 @@ mod tests {
 
     #[test]
     fn test_chained_and_then() {
-        // Test chained and_then - Note: first and_then returns BoxBiTransformer,
-        // which doesn't have and_then method, so need to do step by step
+        // Test chained and_then - Note: first and_then returns
+        // BoxBiTransformer, which doesn't have and_then method, so need
+        // to do step by step
         let add = |x: i32, y: i32| x + y;
         let double = |x: i32| x * 2;
 

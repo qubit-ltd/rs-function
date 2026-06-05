@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Shared Mutator Methods Macro
 //!
 //! Generates when and and_then method implementations for Arc/Rc-based Mutator
@@ -22,9 +20,11 @@
 //! * `$struct_name<$generics>` - The struct name with its generic parameters
 //!   - Single parameter: `ArcMutator<T>`
 //! * `$return_type` - The return type for when (e.g., ArcConditionalMutator)
-//! * `$predicate_conversion` - Method to convert predicate (into_arc or into_rc)
+//! * `$predicate_conversion` - Method to convert predicate (into_arc or
+//!   into_rc)
 //! * `$mutator_trait` - Mutator trait name (e.g., Mutator, MutatorOnce)
-//! * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync + 'static for Arc)
+//! * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync +
+//!   'static for Arc)
 //!
 //! # All Macro Invocations
 //!
@@ -56,7 +56,6 @@
 //!     'static
 //! );
 //! ```
-//!
 
 /// Generates when and and_then method implementations for Arc/Rc-based Mutator
 ///
@@ -72,9 +71,11 @@
 /// * `$struct_name<$generics>` - The struct name with its generic parameters
 ///   - Single parameter: `ArcMutator<T>`
 /// * `$return_type` - The return type for when (e.g., ArcConditionalMutator)
-/// * `$predicate_conversion` - Method to convert predicate (into_arc or into_rc)
+/// * `$predicate_conversion` - Method to convert predicate (into_arc or
+///   into_rc)
 /// * `$mutator_trait` - Mutator trait name (e.g., Mutator, MutatorOnce)
-/// * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync + 'static for Arc)
+/// * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync +
+///   'static for Arc)
 ///
 /// # All Macro Invocations
 ///
@@ -114,7 +115,6 @@
 ///     );
 /// }
 /// ```
-///
 macro_rules! impl_shared_mutator_methods {
     (@and_then Mutator, $struct_name:ident, $first:expr, $after:expr, $t:ident) => {{
         let first = $first;

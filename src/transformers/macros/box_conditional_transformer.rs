@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Box Conditional Transformer Macro
 //!
 //! Generates Box-based Conditional Transformer implementations
@@ -43,14 +41,14 @@
 //!     BiTransformer
 //! );
 //! ```
-//!
 
 /// Generates Box-based Conditional Transformer implementations
 ///
 /// This macro should be used at the top level (outside of any impl block) as
 /// it generates a complete impl block with methods for the specified struct.
-/// For Box-based conditional transformers, generates `and_then` and `or_else` methods,
-/// as well as complete Transformer/BiTransformer trait implementations.
+/// For Box-based conditional transformers, generates `and_then` and `or_else`
+/// methods, as well as complete Transformer/BiTransformer trait
+/// implementations.
 ///
 /// Box type characteristics:
 /// - `and_then` and `or_else` consume self (because Box cannot Clone)
@@ -80,7 +78,6 @@
 ///     BiTransformer
 /// );
 /// ```
-///
 macro_rules! impl_box_conditional_transformer {
     (@let_transformer Transformer, $name:ident, $value:expr) => {
         let $name = $value;

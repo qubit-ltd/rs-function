@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalMutatorOnce` public type.
 
@@ -25,8 +23,9 @@ use super::{
 
 /// BoxConditionalMutatorOnce struct
 ///
-/// A conditional one-time mutator that only executes when a predicate is satisfied.
-/// Uses `BoxMutatorOnce` and `BoxPredicate` for single ownership semantics.
+/// A conditional one-time mutator that only executes when a predicate is
+/// satisfied. Uses `BoxMutatorOnce` and `BoxPredicate` for single ownership
+/// semantics.
 ///
 /// This type is typically created by calling `BoxMutatorOnce::when()` and is
 /// designed to work with the `or_else()` method to create if-then-else logic.
@@ -36,7 +35,8 @@ use super::{
 /// - **Single Ownership**: Not cloneable, consumes `self` on use
 /// - **Conditional Execution**: Only mutates when predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
-/// - **Implements MutatorOnce**: Can be used anywhere a `MutatorOnce` is expected
+/// - **Implements MutatorOnce**: Can be used anywhere a `MutatorOnce` is
+///   expected
 ///
 /// # Examples
 ///
@@ -98,14 +98,17 @@ use super::{
 /// mutator2.apply(&mut target2);
 /// assert_eq!(target2, vec![0, 99]); // or_else branch executed
 /// ```
-///
 pub struct BoxConditionalMutatorOnce<T> {
     pub(super) mutator: BoxMutatorOnce<T>,
     pub(super) predicate: BoxPredicate<T>,
 }
 
 // Generate and_then and or_else methods using macro
-impl_box_conditional_mutator!(BoxConditionalMutatorOnce<T>, BoxMutatorOnce, MutatorOnce);
+impl_box_conditional_mutator!(
+    BoxConditionalMutatorOnce<T>,
+    BoxMutatorOnce,
+    MutatorOnce
+);
 
 impl<T> MutatorOnce<T> for BoxConditionalMutatorOnce<T> {
     fn apply(self, value: &mut T) {

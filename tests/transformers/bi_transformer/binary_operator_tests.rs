@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 use qubit_function::{
     ArcBinaryOperator,
@@ -64,13 +62,18 @@ fn test_rc_binary_operator_clone() {
 
 #[test]
 fn test_box_binary_operator_once() {
-    let add: BoxBinaryOperatorOnce<i32> = BoxBinaryOperatorOnce::new(|a, b| a + b);
+    let add: BoxBinaryOperatorOnce<i32> =
+        BoxBinaryOperatorOnce::new(|a, b| a + b);
     assert_eq!(add.apply(20, 22), 42);
 }
 
 #[test]
 fn test_binary_operator_implements_bi_transformer() {
-    fn use_bi_transformer<T: BiTransformer<i32, i32, i32>>(t: T, a: i32, b: i32) -> i32 {
+    fn use_bi_transformer<T: BiTransformer<i32, i32, i32>>(
+        t: T,
+        a: i32,
+        b: i32,
+    ) -> i32 {
         t.apply(a, b)
     }
 

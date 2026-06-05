@@ -1,24 +1,22 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! # BiMutatingFunctionOnce Types
 //!
-//! Provides Rust implementations of consuming bi-mutating-function traits similar to
-//! Rust's `FnOnce(&mut T, &mut U) -> R` trait, but with value-oriented semantics for functional
-//! programming patterns with two mutable input references.
+//! Provides Rust implementations of consuming bi-mutating-function traits
+//! similar to Rust's `FnOnce(&mut T, &mut U) -> R` trait, but with
+//! value-oriented semantics for functional programming patterns with two
+//! mutable input references.
 //!
-//! This module provides the `BiMutatingFunctionOnce<T, U, R>` trait and one-time use
-//! implementations:
+//! This module provides the `BiMutatingFunctionOnce<T, U, R>` trait and
+//! one-time use implementations:
 //!
 //! - [`BoxBiMutatingFunctionOnce`]: Single ownership, one-time use
-//!
 use crate::functions::{
     macros::{
         impl_box_conditional_function,
@@ -53,16 +51,15 @@ pub use box_conditional_bi_mutating_function_once::BoxConditionalBiMutatingFunct
 /// BiMutatingFunctionOnce trait - consuming bi-mutating-function that takes
 /// mutable references
 ///
-/// Defines the behavior of a consuming bi-mutating-function: computing a value of
-/// type `R` from mutable references to types `T` and `U` by taking ownership of self.
-/// This trait is analogous to `FnOnce(&mut T, &mut U) -> R`.
+/// Defines the behavior of a consuming bi-mutating-function: computing a value
+/// of type `R` from mutable references to types `T` and `U` by taking ownership
+/// of self. This trait is analogous to `FnOnce(&mut T, &mut U) -> R`.
 ///
 /// # Type Parameters
 ///
 /// * `T` - The type of the first input value (mutable reference)
 /// * `U` - The type of the second input value (mutable reference)
 /// * `R` - The type of the output value
-///
 pub trait BiMutatingFunctionOnce<T, U, R> {
     /// Computes output from two mutable references, consuming self
     ///
@@ -88,7 +85,9 @@ pub trait BiMutatingFunctionOnce<T, U, R> {
     where
         Self: Sized + 'static,
     {
-        BoxBiMutatingFunctionOnce::new(move |t: &mut T, u: &mut U| self.apply(t, u))
+        BoxBiMutatingFunctionOnce::new(move |t: &mut T, u: &mut U| {
+            self.apply(t, u)
+        })
     }
 
     /// Converts bi-mutating-function to a closure
@@ -113,7 +112,8 @@ pub trait BiMutatingFunctionOnce<T, U, R> {
     ///
     /// # Returns
     ///
-    /// Returns a boxed function pointer that implements `FnOnce(&mut T, &mut U) -> R`
+    /// Returns a boxed function pointer that implements `FnOnce(&mut T, &mut U)
+    /// -> R`
     ///
     /// # Examples
     ///

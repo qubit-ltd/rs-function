@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Shared Function Methods Macro
 //!
 //! Generates when and and_then method implementations for Arc/Rc-based Function
@@ -14,8 +12,8 @@
 //! Generates conditional execution when method and chaining and_then method
 //! for Arc/Rc-based functions that borrow &self (because Arc/Rc can be cloned).
 //!
-//! This macro supports both single-parameter and two-parameter functions through
-//! pattern matching on the struct signature.
+//! This macro supports both single-parameter and two-parameter functions
+//! through pattern matching on the struct signature.
 //!
 //! # Parameters
 //!
@@ -24,10 +22,12 @@
 //!   - Two parameters: `ArcBiFunction<T, U, R>`
 //! * `$conditional_type` - The conditional function type for when (e.g.,
 //!   ArcConditionalFunction)
-//! * `$predicate_conversion` - Method to convert predicate (into_arc or into_rc)
+//! * `$predicate_conversion` - Method to convert predicate (into_arc or
+//!   into_rc)
 //! * `$chained_function_trait` - The name of the function trait that is chained
 //!   after the execution of this function (e.g., Function, BiFunction)
-//! * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync + 'static for Arc)
+//! * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync +
+//!   'static for Arc)
 //!
 //! # All Macro Invocations
 //!
@@ -63,7 +63,6 @@
 //! //     'static
 //! // );
 //! ```
-//!
 
 /// Generates when and and_then method implementations for Arc/Rc-based Function
 ///
@@ -73,19 +72,22 @@
 /// and_then method for Arc/Rc-based functions that borrow &self (because Arc/Rc
 /// can be cloned).
 ///
-/// This macro supports both single-parameter and two-parameter functions through
-/// pattern matching on the struct signature.
+/// This macro supports both single-parameter and two-parameter functions
+/// through pattern matching on the struct signature.
 ///
 /// # Parameters
 ///
 /// * `$struct_name<$generics>` - The struct name with its generic parameters
 ///   - Single parameter: `ArcFunction<T, R>`
 ///   - Two parameters: `ArcBiFunction<T, U, R>`
-/// * `$conditional_type` - The conditional function type for when (e.g., ArcConditionalFunction)
-/// * `$predicate_conversion` - Method to convert predicate (into_arc or into_rc)
+/// * `$conditional_type` - The conditional function type for when (e.g.,
+///   ArcConditionalFunction)
+/// * `$predicate_conversion` - Method to convert predicate (into_arc or
+///   into_rc)
 /// * `$chained_function_trait` - The name of the function trait that is chained
 ///   after the execution of this function (e.g., Function, BiFunction)
-/// * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync + 'static for Arc)
+/// * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync +
+///   'static for Arc)
 ///
 /// # All Macro Invocations
 ///
@@ -121,7 +123,6 @@
 /// //     'static
 /// // );
 /// ```
-///
 macro_rules! impl_shared_function_methods {
     (@let_before ArcStatefulFunction, $name:ident, $value:expr) => {
         let mut $name = $value;

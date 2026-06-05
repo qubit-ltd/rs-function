@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcComparator` public type.
 
@@ -39,7 +37,6 @@ type RcComparatorFn<T> = Rc<dyn Fn(&T, &T) -> Ordering>;
 /// assert_eq!(cmp.compare(&5, &3), Ordering::Greater);
 /// assert_eq!(cloned.compare(&5, &3), Ordering::Greater);
 /// ```
-///
 #[derive(Clone)]
 pub struct RcComparator<T> {
     pub(super) function: RcComparatorFn<T>,

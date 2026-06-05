@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcBiTransformer` public type.
 
@@ -44,7 +42,6 @@ use super::{
 ///   inputs)
 /// - **Thread Safety**: Thread-safe (`Send + Sync` required)
 /// - **Clonable**: Cheap cloning via `Arc::clone`
-///
 pub struct ArcBiTransformer<T, U, R> {
     pub(super) function: Arc<dyn Fn(T, U) -> R + Send + Sync>,
     pub(super) name: Option<String>,
@@ -112,7 +109,6 @@ impl<T, U, R> BiTransformer<T, U, R> for ArcBiTransformer<T, U, R> {
 /// let multiply = |x: i32, y: i32| x * y;
 /// assert_eq!(multiply.apply(6, 7), 42);
 /// ```
-///
 impl<F, T, U, R> BiTransformer<T, U, R> for F
 where
     F: Fn(T, U) -> R,

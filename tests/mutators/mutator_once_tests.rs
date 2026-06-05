@@ -1,16 +1,15 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! # MutatorOnce Tests
 //!
-//! Tests the complete functionality of MutatorOnce trait and its implementations.
+//! Tests the complete functionality of MutatorOnce trait and its
+//! implementations.
 
 use qubit_function::{
     BoxMutatorOnce,
@@ -61,7 +60,8 @@ fn test_closure_into_and_to_variants() {
 
     // Note: closure was moved - create another closure for to_box/to_fn
     let closure2 = move |x: &mut Vec<i32>| x.push(99);
-    // to_box uses Clone; simple closure is zero-sized and Clone, so to_box exists
+    // to_box uses Clone; simple closure is zero-sized and Clone, so to_box
+    // exists
     let boxed2 = closure2.to_box();
     let mut v2 = vec![0];
     boxed2.apply(&mut v2);
@@ -386,8 +386,8 @@ fn test_closure_and_then() {
     let data1 = vec![1, 2];
     let data2 = vec![3, 4];
 
-    let chained =
-        (move |x: &mut Vec<i32>| x.extend(data1)).and_then(move |x: &mut Vec<i32>| x.extend(data2));
+    let chained = (move |x: &mut Vec<i32>| x.extend(data1))
+        .and_then(move |x: &mut Vec<i32>| x.extend(data2));
 
     let mut target = vec![0];
     chained.apply(&mut target);
@@ -421,7 +421,8 @@ mod test_box_conditional_mutator_once_debug_display {
     #[test]
     fn test_box_conditional_mutator_once_debug() {
         let data = vec![1, 2];
-        let mutator = BoxMutatorOnce::new(move |x: &mut Vec<i32>| x.extend(data));
+        let mutator =
+            BoxMutatorOnce::new(move |x: &mut Vec<i32>| x.extend(data));
         let conditional = mutator.when(|x: &Vec<i32>| x.len() < 5);
 
         let debug_str = format!("{:?}", conditional);
@@ -433,7 +434,8 @@ mod test_box_conditional_mutator_once_debug_display {
     #[test]
     fn test_box_conditional_mutator_once_display() {
         let data = vec![3, 4];
-        let mutator = BoxMutatorOnce::new(move |x: &mut Vec<i32>| x.extend(data));
+        let mutator =
+            BoxMutatorOnce::new(move |x: &mut Vec<i32>| x.extend(data));
         let conditional = mutator.when(|x: &Vec<i32>| !x.is_empty());
 
         let display_str = format!("{}", conditional);
@@ -442,7 +444,10 @@ mod test_box_conditional_mutator_once_debug_display {
 
     #[test]
     fn test_box_mutator_once_new_with_name() {
-        let mutator = BoxMutatorOnce::new_with_name("test_mutator_once", |x: &mut i32| *x += 1);
+        let mutator = BoxMutatorOnce::new_with_name(
+            "test_mutator_once",
+            |x: &mut i32| *x += 1,
+        );
         assert_eq!(mutator.name(), Some("test_mutator_once"));
 
         let mut value = 5;
@@ -465,7 +470,8 @@ mod test_box_conditional_mutator_once_debug_display {
 
     #[test]
     fn test_box_mutator_once_new_with_optional_name_none() {
-        let mutator = BoxMutatorOnce::new_with_optional_name(|x: &mut i32| *x += 1, None);
+        let mutator =
+            BoxMutatorOnce::new_with_optional_name(|x: &mut i32| *x += 1, None);
         assert_eq!(mutator.name(), None);
 
         let mut value = 5;
@@ -527,7 +533,10 @@ mod custom_mutator_to_methods_tests {
         let mut value = 7;
         boxed.apply(&mut value);
         assert_eq!(value, 14);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![14]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![14]
+        );
     }
 
     #[test]
@@ -535,7 +544,8 @@ mod custom_mutator_to_methods_tests {
         let log = Arc::new(Mutex::new(Vec::new()));
         let mutator = CloneableMutator::new(log.clone(), 3);
 
-        // to_box() should allow being called multiple times since the mutator is Clone
+        // to_box() should allow being called multiple times since the mutator
+        // is Clone
         let boxed1 = mutator.to_box();
         let boxed2 = mutator.to_box();
 

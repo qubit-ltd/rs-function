@@ -1,17 +1,15 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! # TransformerOnce Demo
 //!
-//! Demonstrates TransformerOnce implementation for BoxTransformer, RcTransformer, and ArcTransformer
-//!
+//! Demonstrates TransformerOnce implementation for BoxTransformer,
+//! RcTransformer, and ArcTransformer
 
 use qubit_function::{
     ArcTransformer,
@@ -63,7 +61,8 @@ fn main() {
 
     // ArcTransformer TransformerOnce demonstration
     println!("3. ArcTransformer TransformerOnce demonstration:");
-    let parse_and_double = ArcTransformer::new(|s: String| s.parse::<i32>().unwrap_or(0) * 2);
+    let parse_and_double =
+        ArcTransformer::new(|s: String| s.parse::<i32>().unwrap_or(0) * 2);
     let result = parse_and_double.apply("21".to_string());
     println!("   parse_and_double.apply(\"21\") = {}", result);
 

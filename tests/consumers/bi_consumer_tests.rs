@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 /// Tests for BiConsumer types
 use qubit_function::{
@@ -50,7 +48,11 @@ fn test_bi_consumer_default_conversions_allow_relaxed_generic_types() {
     consumer.clone().into_box().accept(&first, &second);
     consumer.clone().into_rc().accept(&first, &second);
     consumer.clone().into_arc().accept(&first, &second);
-    qubit_function::BiConsumerOnce::accept(consumer.clone().into_once(), &first, &second);
+    qubit_function::BiConsumerOnce::accept(
+        consumer.clone().into_once(),
+        &first,
+        &second,
+    );
     consumer.clone().into_fn()(&first, &second);
 
     consumer.to_box().accept(&first, &second);
@@ -499,7 +501,8 @@ mod closure_tests {
         let box_consumer = closure.into_box();
         box_consumer.accept(&5, &3);
 
-        // Use default into_rc by creating a new closure (Rc requires non-Send closures)
+        // Use default into_rc by creating a new closure (Rc requires non-Send
+        // closures)
         let counter2 = Rc::new(std::cell::RefCell::new(0));
         let c2 = counter2.clone();
         let closure2 = move |x: &i32, y: &i32| {
@@ -586,7 +589,8 @@ mod edge_cases_tests {
         let counter = Arc::new(std::sync::Mutex::new(String::new()));
         let c = counter.clone();
         let consumer = BoxBiConsumer::new(move |s: &String, n: &i32| {
-            *c.lock().expect("mutex should not be poisoned") = format!("{}: {}", s, n);
+            *c.lock().expect("mutex should not be poisoned") =
+                format!("{}: {}", s, n);
         });
         consumer.accept(&"Count".to_string(), &42);
         assert_eq!(
@@ -1180,7 +1184,8 @@ mod custom_non_mutating_bi_consumer_tests {
 
     #[test]
     fn test_custom_multiple_conversions() {
-        // Test that the same custom implementation can be converted to different types
+        // Test that the same custom implementation can be converted to
+        // different types
         let counter1 = Arc::new(std::sync::Mutex::new(0));
         let custom1 = CustomBiConsumer::new(counter1.clone());
         let box_consumer = custom1.into_box();
@@ -1211,7 +1216,8 @@ mod custom_non_mutating_bi_consumer_tests {
 
         impl BiConsumer<String, i32> for StringIntConsumer {
             fn accept(&self, _first: &String, second: &i32) {
-                *self.counter.lock().expect("mutex should not be poisoned") += second;
+                *self.counter.lock().expect("mutex should not be poisoned") +=
+                    second;
             }
         }
 
@@ -1610,7 +1616,8 @@ mod to_methods_tests {
 
     impl BiConsumer<i32, i32> for CustomConsumer {
         fn accept(&self, first: &i32, second: &i32) {
-            *self.counter.lock().expect("mutex should not be poisoned") += first + second;
+            *self.counter.lock().expect("mutex should not be poisoned") +=
+                first + second;
         }
         // Use default to_xxx implementations from the trait
     }
@@ -1814,7 +1821,8 @@ mod to_methods_tests {
 
         impl BiConsumer<String, i32> for StringConsumer {
             fn accept(&self, first: &String, second: &i32) {
-                let mut c = self.counter.lock().expect("mutex should not be poisoned");
+                let mut c =
+                    self.counter.lock().expect("mutex should not be poisoned");
                 if !c.is_empty() {
                     c.push(',');
                 }
@@ -1875,7 +1883,8 @@ mod to_once_tests {
     #[test]
     fn test_custom_bi_consumer_to_once() {
         let counter = Arc::new(Mutex::new(0));
-        let custom = super::to_methods_tests::CustomConsumer::new(counter.clone());
+        let custom =
+            super::to_methods_tests::CustomConsumer::new(counter.clone());
 
         // Test to_once() - should not consume the original
         let once_consumer = custom.to_once();
@@ -1890,7 +1899,8 @@ mod to_once_tests {
     #[test]
     fn test_custom_bi_consumer_into_once() {
         let counter = Arc::new(Mutex::new(0));
-        let custom = super::to_methods_tests::CustomConsumer::new(counter.clone());
+        let custom =
+            super::to_methods_tests::CustomConsumer::new(counter.clone());
 
         // Test into_once() - should consume the original
         let once_consumer = custom.into_once();
@@ -1956,14 +1966,13 @@ mod box_conditional_bi_consumer_tests {
                 .push(*x + *y);
         });
 
-        let conditional =
-            consumer
-                .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-                .or_else(move |x: &i32, y: &i32| {
-                    l2.lock()
-                        .expect("mutex should not be poisoned")
-                        .push(*x * *y);
-                });
+        let conditional = consumer
+            .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
+            .or_else(move |x: &i32, y: &i32| {
+                l2.lock()
+                    .expect("mutex should not be poisoned")
+                    .push(*x * *y);
+            });
 
         conditional.accept(&5, &3);
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
@@ -2103,11 +2112,11 @@ mod arc_conditional_bi_consumer_tests {
             c1.fetch_add(1, Ordering::SeqCst);
         });
 
-        let conditional = consumer.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(
-            move |_x: &i32, _y: &i32| {
+        let conditional = consumer
+            .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
+            .or_else(move |_x: &i32, _y: &i32| {
                 c2.fetch_add(100, Ordering::SeqCst);
-            },
-        );
+            });
 
         conditional.accept(&5, &3);
         assert_eq!(counter.load(Ordering::SeqCst), 1);
@@ -2332,12 +2341,11 @@ mod rc_conditional_bi_consumer_tests {
             l1.borrow_mut().push(*x + *y);
         });
 
-        let conditional =
-            consumer
-                .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-                .or_else(move |x: &i32, y: &i32| {
-                    l2.borrow_mut().push(*x * *y);
-                });
+        let conditional = consumer
+            .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
+            .or_else(move |x: &i32, y: &i32| {
+                l2.borrow_mut().push(*x * *y);
+            });
 
         conditional.accept(&5, &3);
         assert_eq!(*log.borrow(), vec![8]);

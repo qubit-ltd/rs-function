@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxMutatingFunctionOnce` public type.
 
@@ -105,14 +103,14 @@ use super::{
 /// assert_eq!(final_len, 5);
 /// assert_eq!(target, vec![0, 1, 2]);
 /// ```
-///
 pub struct BoxMutatingFunctionOnce<T, R> {
     pub(super) function: Box<dyn FnOnce(&mut T) -> R>,
     pub(super) name: Option<String>,
 }
 
 impl<T, R> BoxMutatingFunctionOnce<T, R> {
-    // Generates: new(), new_with_name(), new_with_optional_name(), name(), set_name()
+    // Generates: new(), new_with_name(), new_with_optional_name(), name(),
+    // set_name()
     impl_function_common_methods!(
         BoxMutatingFunctionOnce<T, R>,
         (FnOnce(&mut T) -> R + 'static),
@@ -142,7 +140,8 @@ impl<T, R> MutatingFunctionOnce<T, R> for BoxMutatingFunctionOnce<T, R> {
 // Generates: identity() method for BoxMutatingFunctionOnce<T, T>
 impl_function_identity_method!(BoxMutatingFunctionOnce<T, T>, mutating);
 
-// Generates: Debug and Display implementations for BoxMutatingFunctionOnce<T, R>
+// Generates: Debug and Display implementations for BoxMutatingFunctionOnce<T,
+// R>
 impl_function_debug_display!(BoxMutatingFunctionOnce<T, R>);
 
 // =======================================================================

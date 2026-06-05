@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 use std::cell::RefCell;
 use std::marker::PhantomData;
 use std::rc::Rc;
@@ -85,8 +83,14 @@ impl<'a> Transformer<Borrowed<'a>, Borrowed<'a>> for BorrowedUnaryOp {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 struct BorrowedBinaryOp;
 
-impl<'a> BiTransformer<Borrowed<'a>, Borrowed<'a>, Borrowed<'a>> for BorrowedBinaryOp {
-    fn apply(&self, first: Borrowed<'a>, _second: Borrowed<'a>) -> Borrowed<'a> {
+impl<'a> BiTransformer<Borrowed<'a>, Borrowed<'a>, Borrowed<'a>>
+    for BorrowedBinaryOp
+{
+    fn apply(
+        &self,
+        first: Borrowed<'a>,
+        _second: Borrowed<'a>,
+    ) -> Borrowed<'a> {
         first
     }
 }
@@ -103,7 +107,9 @@ impl<'a> TransformerOnce<Borrowed<'a>, Borrowed<'a>> for BorrowedUnaryOpOnce {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 struct BorrowedBinaryOpOnce;
 
-impl<'a> BiTransformerOnce<Borrowed<'a>, Borrowed<'a>, Borrowed<'a>> for BorrowedBinaryOpOnce {
+impl<'a> BiTransformerOnce<Borrowed<'a>, Borrowed<'a>, Borrowed<'a>>
+    for BorrowedBinaryOpOnce
+{
     fn apply(self, first: Borrowed<'a>, _second: Borrowed<'a>) -> Borrowed<'a> {
         first
     }
@@ -232,13 +238,15 @@ fn test_predicate_and_transformer_allow_non_static_generic_on_new() {
     let predicate = BoxPredicate::new(|item: &Borrowed<'_>| *item.value > 10);
     assert!(predicate.test(&value));
 
-    let arc_predicate = ArcPredicate::new(|item: &Borrowed<'_>| *item.value % 2 == 1);
+    let arc_predicate =
+        ArcPredicate::new(|item: &Borrowed<'_>| *item.value % 2 == 1);
     assert!(arc_predicate.test(&value));
 
     let transformer = BoxTransformer::new(|item: Borrowed<'_>| *item.value + 1);
     assert_eq!(transformer.apply(value), 14);
 
-    let arc_transformer = ArcTransformer::new(|item: Borrowed<'_>| *item.value - 1);
+    let arc_transformer =
+        ArcTransformer::new(|item: Borrowed<'_>| *item.value - 1);
     assert_eq!(arc_transformer.apply(value), 12);
 }
 
@@ -247,7 +255,8 @@ fn test_transformer_once_allow_non_static_generic_on_new() {
     let n = 8;
     let value = Borrowed { value: &n };
 
-    let transformer_once = BoxTransformerOnce::new(|item: Borrowed<'_>| *item.value * 2);
+    let transformer_once =
+        BoxTransformerOnce::new(|item: Borrowed<'_>| *item.value * 2);
     assert_eq!(transformer_once.apply(value), 16);
 }
 
@@ -255,10 +264,12 @@ fn test_transformer_once_allow_non_static_generic_on_new() {
 fn test_suppliers_allow_non_static_generic_on_new() {
     let n = 21;
 
-    let box_supplier: BoxSupplier<PhantomData<&i32>> = make_box_supplier_with_lifetime(&n);
+    let box_supplier: BoxSupplier<PhantomData<&i32>> =
+        make_box_supplier_with_lifetime(&n);
     let box_supplier_once: BoxSupplierOnce<PhantomData<&i32>> =
         make_box_supplier_once_with_lifetime(&n);
-    let arc_supplier: ArcSupplier<PhantomData<&i32>> = make_arc_supplier_with_lifetime(&n);
+    let arc_supplier: ArcSupplier<PhantomData<&i32>> =
+        make_arc_supplier_with_lifetime(&n);
 
     assert_eq!(box_supplier.get(), PhantomData);
     assert_eq!(box_supplier_once.get(), PhantomData);
@@ -269,7 +280,9 @@ fn make_box_supplier_with_lifetime(_: &i32) -> BoxSupplier<PhantomData<&i32>> {
     BoxSupplier::new(|| PhantomData)
 }
 
-fn make_box_supplier_once_with_lifetime(_: &i32) -> BoxSupplierOnce<PhantomData<&i32>> {
+fn make_box_supplier_once_with_lifetime(
+    _: &i32,
+) -> BoxSupplierOnce<PhantomData<&i32>> {
     BoxSupplierOnce::new(|| PhantomData)
 }
 
@@ -292,7 +305,9 @@ fn test_fn_ops_traits_allow_non_static_closure_implementations() {
         *y += *b_ref;
         *x + *y
     };
-    assert_fn_bi_mutating_function_ops_impl::<i32, i32, i32, _>(bi_mutating_function);
+    assert_fn_bi_mutating_function_ops_impl::<i32, i32, i32, _>(
+        bi_mutating_function,
+    );
 
     let predicate = |x: &i32| *x > *a_ref;
     assert_fn_predicate_ops_impl::<i32, _>(predicate);
@@ -318,20 +333,26 @@ fn test_fn_ops_traits_allow_non_static_closure_implementations() {
         offset += 1;
         x + offset + *a_ref
     };
-    assert_fn_stateful_transformer_ops_impl::<i32, i32, _>(stateful_transformer);
+    assert_fn_stateful_transformer_ops_impl::<i32, i32, _>(
+        stateful_transformer,
+    );
 
     let mut delta = 0;
     let stateful_bi_transformer = move |x: i32, y: i32| {
         delta += 1;
         x + y + delta + *b_ref
     };
-    assert_fn_stateful_bi_transformer_ops_impl::<i32, i32, i32, _>(stateful_bi_transformer);
+    assert_fn_stateful_bi_transformer_ops_impl::<i32, i32, i32, _>(
+        stateful_bi_transformer,
+    );
 
     let transformer_once = move |x: i32| x + *b_ref;
     assert_fn_transformer_once_ops_impl::<i32, i32, _>(transformer_once);
 
     let bi_transformer_once = move |x: i32, y: i32| x * y + *a_ref;
-    assert_fn_bi_transformer_once_ops_impl::<i32, i32, i32, _>(bi_transformer_once);
+    assert_fn_bi_transformer_once_ops_impl::<i32, i32, i32, _>(
+        bi_transformer_once,
+    );
 
     let bi_function_once = move |x: &i32, y: &i32| *x + *y + *a_ref;
     assert_fn_bi_function_once_ops_impl::<i32, i32, i32, _>(bi_function_once);
@@ -341,7 +362,9 @@ fn test_fn_ops_traits_allow_non_static_closure_implementations() {
         *y += *b_ref;
         *x + *y
     };
-    assert_fn_bi_mutating_function_once_ops_impl::<i32, i32, i32, _>(bi_mutating_function_once);
+    assert_fn_bi_mutating_function_once_ops_impl::<i32, i32, i32, _>(
+        bi_mutating_function_once,
+    );
 
     let tester = || *a_ref < *b_ref;
     assert_fn_tester_ops_impl::<_>(tester);

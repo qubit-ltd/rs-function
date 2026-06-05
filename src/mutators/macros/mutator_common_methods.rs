@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Mutator Common Methods Macro
 //!
 //! Generates common Mutator methods (new, new_with_name, name,
@@ -22,8 +20,8 @@
 //! # Parameters
 //!
 //! * `$struct_name<$generics>` - Struct name with generic parameters
-//! * `$fn_trait_with_bounds` - Closure trait with complete bounds
-//!   (e.g., `FnMut(&mut T) + 'static`)
+//! * `$fn_trait_with_bounds` - Closure trait with complete bounds (e.g.,
+//!   `FnMut(&mut T) + 'static`)
 //! * `$wrapper_expr` - Wrapper expression (uses `f` for the closure)
 //!
 //! # Usage
@@ -51,7 +49,6 @@
 //! * `name()` - Gets the name of the mutator
 //! * `set_name()` - Sets the name of the mutator
 //! * `noop()` - Creates a mutator that performs no operation
-//!
 
 /// Generates common Mutator methods (new, new_with_name, name,
 /// set_name, noop)
@@ -64,8 +61,8 @@
 /// # Parameters
 ///
 /// * `$struct_name<$generics>` - Struct name with generic parameters
-/// * `$fn_trait_with_bounds` - Closure trait with complete bounds
-///   (e.g., `FnMut(&mut T) + 'static`)
+/// * `$fn_trait_with_bounds` - Closure trait with complete bounds (e.g.,
+///   `FnMut(&mut T) + 'static`)
 /// * `$wrapper_expr` - Wrapper expression (uses `f` for the closure)
 ///
 /// # Usage Location
@@ -101,7 +98,6 @@
 /// * `name()` - Gets the name of the mutator
 /// * `set_name()` - Sets the name of the mutator
 /// * `noop()` - Creates a mutator that performs no operation
-///
 macro_rules! impl_mutator_common_methods {
     // Single generic parameter - Mutator types
     (

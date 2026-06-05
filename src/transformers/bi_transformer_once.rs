@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # BiTransformerOnce Types
 //!
 //! Provides Rust implementations of consuming bi-transformer traits similar to
@@ -17,7 +15,6 @@
 //! implementations:
 //!
 //! - [`BoxBiTransformerOnce`]: Single ownership, one-time use
-//!
 use crate::macros::{
     impl_box_once_conversions,
     impl_closure_once_trait,
@@ -64,7 +61,6 @@ pub use box_conditional_bi_transformer_once::BoxConditionalBiTransformerOnce;
 /// * `T` - The type of the first input value (consumed)
 /// * `U` - The type of the second input value (consumed)
 /// * `R` - The type of the output value
-///
 pub trait BiTransformerOnce<T, U, R> {
     /// Transforms two input values, consuming self and both inputs
     ///

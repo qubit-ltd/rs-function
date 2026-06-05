@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcBiPredicate` public type.
 
@@ -53,14 +51,14 @@ use super::{
 ///     assert!(pred_clone.test(&10, &5));
 /// }).join().expect("thread should not panic");
 /// ```
-///
 pub struct ArcBiPredicate<T, U> {
     pub(super) function: Arc<SendSyncBiPredicateFn<T, U>>,
     pub(super) name: Option<String>,
 }
 
 impl<T, U> ArcBiPredicate<T, U> {
-    // Generates: new(), new_with_name(), name(), set_name(), always_true(), always_false()
+    // Generates: new(), new_with_name(), name(), set_name(), always_true(),
+    // always_false()
     impl_predicate_common_methods!(
         ArcBiPredicate<T, U>,
         (Fn(&T, &U) -> bool + Send + Sync + 'static),
@@ -103,7 +101,8 @@ where
 // Generates: impl Clone for ArcBiPredicate<T, U>
 impl_predicate_clone!(ArcBiPredicate<T, U>);
 
-// Generates: impl Debug for ArcBiPredicate<T, U> and impl Display for ArcBiPredicate<T, U>
+// Generates: impl Debug for ArcBiPredicate<T, U> and impl Display for
+// ArcBiPredicate<T, U>
 impl_predicate_debug_display!(ArcBiPredicate<T, U>);
 
 // Implements BiPredicate trait for ArcBiPredicate<T, U>
@@ -112,7 +111,8 @@ impl<T, U> BiPredicate<T, U> for ArcBiPredicate<T, U> {
         (self.function)(first, second)
     }
 
-    // Generates: into_box, into_rc, into_arc, into_fn, to_box, to_rc, to_arc, to_fn
+    // Generates: into_box, into_rc, into_arc, into_fn, to_box, to_rc, to_arc,
+    // to_fn
     impl_arc_conversions!(
         ArcBiPredicate<T, U>,
         BoxBiPredicate,

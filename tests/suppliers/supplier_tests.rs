@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 // qubit-style: allow explicit-imports
 //! Unit tests for Supplier types
@@ -259,7 +257,8 @@ mod test_box_stateless_supplier {
         #[test]
         fn test_map_chain() {
             // Test chained map operations
-            let pipeline = BoxSupplier::new(|| 10).map(|x| x * 2).map(|x| x + 5);
+            let pipeline =
+                BoxSupplier::new(|| 10).map(|x| x * 2).map(|x| x + 5);
             assert_eq!(pipeline.get(), 25);
         }
 
@@ -592,7 +591,10 @@ mod test_arc_stateless_supplier {
                 .collect();
 
             for h in handles {
-                assert_eq!(h.join().expect("thread should not panic"), "Hello, World!");
+                assert_eq!(
+                    h.join().expect("thread should not panic"),
+                    "Hello, World!"
+                );
             }
         }
 

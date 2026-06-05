@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # StatefulMutatingFunction Types
 //!
 //! Provides Java-like `StatefulMutatingFunction` interface implementations
@@ -117,7 +115,6 @@
 //! assert_eq!(accumulator.apply(&mut value2), 16); // 10 + 6
 //! assert_eq!(value2, 6);
 //! ```
-//!
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
@@ -183,9 +180,8 @@ pub use fn_stateful_mutating_function_ops::FnStatefulMutatingFunctionOps;
 ///
 /// This trait is automatically implemented by:
 /// - All closures implementing `FnMut(&mut T) -> R`
-/// - `BoxStatefulMutatingFunction<T, R>`,
-///   `ArcStatefulMutatingFunction<T, R>`, and
-///   `RcStatefulMutatingFunction<T, R>`
+/// - `BoxStatefulMutatingFunction<T, R>`, `ArcStatefulMutatingFunction<T, R>`,
+///   and `RcStatefulMutatingFunction<T, R>`
 ///
 /// # Design Rationale
 ///
@@ -198,10 +194,9 @@ pub use fn_stateful_mutating_function_ops::FnStatefulMutatingFunctionOps;
 ///
 /// # Features
 ///
-/// - **Unified Interface**: All stateful mutating function types share the
-///   same `apply` method signature
-/// - **Automatic Implementation**: Closures automatically implement this
-///   trait
+/// - **Unified Interface**: All stateful mutating function types share the same
+///   `apply` method signature
+/// - **Automatic Implementation**: Closures automatically implement this trait
 /// - **Type Conversions**: Easy conversion between ownership models
 /// - **Generic Programming**: Write functions that work with any stateful
 ///   mutating function type
@@ -252,7 +247,6 @@ pub use fn_stateful_mutating_function_ops::FnStatefulMutatingFunctionOps;
 /// // let mut rc_func = closure.into_rc();  // closure moved
 /// // let mut arc_func = closure.into_arc(); // closure moved
 /// ```
-///
 pub trait StatefulMutatingFunction<T, R> {
     /// Applies the function to the mutable reference and returns a result
     ///
@@ -549,8 +543,9 @@ pub trait StatefulMutatingFunction<T, R> {
     /// after calling this method.
     ///
     /// Converts a reusable stateful mutating function to a one-time function
-    /// that consumes itself on use. This enables passing `StatefulMutatingFunction`
-    /// to functions that require `StatefulMutatingFunctionOnce`.
+    /// that consumes itself on use. This enables passing
+    /// `StatefulMutatingFunction` to functions that require
+    /// `StatefulMutatingFunctionOnce`.
     ///
     /// # Returns
     ///
@@ -585,7 +580,8 @@ pub trait StatefulMutatingFunction<T, R> {
     /// Convert to StatefulMutatingFunctionOnce without consuming self
     ///
     /// **⚠️ Requires Clone**: This method requires `Self` to implement `Clone`.
-    /// Clones the current function and converts the clone to a one-time function.
+    /// Clones the current function and converts the clone to a one-time
+    /// function.
     ///
     /// # Returns
     ///
@@ -623,7 +619,8 @@ pub trait StatefulMutatingFunction<T, R> {
 // =======================================================================
 
 /// Type alias for Arc-wrapped stateful mutating function
-type ArcStatefulMutatingFunctionFn<T, R> = Arc<Mutex<dyn FnMut(&mut T) -> R + Send + 'static>>;
+type ArcStatefulMutatingFunctionFn<T, R> =
+    Arc<Mutex<dyn FnMut(&mut T) -> R + Send + 'static>>;
 
 /// Type alias for Rc-wrapped stateful mutating function
 type RcStatefulMutatingFunctionFn<T, R> = Rc<RefCell<dyn FnMut(&mut T) -> R>>;

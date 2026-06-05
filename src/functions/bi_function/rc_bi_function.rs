@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcBiFunction` public type.
 
@@ -44,7 +42,6 @@ type RcBiFunctionFn<T, U, R> = Rc<dyn Fn(&T, &U) -> R>;
 /// - **Reusability**: Can be called multiple times (borrows inputs each time)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync`)
 /// - **Clonable**: Cheap cloning via `Rc::clone`
-///
 pub struct RcBiFunction<T, U, R> {
     pub(super) function: RcBiFunctionFn<T, U, R>,
     pub(super) name: Option<String>,
@@ -71,7 +68,8 @@ impl<T, U, R> BiFunction<T, U, R> for RcBiFunction<T, U, R> {
         (self.function)(first, second)
     }
 
-    // Generate into_box(), into_rc(), into_fn(), into_once(), to_box(), to_rc(), to_fn(), to_once()
+    // Generate into_box(), into_rc(), into_fn(), into_once(), to_box(),
+    // to_rc(), to_fn(), to_once()
     impl_rc_conversions!(
         RcBiFunction<T, U, R>,
         BoxBiFunction,

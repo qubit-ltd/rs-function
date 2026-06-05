@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcMutatingFunction` public type.
 
@@ -40,8 +38,7 @@ use super::{
 ///
 /// - **Shared Ownership**: Cloneable via `Rc`, multiple owners allowed
 /// - **Single-Threaded**: Not thread-safe, cannot be sent across threads
-/// - **Stateless**: Cannot modify captured environment (uses `Fn` not
-///   `FnMut`)
+/// - **Stateless**: Cannot modify captured environment (uses `Fn` not `FnMut`)
 /// - **Chainable**: Method chaining via `&self` (non-consuming)
 /// - **Performance**: More efficient than `ArcMutatingFunction` (no locking)
 ///
@@ -67,14 +64,14 @@ use super::{
 /// let mut value = 5;
 /// assert_eq!(func.apply(&mut value), 10);
 /// ```
-///
 pub struct RcMutatingFunction<T, R> {
     pub(super) function: Rc<dyn Fn(&mut T) -> R>,
     pub(super) name: Option<String>,
 }
 
 impl<T, R> RcMutatingFunction<T, R> {
-    // Generates: new(), new_with_name(), new_with_optional_name(), name(), set_name()
+    // Generates: new(), new_with_name(), new_with_optional_name(), name(),
+    // set_name()
     impl_function_common_methods!(
         RcMutatingFunction<T, R>,
         (Fn(&mut T) -> R + 'static),

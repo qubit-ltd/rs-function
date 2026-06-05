@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxBiFunctionOnce` public type.
 
@@ -41,7 +39,6 @@ type BoxBiFunctionOnceFn<T, U, R> = Box<dyn FnOnce(&T, &U) -> R>;
 /// - **Ownership**: Single ownership, cannot be cloned
 /// - **Reusability**: Can only be called once (consumes self)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
-///
 pub struct BoxBiFunctionOnce<T, U, R> {
     pub(super) function: BoxBiFunctionOnceFn<T, U, R>,
     pub(super) name: Option<String>,
@@ -49,7 +46,8 @@ pub struct BoxBiFunctionOnce<T, U, R> {
 
 // Implement BoxBiFunctionOnce
 impl<T, U, R> BoxBiFunctionOnce<T, U, R> {
-    // Generate new(), new_with_name(), new_with_optional_name(), name(), set_name()
+    // Generate new(), new_with_name(), new_with_optional_name(), name(),
+    // set_name()
     impl_function_common_methods!(
         BoxBiFunctionOnce<T, U, R>,
         (FnOnce(&T, &U) -> R + 'static),

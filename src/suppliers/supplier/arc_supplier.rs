@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcSupplier` public type.
 
@@ -89,7 +87,6 @@ use super::{
 /// assert_eq!(doubled.get(), 20);
 /// assert_eq!(tripled.get(), 30);
 /// ```
-///
 pub struct ArcSupplier<T> {
     pub(super) function: Arc<dyn Fn() -> T + Send + Sync>,
     pub(super) name: Option<String>,

@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `FnConsumerOnceOps` public type.
 
@@ -21,15 +19,17 @@ use super::{
 
 /// Extension trait providing one-time consumer composition methods for closures
 ///
-/// Provides `and_then` and other composition methods for all closures implementing `FnOnce(&T)`,
-/// allowing closures to chain methods directly without explicit wrapper types.
+/// Provides `and_then` and other composition methods for all closures
+/// implementing `FnOnce(&T)`, allowing closures to chain methods directly
+/// without explicit wrapper types.
 ///
 /// # Features
 ///
 /// - **Natural Syntax**: Chain operations directly on closures
 /// - **Returns BoxConsumerOnce**: Composed results can continue chaining
 /// - **Zero Cost**: No overhead when composing closures
-/// - **Automatic Implementation**: All `FnOnce(&T)` closures automatically get these methods
+/// - **Automatic Implementation**: All `FnOnce(&T)` closures automatically get
+///   these methods
 ///
 /// # Examples
 ///
@@ -48,12 +48,12 @@ use super::{
 /// chained.accept(&5);
 /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![10, 15]);
 /// ```
-///
 pub trait FnConsumerOnceOps<T>: FnOnce(&T) + Sized {
     /// Sequentially chain another one-time consumer
     ///
-    /// Returns a new consumer that executes the current operation first, then the next operation.
-    /// Consumes the current closure and returns `BoxConsumerOnce<T>`.
+    /// Returns a new consumer that executes the current operation first, then
+    /// the next operation. Consumes the current closure and returns
+    /// `BoxConsumerOnce<T>`.
     ///
     /// # Type Parameters
     ///

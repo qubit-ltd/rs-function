@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `FnBiConsumerOps` public type.
 
@@ -29,11 +27,10 @@ use super::{
 /// # Features
 ///
 /// - **Natural Syntax**: Chain operations directly on closures
-/// - **Returns BoxBiConsumer**: Composition results can be
-///   further chained
+/// - **Returns BoxBiConsumer**: Composition results can be further chained
 /// - **Zero Cost**: No overhead when composing closures
-/// - **Automatic Implementation**: All `Fn(&T, &U)` closures get these
-///   methods automatically
+/// - **Automatic Implementation**: All `Fn(&T, &U)` closures get these methods
+///   automatically
 ///
 /// # Examples
 ///
@@ -47,7 +44,6 @@ use super::{
 /// });
 /// chained.accept(&5, &3);
 /// ```
-///
 pub trait FnBiConsumerOps<T, U>: Fn(&T, &U) + Sized {
     /// Chains another non-mutating bi-consumer in sequence
     ///

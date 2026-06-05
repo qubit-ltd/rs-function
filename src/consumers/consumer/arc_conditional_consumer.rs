@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcConditionalConsumer` public type.
 
@@ -29,8 +27,9 @@ use super::{
 
 /// ArcConditionalConsumer struct
 ///
-/// A conditional non-mutating consumer that only executes when a predicate is satisfied.
-/// Uses `ArcConsumer` and `ArcPredicate` for thread-safe shared ownership semantics.
+/// A conditional non-mutating consumer that only executes when a predicate is
+/// satisfied. Uses `ArcConsumer` and `ArcPredicate` for thread-safe shared
+/// ownership semantics.
 ///
 /// This type is typically created by calling `ArcConsumer::when()` and is
 /// designed to work with the `or_else()` method to create if-then-else logic.
@@ -76,7 +75,6 @@ use super::{
 /// consumer.accept(&5);  // Prints: Positive: 5
 /// consumer.accept(&-5); // Prints: Non-positive: -5
 /// ```
-///
 pub struct ArcConditionalConsumer<T> {
     pub(super) consumer: ArcConsumer<T>,
     pub(super) predicate: ArcPredicate<T>,

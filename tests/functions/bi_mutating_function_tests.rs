@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! Comprehensive tests for BiMutatingFunction trait and its implementations
 
@@ -66,7 +64,9 @@ fn test_bi_mutating_function_default_conversions_allow_relaxed_generic_types() {
     #[derive(Clone, Copy, Debug, Eq, PartialEq)]
     struct BorrowedRcSelector;
 
-    impl<'a> BiMutatingFunction<BorrowedRc<'a>, BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcSelector {
+    impl<'a> BiMutatingFunction<BorrowedRc<'a>, BorrowedRc<'a>, BorrowedRc<'a>>
+        for BorrowedRcSelector
+    {
         fn apply(
             &self,
             first: &mut BorrowedRc<'a>,
@@ -335,11 +335,13 @@ fn test_box_bi_mutating_function_new() {
 
 #[test]
 fn test_box_bi_mutating_function_new_with_name() {
-    let swap_sum =
-        BoxBiMutatingFunction::new_with_name("swap_and_sum", |x: &mut i32, y: &mut i32| {
+    let swap_sum = BoxBiMutatingFunction::new_with_name(
+        "swap_and_sum",
+        |x: &mut i32, y: &mut i32| {
             std::mem::swap(&mut *x, &mut *y);
             *x + *y
-        });
+        },
+    );
     assert_eq!(swap_sum.name(), Some("swap_and_sum"));
     let mut a = 10;
     let mut b = 15;
@@ -357,17 +359,20 @@ fn test_box_bi_mutating_function_new_with_optional_name() {
     );
     assert_eq!(swap_sum.name(), Some("test_function"));
 
-    let no_name =
-        BoxBiMutatingFunction::new_with_optional_name(|x: &mut i32, y: &mut i32| *x + *y, None);
+    let no_name = BoxBiMutatingFunction::new_with_optional_name(
+        |x: &mut i32, y: &mut i32| *x + *y,
+        None,
+    );
     assert_eq!(no_name.name(), None);
 }
 
 #[test]
 fn test_box_bi_mutating_function_name_and_set_name() {
-    let mut swap_sum = BoxBiMutatingFunction::new(|x: &mut i32, y: &mut i32| {
-        std::mem::swap(&mut *x, &mut *y);
-        *x + *y
-    });
+    let mut swap_sum =
+        BoxBiMutatingFunction::new(|x: &mut i32, y: &mut i32| {
+            std::mem::swap(&mut *x, &mut *y);
+            *x + *y
+        });
 
     assert_eq!(swap_sum.name(), None);
     swap_sum.set_name("modified_name");
@@ -467,11 +472,13 @@ fn test_rc_bi_mutating_function_clone() {
 
 #[test]
 fn test_rc_bi_mutating_function_name_and_set_name() {
-    let mut swap_sum =
-        RcBiMutatingFunction::new_with_name("rc_function", |x: &mut i32, y: &mut i32| {
+    let mut swap_sum = RcBiMutatingFunction::new_with_name(
+        "rc_function",
+        |x: &mut i32, y: &mut i32| {
             std::mem::swap(&mut *x, &mut *y);
             *x + *y
-        });
+        },
+    );
 
     assert_eq!(swap_sum.name(), Some("rc_function"));
     swap_sum.set_name("modified_rc");
@@ -578,11 +585,13 @@ fn test_arc_bi_mutating_function_thread_safety() {
 
 #[test]
 fn test_arc_bi_mutating_function_name_and_set_name() {
-    let mut swap_sum =
-        ArcBiMutatingFunction::new_with_name("arc_function", |x: &mut i32, y: &mut i32| {
+    let mut swap_sum = ArcBiMutatingFunction::new_with_name(
+        "arc_function",
+        |x: &mut i32, y: &mut i32| {
             std::mem::swap(&mut *x, &mut *y);
             *x + *y
-        });
+        },
+    );
 
     assert_eq!(swap_sum.name(), Some("arc_function"));
     swap_sum.set_name("modified_arc");
@@ -707,10 +716,11 @@ fn test_fn_bi_mutating_function_ops_when_or_else() {
 
 #[test]
 fn test_box_conditional_bi_mutating_function() {
-    let swap_and_sum = BoxBiMutatingFunction::new(|x: &mut i32, y: &mut i32| {
-        std::mem::swap(&mut *x, &mut *y);
-        *x + *y
-    });
+    let swap_and_sum =
+        BoxBiMutatingFunction::new(|x: &mut i32, y: &mut i32| {
+            std::mem::swap(&mut *x, &mut *y);
+            *x + *y
+        });
 
     let multiply = BoxBiMutatingFunction::new(|x: &mut i32, y: &mut i32| {
         *x *= *y;
@@ -762,10 +772,11 @@ fn test_rc_conditional_bi_mutating_function() {
 
 #[test]
 fn test_arc_conditional_bi_mutating_function() {
-    let swap_and_sum = ArcBiMutatingFunction::new(|x: &mut i32, y: &mut i32| {
-        std::mem::swap(&mut *x, &mut *y);
-        *x + *y
-    });
+    let swap_and_sum =
+        ArcBiMutatingFunction::new(|x: &mut i32, y: &mut i32| {
+            std::mem::swap(&mut *x, &mut *y);
+            *x + *y
+        });
 
     let multiply = ArcBiMutatingFunction::new(|x: &mut i32, y: &mut i32| {
         *x *= *y;
@@ -818,10 +829,11 @@ fn test_rc_conditional_bi_mutating_function_clone() {
 
 #[test]
 fn test_arc_conditional_bi_mutating_function_clone() {
-    let swap_and_sum = ArcBiMutatingFunction::new(|x: &mut i32, y: &mut i32| {
-        std::mem::swap(&mut *x, &mut *y);
-        *x + *y
-    });
+    let swap_and_sum =
+        ArcBiMutatingFunction::new(|x: &mut i32, y: &mut i32| {
+            std::mem::swap(&mut *x, &mut *y);
+            *x + *y
+        });
 
     let multiply = ArcBiMutatingFunction::new(|x: &mut i32, y: &mut i32| {
         *x *= *y;
@@ -845,10 +857,13 @@ fn test_arc_conditional_bi_mutating_function_clone() {
 }
 
 #[test]
-fn test_impl_conditional_function_clone_three_params_bi_mutating_macro_coverage() {
-    // Test to ensure the three-parameter version of impl_conditional_function_clone macro is covered
-    // for bi-mutating functions. This test verifies that the macro generates Clone implementations
-    // for RcConditionalBiMutatingFunction<T, U, R> and ArcConditionalBiMutatingFunction<T, U, R>
+fn test_impl_conditional_function_clone_three_params_bi_mutating_macro_coverage()
+ {
+    // Test to ensure the three-parameter version of
+    // impl_conditional_function_clone macro is covered for bi-mutating
+    // functions. This test verifies that the macro generates Clone
+    // implementations for RcConditionalBiMutatingFunction<T, U, R> and
+    // ArcConditionalBiMutatingFunction<T, U, R>
 
     // Test RcConditionalBiMutatingFunction (three parameters: T, U, R)
     {
@@ -881,10 +896,11 @@ fn test_impl_conditional_function_clone_three_params_bi_mutating_macro_coverage(
 
     // Test ArcConditionalBiMutatingFunction (three parameters: T, U, R)
     {
-        let increment = ArcBiMutatingFunction::new(|x: &mut i32, y: &mut i32| {
-            *x += *y;
-            *x
-        });
+        let increment =
+            ArcBiMutatingFunction::new(|x: &mut i32, y: &mut i32| {
+                *x += *y;
+                *x
+            });
         let pred = ArcBiPredicate::new(|x: &i32, _y: &i32| *x >= 0);
 
         let conditional_arc = increment.when(pred);
@@ -892,10 +908,11 @@ fn test_impl_conditional_function_clone_three_params_bi_mutating_macro_coverage(
         let cloned_arc = conditional_arc.clone();
 
         // Create or_else to test functionality
-        let decrement = ArcBiMutatingFunction::new(|x: &mut i32, y: &mut i32| {
-            *x -= *y;
-            *x
-        });
+        let decrement =
+            ArcBiMutatingFunction::new(|x: &mut i32, y: &mut i32| {
+                *x -= *y;
+                *x
+            });
         let func = cloned_arc.or_else(decrement);
 
         // Verify functionality
@@ -912,7 +929,9 @@ fn test_impl_conditional_function_clone_three_params_bi_mutating_macro_coverage(
 #[test]
 fn test_conditional_bi_mutating_function_with_structs() {
     let modify = BoxBiMutatingFunction::new(modify_structs);
-    let no_op = BoxBiMutatingFunction::new(|_a: &mut TestStruct, _b: &mut TestStruct| 0);
+    let no_op = BoxBiMutatingFunction::new(
+        |_a: &mut TestStruct, _b: &mut TestStruct| 0,
+    );
 
     let conditional = modify
         .when(|a: &TestStruct, b: &TestStruct| a.value > 0 && b.value > 0)

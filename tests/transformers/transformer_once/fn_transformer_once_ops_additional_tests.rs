@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 // qubit-style: allow explicit-imports
 use qubit_function::{
@@ -18,7 +16,8 @@ use qubit_function::{
 };
 
 // ============================================================================
-// Additional FnTransformerOnceOps tests - extension trait for closure transformers
+// Additional FnTransformerOnceOps tests - extension trait for closure
+// transformers
 // ============================================================================
 
 #[cfg(test)]
@@ -51,11 +50,13 @@ mod tests {
     #[test]
     fn test_closure_when() {
         let double = |x: i32| x * 2;
-        let conditional = FnTransformerOnceOps::when(double, |x: &i32| *x > 0).or_else(|x: i32| -x);
+        let conditional = FnTransformerOnceOps::when(double, |x: &i32| *x > 0)
+            .or_else(|x: i32| -x);
 
         assert_eq!(conditional.apply(5), 10);
         let conditional2 =
-            FnTransformerOnceOps::when(|x: i32| x * 2, |x: &i32| *x > 0).or_else(|x: i32| -x);
+            FnTransformerOnceOps::when(|x: i32| x * 2, |x: &i32| *x > 0)
+                .or_else(|x: i32| -x);
         assert_eq!(conditional2.apply(-5), 5);
     }
 }
@@ -93,7 +94,8 @@ mod composition_with_box_tests {
 
     #[test]
     fn test_box_and_then_closure() {
-        let parse = BoxTransformerOnce::new(|s: String| s.parse::<i32>().unwrap_or(0));
+        let parse =
+            BoxTransformerOnce::new(|s: String| s.parse::<i32>().unwrap_or(0));
         let double = BoxTransformerOnce::new(|x: i32| x * 2);
 
         let composed = parse.and_then(double);
@@ -153,8 +155,10 @@ mod multiple_composition_tests {
         let add_ten = |x: i32| x + 10;
         let double = |x: i32| x * 2;
 
-        let composed =
-            FnTransformerOnceOps::and_then(parse, FnTransformerOnceOps::and_then(add_ten, double));
+        let composed = FnTransformerOnceOps::and_then(
+            parse,
+            FnTransformerOnceOps::and_then(add_ten, double),
+        );
         assert_eq!(composed.apply("16".to_string()), 52); // (16 + 10) * 2
     }
 }
@@ -179,7 +183,8 @@ mod conditional_mapping_tests {
         let double = |x: i32| x * 2;
         let is_positive = |x: &i32| *x > 0;
 
-        let conditional = FnTransformerOnceOps::when(double, is_positive).or_else(|x: i32| -x);
+        let conditional = FnTransformerOnceOps::when(double, is_positive)
+            .or_else(|x: i32| -x);
         assert_eq!(conditional.apply(5), 10);
     }
 
@@ -190,7 +195,8 @@ mod conditional_mapping_tests {
 
         // Clone to preserve original predicate
         let conditional =
-            FnTransformerOnceOps::when(double, is_positive.clone()).or_else(|x: i32| -x);
+            FnTransformerOnceOps::when(double, is_positive.clone())
+                .or_else(|x: i32| -x);
 
         assert_eq!(conditional.apply(5), 10);
 
@@ -204,7 +210,8 @@ mod conditional_mapping_tests {
         let is_positive = |x: &i32| *x > 0;
         let negate = |x: i32| -x;
 
-        let conditional = FnTransformerOnceOps::when(double, is_positive).or_else(negate);
+        let conditional =
+            FnTransformerOnceOps::when(double, is_positive).or_else(negate);
         let composed = conditional.and_then(|x| x + 1);
 
         assert_eq!(composed.apply(5), 11); // (5 * 2) + 1
@@ -248,7 +255,8 @@ mod complex_pipeline_tests {
         let half = |x: i32| x / 2;
 
         let temp1 = FnTransformerOnceOps::and_then(parse, double);
-        let conditional = FnTransformerOnceOps::when(|y: i32| y, is_even).or_else(identity);
+        let conditional =
+            FnTransformerOnceOps::when(|y: i32| y, is_even).or_else(identity);
         let temp2 = temp1.and_then(move |x: i32| conditional.apply(x));
         let pipeline = temp2.and_then(half);
 
@@ -317,7 +325,8 @@ mod function_pointer_tests {
 
     #[test]
     fn test_function_pointer_when() {
-        let conditional = FnTransformerOnceOps::when(double, |x: &i32| *x > 0).or_else(|x: i32| -x);
+        let conditional = FnTransformerOnceOps::when(double, |x: &i32| *x > 0)
+            .or_else(|x: i32| -x);
         assert_eq!(conditional.apply(5), 10);
     }
 }
@@ -347,7 +356,8 @@ mod captured_state_tests {
         let prefix = "Value: ".to_string();
         let format_with_prefix = move |x: i32| format!("{}{}", prefix, x);
 
-        let composed = FnTransformerOnceOps::and_then(format_with_prefix, |s| s + "!");
+        let composed =
+            FnTransformerOnceOps::and_then(format_with_prefix, |s| s + "!");
         assert_eq!(composed.apply(42), "Value: 42!");
     }
 
@@ -357,7 +367,8 @@ mod captured_state_tests {
         let offset = 10;
 
         let transform = move |x: i32| (x * multiplier) + offset;
-        let composed = FnTransformerOnceOps::and_then(transform, |x: i32| x.to_string());
+        let composed =
+            FnTransformerOnceOps::and_then(transform, |x: i32| x.to_string());
 
         assert_eq!(composed.apply(16), "42"); // (16 * 2) + 10
     }
@@ -407,7 +418,9 @@ mod type_conversion_tests {
 
     #[test]
     fn test_result_chain() {
-        let parse = |s: String| -> Result<i32, std::num::ParseIntError> { s.parse::<i32>() };
+        let parse = |s: String| -> Result<i32, std::num::ParseIntError> {
+            s.parse::<i32>()
+        };
         let double = |r: Result<i32, _>| r.map(|x| x * 2);
         let unwrap_or = |r: Result<i32, _>| r.unwrap_or(0);
 
@@ -489,7 +502,8 @@ mod advanced_usage_tests {
 
     #[test]
     fn test_vec_transformation() {
-        let split = |s: String| s.split(',').map(|s| s.to_string()).collect::<Vec<_>>();
+        let split =
+            |s: String| s.split(',').map(|s| s.to_string()).collect::<Vec<_>>();
         let count = |v: Vec<String>| v.len();
 
         let composed = FnTransformerOnceOps::and_then(split, count);
@@ -499,14 +513,18 @@ mod advanced_usage_tests {
     #[test]
     fn test_nested_options() {
         let parse = |s: String| s.parse::<i32>().ok();
-        let double_if_positive =
-            |opt: Option<i32>| opt.and_then(|x| if x > 0 { Some(x * 2) } else { None });
+        let double_if_positive = |opt: Option<i32>| {
+            opt.and_then(|x| if x > 0 { Some(x * 2) } else { None })
+        };
 
-        let composed = FnTransformerOnceOps::and_then(parse, double_if_positive);
+        let composed =
+            FnTransformerOnceOps::and_then(parse, double_if_positive);
         assert_eq!(composed.apply("21".to_string()), Some(42));
         let composed2 = FnTransformerOnceOps::and_then(
             |s: String| s.parse::<i32>().ok(),
-            |opt: Option<i32>| opt.and_then(|x| if x > 0 { Some(x * 2) } else { None }),
+            |opt: Option<i32>| {
+                opt.and_then(|x| if x > 0 { Some(x * 2) } else { None })
+            },
         );
         assert_eq!(composed2.apply("-10".to_string()), None);
     }
@@ -517,10 +535,14 @@ mod advanced_usage_tests {
         let scale = |x: i32| x * 2;
         let clamp = |x: i32| if x > 100 { 100 } else { x };
 
-        let composed = FnTransformerOnceOps::when(scale, is_in_range).or_else(clamp);
+        let composed =
+            FnTransformerOnceOps::when(scale, is_in_range).or_else(clamp);
         assert_eq!(composed.apply(21), 42); // in range, scaled
-        let composed2 = FnTransformerOnceOps::when(|x: i32| x * 2, |x: &i32| *x >= 0 && *x <= 100)
-            .or_else(|x: i32| if x > 100 { 100 } else { x });
+        let composed2 = FnTransformerOnceOps::when(
+            |x: i32| x * 2,
+            |x: &i32| *x >= 0 && *x <= 100,
+        )
+        .or_else(|x: i32| if x > 100 { 100 } else { x });
         assert_eq!(composed2.apply(150), 100); // out of range, clamped
     }
 
@@ -530,8 +552,10 @@ mod advanced_usage_tests {
         let double = |x: i32| x * 2;
         let rebox = |x: i32| Box::new(x);
 
-        let composed =
-            FnTransformerOnceOps::and_then(unbox, FnTransformerOnceOps::and_then(double, rebox));
+        let composed = FnTransformerOnceOps::and_then(
+            unbox,
+            FnTransformerOnceOps::and_then(double, rebox),
+        );
         let result = composed.apply(Box::new(21));
         assert_eq!(*result, 42);
     }

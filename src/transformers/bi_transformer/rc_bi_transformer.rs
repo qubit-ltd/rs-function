@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcBiTransformer` public type.
 
@@ -43,7 +41,6 @@ use super::{
 ///   inputs)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync`)
 /// - **Clonable**: Cheap cloning via `Rc::clone`
-///
 pub struct RcBiTransformer<T, U, R> {
     pub(super) function: Rc<dyn Fn(T, U) -> R>,
     pub(super) name: Option<String>,
@@ -88,9 +85,11 @@ impl<T, U, R> BiTransformer<T, U, R> for RcBiTransformer<T, U, R> {
         Fn(first: T, second: U) -> R
     );
 
-    // do NOT override RcBiTransformer::into_arc() because RcBiTransformer is not Send + Sync
-    // and calling RcBiTransformer::into_arc() will cause a compile error
+    // do NOT override RcBiTransformer::into_arc() because RcBiTransformer is
+    // not Send + Sync and calling RcBiTransformer::into_arc() will cause a
+    // compile error
 
-    // do NOT override RcBiTransformer::to_arc() because RcBiTransformer is not Send + Sync
-    // and calling RcBiTransformer::to_arc() will cause a compile error
+    // do NOT override RcBiTransformer::to_arc() because RcBiTransformer is not
+    // Send + Sync and calling RcBiTransformer::to_arc() will cause a
+    // compile error
 }

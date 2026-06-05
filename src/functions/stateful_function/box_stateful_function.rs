@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulFunction` public type.
 
@@ -30,26 +28,26 @@ use super::{
 
 /// BoxStatefulFunction - stateful function wrapper based on `Box<dyn FnMut>`
 ///
-/// A stateful function wrapper that provides single ownership with reusable stateful
-/// transformation. The stateful function consumes the input and can be called
-/// multiple times while maintaining internal state.
+/// A stateful function wrapper that provides single ownership with reusable
+/// stateful transformation. The stateful function consumes the input and can be
+/// called multiple times while maintaining internal state.
 ///
 /// # Features
 ///
 /// - **Based on**: `Box<dyn FnMut(&T) -> R>`
 /// - **Ownership**: Single ownership, cannot be cloned
-/// - **Reusability**: Can be called multiple times (each call consumes
-///   its input)
+/// - **Reusability**: Can be called multiple times (each call consumes its
+///   input)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
 /// - **Statefulness**: Can modify internal state between calls
-///
 pub struct BoxStatefulFunction<T, R> {
     pub(super) function: Box<dyn FnMut(&T) -> R>,
     pub(super) name: Option<String>,
 }
 
 impl<T, R> BoxStatefulFunction<T, R> {
-    // Generates: new(), new_with_name(), new_with_optional_name(), name(), set_name()
+    // Generates: new(), new_with_name(), new_with_optional_name(), name(),
+    // set_name()
     impl_function_common_methods!(
         BoxStatefulFunction<T, R>,
         (FnMut(&T) -> R + 'static),

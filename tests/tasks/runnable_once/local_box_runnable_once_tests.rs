@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! Unit tests for LocalBoxRunnableOnce.
 
@@ -48,7 +46,8 @@ fn test_local_box_runnable_once_from_supplier() {
 
     let task = LocalBoxRunnableOnce::from_supplier(supplier);
 
-    SupplierOnce::get(task).expect("supplier-backed local runnable should succeed");
+    SupplierOnce::get(task)
+        .expect("supplier-backed local runnable should succeed");
     assert!(flag.get());
 }
 
@@ -121,7 +120,8 @@ fn test_local_box_runnable_once_then_callable_supports_local_callable() {
 
 #[test]
 fn test_local_box_runnable_once_into_local_callable_preserves_name() {
-    let task = LocalBoxRunnableOnce::<io::Error>::new_with_name("cleanup", || Ok(()));
+    let task =
+        LocalBoxRunnableOnce::<io::Error>::new_with_name("cleanup", || Ok(()));
     let callable = RunnableOnce::into_local_callable(task);
 
     assert_eq!(callable.name(), Some("cleanup"));

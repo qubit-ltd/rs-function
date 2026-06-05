@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcUnaryOperator` public type.
 
@@ -28,5 +26,4 @@ use super::RcTransformer;
 /// assert_eq!(negate.apply(42), -42);
 /// assert_eq!(negate_clone.apply(42), -42);
 /// ```
-///
 pub type RcUnaryOperator<T> = RcTransformer<T, T>;

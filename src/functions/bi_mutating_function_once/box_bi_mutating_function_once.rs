@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxBiMutatingFunctionOnce` public type.
 
@@ -23,7 +21,8 @@ use super::{
     impl_function_debug_display,
 };
 
-type BoxBiMutatingFunctionOnceFn<T, U, R> = Box<dyn FnOnce(&mut T, &mut U) -> R>;
+type BoxBiMutatingFunctionOnceFn<T, U, R> =
+    Box<dyn FnOnce(&mut T, &mut U) -> R>;
 
 // ============================================================================
 // BoxBiMutatingFunctionOnce - Box<dyn FnOnce(&mut T, &mut U) -> R>
@@ -32,8 +31,8 @@ type BoxBiMutatingFunctionOnceFn<T, U, R> = Box<dyn FnOnce(&mut T, &mut U) -> R>
 /// BoxBiMutatingFunctionOnce - consuming bi-mutating-function wrapper based on
 /// `Box<dyn FnOnce>`
 ///
-/// A bi-mutating-function wrapper that provides single ownership with one-time use
-/// semantics. Consumes self and borrows both input values mutably.
+/// A bi-mutating-function wrapper that provides single ownership with one-time
+/// use semantics. Consumes self and borrows both input values mutably.
 ///
 /// # Features
 ///
@@ -41,7 +40,6 @@ type BoxBiMutatingFunctionOnceFn<T, U, R> = Box<dyn FnOnce(&mut T, &mut U) -> R>
 /// - **Ownership**: Single ownership, cannot be cloned
 /// - **Reusability**: Can only be called once (consumes self)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
-///
 pub struct BoxBiMutatingFunctionOnce<T, U, R> {
     pub(super) function: BoxBiMutatingFunctionOnceFn<T, U, R>,
     pub(super) name: Option<String>,
@@ -49,7 +47,8 @@ pub struct BoxBiMutatingFunctionOnce<T, U, R> {
 
 // Implement BoxBiMutatingFunctionOnce
 impl<T, U, R> BoxBiMutatingFunctionOnce<T, U, R> {
-    // Generate new(), new_with_name(), new_with_optional_name(), name(), set_name()
+    // Generate new(), new_with_name(), new_with_optional_name(), name(),
+    // set_name()
     impl_function_common_methods!(
         BoxBiMutatingFunctionOnce<T, U, R>,
         (FnOnce(&mut T, &mut U) -> R + 'static),
@@ -65,7 +64,9 @@ impl<T, U, R> BoxBiMutatingFunctionOnce<T, U, R> {
 }
 
 // Implement BiMutatingFunctionOnce trait for BoxBiMutatingFunctionOnce
-impl<T, U, R> BiMutatingFunctionOnce<T, U, R> for BoxBiMutatingFunctionOnce<T, U, R> {
+impl<T, U, R> BiMutatingFunctionOnce<T, U, R>
+    for BoxBiMutatingFunctionOnce<T, U, R>
+{
     fn apply(self, first: &mut T, second: &mut U) -> R {
         (self.function)(first, second)
     }
@@ -88,7 +89,8 @@ impl_function_debug_display!(BoxBiMutatingFunctionOnce<T, U, R>);
 // Blanket implementation for standard FnOnce trait
 // ============================================================================
 
-// Implement BiMutatingFunctionOnce for all FnOnce(&mut T, &mut U) -> R using macro
+// Implement BiMutatingFunctionOnce for all FnOnce(&mut T, &mut U) -> R using
+// macro
 impl_closure_once_trait!(
     BiMutatingFunctionOnce<T, U, R>,
     apply,

@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcMutatingFunction` public type.
 
@@ -43,8 +41,7 @@ use super::{
 ///
 /// - **Shared Ownership**: Cloneable via `Arc`, multiple owners allowed
 /// - **Thread-Safe**: Implements `Send + Sync`, safe for concurrent use
-/// - **Stateless**: Cannot modify captured environment (uses `Fn` not
-///   `FnMut`)
+/// - **Stateless**: Cannot modify captured environment (uses `Fn` not `FnMut`)
 /// - **Chainable**: Method chaining via `&self` (non-consuming)
 ///
 /// # Use Cases
@@ -69,14 +66,14 @@ use super::{
 /// let mut value = 5;
 /// assert_eq!(func.apply(&mut value), 10);
 /// ```
-///
 pub struct ArcMutatingFunction<T, R> {
     pub(super) function: Arc<dyn Fn(&mut T) -> R + Send + Sync>,
     pub(super) name: Option<String>,
 }
 
 impl<T, R> ArcMutatingFunction<T, R> {
-    // Generates: new(), new_with_name(), new_with_optional_name(), name(), set_name()
+    // Generates: new(), new_with_name(), new_with_optional_name(), name(),
+    // set_name()
     impl_function_common_methods!(
         ArcMutatingFunction<T, R>,
         (Fn(&mut T) -> R + Send + Sync + 'static),

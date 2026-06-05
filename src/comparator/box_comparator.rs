@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxComparator` public type.
 
@@ -36,7 +34,6 @@ type BoxComparatorFn<T> = Box<dyn Fn(&T, &T) -> Ordering>;
 /// let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
 /// assert_eq!(cmp.compare(&5, &3), Ordering::Greater);
 /// ```
-///
 pub struct BoxComparator<T> {
     pub(super) function: BoxComparatorFn<T>,
 }

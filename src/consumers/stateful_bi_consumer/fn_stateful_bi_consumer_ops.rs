@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `FnStatefulBiConsumerOps` public type.
 
@@ -38,8 +36,8 @@ use super::{
 /// - **Returns BoxStatefulBiConsumer**: Composition results are
 ///   `BoxStatefulBiConsumer<T, U>` for continued chaining
 /// - **Zero Cost**: No overhead when composing closures
-/// - **Automatic Implementation**: All `FnMut(&T, &U)` closures get
-///   these methods automatically
+/// - **Automatic Implementation**: All `FnMut(&T, &U)` closures get these
+///   methods automatically
 ///
 /// # Examples
 ///
@@ -58,7 +56,6 @@ use super::{
 /// chained.accept(&5, &3);
 /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8, 15]);
 /// ```
-///
 pub trait FnStatefulBiConsumerOps<T, U>: FnMut(&T, &U) + Sized {
     /// Chains another consumer in sequence
     ///
@@ -73,9 +70,9 @@ pub trait FnStatefulBiConsumerOps<T, U>: FnMut(&T, &U) + Sized {
     /// # Parameters
     ///
     /// * `next` - The consumer to execute after the current operation. **Note:
-    ///   This parameter is passed by value and will transfer ownership.** If you
-    ///   need to preserve the original consumer, clone it first (if it implements
-    ///   `Clone`). Can be:
+    ///   This parameter is passed by value and will transfer ownership.** If
+    ///   you need to preserve the original consumer, clone it first (if it
+    ///   implements `Clone`). Can be:
     ///   - A closure: `|x: &T, y: &U|`
     ///   - A `BoxStatefulBiConsumer<T, U>`
     ///   - An `ArcStatefulBiConsumer<T, U>`

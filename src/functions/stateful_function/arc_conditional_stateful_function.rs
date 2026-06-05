@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcConditionalStatefulFunction` public type.
 
@@ -30,8 +28,8 @@ use super::{
 /// is satisfied. Uses `ArcStatefulFunction` and `ArcPredicate` for shared
 /// ownership across threads.
 ///
-/// This type is typically created by calling `ArcStatefulFunction::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else
+/// This type is typically created by calling `ArcStatefulFunction::when()` and
+/// is designed to work with the `or_else()` method to create if-then-else
 /// logic.
 ///
 /// # Features
@@ -39,8 +37,7 @@ use super::{
 /// - **Shared Ownership**: Cloneable via `Arc`, multiple owners allowed
 /// - **Thread-Safe**: Implements `Send`, safe for concurrent use
 /// - **Conditional Execution**: Only maps when predicate returns `true`
-/// - **Chainable**: Can add `or_else` branch to create if-then-else
-///   logic
+/// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 ///
 /// # Examples
 ///
@@ -56,7 +53,6 @@ use super::{
 /// assert_eq!(function.apply(&5), 10);
 /// assert_eq!(function_clone.apply(&-5), 5);
 /// ```
-///
 pub struct ArcConditionalStatefulFunction<T, R> {
     pub(super) function: ArcStatefulFunction<T, R>,
     pub(super) predicate: ArcPredicate<T>,

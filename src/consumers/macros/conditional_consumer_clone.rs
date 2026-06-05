@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Conditional Consumer Clone Macro
 //!
 //! Generates Clone trait implementation for Conditional Consumer types
@@ -43,7 +41,6 @@
 //! impl_conditional_consumer_clone!(ArcConditionalBiConsumer<i32, i32>);
 //! impl_conditional_consumer_clone!(RcConditionalBiConsumer<i32, i32>);
 //! ```
-//!
 
 /// Generates Clone trait implementation for Conditional Consumer types
 ///
@@ -81,7 +78,6 @@
 /// impl_conditional_consumer_clone!(ArcConditionalBiConsumer<i32, i32>);
 /// impl_conditional_consumer_clone!(RcConditionalBiConsumer<i32, i32>);
 /// ```
-///
 ///
 macro_rules! impl_conditional_consumer_clone {
     // Single generic parameter - Consumer types

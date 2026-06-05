@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcStatefulMutatingFunction` public type.
 
@@ -75,14 +73,14 @@ use super::{
 /// let mut value = 5;
 /// assert_eq!(clone.apply(&mut value), 1);
 /// ```
-///
 pub struct RcStatefulMutatingFunction<T, R> {
     pub(super) function: RcStatefulMutatingFunctionFn<T, R>,
     pub(super) name: Option<String>,
 }
 
 impl<T, R> RcStatefulMutatingFunction<T, R> {
-    // Generates: new(), new_with_name(), new_with_optional_name(), name(), set_name()
+    // Generates: new(), new_with_name(), new_with_optional_name(), name(),
+    // set_name()
     impl_function_common_methods!(
         RcStatefulMutatingFunction<T, R>,
         (FnMut(&mut T) -> R + 'static),
@@ -102,7 +100,8 @@ impl<T, R> RcStatefulMutatingFunction<T, R> {
 // Generates: Clone implementation for RcStatefulMutatingFunction<T, R>
 impl_function_clone!(RcStatefulMutatingFunction<T, R>);
 
-// Generates: Debug and Display implementations for RcStatefulMutatingFunction<T, R>
+// Generates: Debug and Display implementations for
+// RcStatefulMutatingFunction<T, R>
 impl_function_debug_display!(RcStatefulMutatingFunction<T, R>);
 
 // Generates: identity() method for RcStatefulMutatingFunction<T, T>

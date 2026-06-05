@@ -1,19 +1,18 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Mutator Clone Macro
 //!
 //! Generates Clone trait implementation for basic Mutator types
 //!
 //! Generates Clone implementation for Mutator structs that have `function`
 //! and `name` fields. The function field is cloned using its inherent `clone`
-//! method, which performs a shallow clone for smart pointers like `Arc` or `Rc`.
+//! method, which performs a shallow clone for smart pointers like `Arc` or
+//! `Rc`.
 //!
 //! # Parameters
 //!
@@ -29,7 +28,6 @@
 //! // // For single type parameter with Rc
 //! // impl_mutator_clone!(RcMutator<T>);
 //! ```
-//!
 
 /// Generates Clone trait implementation for basic Mutator types
 ///
@@ -58,7 +56,6 @@
 /// // // For single type parameter with Rc
 /// // impl_mutator_clone!(RcMutator<T>);
 /// ```
-///
 macro_rules! impl_mutator_clone {
     // Single generic parameter
     ($struct_name:ident < $generic:ident >) => {

@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcBinaryMutatingFunction` public type.
 
@@ -14,9 +12,9 @@ use super::ArcBiMutatingFunction;
 
 /// Type alias for `ArcBiMutatingFunction<T, T, R>`
 ///
-/// Represents a thread-safe binary mutating function that takes two values of type `T`
-/// and produces a value of type `R`. Similar to Java's `BiFunction<T, T, R>`
-/// with shared, thread-safe ownership and mutable references.
+/// Represents a thread-safe binary mutating function that takes two values of
+/// type `T` and produces a value of type `R`. Similar to Java's `BiFunction<T,
+/// T, R>` with shared, thread-safe ownership and mutable references.
 ///
 /// # Examples
 ///
@@ -35,5 +33,4 @@ use super::ArcBiMutatingFunction;
 /// assert_eq!(swap_and_sum.apply(&mut a, &mut b), 15);
 /// assert_eq!(swap_clone.apply(&mut a, &mut b), 15);
 /// ```
-///
 pub type ArcBinaryMutatingFunction<T, R> = ArcBiMutatingFunction<T, T, R>;

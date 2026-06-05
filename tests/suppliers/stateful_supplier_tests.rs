@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 // qubit-style: allow explicit-imports
 //! Unit tests for StatefulSupplier types
@@ -261,7 +259,8 @@ mod test_box_stateful_supplier {
 
         #[test]
         fn test_with_string() {
-            let mut supplier = BoxStatefulSupplier::new(|| String::from("hello"));
+            let mut supplier =
+                BoxStatefulSupplier::new(|| String::from("hello"));
             assert_eq!(supplier.get(), "hello");
         }
 
@@ -294,7 +293,8 @@ mod test_box_stateful_supplier {
 
         #[test]
         fn test_with_string() {
-            let mut constant = BoxStatefulSupplier::constant(String::from("hello"));
+            let mut constant =
+                BoxStatefulSupplier::constant(String::from("hello"));
             assert_eq!(constant.get(), "hello");
             assert_eq!(constant.get(), "hello");
         }
@@ -342,13 +342,15 @@ mod test_box_stateful_supplier {
 
         #[test]
         fn test_multiple_chains() {
-            let mut chained = BoxStatefulSupplier::new(|| 5).map(|x| x * 2).map(|x| x + 5);
+            let mut chained =
+                BoxStatefulSupplier::new(|| 5).map(|x| x * 2).map(|x| x + 5);
             assert_eq!(chained.get(), 15);
         }
 
         #[test]
         fn test_type_conversion() {
-            let mut converted = BoxStatefulSupplier::new(|| 42).map(|x: i32| x.to_string());
+            let mut converted =
+                BoxStatefulSupplier::new(|| 42).map(|x: i32| x.to_string());
             assert_eq!(converted.get(), "42");
         }
 
@@ -400,7 +402,8 @@ mod test_box_stateful_supplier {
 
         #[test]
         fn test_with_constant_stateful_supplier() {
-            let mut filtered = BoxStatefulSupplier::constant(5).filter(|x: &i32| x % 2 == 0);
+            let mut filtered =
+                BoxStatefulSupplier::constant(5).filter(|x: &i32| x % 2 == 0);
             assert_eq!(filtered.get(), None); // 5 is odd
             assert_eq!(filtered.get(), None);
         }
@@ -641,7 +644,8 @@ mod test_arc_stateful_supplier {
             let counter = Arc::new(Mutex::new(0));
             let counter_clone = Arc::clone(&counter);
             let supplier = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone.lock().expect("mutex should not be poisoned");
+                let mut c =
+                    counter_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
@@ -678,7 +682,8 @@ mod test_arc_stateful_supplier {
             let counter = Arc::new(Mutex::new(0));
             let counter_clone = Arc::clone(&counter);
             let supplier = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone.lock().expect("mutex should not be poisoned");
+                let mut c =
+                    counter_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
@@ -747,7 +752,8 @@ mod test_arc_stateful_supplier {
             let counter = Arc::new(Mutex::new(0));
             let counter_clone = Arc::clone(&counter);
             let source = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone.lock().expect("mutex should not be poisoned");
+                let mut c =
+                    counter_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
@@ -782,7 +788,8 @@ mod test_arc_stateful_supplier {
             let counter = Arc::new(Mutex::new(0));
             let counter_clone = Arc::clone(&counter);
             let source = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone.lock().expect("mutex should not be poisoned");
+                let mut c =
+                    counter_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
@@ -848,7 +855,10 @@ mod test_arc_stateful_supplier {
             let mut s = memoized;
             assert_eq!(s.get(), 42);
             assert_eq!(s.get(), 42);
-            assert_eq!(*call_count.lock().expect("mutex should not be poisoned"), 1);
+            assert_eq!(
+                *call_count.lock().expect("mutex should not be poisoned"),
+                1
+            );
         }
     }
 
@@ -866,7 +876,8 @@ mod test_arc_stateful_supplier {
             let counter = Arc::new(Mutex::new(0));
             let counter_clone = Arc::clone(&counter);
             let supplier = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone.lock().expect("mutex should not be poisoned");
+                let mut c =
+                    counter_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
@@ -881,7 +892,10 @@ mod test_arc_stateful_supplier {
             let v2 = h2.join().expect("thread should not panic");
 
             assert!(v1 != v2);
-            assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 2);
+            assert_eq!(
+                *counter.lock().expect("mutex should not be poisoned"),
+                2
+            );
         }
     }
 
@@ -948,7 +962,8 @@ mod test_arc_stateful_supplier {
             let counter = Arc::new(Mutex::new(0));
             let counter_clone = Arc::clone(&counter);
             let supplier = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone.lock().expect("mutex should not be poisoned");
+                let mut c =
+                    counter_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
@@ -956,7 +971,10 @@ mod test_arc_stateful_supplier {
             assert_eq!(f(), 1);
             assert_eq!(f(), 2);
             assert_eq!(f(), 3);
-            assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 3);
+            assert_eq!(
+                *counter.lock().expect("mutex should not be poisoned"),
+                3
+            );
         }
 
         #[test]
@@ -989,11 +1007,13 @@ mod test_arc_stateful_supplier {
 
         #[test]
         fn test_into_fn_thread_safe() {
-            // Test that the closure returned by into_fn works with thread-safe data
+            // Test that the closure returned by into_fn works with thread-safe
+            // data
             let counter = Arc::new(Mutex::new(0));
             let counter_clone = Arc::clone(&counter);
             let supplier = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone.lock().expect("mutex should not be poisoned");
+                let mut c =
+                    counter_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
@@ -1006,7 +1026,10 @@ mod test_arc_stateful_supplier {
             assert_eq!(f(), 3);
 
             // Verify the counter was incremented correctly
-            assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 3);
+            assert_eq!(
+                *counter.lock().expect("mutex should not be poisoned"),
+                3
+            );
         }
     }
 
@@ -1506,8 +1529,8 @@ mod test_rc_stateful_supplier {
         }
     }
 
-    // Note: RcStatefulSupplier cannot be converted to ArcStatefulSupplier because
-    // Rc is not Send. This is prevented at compile time by the
+    // Note: RcStatefulSupplier cannot be converted to ArcStatefulSupplier
+    // because Rc is not Send. This is prevented at compile time by the
     // trait bound, so we don't test it.
 }
 
@@ -1538,7 +1561,8 @@ mod test_box_stateful_supplier_once {
 
         #[test]
         fn test_with_string() {
-            let mut supplier = BoxStatefulSupplier::new(|| String::from("hello"));
+            let mut supplier =
+                BoxStatefulSupplier::new(|| String::from("hello"));
             let value = supplier.get();
             assert_eq!(value, "hello");
         }
@@ -1679,7 +1703,8 @@ mod test_arc_stateful_supplier_once {
 
         #[test]
         fn test_with_string() {
-            let mut supplier = ArcStatefulSupplier::new(|| String::from("hello"));
+            let mut supplier =
+                ArcStatefulSupplier::new(|| String::from("hello"));
             let value = supplier.get();
             assert_eq!(value, "hello");
         }
@@ -1696,13 +1721,17 @@ mod test_arc_stateful_supplier_once {
             let counter = Arc::new(Mutex::new(0));
             let counter_clone = Arc::clone(&counter);
             let mut supplier = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone.lock().expect("mutex should not be poisoned");
+                let mut c =
+                    counter_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
             let value = supplier.get();
             assert_eq!(value, 1);
-            assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 1);
+            assert_eq!(
+                *counter.lock().expect("mutex should not be poisoned"),
+                1
+            );
         }
 
         #[test]
@@ -1711,7 +1740,9 @@ mod test_arc_stateful_supplier_once {
             let counter_clone1 = Arc::clone(&counter);
 
             let stateful_supplier1 = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone1.lock().expect("mutex should not be poisoned");
+                let mut c = counter_clone1
+                    .lock()
+                    .expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
@@ -1725,7 +1756,10 @@ mod test_arc_stateful_supplier_once {
 
             // Both should increment the same counter
             assert_eq!(value1 + value2, 3); // 1 + 2
-            assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 2);
+            assert_eq!(
+                *counter.lock().expect("mutex should not be poisoned"),
+                2
+            );
         }
     }
 
@@ -1756,13 +1790,17 @@ mod test_arc_stateful_supplier_once {
             let counter = Arc::new(Mutex::new(0));
             let counter_clone = Arc::clone(&counter);
             let supplier = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone.lock().expect("mutex should not be poisoned");
+                let mut c =
+                    counter_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
             let mut boxed = supplier.into_box();
             assert_eq!(boxed.get(), 1);
-            assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 1);
+            assert_eq!(
+                *counter.lock().expect("mutex should not be poisoned"),
+                1
+            );
         }
     }
 
@@ -1793,13 +1831,17 @@ mod test_arc_stateful_supplier_once {
             let counter = Arc::new(Mutex::new(0));
             let counter_clone = Arc::clone(&counter);
             let supplier = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone.lock().expect("mutex should not be poisoned");
+                let mut c =
+                    counter_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
             let mut f = supplier.into_fn();
             assert_eq!(f(), 1);
-            assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 1);
+            assert_eq!(
+                *counter.lock().expect("mutex should not be poisoned"),
+                1
+            );
         }
 
         #[test]
@@ -1807,7 +1849,8 @@ mod test_arc_stateful_supplier_once {
             let counter = Arc::new(Mutex::new(0));
             let counter_clone = Arc::clone(&counter);
             let supplier = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone.lock().expect("mutex should not be poisoned");
+                let mut c =
+                    counter_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
@@ -1845,7 +1888,8 @@ mod test_arc_stateful_supplier_once {
             let counter = Arc::new(Mutex::new(0));
             let counter_clone = Arc::clone(&counter);
             let supplier = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone.lock().expect("mutex should not be poisoned");
+                let mut c =
+                    counter_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
@@ -1855,7 +1899,10 @@ mod test_arc_stateful_supplier_once {
 
             // Can still use original
             assert_eq!(supplier.clone().get(), 2);
-            assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 2);
+            assert_eq!(
+                *counter.lock().expect("mutex should not be poisoned"),
+                2
+            );
         }
     }
 
@@ -1889,7 +1936,8 @@ mod test_arc_stateful_supplier_once {
             let counter = Arc::new(Mutex::new(0));
             let counter_clone = Arc::clone(&counter);
             let supplier = ArcStatefulSupplier::new(move || {
-                let mut c = counter_clone.lock().expect("mutex should not be poisoned");
+                let mut c =
+                    counter_clone.lock().expect("mutex should not be poisoned");
                 *c += 1;
                 *c
             });
@@ -1899,7 +1947,10 @@ mod test_arc_stateful_supplier_once {
 
             // Can still use original
             assert_eq!(supplier.clone().get(), 2);
-            assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 2);
+            assert_eq!(
+                *counter.lock().expect("mutex should not be poisoned"),
+                2
+            );
         }
     }
 }
@@ -1935,7 +1986,8 @@ mod test_rc_stateful_supplier_once {
 
         #[test]
         fn test_with_string() {
-            let mut supplier = RcStatefulSupplier::new(|| String::from("hello"));
+            let mut supplier =
+                RcStatefulSupplier::new(|| String::from("hello"));
             let value = supplier.get();
             assert_eq!(value, "hello");
         }
@@ -2288,7 +2340,8 @@ mod test_custom_stateful_supplier_default_impl {
 
         impl StatefulSupplier<String> for IdStatefulSupplier {
             fn get(&mut self) -> String {
-                // Return the same ID because this implementation does not advance state.
+                // Return the same ID because this implementation does not
+                // advance state.
                 format!("ID-{:04}", self.next_id)
             }
         }
@@ -2303,7 +2356,8 @@ mod test_custom_stateful_supplier_default_impl {
 
     #[test]
     fn test_custom_stateful_supplier_into_fn() {
-        // Test the default implementation of into_fn for custom StatefulSupplier
+        // Test the default implementation of into_fn for custom
+        // StatefulSupplier
         let custom = CounterStatefulSupplier::new(42);
 
         // Convert to closure using the default implementation
@@ -2342,7 +2396,8 @@ mod test_custom_stateful_supplier_default_impl {
 
         impl StatefulSupplier<String> for IdStatefulSupplier {
             fn get(&mut self) -> String {
-                // Return the same ID because this implementation does not advance state.
+                // Return the same ID because this implementation does not
+                // advance state.
                 format!("ID-{:04}", self.next_id)
             }
         }
@@ -2385,7 +2440,8 @@ mod test_custom_stateful_supplier_default_impl {
 
     #[test]
     fn test_custom_stateful_supplier_into_fn_composition() {
-        // Test that into_fn works correctly when composing with other operations
+        // Test that into_fn works correctly when composing with other
+        // operations
         let custom = CounterStatefulSupplier::new(0);
 
         // First convert to BoxStatefulSupplier, then to closure
@@ -2663,7 +2719,8 @@ mod test_fn_stateful_supplier_ops {
     #[test]
     fn test_closure_string_operations() {
         // Test with String type
-        let mut mapped = (|| "hello".to_string()).map(|s: String| s.to_uppercase());
+        let mut mapped =
+            (|| "hello".to_string()).map(|s: String| s.to_uppercase());
         assert_eq!(mapped.get(), "HELLO");
     }
 
@@ -2680,15 +2737,16 @@ mod test_fn_stateful_supplier_ops {
         let mut mapped = (|| Some(42)).map(|opt: Option<i32>| opt.unwrap_or(0));
         assert_eq!(mapped.get(), 42);
 
-        let mut mapped_none = (|| None::<i32>).map(|opt: Option<i32>| opt.unwrap_or(0));
+        let mut mapped_none =
+            (|| None::<i32>).map(|opt: Option<i32>| opt.unwrap_or(0));
         assert_eq!(mapped_none.get(), 0);
     }
 
     #[test]
     fn test_closure_result_operations() {
         // Test with Result type
-        let mut mapped =
-            (|| Ok::<i32, String>(42)).map(|res: Result<i32, String>| res.unwrap_or(0));
+        let mut mapped = (|| Ok::<i32, String>(42))
+            .map(|res: Result<i32, String>| res.unwrap_or(0));
         assert_eq!(mapped.get(), 42);
 
         let mut mapped_err = (|| Err::<i32, String>("error".to_string()))
@@ -2805,7 +2863,8 @@ mod test_stateful_supplier_debug_display {
         #[test]
         fn test_debug_with_name() {
             // Test Debug formatting for BoxStatefulSupplier with name
-            let supplier = BoxStatefulSupplier::new_with_name("test_supplier", || 42);
+            let supplier =
+                BoxStatefulSupplier::new_with_name("test_supplier", || 42);
             let debug_str = format!("{:?}", supplier);
             assert!(debug_str.contains("BoxStatefulSupplier"));
             assert!(debug_str.contains("name: Some(\"test_supplier\")"));
@@ -2823,7 +2882,8 @@ mod test_stateful_supplier_debug_display {
         #[test]
         fn test_display_with_name() {
             // Test Display formatting for BoxStatefulSupplier with name
-            let supplier = BoxStatefulSupplier::new_with_name("test_supplier", || 42);
+            let supplier =
+                BoxStatefulSupplier::new_with_name("test_supplier", || 42);
             let display_str = format!("{}", supplier);
             assert_eq!(display_str, "BoxStatefulSupplier(test_supplier)");
         }
@@ -2849,7 +2909,8 @@ mod test_stateful_supplier_debug_display {
         #[test]
         fn test_debug_with_name() {
             // Test Debug formatting for ArcStatefulSupplier with name
-            let supplier = ArcStatefulSupplier::new_with_name("test_supplier", || 42);
+            let supplier =
+                ArcStatefulSupplier::new_with_name("test_supplier", || 42);
             let debug_str = format!("{:?}", supplier);
             assert!(debug_str.contains("ArcStatefulSupplier"));
             assert!(debug_str.contains("name: Some(\"test_supplier\")"));
@@ -2867,7 +2928,8 @@ mod test_stateful_supplier_debug_display {
         #[test]
         fn test_display_with_name() {
             // Test Display formatting for ArcStatefulSupplier with name
-            let supplier = ArcStatefulSupplier::new_with_name("test_supplier", || 42);
+            let supplier =
+                ArcStatefulSupplier::new_with_name("test_supplier", || 42);
             let display_str = format!("{}", supplier);
             assert_eq!(display_str, "ArcStatefulSupplier(test_supplier)");
         }
@@ -2893,7 +2955,8 @@ mod test_stateful_supplier_debug_display {
         #[test]
         fn test_debug_with_name() {
             // Test Debug formatting for RcStatefulSupplier with name
-            let supplier = RcStatefulSupplier::new_with_name("test_supplier", || 42);
+            let supplier =
+                RcStatefulSupplier::new_with_name("test_supplier", || 42);
             let debug_str = format!("{:?}", supplier);
             assert!(debug_str.contains("RcStatefulSupplier"));
             assert!(debug_str.contains("name: Some(\"test_supplier\")"));
@@ -2911,7 +2974,8 @@ mod test_stateful_supplier_debug_display {
         #[test]
         fn test_display_with_name() {
             // Test Display formatting for RcStatefulSupplier with name
-            let supplier = RcStatefulSupplier::new_with_name("test_supplier", || 42);
+            let supplier =
+                RcStatefulSupplier::new_with_name("test_supplier", || 42);
             let display_str = format!("{}", supplier);
             assert_eq!(display_str, "RcStatefulSupplier(test_supplier)");
         }

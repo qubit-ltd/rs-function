@@ -1,18 +1,16 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! # BiFunction Types
 //!
-//! Provides Rust implementations of bi-function traits for computing output values
-//! from two input references. BiFunctions borrow input values (not consuming them)
-//! and produce output values.
+//! Provides Rust implementations of bi-function traits for computing output
+//! values from two input references. BiFunctions borrow input values (not
+//! consuming them) and produce output values.
 //!
 //! It is similar to the `Fn(&T, &U) -> R` trait in the standard library.
 //!
@@ -22,7 +20,6 @@
 //! - [`BoxBiFunction`]: Single ownership, not cloneable
 //! - [`ArcBiFunction`]: Thread-safe shared ownership, cloneable
 //! - [`RcBiFunction`]: Single-threaded shared ownership, cloneable
-//!
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -83,17 +80,18 @@ pub use arc_conditional_bi_function::ArcConditionalBiFunction;
 /// BiFunction trait - computes output from two input references
 ///
 /// Defines the behavior of a bi-function: computing a value of type `R`
-/// from references to types `T` and `U` without consuming the inputs. This is analogous to
-/// `Fn(&T, &U) -> R` in Rust's standard library, similar to Java's `BiFunction<T, U, R>`.
+/// from references to types `T` and `U` without consuming the inputs. This is
+/// analogous to `Fn(&T, &U) -> R` in Rust's standard library, similar to Java's
+/// `BiFunction<T, U, R>`.
 ///
 /// # Type Parameters
 ///
 /// * `T` - The type of the first input value (borrowed)
 /// * `U` - The type of the second input value (borrowed)
 /// * `R` - The type of the output value
-///
 pub trait BiFunction<T, U, R> {
-    /// Applies the bi-function to two input references to produce an output value
+    /// Applies the bi-function to two input references to produce an output
+    /// value
     ///
     /// # Parameters
     ///
@@ -191,10 +189,12 @@ pub trait BiFunction<T, U, R> {
 
     /// Converts to BiFunctionOnce
     ///
-    /// **⚠️ Consumes `self`**: The original bi-function becomes unavailable after calling this method.
+    /// **⚠️ Consumes `self`**: The original bi-function becomes unavailable
+    /// after calling this method.
     ///
-    /// Converts a reusable bi-function to a one-time bi-function that consumes itself on use.
-    /// This enables passing `BiFunction` to functions that require `BiFunctionOnce`.
+    /// Converts a reusable bi-function to a one-time bi-function that consumes
+    /// itself on use. This enables passing `BiFunction` to functions that
+    /// require `BiFunctionOnce`.
     ///
     /// # Returns
     ///
@@ -250,7 +250,8 @@ pub trait BiFunction<T, U, R> {
     /// Convert to BiFunctionOnce without consuming self
     ///
     /// **⚠️ Requires Clone**: This method requires `Self` to implement `Clone`.
-    /// Clones the current bi-function and converts the clone to a one-time bi-function.
+    /// Clones the current bi-function and converts the clone to a one-time
+    /// bi-function.
     ///
     /// # Returns
     ///

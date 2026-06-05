@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcStatefulBinaryOperator` public type.
 
@@ -29,5 +27,4 @@ use super::RcStatefulBiTransformer;
 /// assert_eq!(max.apply(30, 42), 42);
 /// assert_eq!(max_clone.apply(30, 42), 42);
 /// ```
-///
 pub type RcStatefulBinaryOperator<T> = RcStatefulBiTransformer<T, T, T>;

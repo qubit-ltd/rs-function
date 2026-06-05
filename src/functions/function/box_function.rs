@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxFunction` public type.
 
@@ -41,14 +39,14 @@ use super::{
 /// - **Reusability**: Can be called multiple times (each call consumes its
 ///   input)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
-///
 pub struct BoxFunction<T, R> {
     pub(super) function: Box<dyn Fn(&T) -> R>,
     pub(super) name: Option<String>,
 }
 
 impl<T, R> BoxFunction<T, R> {
-    // Generates: new(), new_with_name(), new_with_optional_name(), name(), set_name()
+    // Generates: new(), new_with_name(), new_with_optional_name(), name(),
+    // set_name()
     impl_function_common_methods!(
         BoxFunction<T, R>,
         (Fn(&T) -> R + 'static),

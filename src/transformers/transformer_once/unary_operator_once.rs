@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `UnaryOperatorOnce` public type.
 
@@ -50,14 +48,12 @@ use super::TransformerOnce;
 /// let double = |x: i32| x * 2;
 /// assert_eq!(apply(21, double), 42);
 /// ```
-///
 pub trait UnaryOperatorOnce<T>: TransformerOnce<T, T> {}
 
 /// Blanket implementation of UnaryOperatorOnce for all TransformerOnce<T, T>
 ///
 /// This automatically implements `UnaryOperatorOnce<T>` for any type that
 /// implements `TransformerOnce<T, T>`.
-///
 impl<F, T> UnaryOperatorOnce<T> for F
 where
     F: TransformerOnce<T, T>,

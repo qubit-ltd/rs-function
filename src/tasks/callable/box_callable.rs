@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxCallable` public type.
 
@@ -50,7 +48,6 @@ use crate::{
 /// let mut task = BoxCallable::new(|| Ok::<i32, String>(42));
 /// assert_eq!(task.call().expect("call should succeed"), 42);
 /// ```
-///
 pub struct BoxCallable<R, E> {
     /// The stateful closure executed by this callable.
     pub(super) function: Box<dyn FnMut() -> Result<R, E>>,
@@ -105,7 +102,10 @@ impl<R, E> BoxCallable<R, E> {
     {
         let name = self.name;
         let mut function = self.function;
-        BoxCallable::new_with_optional_name(move || function().map(&mut mapper), name)
+        BoxCallable::new_with_optional_name(
+            move || function().map(&mut mapper),
+            name,
+        )
     }
 
     /// Maps the error value of this callable.
@@ -126,7 +126,10 @@ impl<R, E> BoxCallable<R, E> {
     {
         let name = self.name;
         let mut function = self.function;
-        BoxCallable::new_with_optional_name(move || function().map_err(&mut mapper), name)
+        BoxCallable::new_with_optional_name(
+            move || function().map_err(&mut mapper),
+            name,
+        )
     }
 
     /// Chains another fallible computation after this callable succeeds.
@@ -193,6 +196,9 @@ impl<R, E> Callable<R, E> for BoxCallable<R, E> {
     {
         let name = self.name;
         let mut function = self.function;
-        BoxRunnable::new_with_optional_name(move || function().map(|_| ()), name)
+        BoxRunnable::new_with_optional_name(
+            move || function().map(|_| ()),
+            name,
+        )
     }
 }

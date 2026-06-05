@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! Unit tests for callable task types.
 
@@ -83,7 +81,8 @@ fn test_callable_closure_call_returns_success_value() {
 fn test_callable_closure_call_returns_error() {
     let mut task = || Err::<i32, _>(io::Error::other("failed"));
 
-    let error = Callable::call(&mut task).expect_err("callable closure should fail");
+    let error =
+        Callable::call(&mut task).expect_err("callable closure should fail");
     assert_eq!(error.kind(), io::ErrorKind::Other);
     assert_eq!(error.to_string(), "failed");
 }
@@ -155,7 +154,8 @@ fn test_box_callable_new_and_call() {
 
 #[test]
 fn test_box_callable_name_management() {
-    let mut task = BoxCallable::<i32, io::Error>::new_with_name("compute", || Ok(1));
+    let mut task =
+        BoxCallable::<i32, io::Error>::new_with_name("compute", || Ok(1));
 
     assert_eq!(task.name(), Some("compute"));
     assert_eq!(task.to_string(), "BoxCallable(compute)");
@@ -189,7 +189,8 @@ fn test_box_callable_into_fn_extracts_function() {
 
 #[test]
 fn test_box_callable_into_local_once_preserves_name() {
-    let task = BoxCallable::new_with_name("compute", || Ok::<i32, io::Error>(9));
+    let task =
+        BoxCallable::new_with_name("compute", || Ok::<i32, io::Error>(9));
 
     let once = Callable::into_local_once(task);
 
@@ -221,7 +222,8 @@ fn test_box_callable_implements_supplier_once() {
 
 #[test]
 fn test_box_callable_map_transforms_success_value() {
-    let task = BoxCallable::new_with_name("compute", || Ok::<i32, io::Error>(10));
+    let task =
+        BoxCallable::new_with_name("compute", || Ok::<i32, io::Error>(10));
 
     let mut mapped = task.map(|value| value * 2);
 
@@ -267,7 +269,8 @@ fn test_box_callable_and_then_skips_next_on_error() {
 
 #[test]
 fn test_callable_into_runnable_discards_success_value() {
-    let task = BoxCallable::new_with_name("compute", || Ok::<i32, io::Error>(42));
+    let task =
+        BoxCallable::new_with_name("compute", || Ok::<i32, io::Error>(42));
 
     let mut runnable = task.into_runnable();
 
@@ -345,7 +348,8 @@ fn test_callable_to_arc_reuses_source_via_clone() {
 
 #[test]
 fn test_arc_callable_local_once_conversions_preserve_name() {
-    let task = ArcCallable::new_with_name("shared", || Ok::<i32, io::Error>(31));
+    let task =
+        ArcCallable::new_with_name("shared", || Ok::<i32, io::Error>(31));
 
     let once = Callable::into_local_once(task.clone());
 
@@ -498,10 +502,12 @@ fn test_callable_default_conversions_with_text_error_type() {
 
 #[test]
 fn test_box_callable_combinators_with_text_error_type() {
-    let mut mapped = BoxCallable::new(|| Ok::<i32, &'static str>(5)).map(|v| v + 7);
+    let mut mapped =
+        BoxCallable::new(|| Ok::<i32, &'static str>(5)).map(|v| v + 7);
     assert_eq!(mapped.call().expect("map should succeed"), 12);
 
-    let mut mapped_err = BoxCallable::new(|| Err::<i32, _>("raw")).map_err(|e| format!("E:{e}"));
+    let mut mapped_err =
+        BoxCallable::new(|| Err::<i32, _>("raw")).map_err(|e| format!("E:{e}"));
     assert_eq!(
         mapped_err
             .call()

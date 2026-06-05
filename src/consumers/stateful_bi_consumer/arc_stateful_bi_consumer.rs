@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulBiConsumer` public type.
 
@@ -45,8 +43,7 @@ type ArcStatefulBiConsumerFn<T, U> = Arc<Mutex<dyn FnMut(&T, &U) + Send>>;
 /// - **Shared Ownership**: Cloneable via `Arc`, multiple owners allowed
 /// - **Thread-Safe**: Implements `Send + Sync`, safe for concurrent use
 /// - **Interior Mutability**: Uses `Mutex` for safe mutable access
-/// - **Non-Consuming API**: `and_then` borrows `&self`, original remains
-///   usable
+/// - **Non-Consuming API**: `and_then` borrows `&self`, original remains usable
 /// - **Cross-Thread Sharing**: Can be sent to and used by other threads
 ///
 /// # Use Cases
@@ -59,7 +56,8 @@ type ArcStatefulBiConsumerFn<T, U> = Arc<Mutex<dyn FnMut(&T, &U) + Send>>;
 ///
 /// # Performance Considerations
 ///
-/// `ArcStatefulBiConsumer` has some overhead compared to `BoxStatefulBiConsumer`:
+/// `ArcStatefulBiConsumer` has some overhead compared to
+/// `BoxStatefulBiConsumer`:
 /// - **Reference Counting**: Atomic operations on clone/drop
 /// - **Mutex Locking**: Each `accept` call requires lock acquisition
 /// - **Lock Contention**: High concurrency may cause contention
@@ -84,7 +82,6 @@ type ArcStatefulBiConsumerFn<T, U> = Arc<Mutex<dyn FnMut(&T, &U) + Send>>;
 /// consumer.accept(&5, &3);
 /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
 /// ```
-///
 pub struct ArcStatefulBiConsumer<T, U> {
     pub(super) function: ArcStatefulBiConsumerFn<T, U>,
     pub(super) name: Option<String>,
@@ -98,7 +95,8 @@ impl<T, U> ArcStatefulBiConsumer<T, U> {
         |f| Arc::new(Mutex::new(f))
     );
 
-    // Generates: when() and and_then() methods that borrow &self (Arc can clone)
+    // Generates: when() and and_then() methods that borrow &self (Arc can
+    // clone)
     impl_shared_consumer_methods!(
         ArcStatefulBiConsumer<T, U>,
         ArcConditionalStatefulBiConsumer,

@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `FnBiMutatingFunctionOnceOps` public type.
 
@@ -17,23 +15,24 @@ use super::{
 };
 
 // ============================================================================
-// FnBiMutatingFunctionOnceOps - Extension trait for FnOnce(&mut T, &mut U) -> R bi-functions
+// FnBiMutatingFunctionOnceOps - Extension trait for FnOnce(&mut T, &mut U) -> R
+// bi-functions
 // ============================================================================
 
 /// Extension trait for closures implementing `FnOnce(&mut T, &mut U) -> R`
 ///
 /// Provides composition methods (`and_then`, `when`) for one-time use
-/// bi-mutating-function closures and function pointers without requiring explicit
-/// wrapping in `BoxBiMutatingFunctionOnce`.
+/// bi-mutating-function closures and function pointers without requiring
+/// explicit wrapping in `BoxBiMutatingFunctionOnce`.
 ///
 /// This trait is automatically implemented for all closures and function
 /// pointers that implement `FnOnce(&mut T, &mut U) -> R`.
 ///
 /// # Design Rationale
 ///
-/// While closures automatically implement `BiMutatingFunctionOnce<T, U, R>` through
-/// blanket implementation, they don't have access to instance methods like
-/// `and_then` and `when`. This extension trait provides those methods,
+/// While closures automatically implement `BiMutatingFunctionOnce<T, U, R>`
+/// through blanket implementation, they don't have access to instance methods
+/// like `and_then` and `when`. This extension trait provides those methods,
 /// returning `BoxBiMutatingFunctionOnce` for maximum flexibility.
 ///
 /// # Examples
@@ -83,13 +82,14 @@ use super::{
 /// let mut b = 3;
 /// assert_eq!(conditional2.apply(&mut a, &mut b), -15); // multiply executed
 /// ```
-///
-pub trait FnBiMutatingFunctionOnceOps<T, U, R>: FnOnce(&mut T, &mut U) -> R + Sized {
+pub trait FnBiMutatingFunctionOnceOps<T, U, R>:
+    FnOnce(&mut T, &mut U) -> R + Sized
+{
     /// Chain composition - applies self first, then after
     ///
-    /// Creates a new bi-mutating-function that applies this bi-mutating-function first,
-    /// then applies the after function to the result. Consumes self and
-    /// returns a `BoxBiMutatingFunctionOnce`.
+    /// Creates a new bi-mutating-function that applies this
+    /// bi-mutating-function first, then applies the after function to the
+    /// result. Consumes self and returns a `BoxBiMutatingFunctionOnce`.
     ///
     /// # Type Parameters
     ///
@@ -98,8 +98,8 @@ pub trait FnBiMutatingFunctionOnceOps<T, U, R>: FnOnce(&mut T, &mut U) -> R + Si
     ///
     /// # Parameters
     ///
-    /// * `after` - The function to apply after self. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** Since this is a
+    /// * `after` - The function to apply after self. **Note: This parameter is
+    ///   passed by value and will transfer ownership.** Since this is a
     ///   `FnOnce` bi-mutating-function, the parameter will be consumed. Can be:
     ///   - A closure: `|x: R| -> S`
     ///   - A function pointer: `fn(R) -> S`
@@ -142,7 +142,9 @@ pub trait FnBiMutatingFunctionOnceOps<T, U, R>: FnOnce(&mut T, &mut U) -> R + Si
         U: 'static,
         R: 'static,
     {
-        BoxBiMutatingFunctionOnce::new(move |t: &mut T, u: &mut U| after.apply(&self(t, u)))
+        BoxBiMutatingFunctionOnce::new(move |t: &mut T, u: &mut U| {
+            after.apply(&self(t, u))
+        })
     }
 
     /// Creates a conditional bi-mutating-function
@@ -155,8 +157,8 @@ pub trait FnBiMutatingFunctionOnceOps<T, U, R>: FnOnce(&mut T, &mut U) -> R + Si
     ///
     /// * `predicate` - The condition to check. **Note: This parameter is passed
     ///   by value and will transfer ownership.** If you need to preserve the
-    ///   original bi-predicate, clone it first (if it implements `Clone`).
-    ///   Can be:
+    ///   original bi-predicate, clone it first (if it implements `Clone`). Can
+    ///   be:
     ///   - A closure: `|x: &mut T, y: &mut U| -> bool`
     ///   - A function pointer: `fn(&mut T, &mut U) -> bool`
     ///   - A `BoxBiPredicate<T, U>`
@@ -222,7 +224,10 @@ pub trait FnBiMutatingFunctionOnceOps<T, U, R>: FnOnce(&mut T, &mut U) -> R + Si
     /// let test_b = 3;
     /// assert!(both_positive.test(&test_a, &test_b));
     /// ```
-    fn when<P>(self, predicate: P) -> BoxConditionalBiMutatingFunctionOnce<T, U, R>
+    fn when<P>(
+        self,
+        predicate: P,
+    ) -> BoxConditionalBiMutatingFunctionOnce<T, U, R>
     where
         Self: 'static,
         P: BiPredicate<T, U> + 'static,
@@ -236,9 +241,8 @@ pub trait FnBiMutatingFunctionOnceOps<T, U, R>: FnOnce(&mut T, &mut U) -> R + Si
 
 /// Blanket implementation of FnBiMutatingFunctionOnceOps for all closures
 ///
-/// Automatically implements `FnBiMutatingFunctionOnceOps<T, U, R>` for any type that
-/// implements `FnOnce(&mut T, &mut U) -> R`.
-///
+/// Automatically implements `FnBiMutatingFunctionOnceOps<T, U, R>` for any type
+/// that implements `FnOnce(&mut T, &mut U) -> R`.
 impl<T, U, R, F> FnBiMutatingFunctionOnceOps<T, U, R> for F
 where
     F: FnOnce(&mut T, &mut U) -> R,

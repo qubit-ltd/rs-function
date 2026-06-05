@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `FnMutatorOnceOps` public type.
 
@@ -49,7 +47,6 @@ use super::{
 /// chained.apply(&mut target);
 /// assert_eq!(target, vec![0, 1, 2, 3, 4]);
 /// ```
-///
 pub trait FnMutatorOnceOps<T>: FnOnce(&mut T) + Sized {
     /// Chains another mutator in sequence
     ///
@@ -59,10 +56,10 @@ pub trait FnMutatorOnceOps<T>: FnOnce(&mut T) + Sized {
     ///
     /// # Parameters
     ///
-    /// * `next` - The mutator to execute after the current operation. **Note: This
-    ///   parameter is passed by value and will transfer ownership.** Since
-    ///   `BoxMutatorOnce` cannot be cloned, the parameter will be consumed.
-    ///   Can be:
+    /// * `next` - The mutator to execute after the current operation. **Note:
+    ///   This parameter is passed by value and will transfer ownership.** Since
+    ///   `BoxMutatorOnce` cannot be cloned, the parameter will be consumed. Can
+    ///   be:
     ///   - A closure: `|x: &mut T|`
     ///   - A `BoxMutatorOnce<T>`
     ///   - Any type implementing `MutatorOnce<T>`

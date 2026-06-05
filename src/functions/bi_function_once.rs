@@ -1,24 +1,21 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! # BiFunctionOnce Types
 //!
 //! Provides Rust implementations of consuming bi-function traits similar to
-//! Rust's `FnOnce(&T, &U) -> R` trait, but with value-oriented semantics for functional
-//! programming patterns with two input references.
+//! Rust's `FnOnce(&T, &U) -> R` trait, but with value-oriented semantics for
+//! functional programming patterns with two input references.
 //!
 //! This module provides the `BiFunctionOnce<T, U, R>` trait and one-time use
 //! implementations:
 //!
 //! - [`BoxBiFunctionOnce`]: Single ownership, one-time use
-//!
 use crate::macros::{
     impl_box_once_conversions,
     impl_closure_once_trait,
@@ -61,7 +58,6 @@ pub use box_conditional_bi_function_once::BoxConditionalBiFunctionOnce;
 /// * `T` - The type of the first input value (borrowed)
 /// * `U` - The type of the second input value (borrowed)
 /// * `R` - The type of the output value
-///
 pub trait BiFunctionOnce<T, U, R> {
     /// Computes output from two input references, consuming self
     ///

@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 // qubit-style: allow explicit-imports
 //! Dedicated test file for impl_conditional_function_clone macro coverage
@@ -16,7 +14,8 @@
 //!
 //! The macro has two branches:
 //! 1. Two generic parameters: `$struct_name:ident < $t:ident, $r:ident >`
-//! 2. Three generic parameters: `$struct_name:ident < $t:ident, $u:ident, $r:ident >`
+//! 2. Three generic parameters: `$struct_name:ident < $t:ident, $u:ident,
+//!    $r:ident >`
 //!
 //! This file focuses on testing the three-parameter version (BiFunction types).
 
@@ -28,13 +27,14 @@ use qubit_function::{
 
 /// Test the three-parameter version of impl_conditional_function_clone macro
 ///
-/// This test verifies that the macro's three-parameter branch (for BiFunction types)
-/// generates correct Clone implementations.
+/// This test verifies that the macro's three-parameter branch (for BiFunction
+/// types) generates correct Clone implementations.
 ///
 /// NOTE: The existing conditional structs (RcConditionalBiFunction, etc.) have
-/// fields that all implement Clone, so Rust automatically provides Clone implementations
-/// that take precedence over macro-generated ones. This test simulates the macro's
-/// behavior with a custom struct to ensure the three-parameter branch logic is correct.
+/// fields that all implement Clone, so Rust automatically provides Clone
+/// implementations that take precedence over macro-generated ones. This test
+/// simulates the macro's behavior with a custom struct to ensure the
+/// three-parameter branch logic is correct.
 #[test]
 fn test_three_param_conditional_clone_macro_coverage() {
     // Test the custom struct with macro-generated Clone

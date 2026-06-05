@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxMutator` public type.
 
@@ -66,15 +64,17 @@ use super::{
 /// mutator.apply(&mut value);
 /// assert_eq!(value, 10);
 /// ```
-///
 pub struct BoxMutator<T> {
     pub(super) function: Box<dyn Fn(&mut T)>,
     pub(super) name: Option<String>,
 }
 
 impl<T> BoxMutator<T> {
-    // Generate common mutator methods (new, new_with_name, name, set_name, noop)
-    impl_mutator_common_methods!(BoxMutator<T>, (Fn(&mut T) + 'static), |f| Box::new(f));
+    // Generate common mutator methods (new, new_with_name, name, set_name,
+    // noop)
+    impl_mutator_common_methods!(BoxMutator<T>, (Fn(&mut T) + 'static), |f| {
+        Box::new(f)
+    });
 
     // Generate box mutator methods (when, and_then, or_else, etc.)
     impl_box_mutator_methods!(BoxMutator<T>, BoxConditionalMutator, Mutator);
