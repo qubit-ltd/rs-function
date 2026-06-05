@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # FunctionOnce Types
 //!
 //! Provides Rust implementations of consuming function traits similar to
@@ -16,7 +14,6 @@
 //! implementations:
 //!
 //! - [`BoxFunctionOnce`]: Single ownership, one-time use
-//!
 use crate::functions::macros::{
     impl_box_conditional_function,
     impl_box_function_methods,
@@ -57,7 +54,6 @@ pub use fn_function_once_ops::FnFunctionOnceOps;
 ///
 /// * `T` - The type of the input value (borrowed)
 /// * `R` - The type of the output value
-///
 pub trait FunctionOnce<T, R> {
     /// Applies the function to the input reference, consuming self
     ///

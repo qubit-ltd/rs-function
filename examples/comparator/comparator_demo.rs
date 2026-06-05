@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 use qubit_function::{
     ArcComparator,
@@ -31,8 +29,12 @@ fn main() {
 fn demo_box_comparator() {
     println!("--- BoxComparator sorting ---");
 
-    let by_age = BoxComparator::new(|left: &User, right: &User| left.age.cmp(&right.age));
-    let by_name = BoxComparator::new(|left: &User, right: &User| left.name.cmp(&right.name));
+    let by_age = BoxComparator::new(|left: &User, right: &User| {
+        left.age.cmp(&right.age)
+    });
+    let by_name = BoxComparator::new(|left: &User, right: &User| {
+        left.name.cmp(&right.name)
+    });
     let comparator = by_age.then_comparing(by_name);
 
     let mut users = vec![
@@ -58,15 +60,19 @@ fn demo_box_comparator() {
 fn demo_shared_comparators() {
     println!("--- Shared comparators ---");
 
-    let ascending = ArcComparator::new(|left: &i32, right: &i32| left.cmp(right));
+    let ascending =
+        ArcComparator::new(|left: &i32, right: &i32| left.cmp(right));
     let descending = ascending.reversed();
     println!(
         "ArcComparator descending 10 vs 3: {:?}",
         descending.compare(&10, &3)
     );
 
-    let by_length = RcComparator::new(|left: &String, right: &String| left.len().cmp(&right.len()));
-    let alphabetic = RcComparator::new(|left: &String, right: &String| left.cmp(right));
+    let by_length = RcComparator::new(|left: &String, right: &String| {
+        left.len().cmp(&right.len())
+    });
+    let alphabetic =
+        RcComparator::new(|left: &String, right: &String| left.cmp(right));
     let combined = by_length.then_comparing(&alphabetic);
     println!(
         "RcComparator length/name 'aa' vs 'b': {:?}",

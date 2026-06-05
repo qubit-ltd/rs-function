@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `FnBiTransformerOps` public type.
 
@@ -63,7 +61,6 @@ use super::{
 /// assert_eq!(conditional.apply(5, 3), 8);   // add
 /// assert_eq!(conditional.apply(-5, 3), -15); // multiply
 /// ```
-///
 pub trait FnBiTransformerOps<T, U, R>: Fn(T, U) -> R + Sized {
     /// Chain composition - applies self first, then after
     ///
@@ -74,7 +71,8 @@ pub trait FnBiTransformerOps<T, U, R>: Fn(T, U) -> R + Sized {
     /// # Type Parameters
     ///
     /// * `S` - The output type of the after transformer
-    /// * `F` - The type of the after transformer (must implement Transformer<R, S>)
+    /// * `F` - The type of the after transformer (must implement Transformer<R,
+    ///   S>)
     ///
     /// # Parameters
     ///
@@ -147,8 +145,8 @@ pub trait FnBiTransformerOps<T, U, R>: Fn(T, U) -> R + Sized {
     ///
     /// * `predicate` - The condition to check. **Note: This parameter is passed
     ///   by value and will transfer ownership.** If you need to preserve the
-    ///   original bi-predicate, clone it first (if it implements `Clone`).
-    ///   Can be:
+    ///   original bi-predicate, clone it first (if it implements `Clone`). Can
+    ///   be:
     ///   - A closure: `|x: &T, y: &U| -> bool`
     ///   - A function pointer: `fn(&T, &U) -> bool`
     ///   - A `BoxBiPredicate<T, U>`
@@ -209,5 +207,4 @@ pub trait FnBiTransformerOps<T, U, R>: Fn(T, U) -> R + Sized {
 ///
 /// Automatically implements `FnBiTransformerOps<T, U, R>` for any type that
 /// implements `Fn(T, U) -> R`.
-///
 impl<T, U, R, F> FnBiTransformerOps<T, U, R> for F where F: Fn(T, U) -> R {}

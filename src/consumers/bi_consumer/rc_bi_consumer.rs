@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcBiConsumer` public type.
 
@@ -41,8 +39,7 @@ use super::{
 /// - **Single-Threaded**: Not thread-safe, cannot send across threads
 /// - **No Wrapper Interior Mutability Overhead**: No RefCell needed by the
 ///   wrapper
-/// - **Non-Consuming API**: `and_then` borrows `&self`, original remains
-///   usable
+/// - **Non-Consuming API**: `and_then` borrows `&self`, original remains usable
 ///
 /// # Use Cases
 ///
@@ -70,7 +67,6 @@ use super::{
 /// consumer.accept(&5, &3);
 /// clone.accept(&10, &20);
 /// ```
-///
 pub struct RcBiConsumer<T, U> {
     pub(super) function: Rc<BiConsumerFn<T, U>>,
     pub(super) name: Option<String>,

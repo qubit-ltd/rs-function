@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalStatefulMutator` public type.
 
@@ -76,7 +74,6 @@ use super::{
 /// mutator.apply(&mut negative);
 /// assert_eq!(negative, -6); // or_else branch executed
 /// ```
-///
 pub struct BoxConditionalStatefulMutator<T> {
     pub(super) mutator: BoxStatefulMutator<T>,
     pub(super) predicate: BoxPredicate<T>,
@@ -97,7 +94,11 @@ impl<T> StatefulMutator<T> for BoxConditionalStatefulMutator<T> {
     }
 
     // Generates: into_box(), into_rc(), into_fn()
-    impl_conditional_mutator_conversions!(BoxStatefulMutator<T>, RcStatefulMutator, FnMut);
+    impl_conditional_mutator_conversions!(
+        BoxStatefulMutator<T>,
+        RcStatefulMutator,
+        FnMut
+    );
 }
 
 // Generate Debug and Display trait implementations for conditional mutator

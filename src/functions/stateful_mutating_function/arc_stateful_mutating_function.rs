@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulMutatingFunction` public type.
 
@@ -74,14 +72,14 @@ use super::{
 /// let mut value = 5;
 /// assert_eq!(clone.apply(&mut value), 1);
 /// ```
-///
 pub struct ArcStatefulMutatingFunction<T, R> {
     pub(super) function: ArcStatefulMutatingFunctionFn<T, R>,
     pub(super) name: Option<String>,
 }
 
 impl<T, R> ArcStatefulMutatingFunction<T, R> {
-    // Generates: new(), new_with_name(), new_with_optional_name(), name(), set_name()
+    // Generates: new(), new_with_name(), new_with_optional_name(), name(),
+    // set_name()
     impl_function_common_methods!(
         ArcStatefulMutatingFunction<T, R>,
         (FnMut(&mut T) -> R + Send + 'static),
@@ -101,14 +99,18 @@ impl<T, R> ArcStatefulMutatingFunction<T, R> {
 // Generates: Clone implementation for ArcStatefulMutatingFunction<T, R>
 impl_function_clone!(ArcStatefulMutatingFunction<T, R>);
 
-// Generates: Debug and Display implementations for ArcStatefulMutatingFunction<T, R>
+// Generates: Debug and Display implementations for
+// ArcStatefulMutatingFunction<T, R>
 impl_function_debug_display!(ArcStatefulMutatingFunction<T, R>);
 
 // Generates: identity() method for ArcStatefulMutatingFunction<T, T>
 impl_function_identity_method!(ArcStatefulMutatingFunction<T, T>, mutating);
 
-// Implement StatefulMutatingFunction trait for ArcStatefulMutatingFunction<T, R>
-impl<T, R> StatefulMutatingFunction<T, R> for ArcStatefulMutatingFunction<T, R> {
+// Implement StatefulMutatingFunction trait for ArcStatefulMutatingFunction<T,
+// R>
+impl<T, R> StatefulMutatingFunction<T, R>
+    for ArcStatefulMutatingFunction<T, R>
+{
     fn apply(&mut self, t: &mut T) -> R {
         (self.function.lock())(t)
     }

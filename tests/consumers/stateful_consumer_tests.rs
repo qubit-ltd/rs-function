@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 // qubit-style: allow explicit-imports
 //! Unit tests for StatefulConsumer types
@@ -118,7 +116,8 @@ mod test_box_consumer {
         let log = Arc::new(Mutex::new(String::new()));
         let l = log.clone();
         let mut consumer = BoxStatefulConsumer::new(move |s: &String| {
-            *l.lock().expect("mutex should not be poisoned") = format!("Got: {}", s);
+            *l.lock().expect("mutex should not be poisoned") =
+                format!("Got: {}", s);
         });
         let text = String::from("hello");
         consumer.accept(&text);
@@ -240,9 +239,12 @@ mod test_box_consumer {
     fn test_new_with_name() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
-        let mut consumer = BoxStatefulConsumer::new_with_name("test_consumer", move |x: &i32| {
-            l.lock().expect("mutex should not be poisoned").push(*x);
-        });
+        let mut consumer = BoxStatefulConsumer::new_with_name(
+            "test_consumer",
+            move |x: &i32| {
+                l.lock().expect("mutex should not be poisoned").push(*x);
+            },
+        );
         assert_eq!(consumer.name(), Some("test_consumer"));
         consumer.accept(&5);
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
@@ -276,9 +278,10 @@ mod test_box_consumer {
         let consumer = BoxStatefulConsumer::new(move |x: &i32| {
             l1.lock().expect("mutex should not be poisoned").push(*x);
         });
-        let mut conditional = consumer.when(|x: &i32| *x > 0).or_else(move |x: &i32| {
-            l2.lock().expect("mutex should not be poisoned").push(-*x);
-        });
+        let mut conditional =
+            consumer.when(|x: &i32| *x > 0).or_else(move |x: &i32| {
+                l2.lock().expect("mutex should not be poisoned").push(-*x);
+            });
 
         let positive = 5;
         conditional.accept(&positive);
@@ -457,7 +460,8 @@ mod test_arc_consumer {
         h1.join().expect("thread should not panic");
         h2.join().expect("thread should not panic");
 
-        let mut result = log.lock().expect("mutex should not be poisoned").clone();
+        let mut result =
+            log.lock().expect("mutex should not be poisoned").clone();
         result.sort();
         assert_eq!(result, vec![1, 2]);
     }
@@ -473,9 +477,12 @@ mod test_arc_consumer {
     fn test_new_with_name() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
-        let mut consumer = ArcStatefulConsumer::new_with_name("test_consumer", move |x: &i32| {
-            l.lock().expect("mutex should not be poisoned").push(*x);
-        });
+        let mut consumer = ArcStatefulConsumer::new_with_name(
+            "test_consumer",
+            move |x: &i32| {
+                l.lock().expect("mutex should not be poisoned").push(*x);
+            },
+        );
         assert_eq!(consumer.name(), Some("test_consumer"));
         consumer.accept(&5);
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
@@ -593,7 +600,8 @@ mod test_arc_consumer {
         let log = Arc::new(Mutex::new(String::new()));
         let l = log.clone();
         let mut consumer = ArcStatefulConsumer::new(move |s: &String| {
-            *l.lock().expect("mutex should not be poisoned") = format!("Got: {}", s);
+            *l.lock().expect("mutex should not be poisoned") =
+                format!("Got: {}", s);
         });
         let text = String::from("hello");
         consumer.accept(&text);
@@ -697,7 +705,10 @@ mod test_arc_consumer {
                 .push(*x + counter);
         });
         consumer.accept(&10);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![11]); // 10 + 1
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![11]
+        ); // 10 + 1
     }
 
     #[test]
@@ -714,9 +725,10 @@ mod test_arc_consumer {
 
     /// Test that ArcConsumer can work with non-Send + non-Sync types
     ///
-    /// This test verifies that the relaxed generic constraints (T: 'static instead
-    /// of T: Send + Sync + 'static) allow ArcConsumer to be created for types that
-    /// are not thread-safe, as long as we only pass references to them.
+    /// This test verifies that the relaxed generic constraints (T: 'static
+    /// instead of T: Send + Sync + 'static) allow ArcConsumer to be created
+    /// for types that are not thread-safe, as long as we only pass
+    /// references to them.
     #[test]
     fn test_with_non_send_sync_type() {
         // Rc<RefCell<i32>> is neither Send nor Sync
@@ -726,15 +738,19 @@ mod test_arc_consumer {
         let l = log.clone();
 
         // This should compile now with relaxed constraints
-        let consumer = ArcConsumer::<NonSendType>::new(move |value: &NonSendType| {
-            let val = *value.borrow();
-            l.lock().expect("mutex should not be poisoned").push(val);
-        });
+        let consumer =
+            ArcConsumer::<NonSendType>::new(move |value: &NonSendType| {
+                let val = *value.borrow();
+                l.lock().expect("mutex should not be poisoned").push(val);
+            });
 
         let value = Rc::new(RefCell::new(42));
         consumer.accept(&value);
 
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![42]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![42]
+        );
     }
 
     /// Test that ArcConsumer with non-Send type can be cloned and used
@@ -745,10 +761,11 @@ mod test_arc_consumer {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
 
-        let consumer = ArcConsumer::<NonSendType>::new(move |value: &NonSendType| {
-            let val = value.borrow().clone();
-            l.lock().expect("mutex should not be poisoned").push(val);
-        });
+        let consumer =
+            ArcConsumer::<NonSendType>::new(move |value: &NonSendType| {
+                let val = value.borrow().clone();
+                l.lock().expect("mutex should not be poisoned").push(val);
+            });
 
         let consumer2 = consumer.clone();
 
@@ -771,19 +788,21 @@ mod test_arc_consumer {
         let l1 = log.clone();
         let l2 = log.clone();
 
-        let first = ArcConsumer::<NonSendType>::new(move |value: &NonSendType| {
-            let val = *value.borrow();
-            l1.lock()
-                .expect("mutex should not be poisoned")
-                .push(val * 2);
-        });
+        let first =
+            ArcConsumer::<NonSendType>::new(move |value: &NonSendType| {
+                let val = *value.borrow();
+                l1.lock()
+                    .expect("mutex should not be poisoned")
+                    .push(val * 2);
+            });
 
-        let second = ArcConsumer::<NonSendType>::new(move |value: &NonSendType| {
-            let val = *value.borrow();
-            l2.lock()
-                .expect("mutex should not be poisoned")
-                .push(val + 10);
-        });
+        let second =
+            ArcConsumer::<NonSendType>::new(move |value: &NonSendType| {
+                let val = *value.borrow();
+                l2.lock()
+                    .expect("mutex should not be poisoned")
+                    .push(val + 10);
+            });
 
         let chained = first.and_then(second);
 
@@ -799,7 +818,10 @@ mod test_arc_consumer {
     // Test into_box() preserves name
     #[test]
     fn test_into_box_preserves_name() {
-        let consumer = ArcStatefulConsumer::new_with_name("original_consumer", |_x: &i32| {});
+        let consumer = ArcStatefulConsumer::new_with_name(
+            "original_consumer",
+            |_x: &i32| {},
+        );
         let boxed = consumer.into_box();
         assert_eq!(boxed.name(), Some("original_consumer"));
     }
@@ -815,7 +837,10 @@ mod test_arc_consumer {
     // Test into_rc() preserves name
     #[test]
     fn test_into_rc_preserves_name() {
-        let consumer = ArcStatefulConsumer::new_with_name("original_consumer", |_x: &i32| {});
+        let consumer = ArcStatefulConsumer::new_with_name(
+            "original_consumer",
+            |_x: &i32| {},
+        );
         let rced = consumer.into_rc();
         assert_eq!(rced.name(), Some("original_consumer"));
     }
@@ -831,7 +856,10 @@ mod test_arc_consumer {
     // Test to_box() preserves name
     #[test]
     fn test_to_box_preserves_name() {
-        let consumer = ArcStatefulConsumer::new_with_name("original_consumer", |_x: &i32| {});
+        let consumer = ArcStatefulConsumer::new_with_name(
+            "original_consumer",
+            |_x: &i32| {},
+        );
         let boxed = consumer.to_box();
         assert_eq!(boxed.name(), Some("original_consumer"));
         // Original consumer should still be usable and have the same name
@@ -850,7 +878,10 @@ mod test_arc_consumer {
     // Test to_rc() preserves name
     #[test]
     fn test_to_rc_preserves_name() {
-        let consumer = ArcStatefulConsumer::new_with_name("original_consumer", |_x: &i32| {});
+        let consumer = ArcStatefulConsumer::new_with_name(
+            "original_consumer",
+            |_x: &i32| {},
+        );
         let rced = consumer.to_rc();
         assert_eq!(rced.name(), Some("original_consumer"));
         // Original consumer should still be usable and have the same name
@@ -869,7 +900,10 @@ mod test_arc_consumer {
     // Test to_arc() preserves name (clones self)
     #[test]
     fn test_to_arc_preserves_name() {
-        let consumer = ArcStatefulConsumer::new_with_name("original_consumer", |_x: &i32| {});
+        let consumer = ArcStatefulConsumer::new_with_name(
+            "original_consumer",
+            |_x: &i32| {},
+        );
         let arced = consumer.to_arc();
         assert_eq!(arced.name(), Some("original_consumer"));
         // Original consumer should still be usable and have the same name
@@ -956,9 +990,12 @@ mod test_rc_consumer {
     fn test_new_with_name() {
         let log = Rc::new(RefCell::new(Vec::new()));
         let l = log.clone();
-        let mut consumer = RcStatefulConsumer::new_with_name("test_consumer", move |x: &i32| {
-            l.borrow_mut().push(*x);
-        });
+        let mut consumer = RcStatefulConsumer::new_with_name(
+            "test_consumer",
+            move |x: &i32| {
+                l.borrow_mut().push(*x);
+            },
+        );
         assert_eq!(consumer.name(), Some("test_consumer"));
         consumer.accept(&5);
         assert_eq!(*log.borrow(), vec![5]);
@@ -1043,7 +1080,10 @@ mod test_rc_consumer {
     // Test into_box() preserves name
     #[test]
     fn test_into_box_preserves_name() {
-        let consumer = RcStatefulConsumer::new_with_name("original_consumer", |_x: &i32| {});
+        let consumer = RcStatefulConsumer::new_with_name(
+            "original_consumer",
+            |_x: &i32| {},
+        );
         let boxed = consumer.into_box();
         assert_eq!(boxed.name(), Some("original_consumer"));
     }
@@ -1059,7 +1099,10 @@ mod test_rc_consumer {
     // Test to_box() preserves name
     #[test]
     fn test_to_box_preserves_name() {
-        let consumer = RcStatefulConsumer::new_with_name("original_consumer", |_x: &i32| {});
+        let consumer = RcStatefulConsumer::new_with_name(
+            "original_consumer",
+            |_x: &i32| {},
+        );
         let boxed = consumer.to_box();
         assert_eq!(boxed.name(), Some("original_consumer"));
         // Original consumer should still be usable and have the same name
@@ -1264,7 +1307,10 @@ mod test_unified_interface {
         });
         let result = apply_consumer(&mut consumer, &5);
         assert_eq!(result, 5);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![10]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![10]
+        );
     }
 
     #[test]
@@ -1276,7 +1322,10 @@ mod test_unified_interface {
         });
         let result = apply_consumer(&mut consumer, &5);
         assert_eq!(result, 5);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![10]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![10]
+        );
     }
 
     #[test]
@@ -1381,12 +1430,16 @@ mod test_fn_consumer_ops {
         };
         let func = Consumer::into_fn(closure);
         func(&5);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![10]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![10]
+        );
     }
 
     // Test closure's to_xxx methods
     // Note: Only Clone closures can use to_xxx methods
-    // Since standard closures do not implement Clone, we use function pointers (function pointers implement Clone)
+    // Since standard closures do not implement Clone, we use function pointers
+    // (function pointers implement Clone)
 
     #[test]
     fn test_closure_to_box_with_fn_pointer() {
@@ -1444,7 +1497,9 @@ mod test_fn_consumer_ops {
         let counter = Arc::new(Mutex::new(0));
         let c1 = counter.clone();
 
-        fn make_consumer(c: Arc<Mutex<i32>>) -> impl FnMut(&i32) + Clone + Send {
+        fn make_consumer(
+            c: Arc<Mutex<i32>>,
+        ) -> impl FnMut(&i32) + Clone + Send {
             move |x: &i32| {
                 *c.lock().expect("mutex should not be poisoned") += *x * 3;
             }
@@ -1487,7 +1542,8 @@ mod test_fn_consumer_ops {
         // Verify first part result
         assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 32); // 15 + 17
 
-        // Use second independent instance to verify original closure is still available
+        // Use second independent instance to verify original closure is still
+        // available
         let mut original_func = consumer_fn2;
         original_func(&3); // 3 + 10 = 13
         assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 45); // 32 + 13
@@ -1705,11 +1761,12 @@ mod test_edge_cases {
         let consumer = BoxStatefulConsumer::new(move |x: &i32| {
             l1.lock().expect("mutex should not be poisoned").push(*x);
         });
-        let mut conditional = consumer.when(|_: &i32| true).or_else(move |x: &i32| {
-            l2.lock()
-                .expect("mutex should not be poisoned")
-                .push(*x * 100);
-        });
+        let mut conditional =
+            consumer.when(|_: &i32| true).or_else(move |x: &i32| {
+                l2.lock()
+                    .expect("mutex should not be poisoned")
+                    .push(*x * 100);
+            });
         conditional.accept(&5);
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
     }
@@ -1722,11 +1779,12 @@ mod test_edge_cases {
         let consumer = BoxStatefulConsumer::new(move |x: &i32| {
             l1.lock().expect("mutex should not be poisoned").push(*x);
         });
-        let mut conditional = consumer.when(|_: &i32| false).or_else(move |x: &i32| {
-            l2.lock()
-                .expect("mutex should not be poisoned")
-                .push(*x * 100);
-        });
+        let mut conditional =
+            consumer.when(|_: &i32| false).or_else(move |x: &i32| {
+                l2.lock()
+                    .expect("mutex should not be poisoned")
+                    .push(*x * 100);
+            });
         conditional.accept(&5);
         assert_eq!(
             *log.lock().expect("mutex should not be poisoned"),
@@ -2111,7 +2169,8 @@ mod test_default_into_implementations {
         StatefulConsumer,
     };
 
-    // Define a custom Consumer implementation for testing default into_xxx() methods
+    // Define a custom Consumer implementation for testing default into_xxx()
+    // methods
     struct CustomConsumer {
         log: Arc<Mutex<Vec<i32>>>,
     }
@@ -2225,7 +2284,8 @@ mod test_default_into_implementations {
         clone1.accept(&1);
         clone2.accept(&2);
 
-        let mut result = log.lock().expect("mutex should not be poisoned").clone();
+        let mut result =
+            log.lock().expect("mutex should not be poisoned").clone();
         result.sort();
         assert_eq!(result, vec![10, 20]);
     }
@@ -2342,7 +2402,8 @@ mod test_default_into_implementations {
         h1.join().expect("thread should not panic");
         h2.join().expect("thread should not panic");
 
-        let mut result = log.lock().expect("mutex should not be poisoned").clone();
+        let mut result =
+            log.lock().expect("mutex should not be poisoned").clone();
         result.sort();
         assert_eq!(result, vec![10, 20]);
     }
@@ -2442,7 +2503,10 @@ mod test_closure_to_methods {
         // Test to_box() - should preserve original consumer
         let mut boxed = consumer.to_box();
         boxed.accept(&5);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![15]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![15]
+        );
 
         // Original consumer is still available
         let mut original = consumer;
@@ -2465,7 +2529,10 @@ mod test_closure_to_methods {
         // Test to_rc() - should preserve original consumer
         let mut rc = consumer.to_rc();
         rc.accept(&5);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![20]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![20]
+        );
 
         // Original consumer is still available
         let mut original = consumer;
@@ -2488,7 +2555,10 @@ mod test_closure_to_methods {
         // Test to_arc() - should preserve original consumer
         let mut arc = consumer.to_arc();
         arc.accept(&3);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![15]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![15]
+        );
 
         // Original consumer is still available
         let mut original = consumer;
@@ -2511,9 +2581,13 @@ mod test_closure_to_methods {
         // Test to_fn() - should preserve original consumer
         let mut func = consumer.to_fn();
         func(&2);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![12]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![12]
+        );
 
-        // Because to_fn() borrows the consumer, it needs to complete func usage first
+        // Because to_fn() borrows the consumer, it needs to complete func usage
+        // first
         drop(func);
 
         // Original consumer is still available
@@ -2579,7 +2653,8 @@ mod test_closure_to_methods {
         func(&1);
         assert_eq!(*log.borrow(), vec![9]);
 
-        // Because to_fn() borrows the consumer, it needs to complete func usage first
+        // Because to_fn() borrows the consumer, it needs to complete func usage
+        // first
         drop(func);
 
         // Original consumer is still available
@@ -2617,7 +2692,10 @@ mod test_closure_to_methods {
         // Test to_box() - using default implementation
         let mut boxed = custom.to_box();
         boxed.accept(&3);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![30]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![30]
+        );
 
         // Original custom consumer is still available
         let mut original = custom;
@@ -2691,7 +2769,10 @@ mod test_closure_to_methods {
         // Test to_arc() - using default implementation
         let mut arc = custom.to_arc();
         arc.accept(&2);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![24]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![24]
+        );
 
         // Original custom consumer is still available
         let mut original = custom;
@@ -2731,9 +2812,13 @@ mod test_closure_to_methods {
         // Test to_fn() - using default implementation
         let mut func = custom.to_fn();
         func(&2);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![26]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![26]
+        );
 
-        // Because to_fn() borrows the custom, it needs to complete func usage first
+        // Because to_fn() borrows the custom, it needs to complete func usage
+        // first
         drop(func);
 
         // Original custom consumer is still available
@@ -2766,7 +2851,8 @@ mod test_closure_to_methods {
         let log = Arc::new(Mutex::new(String::new()));
         let l = log.clone();
         let mut consumer = BoxStatefulConsumer::new(move |s: &String| {
-            *l.lock().expect("mutex should not be poisoned") = format!("Got: {}", s);
+            *l.lock().expect("mutex should not be poisoned") =
+                format!("Got: {}", s);
         });
         let text = String::from("hello");
         consumer.accept(&text);
@@ -2833,7 +2919,10 @@ mod test_closure_to_methods {
                 .push(*x + counter);
         });
         consumer.accept(&10);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![11]); // 10 + 1
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![11]
+        ); // 10 + 1
     }
 
     #[test]
@@ -2882,7 +2971,10 @@ mod consumer_once_trait_tests {
 
         // BoxConsumer can be used as ConsumerOnce
         accept_consumer_once(consumer.into_once(), &42);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![42]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![42]
+        );
     }
 
     #[test]
@@ -2895,7 +2987,10 @@ mod consumer_once_trait_tests {
 
         // ArcConsumer can be used as ConsumerOnce
         accept_consumer_once(consumer.into_once(), &21);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![42]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![42]
+        );
     }
 
     #[test]
@@ -2935,7 +3030,10 @@ mod consumer_once_trait_tests {
         });
 
         consumer.accept(&7);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![21]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![21]
+        );
     }
 
     #[test]
@@ -2960,7 +3058,10 @@ mod consumer_once_trait_tests {
 
         let once_consumer = consumer.into_box();
         once_consumer.accept(&77);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![77]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![77]
+        );
     }
 
     #[test]
@@ -2973,7 +3074,10 @@ mod consumer_once_trait_tests {
 
         let once_consumer = consumer.into_box();
         once_consumer.accept(&8);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![40]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![40]
+        );
     }
 
     #[test]
@@ -2999,7 +3103,10 @@ mod consumer_once_trait_tests {
 
         let func = consumer.into_fn();
         func(&99);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![99]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![99]
+        );
     }
 
     #[test]
@@ -3012,7 +3119,10 @@ mod consumer_once_trait_tests {
 
         let func = consumer.into_fn();
         func(&84);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![42]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![42]
+        );
     }
 
     #[test]
@@ -3343,7 +3453,8 @@ mod custom_struct_tests {
         Ordering,
     };
 
-    /// Custom struct implementing StatefulConsumer for testing default trait methods
+    /// Custom struct implementing StatefulConsumer for testing default trait
+    /// methods
     pub struct MyStatefulConsumer {
         counter: Arc<AtomicUsize>,
     }
@@ -3440,7 +3551,8 @@ mod custom_struct_tests {
         };
 
         // Test into_once() - should consume the closure
-        let once_consumer = qubit_function::StatefulConsumer::into_once(closure);
+        let once_consumer =
+            qubit_function::StatefulConsumer::into_once(closure);
         once_consumer.accept(&5);
         assert_eq!(counter.load(Ordering::SeqCst), 5);
     }

@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! # Box Supplier Methods Macro
 //!
@@ -41,7 +39,6 @@
 //! // );
 //! // (private to crate implementation)
 //! ```
-//!
 
 /// Generates map, filter, and zip method implementations for Box-based Supplier
 ///
@@ -73,7 +70,6 @@
 /// // Use this macro from `qubit_function::suppliers` when implementing
 /// // supplier methods in that module.
 /// ```
-///
 macro_rules! impl_box_supplier_methods {
     (@let_supplier_fn Supplier, $name:ident, $value:expr) => {
         let $name = $value;

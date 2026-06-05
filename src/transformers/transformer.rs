@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Transformer Types
 //!
 //! Provides Rust implementations of transformer traits for type conversion
@@ -20,7 +18,6 @@
 //! - [`BoxTransformer`]: Single ownership, not cloneable
 //! - [`ArcTransformer`]: Thread-safe shared ownership, cloneable
 //! - [`RcTransformer`]: Single-threaded shared ownership, cloneable
-//!
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -89,7 +86,6 @@ pub use arc_conditional_transformer::ArcConditionalTransformer;
 ///
 /// * `T` - The type of the input value (consumed)
 /// * `R` - The type of the output value
-///
 pub trait Transformer<T, R> {
     /// Applies the transformation to the input value to produce an output value
     ///
@@ -351,7 +347,8 @@ pub trait Transformer<T, R> {
     /// Converts to `BoxTransformerOnce` without consuming self
     ///
     /// **⚠️ Requires Clone**: This method requires `Self` to implement `Clone`.
-    /// Clones the current transformer and converts the clone to a one-time transformer.
+    /// Clones the current transformer and converts the clone to a one-time
+    /// transformer.
     ///
     /// # Returns
     ///

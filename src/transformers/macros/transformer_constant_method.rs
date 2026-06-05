@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! # Transformer Constant Method Macro
 //!
@@ -62,7 +60,6 @@
 //!     }
 //! }
 //! ```
-//!
 
 /// Generates constant method implementation for transformer types.
 ///
@@ -87,7 +84,6 @@
 /// let constant = BoxTransformer::constant("hello");
 /// assert_eq!(constant.apply(123), "hello");
 /// ```
-///
 macro_rules! impl_transformer_constant_method {
     // Single-parameter transformer (BoxTransformer, RcTransformer, BoxTransformerOnce)
     ($struct_name:ident < $t:ident, $r:ident >) => {

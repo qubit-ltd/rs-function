@@ -1,19 +1,16 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Transformers Module
 //!
 //! This module provides transformer-related functional programming
 //! abstractions for converting values from one type to another, including
 //! single-parameter transformers, bi-transformers, and their stateful
 //! variants.
-//!
 
 pub mod bi_transformer;
 pub mod bi_transformer_once;

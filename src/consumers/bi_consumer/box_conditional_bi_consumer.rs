@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalBiConsumer` public type.
 
@@ -27,8 +25,9 @@ use super::{
 
 /// BoxConditionalBiConsumer struct
 ///
-/// A conditional non-mutating bi-consumer that only executes when a predicate is satisfied.
-/// Uses `BoxBiConsumer` and `BoxBiPredicate` for single ownership semantics.
+/// A conditional non-mutating bi-consumer that only executes when a predicate
+/// is satisfied. Uses `BoxBiConsumer` and `BoxBiPredicate` for single ownership
+/// semantics.
 ///
 /// This type is typically created by calling `BoxBiConsumer::when()` and is
 /// designed to work with the `or_else()` method to create if-then-else logic.
@@ -73,7 +72,6 @@ use super::{
 /// consumer.accept(&5, &3);  // Prints: Both positive: 5 + 3 = 8
 /// consumer.accept(&-5, &3); // Prints: Not both positive: -5 and 3
 /// ```
-///
 pub struct BoxConditionalBiConsumer<T, U> {
     pub(super) consumer: BoxBiConsumer<T, U>,
     pub(super) predicate: BoxBiPredicate<T, U>,

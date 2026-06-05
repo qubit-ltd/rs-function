@@ -1,19 +1,18 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Function Clone Macro
 //!
 //! Generates Clone trait implementation for basic Function types
 //!
 //! Generates Clone implementation for Function structs that have `function`
 //! and `name` fields. The function field is cloned using its inherent `clone`
-//! method, which performs a shallow clone for smart pointers like `Arc` or `Rc`.
+//! method, which performs a shallow clone for smart pointers like `Arc` or
+//! `Rc`.
 //!
 //! # Parameters
 //!
@@ -35,7 +34,6 @@
 //! // For three type parameters with Rc
 //! // impl_function_clone!(RcBiFunction<T, U, R>);
 //! ```
-//!
 
 /// Generates Clone trait implementation for basic Function types
 ///
@@ -65,7 +63,6 @@
 /// // For three type parameters with Rc
 /// // impl_function_clone!(RcBiFunction<T, U, R>);
 /// ```
-///
 macro_rules! impl_function_clone {
     // Two generic parameters - Function types
     ($struct_name:ident < $t:ident, $r:ident >) => {

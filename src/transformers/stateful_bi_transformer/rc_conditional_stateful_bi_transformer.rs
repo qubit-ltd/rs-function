@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcConditionalStatefulBiTransformer` public type.
 
@@ -21,24 +19,28 @@ use super::{
 };
 
 // ============================================================================
-// RcConditionalStatefulBiTransformer - Rc-based Conditional StatefulBiTransformer
+// RcConditionalStatefulBiTransformer - Rc-based Conditional
+// StatefulBiTransformer
 // ============================================================================
 
 /// RcConditionalStatefulBiTransformer struct
 ///
 /// A single-threaded conditional bi-transformer that only executes when a
-/// bi-predicate is satisfied. Uses `RcStatefulBiTransformer` and `RcBiPredicate` for
-/// shared ownership within a single thread.
+/// bi-predicate is satisfied. Uses `RcStatefulBiTransformer` and
+/// `RcBiPredicate` for shared ownership within a single thread.
 ///
-/// This type is typically created by calling `RcStatefulBiTransformer::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
+/// This type is typically created by calling `RcStatefulBiTransformer::when()`
+/// and is designed to work with the `or_else()` method to create if-then-else
+/// logic.
 ///
 /// # Features
 ///
 /// - **Shared Ownership**: Cloneable via `Rc`, multiple owners allowed
 /// - **Single-Threaded**: Not thread-safe, cannot be sent across threads
-/// - **Conditional Execution**: Only transforms when bi-predicate returns `true`
-/// - **No Lock Overhead**: More efficient than `ArcConditionalStatefulBiTransformer`
+/// - **Conditional Execution**: Only transforms when bi-predicate returns
+///   `true`
+/// - **No Lock Overhead**: More efficient than
+///   `ArcConditionalStatefulBiTransformer`
 ///
 /// # Examples
 ///
@@ -54,7 +56,6 @@ use super::{
 /// assert_eq!(conditional.apply(5, 3), 8);
 /// assert_eq!(conditional_clone.apply(-5, 3), -15);
 /// ```
-///
 pub struct RcConditionalStatefulBiTransformer<T, U, R> {
     pub(super) transformer: RcStatefulBiTransformer<T, U, R>,
     pub(super) predicate: RcBiPredicate<T, U>,

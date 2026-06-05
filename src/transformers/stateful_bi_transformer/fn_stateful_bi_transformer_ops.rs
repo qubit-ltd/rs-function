@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `FnStatefulBiTransformerOps` public type.
 
@@ -18,7 +16,8 @@ use super::{
 };
 
 // ============================================================================
-// FnStatefulBiTransformerOps - Extension trait for FnMut(T, U) -> R bi-transformers
+// FnStatefulBiTransformerOps - Extension trait for FnMut(T, U) -> R
+// bi-transformers
 // ============================================================================
 
 /// Extension trait for closures implementing `FnMut(T, U) -> R`
@@ -32,9 +31,9 @@ use super::{
 ///
 /// # Design Rationale
 ///
-/// While closures automatically implement `StatefulBiTransformer<T, U, R>` through
-/// blanket implementation, they don't have access to instance methods like
-/// `and_then` and `when`. This extension trait provides those methods,
+/// While closures automatically implement `StatefulBiTransformer<T, U, R>`
+/// through blanket implementation, they don't have access to instance methods
+/// like `and_then` and `when`. This extension trait provides those methods,
 /// returning `BoxStatefulBiTransformer` for maximum flexibility.
 ///
 /// # Examples
@@ -66,8 +65,9 @@ use super::{
 /// assert_eq!(conditional.apply(5, 3), 8);   // add
 /// assert_eq!(conditional.apply(-5, 3), -15); // multiply
 /// ```
-///
-pub trait FnStatefulBiTransformerOps<T, U, R>: FnMut(T, U) -> R + Sized {
+pub trait FnStatefulBiTransformerOps<T, U, R>:
+    FnMut(T, U) -> R + Sized
+{
     /// Chain composition - applies self first, then after
     ///
     /// Creates a new bi-transformer that applies this bi-transformer first,
@@ -77,7 +77,8 @@ pub trait FnStatefulBiTransformerOps<T, U, R>: FnMut(T, U) -> R + Sized {
     /// # Type Parameters
     ///
     /// * `S` - The output type of the after transformer
-    /// * `F` - The type of the after transformer (must implement Transformer<R, S>)
+    /// * `F` - The type of the after transformer (must implement Transformer<R,
+    ///   S>)
     ///
     /// # Parameters
     ///
@@ -150,8 +151,8 @@ pub trait FnStatefulBiTransformerOps<T, U, R>: FnMut(T, U) -> R + Sized {
     ///
     /// * `predicate` - The condition to check. **Note: This parameter is passed
     ///   by value and will transfer ownership.** If you need to preserve the
-    ///   original bi-predicate, clone it first (if it implements `Clone`).
-    ///   Can be:
+    ///   original bi-predicate, clone it first (if it implements `Clone`). Can
+    ///   be:
     ///   - A closure: `|x: &T, y: &U| -> bool`
     ///   - A function pointer: `fn(&T, &U) -> bool`
     ///   - A `BoxBiPredicate<T, U>`
@@ -198,7 +199,10 @@ pub trait FnStatefulBiTransformerOps<T, U, R>: FnMut(T, U) -> R + Sized {
     /// // Original bi-predicate still usable
     /// assert!(both_positive.test(&5, &3));
     /// ```
-    fn when<P>(self, predicate: P) -> BoxConditionalStatefulBiTransformer<T, U, R>
+    fn when<P>(
+        self,
+        predicate: P,
+    ) -> BoxConditionalStatefulBiTransformer<T, U, R>
     where
         Self: 'static,
         P: BiPredicate<T, U> + 'static,
@@ -250,7 +254,9 @@ pub trait FnStatefulBiTransformerOps<T, U, R>: FnMut(T, U) -> R + Sized {
 
 /// Blanket implementation of FnStatefulBiTransformerOps for all closures
 ///
-/// Automatically implements `FnStatefulBiTransformerOps<T, U, R>` for any type that
-/// implements `FnMut(T, U) -> R`.
-///
-impl<T, U, R, F> FnStatefulBiTransformerOps<T, U, R> for F where F: FnMut(T, U) -> R {}
+/// Automatically implements `FnStatefulBiTransformerOps<T, U, R>` for any type
+/// that implements `FnMut(T, U) -> R`.
+impl<T, U, R, F> FnStatefulBiTransformerOps<T, U, R> for F where
+    F: FnMut(T, U) -> R
+{
+}

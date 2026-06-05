@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BinaryOperator` public type.
 
@@ -63,14 +61,12 @@ use super::BiTransformer;
 /// let op = create_adder();
 /// assert_eq!(op.apply(20, 22), 42);
 /// ```
-///
 pub trait BinaryOperator<T>: BiTransformer<T, T, T> {}
 
 /// Blanket implementation of BinaryOperator for all BiTransformer<T, T, T>
 ///
 /// This automatically implements `BinaryOperator<T>` for any type that
 /// implements `BiTransformer<T, T, T>`.
-///
 impl<F, T> BinaryOperator<T> for F
 where
     F: BiTransformer<T, T, T>,

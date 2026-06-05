@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Box Mutator Methods Macro
 //!
 //! Generates when and and_then method implementations for Box-based Mutator
@@ -21,7 +19,8 @@
 //!
 //! * `$struct_name<$generics>` - The struct name with its generic parameters
 //!   - Single parameter: `BoxMutator<T>`
-//! * `$conditional_type` - The conditional mutator type for when (e.g., BoxConditionalMutator)
+//! * `$conditional_type` - The conditional mutator type for when (e.g.,
+//!   BoxConditionalMutator)
 //! * `$mutator_trait` - Mutator trait name (e.g., Mutator, MutatorOnce)
 //!
 //! # Parameter Usage Comparison
@@ -42,7 +41,6 @@
 //! //     Mutator
 //! // );
 //! ```
-//!
 
 /// Generates when and and_then method implementations for Box-based Mutator
 ///
@@ -57,7 +55,8 @@
 ///
 /// * `$struct_name<$generics>` - The struct name with its generic parameters
 ///   - Single parameter: `BoxMutator<T>`
-/// * `$conditional_type` - The conditional mutator type for when (e.g., BoxConditionalMutator)
+/// * `$conditional_type` - The conditional mutator type for when (e.g.,
+///   BoxConditionalMutator)
 /// * `$mutator_trait` - Mutator trait name (e.g., Mutator, MutatorOnce)
 ///
 /// # Parameter Usage Comparison
@@ -84,7 +83,6 @@
 /// //     );
 /// // }
 /// ```
-///
 macro_rules! impl_box_mutator_methods {
     (@and_then Mutator, $struct_name:ident, $first:expr, $after:expr, $t:ident) => {{
         let first = $first;

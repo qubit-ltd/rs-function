@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulBiPredicate` public type.
 
@@ -35,7 +33,8 @@ pub struct BoxStatefulBiPredicate<T, U> {
 }
 
 impl<T, U> BoxStatefulBiPredicate<T, U> {
-    // Generates: new(), new_with_name(), name(), set_name(), always_true(), always_false()
+    // Generates: new(), new_with_name(), name(), set_name(), always_true(),
+    // always_false()
     impl_predicate_common_methods!(
         BoxStatefulBiPredicate<T, U>,
         (FnMut(&T, &U) -> bool + 'static),
@@ -169,11 +168,14 @@ where
     type Output = BoxStatefulBiPredicate<T, U>;
 
     fn not(mut self) -> Self::Output {
-        BoxStatefulBiPredicate::new(move |first, second| !self.test(first, second))
+        BoxStatefulBiPredicate::new(move |first, second| {
+            !self.test(first, second)
+        })
     }
 }
 
-// Generates: impl Debug for BoxStatefulBiPredicate<T, U> and impl Display for BoxStatefulBiPredicate<T, U>
+// Generates: impl Debug for BoxStatefulBiPredicate<T, U> and impl Display for
+// BoxStatefulBiPredicate<T, U>
 impl_predicate_debug_display!(BoxStatefulBiPredicate<T, U>);
 
 impl<T, U> StatefulBiPredicate<T, U> for BoxStatefulBiPredicate<T, U> {

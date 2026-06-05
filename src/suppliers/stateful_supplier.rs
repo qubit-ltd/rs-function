@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # StatefulSupplier Types
 //!
 //! Provides stateful supplier implementations that generate and return values
@@ -24,26 +22,26 @@
 //!
 //! # Core Design Principles
 //!
-//! 1. **Returns Ownership**: `StatefulSupplier` returns `T` (not `&T`) to
-//!    avoid lifetime issues
-//! 2. **Uses `&mut self`**: Typical scenarios (counters, generators)
-//!    require state modification
+//! 1. **Returns Ownership**: `StatefulSupplier` returns `T` (not `&T`) to avoid
+//!    lifetime issues
+//! 2. **Uses `&mut self`**: Typical scenarios (counters, generators) require
+//!    state modification
 //! 3. **Separate stateless API**: `Supplier` covers lock-free stateless
 //!    factories, while `StatefulSupplier` covers stateful generation
 //!
 //! # Three Implementations
 //!
-//! - **`BoxStatefulSupplier<T>`**: Single ownership using `Box<dyn FnMut()
-//!   -> T>`. Zero overhead, cannot be cloned. Best for one-time use
-//!   and builder patterns.
+//! - **`BoxStatefulSupplier<T>`**: Single ownership using `Box<dyn FnMut() ->
+//!   T>`. Zero overhead, cannot be cloned. Best for one-time use and builder
+//!   patterns.
 //!
 //! - **`ArcStatefulSupplier<T>`**: Thread-safe shared ownership using
-//!   `Arc<Mutex<dyn FnMut() -> T + Send>>`. Can be cloned and sent
-//!   across threads. Higher overhead due to locking.
+//!   `Arc<Mutex<dyn FnMut() -> T + Send>>`. Can be cloned and sent across
+//!   threads. Higher overhead due to locking.
 //!
 //! - **`RcStatefulSupplier<T>`**: Single-threaded shared ownership using
-//!   `Rc<RefCell<dyn FnMut() -> T>>`. Can be cloned but not sent
-//!   across threads. Lower overhead than `ArcStatefulSupplier`.
+//!   `Rc<RefCell<dyn FnMut() -> T>>`. Can be cloned but not sent across
+//!   threads. Lower overhead than `ArcStatefulSupplier`.
 //!
 //! # Comparison with Other Functional Abstractions
 //!
@@ -112,7 +110,6 @@
 //! assert!(v1 != v2);
 //! assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 2);
 //! ```
-//!
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
@@ -161,10 +158,9 @@ pub use fn_stateful_supplier_ops::FnStatefulSupplierOps;
 ///
 /// - **No input parameters**: Pure value generation
 /// - **Mutable access**: Uses `&mut self` to allow state changes
-/// - **Returns ownership**: Returns `T` (not `&T`) to avoid lifetime
-///   issues
-/// - **Can modify state**: Commonly used for counters, sequences,
-///   and generators
+/// - **Returns ownership**: Returns `T` (not `&T`) to avoid lifetime issues
+/// - **Can modify state**: Commonly used for counters, sequences, and
+///   generators
 ///
 /// # Automatically Implemented for Closures
 ///
@@ -204,7 +200,6 @@ pub use fn_stateful_supplier_ops::FnStatefulSupplierOps;
 /// assert_eq!(stateful.get(), 1);
 /// assert_eq!(stateful.get(), 2);
 /// ```
-///
 pub trait StatefulSupplier<T> {
     /// Generates and returns the next value.
     ///

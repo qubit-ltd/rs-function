@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulMutatingFunction` public type.
 
@@ -78,14 +76,14 @@ use super::{
 /// assert_eq!(counter.apply(&mut value), 1);
 /// assert_eq!(value, 10);
 /// ```
-///
 pub struct BoxStatefulMutatingFunction<T, R> {
     pub(super) function: Box<dyn FnMut(&mut T) -> R>,
     pub(super) name: Option<String>,
 }
 
 impl<T, R> BoxStatefulMutatingFunction<T, R> {
-    // Generates: new(), new_with_name(), new_with_optional_name(), name(), set_name()
+    // Generates: new(), new_with_name(), new_with_optional_name(), name(),
+    // set_name()
     impl_function_common_methods!(
         BoxStatefulMutatingFunction<T, R>,
         (FnMut(&mut T) -> R + 'static),
@@ -100,14 +98,18 @@ impl<T, R> BoxStatefulMutatingFunction<T, R> {
     );
 }
 
-// Generates: Debug and Display implementations for BoxStatefulMutatingFunction<T, R>
+// Generates: Debug and Display implementations for
+// BoxStatefulMutatingFunction<T, R>
 impl_function_debug_display!(BoxStatefulMutatingFunction<T, R>);
 
 // Generates: identity() method for BoxStatefulMutatingFunction<T, T>
 impl_function_identity_method!(BoxStatefulMutatingFunction<T, T>, mutating);
 
-// Implement StatefulMutatingFunction trait for BoxStatefulMutatingFunction<T, R>
-impl<T, R> StatefulMutatingFunction<T, R> for BoxStatefulMutatingFunction<T, R> {
+// Implement StatefulMutatingFunction trait for BoxStatefulMutatingFunction<T,
+// R>
+impl<T, R> StatefulMutatingFunction<T, R>
+    for BoxStatefulMutatingFunction<T, R>
+{
     fn apply(&mut self, t: &mut T) -> R {
         (self.function)(t)
     }

@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BinaryOperatorOnce` public type.
 
@@ -50,14 +48,13 @@ use super::BiTransformerOnce;
 /// let multiply = |x: i32, y: i32| x * y;
 /// assert_eq!(combine(6, 7, multiply), 42);
 /// ```
-///
 pub trait BinaryOperatorOnce<T>: BiTransformerOnce<T, T, T> {}
 
-/// Blanket implementation of BinaryOperatorOnce for all BiTransformerOnce<T, T, T>
+/// Blanket implementation of BinaryOperatorOnce for all BiTransformerOnce<T, T,
+/// T>
 ///
 /// This automatically implements `BinaryOperatorOnce<T>` for any type that
 /// implements `BiTransformerOnce<T, T, T>`.
-///
 impl<F, T> BinaryOperatorOnce<T> for F
 where
     F: BiTransformerOnce<T, T, T>,

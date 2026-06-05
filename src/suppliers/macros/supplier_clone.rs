@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! # Supplier Clone Macro
 //!
@@ -14,7 +12,8 @@
 //!
 //! Generates Clone implementation for Supplier structs that have `function`
 //! and `name` fields. The function field is cloned using its inherent `clone`
-//! method, which performs a shallow clone for smart pointers like `Arc` or `Rc`.
+//! method, which performs a shallow clone for smart pointers like `Arc` or
+//! `Rc`.
 //!
 //! # Parameters
 //!
@@ -40,7 +39,6 @@
 //! let stateful_rc = RcStatefulSupplier::new(|| 1);
 //! let _stateful_rc_clone = stateful_rc.clone();
 //! ```
-//!
 
 /// Generates Clone trait implementation for basic Supplier types
 ///
@@ -74,7 +72,6 @@
 /// let stateful_rc = RcStatefulSupplier::new(|| 1);
 /// let _stateful_rc_clone = stateful_rc.clone();
 /// ```
-///
 macro_rules! impl_supplier_clone {
     // Single generic parameter
     ($struct_name:ident < $t:ident >) => {

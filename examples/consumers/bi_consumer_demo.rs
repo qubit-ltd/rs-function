@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! BiConsumer demonstration
 //!
@@ -137,12 +135,13 @@ fn main() {
     println!("6. Conditional BiConsumer:");
     let log = Arc::new(Mutex::new(Vec::new()));
     let l = log.clone();
-    let mut conditional = BoxStatefulBiConsumer::new(move |x: &i32, y: &i32| {
-        l.lock()
-            .expect("mutex should not be poisoned")
-            .push(*x + *y);
-    })
-    .when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+    let mut conditional =
+        BoxStatefulBiConsumer::new(move |x: &i32, y: &i32| {
+            l.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x + *y);
+        })
+        .when(|x: &i32, y: &i32| *x > 0 && *y > 0);
 
     conditional.accept(&5, &3);
     println!(

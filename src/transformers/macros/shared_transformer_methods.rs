@@ -1,21 +1,21 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Shared Transformer Methods Macro
 //!
-//! Generates when and and_then method implementations for Arc/Rc-based Transformer
+//! Generates when and and_then method implementations for Arc/Rc-based
+//! Transformer
 //!
 //! Generates conditional execution when method and chaining and_then method
-//! for Arc/Rc-based transformers that borrow &self (because Arc/Rc can be cloned).
+//! for Arc/Rc-based transformers that borrow &self (because Arc/Rc can be
+//! cloned).
 //!
-//! This macro supports both two-parameter and three-parameter transformers through
-//! pattern matching on the struct signature.
+//! This macro supports both two-parameter and three-parameter transformers
+//! through pattern matching on the struct signature.
 //!
 //! # Parameters
 //!
@@ -23,11 +23,13 @@
 //!   - Two parameters: `ArcTransformer<T, U>`
 //!   - Three parameters: `ArcBiTransformer<T, U, V>`
 //! * `$conditional_type` - The conditional transformer type returned by `when`
-//! * `$predicate_conversion` - Method to convert predicate (into_arc or into_rc)
+//! * `$predicate_conversion` - Method to convert predicate (into_arc or
+//!   into_rc)
 //! * `$chained_transformer_trait` - The name of the transformer trait that is
 //!   chained after the execution of this transformer (e.g., Transformer,
 //!   BiTransformer)
-//! * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync + 'static for Arc)
+//! * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync +
+//!   'static for Arc)
 //!
 //! # All Macro Invocations
 //!
@@ -74,18 +76,18 @@
 //!     'static
 //! );
 //! ```
-//!
 
-/// Generates when and and_then method implementations for Arc/Rc-based Transformer
+/// Generates when and and_then method implementations for Arc/Rc-based
+/// Transformer
 ///
 /// This macro should be used inside an existing impl block for the target
 /// struct. It generates individual methods but does not create a complete
 /// impl block itself. Generates conditional execution when method and chaining
-/// and_then method for Arc/Rc-based transformers that borrow &self (because Arc/Rc
-/// can be cloned).
+/// and_then method for Arc/Rc-based transformers that borrow &self (because
+/// Arc/Rc can be cloned).
 ///
-/// This macro supports both two-parameter and three-parameter transformers through
-/// pattern matching on the struct signature.
+/// This macro supports both two-parameter and three-parameter transformers
+/// through pattern matching on the struct signature.
 ///
 /// # Parameters
 ///
@@ -93,10 +95,13 @@
 ///   - Two parameters: `ArcTransformer<T, U>`
 ///   - Three parameters: `ArcBiTransformer<T, U, V>`
 /// * `$conditional_type` - The conditional transformer type returned by `when`
-/// * `$predicate_conversion` - Method to convert predicate (into_arc or into_rc)
+/// * `$predicate_conversion` - Method to convert predicate (into_arc or
+///   into_rc)
 /// * `$chained_transformer_trait` - The name of the transformer trait that is
-///   chained after the execution of this transformer (e.g., Transformer, BiTransformer)
-/// * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync + 'static for Arc)
+///   chained after the execution of this transformer (e.g., Transformer,
+///   BiTransformer)
+/// * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync +
+///   'static for Arc)
 ///
 /// # All Macro Invocations
 ///
@@ -132,7 +137,6 @@
 ///     'static
 /// );
 /// ```
-///
 macro_rules! impl_shared_transformer_methods {
     (@let_before ArcStatefulTransformer, $name:ident, $value:expr) => {
         let mut $name = $value;

@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulPredicate` public type.
 
@@ -26,7 +24,8 @@ use super::{
     impl_predicate_debug_display,
 };
 
-type ArcStatefulPredicateFn<T> = Arc<Mutex<dyn FnMut(&T) -> bool + Send + 'static>>;
+type ArcStatefulPredicateFn<T> =
+    Arc<Mutex<dyn FnMut(&T) -> bool + Send + 'static>>;
 
 /// An Arc-based stateful predicate with thread-safe shared ownership.
 ///
@@ -38,7 +37,8 @@ pub struct ArcStatefulPredicate<T> {
 }
 
 impl<T> ArcStatefulPredicate<T> {
-    // Generates: new(), new_with_name(), name(), set_name(), always_true(), always_false()
+    // Generates: new(), new_with_name(), name(), set_name(), always_true(),
+    // always_false()
     impl_predicate_common_methods!(
         ArcStatefulPredicate<T>,
         (FnMut(&T) -> bool + Send + 'static),
@@ -196,7 +196,8 @@ where
 // Generates: impl Clone for ArcStatefulPredicate<T>
 impl_predicate_clone!(ArcStatefulPredicate<T>);
 
-// Generates: impl Debug for ArcStatefulPredicate<T> and impl Display for ArcStatefulPredicate<T>
+// Generates: impl Debug for ArcStatefulPredicate<T> and impl Display for
+// ArcStatefulPredicate<T>
 impl_predicate_debug_display!(ArcStatefulPredicate<T>);
 
 // Implements StatefulPredicate trait for ArcStatefulPredicate<T>
@@ -205,7 +206,8 @@ impl<T> StatefulPredicate<T> for ArcStatefulPredicate<T> {
         (self.function.lock())(value)
     }
 
-    // Generates: into_box, into_rc, into_arc, into_fn, to_box, to_rc, to_arc, to_fn
+    // Generates: into_box, into_rc, into_arc, into_fn, to_box, to_rc, to_arc,
+    // to_fn
     impl_arc_conversions!(
         ArcStatefulPredicate<T>,
         BoxStatefulPredicate,

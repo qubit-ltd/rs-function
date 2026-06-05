@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `FnBiMutatingFunctionOps` public type.
 
@@ -17,7 +15,8 @@ use super::{
 };
 
 // ============================================================================
-// FnBiMutatingFunctionOps - Extension trait for Fn(&mut T, &mut U) -> R bi-functions
+// FnBiMutatingFunctionOps - Extension trait for Fn(&mut T, &mut U) -> R
+// bi-functions
 // ============================================================================
 
 /// Extension trait for closures implementing `Fn(&mut T, &mut U) -> R`
@@ -83,13 +82,14 @@ use super::{
 /// let mut b = 3;
 /// assert_eq!(conditional.apply(&mut a, &mut b), -15); // multiply: (-5 * 3)
 /// ```
-///
-pub trait FnBiMutatingFunctionOps<T, U, R>: Fn(&mut T, &mut U) -> R + Sized {
+pub trait FnBiMutatingFunctionOps<T, U, R>:
+    Fn(&mut T, &mut U) -> R + Sized
+{
     /// Chain composition - applies self first, then after
     ///
-    /// Creates a new bi-mutating-function that applies this bi-mutating-function first,
-    /// then applies the after function to the result. Consumes self and
-    /// returns a `BoxBiMutatingFunction`.
+    /// Creates a new bi-mutating-function that applies this
+    /// bi-mutating-function first, then applies the after function to the
+    /// result. Consumes self and returns a `BoxBiMutatingFunction`.
     ///
     /// # Type Parameters
     ///
@@ -98,10 +98,10 @@ pub trait FnBiMutatingFunctionOps<T, U, R>: Fn(&mut T, &mut U) -> R + Sized {
     ///
     /// # Parameters
     ///
-    /// * `after` - The function to apply after self. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to
-    ///   preserve the original function, clone it first (if it implements
-    ///   `Clone`). Can be:
+    /// * `after` - The function to apply after self. **Note: This parameter is
+    ///   passed by value and will transfer ownership.** If you need to preserve
+    ///   the original function, clone it first (if it implements `Clone`). Can
+    ///   be:
     ///   - A closure: `|x: R| -> S`
     ///   - A function pointer: `fn(R) -> S`
     ///   - A `BoxFunction<R, S>`
@@ -169,7 +169,9 @@ pub trait FnBiMutatingFunctionOps<T, U, R>: Fn(&mut T, &mut U) -> R + Sized {
         U: 'static,
         R: 'static,
     {
-        BoxBiMutatingFunction::new(move |t: &mut T, u: &mut U| after.apply(&self(t, u)))
+        BoxBiMutatingFunction::new(move |t: &mut T, u: &mut U| {
+            after.apply(&self(t, u))
+        })
     }
 
     /// Creates a conditional bi-mutating-function
@@ -182,8 +184,8 @@ pub trait FnBiMutatingFunctionOps<T, U, R>: Fn(&mut T, &mut U) -> R + Sized {
     ///
     /// * `predicate` - The condition to check. **Note: This parameter is passed
     ///   by value and will transfer ownership.** If you need to preserve the
-    ///   original bi-predicate, clone it first (if it implements `Clone`).
-    ///   Can be:
+    ///   original bi-predicate, clone it first (if it implements `Clone`). Can
+    ///   be:
     ///   - A closure: `|x: &mut T, y: &mut U| -> bool`
     ///   - A function pointer: `fn(&mut T, &mut U) -> bool`
     ///   - A `BoxBiPredicate<T, U>`
@@ -263,7 +265,9 @@ pub trait FnBiMutatingFunctionOps<T, U, R>: Fn(&mut T, &mut U) -> R + Sized {
 
 /// Blanket implementation of FnBiMutatingFunctionOps for all closures
 ///
-/// Automatically implements `FnBiMutatingFunctionOps<T, U, R>` for any type that
-/// implements `Fn(&mut T, &mut U) -> R`.
-///
-impl<T, U, R, F> FnBiMutatingFunctionOps<T, U, R> for F where F: Fn(&mut T, &mut U) -> R {}
+/// Automatically implements `FnBiMutatingFunctionOps<T, U, R>` for any type
+/// that implements `Fn(&mut T, &mut U) -> R`.
+impl<T, U, R, F> FnBiMutatingFunctionOps<T, U, R> for F where
+    F: Fn(&mut T, &mut U) -> R
+{
+}

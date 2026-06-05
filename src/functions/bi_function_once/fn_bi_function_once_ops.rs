@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `FnBiFunctionOnceOps` public type.
 
@@ -61,7 +59,6 @@ use super::{
 /// let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply);
 /// assert_eq!(conditional.apply(&5, &3), 8); // when branch executed
 /// ```
-///
 pub trait FnBiFunctionOnceOps<T, U, R>: FnOnce(&T, &U) -> R + Sized {
     /// Chain composition - applies self first, then after
     ///
@@ -72,12 +69,13 @@ pub trait FnBiFunctionOnceOps<T, U, R>: FnOnce(&T, &U) -> R + Sized {
     /// # Type Parameters
     ///
     /// * `S` - The output type of the after function
-    /// * `F` - The type of the after function (must implement FunctionOnce<R, S>)
+    /// * `F` - The type of the after function (must implement FunctionOnce<R,
+    ///   S>)
     ///
     /// # Parameters
     ///
-    /// * `after` - The function to apply after self. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** Since this is a
+    /// * `after` - The function to apply after self. **Note: This parameter is
+    ///   passed by value and will transfer ownership.** Since this is a
     ///   `FnOnce` bi-function, the parameter will be consumed. Can be:
     ///   - A closure: `|x: R| -> S`
     ///   - A function pointer: `fn(R) -> S`
@@ -124,8 +122,8 @@ pub trait FnBiFunctionOnceOps<T, U, R>: FnOnce(&T, &U) -> R + Sized {
     ///
     /// * `predicate` - The condition to check. **Note: This parameter is passed
     ///   by value and will transfer ownership.** If you need to preserve the
-    ///   original bi-predicate, clone it first (if it implements `Clone`).
-    ///   Can be:
+    ///   original bi-predicate, clone it first (if it implements `Clone`). Can
+    ///   be:
     ///   - A closure: `|x: &T, y: &U| -> bool`
     ///   - A function pointer: `fn(&T, &U) -> bool`
     ///   - A `BoxBiPredicate<T, U>`
@@ -188,7 +186,6 @@ pub trait FnBiFunctionOnceOps<T, U, R>: FnOnce(&T, &U) -> R + Sized {
 ///
 /// Automatically implements `FnBiFunctionOnceOps<T, U, R>` for any type that
 /// implements `FnOnce(&T, &U) -> R`.
-///
 impl<T, U, R, F> FnBiFunctionOnceOps<T, U, R> for F
 where
     F: FnOnce(&T, &U) -> R,

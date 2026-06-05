@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! # Function Common Methods Macro
 //!
@@ -24,8 +22,8 @@
 //! # Parameters
 //!
 //! * `$struct_name<$generics>` - Struct name with generic parameters
-//! * `$fn_trait_with_bounds` - Closure trait with complete bounds
-//!   (e.g., `Fn(&T) -> R + 'static`)
+//! * `$fn_trait_with_bounds` - Closure trait with complete bounds (e.g.,
+//!   `Fn(&T) -> R + 'static`)
 //! * `$wrapper_expr` - Wrapper expression (uses `f` for the closure)
 //!
 //! # Usage
@@ -60,7 +58,6 @@
 //! * `name()` - Gets the name of the function
 //! * `set_name()` - Sets the name of the function
 //! * `identity()` - Creates an identity function
-//!
 
 /// Generates common Function methods (new, new_with_name, name,
 /// set_name, identity)
@@ -77,8 +74,8 @@
 /// # Parameters
 ///
 /// * `$struct_name<$generics>` - Struct name with generic parameters
-/// * `$fn_trait_with_bounds` - Closure trait with complete bounds
-///   (e.g., `Fn(&T) -> R + 'static`)
+/// * `$fn_trait_with_bounds` - Closure trait with complete bounds (e.g.,
+///   `Fn(&T) -> R + 'static`)
 /// * `$wrapper_expr` - Wrapper expression (uses `f` for the closure)
 ///
 /// # Usage
@@ -113,7 +110,6 @@
 /// * `name()` - Gets the name of the function
 /// * `set_name()` - Sets the name of the function
 /// * `identity()` - Creates an identity function
-///
 macro_rules! impl_function_common_methods {
     // Two generic parameters - Function types
     (

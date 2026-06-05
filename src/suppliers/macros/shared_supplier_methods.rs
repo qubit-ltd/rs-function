@@ -1,19 +1,17 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! # Shared Supplier Methods Macro
 //!
 //! Generates map, filter, zip method implementations for Arc/Rc-based Supplier
 //!
-//! Generates transformation methods for Arc/Rc-based suppliers that borrow &self
-//! (because Arc/Rc can be cloned).
+//! Generates transformation methods for Arc/Rc-based suppliers that borrow
+//! &self (because Arc/Rc can be cloned).
 //!
 //! This macro supports single-parameter suppliers.
 //!
@@ -22,7 +20,8 @@
 //! * `$struct_name<$generics>` - The struct name with its generic parameters
 //!   - Single parameter: `ArcSupplier<T>`
 //! * `$supplier_trait` - Supplier trait name (e.g., Supplier, StatefulSupplier)
-//! * `($extra_bounds)` - Extra trait bounds in parentheses ('static for both Rc and Arc)
+//! * `($extra_bounds)` - Extra trait bounds in parentheses ('static for both Rc
+//!   and Arc)
 //!
 //! # All Macro Invocations
 //!
@@ -53,14 +52,13 @@
 //! let zipped = rc.zip(RcSupplier::new(|| 1));
 //! assert_eq!(zipped.get(), ("hello".to_string(), 1));
 //! ```
-//!
 
 /// Generates map, filter, zip method implementations for Arc/Rc-based Supplier
 ///
 /// This macro should be used inside an existing impl block for the target
 /// struct. It generates individual methods but does not create a complete
-/// impl block itself. Generates transformation methods for Arc/Rc-based suppliers
-/// that borrow &self (because Arc/Rc can be cloned).
+/// impl block itself. Generates transformation methods for Arc/Rc-based
+/// suppliers that borrow &self (because Arc/Rc can be cloned).
 ///
 /// This macro supports single-parameter suppliers.
 ///

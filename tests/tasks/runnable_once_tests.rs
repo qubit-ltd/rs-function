@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! Unit tests for RunnableOnce and BoxRunnableOnce.
 
@@ -184,7 +182,8 @@ fn test_local_box_runnable_once_allows_non_send_capture() {
 
 #[test]
 fn test_box_runnable_once_name_management() {
-    let mut task = BoxRunnableOnce::<io::Error>::new_with_name("cleanup", || Ok(()));
+    let mut task =
+        BoxRunnableOnce::<io::Error>::new_with_name("cleanup", || Ok(()));
     assert_eq!(task.name(), Some("cleanup"));
     assert_eq!(task.to_string(), "BoxRunnableOnce(cleanup)");
     assert!(format!("{task:?}").contains("cleanup"));
@@ -276,7 +275,8 @@ fn test_box_runnable_once_combinators_cover_branches_with_same_next_types() {
     assert!(success_flag.get());
 
     let error_flag = Rc::new(Cell::new(false));
-    let first = LocalBoxRunnableOnce::new(|| Err::<(), _>(io::Error::other("stop")));
+    let first =
+        LocalBoxRunnableOnce::new(|| Err::<(), _>(io::Error::other("stop")));
     let chained = first.and_then(ClonedRunnableOnce {
         flag: Rc::clone(&error_flag),
     });
@@ -303,7 +303,9 @@ fn test_box_runnable_once_combinators_cover_branches_with_same_next_types() {
     assert!(success_flag.get());
 
     let error_flag = Rc::new(Cell::new(false));
-    let first = LocalBoxRunnableOnce::new(|| Err::<(), _>(io::Error::other("prepare failed")));
+    let first = LocalBoxRunnableOnce::new(|| {
+        Err::<(), _>(io::Error::other("prepare failed"))
+    });
     let callable = first.then_callable(FlagCallableOnce {
         flag: Rc::clone(&error_flag),
     });
@@ -319,7 +321,8 @@ fn test_box_runnable_once_combinators_cover_branches_with_same_next_types() {
 
 #[test]
 fn test_box_runnable_once_then_callable_runs_callable_on_success() {
-    let task = BoxRunnableOnce::new_with_name("prepare", || Ok::<(), io::Error>(()));
+    let task =
+        BoxRunnableOnce::new_with_name("prepare", || Ok::<(), io::Error>(()));
     let callable = || Ok::<i32, io::Error>(42);
 
     let chained = task.then_callable(callable);
@@ -331,7 +334,9 @@ fn test_box_runnable_once_then_callable_runs_callable_on_success() {
 fn test_box_runnable_once_then_callable_skips_callable_on_error() {
     let callable_ran = Arc::new(AtomicBool::new(false));
     let callable_ran_capture = Arc::clone(&callable_ran);
-    let task = BoxRunnableOnce::<io::Error>::new(|| Err(io::Error::other("prepare failed")));
+    let task = BoxRunnableOnce::<io::Error>::new(|| {
+        Err(io::Error::other("prepare failed"))
+    });
     let callable = move || {
         callable_ran_capture.store(true, Ordering::SeqCst);
         Ok::<i32, io::Error>(42)
@@ -348,7 +353,8 @@ fn test_box_runnable_once_then_callable_skips_callable_on_error() {
 
 #[test]
 fn test_box_runnable_once_into_callable() {
-    let task = BoxRunnableOnce::new_with_name("cleanup", || Ok::<(), io::Error>(()));
+    let task =
+        BoxRunnableOnce::new_with_name("cleanup", || Ok::<(), io::Error>(()));
     let callable = RunnableOnce::into_callable(task);
 
     assert_eq!(callable.name(), Some("cleanup"));
@@ -357,14 +363,16 @@ fn test_box_runnable_once_into_callable() {
 
 #[test]
 fn test_box_runnable_once_local_conversions_preserve_name() {
-    let task = BoxRunnableOnce::new_with_name("cleanup", || Ok::<(), io::Error>(()));
+    let task =
+        BoxRunnableOnce::new_with_name("cleanup", || Ok::<(), io::Error>(()));
 
     let local = RunnableOnce::into_local_box(task);
 
     assert_eq!(local.name(), Some("cleanup"));
     local.run().expect("local runnable should succeed");
 
-    let task = BoxRunnableOnce::new_with_name("cleanup", || Ok::<(), io::Error>(()));
+    let task =
+        BoxRunnableOnce::new_with_name("cleanup", || Ok::<(), io::Error>(()));
 
     let callable = RunnableOnce::into_local_callable(task);
 
@@ -468,7 +476,8 @@ fn test_box_runnable_once_combinators_with_text_error_type() {
 
     let callable_ran = Rc::new(Cell::new(false));
     let callable_ran_capture = Rc::clone(&callable_ran);
-    let runnable = LocalBoxRunnableOnce::new(|| Err::<(), &'static str>("prepare"));
+    let runnable =
+        LocalBoxRunnableOnce::new(|| Err::<(), &'static str>("prepare"));
     let callable = runnable.then_callable(move || {
         callable_ran_capture.set(true);
         Ok::<i32, &'static str>(9)

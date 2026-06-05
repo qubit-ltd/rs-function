@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Closure Once Trait Implementation Macro
 //!
 //! This module provides the `impl_closure_once_trait!` macro for implementing
@@ -29,7 +27,6 @@
 //!
 //! The macro is typically used in trait definitions to provide consistent
 //! conversion methods across different once trait implementations.
-//!
 
 /// Implement common conversion methods for closure once traits
 ///
@@ -39,10 +36,13 @@
 ///
 /// # Parameters
 ///
-/// * `$trait_name<$(generics),*>` - Full trait name with generics (e.g., `ConsumerOnce<T>`, `BiFunctionOnce<T, U, R>`)
+/// * `$trait_name<$(generics),*>` - Full trait name with generics (e.g.,
+///   `ConsumerOnce<T>`, `BiFunctionOnce<T, U, R>`)
 /// * `$method_name` - Core method name (e.g., `accept`, `apply`)
-/// * `$box_type` - Box wrapper type (e.g., `BoxConsumerOnce`, `BoxBiFunctionOnce`)
-/// * `$fn_trait` - Function signature (e.g., `FnOnce(value: &T)`, `FnOnce(first: &T, second: &U) -> R`)
+/// * `$box_type` - Box wrapper type (e.g., `BoxConsumerOnce`,
+///   `BoxBiFunctionOnce`)
+/// * `$fn_trait` - Function signature (e.g., `FnOnce(value: &T)`,
+///   `FnOnce(first: &T, second: &U) -> R`)
 ///
 /// # Generated implementation
 ///
@@ -81,7 +81,6 @@
 ///     FnOnce(first: &i32, second: &i32) -> i32
 /// );
 /// ```
-///
 macro_rules! impl_closure_once_trait {
   // ==================== Internal Implementation ====================
 

@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! # Function Identity Macro
 //!
@@ -17,7 +15,8 @@
 //!
 //! # Parameters
 //!
-//! * `$struct_name` - The struct name (e.g., `BoxFunction`, `RcFunction`, `ArcFunction`)
+//! * `$struct_name` - The struct name (e.g., `BoxFunction`, `RcFunction`,
+//!   `ArcFunction`)
 //! * `$t:ident` - The generic type parameter name (usually `T`)
 //!
 //! # Usage
@@ -47,7 +46,6 @@
 //!     pub fn identity() -> ArcBiFunction<T, U, T>;
 //! }
 //! ```
-//!
 
 /// Generates identity method implementation for function types.
 ///
@@ -56,9 +54,12 @@
 ///
 /// # Parameters
 ///
-/// * `$struct_name<$input_type, $output_type>` - The struct name with two generic type parameters
-///   - Both generic parameters must be the same type identifier (e.g., `BoxFunction<T, T>`)
-///   - Note: The macro caller must ensure $input_type and $output_type are identical
+/// * `$struct_name<$input_type, $output_type>` - The struct name with two
+///   generic type parameters
+///   - Both generic parameters must be the same type identifier (e.g.,
+///     `BoxFunction<T, T>`)
+///   - Note: The macro caller must ensure $input_type and $output_type are
+///     identical
 ///
 /// # Usage
 ///
@@ -70,7 +71,6 @@
 /// impl_function_identity_method!(BoxMutatingFunction<T, T>);
 /// impl_function_identity_method!(BoxStatefulFunction<T, T>);
 /// ```
-///
 macro_rules! impl_function_identity_method {
     ($struct_name:ident < $t:ident , $r:ident >) => {
         // Note: The caller must ensure $t and $r are the same identifier

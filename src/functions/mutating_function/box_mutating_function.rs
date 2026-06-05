@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxMutatingFunction` public type.
 
@@ -38,8 +36,7 @@ use super::{
 ///
 /// - **Single Ownership**: Not cloneable, ownership moves on use
 /// - **Zero Overhead**: No reference counting or locking
-/// - **Stateless**: Cannot modify captured environment (uses `Fn` not
-///   `FnMut`)
+/// - **Stateless**: Cannot modify captured environment (uses `Fn` not `FnMut`)
 /// - **Builder Pattern**: Method chaining consumes `self` naturally
 /// - **Factory Methods**: Convenient constructors for common patterns
 ///
@@ -73,14 +70,14 @@ use super::{
 /// assert_eq!(func.apply(&mut value), 10);
 /// assert_eq!(value, 10);
 /// ```
-///
 pub struct BoxMutatingFunction<T, R> {
     pub(super) function: Box<dyn Fn(&mut T) -> R>,
     pub(super) name: Option<String>,
 }
 
 impl<T, R> BoxMutatingFunction<T, R> {
-    // Generates: new(), new_with_name(), new_with_optional_name(), name(), set_name()
+    // Generates: new(), new_with_name(), new_with_optional_name(), name(),
+    // set_name()
     impl_function_common_methods!(
         BoxMutatingFunction<T, R>,
         (Fn(&mut T) -> R + 'static),

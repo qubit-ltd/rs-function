@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcConditionalStatefulConsumer` public type.
 
@@ -28,12 +26,13 @@ use super::{
 
 /// RcConditionalStatefulConsumer struct
 ///
-/// A single-threaded conditional consumer that only executes when a predicate is
-/// satisfied. Uses `RcStatefulConsumer` and `RcPredicate` for shared ownership within a
-/// single thread.
+/// A single-threaded conditional consumer that only executes when a predicate
+/// is satisfied. Uses `RcStatefulConsumer` and `RcPredicate` for shared
+/// ownership within a single thread.
 ///
-/// This type is typically created by calling `RcStatefulConsumer::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
+/// This type is typically created by calling `RcStatefulConsumer::when()` and
+/// is designed to work with the `or_else()` method to create if-then-else
+/// logic.
 ///
 /// # Features
 ///
@@ -63,7 +62,6 @@ use super::{
 /// m.accept(&value);
 /// assert_eq!(*log.borrow(), vec![5]);
 /// ```
-///
 pub struct RcConditionalStatefulConsumer<T> {
     pub(super) consumer: RcStatefulConsumer<T>,
     pub(super) predicate: RcPredicate<T>,
@@ -86,7 +84,11 @@ impl<T> StatefulConsumer<T> for RcConditionalStatefulConsumer<T> {
     }
 
     // Generates: into_box(), into_rc(), into_fn()
-    impl_conditional_consumer_conversions!(BoxStatefulConsumer<T>, RcStatefulConsumer, FnMut);
+    impl_conditional_consumer_conversions!(
+        BoxStatefulConsumer<T>,
+        RcStatefulConsumer,
+        FnMut
+    );
 }
 
 // Use macro to generate Clone implementation

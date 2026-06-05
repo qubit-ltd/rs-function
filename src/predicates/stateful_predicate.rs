@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # StatefulPredicate Abstraction
 //!
 //! Provides predicate wrappers for closures that implement
@@ -17,7 +15,6 @@
 //! predicates and `StatefulPredicate` when the predicate needs native
 //! `FnMut` semantics, such as counters, rolling windows, sampling, or
 //! stateful filters.
-//!
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;

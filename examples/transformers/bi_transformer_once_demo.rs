@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! BiTransformerOnce usage examples
 
 use qubit_function::{
@@ -35,7 +33,9 @@ fn main() {
 
     // Example 4: Consuming owned values
     println!("\n4. Consuming owned values:");
-    let concat = BoxBiTransformerOnce::new(|x: String, y: String| format!("{} {}", x, y));
+    let concat = BoxBiTransformerOnce::new(|x: String, y: String| {
+        format!("{} {}", x, y)
+    });
     let s1 = String::from("hello");
     let s2 = String::from("world");
     let result = concat.apply(s1, s2);

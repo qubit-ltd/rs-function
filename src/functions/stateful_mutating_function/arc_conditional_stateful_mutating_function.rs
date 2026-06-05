@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcConditionalStatefulMutatingFunction` public type.
 
@@ -21,17 +19,19 @@ use super::{
 };
 
 // ============================================================================
-// ArcConditionalStatefulMutatingFunction - Arc-based Conditional Stateful Mutating Function
+// ArcConditionalStatefulMutatingFunction - Arc-based Conditional Stateful
+// Mutating Function
 // ============================================================================
 
 /// ArcConditionalStatefulMutatingFunction struct
 ///
 /// A thread-safe conditional function that only executes when a predicate is
-/// satisfied. Uses `ArcStatefulMutatingFunction` and `ArcPredicate` for shared ownership
-/// across threads.
+/// satisfied. Uses `ArcStatefulMutatingFunction` and `ArcPredicate` for shared
+/// ownership across threads.
 ///
-/// This type is typically created by calling `ArcStatefulMutatingFunction::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
+/// This type is typically created by calling
+/// `ArcStatefulMutatingFunction::when()` and is designed to work with the
+/// `or_else()` method to create if-then-else logic.
 ///
 /// # Features
 ///
@@ -59,7 +59,6 @@ use super::{
 /// assert_eq!(conditional.apply(&mut positive), 10);
 /// assert_eq!(conditional_clone.apply(&mut negative), -5);
 /// ```
-///
 pub struct ArcConditionalStatefulMutatingFunction<T, R> {
     pub(super) function: ArcStatefulMutatingFunction<T, R>,
     pub(super) predicate: ArcPredicate<T>,

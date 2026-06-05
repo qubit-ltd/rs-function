@@ -1,19 +1,18 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Transformer Clone Macro
 //!
 //! Generates Clone trait implementation for basic Transformer types
 //!
 //! Generates Clone implementation for Transformer structs that have `function`
 //! and `name` fields. The function field is cloned using its inherent `clone`
-//! method, which performs a shallow clone for smart pointers like `Arc` or `Rc`.
+//! method, which performs a shallow clone for smart pointers like `Arc` or
+//! `Rc`.
 //!
 //! # Parameters
 //!
@@ -35,7 +34,6 @@
 //! // For three type parameters with Rc
 //! impl_transformer_clone!(RcBiTransformer<T, U, V>);
 //! ```
-//!
 
 /// Generates Clone trait implementation for basic Transformer types
 ///
@@ -67,7 +65,6 @@
 /// // For three type parameters with Rc
 /// impl_transformer_clone!(RcBiTransformer<T, U, V>);
 /// ```
-///
 macro_rules! impl_transformer_clone {
     // Two generic parameters
     ($struct_name:ident < $t:ident, $r:ident >) => {

@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # BiConsumer Types
 //!
 //! Provides non-mutating bi-consumer interface implementations for operations
@@ -19,10 +17,8 @@
 //! concrete implementations based on different ownership models:
 //!
 //! - **`BoxBiConsumer<T, U>`**: Box-based single ownership
-//! - **`ArcBiConsumer<T, U>`**: Arc-based thread-safe shared
-//!   ownership
-//! - **`RcBiConsumer<T, U>`**: Rc-based single-threaded shared
-//!   ownership
+//! - **`ArcBiConsumer<T, U>`**: Arc-based thread-safe shared ownership
+//! - **`RcBiConsumer<T, U>`**: Rc-based single-threaded shared ownership
 //!
 //! # Design Philosophy
 //!
@@ -33,7 +29,6 @@
 //! parameters. Compared to `StatefulBiConsumer`, `BiConsumer` does not require
 //! wrapper-level interior mutability (`Mutex`/`RefCell`), making it more
 //! efficient and easier to share.
-//!
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -105,15 +100,14 @@ pub use rc_conditional_bi_consumer::RcConditionalBiConsumer;
 /// # Automatic Implementations
 ///
 /// - All closures implementing `Fn(&T, &U)`
-/// - `BoxBiConsumer<T, U>`, `ArcBiConsumer<T, U>`,
-///   `RcBiConsumer<T, U>`
+/// - `BoxBiConsumer<T, U>`, `ArcBiConsumer<T, U>`, `RcBiConsumer<T, U>`
 ///
 /// # Features
 ///
 /// - **Unified Interface**: All non-mutating bi-consumer types share the same
 ///   `accept` method signature
-/// - **Automatic Implementation**: Closures automatically implement this
-///   trait with zero overhead
+/// - **Automatic Implementation**: Closures automatically implement this trait
+///   with zero overhead
 /// - **Type Conversions**: Easy conversion between ownership models
 /// - **Generic Programming**: Write functions accepting any non-mutating
 ///   bi-consumer type
@@ -138,7 +132,6 @@ pub use rc_conditional_bi_consumer::RcConditionalBiConsumer;
 /// });
 /// apply_consumer(&box_con, &5, &3);
 /// ```
-///
 pub trait BiConsumer<T, U> {
     /// Performs the non-mutating consumption operation
     ///
@@ -240,10 +233,12 @@ pub trait BiConsumer<T, U> {
 
     /// Convert to BiConsumerOnce
     ///
-    /// **⚠️ Consumes `self`**: The original consumer will be unavailable after calling this method.
+    /// **⚠️ Consumes `self`**: The original consumer will be unavailable after
+    /// calling this method.
     ///
-    /// Converts a reusable non-mutating bi-consumer to a one-time consumer that consumes itself on use.
-    /// This enables passing `BiConsumer` to functions that require `BiConsumerOnce`.
+    /// Converts a reusable non-mutating bi-consumer to a one-time consumer that
+    /// consumes itself on use. This enables passing `BiConsumer` to
+    /// functions that require `BiConsumerOnce`.
     ///
     /// # Returns
     ///
@@ -372,7 +367,8 @@ pub trait BiConsumer<T, U> {
     /// Convert to BiConsumerOnce without consuming self
     ///
     /// **⚠️ Requires Clone**: This method requires `Self` to implement `Clone`.
-    /// Clones the current consumer and converts the clone to a one-time consumer.
+    /// Clones the current consumer and converts the clone to a one-time
+    /// consumer.
     ///
     /// # Returns
     ///

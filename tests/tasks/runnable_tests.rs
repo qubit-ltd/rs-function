@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! Unit tests for runnable task types.
 
@@ -112,8 +110,10 @@ fn test_runnable_closure_into_once_preserves_error() {
     let task = || Err::<(), _>(io::Error::other("failed"));
 
     let once: BoxRunnableOnce<io::Error> = Runnable::into_once(task);
-    let error = <BoxRunnableOnce<io::Error> as qubit_function::RunnableOnce<io::Error>>::run(once)
-        .expect_err("runnable-once conversion should preserve errors");
+    let error = <BoxRunnableOnce<io::Error> as qubit_function::RunnableOnce<
+        io::Error,
+    >>::run(once)
+    .expect_err("runnable-once conversion should preserve errors");
 
     assert_eq!(error.kind(), io::ErrorKind::Other);
     assert_eq!(error.to_string(), "failed");
@@ -315,7 +315,8 @@ fn test_box_runnable_new_and_run() {
 
 #[test]
 fn test_box_runnable_name_management() {
-    let mut task = BoxRunnable::<io::Error>::new_with_name("cleanup", || Ok(()));
+    let mut task =
+        BoxRunnable::<io::Error>::new_with_name("cleanup", || Ok(()));
 
     assert_eq!(task.name(), Some("cleanup"));
     assert_eq!(task.to_string(), "BoxRunnable(cleanup)");
@@ -431,7 +432,8 @@ fn test_box_runnable_and_then_skips_next_on_error() {
 
 #[test]
 fn test_box_runnable_then_callable_runs_callable_on_success() {
-    let task = BoxRunnable::new_with_name("prepare", || Ok::<(), io::Error>(()));
+    let task =
+        BoxRunnable::new_with_name("prepare", || Ok::<(), io::Error>(()));
     let callable = || Ok::<i32, io::Error>(42);
 
     let mut chained = task.then_callable(callable);
@@ -444,7 +446,9 @@ fn test_box_runnable_then_callable_runs_callable_on_success() {
 fn test_box_runnable_then_callable_skips_callable_on_error() {
     let callable_ran = Rc::new(Cell::new(false));
     let callable_ran_capture = Rc::clone(&callable_ran);
-    let task = BoxRunnable::<io::Error>::new(|| Err(io::Error::other("prepare failed")));
+    let task = BoxRunnable::<io::Error>::new(|| {
+        Err(io::Error::other("prepare failed"))
+    });
     let callable = move || {
         callable_ran_capture.set(true);
         Ok::<i32, io::Error>(42)
@@ -461,7 +465,8 @@ fn test_box_runnable_then_callable_skips_callable_on_error() {
 
 #[test]
 fn test_runnable_into_callable_returns_unit_callable() {
-    let task = BoxRunnable::new_with_name("cleanup", || Ok::<(), io::Error>(()));
+    let task =
+        BoxRunnable::new_with_name("cleanup", || Ok::<(), io::Error>(()));
 
     let mut callable = task.into_callable();
 

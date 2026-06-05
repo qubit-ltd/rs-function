@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Task Function Module
 //!
 //! Provides zero-argument task-oriented functional abstractions.
@@ -20,7 +18,6 @@
 //!
 //! One-time equivalents are also provided as `CallableOnce` and `RunnableOnce`
 //! for move-only callable use cases.
-//!
 
 pub mod callable;
 pub mod callable_once;

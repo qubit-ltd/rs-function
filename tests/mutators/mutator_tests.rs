@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 // qubit-style: allow explicit-imports
 //! Unit tests for Mutator types (stateless Fn(&mut T))
@@ -234,7 +232,8 @@ mod test_box_mutator {
 
     #[test]
     fn test_and_then() {
-        let mutator = BoxMutator::new(|x: &mut i32| *x *= 2).and_then(|x: &mut i32| *x += 10);
+        let mutator = BoxMutator::new(|x: &mut i32| *x *= 2)
+            .and_then(|x: &mut i32| *x += 10);
 
         let mut value = 5;
         mutator.apply(&mut value);
@@ -299,7 +298,8 @@ mod test_box_mutator {
 
     #[test]
     fn test_if_then_true() {
-        let mutator = BoxMutator::new(|x: &mut i32| *x += 10).when(|x: &i32| *x > 0);
+        let mutator =
+            BoxMutator::new(|x: &mut i32| *x += 10).when(|x: &i32| *x > 0);
 
         let mut value = 5;
         mutator.apply(&mut value);
@@ -308,7 +308,8 @@ mod test_box_mutator {
 
     #[test]
     fn test_if_then_false() {
-        let mutator = BoxMutator::new(|x: &mut i32| *x += 10).when(|x: &i32| *x > 0);
+        let mutator =
+            BoxMutator::new(|x: &mut i32| *x += 10).when(|x: &i32| *x > 0);
 
         let mut value = -5;
         mutator.apply(&mut value);
@@ -332,7 +333,8 @@ mod test_box_mutator {
 
     #[test]
     fn test_conditional_and_then() {
-        let cond1 = BoxMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
+        let cond1 =
+            BoxMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
         let cond2 = BoxMutator::new(|x: &mut i32| *x += 5);
         let chained = cond1.and_then(cond2);
 
@@ -347,7 +349,8 @@ mod test_box_mutator {
 
     #[test]
     fn test_conditional_into_box() {
-        let conditional = BoxMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
+        let conditional =
+            BoxMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
         let boxed = conditional.into_box();
 
         let mut positive = 5;
@@ -357,7 +360,8 @@ mod test_box_mutator {
 
     #[test]
     fn test_conditional_into_rc() {
-        let conditional = BoxMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
+        let conditional =
+            BoxMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
         let rc = conditional.into_rc();
 
         let mut positive = 5;
@@ -367,7 +371,8 @@ mod test_box_mutator {
 
     #[test]
     fn test_conditional_into_fn() {
-        let conditional = BoxMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
+        let conditional =
+            BoxMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
         let closure = conditional.into_fn();
 
         let mut positive = 5;
@@ -405,7 +410,8 @@ mod test_box_mutator {
 
     #[test]
     fn test_new_with_name() {
-        let mutator = BoxMutator::new_with_name("test_mutator", |x: &mut i32| *x += 1);
+        let mutator =
+            BoxMutator::new_with_name("test_mutator", |x: &mut i32| *x += 1);
         assert_eq!(mutator.name(), Some("test_mutator"));
 
         let mut value = 5;
@@ -428,7 +434,8 @@ mod test_box_mutator {
 
     #[test]
     fn test_new_with_optional_name_none() {
-        let mutator = BoxMutator::new_with_optional_name(|x: &mut i32| *x += 1, None);
+        let mutator =
+            BoxMutator::new_with_optional_name(|x: &mut i32| *x += 1, None);
         assert_eq!(mutator.name(), None);
 
         let mut value = 5;
@@ -464,7 +471,8 @@ mod test_box_mutator {
         let display_str = format!("{}", mutator);
         assert_eq!(display_str, "BoxMutator");
 
-        let named_mutator = BoxMutator::new_with_name("test_mutator", |x: &mut i32| *x *= 2);
+        let named_mutator =
+            BoxMutator::new_with_name("test_mutator", |x: &mut i32| *x *= 2);
         let named_display_str = format!("{}", named_mutator);
         assert_eq!(named_display_str, "BoxMutator(test_mutator)");
     }
@@ -750,7 +758,8 @@ mod test_arc_mutator {
 
     #[test]
     fn test_conditional_into_box() {
-        let conditional = ArcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
+        let conditional =
+            ArcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
         let boxed = conditional.into_box();
 
         let mut positive = 5;
@@ -760,7 +769,8 @@ mod test_arc_mutator {
 
     #[test]
     fn test_conditional_into_rc() {
-        let conditional = ArcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
+        let conditional =
+            ArcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
         let rc = conditional.into_rc();
 
         let mut positive = 5;
@@ -770,7 +780,8 @@ mod test_arc_mutator {
 
     #[test]
     fn test_conditional_into_arc() {
-        let conditional = ArcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
+        let conditional =
+            ArcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
         let arc = conditional.into_arc();
 
         let mut positive = 5;
@@ -780,7 +791,8 @@ mod test_arc_mutator {
 
     #[test]
     fn test_conditional_into_fn() {
-        let conditional = ArcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
+        let conditional =
+            ArcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
         let closure = conditional.into_fn();
 
         let mut positive = 5;
@@ -790,7 +802,8 @@ mod test_arc_mutator {
 
     #[test]
     fn test_conditional_to_box() {
-        let conditional = ArcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
+        let conditional =
+            ArcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
         let boxed = conditional.to_box();
 
         let mut positive = 5;
@@ -800,7 +813,8 @@ mod test_arc_mutator {
 
     #[test]
     fn test_conditional_to_rc() {
-        let conditional = ArcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
+        let conditional =
+            ArcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
         let rc = conditional.to_rc();
 
         let mut positive = 5;
@@ -810,7 +824,8 @@ mod test_arc_mutator {
 
     #[test]
     fn test_conditional_to_arc() {
-        let conditional = ArcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
+        let conditional =
+            ArcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
         let arc = conditional.to_arc();
 
         let mut positive = 5;
@@ -820,7 +835,8 @@ mod test_arc_mutator {
 
     #[test]
     fn test_conditional_to_fn() {
-        let conditional = ArcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
+        let conditional =
+            ArcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
         let closure = conditional.to_fn();
 
         let mut positive = 5;
@@ -845,7 +861,8 @@ mod test_arc_mutator {
 
     #[test]
     fn test_conditional_clone() {
-        let conditional = ArcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
+        let conditional =
+            ArcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
         let clone = conditional.clone();
 
         let mut positive = 5;
@@ -859,7 +876,10 @@ mod test_arc_mutator {
 
     #[test]
     fn test_new_with_name() {
-        let mutator = ArcMutator::new_with_name("arc_test_mutator", |x: &mut i32| *x += 1);
+        let mutator =
+            ArcMutator::new_with_name("arc_test_mutator", |x: &mut i32| {
+                *x += 1
+            });
         assert_eq!(mutator.name(), Some("arc_test_mutator"));
 
         let mut value = 5;
@@ -882,7 +902,8 @@ mod test_arc_mutator {
 
     #[test]
     fn test_new_with_optional_name_none() {
-        let mutator = ArcMutator::new_with_optional_name(|x: &mut i32| *x += 1, None);
+        let mutator =
+            ArcMutator::new_with_optional_name(|x: &mut i32| *x += 1, None);
         assert_eq!(mutator.name(), None);
 
         let mut value = 5;
@@ -1110,7 +1131,8 @@ mod test_rc_mutator {
 
     #[test]
     fn test_conditional_into_box() {
-        let conditional = RcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
+        let conditional =
+            RcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
         let boxed = conditional.into_box();
 
         let mut positive = 5;
@@ -1120,7 +1142,8 @@ mod test_rc_mutator {
 
     #[test]
     fn test_conditional_into_rc() {
-        let conditional = RcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
+        let conditional =
+            RcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
         let rc = conditional.into_rc();
 
         let mut positive = 5;
@@ -1130,7 +1153,8 @@ mod test_rc_mutator {
 
     #[test]
     fn test_conditional_into_fn() {
-        let conditional = RcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
+        let conditional =
+            RcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
         let closure = conditional.into_fn();
 
         let mut positive = 5;
@@ -1140,7 +1164,8 @@ mod test_rc_mutator {
 
     #[test]
     fn test_conditional_to_box() {
-        let conditional = RcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
+        let conditional =
+            RcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
         let boxed = conditional.to_box();
 
         let mut positive = 5;
@@ -1150,7 +1175,8 @@ mod test_rc_mutator {
 
     #[test]
     fn test_conditional_to_rc() {
-        let conditional = RcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
+        let conditional =
+            RcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
         let rc = conditional.to_rc();
 
         let mut positive = 5;
@@ -1160,7 +1186,8 @@ mod test_rc_mutator {
 
     #[test]
     fn test_conditional_to_fn() {
-        let conditional = RcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
+        let conditional =
+            RcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
         let closure = conditional.to_fn();
 
         let mut positive = 5;
@@ -1185,7 +1212,8 @@ mod test_rc_mutator {
 
     #[test]
     fn test_conditional_clone() {
-        let conditional = RcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
+        let conditional =
+            RcMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
         let clone = conditional.clone();
 
         let mut positive = 5;
@@ -1199,7 +1227,8 @@ mod test_rc_mutator {
 
     #[test]
     fn test_new_with_name() {
-        let mutator = RcMutator::new_with_name("rc_test_mutator", |x: &mut i32| *x += 1);
+        let mutator =
+            RcMutator::new_with_name("rc_test_mutator", |x: &mut i32| *x += 1);
         assert_eq!(mutator.name(), Some("rc_test_mutator"));
 
         let mut value = 5;
@@ -1222,7 +1251,8 @@ mod test_rc_mutator {
 
     #[test]
     fn test_new_with_optional_name_none() {
-        let mutator = RcMutator::new_with_optional_name(|x: &mut i32| *x += 1, None);
+        let mutator =
+            RcMutator::new_with_optional_name(|x: &mut i32| *x += 1, None);
         assert_eq!(mutator.name(), None);
 
         let mut value = 5;
@@ -1666,7 +1696,8 @@ mod test_conditional_mutator_debug_display {
 #[test]
 fn test_rc_mutator_into_box_preserves_name() {
     // Test that RcMutator::into_box preserves the name
-    let original = RcMutator::new_with_name("test_rc_mutator", |x: &mut i32| *x *= 2);
+    let original =
+        RcMutator::new_with_name("test_rc_mutator", |x: &mut i32| *x *= 2);
     assert_eq!(original.name(), Some("test_rc_mutator"));
 
     let boxed = original.into_box();
@@ -1680,7 +1711,8 @@ fn test_rc_mutator_into_box_preserves_name() {
 #[test]
 fn test_arc_mutator_into_box_preserves_name() {
     // Test that ArcMutator::into_box preserves the name
-    let original = ArcMutator::new_with_name("test_arc_mutator", |x: &mut i32| *x *= 2);
+    let original =
+        ArcMutator::new_with_name("test_arc_mutator", |x: &mut i32| *x *= 2);
     assert_eq!(original.name(), Some("test_arc_mutator"));
 
     let boxed = original.into_box();
@@ -1694,7 +1726,8 @@ fn test_arc_mutator_into_box_preserves_name() {
 #[test]
 fn test_arc_mutator_into_rc_preserves_name() {
     // Test that ArcMutator::into_rc preserves the name
-    let original = ArcMutator::new_with_name("test_arc_mutator", |x: &mut i32| *x *= 2);
+    let original =
+        ArcMutator::new_with_name("test_arc_mutator", |x: &mut i32| *x *= 2);
     assert_eq!(original.name(), Some("test_arc_mutator"));
 
     let rc = original.into_rc();
@@ -1708,7 +1741,8 @@ fn test_arc_mutator_into_rc_preserves_name() {
 #[test]
 fn test_rc_mutator_to_box_preserves_name() {
     // Test that RcMutator::to_box preserves the name
-    let original = RcMutator::new_with_name("test_rc_mutator", |x: &mut i32| *x *= 2);
+    let original =
+        RcMutator::new_with_name("test_rc_mutator", |x: &mut i32| *x *= 2);
     assert_eq!(original.name(), Some("test_rc_mutator"));
 
     let boxed = original.to_box();
@@ -1727,7 +1761,8 @@ fn test_rc_mutator_to_box_preserves_name() {
 #[test]
 fn test_arc_mutator_to_box_preserves_name() {
     // Test that ArcMutator::to_box preserves the name
-    let original = ArcMutator::new_with_name("test_arc_mutator", |x: &mut i32| *x *= 2);
+    let original =
+        ArcMutator::new_with_name("test_arc_mutator", |x: &mut i32| *x *= 2);
     assert_eq!(original.name(), Some("test_arc_mutator"));
 
     let boxed = original.to_box();
@@ -1746,7 +1781,8 @@ fn test_arc_mutator_to_box_preserves_name() {
 #[test]
 fn test_arc_mutator_to_rc_preserves_name() {
     // Test that ArcMutator::to_rc preserves the name
-    let original = ArcMutator::new_with_name("test_arc_mutator", |x: &mut i32| *x *= 2);
+    let original =
+        ArcMutator::new_with_name("test_arc_mutator", |x: &mut i32| *x *= 2);
     assert_eq!(original.name(), Some("test_arc_mutator"));
 
     let rc = original.to_rc();
@@ -1779,7 +1815,8 @@ fn test_mutator_conversions_without_name() {
 #[test]
 fn test_multiple_mutator_conversions_preserve_name() {
     // Test that multiple conversions preserve the name correctly
-    let original = ArcMutator::new_with_name("original_mutator", |x: &mut i32| *x *= 2);
+    let original =
+        ArcMutator::new_with_name("original_mutator", |x: &mut i32| *x *= 2);
     assert_eq!(original.name(), Some("original_mutator"));
 
     // Arc -> Rc

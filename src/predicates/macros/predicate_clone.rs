@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! # Predicate Clone Macro
 //!
@@ -14,7 +12,8 @@
 //!
 //! Generates Clone implementation for Predicate structs that have `function`
 //! and `name` fields. The function field is cloned using its inherent `clone`
-//! method, which performs a shallow clone for smart pointers like `Arc` or `Rc`.
+//! method, which performs a shallow clone for smart pointers like `Arc` or
+//! `Rc`.
 //!
 //! # Parameters
 //!
@@ -36,7 +35,6 @@
 //! // For two type parameters with Rc
 //! impl_predicate_clone!(RcBiPredicate<T, U>);
 //! ```
-//!
 
 /// Generates Clone trait implementation for basic Predicate types
 ///
@@ -66,7 +64,6 @@
 /// // For two type parameters with Rc
 /// impl_predicate_clone!(RcBiPredicate<T, U>);
 /// ```
-///
 macro_rules! impl_predicate_clone {
     // Single generic parameter
     ($struct_name:ident < $t:ident >) => {

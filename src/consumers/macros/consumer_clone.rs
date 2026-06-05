@@ -1,19 +1,18 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Consumer Clone Macro
 //!
 //! Generates Clone trait implementation for basic Consumer types
 //!
 //! Generates Clone implementation for Consumer structs that have `function`
 //! and `name` fields. The function field is cloned using its inherent `clone`
-//! method, which performs a shallow clone for smart pointers like `Arc` or `Rc`.
+//! method, which performs a shallow clone for smart pointers like `Arc` or
+//! `Rc`.
 //!
 //! # Parameters
 //!
@@ -47,7 +46,6 @@
 //! // For two type parameters with Rc
 //! impl_consumer_clone!(RcBiConsumer<i32, i32>);
 //! ```
-//!
 
 /// Generates Clone trait implementation for basic Consumer types
 ///
@@ -90,7 +88,6 @@
 /// // For two type parameters with Rc
 /// impl_consumer_clone!(RcBiConsumer<i32, i32>);
 /// ```
-///
 macro_rules! impl_consumer_clone {
     // Single generic parameter - Consumer types
     ($struct_name:ident < $t:ident >) => {

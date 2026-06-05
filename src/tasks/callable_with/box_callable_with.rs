@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxCallableWith` public type.
 
@@ -31,7 +29,6 @@ type BoxCallableWithFn<T, R, E> = Box<dyn FnMut(&mut T) -> Result<R, E>>;
 ///
 /// `BoxCallableWith<T, R, E>` stores a
 /// `Box<dyn FnMut(&mut T) -> Result<R, E>>` and can be called repeatedly.
-///
 pub struct BoxCallableWith<T, R, E> {
     /// The stateful closure executed by this callable.
     pub(super) function: BoxCallableWithFn<T, R, E>,
@@ -67,7 +64,10 @@ impl<T, R, E> BoxCallableWith<T, R, E> {
     {
         let name = self.name;
         let mut function = self.function;
-        BoxCallableWith::new_with_optional_name(move |input| function(input).map(&mut mapper), name)
+        BoxCallableWith::new_with_optional_name(
+            move |input| function(input).map(&mut mapper),
+            name,
+        )
     }
 
     /// Maps the error value of this callable.
@@ -147,6 +147,9 @@ impl<T, R, E> CallableWith<T, R, E> for BoxCallableWith<T, R, E> {
     {
         let name = self.name;
         let mut function = self.function;
-        BoxRunnableWith::new_with_optional_name(move |input| function(input).map(|_| ()), name)
+        BoxRunnableWith::new_with_optional_name(
+            move |input| function(input).map(|_| ()),
+            name,
+        )
     }
 }

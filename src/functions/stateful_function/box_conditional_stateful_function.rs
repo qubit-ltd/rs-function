@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalStatefulFunction` public type.
 
@@ -26,19 +24,20 @@ use super::{
 /// BoxConditionalStatefulFunction struct
 ///
 /// A conditional function that only executes when a predicate is satisfied.
-/// Uses `BoxStatefulFunction` and `BoxPredicate` for single ownership semantics.
+/// Uses `BoxStatefulFunction` and `BoxPredicate` for single ownership
+/// semantics.
 ///
-/// This type is typically created by calling `BoxStatefulFunction::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else
+/// This type is typically created by calling `BoxStatefulFunction::when()` and
+/// is designed to work with the `or_else()` method to create if-then-else
 /// logic.
 ///
 /// # Features
 ///
 /// - **Single Ownership**: Not cloneable, consumes `self` on use
 /// - **Conditional Execution**: Only maps when predicate returns `true`
-/// - **Chainable**: Can add `or_else` branch to create if-then-else
-///   logic
-/// - **Implements StatefulFunction**: Can be used anywhere a `StatefulFunction` is expected
+/// - **Chainable**: Can add `or_else` branch to create if-then-else logic
+/// - **Implements StatefulFunction**: Can be used anywhere a `StatefulFunction`
+///   is expected
 ///
 /// # Examples
 ///
@@ -61,7 +60,6 @@ use super::{
 /// assert_eq!(function.apply(&15), 30); // when branch executed
 /// assert_eq!(function.apply(&5), 6);   // or_else branch executed
 /// ```
-///
 pub struct BoxConditionalStatefulFunction<T, R> {
     pub(super) function: BoxStatefulFunction<T, R>,
     pub(super) predicate: BoxPredicate<T>,

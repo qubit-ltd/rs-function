@@ -1,17 +1,14 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! # Common New Methods Macro
 //!
 //! Generates common constructor methods for function-like structs.
-//!
 
 /// Implements common constructor methods for function-like structs.
 ///
@@ -31,9 +28,8 @@
 ///
 /// * `new<F>(f: F) -> Self` - Creates a new instance without a name
 /// * `new_with_name<F>(name: &str, f: F) -> Self` - Creates a named instance
-/// * `new_with_optional_name<F>(f: F, name: Option<String>) -> Self` -
-///   Creates an instance with an optional name
-///
+/// * `new_with_optional_name<F>(f: F, name: Option<String>) -> Self` - Creates
+///   an instance with an optional name
 macro_rules! impl_common_new_methods {
     (
         ($($fn_trait_with_bounds:tt)+),

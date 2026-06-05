@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcConditionalStatefulBiConsumer` public type.
 
@@ -28,19 +26,21 @@ use super::{
 
 /// RcConditionalStatefulBiConsumer struct
 ///
-/// A single-threaded conditional bi-consumer that only executes when a predicate is
-/// satisfied. Uses `RcStatefulBiConsumer` and `RcBiPredicate` for shared ownership within a
-/// single thread.
+/// A single-threaded conditional bi-consumer that only executes when a
+/// predicate is satisfied. Uses `RcStatefulBiConsumer` and `RcBiPredicate` for
+/// shared ownership within a single thread.
 ///
-/// This type is typically created by calling `RcStatefulBiConsumer::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
+/// This type is typically created by calling `RcStatefulBiConsumer::when()` and
+/// is designed to work with the `or_else()` method to create if-then-else
+/// logic.
 ///
 /// # Features
 ///
 /// - **Shared Ownership**: Cloneable via `Rc`, multiple owners allowed
 /// - **Single-Threaded**: Not thread-safe, cannot be sent across threads
 /// - **Conditional Execution**: Only consumes when predicate returns `true`
-/// - **No Lock Overhead**: More efficient than `ArcConditionalStatefulBiConsumer`
+/// - **No Lock Overhead**: More efficient than
+///   `ArcConditionalStatefulBiConsumer`
 ///
 /// # Examples
 ///
@@ -62,7 +62,6 @@ use super::{
 /// m.accept(&value, &3);
 /// assert_eq!(*log.borrow(), vec![8]);
 /// ```
-///
 pub struct RcConditionalStatefulBiConsumer<T, U> {
     pub(super) consumer: RcStatefulBiConsumer<T, U>,
     pub(super) predicate: RcBiPredicate<T, U>,

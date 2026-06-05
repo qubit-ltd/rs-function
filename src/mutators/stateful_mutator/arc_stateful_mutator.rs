@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulMutator` public type.
 
@@ -66,7 +64,6 @@ use super::{
 /// m.apply(&mut value);
 /// assert_eq!(value, 10);
 /// ```
-///
 pub struct ArcStatefulMutator<T> {
     pub(super) function: ArcMutMutatorFn<T>,
     pub(super) name: Option<String>,

@@ -1,31 +1,32 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! # Shared Predicate Methods Macro
 //!
-//! Generates when and and_then method implementations for Arc/Rc-based Predicate
+//! Generates when and and_then method implementations for Arc/Rc-based
+//! Predicate
 //!
-//! Generates conditional execution when method and logical combination and_then method
-//! for Arc/Rc-based predicates that borrow &self (because Arc/Rc can be cloned).
+//! Generates conditional execution when method and logical combination and_then
+//! method for Arc/Rc-based predicates that borrow &self (because Arc/Rc can be
+//! cloned).
 //!
-//! This macro supports both single-parameter and two-parameter predicates through
-//! pattern matching on the struct signature.
+//! This macro supports both single-parameter and two-parameter predicates
+//! through pattern matching on the struct signature.
 //!
 //! # Parameters
 //!
 //! * `$struct_name<$generics>` - The struct name with its generic parameters
 //!   - Single parameter: `ArcPredicate<T>`
 //!   - Two parameters: `ArcBiPredicate<T, U>`
-//! * `$predicate_trait_name` - Predicate trait name (e.g., Predicate, BiPredicate)
-//! * `$predicate_extra_bounds` - Extra trait bounds (e.g., 'static for Rc,
-//!   Send + Sync + 'static for Arc)
+//! * `$predicate_trait_name` - Predicate trait name (e.g., Predicate,
+//!   BiPredicate)
+//! * `$predicate_extra_bounds` - Extra trait bounds (e.g., 'static for Rc, Send
+//!   + Sync + 'static for Arc)
 //!
 //! # All Macro Invocations
 //!
@@ -48,9 +49,9 @@
 //! // Two-parameter with Rc
 //! impl_shared_predicate_methods!(RcBiPredicate<T, U>, 'static);
 //! ```
-//!
 
-/// Generates when and and_then method implementations for Arc/Rc-based Predicate
+/// Generates when and and_then method implementations for Arc/Rc-based
+/// Predicate
 ///
 /// This macro should be used inside an existing impl block for the target
 /// struct. It generates individual methods but does not create a complete
@@ -58,17 +59,18 @@
 /// combination and_then method for Arc/Rc-based predicates that borrow &self
 /// (because Arc/Rc can be cloned).
 ///
-/// This macro supports both single-parameter and two-parameter predicates through
-/// pattern matching on the struct signature.
+/// This macro supports both single-parameter and two-parameter predicates
+/// through pattern matching on the struct signature.
 ///
 /// # Parameters
 ///
 /// * `$struct_name<$generics>` - The struct name with its generic parameters
 ///   - Single parameter: `ArcPredicate<T>`
 ///   - Two parameters: `ArcBiPredicate<T, U>`
-/// * `$predicate_trait_name` - Predicate trait name (e.g., Predicate, BiPredicate)
-/// * `$predicate_extra_bounds` - Extra trait bounds (e.g., 'static for Rc,
-///   Send + Sync + 'static for Arc)
+/// * `$predicate_trait_name` - Predicate trait name (e.g., Predicate,
+///   BiPredicate)
+/// * `$predicate_extra_bounds` - Extra trait bounds (e.g., 'static for Rc, Send
+///   + Sync + 'static for Arc)
 ///
 /// # All Macro Invocations
 ///
@@ -93,7 +95,6 @@
 /// // Two-parameter with Rc
 /// impl_shared_predicate_methods!(RcBiPredicate<T, U>, 'static);
 /// ```
-///
 macro_rules! impl_shared_predicate_methods {
     // Internal macro for generating logical operations
     (

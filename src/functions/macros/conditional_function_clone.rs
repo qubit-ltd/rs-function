@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Conditional Function Clone Macro
 //!
 //! Generates Clone trait implementation for Conditional Function types
@@ -30,7 +28,6 @@
 //! // impl_conditional_function_clone!(ArcConditionalBiFunction<T, U, R>);
 //! // impl_conditional_function_clone!(RcConditionalBiFunction<T, U, R>);
 //! ```
-//!
 
 /// Generates Clone trait implementation for Conditional Function types
 ///
@@ -55,7 +52,6 @@
 /// // impl_conditional_function_clone!(ArcConditionalBiFunction<T, U, R>);
 /// // impl_conditional_function_clone!(RcConditionalBiFunction<T, U, R>);
 /// ```
-///
 macro_rules! impl_conditional_function_clone {
     // Two generic parameters - Function types
     ($struct_name:ident < $t:ident, $r:ident >) => {

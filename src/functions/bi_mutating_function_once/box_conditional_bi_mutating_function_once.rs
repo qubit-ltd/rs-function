@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalBiMutatingFunctionOnce` public type.
 
@@ -20,17 +18,19 @@ use super::{
 };
 
 // ============================================================================
-// BoxConditionalBiMutatingFunctionOnce - Box-based Conditional BiMutatingFunction
+// BoxConditionalBiMutatingFunctionOnce - Box-based Conditional
+// BiMutatingFunction
 // ============================================================================
 
 /// BoxConditionalBiMutatingFunctionOnce struct
 ///
-/// A conditional consuming bi-mutating-function that only executes when a bi-predicate
-/// is satisfied. Uses `BoxBiMutatingFunctionOnce` and `BoxBiPredicate` for single
-/// ownership semantics.
+/// A conditional consuming bi-mutating-function that only executes when a
+/// bi-predicate is satisfied. Uses `BoxBiMutatingFunctionOnce` and
+/// `BoxBiPredicate` for single ownership semantics.
 ///
-/// This type is typically created by calling `BoxBiMutatingFunctionOnce::when()` and
-/// is designed to work with the `or_else()` method to create if-then-else logic.
+/// This type is typically created by calling
+/// `BoxBiMutatingFunctionOnce::when()` and is designed to work with the
+/// `or_else()` method to create if-then-else logic.
 ///
 /// # Features
 ///
@@ -38,7 +38,6 @@ use super::{
 /// - **One-time Use**: Can only be called once
 /// - **Conditional Execution**: Only computes when bi-predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
-///
 pub struct BoxConditionalBiMutatingFunctionOnce<T, U, R> {
     pub(super) function: BoxBiMutatingFunctionOnce<T, U, R>,
     pub(super) predicate: BoxBiPredicate<T, U>,

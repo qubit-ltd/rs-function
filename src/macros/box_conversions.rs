@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Box Conversions Macro
 //!
 //! Generate common conversion methods for all Box-based function wrappers.
@@ -14,7 +12,6 @@
 //! This macro uses a unified pattern to generate standard conversion methods
 //! for all Box-based function wrapper types (into_box, into_rc, into_fn,
 //! into_once).
-//!
 
 /// Implement common conversion methods for Box types
 ///
@@ -55,7 +52,6 @@
 /// //     BoxConsumerOnce
 /// // );
 /// ```
-///
 macro_rules! impl_box_conversions {
     // 3-parameter pattern: box_type, rc_type, fn_trait (no once_type)
     (
@@ -125,8 +121,8 @@ pub(crate) use impl_box_conversions;
 /// * `$box_type_with_generics` - Box type with generics (e.g.,
 ///   `BoxConsumerOnce<T>`, `BoxBiConsumerOnce<T, U>`)
 /// * `$trait_name` - Trait name (for documentation, unused in expansion)
-/// * `$fn_trait` - Function trait type (e.g., `FnOnce(&T)`,
-///   `FnOnce(&T) -> R`, `FnOnce() -> T`)
+/// * `$fn_trait` - Function trait type (e.g., `FnOnce(&T)`, `FnOnce(&T) -> R`,
+///   `FnOnce() -> T`)
 ///
 /// # Generated methods
 ///
@@ -154,7 +150,6 @@ pub(crate) use impl_box_conversions;
 /// // Supplier: () -> T
 /// // impl_box_once_conversions!(BoxSupplierOnce<T>, SupplierOnce, FnOnce() -> T);
 /// ```
-///
 macro_rules! impl_box_once_conversions {
     (
         $box_type:ident < $($generics:ident),* >,

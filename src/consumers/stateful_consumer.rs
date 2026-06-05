@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Consumer Types
 //!
 //! Provides implementations of consumer interfaces for executing operations
@@ -17,12 +15,12 @@
 //! This module provides a unified `Consumer` trait and three concrete
 //! implementations based on different ownership models:
 //!
-//! - **`BoxStatefulConsumer<T>`**: Box-based single ownership implementation for
-//!   one-time use scenarios
+//! - **`BoxStatefulConsumer<T>`**: Box-based single ownership implementation
+//!   for one-time use scenarios
 //! - **`ArcStatefulConsumer<T>`**: Thread-safe shared ownership implementation
 //!   based on Arc<Mutex<>>
-//! - **`RcStatefulConsumer<T>`**: Single-threaded shared ownership implementation
-//!   based on Rc<RefCell<>>
+//! - **`RcStatefulConsumer<T>`**: Single-threaded shared ownership
+//!   implementation based on Rc<RefCell<>>
 //!
 //! # Design Philosophy
 //!
@@ -30,7 +28,6 @@
 //! but not the input value.
 //!
 //! Suitable for statistics, accumulation, event handling, and other scenarios.
-//!
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
@@ -96,7 +93,8 @@ pub use rc_conditional_stateful_consumer::RcConditionalStatefulConsumer;
 /// # Automatic Implementation
 ///
 /// - All closures implementing `FnMut(&T)`
-/// - `BoxStatefulConsumer<T>`, `ArcStatefulConsumer<T>`, `RcStatefulConsumer<T>`
+/// - `BoxStatefulConsumer<T>`, `ArcStatefulConsumer<T>`,
+///   `RcStatefulConsumer<T>`
 ///
 /// # Features
 ///
@@ -126,7 +124,6 @@ pub use rc_conditional_stateful_consumer::RcConditionalStatefulConsumer;
 /// apply_consumer(&mut box_con, &5);
 /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
 /// ```
-///
 pub trait StatefulConsumer<T> {
     /// Execute consumption operation
     ///
@@ -161,9 +158,9 @@ pub trait StatefulConsumer<T> {
     /// This method **consumes** the consumer (takes ownership of `self`).
     /// After calling this method, the original consumer is no longer available.
     ///
-    /// **Tip**: For cloneable consumers ([`ArcStatefulConsumer`], [`RcStatefulConsumer`]),
-    /// if you need to preserve the original object, you can call `.clone()`
-    /// first.
+    /// **Tip**: For cloneable consumers ([`ArcStatefulConsumer`],
+    /// [`RcStatefulConsumer`]), if you need to preserve the original
+    /// object, you can call `.clone()` first.
     ///
     /// # Return Value
     ///
@@ -261,10 +258,12 @@ pub trait StatefulConsumer<T> {
 
     /// Convert to ConsumerOnce
     ///
-    /// **⚠️ Consumes `self`**: The original consumer will be unavailable after calling this method.
+    /// **⚠️ Consumes `self`**: The original consumer will be unavailable after
+    /// calling this method.
     ///
-    /// Converts a reusable stateful consumer to a one-time consumer that consumes itself on use.
-    /// This enables passing `StatefulConsumer` to functions that require `ConsumerOnce`.
+    /// Converts a reusable stateful consumer to a one-time consumer that
+    /// consumes itself on use. This enables passing `StatefulConsumer` to
+    /// functions that require `ConsumerOnce`.
     ///
     /// # Returns
     ///
@@ -296,13 +295,14 @@ pub trait StatefulConsumer<T> {
     ///
     /// **⚠️ Requires Clone**: The original consumer must implement Clone.
     ///
-    /// Converts the current consumer to `BoxStatefulConsumer<T>` by cloning it first.
+    /// Converts the current consumer to `BoxStatefulConsumer<T>` by cloning it
+    /// first.
     ///
     /// # Ownership
     ///
-    /// This method does **not consume** the consumer. It clones the consumer and
-    /// then converts the clone to `BoxStatefulConsumer<T>`. The original consumer remains
-    /// available after calling this method.
+    /// This method does **not consume** the consumer. It clones the consumer
+    /// and then converts the clone to `BoxStatefulConsumer<T>`. The
+    /// original consumer remains available after calling this method.
     ///
     /// # Return Value
     ///
@@ -337,13 +337,14 @@ pub trait StatefulConsumer<T> {
     ///
     /// **⚠️ Requires Clone**: The original consumer must implement Clone.
     ///
-    /// Converts the current consumer to `RcStatefulConsumer<T>` by cloning it first.
+    /// Converts the current consumer to `RcStatefulConsumer<T>` by cloning it
+    /// first.
     ///
     /// # Ownership
     ///
-    /// This method does **not consume** the consumer. It clones the consumer and
-    /// then converts the clone to `RcStatefulConsumer<T>`. The original consumer remains
-    /// available after calling this method.
+    /// This method does **not consume** the consumer. It clones the consumer
+    /// and then converts the clone to `RcStatefulConsumer<T>`. The original
+    /// consumer remains available after calling this method.
     ///
     /// # Return Value
     ///
@@ -379,13 +380,14 @@ pub trait StatefulConsumer<T> {
     /// **⚠️ Requires Clone + Send**: The original consumer must implement
     /// Clone + Send.
     ///
-    /// Converts the current consumer to `ArcStatefulConsumer<T>` by cloning it first.
+    /// Converts the current consumer to `ArcStatefulConsumer<T>` by cloning it
+    /// first.
     ///
     /// # Ownership
     ///
-    /// This method does **not consume** the consumer. It clones the consumer and
-    /// then converts the clone to `ArcStatefulConsumer<T>`. The original consumer remains
-    /// available after calling this method.
+    /// This method does **not consume** the consumer. It clones the consumer
+    /// and then converts the clone to `ArcStatefulConsumer<T>`. The
+    /// original consumer remains available after calling this method.
     ///
     /// # Return Value
     ///
@@ -425,9 +427,9 @@ pub trait StatefulConsumer<T> {
     ///
     /// # Ownership
     ///
-    /// This method does **not consume** the consumer. It clones the consumer and
-    /// then converts the clone to a closure. The original consumer remains
-    /// available after calling this method.
+    /// This method does **not consume** the consumer. It clones the consumer
+    /// and then converts the clone to a closure. The original consumer
+    /// remains available after calling this method.
     ///
     /// # Return Value
     ///
@@ -463,7 +465,8 @@ pub trait StatefulConsumer<T> {
     /// Convert to ConsumerOnce without consuming self
     ///
     /// **⚠️ Requires Clone**: This method requires `Self` to implement `Clone`.
-    /// Clones the current consumer and converts the clone to a one-time consumer.
+    /// Clones the current consumer and converts the clone to a one-time
+    /// consumer.
     ///
     /// # Returns
     ///

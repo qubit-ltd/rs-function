@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulBinaryOperator` public type.
 
@@ -31,5 +29,4 @@ use super::BoxStatefulBiTransformer;
 /// let mut add = add;
 /// assert_eq!(add.apply(20, 22), 42);
 /// ```
-///
 pub type BoxStatefulBinaryOperator<T> = BoxStatefulBiTransformer<T, T, T>;

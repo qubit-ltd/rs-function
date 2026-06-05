@@ -1,20 +1,20 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # ConsumerOnce Types
 //!
-//! Provides implementations of one-time consumer interfaces for executing one-time operations
-//! that accept a single input parameter but return no result.
+//! Provides implementations of one-time consumer interfaces for executing
+//! one-time operations that accept a single input parameter but return no
+//! result.
 //!
 //! It is similar to the `FnOnce(&T)` trait in the standard library.
 //!
-//! This module provides a unified `ConsumerOnce` trait and one concrete implementation:
+//! This module provides a unified `ConsumerOnce` trait and one concrete
+//! implementation:
 //!
 //! - **`BoxConsumerOnce<T>`**: Box-based single ownership implementation
 //!
@@ -28,11 +28,11 @@
 //!
 //! # Design Philosophy
 //!
-//! ConsumerOnce uses `FnOnce(&T)` semantics for truly one-time consumption operations.
+//! ConsumerOnce uses `FnOnce(&T)` semantics for truly one-time consumption
+//! operations.
 //!
-//! Unlike Consumer, ConsumerOnce consumes itself on first call. Suitable for initialization
-//! callbacks, cleanup callbacks, and similar scenarios.
-//!
+//! Unlike Consumer, ConsumerOnce consumes itself on first call. Suitable for
+//! initialization callbacks, cleanup callbacks, and similar scenarios.
 
 use crate::consumers::macros::{
     impl_box_conditional_consumer,
@@ -65,9 +65,10 @@ pub use box_conditional_consumer_once::BoxConditionalConsumerOnce;
 ///
 /// It is similar to the `FnOnce(&T)` trait in the standard library.
 ///
-/// Defines the core behavior of all one-time consumer types. Similar to consumers
-/// implementing `FnOnce(&T)`, executes operations that accept a value reference but
-/// return no result (only side effects), consuming itself in the process.
+/// Defines the core behavior of all one-time consumer types. Similar to
+/// consumers implementing `FnOnce(&T)`, executes operations that accept a value
+/// reference but return no result (only side effects), consuming itself in the
+/// process.
 ///
 /// # Automatic Implementation
 ///
@@ -76,10 +77,13 @@ pub use box_conditional_consumer_once::BoxConditionalConsumerOnce;
 ///
 /// # Features
 ///
-/// - **Unified Interface**: All consumer types share the same `accept` method signature
-/// - **Automatic Implementation**: Closures automatically implement this trait with zero overhead
+/// - **Unified Interface**: All consumer types share the same `accept` method
+///   signature
+/// - **Automatic Implementation**: Closures automatically implement this trait
+///   with zero overhead
 /// - **Type Conversion**: Can be converted to BoxConsumerOnce
-/// - **Generic Programming**: Write functions that work with any one-time consumer type
+/// - **Generic Programming**: Write functions that work with any one-time
+///   consumer type
 ///
 /// # Examples
 ///
@@ -99,13 +103,12 @@ pub use box_conditional_consumer_once::BoxConditionalConsumerOnce;
 /// apply_consumer(box_con, &5);
 /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
 /// ```
-///
 pub trait ConsumerOnce<T> {
     /// Execute one-time consumption operation
     ///
-    /// Executes an operation on the given reference. The operation typically reads
-    /// the input value or produces side effects, but does not modify the input
-    /// value itself. Consumes self.
+    /// Executes an operation on the given reference. The operation typically
+    /// reads the input value or produces side effects, but does not modify
+    /// the input value itself. Consumes self.
     ///
     /// # Parameters
     ///
@@ -123,13 +126,14 @@ pub trait ConsumerOnce<T> {
 
     /// Convert to BoxConsumerOnce
     ///
-    /// **⚠️ Consumes `self`**: The original consumer will be unavailable after calling this method.
+    /// **⚠️ Consumes `self`**: The original consumer will be unavailable after
+    /// calling this method.
     ///
     /// # Default Implementation
     ///
-    /// The default implementation wraps `self` in a `BoxConsumerOnce` by calling
-    /// `accept` on the consumer. Types can override this method to provide more
-    /// efficient conversions.
+    /// The default implementation wraps `self` in a `BoxConsumerOnce` by
+    /// calling `accept` on the consumer. Types can override this method to
+    /// provide more efficient conversions.
     ///
     /// # Returns
     ///
@@ -159,16 +163,17 @@ pub trait ConsumerOnce<T> {
 
     /// Convert to closure
     ///
-    /// **⚠️ Consumes `self`**: The original consumer will be unavailable after calling this method.
+    /// **⚠️ Consumes `self`**: The original consumer will be unavailable after
+    /// calling this method.
     ///
-    /// Converts a one-time consumer to a closure that can be used directly in places
-    /// where the standard library requires `FnOnce`.
+    /// Converts a one-time consumer to a closure that can be used directly in
+    /// places where the standard library requires `FnOnce`.
     ///
     /// # Default Implementation
     ///
-    /// The default implementation creates a closure that captures `self` and calls
-    /// its `accept` method. Types can override this method to provide more efficient
-    /// conversions.
+    /// The default implementation creates a closure that captures `self` and
+    /// calls its `accept` method. Types can override this method to provide
+    /// more efficient conversions.
     ///
     /// # Returns
     ///

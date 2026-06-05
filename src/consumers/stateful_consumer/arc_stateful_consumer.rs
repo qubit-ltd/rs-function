@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulConsumer` public type.
 
@@ -58,14 +56,15 @@ type ArcStatefulConsumerFn<T> = Arc<Mutex<dyn FnMut(&T) + Send>>;
 ///
 /// # Performance Considerations
 ///
-/// `ArcStatefulConsumer` has some performance overhead compared to `BoxStatefulConsumer`:
+/// `ArcStatefulConsumer` has some performance overhead compared to
+/// `BoxStatefulConsumer`:
 /// - **Reference Counting**: Atomic operations on clone/drop
 /// - **Mutex Locking**: Each `accept` call requires lock acquisition
 /// - **Lock Contention**: High concurrency may cause contention
 ///
 /// These overheads are necessary for safe concurrent access. If thread safety
-/// is not needed, consider using `RcStatefulConsumer` for less single-threaded sharing
-/// overhead.
+/// is not needed, consider using `RcStatefulConsumer` for less single-threaded
+/// sharing overhead.
 ///
 /// # Examples
 ///
@@ -83,7 +82,6 @@ type ArcStatefulConsumerFn<T> = Arc<Mutex<dyn FnMut(&T) + Send>>;
 /// consumer.accept(&5);
 /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![10]);
 /// ```
-///
 pub struct ArcStatefulConsumer<T> {
     pub(super) function: ArcStatefulConsumerFn<T>,
     pub(super) name: Option<String>,
@@ -91,11 +89,14 @@ pub struct ArcStatefulConsumer<T> {
 
 impl<T> ArcStatefulConsumer<T> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
-    impl_consumer_common_methods!(ArcStatefulConsumer<T>, (FnMut(&T) + Send + 'static), |f| {
-        Arc::new(Mutex::new(f))
-    });
+    impl_consumer_common_methods!(
+        ArcStatefulConsumer<T>,
+        (FnMut(&T) + Send + 'static),
+        |f| { Arc::new(Mutex::new(f)) }
+    );
 
-    // Generates: when() and and_then() methods that borrow &self (Arc can clone)
+    // Generates: when() and and_then() methods that borrow &self (Arc can
+    // clone)
     impl_shared_consumer_methods!(
         ArcStatefulConsumer<T>,
         ArcConditionalStatefulConsumer,

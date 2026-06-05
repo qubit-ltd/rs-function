@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Shared Consumer Methods Macro
 //!
 //! Generates when and and_then method implementations for Arc/Rc-based Consumer
@@ -14,8 +12,8 @@
 //! Generates conditional execution when method and chaining and_then method
 //! for Arc/Rc-based consumers that borrow &self (because Arc/Rc can be cloned).
 //!
-//! This macro supports both single-parameter and two-parameter consumers through
-//! pattern matching on the struct signature.
+//! This macro supports both single-parameter and two-parameter consumers
+//! through pattern matching on the struct signature.
 //!
 //! # Parameters
 //!
@@ -23,9 +21,11 @@
 //!   - Single parameter: `ArcConsumer<T>`
 //!   - Two parameters: `ArcBiConsumer<T, U>`
 //! * `$return_type` - The return type for when (e.g., ArcConditionalConsumer)
-//! * `$predicate_conversion` - Method to convert predicate (into_arc or into_rc)
+//! * `$predicate_conversion` - Method to convert predicate (into_arc or
+//!   into_rc)
 //! * `$consumer_trait` - Consumer trait name (e.g., Consumer, BiConsumer)
-//! * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync + 'static for Arc)
+//! * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync +
+//!   'static for Arc)
 //!
 //! # All Macro Invocations
 //!
@@ -61,7 +61,6 @@
 //!     'static
 //! );
 //! ```
-//!
 
 /// Generates when and and_then method implementations for Arc/Rc-based Consumer
 ///
@@ -71,8 +70,8 @@
 /// and_then method for Arc/Rc-based consumers that borrow &self (because Arc/Rc
 /// can be cloned).
 ///
-/// This macro supports both single-parameter and two-parameter consumers through
-/// pattern matching on the struct signature.
+/// This macro supports both single-parameter and two-parameter consumers
+/// through pattern matching on the struct signature.
 ///
 /// # Parameters
 ///
@@ -80,9 +79,11 @@
 ///   - Single parameter: `ArcConsumer<T>`
 ///   - Two parameters: `ArcBiConsumer<T, U>`
 /// * `$return_type` - The return type for when (e.g., ArcConditionalConsumer)
-/// * `$predicate_conversion` - Method to convert predicate (into_arc or into_rc)
+/// * `$predicate_conversion` - Method to convert predicate (into_arc or
+///   into_rc)
 /// * `$consumer_trait` - Consumer trait name (e.g., Consumer, BiConsumer)
-/// * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync + 'static for Arc)
+/// * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync +
+///   'static for Arc)
 ///
 /// # All Macro Invocations
 ///
@@ -116,7 +117,6 @@
 ///     let _ = (*x, *y);
 /// }).when(|x: &i32, y: &i32| *x > 0 && *y > 0);
 /// ```
-///
 macro_rules! impl_shared_consumer_methods {
     (@and_then Consumer, $struct_name:ident, $first:expr, $after:expr, $t:ident) => {{
         let first = $first;

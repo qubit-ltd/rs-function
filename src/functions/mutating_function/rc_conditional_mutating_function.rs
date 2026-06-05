@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcConditionalMutatingFunction` public type.
 
@@ -27,11 +25,12 @@ use super::{
 /// RcConditionalMutatingFunction struct
 ///
 /// A single-threaded conditional function that only executes when a
-/// predicate is satisfied. Uses `RcMutatingFunction` and `RcPredicate` for shared
-/// ownership within a single thread.
+/// predicate is satisfied. Uses `RcMutatingFunction` and `RcPredicate` for
+/// shared ownership within a single thread.
 ///
-/// This type is typically created by calling `RcMutatingFunction::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
+/// This type is typically created by calling `RcMutatingFunction::when()` and
+/// is designed to work with the `or_else()` method to create if-then-else
+/// logic.
 ///
 /// # Features
 ///
@@ -56,7 +55,6 @@ use super::{
 /// let mut negative = -5;
 /// assert_eq!(conditional_clone.apply(&mut negative), -5);
 /// ```
-///
 pub struct RcConditionalMutatingFunction<T, R> {
     pub(super) function: RcMutatingFunction<T, R>,
     pub(super) predicate: RcPredicate<T>,

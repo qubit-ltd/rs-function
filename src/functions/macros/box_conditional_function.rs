@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Box Conditional Function Macro
 //!
 //! Generates Box-based Conditional Function implementations
@@ -21,7 +19,8 @@
 //!
 //! * `$struct_name<$generics>` - Struct name with generic parameters
 //! * `$box_function_type` - Function wrapper type name
-//! * `$else_function_trait` - The name of the else function trait (e.g., Function, BiFunction)
+//! * `$else_function_trait` - The name of the else function trait (e.g.,
+//!   Function, BiFunction)
 //!
 //! # Usage Examples
 //!
@@ -41,7 +40,6 @@
 //! //     BiFunction
 //! // );
 //! ```
-//!
 
 /// Generates Box-based Conditional Function implementations
 ///
@@ -59,7 +57,8 @@
 ///
 /// * `$struct_name<$generics>` - Struct name with generic parameters
 /// * `$box_function_type` - Function wrapper type name
-/// * `$else_function_trait` - The name of the else function trait (e.g., Function, BiFunction)
+/// * `$else_function_trait` - The name of the else function trait (e.g.,
+///   Function, BiFunction)
 ///
 /// # Usage Examples
 ///
@@ -79,7 +78,6 @@
 /// //     BiFunction
 /// // );
 /// ```
-///
 macro_rules! impl_box_conditional_function {
     (@let_function Function, $name:ident, $value:expr) => {
         let $name = $value;

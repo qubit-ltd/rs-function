@@ -1,25 +1,24 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # StatefulTransformer Types
 //!
-//! Provides Rust implementations of stateful transformer traits for stateful value
-//! transformation. StatefulTransformers consume input values (taking ownership) and
-//! produce output values while allowing internal state modification. This is
-//! analogous to `FnMut(T) -> R` in Rust's standard library.
+//! Provides Rust implementations of stateful transformer traits for stateful
+//! value transformation. StatefulTransformers consume input values (taking
+//! ownership) and produce output values while allowing internal state
+//! modification. This is analogous to `FnMut(T) -> R` in Rust's standard
+//! library.
 //!
-//! This module provides the `StatefulTransformer<T, R>` trait and three implementations:
+//! This module provides the `StatefulTransformer<T, R>` trait and three
+//! implementations:
 //!
 //! - [`BoxStatefulTransformer`]: Single ownership, not cloneable
 //! - [`ArcStatefulTransformer`]: Thread-safe shared ownership, cloneable
 //! - [`RcStatefulTransformer`]: Single-threaded shared ownership, cloneable
-//!
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
@@ -73,7 +72,8 @@ pub use arc_conditional_stateful_transformer::ArcConditionalStatefulTransformer;
 // Core Trait
 // ============================================================================
 
-/// StatefulTransformer trait - transforms values from type T to type R with state
+/// StatefulTransformer trait - transforms values from type T to type R with
+/// state
 ///
 /// Defines the behavior of a stateful transformation: converting a value
 /// of type `T` to a value of type `R` by consuming the input while
@@ -84,7 +84,6 @@ pub use arc_conditional_stateful_transformer::ArcConditionalStatefulTransformer;
 ///
 /// * `T` - The type of the input value (consumed)
 /// * `R` - The type of the output value
-///
 pub trait StatefulTransformer<T, R> {
     /// Applies the transformation to the input value to produce an output value
     ///
@@ -152,9 +151,9 @@ pub trait StatefulTransformer<T, R> {
     ///
     /// # Default Implementation
     ///
-    /// The default implementation first converts to `BoxStatefulTransformer` using
-    /// `into_box()`, then wraps it in `RcStatefulTransformer`. Specific implementations
-    /// may override this for better efficiency.
+    /// The default implementation first converts to `BoxStatefulTransformer`
+    /// using `into_box()`, then wraps it in `RcStatefulTransformer`.
+    /// Specific implementations may override this for better efficiency.
     ///
     /// # Examples
     ///
@@ -196,9 +195,10 @@ pub trait StatefulTransformer<T, R> {
     ///
     /// # Default Implementation
     ///
-    /// The default implementation wraps `self` in an `ArcStatefulTransformer` by creating
-    /// a new closure that calls `self.apply()`. Note that this requires `self`
-    /// to implement `Send` due to Arc's thread-safety requirements.
+    /// The default implementation wraps `self` in an `ArcStatefulTransformer`
+    /// by creating a new closure that calls `self.apply()`. Note that this
+    /// requires `self` to implement `Send` due to Arc's thread-safety
+    /// requirements.
     ///
     /// # Examples
     ///
@@ -240,8 +240,9 @@ pub trait StatefulTransformer<T, R> {
     ///
     /// # Default Implementation
     ///
-    /// The default implementation creates a new closure that calls `self.apply()`.
-    /// Specific implementations may override this for better efficiency.
+    /// The default implementation creates a new closure that calls
+    /// `self.apply()`. Specific implementations may override this for
+    /// better efficiency.
     ///
     /// # Examples
     ///

@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # SupplierOnce Types
 //!
 //! Provides one-time supplier implementations that generate and
@@ -24,17 +22,13 @@
 //! - **Single use**: Can only call `get()` once
 //! - **Consumes self**: The method takes ownership of `self`
 //! - **Holds `FnOnce`**: Can capture and move non-cloneable values
-//! - **Type-system guaranteed**: Prevents multiple calls at compile
-//!   time
+//! - **Type-system guaranteed**: Prevents multiple calls at compile time
 //!
 //! # Use Cases
 //!
-//! 1. **Lazy initialization**: Delay expensive computation until
-//!    needed
-//! 2. **One-time resource consumption**: Generate value by consuming
-//!    a resource
-//! 3. **Move-only closures**: Hold closures that capture moved
-//!    values
+//! 1. **Lazy initialization**: Delay expensive computation until needed
+//! 2. **One-time resource consumption**: Generate value by consuming a resource
+//! 3. **Move-only closures**: Hold closures that capture moved values
 //!
 //! # Examples
 //!
@@ -63,7 +57,6 @@
 //! let value = once.get();
 //! assert_eq!(value, "data");
 //! ```
-//!
 use crate::macros::{
     impl_box_once_conversions,
     impl_closure_once_trait,
@@ -93,17 +86,13 @@ pub use box_supplier_once::BoxSupplierOnce;
 /// - **Single use**: Can only call `get()` once
 /// - **Consumes self**: The method takes ownership of `self`
 /// - **Holds `FnOnce`**: Can capture and move non-cloneable values
-/// - **Type-system guaranteed**: Prevents multiple calls at compile
-///   time
+/// - **Type-system guaranteed**: Prevents multiple calls at compile time
 ///
 /// # Use Cases
 ///
-/// 1. **Lazy initialization**: Delay expensive computation until
-///    needed
-/// 2. **One-time resource consumption**: Generate value by consuming
-///    a resource
-/// 3. **Move-only closures**: Hold closures that capture moved
-///    values
+/// 1. **Lazy initialization**: Delay expensive computation until needed
+/// 2. **One-time resource consumption**: Generate value by consuming a resource
+/// 3. **Move-only closures**: Hold closures that capture moved values
 ///
 /// # Examples
 ///
@@ -135,7 +124,6 @@ pub use box_supplier_once::BoxSupplierOnce;
 /// let value = once.get();
 /// assert_eq!(value, "data");
 /// ```
-///
 pub trait SupplierOnce<T> {
     /// Generates and returns the value, consuming self.
     ///

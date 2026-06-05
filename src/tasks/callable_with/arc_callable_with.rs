@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcCallableWith` public type.
 
@@ -32,13 +30,13 @@ use crate::{
     },
 };
 
-type ArcCallableWithFn<T, R, E> = Arc<Mutex<dyn FnMut(&mut T) -> Result<R, E> + Send>>;
+type ArcCallableWithFn<T, R, E> =
+    Arc<Mutex<dyn FnMut(&mut T) -> Result<R, E> + Send>>;
 
 /// Thread-safe shared callable with mutable input.
 ///
 /// `ArcCallableWith<T, R, E>` stores an
 /// `Arc<Mutex<dyn FnMut(&mut T) -> Result<R, E> + Send>>`.
-///
 pub struct ArcCallableWith<T, R, E> {
     /// The stateful closure executed by this callable.
     pub(super) function: ArcCallableWithFn<T, R, E>,

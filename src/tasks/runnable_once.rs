@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Runnable Once Types
 //!
 //! Provides fallible, one-time, zero-argument actions.
@@ -17,7 +15,6 @@
 //!
 //! The trait itself does not require `Send`; concurrent executors should add
 //! `+ Send + 'static` at their API boundary.
-//!
 
 use crate::tasks::callable_once::{
     BoxCallableOnce,
@@ -38,7 +35,8 @@ pub use local_box_runnable_once::LocalBoxRunnableOnce;
 /// Conceptually this matches `FnOnce() -> Result<(), E>`: `run` consumes `self`
 /// and returns `Result<(), E>`, but the surface uses task-oriented naming and
 /// helpers instead of closure types. It is a semantic specialization of
-/// `SupplierOnce<Result<(), E>>` for executable actions and deferred side effects.
+/// `SupplierOnce<Result<(), E>>` for executable actions and deferred side
+/// effects.
 ///
 /// Choose **`RunnableOnce`** when only success or failure matters; the success
 /// type is `()`. When callers need the success value `R`, use
@@ -56,7 +54,6 @@ pub use local_box_runnable_once::LocalBoxRunnableOnce;
 /// let task = || Ok::<(), String>(());
 /// assert_eq!(task.run(), Ok(()));
 /// ```
-///
 pub trait RunnableOnce<E> {
     /// Executes the action, consuming `self`.
     ///

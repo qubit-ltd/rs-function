@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! Comprehensive demonstration of the Predicate abstraction.
 //!
@@ -92,7 +90,9 @@ fn box_predicate_examples() {
 
     // Named predicate for better debugging
     let named_pred =
-        BoxPredicate::new_with_name("is_positive_even", |x: &i32| *x > 0 && x % 2 == 0);
+        BoxPredicate::new_with_name("is_positive_even", |x: &i32| {
+            *x > 0 && x % 2 == 0
+        });
     println!("Predicate name: {:?}", named_pred.name());
     println!("Test 4: {}", named_pred.test(&4));
 
@@ -150,7 +150,12 @@ fn arc_predicate_examples() {
             let pred = combined.clone();
             std::thread::spawn(move || {
                 let value = i * 2;
-                println!("  Thread {} testing {}: {}", i, value, pred.test(&value));
+                println!(
+                    "  Thread {} testing {}: {}",
+                    i,
+                    value,
+                    pred.test(&value)
+                );
             })
         })
         .collect();
@@ -170,7 +175,8 @@ fn logical_composition_examples() {
 
     let positive = RcPredicate::new_with_name("positive", |x: &i32| *x > 0);
     let even = RcPredicate::new_with_name("even", |x: &i32| x % 2 == 0);
-    let less_than_ten = RcPredicate::new_with_name("less_than_ten", |x: &i32| *x < 10);
+    let less_than_ten =
+        RcPredicate::new_with_name("less_than_ten", |x: &i32| *x < 10);
 
     // AND composition
     let positive_and_even = positive.and(even.clone());
@@ -294,14 +300,19 @@ fn practical_use_cases() {
     }
 
     let name_valid =
-        RcPredicate::new_with_name("name_not_empty", |user: &User| !user.name.is_empty());
+        RcPredicate::new_with_name("name_not_empty", |user: &User| {
+            !user.name.is_empty()
+        });
 
-    let age_valid = RcPredicate::new_with_name("age_between_18_120", |user: &User| {
-        user.age >= 18 && user.age <= 120
-    });
+    let age_valid =
+        RcPredicate::new_with_name("age_between_18_120", |user: &User| {
+            user.age >= 18 && user.age <= 120
+        });
 
     let email_valid =
-        RcPredicate::new_with_name("email_contains_at", |user: &User| user.email.contains('@'));
+        RcPredicate::new_with_name("email_contains_at", |user: &User| {
+            user.email.contains('@')
+        });
 
     let all_valid = name_valid.and(age_valid.clone()).and(email_valid.clone());
 

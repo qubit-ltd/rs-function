@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConsumerOnce` public type.
 
@@ -27,8 +25,9 @@ use super::{
 
 /// BoxConsumerOnce struct
 ///
-/// One-time consumer implementation based on `Box<dyn FnOnce(&T)>` for single ownership scenarios.
-/// This is the simplest consumer type for truly one-time use.
+/// One-time consumer implementation based on `Box<dyn FnOnce(&T)>` for single
+/// ownership scenarios. This is the simplest consumer type for truly one-time
+/// use.
 ///
 /// # Features
 ///
@@ -63,7 +62,6 @@ use super::{
 /// });
 /// consumer.accept(&5);
 /// ```
-///
 pub struct BoxConsumerOnce<T> {
     pub(super) function: Box<dyn FnOnce(&T)>,
     pub(super) name: Option<String>,
@@ -72,10 +70,18 @@ pub struct BoxConsumerOnce<T> {
 // All methods require T: 'static because Box<dyn FnOnce(&T)> requires it
 impl<T> BoxConsumerOnce<T> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
-    impl_consumer_common_methods!(BoxConsumerOnce<T>, (FnOnce(&T) + 'static), |f| Box::new(f));
+    impl_consumer_common_methods!(
+        BoxConsumerOnce<T>,
+        (FnOnce(&T) + 'static),
+        |f| Box::new(f)
+    );
 
     // Generates: when() and and_then() methods that consume self
-    impl_box_consumer_methods!(BoxConsumerOnce<T>, BoxConditionalConsumerOnce, ConsumerOnce);
+    impl_box_consumer_methods!(
+        BoxConsumerOnce<T>,
+        BoxConditionalConsumerOnce,
+        ConsumerOnce
+    );
 }
 
 impl<T> ConsumerOnce<T> for BoxConsumerOnce<T> {

@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # RunnableWith Types
 //!
 //! Provides fallible, reusable actions that operate on a mutable input.
@@ -18,7 +16,6 @@
 //!
 //! The trait itself does not require `Send`; concurrent executors should add
 //! `+ Send + 'static` at their API boundary.
-//!
 
 use crate::tasks::callable_with::BoxCallableWith;
 
@@ -39,7 +36,6 @@ pub use arc_runnable_with::ArcRunnableWith;
 ///
 /// * `T` - The mutable input type.
 /// * `E` - The error value returned when the action fails.
-///
 pub trait RunnableWith<T, E> {
     /// Executes the action with mutable input.
     ///

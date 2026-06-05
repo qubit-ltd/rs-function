@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 // qubit-style: allow explicit-imports
 //! Unit tests for the predicate module.
@@ -552,7 +550,8 @@ mod interior_mutability_tests {
         let count_clone = Arc::clone(&count);
 
         let pred = ArcPredicate::new(move |x: &i32| {
-            let mut c = count_clone.lock().expect("mutex should not be poisoned");
+            let mut c =
+                count_clone.lock().expect("mutex should not be poisoned");
             *c += 1;
             *x > 0
         });
@@ -975,7 +974,8 @@ mod logical_operations_tests {
         let is_small = |x: &i32| x.abs() < 10;
 
         // (positive NAND even) AND small
-        let complex = is_positive.nand(is_even).and(BoxPredicate::new(is_small));
+        let complex =
+            is_positive.nand(is_even).and(BoxPredicate::new(is_small));
 
         assert!(complex.test(&3)); // !(true && false) && true = true && true = true
         assert!(complex.test(&-2)); // !(false && true) && true = true && true = true
@@ -1003,7 +1003,8 @@ mod logical_operations_tests {
     #[test]
     fn test_nand_with_strings() {
         let is_long = BoxPredicate::new(|s: &String| s.len() > 5);
-        let has_uppercase = BoxPredicate::new(|s: &String| s.chars().any(|c| c.is_uppercase()));
+        let has_uppercase =
+            BoxPredicate::new(|s: &String| s.chars().any(|c| c.is_uppercase()));
 
         let nand = is_long.nand(has_uppercase);
 
@@ -1017,7 +1018,8 @@ mod logical_operations_tests {
     #[test]
     fn test_xor_with_strings() {
         let is_long = BoxPredicate::new(|s: &String| s.len() > 5);
-        let has_uppercase = BoxPredicate::new(|s: &String| s.chars().any(|c| c.is_uppercase()));
+        let has_uppercase =
+            BoxPredicate::new(|s: &String| s.chars().any(|c| c.is_uppercase()));
 
         let xor = is_long.xor(has_uppercase);
 
@@ -1031,7 +1033,8 @@ mod logical_operations_tests {
     #[test]
     fn test_nor_with_strings() {
         let is_long = BoxPredicate::new(|s: &String| s.len() > 5);
-        let has_uppercase = BoxPredicate::new(|s: &String| s.chars().any(|c| c.is_uppercase()));
+        let has_uppercase =
+            BoxPredicate::new(|s: &String| s.chars().any(|c| c.is_uppercase()));
 
         let nor = is_long.nor(has_uppercase);
 
@@ -1864,7 +1867,8 @@ mod always_predicates_tests {
 
     #[test]
     fn test_new_with_name() {
-        let mut pred = BoxPredicate::new_with_name("positive", |x: &i32| *x > 0);
+        let mut pred =
+            BoxPredicate::new_with_name("positive", |x: &i32| *x > 0);
         assert_eq!(pred.name(), Some("positive"));
         assert!(pred.test(&5));
 
@@ -1884,7 +1888,8 @@ mod always_predicates_tests {
 
     #[test]
     fn test_arc_new_with_name() {
-        let mut pred = ArcPredicate::new_with_name("positive", |x: &i32| *x > 0);
+        let mut pred =
+            ArcPredicate::new_with_name("positive", |x: &i32| *x > 0);
         assert_eq!(pred.name(), Some("positive"));
         assert!(pred.test(&5));
 
@@ -2316,7 +2321,9 @@ mod custom_predicate_tests {
         let arc = pred.into_arc();
         let arc_clone = arc.clone();
 
-        let handle = std::thread::spawn(move || arc_clone.test(&10) && !arc_clone.test(&-10));
+        let handle = std::thread::spawn(move || {
+            arc_clone.test(&10) && !arc_clone.test(&-10)
+        });
 
         assert!(handle.join().expect("thread should not panic"));
         assert!(arc.test(&5));
@@ -2607,7 +2614,9 @@ mod to_methods_comprehensive_tests {
         let arc_pred = ArcPredicate::new(|x: &i32| *x > 0);
         let arc_pred2 = arc_pred.to_arc();
 
-        let handle = std::thread::spawn(move || arc_pred2.test(&10) && !arc_pred2.test(&-10));
+        let handle = std::thread::spawn(move || {
+            arc_pred2.test(&10) && !arc_pred2.test(&-10)
+        });
 
         assert!(handle.join().expect("thread should not panic"));
         assert!(arc_pred.test(&5));
@@ -2778,7 +2787,9 @@ mod to_methods_comprehensive_tests {
         let arc_pred = pred.to_arc();
 
         let arc_clone = arc_pred.clone();
-        let handle = std::thread::spawn(move || arc_clone.test(&10) && !arc_clone.test(&-10));
+        let handle = std::thread::spawn(move || {
+            arc_clone.test(&10) && !arc_clone.test(&-10)
+        });
 
         assert!(handle.join().expect("thread should not panic"));
         assert!(arc_pred.test(&5));
@@ -2845,9 +2856,11 @@ mod to_methods_comprehensive_tests {
         let arc1 = arc_pred.clone();
         let arc2 = arc_pred.clone();
 
-        let handle1 = std::thread::spawn(move || arc1.test(&25) && arc1.test(&75));
+        let handle1 =
+            std::thread::spawn(move || arc1.test(&25) && arc1.test(&75));
 
-        let handle2 = std::thread::spawn(move || !arc2.test(&-5) && !arc2.test(&150));
+        let handle2 =
+            std::thread::spawn(move || !arc2.test(&-5) && !arc2.test(&150));
 
         assert!(handle1.join().expect("thread should not panic"));
         assert!(handle2.join().expect("thread should not panic"));
@@ -3002,7 +3015,8 @@ mod to_methods_comprehensive_tests {
 
     #[test]
     fn test_rc_vec_predicate_to_box() {
-        let rc_pred = RcPredicate::new(|v: &Vec<i32>| v.iter().sum::<i32>() > 10);
+        let rc_pred =
+            RcPredicate::new(|v: &Vec<i32>| v.iter().sum::<i32>() > 10);
         let box_pred = rc_pred.to_box();
 
         assert!(box_pred.test(&vec![5, 6]));
@@ -3012,7 +3026,8 @@ mod to_methods_comprehensive_tests {
 
     #[test]
     fn test_arc_option_predicate_to_fn() {
-        let arc_pred = ArcPredicate::new(|opt: &Option<i32>| opt.is_some_and(|x| x > 0));
+        let arc_pred =
+            ArcPredicate::new(|opt: &Option<i32>| opt.is_some_and(|x| x > 0));
         let func = arc_pred.to_fn();
 
         assert!(func(&Some(5)));
@@ -3029,7 +3044,8 @@ mod to_methods_comprehensive_tests {
 #[test]
 fn test_rc_predicate_into_box_preserves_name() {
     // Test that RcPredicate::into_box preserves the name
-    let original = RcPredicate::new_with_name("test_rc_predicate", |x: &i32| *x > 0);
+    let original =
+        RcPredicate::new_with_name("test_rc_predicate", |x: &i32| *x > 0);
     assert_eq!(original.name(), Some("test_rc_predicate"));
 
     let boxed = original.into_box();
@@ -3041,7 +3057,8 @@ fn test_rc_predicate_into_box_preserves_name() {
 #[test]
 fn test_arc_predicate_into_box_preserves_name() {
     // Test that ArcPredicate::into_box preserves the name
-    let original = ArcPredicate::new_with_name("test_arc_predicate", |x: &i32| *x > 0);
+    let original =
+        ArcPredicate::new_with_name("test_arc_predicate", |x: &i32| *x > 0);
     assert_eq!(original.name(), Some("test_arc_predicate"));
 
     let boxed = original.into_box();
@@ -3053,7 +3070,8 @@ fn test_arc_predicate_into_box_preserves_name() {
 #[test]
 fn test_arc_predicate_into_rc_preserves_name() {
     // Test that ArcPredicate::into_rc preserves the name
-    let original = ArcPredicate::new_with_name("test_arc_predicate", |x: &i32| *x > 0);
+    let original =
+        ArcPredicate::new_with_name("test_arc_predicate", |x: &i32| *x > 0);
     assert_eq!(original.name(), Some("test_arc_predicate"));
 
     let rc = original.into_rc();
@@ -3065,7 +3083,8 @@ fn test_arc_predicate_into_rc_preserves_name() {
 #[test]
 fn test_rc_predicate_to_box_preserves_name() {
     // Test that RcPredicate::to_box preserves the name
-    let original = RcPredicate::new_with_name("test_rc_predicate", |x: &i32| *x > 0);
+    let original =
+        RcPredicate::new_with_name("test_rc_predicate", |x: &i32| *x > 0);
     assert_eq!(original.name(), Some("test_rc_predicate"));
 
     let boxed = original.to_box();
@@ -3081,7 +3100,8 @@ fn test_rc_predicate_to_box_preserves_name() {
 #[test]
 fn test_arc_predicate_to_box_preserves_name() {
     // Test that ArcPredicate::to_box preserves the name
-    let original = ArcPredicate::new_with_name("test_arc_predicate", |x: &i32| *x > 0);
+    let original =
+        ArcPredicate::new_with_name("test_arc_predicate", |x: &i32| *x > 0);
     assert_eq!(original.name(), Some("test_arc_predicate"));
 
     let boxed = original.to_box();
@@ -3097,7 +3117,8 @@ fn test_arc_predicate_to_box_preserves_name() {
 #[test]
 fn test_arc_predicate_to_rc_preserves_name() {
     // Test that ArcPredicate::to_rc preserves the name
-    let original = ArcPredicate::new_with_name("test_arc_predicate", |x: &i32| *x > 0);
+    let original =
+        ArcPredicate::new_with_name("test_arc_predicate", |x: &i32| *x > 0);
     assert_eq!(original.name(), Some("test_arc_predicate"));
 
     let rc = original.to_rc();
@@ -3125,7 +3146,8 @@ fn test_predicate_conversions_without_name() {
 #[test]
 fn test_multiple_predicate_conversions_preserve_name() {
     // Test that multiple conversions preserve the name correctly
-    let original = ArcPredicate::new_with_name("original_predicate", |x: &i32| *x > 0);
+    let original =
+        ArcPredicate::new_with_name("original_predicate", |x: &i32| *x > 0);
     assert_eq!(original.name(), Some("original_predicate"));
 
     // Arc -> Rc

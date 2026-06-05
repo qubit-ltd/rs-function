@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 // qubit-style: allow explicit-imports
 //! Unit tests for the stateful predicate module.
@@ -93,7 +91,10 @@ fn test_closure_implements_stateful_predicate() {
 
 #[test]
 fn test_box_stateful_predicate_new_and_name_methods() {
-    let mut predicate = BoxStatefulPredicate::new_with_name("positive", |value: &i32| *value > 0);
+    let mut predicate =
+        BoxStatefulPredicate::new_with_name("positive", |value: &i32| {
+            *value > 0
+        });
 
     assert_eq!(predicate.name(), Some("positive"));
     assert!(predicate.test(&5));
@@ -142,33 +143,33 @@ fn test_box_stateful_predicate_composition_preserves_state() {
 
 #[test]
 fn test_box_stateful_predicate_logical_operations_cover_all_branches() {
-    let mut and_pred =
-        BoxStatefulPredicate::new(|value: &i32| *value > 0).and(|value: &i32| value % 2 == 0);
+    let mut and_pred = BoxStatefulPredicate::new(|value: &i32| *value > 0)
+        .and(|value: &i32| value % 2 == 0);
     assert!(and_pred.test(&4));
     assert!(!and_pred.test(&3));
     assert!(!and_pred.test(&-2));
 
-    let mut or_pred =
-        BoxStatefulPredicate::new(|value: &i32| *value > 0).or(|value: &i32| value % 2 == 0);
+    let mut or_pred = BoxStatefulPredicate::new(|value: &i32| *value > 0)
+        .or(|value: &i32| value % 2 == 0);
     assert!(or_pred.test(&4));
     assert!(or_pred.test(&-2));
     assert!(!or_pred.test(&-3));
 
-    let mut nand_pred =
-        BoxStatefulPredicate::new(|value: &i32| *value > 0).nand(|value: &i32| value % 2 == 0);
+    let mut nand_pred = BoxStatefulPredicate::new(|value: &i32| *value > 0)
+        .nand(|value: &i32| value % 2 == 0);
     assert!(!nand_pred.test(&4));
     assert!(nand_pred.test(&3));
     assert!(nand_pred.test(&-2));
 
-    let mut xor_pred =
-        BoxStatefulPredicate::new(|value: &i32| *value > 0).xor(|value: &i32| value % 2 == 0);
+    let mut xor_pred = BoxStatefulPredicate::new(|value: &i32| *value > 0)
+        .xor(|value: &i32| value % 2 == 0);
     assert!(!xor_pred.test(&4));
     assert!(xor_pred.test(&3));
     assert!(xor_pred.test(&-2));
     assert!(!xor_pred.test(&-3));
 
-    let mut nor_pred =
-        BoxStatefulPredicate::new(|value: &i32| *value > 0).nor(|value: &i32| value % 2 == 0);
+    let mut nor_pred = BoxStatefulPredicate::new(|value: &i32| *value > 0)
+        .nor(|value: &i32| value % 2 == 0);
     assert!(!nor_pred.test(&4));
     assert!(!nor_pred.test(&-2));
     assert!(nor_pred.test(&-3));
@@ -180,7 +181,10 @@ fn test_box_stateful_predicate_debug_and_display() {
     assert!(format!("{unnamed:?}").contains("BoxStatefulPredicate"));
     assert_eq!(format!("{unnamed}"), "BoxStatefulPredicate(unnamed)");
 
-    let named = BoxStatefulPredicate::new_with_name("positive", |value: &i32| *value > 0);
+    let named =
+        BoxStatefulPredicate::new_with_name("positive", |value: &i32| {
+            *value > 0
+        });
     assert!(format!("{named:?}").contains("positive"));
     assert_eq!(format!("{named}"), "BoxStatefulPredicate(positive)");
 }
@@ -216,7 +220,10 @@ fn test_rc_stateful_predicate_common_methods_and_conversions() {
     assert!(always_true.test(&0));
     assert!(!always_false.test(&0));
 
-    let mut predicate = RcStatefulPredicate::new_with_name("positive", |value: &i32| *value > 0);
+    let mut predicate =
+        RcStatefulPredicate::new_with_name("positive", |value: &i32| {
+            *value > 0
+        });
     assert_eq!(predicate.name(), Some("positive"));
     predicate.set_name("renamed");
     assert_eq!(predicate.name(), Some("renamed"));
@@ -309,7 +316,10 @@ fn test_arc_stateful_predicate_common_methods_and_conversions() {
     assert!(always_true.test(&0));
     assert!(!always_false.test(&0));
 
-    let mut predicate = ArcStatefulPredicate::new_with_name("positive", |value: &i32| *value > 0);
+    let mut predicate =
+        ArcStatefulPredicate::new_with_name("positive", |value: &i32| {
+            *value > 0
+        });
     assert_eq!(predicate.name(), Some("positive"));
     predicate.set_name("renamed");
     assert_eq!(predicate.name(), Some("renamed"));
@@ -442,12 +452,14 @@ fn test_fn_stateful_predicate_ops_observable_behavior() {
 
 #[test]
 fn test_fn_stateful_predicate_ops_logical_operations_cover_all_branches() {
-    let mut and_pred = (|value: &i32| *value > 0).and(|value: &i32| value % 2 == 0);
+    let mut and_pred =
+        (|value: &i32| *value > 0).and(|value: &i32| value % 2 == 0);
     assert!(and_pred.test(&4));
     assert!(!and_pred.test(&3));
     assert!(!and_pred.test(&-2));
 
-    let mut or_pred = (|value: &i32| *value > 0).or(|value: &i32| value % 2 == 0);
+    let mut or_pred =
+        (|value: &i32| *value > 0).or(|value: &i32| value % 2 == 0);
     assert!(or_pred.test(&4));
     assert!(or_pred.test(&-2));
     assert!(!or_pred.test(&-3));
@@ -456,18 +468,21 @@ fn test_fn_stateful_predicate_ops_logical_operations_cover_all_branches() {
     assert!(!not_pred.test(&5));
     assert!(not_pred.test(&-5));
 
-    let mut nand_pred = (|value: &i32| *value > 0).nand(|value: &i32| value % 2 == 0);
+    let mut nand_pred =
+        (|value: &i32| *value > 0).nand(|value: &i32| value % 2 == 0);
     assert!(!nand_pred.test(&4));
     assert!(nand_pred.test(&3));
     assert!(nand_pred.test(&-2));
 
-    let mut xor_pred = (|value: &i32| *value > 0).xor(|value: &i32| value % 2 == 0);
+    let mut xor_pred =
+        (|value: &i32| *value > 0).xor(|value: &i32| value % 2 == 0);
     assert!(!xor_pred.test(&4));
     assert!(xor_pred.test(&3));
     assert!(xor_pred.test(&-2));
     assert!(!xor_pred.test(&-3));
 
-    let mut nor_pred = (|value: &i32| *value > 0).nor(|value: &i32| value % 2 == 0);
+    let mut nor_pred =
+        (|value: &i32| *value > 0).nor(|value: &i32| value % 2 == 0);
     assert!(!nor_pred.test(&4));
     assert!(!nor_pred.test(&-2));
     assert!(nor_pred.test(&-3));

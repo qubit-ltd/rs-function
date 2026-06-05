@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Box Transformer Methods Macro
 //!
 //! Generates when and and_then method implementations for Box-based Transformer
@@ -14,15 +12,16 @@
 //! Generates conditional execution when method and chaining and_then method
 //! for Box-based transformers that consume self (because Box cannot be cloned).
 //!
-//! This macro supports both single-parameter and two-parameter transformers through
-//! pattern matching on the struct signature.
+//! This macro supports both single-parameter and two-parameter transformers
+//! through pattern matching on the struct signature.
 //!
 //! # Parameters
 //!
 //! * `$struct_name<$generics>` - The struct name with its generic parameters
 //!   - Single parameter: `BoxTransformer<T, U>`
 //!   - Two parameters: `BoxBiTransformer<T, U, V>`
-//! * `$conditional_type` - The conditional transformer type for when (e.g., BoxConditionalTransformer)
+//! * `$conditional_type` - The conditional transformer type for when (e.g.,
+//!   BoxConditionalTransformer)
 //! * `$chained_transformer_trait` - The name of the transformer trait that is
 //!   chained after the execution of this transformer (e.g., Transformer,
 //!   BiTransformer)
@@ -55,7 +54,6 @@
 //! //     BiTransformer
 //! // );
 //! ```
-//!
 
 /// Generates when and and_then method implementations for Box-based Transformer
 ///
@@ -64,8 +62,8 @@
 /// Generates conditional execution when method and chaining and_then method
 /// for Box-based transformers that consume self (because Box cannot be cloned).
 ///
-/// This macro supports both single-parameter and two-parameter transformers through
-/// pattern matching on the struct signature.
+/// This macro supports both single-parameter and two-parameter transformers
+/// through pattern matching on the struct signature.
 ///
 /// # Parameters
 ///
@@ -75,7 +73,8 @@
 /// * `$conditional_type` - The conditional transformer type for when (e.g.,
 ///   BoxConditionalTransformer)
 /// * `$chained_transformer_trait` - The name of the transformer trait that is
-///   chained after the execution of this transformer (e.g., Transformer, BiTransformer)
+///   chained after the execution of this transformer (e.g., Transformer,
+///   BiTransformer)
 ///
 /// # Parameter Usage Comparison
 ///
@@ -105,7 +104,6 @@
 /// //     BiTransformer
 /// // );
 /// ```
-///
 macro_rules! impl_box_transformer_methods {
     (@let_before BoxStatefulTransformer, $name:ident, $value:expr) => {
         let mut $name = $value;

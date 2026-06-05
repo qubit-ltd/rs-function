@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Function Types
 //!
 //! Provides Rust implementations of function traits for computing output values
@@ -21,7 +19,6 @@
 //! - [`BoxFunction`]: Single ownership, not cloneable
 //! - [`ArcFunction`]: Thread-safe shared ownership, cloneable
 //! - [`RcFunction`]: Single-threaded shared ownership, cloneable
-//!
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -77,14 +74,14 @@ pub use fn_function_ops::FnFunctionOps;
 /// Function trait - computes output from input reference
 ///
 /// Defines the behavior of a function: computing a value of type `R`
-/// from a reference to type `T` without consuming the input. This is analogous to
-/// `Fn(&T) -> R` in Rust's standard library, similar to Java's `Function<T, R>`.
+/// from a reference to type `T` without consuming the input. This is analogous
+/// to `Fn(&T) -> R` in Rust's standard library, similar to Java's `Function<T,
+/// R>`.
 ///
 /// # Type Parameters
 ///
 /// * `T` - The type of the input value (borrowed)
 /// * `R` - The type of the output value
-///
 pub trait Function<T, R> {
     /// Applies the function to the input reference to produce an output value
     ///
@@ -183,10 +180,12 @@ pub trait Function<T, R> {
 
     /// Converts to FunctionOnce
     ///
-    /// **⚠️ Consumes `self`**: The original function becomes unavailable after calling this method.
+    /// **⚠️ Consumes `self`**: The original function becomes unavailable after
+    /// calling this method.
     ///
-    /// Converts a reusable function to a one-time function that consumes itself on use.
-    /// This enables passing `Function` to functions that require `FunctionOnce`.
+    /// Converts a reusable function to a one-time function that consumes itself
+    /// on use. This enables passing `Function` to functions that require
+    /// `FunctionOnce`.
     ///
     /// # Returns
     ///
@@ -351,7 +350,8 @@ pub trait Function<T, R> {
     /// Convert to FunctionOnce without consuming self
     ///
     /// **⚠️ Requires Clone**: This method requires `Self` to implement `Clone`.
-    /// Clones the current function and converts the clone to a one-time function.
+    /// Clones the current function and converts the clone to a one-time
+    /// function.
     ///
     /// # Returns
     ///
@@ -360,7 +360,7 @@ pub trait Function<T, R> {
     /// # Examples
     ///
     /// ```rust
-    ///
+    /// 
     /// use qubit_function::{Function, FunctionOnce, RcFunction};
     ///
     /// fn takes_once<F: FunctionOnce<i32, i32>>(func: F, value: &i32) -> i32 {

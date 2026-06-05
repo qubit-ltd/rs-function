@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulSupplier` public type.
 
@@ -94,7 +92,6 @@ use super::{
 /// assert_eq!(d.get(), 20);
 /// assert_eq!(t.get(), 30);
 /// ```
-///
 pub struct ArcStatefulSupplier<T> {
     pub(super) function: Arc<Mutex<dyn FnMut() -> T + Send>>,
     pub(super) name: Option<String>,
@@ -112,7 +109,11 @@ impl<T> ArcStatefulSupplier<T> {
     crate::macros::impl_common_name_methods!("supplier");
 
     // Generates: map(), filter(), zip()
-    impl_shared_supplier_methods!(ArcStatefulSupplier<T>, StatefulSupplier, (arc));
+    impl_shared_supplier_methods!(
+        ArcStatefulSupplier<T>,
+        StatefulSupplier,
+        (arc)
+    );
 }
 
 // Separate impl block for constant() and memoize() with stricter T: Send bound
@@ -123,7 +124,8 @@ impl<T> ArcStatefulSupplier<T> {
     /// default values or placeholder implementations.
     ///
     /// **Note:** This method requires `T: Send` because the constant value
-    /// is captured by a `FnMut` closure which will be stored in an `Arc<Mutex<...>>`.
+    /// is captured by a `FnMut` closure which will be stored in an
+    /// `Arc<Mutex<...>>`.
     ///
     /// # Parameters
     ///

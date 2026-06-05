@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulConsumer` public type.
 
@@ -49,7 +47,8 @@ use super::{
 ///
 /// # Performance
 ///
-/// `BoxStatefulConsumer` has the best performance among the three consumer types:
+/// `BoxStatefulConsumer` has the best performance among the three consumer
+/// types:
 /// - No reference counting overhead
 /// - No lock acquisition or runtime borrowing checks
 /// - Direct function calls through vtable
@@ -69,7 +68,6 @@ use super::{
 /// consumer.accept(&5);
 /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
 /// ```
-///
 pub struct BoxStatefulConsumer<T> {
     pub(super) function: Box<dyn FnMut(&T)>,
     pub(super) name: Option<String>,
@@ -77,9 +75,11 @@ pub struct BoxStatefulConsumer<T> {
 
 impl<T> BoxStatefulConsumer<T> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
-    impl_consumer_common_methods!(BoxStatefulConsumer<T>, (FnMut(&T) + 'static), |f| Box::new(
-        f
-    ));
+    impl_consumer_common_methods!(
+        BoxStatefulConsumer<T>,
+        (FnMut(&T) + 'static),
+        |f| Box::new(f)
+    );
 
     // Generates: when() and and_then() methods that consume self
     impl_box_consumer_methods!(

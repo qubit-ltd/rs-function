@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! BiConsumerOnce demonstration
 //!
@@ -146,12 +144,13 @@ fn main() {
     println!("8. Initialization callback:");
     let log = Arc::new(Mutex::new(Vec::new()));
     let l = log.clone();
-    let init_callback = BoxBiConsumerOnce::new(move |width: &i32, height: &i32| {
-        println!("  Initializing with dimensions: {}x{}", width, height);
-        l.lock()
-            .expect("mutex should not be poisoned")
-            .push(*width * *height);
-    });
+    let init_callback =
+        BoxBiConsumerOnce::new(move |width: &i32, height: &i32| {
+            println!("  Initializing with dimensions: {}x{}", width, height);
+            l.lock()
+                .expect("mutex should not be poisoned")
+                .push(*width * *height);
+        });
     init_callback.accept(&800, &600);
     println!(
         "  Areas: {:?}\n",
@@ -183,11 +182,13 @@ fn main() {
 
     // 11. Print helpers
     println!("11. Print helpers:");
-    let print = BoxBiConsumerOnce::new(|x: &i32, y: &i32| println!("{}, {}", x, y));
+    let print =
+        BoxBiConsumerOnce::new(|x: &i32, y: &i32| println!("{}, {}", x, y));
     print.accept(&42, &10);
 
-    let print_with =
-        BoxBiConsumerOnce::new(|x: &i32, y: &i32| println!("Dimensions: {}, {}", x, y));
+    let print_with = BoxBiConsumerOnce::new(|x: &i32, y: &i32| {
+        println!("Dimensions: {}, {}", x, y)
+    });
     print_with.accept(&800, &600);
     println!();
 

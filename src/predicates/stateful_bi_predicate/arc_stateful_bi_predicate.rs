@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulBiPredicate` public type.
 
@@ -27,7 +25,8 @@ use super::{
     impl_predicate_debug_display,
 };
 
-type ArcStatefulBiPredicateFn<T, U> = Arc<Mutex<dyn FnMut(&T, &U) -> bool + Send + 'static>>;
+type ArcStatefulBiPredicateFn<T, U> =
+    Arc<Mutex<dyn FnMut(&T, &U) -> bool + Send + 'static>>;
 
 /// An Arc-based stateful bi-predicate with thread-safe shared ownership.
 ///
@@ -39,7 +38,8 @@ pub struct ArcStatefulBiPredicate<T, U> {
 }
 
 impl<T, U> ArcStatefulBiPredicate<T, U> {
-    // Generates: new(), new_with_name(), name(), set_name(), always_true(), always_false()
+    // Generates: new(), new_with_name(), name(), set_name(), always_true(),
+    // always_false()
     impl_predicate_common_methods!(
         ArcStatefulBiPredicate<T, U>,
         (FnMut(&T, &U) -> bool + Send + 'static),
@@ -184,7 +184,9 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function;
-        ArcStatefulBiPredicate::new(move |first, second| !((function.lock())(first, second)))
+        ArcStatefulBiPredicate::new(move |first, second| {
+            !((function.lock())(first, second))
+        })
     }
 }
 
@@ -197,14 +199,17 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function.clone();
-        ArcStatefulBiPredicate::new(move |first, second| !((function.lock())(first, second)))
+        ArcStatefulBiPredicate::new(move |first, second| {
+            !((function.lock())(first, second))
+        })
     }
 }
 
 // Generates: impl Clone for ArcStatefulBiPredicate<T, U>
 impl_predicate_clone!(ArcStatefulBiPredicate<T, U>);
 
-// Generates: impl Debug for ArcStatefulBiPredicate<T, U> and impl Display for ArcStatefulBiPredicate<T, U>
+// Generates: impl Debug for ArcStatefulBiPredicate<T, U> and impl Display for
+// ArcStatefulBiPredicate<T, U>
 impl_predicate_debug_display!(ArcStatefulBiPredicate<T, U>);
 
 impl<T, U> StatefulBiPredicate<T, U> for ArcStatefulBiPredicate<T, U> {
@@ -212,7 +217,8 @@ impl<T, U> StatefulBiPredicate<T, U> for ArcStatefulBiPredicate<T, U> {
         (self.function.lock())(first, second)
     }
 
-    // Generates: into_box, into_rc, into_arc, into_fn, to_box, to_rc, to_arc, to_fn
+    // Generates: into_box, into_rc, into_arc, into_fn, to_box, to_rc, to_arc,
+    // to_fn
     impl_arc_conversions!(
         ArcStatefulBiPredicate<T, U>,
         BoxStatefulBiPredicate,

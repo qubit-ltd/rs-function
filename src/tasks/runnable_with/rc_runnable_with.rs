@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcRunnableWith` public type.
 
@@ -31,7 +29,6 @@ type RcRunnableWithFn<T, E> = Rc<RefCell<dyn FnMut(&mut T) -> Result<(), E>>>;
 ///
 /// `RcRunnableWith<T, E>` stores a
 /// `Rc<RefCell<dyn FnMut(&mut T) -> Result<(), E>>>`.
-///
 pub struct RcRunnableWith<T, E> {
     /// The stateful closure executed by this runnable.
     pub(super) function: RcRunnableWithFn<T, E>,
