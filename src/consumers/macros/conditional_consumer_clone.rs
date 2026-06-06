@@ -78,7 +78,6 @@
 /// impl_conditional_consumer_clone!(ArcConditionalBiConsumer<i32, i32>);
 /// impl_conditional_consumer_clone!(RcConditionalBiConsumer<i32, i32>);
 /// ```
-///
 macro_rules! impl_conditional_consumer_clone {
     // Single generic parameter - Consumer types
     ($struct_name:ident < $t:ident >) => {
