@@ -96,7 +96,6 @@
 ///   according to the generated operation.
 /// - The `into_fn` method uses the provided `$fn_trait` parameter to match the
 ///   intended trait type
-///
 macro_rules! impl_conditional_consumer_conversions {
     (@let_consumer Fn, $name:ident, $value:expr) => {
         let $name = $value;
