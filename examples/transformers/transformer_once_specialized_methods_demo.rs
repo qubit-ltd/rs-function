@@ -37,14 +37,20 @@ fn main() {
 
     // Test to_box - borrows self
     let boxed_once_borrowed = arc_double.to_box();
-    println!("   ArcTransformer::to_box(): {}", boxed_once_borrowed.apply(21));
+    println!(
+        "   ArcTransformer::to_box(): {}",
+        boxed_once_borrowed.apply(21)
+    );
 
     // Test to_fn - borrows self
     let fn_once_borrowed = arc_double.to_fn();
     println!("   ArcTransformer::to_fn(): {}", fn_once_borrowed(21));
 
     // Original transformer still usable after to_xxx methods
-    println!("   Original ArcTransformer still works: {}", arc_double.apply(21));
+    println!(
+        "   Original ArcTransformer still works: {}",
+        arc_double.apply(21)
+    );
 
     println!();
 
@@ -66,14 +72,20 @@ fn main() {
 
     // Test to_box - borrows self
     let boxed_once_borrowed = rc_triple.to_box();
-    println!("   RcTransformer::to_box(): {}", boxed_once_borrowed.apply(14));
+    println!(
+        "   RcTransformer::to_box(): {}",
+        boxed_once_borrowed.apply(14)
+    );
 
     // Test to_fn - borrows self
     let fn_once_borrowed = rc_triple.to_fn();
     println!("   RcTransformer::to_fn(): {}", fn_once_borrowed(14));
 
     // Original transformer still usable after to_xxx methods
-    println!("   Original RcTransformer still works: {}", rc_triple.apply(14));
+    println!(
+        "   Original RcTransformer still works: {}",
+        rc_triple.apply(14)
+    );
 
     println!();
 
@@ -116,7 +128,10 @@ fn main() {
     println!("   Thread-safe ArcTransformer result: {}", result);
 
     // Original still usable
-    println!("   Original ArcTransformer still works: {}", arc_shared.apply(50));
+    println!(
+        "   Original ArcTransformer still works: {}",
+        arc_shared.apply(50)
+    );
 
     println!();
 
@@ -134,7 +149,10 @@ fn main() {
     // Using specialized methods
     let boxed_upper = arc_uppercase.clone().into_box();
     let result = boxed_upper.apply(test_string.clone());
-    println!("   String transformation: '{}' -> '{}'", test_string, result);
+    println!(
+        "   String transformation: '{}' -> '{}'",
+        test_string, result
+    );
 
     // Using to_xxx methods (borrowing)
     let fn_upper = arc_uppercase.to_fn();

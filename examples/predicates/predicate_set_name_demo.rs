@@ -94,7 +94,10 @@ fn demo_arc_predicate() {
     println!("     Initial name: {:?}", pred2.name());
     pred2.set_name("longer_than_5");
     println!("     Name after setting: {:?}", pred2.name());
-    println!("     Test 'Hello World': {}", pred2.test(&"Hello World".to_string()));
+    println!(
+        "     Test 'Hello World': {}",
+        pred2.test(&"Hello World".to_string())
+    );
 
     // Name is preserved when sharing between threads
     let pred3 = pred2.clone();

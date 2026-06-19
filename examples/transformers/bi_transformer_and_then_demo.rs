@@ -100,7 +100,10 @@ fn main() {
     let to_int = |x: f64| x as i32;
 
     let calculator = calculate.and_then(round).and_then(to_int);
-    println!("   3.7 + 4.8 -> round -> integer: {}", calculator.apply(3.7, 4.8));
+    println!(
+        "   3.7 + 4.8 -> round -> integer: {}",
+        calculator.apply(3.7, 4.8)
+    );
     println!();
 
     // 8. Error handling example
@@ -137,7 +140,9 @@ fn main() {
         |p: Point| ((p.x * p.x + p.y * p.y) as f64).sqrt();
     let format_distance = |d: f64| format!("{:.2}", d);
 
-    let point_processor = create_point.and_then(distance_from_origin).and_then(format_distance);
+    let point_processor = create_point
+        .and_then(distance_from_origin)
+        .and_then(format_distance);
     println!(
         "   Distance from point(3, 4) to origin: {}",
         point_processor.apply(3, 4)

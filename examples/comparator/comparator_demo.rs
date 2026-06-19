@@ -63,7 +63,10 @@ fn demo_shared_comparators() {
     let ascending =
         ArcComparator::new(|left: &i32, right: &i32| left.cmp(right));
     let descending = ascending.reversed();
-    println!("ArcComparator descending 10 vs 3: {:?}", descending.compare(&10, &3));
+    println!(
+        "ArcComparator descending 10 vs 3: {:?}",
+        descending.compare(&10, &3)
+    );
 
     let by_length = RcComparator::new(|left: &String, right: &String| {
         left.len().cmp(&right.len())
