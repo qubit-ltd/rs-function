@@ -139,7 +139,9 @@ pub trait FnBiPredicateOps<T, U>: Fn(&T, &U) -> bool + Sized {
         T: 'static,
         U: 'static,
     {
-        BoxBiPredicate::new(move |first, second| !(self(first, second) && other.test(first, second)))
+        BoxBiPredicate::new(move |first, second| {
+            !(self(first, second) && other.test(first, second))
+        })
     }
 
     /// Returns a bi-predicate that represents the logical XOR
@@ -205,7 +207,9 @@ pub trait FnBiPredicateOps<T, U>: Fn(&T, &U) -> bool + Sized {
         T: 'static,
         U: 'static,
     {
-        BoxBiPredicate::new(move |first, second| !(self(first, second) || other.test(first, second)))
+        BoxBiPredicate::new(move |first, second| {
+            !(self(first, second) || other.test(first, second))
+        })
     }
 }
 

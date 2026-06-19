@@ -86,7 +86,9 @@ impl RcTester {
     where
         F: Fn() -> bool + 'static,
     {
-        RcTester { function: Rc::new(f) }
+        RcTester {
+            function: Rc::new(f),
+        }
     }
 
     /// Combines this tester with another tester using logical AND

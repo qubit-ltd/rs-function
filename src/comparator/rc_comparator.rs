@@ -65,7 +65,9 @@ impl<T> RcComparator<T> {
     where
         F: Fn(&T, &T) -> Ordering + 'static,
     {
-        Self { function: Rc::new(f) }
+        Self {
+            function: Rc::new(f),
+        }
     }
 
     /// Returns a comparator that imposes the reverse ordering.

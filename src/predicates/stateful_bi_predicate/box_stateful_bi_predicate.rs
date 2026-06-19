@@ -60,7 +60,9 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
         T: 'static,
         U: 'static,
     {
-        BoxStatefulBiPredicate::new(move |first, second| self.test(first, second) && other.test(first, second))
+        BoxStatefulBiPredicate::new(move |first, second| {
+            self.test(first, second) && other.test(first, second)
+        })
     }
 
     /// Returns a bi-predicate representing logical OR with another predicate.
@@ -82,7 +84,9 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
         T: 'static,
         U: 'static,
     {
-        BoxStatefulBiPredicate::new(move |first, second| self.test(first, second) || other.test(first, second))
+        BoxStatefulBiPredicate::new(move |first, second| {
+            self.test(first, second) || other.test(first, second)
+        })
     }
 
     /// Returns a bi-predicate representing logical NAND with another predicate.
@@ -103,7 +107,9 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
         T: 'static,
         U: 'static,
     {
-        BoxStatefulBiPredicate::new(move |first, second| !(self.test(first, second) && other.test(first, second)))
+        BoxStatefulBiPredicate::new(move |first, second| {
+            !(self.test(first, second) && other.test(first, second))
+        })
     }
 
     /// Returns a bi-predicate representing logical XOR with another predicate.
@@ -125,7 +131,9 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
         T: 'static,
         U: 'static,
     {
-        BoxStatefulBiPredicate::new(move |first, second| self.test(first, second) ^ other.test(first, second))
+        BoxStatefulBiPredicate::new(move |first, second| {
+            self.test(first, second) ^ other.test(first, second)
+        })
     }
 
     /// Returns a bi-predicate representing logical NOR with another predicate.
@@ -146,7 +154,9 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
         T: 'static,
         U: 'static,
     {
-        BoxStatefulBiPredicate::new(move |first, second| !(self.test(first, second) || other.test(first, second)))
+        BoxStatefulBiPredicate::new(move |first, second| {
+            !(self.test(first, second) || other.test(first, second))
+        })
     }
 }
 
