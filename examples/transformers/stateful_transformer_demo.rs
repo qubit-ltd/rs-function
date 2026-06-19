@@ -147,7 +147,10 @@ fn main() {
         counter += 1;
         x * counter
     });
-    println!("  BoxStatefulTransformer consumed once: {}", box_mapper.apply(10)); // 10 * 1 = 10
+    println!(
+        "  BoxStatefulTransformer consumed once: {}",
+        box_mapper.apply(10)
+    ); // 10 * 1 = 10
 
     // RcStatefulTransformer can be consumed as TransformerOnce
     let mut counter = 0;
@@ -156,7 +159,10 @@ fn main() {
         x + counter
     });
     let rc_clone = rc_mapper.clone(); // Clone before consuming
-    println!("  RcStatefulTransformer consumed once: {}", rc_mapper.apply(10)); // 10 + 1 = 11
+    println!(
+        "  RcStatefulTransformer consumed once: {}",
+        rc_mapper.apply(10)
+    ); // 10 + 1 = 11
     println!("  RcStatefulTransformer clone still works: {}", {
         let mut rc_clone_for_call = rc_clone.clone();
         rc_clone_for_call.apply(10)
@@ -169,7 +175,10 @@ fn main() {
         x * counter
     });
     let arc_clone = arc_mapper.clone(); // Clone before consuming
-    println!("  ArcStatefulTransformer consumed once: {}", arc_mapper.apply(10)); // 10 * 1 = 10
+    println!(
+        "  ArcStatefulTransformer consumed once: {}",
+        arc_mapper.apply(10)
+    ); // 10 * 1 = 10
     println!("  ArcStatefulTransformer clone still works: {}", {
         let mut arc_clone_for_call = arc_clone.clone();
         arc_clone_for_call.apply(10)
@@ -184,7 +193,10 @@ fn main() {
         x * counter
     });
     let mut once_mapper = mapper.into_box();
-    println!("  BoxStatefulTransformer->BoxTransformerOnce: {}", once_mapper.apply(5)); // 5 * 1 = 5
+    println!(
+        "  BoxStatefulTransformer->BoxTransformerOnce: {}",
+        once_mapper.apply(5)
+    ); // 5 * 1 = 5
 
     // RcStatefulTransformer can use to_box() to preserve original
     let mut counter = 0;
@@ -193,7 +205,10 @@ fn main() {
         x * counter
     });
     let mut once_mapper = rc_mapper.to_box();
-    println!("  RcStatefulTransformer->BoxTransformerOnce: {}", once_mapper.apply(5)); // 5 * 1 = 5
+    println!(
+        "  RcStatefulTransformer->BoxTransformerOnce: {}",
+        once_mapper.apply(5)
+    ); // 5 * 1 = 5
     println!("  Original RcStatefulTransformer still works: {}", {
         let mut rc_original_for_call = rc_mapper.clone();
         rc_original_for_call.apply(5)
