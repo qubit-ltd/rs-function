@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulBiConsumer` public type.
 
@@ -72,7 +70,6 @@ type BoxStatefulBiConsumerFn<T, U> = Box<dyn FnMut(&T, &U)>;
 /// consumer.accept(&5, &3);
 /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
 /// ```
-///
 pub struct BoxStatefulBiConsumer<T, U> {
     pub(super) function: BoxStatefulBiConsumerFn<T, U>,
     pub(super) name: Option<String>,

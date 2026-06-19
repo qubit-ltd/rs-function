@@ -1,18 +1,18 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Conditional Consumer Debug Display Macro
 //!
-//! Generates Debug and Display trait implementations for Conditional Consumer structs
+//! Generates Debug and Display trait implementations for Conditional Consumer
+//! structs
 //!
 //! Generates standard Debug and Display trait implementations for Conditional
-//! Consumer structs that have `consumer` and `predicate` fields but no `name` field.
+//! Consumer structs that have `consumer` and `predicate` fields but no `name`
+//! field.
 //!
 //! # Parameters
 //!
@@ -37,9 +37,9 @@
 //! impl_conditional_consumer_debug_display!(BoxConditionalConsumer<i32>);
 //! impl_conditional_consumer_debug_display!(BoxConditionalBiConsumer<i32, i32>);
 //! ```
-//!
 
-/// Generates Debug and Display trait implementations for Conditional Consumer structs
+/// Generates Debug and Display trait implementations for Conditional Consumer
+/// structs
 ///
 /// This macro should be used at the top level (outside of any impl block) as
 /// it generates complete `impl Debug` and `impl Display` blocks for the
@@ -74,7 +74,6 @@
 /// // For two type parameters
 /// impl_conditional_consumer_debug_display!(BoxConditionalBiConsumer<i32, i32>);
 /// ```
-///
 macro_rules! impl_conditional_consumer_debug_display {
     // Single generic parameter - Consumer types
     ($struct_name:ident < $t:ident >) => {

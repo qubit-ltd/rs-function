@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcConditionalBiConsumer` public type.
 
@@ -30,7 +28,8 @@ use super::{
 /// ArcConditionalBiConsumer struct
 ///
 /// A conditional bi-consumer that wraps an `ArcBiConsumer` and only executes
-/// when a predicate is satisfied. Based on `Arc` for thread-safe shared ownership.
+/// when a predicate is satisfied. Based on `Arc` for thread-safe shared
+/// ownership.
 ///
 /// # Features
 ///
@@ -39,7 +38,6 @@ use super::{
 /// - **Conditional Execution**: Only consumes when predicate returns `true`
 /// - **Implements BiConsumer**: Can be used anywhere a `BiConsumer` is expected
 /// - **Non-mutating**: Neither modifies itself nor input values
-///
 pub struct ArcConditionalBiConsumer<T, U> {
     pub(super) consumer: ArcBiConsumer<T, U>,
     pub(super) predicate: ArcBiPredicate<T, U>,

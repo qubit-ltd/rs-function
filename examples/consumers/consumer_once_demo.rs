@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # ConsumerOnce Demo
 //!
 //! Demonstrates the usage of ConsumerOnce trait and its implementations.
@@ -75,7 +73,8 @@ fn main() {
 
         // Print with prefix
         print!("  Print with prefix: ");
-        let print_with = BoxConsumerOnce::new(|x: &i32| println!("Value: {}", x));
+        let print_with =
+            BoxConsumerOnce::new(|x: &i32| println!("Value: {}", x));
         print_with.accept(&42);
 
         // Conditional consumer

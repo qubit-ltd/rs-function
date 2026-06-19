@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Transformer Common Methods Macro
 //!
 //! Generates common Transformer methods using shared implementations
@@ -24,8 +22,8 @@
 //! # Parameters
 //!
 //! * `$struct_name<$generics>` - Struct name with generic parameters
-//! * `$fn_trait_with_bounds` - Closure trait with complete bounds
-//!   (e.g., `Fn(&T) -> U + 'static`)
+//! * `$fn_trait_with_bounds` - Closure trait with complete bounds (e.g.,
+//!   `Fn(&T) -> U + 'static`)
 //! * `$wrapper_expr` - Wrapper expression (uses `f` for the closure)
 //!
 //! # Usage
@@ -61,7 +59,6 @@
 //! * `name()` - Gets the name of the transformer
 //! * `set_name()` - Sets the name of the transformer
 //! * `identity()` - Creates a transformer that returns the input unchanged
-//!
 
 /// Generates common Transformer methods using shared implementations
 /// (new, new_with_name, new_with_optional_name, name, set_name, identity)
@@ -78,8 +75,8 @@
 /// # Parameters
 ///
 /// * `$struct_name<$generics>` - Struct name with generic parameters
-/// * `$fn_trait_with_bounds` - Closure trait with complete bounds
-///   (e.g., `Fn(&T) -> U + 'static`)
+/// * `$fn_trait_with_bounds` - Closure trait with complete bounds (e.g.,
+///   `Fn(&T) -> U + 'static`)
 /// * `$wrapper_expr` - Wrapper expression (uses `f` for the closure)
 ///
 /// # Usage
@@ -115,7 +112,6 @@
 /// * `name()` - Gets the name of the transformer
 /// * `set_name()` - Sets the name of the transformer
 /// * `identity()` - Creates a transformer that returns the input unchanged
-///
 macro_rules! impl_transformer_common_methods {
     // Single generic parameter - Transformer types
     (

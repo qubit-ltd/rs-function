@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalTransformer` public type.
 
@@ -36,7 +34,8 @@ use super::{
 /// - **Single Ownership**: Not cloneable, consumes `self` on use
 /// - **Conditional Execution**: Only transforms when predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
-/// - **Implements Transformer**: Can be used anywhere a `Transformer` is expected
+/// - **Implements Transformer**: Can be used anywhere a `Transformer` is
+///   expected
 ///
 /// # Examples
 ///
@@ -52,7 +51,6 @@ use super::{
 /// assert_eq!(conditional.apply(5), 10); // when branch executed
 /// assert_eq!(conditional.apply(-5), 5); // or_else branch executed
 /// ```
-///
 pub struct BoxConditionalTransformer<T, R> {
     pub(super) transformer: BoxTransformer<T, R>,
     pub(super) predicate: BoxPredicate<T>,

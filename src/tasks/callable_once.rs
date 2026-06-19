@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Callable Once Types
 //!
 //! Provides fallible, one-time, zero-argument computations.
@@ -18,7 +16,6 @@
 //!
 //! The trait itself does not require `Send`; concurrent executors should add
 //! `+ Send + 'static` at their API boundary.
-//!
 
 use crate::tasks::runnable_once::{
     BoxRunnableOnce,
@@ -42,8 +39,9 @@ pub use local_box_callable_once::LocalBoxCallableOnce;
 /// `SupplierOnce<Result<R, E>>` for executable computations and deferred tasks.
 ///
 /// Choose **`CallableOnce`** when callers need the success value `R`. When only
-/// success or failure matters, use [`RunnableOnce`](crate::tasks::runnable_once::RunnableOnce),
-/// whose success type is `()`.
+/// success or failure matters, use
+/// [`RunnableOnce`](crate::tasks::runnable_once::RunnableOnce), whose success
+/// type is `()`.
 ///
 /// # Type Parameters
 ///
@@ -58,7 +56,6 @@ pub use local_box_callable_once::LocalBoxCallableOnce;
 /// let task = || Ok::<i32, String>(21 * 2);
 /// assert_eq!(task.call(), Ok(42));
 /// ```
-///
 pub trait CallableOnce<R, E> {
     /// Executes the computation, consuming `self`.
     ///

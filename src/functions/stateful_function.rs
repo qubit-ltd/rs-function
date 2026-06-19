@@ -1,26 +1,24 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # StatefulFunction Types
 //!
 //! Provides Rust implementations of stateful function traits for stateful value
-//! transformation. StatefulFunctions consume input values (taking ownership) and
-//! produce output values while allowing internal state modification.
+//! transformation. StatefulFunctions consume input values (taking ownership)
+//! and produce output values while allowing internal state modification.
 //!
 //! It is similar to the `FnMut(&T) -> R` trait in the standard library.
 //!
-//! This module provides the `StatefulFunction<T, R>` trait and three implementations:
+//! This module provides the `StatefulFunction<T, R>` trait and three
+//! implementations:
 //!
 //! - [`BoxStatefulFunction`]: Single ownership, not cloneable
 //! - [`ArcStatefulFunction`]: Thread-safe shared ownership, cloneable
 //! - [`RcStatefulFunction`]: Single-threaded shared ownership, cloneable
-//!
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
@@ -86,7 +84,6 @@ pub use fn_stateful_function_ops::FnStatefulFunctionOps;
 ///
 /// * `T` - The type of the input value (consumed)
 /// * `R` - The type of the output value
-///
 pub trait StatefulFunction<T, R> {
     /// Applies the mapping to the input value to produce an output value
     ///
@@ -101,8 +98,8 @@ pub trait StatefulFunction<T, R> {
 
     /// Converts to BoxStatefulFunction
     ///
-    /// **⚠️ Consumes `self`**: The original stateful function becomes unavailable
-    /// after calling this method.
+    /// **⚠️ Consumes `self`**: The original stateful function becomes
+    /// unavailable after calling this method.
     ///
     /// # Returns
     ///
@@ -144,8 +141,8 @@ pub trait StatefulFunction<T, R> {
 
     /// Converts to RcStatefulFunction
     ///
-    /// **⚠️ Consumes `self`**: The original stateful function becomes unavailable
-    /// after calling this method.
+    /// **⚠️ Consumes `self`**: The original stateful function becomes
+    /// unavailable after calling this method.
     ///
     /// # Returns
     ///
@@ -154,8 +151,8 @@ pub trait StatefulFunction<T, R> {
     /// # Default Implementation
     ///
     /// The default implementation first converts to `BoxStatefulFunction` using
-    /// `into_box()`, then wraps it in `RcStatefulFunction`. Specific implementations
-    /// may override this for better efficiency.
+    /// `into_box()`, then wraps it in `RcStatefulFunction`. Specific
+    /// implementations may override this for better efficiency.
     ///
     /// # Examples
     ///
@@ -187,8 +184,8 @@ pub trait StatefulFunction<T, R> {
 
     /// Converts to ArcStatefulFunction
     ///
-    /// **⚠️ Consumes `self`**: The original stateful function becomes unavailable
-    /// after calling this method.
+    /// **⚠️ Consumes `self`**: The original stateful function becomes
+    /// unavailable after calling this method.
     ///
     /// # Returns
     ///
@@ -196,9 +193,10 @@ pub trait StatefulFunction<T, R> {
     ///
     /// # Default Implementation
     ///
-    /// The default implementation wraps `self` in an `ArcStatefulFunction` by creating
-    /// a new closure that calls `self.apply()`. Note that this requires `self`
-    /// to implement `Send` due to Arc's thread-safety requirements.
+    /// The default implementation wraps `self` in an `ArcStatefulFunction` by
+    /// creating a new closure that calls `self.apply()`. Note that this
+    /// requires `self` to implement `Send` due to Arc's thread-safety
+    /// requirements.
     ///
     /// # Examples
     ///
@@ -230,8 +228,8 @@ pub trait StatefulFunction<T, R> {
 
     /// Converts to a closure implementing `FnMut(&T) -> R`
     ///
-    /// **⚠️ Consumes `self`**: The original stateful function becomes unavailable
-    /// after calling this method.
+    /// **⚠️ Consumes `self`**: The original stateful function becomes
+    /// unavailable after calling this method.
     ///
     /// # Returns
     ///
@@ -239,8 +237,9 @@ pub trait StatefulFunction<T, R> {
     ///
     /// # Default Implementation
     ///
-    /// The default implementation creates a new closure that calls `self.apply()`.
-    /// Specific implementations may override this for better efficiency.
+    /// The default implementation creates a new closure that calls
+    /// `self.apply()`. Specific implementations may override this for
+    /// better efficiency.
     ///
     /// # Examples
     ///
@@ -307,8 +306,8 @@ pub trait StatefulFunction<T, R> {
     /// Non-consuming conversion to `BoxStatefulFunction`.
     ///
     /// Default implementation requires `Self: Clone` and wraps a cloned
-    /// instance in a `RefCell` so the returned stateful function can mutate state
-    /// across calls.
+    /// instance in a `RefCell` so the returned stateful function can mutate
+    /// state across calls.
     fn to_box(&self) -> BoxStatefulFunction<T, R>
     where
         Self: Clone + 'static,
@@ -365,7 +364,8 @@ pub trait StatefulFunction<T, R> {
     /// Convert to StatefulFunctionOnce without consuming self
     ///
     /// **⚠️ Requires Clone**: This method requires `Self` to implement `Clone`.
-    /// Clones the current function and converts the clone to a one-time function.
+    /// Clones the current function and converts the clone to a one-time
+    /// function.
     ///
     /// # Returns
     ///

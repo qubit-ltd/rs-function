@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcConditionalMutatingFunction` public type.
 
@@ -27,11 +25,12 @@ use super::{
 /// ArcConditionalMutatingFunction struct
 ///
 /// A thread-safe conditional function that only executes when a predicate is
-/// satisfied. Uses `ArcMutatingFunction` and `ArcPredicate` for shared ownership
-/// across threads.
+/// satisfied. Uses `ArcMutatingFunction` and `ArcPredicate` for shared
+/// ownership across threads.
 ///
-/// This type is typically created by calling `ArcMutatingFunction::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
+/// This type is typically created by calling `ArcMutatingFunction::when()` and
+/// is designed to work with the `or_else()` method to create if-then-else
+/// logic.
 ///
 /// # Features
 ///
@@ -56,7 +55,6 @@ use super::{
 /// let mut negative = -5;
 /// assert_eq!(conditional_clone.apply(&mut negative), -5);
 /// ```
-///
 pub struct ArcConditionalMutatingFunction<T, R> {
     pub(super) function: ArcMutatingFunction<T, R>,
     pub(super) predicate: ArcPredicate<T>,

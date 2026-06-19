@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `FnTesterOps` public type.
 
@@ -37,17 +35,16 @@ use super::{
 /// let combined = is_ready.and(is_available);
 /// assert!(combined.test());
 /// ```
-///
 pub trait FnTesterOps: Sized + Fn() -> bool {
     /// Returns a tester that represents the logical AND of this tester
     /// and another
     ///
     /// # Parameters
     ///
-    /// * `other` - The other tester to combine with. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to
-    ///   preserve the original tester, clone it first (if it implements
-    ///   `Clone`). Can be:
+    /// * `other` - The other tester to combine with. **Note: This parameter is
+    ///   passed by value and will transfer ownership.** If you need to preserve
+    ///   the original tester, clone it first (if it implements `Clone`). Can
+    ///   be:
     ///   - Another closure
     ///   - A function pointer
     ///   - A `BoxTester`, `RcTester`, or `ArcTester`
@@ -81,10 +78,10 @@ pub trait FnTesterOps: Sized + Fn() -> bool {
     ///
     /// # Parameters
     ///
-    /// * `other` - The other tester to combine with. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to
-    ///   preserve the original tester, clone it first (if it implements
-    ///   `Clone`). Can be:
+    /// * `other` - The other tester to combine with. **Note: This parameter is
+    ///   passed by value and will transfer ownership.** If you need to preserve
+    ///   the original tester, clone it first (if it implements `Clone`). Can
+    ///   be:
     ///   - Another closure
     ///   - A function pointer
     ///   - A `BoxTester`, `RcTester`, or `ArcTester`
@@ -145,11 +142,10 @@ pub trait FnTesterOps: Sized + Fn() -> bool {
     ///
     /// # Parameters
     ///
-    /// * `other` - The other tester to combine with. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to
-    ///   preserve the original tester, clone it first (if it implements
-    ///   `Clone`). Accepts closures, function pointers, or any
-    ///   `Tester` implementation.
+    /// * `other` - The other tester to combine with. **Note: This parameter is
+    ///   passed by value and will transfer ownership.** If you need to preserve
+    ///   the original tester, clone it first (if it implements `Clone`).
+    ///   Accepts closures, function pointers, or any `Tester` implementation.
     ///
     /// # Return Value
     ///
@@ -182,11 +178,10 @@ pub trait FnTesterOps: Sized + Fn() -> bool {
     ///
     /// # Parameters
     ///
-    /// * `other` - The other tester to combine with. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to
-    ///   preserve the original tester, clone it first (if it implements
-    ///   `Clone`). Accepts closures, function pointers, or any
-    ///   `Tester` implementation.
+    /// * `other` - The other tester to combine with. **Note: This parameter is
+    ///   passed by value and will transfer ownership.** If you need to preserve
+    ///   the original tester, clone it first (if it implements `Clone`).
+    ///   Accepts closures, function pointers, or any `Tester` implementation.
     ///
     /// # Return Value
     ///
@@ -220,11 +215,10 @@ pub trait FnTesterOps: Sized + Fn() -> bool {
     ///
     /// # Parameters
     ///
-    /// * `other` - The other tester to combine with. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to
-    ///   preserve the original tester, clone it first (if it implements
-    ///   `Clone`). Accepts closures, function pointers, or any
-    ///   `Tester` implementation.
+    /// * `other` - The other tester to combine with. **Note: This parameter is
+    ///   passed by value and will transfer ownership.** If you need to preserve
+    ///   the original tester, clone it first (if it implements `Clone`).
+    ///   Accepts closures, function pointers, or any `Tester` implementation.
     ///
     /// # Return Value
     ///

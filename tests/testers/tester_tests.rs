@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! Unit tests for Tester
 
 #[cfg(test)]
@@ -43,7 +41,8 @@ mod tests {
         let count = Arc::new(AtomicUsize::new(0));
         let count_clone = Arc::clone(&count);
 
-        let tester = BoxTester::new(move || count_clone.load(Ordering::Relaxed) <= 3);
+        let tester =
+            BoxTester::new(move || count_clone.load(Ordering::Relaxed) <= 3);
 
         assert!(tester.test()); // 0
         count.fetch_add(1, Ordering::Relaxed);
@@ -85,7 +84,8 @@ mod tests {
         });
         assert!(!combined.test());
 
-        // Verify that the second test was not executed (short-circuit evaluation)
+        // Verify that the second test was not executed (short-circuit
+        // evaluation)
         assert!(!executed.load(Ordering::Relaxed));
     }
 
@@ -138,8 +138,9 @@ mod tests {
         let count1_clone = Arc::clone(&count1);
         let count2_clone = Arc::clone(&count2);
 
-        let combined = BoxTester::new(move || count1_clone.load(Ordering::Relaxed) <= 2)
-            .and(move || count2_clone.load(Ordering::Relaxed) <= 1);
+        let combined =
+            BoxTester::new(move || count1_clone.load(Ordering::Relaxed) <= 2)
+                .and(move || count2_clone.load(Ordering::Relaxed) <= 1);
 
         assert!(combined.test()); // count1=0, count2=0
         count1.fetch_add(1, Ordering::Relaxed);
@@ -178,7 +179,8 @@ mod tests {
         let count = Arc::new(AtomicUsize::new(0));
         let count_clone = Arc::clone(&count);
 
-        let tester = BoxTester::new(move || count_clone.load(Ordering::Relaxed) <= 2);
+        let tester =
+            BoxTester::new(move || count_clone.load(Ordering::Relaxed) <= 2);
         let func = tester.into_fn();
 
         assert!(func()); // 0
@@ -212,7 +214,8 @@ mod tests {
         let counter = Arc::new(AtomicUsize::new(0));
         let counter_clone = Arc::clone(&counter);
 
-        let tester = ArcTester::new(move || counter_clone.load(Ordering::Relaxed) <= 3);
+        let tester =
+            ArcTester::new(move || counter_clone.load(Ordering::Relaxed) <= 3);
 
         let t1 = tester.clone();
         let t2 = tester.clone();
@@ -265,7 +268,8 @@ mod tests {
         let counter = Arc::new(AtomicUsize::new(0));
         let counter_clone = Arc::clone(&counter);
 
-        let tester = ArcTester::new(move || counter_clone.load(Ordering::Relaxed) < 10);
+        let tester =
+            ArcTester::new(move || counter_clone.load(Ordering::Relaxed) < 10);
 
         let clone = tester.clone();
         let handle = std::thread::spawn(move || clone.test());
@@ -311,7 +315,8 @@ mod tests {
         let count = Arc::new(AtomicUsize::new(0));
         let count_clone = Arc::clone(&count);
 
-        let tester = ArcTester::new(move || count_clone.load(Ordering::Relaxed) <= 2);
+        let tester =
+            ArcTester::new(move || count_clone.load(Ordering::Relaxed) <= 2);
         let func = tester.into_fn();
 
         assert!(func()); // 0
@@ -355,7 +360,8 @@ mod tests {
         let count = Arc::new(AtomicUsize::new(0));
         let count_clone = Arc::clone(&count);
 
-        let tester = ArcTester::new(move || count_clone.load(Ordering::Relaxed) <= 1);
+        let tester =
+            ArcTester::new(move || count_clone.load(Ordering::Relaxed) <= 1);
         let func = tester.to_fn();
 
         assert!(func());
@@ -662,7 +668,9 @@ mod tests {
         let attempts_clone = Arc::clone(&attempts);
         let max_attempts = 3;
 
-        let rate_limiter = BoxTester::new(move || attempts_clone.load(Ordering::Relaxed) <= max_attempts);
+        let rate_limiter = BoxTester::new(move || {
+            attempts_clone.load(Ordering::Relaxed) <= max_attempts
+        });
 
         assert!(rate_limiter.test());
         attempts.fetch_add(1, Ordering::Relaxed);
@@ -680,7 +688,8 @@ mod tests {
         let ready_count = Arc::new(AtomicUsize::new(0));
         let count_clone = Arc::clone(&ready_count);
 
-        let readiness = BoxTester::new(move || count_clone.load(Ordering::Relaxed) >= 3);
+        let readiness =
+            BoxTester::new(move || count_clone.load(Ordering::Relaxed) >= 3);
 
         // Simulate waiting until condition is met
         assert!(!readiness.test());
@@ -711,7 +720,9 @@ mod tests {
         let can_execute_clone = Arc::clone(&can_execute);
 
         let op = Operation {
-            precondition: BoxTester::new(move || can_execute_clone.load(Ordering::Acquire)),
+            precondition: BoxTester::new(move || {
+                can_execute_clone.load(Ordering::Acquire)
+            }),
         };
 
         assert!(op.execute().is_ok());
@@ -730,9 +741,10 @@ mod tests {
         let cache_clone = Arc::clone(&cache_ready);
         let config_clone = Arc::clone(&config_loaded);
 
-        let system_ready = BoxTester::new(move || db_clone.load(Ordering::Acquire))
-            .and(move || cache_clone.load(Ordering::Acquire))
-            .and(move || config_clone.load(Ordering::Acquire));
+        let system_ready =
+            BoxTester::new(move || db_clone.load(Ordering::Acquire))
+                .and(move || cache_clone.load(Ordering::Acquire))
+                .and(move || config_clone.load(Ordering::Acquire));
 
         assert!(!system_ready.test());
 
@@ -748,8 +760,9 @@ mod tests {
         let primary_clone = Arc::clone(&primary_available);
         let fallback_clone = Arc::clone(&fallback_available);
 
-        let availability = BoxTester::new(move || primary_clone.load(Ordering::Acquire))
-            .or(move || fallback_clone.load(Ordering::Acquire));
+        let availability =
+            BoxTester::new(move || primary_clone.load(Ordering::Acquire))
+                .or(move || fallback_clone.load(Ordering::Acquire));
 
         assert!(availability.test());
 
@@ -1356,7 +1369,8 @@ mod tests {
         // Can clone and share across threads
         let arc_clone = arc.clone();
         let tester_clone = tester.clone();
-        let handle = std::thread::spawn(move || arc_clone.test() && tester_clone.test());
+        let handle =
+            std::thread::spawn(move || arc_clone.test() && tester_clone.test());
 
         assert!(handle.join().expect("thread should not panic"));
     }

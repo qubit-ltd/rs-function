@@ -1,16 +1,14 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # MutatorOnce Types
 //!
-//! Provides Java-style one-time `Mutator` interface implementations for performing
-//! operations that consume self and modify the input value.
+//! Provides Java-style one-time `Mutator` interface implementations for
+//! performing operations that consume self and modify the input value.
 //!
 //! It is similar to the `FnOnce(&mut T)` trait in the standard library.
 //!
@@ -24,7 +22,8 @@
 //!
 //! The key difference between `MutatorOnce` and `Mutator`:
 //!
-//! - **Mutator**: `&mut self`, can be called multiple times, uses `FnMut(&mut T)`
+//! - **Mutator**: `&mut self`, can be called multiple times, uses `FnMut(&mut
+//!   T)`
 //! - **MutatorOnce**: `self`, can only be called once, uses `FnOnce(&mut T)`
 //!
 //! ## MutatorOnce vs Mutator
@@ -42,12 +41,13 @@
 //!
 //! 1. **Store FnOnce closures**: Allows moving captured variables
 //! 2. **Delayed execution**: Store in data structures, execute later
-//! 3. **Resource transfer**: Suitable for scenarios requiring ownership transfer
+//! 3. **Resource transfer**: Suitable for scenarios requiring ownership
+//!    transfer
 //!
 //! # Why Only Box Variant?
 //!
-//! - **Arc/Rc conflicts with FnOnce semantics**: FnOnce can only be called once,
-//!   while shared ownership implies multiple references
+//! - **Arc/Rc conflicts with FnOnce semantics**: FnOnce can only be called
+//!   once, while shared ownership implies multiple references
 //! - **Box is perfect match**: Single ownership aligns perfectly with one-time
 //!   call semantics
 //!
@@ -135,7 +135,6 @@
 //! init.run(&mut result);
 //! assert_eq!(result, vec![42, 1, 2, 3]);
 //! ```
-//!
 use crate::macros::{
     impl_box_once_conversions,
     impl_closure_once_trait,
@@ -183,8 +182,8 @@ pub use box_conditional_mutator_once::BoxConditionalMutatorOnce;
 ///
 /// - **Unified Interface**: All one-time mutators share the same `mutate`
 ///   method signature
-/// - **Automatic Implementation**: Closures automatically implement this
-///   trait with zero overhead
+/// - **Automatic Implementation**: Closures automatically implement this trait
+///   with zero overhead
 /// - **Type Conversions**: Provides `into_box` method for type conversion
 /// - **Generic Programming**: Write functions that work with any one-time
 ///   mutator type
@@ -222,13 +221,12 @@ pub use box_conditional_mutator_once::BoxConditionalMutatorOnce;
 /// let closure = move |x: &mut Vec<i32>| x.extend(data);
 /// let box_mutator = closure.into_box();
 /// ```
-///
 pub trait MutatorOnce<T> {
     /// Performs the one-time mutation operation
     ///
     /// Consumes self and executes an operation on the given mutable reference.
-    /// The operation typically modifies the input value or produces side effects,
-    /// and can only be called once.
+    /// The operation typically modifies the input value or produces side
+    /// effects, and can only be called once.
     ///
     /// # Parameters
     ///

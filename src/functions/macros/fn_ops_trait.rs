@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Fn Ops Trait Macro
 //!
 //! Generate extension traits and implementations for closure types
@@ -21,10 +19,12 @@
 //!   Examples: `(Fn(&T) -> R)`, `(FnMut(&T) -> R)`, `(FnMut(&mut T) -> R)`
 //! * `$trait_name` - Name of the extension trait (e.g., `FnFunctionOps`,
 //!   `FnStatefulFunctionOps`)
-//! * `$box_type` - Box wrapper type (e.g., `BoxFunction`, `BoxStatefulFunction`)
+//! * `$box_type` - Box wrapper type (e.g., `BoxFunction`,
+//!   `BoxStatefulFunction`)
 //! * `$chained_function_trait` - The name of the function trait that is chained
 //!   after the execution of this function (e.g., Function, BiFunction)
-//! * `$conditional_type` - Conditional function type (e.g., `BoxConditionalFunction`)
+//! * `$conditional_type` - Conditional function type (e.g.,
+//!   `BoxConditionalFunction`)
 //!
 //! # Usage Examples
 //!
@@ -56,7 +56,6 @@
 //!     BoxConditionalMutatingFunction
 //! );
 //! ```
-//!
 
 /// Generate extension traits and implementations for closure types
 ///
@@ -109,7 +108,6 @@
 ///     BoxConditionalMutatingFunction
 /// );
 /// ```
-///
 macro_rules! impl_fn_ops_trait {
     (@let_self BoxStatefulFunction, $name:ident, $value:expr) => {
         let mut $name = $value;

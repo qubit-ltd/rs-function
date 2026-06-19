@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `FnPredicateOps` public type.
 
@@ -34,7 +32,6 @@ use super::{
 /// assert!(pred.test(&4));
 /// assert!(!pred.test(&3));
 /// ```
-///
 pub trait FnPredicateOps<T>: Fn(&T) -> bool + Sized {
     /// Returns a predicate that represents the logical AND of this predicate
     /// and another.
@@ -71,7 +68,9 @@ pub trait FnPredicateOps<T>: Fn(&T) -> bool + Sized {
         P: Predicate<T> + 'static,
         T: 'static,
     {
-        BoxPredicate::new(move |value: &T| self.test(value) && other.test(value))
+        BoxPredicate::new(move |value: &T| {
+            self.test(value) && other.test(value)
+        })
     }
 
     /// Returns a predicate that represents the logical OR of this predicate
@@ -111,7 +110,9 @@ pub trait FnPredicateOps<T>: Fn(&T) -> bool + Sized {
         P: Predicate<T> + 'static,
         T: 'static,
     {
-        BoxPredicate::new(move |value: &T| self.test(value) || other.test(value))
+        BoxPredicate::new(move |value: &T| {
+            self.test(value) || other.test(value)
+        })
     }
 
     /// Returns a predicate that represents the logical negation of this
@@ -139,8 +140,8 @@ pub trait FnPredicateOps<T>: Fn(&T) -> bool + Sized {
     /// * `other` - The other predicate to combine with. **Note: This parameter
     ///   is passed by value and will transfer ownership.** If you need to
     ///   preserve the original predicate, clone it first (if it implements
-    ///   `Clone`). Accepts closures, function pointers, or any
-    ///   `Predicate<T>` implementation.
+    ///   `Clone`). Accepts closures, function pointers, or any `Predicate<T>`
+    ///   implementation.
     ///
     /// # Returns
     ///
@@ -164,7 +165,9 @@ pub trait FnPredicateOps<T>: Fn(&T) -> bool + Sized {
         P: Predicate<T> + 'static,
         T: 'static,
     {
-        BoxPredicate::new(move |value: &T| !(self.test(value) && other.test(value)))
+        BoxPredicate::new(move |value: &T| {
+            !(self.test(value) && other.test(value))
+        })
     }
 
     /// Returns a predicate that represents the logical XOR (exclusive OR) of
@@ -177,8 +180,8 @@ pub trait FnPredicateOps<T>: Fn(&T) -> bool + Sized {
     /// * `other` - The other predicate to combine with. **Note: This parameter
     ///   is passed by value and will transfer ownership.** If you need to
     ///   preserve the original predicate, clone it first (if it implements
-    ///   `Clone`). Accepts closures, function pointers, or any
-    ///   `Predicate<T>` implementation.
+    ///   `Clone`). Accepts closures, function pointers, or any `Predicate<T>`
+    ///   implementation.
     ///
     /// # Returns
     ///
@@ -217,8 +220,8 @@ pub trait FnPredicateOps<T>: Fn(&T) -> bool + Sized {
     /// * `other` - The other predicate to combine with. **Note: This parameter
     ///   is passed by value and will transfer ownership.** If you need to
     ///   preserve the original predicate, clone it first (if it implements
-    ///   `Clone`). Accepts closures, function pointers, or any
-    ///   `Predicate<T>` implementation.
+    ///   `Clone`). Accepts closures, function pointers, or any `Predicate<T>`
+    ///   implementation.
     ///
     /// # Returns
     ///
@@ -243,7 +246,9 @@ pub trait FnPredicateOps<T>: Fn(&T) -> bool + Sized {
         P: Predicate<T> + 'static,
         T: 'static,
     {
-        BoxPredicate::new(move |value: &T| !(self.test(value) || other.test(value)))
+        BoxPredicate::new(move |value: &T| {
+            !(self.test(value) || other.test(value))
+        })
     }
 }
 

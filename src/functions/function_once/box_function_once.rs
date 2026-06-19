@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxFunctionOnce` public type.
 
@@ -39,14 +37,14 @@ use super::{
 /// - **Ownership**: Single ownership, cannot be cloned
 /// - **Reusability**: Can only be called once (consumes self and input)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
-///
 pub struct BoxFunctionOnce<T, R> {
     pub(super) function: Box<dyn FnOnce(&T) -> R>,
     pub(super) name: Option<String>,
 }
 
 impl<T, R> BoxFunctionOnce<T, R> {
-    // Generates: new(), new_with_name(), new_with_optional_name(), name(), set_name()
+    // Generates: new(), new_with_name(), new_with_optional_name(), name(),
+    // set_name()
     impl_function_common_methods!(
         BoxFunctionOnce<T, R>,
         (FnOnce(&T) -> R + 'static),

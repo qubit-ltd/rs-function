@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # BiTransformer Types
 //!
 //! Provides Rust implementations of bi-transformer traits for type conversion
@@ -19,7 +17,6 @@
 //! - [`BoxBiTransformer`]: Single ownership, not cloneable
 //! - [`ArcBiTransformer`]: Thread-safe shared ownership, cloneable
 //! - [`RcBiTransformer`]: Single-threaded shared ownership, cloneable
-//!
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -89,7 +86,6 @@ pub use arc_conditional_bi_transformer::ArcConditionalBiTransformer;
 /// * `T` - The type of the first input value (consumed)
 /// * `U` - The type of the second input value (consumed)
 /// * `R` - The type of the output value
-///
 pub trait BiTransformer<T, U, R> {
     /// Transforms two input values to produce an output value
     ///
@@ -189,10 +185,12 @@ pub trait BiTransformer<T, U, R> {
 
     /// Convert to BiTransformerOnce
     ///
-    /// **⚠️ Consumes `self`**: The original bi-transformer will be unavailable after calling this method.
+    /// **⚠️ Consumes `self`**: The original bi-transformer will be unavailable
+    /// after calling this method.
     ///
-    /// Converts a reusable bi-transformer to a one-time bi-transformer that consumes itself on use.
-    /// This enables passing `BiTransformer` to functions that require `BiTransformerOnce`.
+    /// Converts a reusable bi-transformer to a one-time bi-transformer that
+    /// consumes itself on use. This enables passing `BiTransformer` to
+    /// functions that require `BiTransformerOnce`.
     ///
     /// # Returns
     ///
@@ -248,7 +246,8 @@ pub trait BiTransformer<T, U, R> {
     /// Convert to BiTransformerOnce without consuming self
     ///
     /// **⚠️ Requires Clone**: This method requires `Self` to implement `Clone`.
-    /// Clones the current bi-transformer and converts the clone to a one-time bi-transformer.
+    /// Clones the current bi-transformer and converts the clone to a one-time
+    /// bi-transformer.
     ///
     /// # Returns
     ///

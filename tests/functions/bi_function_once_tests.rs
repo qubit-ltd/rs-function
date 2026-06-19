@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! Comprehensive tests for BiFunctionOnce trait and BoxBiFunctionOnce
 
@@ -90,8 +88,14 @@ fn test_bi_function_once_default_conversions_allow_relaxed_generic_types() {
     #[derive(Clone, Copy, Debug, Eq, PartialEq)]
     struct BorrowedRcSelectorOnce;
 
-    impl<'a> BiFunctionOnce<BorrowedRc<'a>, BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcSelectorOnce {
-        fn apply(self, first: &BorrowedRc<'a>, _second: &BorrowedRc<'a>) -> BorrowedRc<'a> {
+    impl<'a> BiFunctionOnce<BorrowedRc<'a>, BorrowedRc<'a>, BorrowedRc<'a>>
+        for BorrowedRcSelectorOnce
+    {
+        fn apply(
+            self,
+            first: &BorrowedRc<'a>,
+            _second: &BorrowedRc<'a>,
+        ) -> BorrowedRc<'a> {
             first.clone()
         }
     }
@@ -131,7 +135,9 @@ fn test_box_bi_function_once_new() {
 fn test_box_bi_function_once_new_allows_non_static_t() {
     fn run<'a>(value: &'a str) -> usize {
         let func: BoxBiFunctionOnce<&'a str, i32, usize> =
-            BoxBiFunctionOnce::new(|x: &&'a str, y: &i32| x.len() + (*y as usize));
+            BoxBiFunctionOnce::new(|x: &&'a str, y: &i32| {
+                x.len() + (*y as usize)
+            });
         func.apply(&value, &3)
     }
 
@@ -143,7 +149,9 @@ fn test_box_bi_function_once_new_allows_non_static_t() {
 fn test_box_bi_function_once_new_allows_non_static_u() {
     fn run<'a>(value: &'a str) -> usize {
         let func: BoxBiFunctionOnce<i32, &'a str, usize> =
-            BoxBiFunctionOnce::new(|x: &i32, y: &&'a str| (*x as usize) + y.len());
+            BoxBiFunctionOnce::new(|x: &i32, y: &&'a str| {
+                (*x as usize) + y.len()
+            });
         func.apply(&3, &value)
     }
 
@@ -154,7 +162,8 @@ fn test_box_bi_function_once_new_allows_non_static_u() {
 #[test]
 fn test_box_bi_function_once_new_allows_non_static_r() {
     fn run<'a>(value: &'a str) -> &'a str {
-        let func: BoxBiFunctionOnce<&'a str, i32, &'a str> = BoxBiFunctionOnce::new(|x: &&'a str, _y: &i32| *x);
+        let func: BoxBiFunctionOnce<&'a str, i32, &'a str> =
+            BoxBiFunctionOnce::new(|x: &&'a str, _y: &i32| *x);
         func.apply(&value, &0)
     }
 
@@ -165,7 +174,8 @@ fn test_box_bi_function_once_new_allows_non_static_r() {
 #[test]
 fn test_box_bi_function_once_new_with_name() {
     // Test creating BoxBiFunctionOnce with name
-    let add = BoxBiFunctionOnce::new_with_name("adder", |x: &i32, y: &i32| *x + *y);
+    let add =
+        BoxBiFunctionOnce::new_with_name("adder", |x: &i32, y: &i32| *x + *y);
     assert_eq!(add.name(), Some("adder"));
     assert_eq!(add.apply(&3, &4), 7);
 }
@@ -173,8 +183,14 @@ fn test_box_bi_function_once_new_with_name() {
 #[test]
 fn test_box_bi_function_once_new_with_optional_name() {
     // Test creating BoxBiFunctionOnce with optional name
-    let add1 = BoxBiFunctionOnce::new_with_optional_name(|x: &i32, y: &i32| *x + *y, Some("named".to_string()));
-    let add2 = BoxBiFunctionOnce::new_with_optional_name(|x: &i32, y: &i32| *x + *y, None);
+    let add1 = BoxBiFunctionOnce::new_with_optional_name(
+        |x: &i32, y: &i32| *x + *y,
+        Some("named".to_string()),
+    );
+    let add2 = BoxBiFunctionOnce::new_with_optional_name(
+        |x: &i32, y: &i32| *x + *y,
+        None,
+    );
 
     assert_eq!(add1.name(), Some("named"));
     assert_eq!(add2.name(), None);
@@ -266,7 +282,10 @@ fn test_fn_bi_function_once_ops_and_then_with_different_types() {
     let length = |s: &String| s.len();
 
     let composed = concat.and_then(length);
-    assert_eq!(composed.apply(&String::from("hello"), &String::from("world")), 11);
+    assert_eq!(
+        composed.apply(&String::from("hello"), &String::from("world")),
+        11
+    );
 }
 
 #[test]
@@ -274,12 +293,16 @@ fn test_fn_bi_function_once_ops_when_or_else() {
     // Test when().or_else() conditional execution
     let add1 = |x: &i32, y: &i32| *x + *y;
     let multiply1 = |x: &i32, y: &i32| *x * *y;
-    let conditional1 = add1.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply1);
+    let conditional1 = add1
+        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
+        .or_else(multiply1);
     assert_eq!(conditional1.apply(&3, &4), 7); // when branch: 3 + 4 = 7
 
     let add2 = |x: &i32, y: &i32| *x + *y;
     let multiply2 = |x: &i32, y: &i32| *x * *y;
-    let conditional2 = add2.when(|x: &i32, y: &i32| *x <= 0 || *y <= 0).or_else(multiply2);
+    let conditional2 = add2
+        .when(|x: &i32, y: &i32| *x <= 0 || *y <= 0)
+        .or_else(multiply2);
     assert_eq!(conditional2.apply(&-3, &4), 1); // when branch: -3 + 4 = 1
 }
 
@@ -288,7 +311,8 @@ fn test_fn_bi_function_once_ops_when_with_box_predicate() {
     // Test when() with BoxBiPredicate
     let add1 = |x: &i32, y: &i32| *x + *y;
     let multiply1 = |x: &i32, y: &i32| *x * *y;
-    let both_positive = BoxBiPredicate::new(|x: &i32, y: &i32| *x > 0 && *y > 0);
+    let both_positive =
+        BoxBiPredicate::new(|x: &i32, y: &i32| *x > 0 && *y > 0);
 
     let conditional1 = add1.when(both_positive).or_else(multiply1);
     assert_eq!(conditional1.apply(&3, &4), 7); // when branch
@@ -324,7 +348,8 @@ fn test_fn_bi_function_once_ops_when_with_arc_predicate() {
     // Test when() with ArcBiPredicate
     let add1 = |x: &i32, y: &i32| *x + *y;
     let multiply1 = |x: &i32, y: &i32| *x * *y;
-    let both_positive = ArcBiPredicate::new(|x: &i32, y: &i32| *x > 0 && *y > 0);
+    let both_positive =
+        ArcBiPredicate::new(|x: &i32, y: &i32| *x > 0 && *y > 0);
 
     let conditional1 = add1.when(both_positive.clone()).or_else(multiply1);
     assert_eq!(conditional1.apply(&3, &4), 7); // when branch
@@ -406,17 +431,23 @@ fn test_closure_bi_function_once_when() {
     // Test closure's when method from FnBiFunctionOnceOps
     let multiply1 = |x: &i32, y: &i32| *x * *y;
     let add1 = |x: &i32, y: &i32| *x + *y;
-    let conditional1 = multiply1.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(add1);
+    let conditional1 = multiply1
+        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
+        .or_else(add1);
     assert_eq!(conditional1.apply(&3, &4), 12); // when branch: 3 * 4 = 12
 
     let multiply2 = |x: &i32, y: &i32| *x * *y;
     let add2 = |x: &i32, y: &i32| *x + *y;
-    let conditional2 = multiply2.when(|x: &i32, y: &i32| *x <= 0 || *y <= 0).or_else(add2);
+    let conditional2 = multiply2
+        .when(|x: &i32, y: &i32| *x <= 0 || *y <= 0)
+        .or_else(add2);
     assert_eq!(conditional2.apply(&-3, &4), -12); // when branch: -3 * 4 = -12
 
     let multiply3 = |x: &i32, y: &i32| *x * *y;
     let add3 = |x: &i32, y: &i32| *x + *y;
-    let conditional3 = multiply3.when(|x: &i32, y: &i32| *x > 0 && *y < 0).or_else(add3);
+    let conditional3 = multiply3
+        .when(|x: &i32, y: &i32| *x > 0 && *y < 0)
+        .or_else(add3);
     assert_eq!(conditional3.apply(&3, &-4), -12); // when branch: 3 * (-4) = -12
 }
 
@@ -429,11 +460,15 @@ fn test_box_conditional_bi_function_once_when_or_else() {
     // Test when().or_else() method
     let add1 = BoxBiFunctionOnce::new(|x: &i32, y: &i32| *x + *y);
     let multiply1 = BoxBiFunctionOnce::new(|x: &i32, y: &i32| *x * *y);
-    let conditional1 = add1.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply1);
+    let conditional1 = add1
+        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
+        .or_else(multiply1);
 
     let add2 = BoxBiFunctionOnce::new(|x: &i32, y: &i32| *x + *y);
     let multiply2 = BoxBiFunctionOnce::new(|x: &i32, y: &i32| *x * *y);
-    let conditional2 = add2.when(|x: &i32, y: &i32| *x <= 0 || *y <= 0).or_else(multiply2);
+    let conditional2 = add2
+        .when(|x: &i32, y: &i32| *x <= 0 || *y <= 0)
+        .or_else(multiply2);
 
     assert_eq!(conditional1.apply(&3, &4), 7); // when branch: 3 + 4 = 7
     assert_eq!(conditional2.apply(&-3, &4), 1); // when branch: -3 + 4 = 1
@@ -444,7 +479,8 @@ fn test_box_conditional_bi_function_once_complex_conditions() {
     // Test with more complex conditions
     let add1 = BoxBiFunctionOnce::new(|x: &i32, y: &i32| *x + *y);
     let subtract1 = BoxBiFunctionOnce::new(|x: &i32, y: &i32| *x - *y);
-    let conditional1 = add1.when(|x: &i32, y: &i32| *x >= *y).or_else(subtract1);
+    let conditional1 =
+        add1.when(|x: &i32, y: &i32| *x >= *y).or_else(subtract1);
 
     let add2 = BoxBiFunctionOnce::new(|x: &i32, y: &i32| *x + *y);
     let subtract2 = BoxBiFunctionOnce::new(|x: &i32, y: &i32| *x - *y);
@@ -457,14 +493,18 @@ fn test_box_conditional_bi_function_once_complex_conditions() {
 #[test]
 fn test_box_conditional_bi_function_once_with_string_operations() {
     // Test with string operations
-    let concat1 = BoxBiFunctionOnce::new(|x: &String, y: &String| format!("{} {}", x, y));
-    let reverse_concat1 = BoxBiFunctionOnce::new(|x: &String, y: &String| format!("{} {}", y, x));
+    let concat1 =
+        BoxBiFunctionOnce::new(|x: &String, y: &String| format!("{} {}", x, y));
+    let reverse_concat1 =
+        BoxBiFunctionOnce::new(|x: &String, y: &String| format!("{} {}", y, x));
     let conditional1 = concat1
         .when(|x: &String, y: &String| x.len() >= y.len())
         .or_else(reverse_concat1);
 
-    let concat2 = BoxBiFunctionOnce::new(|x: &String, y: &String| format!("{} {}", x, y));
-    let reverse_concat2 = BoxBiFunctionOnce::new(|x: &String, y: &String| format!("{} {}", y, x));
+    let concat2 =
+        BoxBiFunctionOnce::new(|x: &String, y: &String| format!("{} {}", x, y));
+    let reverse_concat2 =
+        BoxBiFunctionOnce::new(|x: &String, y: &String| format!("{} {}", y, x));
     let conditional2 = concat2
         .when(|x: &String, y: &String| x.len() < y.len())
         .or_else(reverse_concat2);
@@ -541,7 +581,11 @@ fn test_bi_function_once_with_custom_types() {
 fn test_bi_function_once_with_result_types() {
     // Test with Result types
     let safe_divide = |x: &i32, y: &i32| {
-        if *y == 0 { Err("Division by zero") } else { Ok(*x / *y) }
+        if *y == 0 {
+            Err("Division by zero")
+        } else {
+            Ok(*x / *y)
+        }
     };
 
     let to_string = |result: &Result<i32, &str>| match result {
@@ -551,7 +595,11 @@ fn test_bi_function_once_with_result_types() {
 
     let composed1 = safe_divide.and_then(to_string);
     let composed2 = (|x: &i32, y: &i32| {
-        if *y == 0 { Err("Division by zero") } else { Ok(*x / *y) }
+        if *y == 0 {
+            Err("Division by zero")
+        } else {
+            Ok(*x / *y)
+        }
     })
     .and_then(to_string);
     assert_eq!(composed1.apply(&10, &2), "Result: 5");
@@ -599,7 +647,8 @@ fn test_box_bi_function_once_display_without_name() {
 #[test]
 fn test_box_bi_function_once_display_with_name() {
     // Test Display implementation with name
-    let func = BoxBiFunctionOnce::new_with_name("adder", |x: &i32, y: &i32| *x + *y);
+    let func =
+        BoxBiFunctionOnce::new_with_name("adder", |x: &i32, y: &i32| *x + *y);
     let display = format!("{}", func);
     assert!(display.contains("adder"));
     assert!(display.contains("BoxBiFunctionOnce"));
@@ -654,7 +703,8 @@ fn test_bi_function_once_with_error_propagation() {
         }
     };
 
-    let multiply_by_two = |result: &Result<i32, MathError>| result.clone().map(|x| x * 2);
+    let multiply_by_two =
+        |result: &Result<i32, MathError>| result.clone().map(|x| x * 2);
 
     let composed1 = safe_divide.and_then(multiply_by_two);
     let safe_divide2 = |x: &i32, y: &i32| -> Result<i32, MathError> {
@@ -719,7 +769,8 @@ fn test_custom_bi_function_once_into_fn() {
 
 #[test]
 fn test_cloneable_custom_bi_function_once_to_box() {
-    // Test BiFunctionOnce trait default to_box method on cloneable custom implementation
+    // Test BiFunctionOnce trait default to_box method on cloneable custom
+    // implementation
     #[derive(Clone, Debug)]
     struct CloneableCustomBiFunctionOnce {
         multiplier: i32,
@@ -744,7 +795,8 @@ fn test_cloneable_custom_bi_function_once_to_box() {
 
 #[test]
 fn test_cloneable_custom_bi_function_once_to_fn() {
-    // Test BiFunctionOnce trait default to_fn method on cloneable custom implementation
+    // Test BiFunctionOnce trait default to_fn method on cloneable custom
+    // implementation
     #[derive(Clone, Debug)]
     struct CloneableCustomBiFunctionOnce {
         multiplier: i32,
@@ -852,14 +904,16 @@ fn test_bi_function_once_consumption_semantics() {
 fn test_bi_function_once_with_references() {
     // Test with complex reference patterns
     let data = vec![1, 2, 3, 4, 5];
-    let func = |slice: &[i32], index: &usize| slice.get(*index).copied().unwrap_or(0);
+    let func =
+        |slice: &[i32], index: &usize| slice.get(*index).copied().unwrap_or(0);
 
     assert_eq!(func(&data, &2), 3);
     assert_eq!(func(&data, &10), 0); // out of bounds
 }
 
 // ============================================================================
-// Custom BiFunctionOnce Implementation Tests - Comprehensive Default Methods Testing
+// Custom BiFunctionOnce Implementation Tests - Comprehensive Default Methods
+// Testing
 // ============================================================================
 
 #[test]
@@ -913,7 +967,8 @@ fn test_custom_my_bi_function_once_comprehensive() {
 
 #[test]
 fn test_custom_cloneable_my_bi_function_once_comprehensive() {
-    // Custom cloneable struct that implements BiFunctionOnce to test to_box and to_fn methods
+    // Custom cloneable struct that implements BiFunctionOnce to test to_box and
+    // to_fn methods
     #[derive(Clone, Debug)]
     struct MyCloneableCustomBiFunctionOnce {
         base_value: i32,
@@ -922,7 +977,10 @@ fn test_custom_cloneable_my_bi_function_once_comprehensive() {
 
     impl MyCloneableCustomBiFunctionOnce {
         fn new(base_value: i32, multiplier: i32) -> Self {
-            Self { base_value, multiplier }
+            Self {
+                base_value,
+                multiplier,
+            }
         }
     }
 
@@ -1027,7 +1085,8 @@ fn test_custom_my_bi_function_once_all_default_methods() {
 
 #[test]
 fn test_custom_cloneable_bi_function_once_to_box() {
-    // Test to_box method on a custom struct that implements both BiFunctionOnce and Clone
+    // Test to_box method on a custom struct that implements both BiFunctionOnce
+    // and Clone
     #[derive(Clone, Debug)]
     struct MyCloneableBiFunction {
         multiplier: i32,

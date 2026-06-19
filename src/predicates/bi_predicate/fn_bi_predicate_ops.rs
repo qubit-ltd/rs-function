@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `FnBiPredicateOps` public type.
 
@@ -34,17 +32,16 @@ use super::{
 /// assert!(pred.test(&10, &5));
 /// assert!(!pred.test(&3, &8));
 /// ```
-///
 pub trait FnBiPredicateOps<T, U>: Fn(&T, &U) -> bool + Sized {
     /// Returns a bi-predicate that represents the logical AND of this
     /// bi-predicate and another.
     ///
     /// # Parameters
     ///
-    /// * `other` - The other bi-predicate to combine with. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to
-    ///   preserve the original bi-predicate, clone it first (if it implements
-    ///   `Clone`). Can be:
+    /// * `other` - The other bi-predicate to combine with. **Note: This
+    ///   parameter is passed by value and will transfer ownership.** If you
+    ///   need to preserve the original bi-predicate, clone it first (if it
+    ///   implements `Clone`). Can be:
     ///   - Another closure: `|x: &T, y: &U| -> bool`
     ///   - A function pointer: `fn(&T, &U) -> bool`
     ///   - A `BoxBiPredicate<T, U>`
@@ -62,7 +59,9 @@ pub trait FnBiPredicateOps<T, U>: Fn(&T, &U) -> bool + Sized {
         T: 'static,
         U: 'static,
     {
-        BoxBiPredicate::new(move |first, second| self(first, second) && other.test(first, second))
+        BoxBiPredicate::new(move |first, second| {
+            self(first, second) && other.test(first, second)
+        })
     }
 
     /// Returns a bi-predicate that represents the logical OR of this
@@ -70,10 +69,10 @@ pub trait FnBiPredicateOps<T, U>: Fn(&T, &U) -> bool + Sized {
     ///
     /// # Parameters
     ///
-    /// * `other` - The other bi-predicate to combine with. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to
-    ///   preserve the original bi-predicate, clone it first (if it implements
-    ///   `Clone`). Can be:
+    /// * `other` - The other bi-predicate to combine with. **Note: This
+    ///   parameter is passed by value and will transfer ownership.** If you
+    ///   need to preserve the original bi-predicate, clone it first (if it
+    ///   implements `Clone`). Can be:
     ///   - Another closure: `|x: &T, y: &U| -> bool`
     ///   - A function pointer: `fn(&T, &U) -> bool`
     ///   - A `BoxBiPredicate<T, U>`
@@ -91,7 +90,9 @@ pub trait FnBiPredicateOps<T, U>: Fn(&T, &U) -> bool + Sized {
         T: 'static,
         U: 'static,
     {
-        BoxBiPredicate::new(move |first, second| self(first, second) || other.test(first, second))
+        BoxBiPredicate::new(move |first, second| {
+            self(first, second) || other.test(first, second)
+        })
     }
 
     /// Returns a bi-predicate that represents the logical negation of
@@ -117,10 +118,10 @@ pub trait FnBiPredicateOps<T, U>: Fn(&T, &U) -> bool + Sized {
     ///
     /// # Parameters
     ///
-    /// * `other` - The other bi-predicate to combine with. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to
-    ///   preserve the original bi-predicate, clone it first (if it implements
-    ///   `Clone`). Can be:
+    /// * `other` - The other bi-predicate to combine with. **Note: This
+    ///   parameter is passed by value and will transfer ownership.** If you
+    ///   need to preserve the original bi-predicate, clone it first (if it
+    ///   implements `Clone`). Can be:
     ///   - Another closure: `|x: &T, y: &U| -> bool`
     ///   - A function pointer: `fn(&T, &U) -> bool`
     ///   - A `BoxBiPredicate<T, U>`
@@ -149,10 +150,10 @@ pub trait FnBiPredicateOps<T, U>: Fn(&T, &U) -> bool + Sized {
     ///
     /// # Parameters
     ///
-    /// * `other` - The other bi-predicate to combine with. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to
-    ///   preserve the original bi-predicate, clone it first (if it implements
-    ///   `Clone`). Can be:
+    /// * `other` - The other bi-predicate to combine with. **Note: This
+    ///   parameter is passed by value and will transfer ownership.** If you
+    ///   need to preserve the original bi-predicate, clone it first (if it
+    ///   implements `Clone`). Can be:
     ///   - Another closure: `|x: &T, y: &U| -> bool`
     ///   - A function pointer: `fn(&T, &U) -> bool`
     ///   - A `BoxBiPredicate<T, U>`
@@ -170,7 +171,9 @@ pub trait FnBiPredicateOps<T, U>: Fn(&T, &U) -> bool + Sized {
         T: 'static,
         U: 'static,
     {
-        BoxBiPredicate::new(move |first, second| self(first, second) ^ other.test(first, second))
+        BoxBiPredicate::new(move |first, second| {
+            self(first, second) ^ other.test(first, second)
+        })
     }
 
     /// Returns a bi-predicate that represents the logical NOR (NOT
@@ -181,10 +184,10 @@ pub trait FnBiPredicateOps<T, U>: Fn(&T, &U) -> bool + Sized {
     ///
     /// # Parameters
     ///
-    /// * `other` - The other bi-predicate to combine with. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to
-    ///   preserve the original bi-predicate, clone it first (if it implements
-    ///   `Clone`). Can be:
+    /// * `other` - The other bi-predicate to combine with. **Note: This
+    ///   parameter is passed by value and will transfer ownership.** If you
+    ///   need to preserve the original bi-predicate, clone it first (if it
+    ///   implements `Clone`). Can be:
     ///   - Another closure: `|x: &T, y: &U| -> bool`
     ///   - A function pointer: `fn(&T, &U) -> bool`
     ///   - A `BoxBiPredicate<T, U>`

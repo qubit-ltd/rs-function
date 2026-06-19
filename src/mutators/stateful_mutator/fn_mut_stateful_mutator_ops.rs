@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `FnMutStatefulMutatorOps` public type.
 
@@ -46,7 +44,6 @@ use super::{
 /// result.apply(&mut value);
 /// assert_eq!(value, 20); // (5 * 2) + 10
 /// ```
-///
 pub trait FnMutStatefulMutatorOps<T>: FnMut(&mut T) + Sized {
     /// Chains another mutator in sequence
     ///
@@ -57,9 +54,9 @@ pub trait FnMutStatefulMutatorOps<T>: FnMut(&mut T) + Sized {
     /// # Parameters
     ///
     /// * `next` - The mutator to execute after the current operation. **Note:
-    ///   This parameter is passed by value and will transfer ownership.** If you
-    ///   need to preserve the original mutator, clone it first (if it implements
-    ///   `Clone`). Can be:
+    ///   This parameter is passed by value and will transfer ownership.** If
+    ///   you need to preserve the original mutator, clone it first (if it
+    ///   implements `Clone`). Can be:
     ///   - A closure: `|x: &mut T|`
     ///   - A `BoxMutator<T>`
     ///   - An `ArcMutator<T>`

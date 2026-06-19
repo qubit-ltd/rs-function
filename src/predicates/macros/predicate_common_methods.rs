@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! # Predicate Common Methods Macro
 //!
@@ -24,8 +22,8 @@
 //! # Parameters
 //!
 //! * `$struct_name<$generics>` - Struct name with generic parameters
-//! * `$fn_trait_with_bounds` - Closure trait with complete bounds
-//!   (e.g., `Fn(&T) -> bool + 'static`)
+//! * `$fn_trait_with_bounds` - Closure trait with complete bounds (e.g.,
+//!   `Fn(&T) -> bool + 'static`)
 //! * `$wrapper_expr` - Wrapper expression (uses `f` for the closure)
 //!
 //! # Usage
@@ -53,7 +51,6 @@
 //! * `name()` - Gets the name of the predicate
 //! * `set_name()` - Sets the name of the predicate
 //! * `always_true()` - Creates a predicate that always returns true
-//!
 
 /// Generates common Predicate methods (new, new_with_name, name,
 /// set_name, always_true, always_false)
@@ -70,8 +67,8 @@
 /// # Parameters
 ///
 /// * `$struct_name<$generics>` - Struct name with generic parameters
-/// * `$fn_trait_with_bounds` - Closure trait with complete bounds
-///   (e.g., `Fn(&T) -> bool + 'static`)
+/// * `$fn_trait_with_bounds` - Closure trait with complete bounds (e.g.,
+///   `Fn(&T) -> bool + 'static`)
 /// * `$wrapper_expr` - Wrapper expression (uses `f` for the closure)
 ///
 /// # Usage
@@ -100,7 +97,6 @@
 /// * `set_name()` - Sets the name of the predicate
 /// * `always_true()` - Creates a predicate that always returns true
 /// * `always_false()` - Creates a predicate that always returns false
-///
 macro_rules! impl_predicate_common_methods {
     // Single generic parameter - Predicate types
     (

@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! Demonstrates the set_name and new_with_name methods of Predicate
 
@@ -57,7 +55,8 @@ fn demo_rc_predicate() {
     println!("2. RcPredicate Naming Functionality");
 
     // Using new_with_name
-    let pred1 = RcPredicate::new_with_name("greater_than_10", |x: &i32| *x > 10);
+    let pred1 =
+        RcPredicate::new_with_name("greater_than_10", |x: &i32| *x > 10);
     println!("   Using new_with_name:");
     println!("     Name: {:?}", pred1.name());
     println!("     Test 15: {}", pred1.test(&15));

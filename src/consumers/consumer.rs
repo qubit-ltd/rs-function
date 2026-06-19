@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Consumer Types
 //!
 //! Provides implementations of non-mutating consumer interfaces for executing
@@ -32,7 +30,6 @@
 //! Compared to `StatefulConsumer`, `Consumer` does not require wrapper-level
 //! interior mutability (`Mutex`/`RefCell`), making it more efficient and easier
 //! to share.
-//!
 
 use std::rc::Rc;
 use std::sync::Arc;
@@ -93,13 +90,12 @@ pub use arc_conditional_consumer::ArcConditionalConsumer;
 /// # Auto-implementation
 ///
 /// - All closures implementing `Fn(&T)`
-/// - `BoxConsumer<T>`, `ArcConsumer<T>`,
-///   `RcConsumer<T>`
+/// - `BoxConsumer<T>`, `ArcConsumer<T>`, `RcConsumer<T>`
 ///
 /// # Features
 ///
-/// - **Unified Interface**: All non-mutating consumer types share the same `accept`
-///   method signature
+/// - **Unified Interface**: All non-mutating consumer types share the same
+///   `accept` method signature
 /// - **Auto-implementation**: Closures automatically implement this trait with
 ///   zero overhead
 /// - **Type Conversion**: Easy conversion between different ownership models
@@ -122,7 +118,6 @@ pub use arc_conditional_consumer::ArcConditionalConsumer;
 /// });
 /// apply_consumer(&box_con, &5);
 /// ```
-///
 pub trait Consumer<T> {
     /// Execute non-mutating consumption operation
     ///
@@ -194,8 +189,8 @@ pub trait Consumer<T> {
     /// **⚠️ Consumes `self`**: The original consumer will be unavailable after
     /// calling this method.
     ///
-    /// Converts a non-mutating consumer to a closure that can be used directly in
-    /// places where the standard library requires `Fn`.
+    /// Converts a non-mutating consumer to a closure that can be used directly
+    /// in places where the standard library requires `Fn`.
     ///
     /// # Returns
     ///
@@ -221,10 +216,12 @@ pub trait Consumer<T> {
 
     /// Convert to ConsumerOnce
     ///
-    /// **⚠️ Consumes `self`**: The original consumer will be unavailable after calling this method.
+    /// **⚠️ Consumes `self`**: The original consumer will be unavailable after
+    /// calling this method.
     ///
-    /// Converts a reusable non-mutating consumer to a one-time consumer that consumes itself on use.
-    /// This enables passing `Consumer` to functions that require `ConsumerOnce`.
+    /// Converts a reusable non-mutating consumer to a one-time consumer that
+    /// consumes itself on use. This enables passing `Consumer` to functions
+    /// that require `ConsumerOnce`.
     ///
     /// # Returns
     ///
@@ -316,7 +313,8 @@ pub trait Consumer<T> {
     /// Convert to ConsumerOnce without consuming self
     ///
     /// **⚠️ Requires Clone**: This method requires `Self` to implement `Clone`.
-    /// Clones the current consumer and converts the clone to a one-time consumer.
+    /// Clones the current consumer and converts the clone to a one-time
+    /// consumer.
     ///
     /// # Returns
     ///

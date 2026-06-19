@@ -1,19 +1,18 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Fn Ops Trait Macro
 //!
 //! Generate extension traits and implementations for closure types
 //!
 //! This macro generates extension traits for closure types that implement
-//! `Fn` or `FnMut`, providing `and_then`, `compose`, and `when` methods without requiring
-//! explicit wrapping as `BoxTransformer`, `RcTransformer`, or `ArcTransformer`.
+//! `Fn` or `FnMut`, providing `and_then`, `compose`, and `when` methods without
+//! requiring explicit wrapping as `BoxTransformer`, `RcTransformer`, or
+//! `ArcTransformer`.
 //!
 //! # Parameters
 //!
@@ -21,11 +20,13 @@
 //!   Examples: `(Fn(T) -> R)`, `(FnMut(T) -> R)`
 //! * `$trait_name` - Name of the extension trait (e.g., `FnTransformerOps`,
 //!   `FnStatefulTransformerOps`)
-//! * `$box_type` - Box wrapper type (e.g., `BoxTransformer`, `BoxStatefulTransformer`)
+//! * `$box_type` - Box wrapper type (e.g., `BoxTransformer`,
+//!   `BoxStatefulTransformer`)
 //! * `$chained_transformer_trait` - The name of the transformer trait that is
 //!   chained after the execution of this transformer (e.g., Transformer,
 //!   BiTransformer)
-//! * `$conditional_type` - Conditional transformer type (e.g., BoxConditionalTransformer)
+//! * `$conditional_type` - Conditional transformer type (e.g.,
+//!   BoxConditionalTransformer)
 //!
 //! # Implementation Notes
 //!
@@ -54,7 +55,6 @@
 //!     BoxConditionalStatefulTransformer
 //! );
 //! ```
-//!
 
 /// Generate extension traits and implementations for closure types
 ///
@@ -106,7 +106,6 @@
 ///     BoxConditionalStatefulTransformer
 /// );
 /// ```
-///
 macro_rules! impl_transformer_fn_ops_trait {
     (@let_self BoxStatefulTransformer, $name:ident, $value:expr) => {
         let mut $name = $value;

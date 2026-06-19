@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Box Consumer Methods Macro
 //!
 //! Generates when and and_then method implementations for Box-based Consumer
@@ -14,15 +12,16 @@
 //! Generates conditional execution when method and chaining and_then method
 //! for Box-based consumers that consume self (because Box cannot be cloned).
 //!
-//! This macro supports both single-parameter and two-parameter consumers through
-//! pattern matching on the struct signature.
+//! This macro supports both single-parameter and two-parameter consumers
+//! through pattern matching on the struct signature.
 //!
 //! # Parameters
 //!
 //! * `$struct_name<$generics>` - The struct name with its generic parameters
 //!   - Single parameter: `BoxConsumer<T>`
 //!   - Two parameters: `BoxBiConsumer<T, U>`
-//! * `$conditional_type` - The conditional consumer type for when (e.g., BoxConditionalConsumer)
+//! * `$conditional_type` - The conditional consumer type for when (e.g.,
+//!   BoxConditionalConsumer)
 //! * `$consumer_trait` - Consumer trait name (e.g., Consumer, BiConsumer)
 //!
 //! # Parameter Usage Comparison
@@ -53,7 +52,6 @@
 //! impl_box_consumer_methods!(BoxConsumer<i32>, BoxConditionalConsumer<i32>, Consumer);
 //! impl_box_consumer_methods!(BoxBiConsumer<i32, i32>, BoxConditionalBiConsumer<i32, i32>, BiConsumer);
 //! ```
-//!
 
 /// Generates when and and_then method implementations for Box-based Consumer
 ///
@@ -62,15 +60,16 @@
 /// Generates conditional execution when method and chaining and_then method
 /// for Box-based consumers that consume self (because Box cannot be cloned).
 ///
-/// This macro supports both single-parameter and two-parameter consumers through
-/// pattern matching on the struct signature.
+/// This macro supports both single-parameter and two-parameter consumers
+/// through pattern matching on the struct signature.
 ///
 /// # Parameters
 ///
 /// * `$struct_name<$generics>` - The struct name with its generic parameters
 ///   - Single parameter: `BoxConsumer<T>`
 ///   - Two parameters: `BoxBiConsumer<T, U>`
-/// * `$conditional_type` - The conditional consumer type for when (e.g., BoxConditionalConsumer)
+/// * `$conditional_type` - The conditional consumer type for when (e.g.,
+///   BoxConditionalConsumer)
 /// * `$consumer_trait` - Consumer trait name (e.g., Consumer, BiConsumer)
 ///
 /// # Parameter Usage Comparison
@@ -101,7 +100,6 @@
 /// impl_box_consumer_methods!(BoxConsumer<i32>, BoxConditionalConsumer<i32>, Consumer);
 /// impl_box_consumer_methods!(BoxBiConsumer<i32, i32>, BoxConditionalBiConsumer<i32, i32>, BiConsumer);
 /// ```
-///
 macro_rules! impl_box_consumer_methods {
     (@and_then Consumer, $struct_name:ident, $first:expr, $after:expr, $t:ident) => {{
         let first = $first;

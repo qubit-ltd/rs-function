@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Box Function Methods Macro
 //!
 //! Generates when and and_then method implementations for Box-based Function
@@ -14,8 +12,8 @@
 //! Generates conditional execution when method and chaining and_then method
 //! for Box-based functions that consume self (because Box cannot be cloned).
 //!
-//! This macro supports both single-parameter and two-parameter functions through
-//! pattern matching on the struct signature.
+//! This macro supports both single-parameter and two-parameter functions
+//! through pattern matching on the struct signature.
 //!
 //! # Parameters
 //!
@@ -58,7 +56,6 @@
 //! //     BiFunction
 //! // );
 //! ```
-//!
 
 /// Generates when and and_then method implementations for Box-based Function
 ///
@@ -67,8 +64,8 @@
 /// Generates conditional execution when method and chaining and_then method
 /// for Box-based functions that consume self (because Box cannot be cloned).
 ///
-/// This macro supports both single-parameter and two-parameter functions through
-/// pattern matching on the struct signature.
+/// This macro supports both single-parameter and two-parameter functions
+/// through pattern matching on the struct signature.
 ///
 /// # Parameters
 ///
@@ -108,7 +105,6 @@
 /// //     BiFunction
 /// // );
 /// ```
-///
 macro_rules! impl_box_function_methods {
     (@let_before BoxStatefulFunction, $name:ident, $value:expr) => {
         let mut $name = $value;

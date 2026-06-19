@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalBiConsumerOnce` public type.
 
@@ -25,8 +23,9 @@ use super::{
 
 /// BoxConditionalBiConsumerOnce struct
 ///
-/// A conditional one-time bi-consumer that only executes when a predicate is satisfied.
-/// Uses `BoxBiConsumerOnce` and `BoxBiPredicate` for single ownership semantics.
+/// A conditional one-time bi-consumer that only executes when a predicate is
+/// satisfied. Uses `BoxBiConsumerOnce` and `BoxBiPredicate` for single
+/// ownership semantics.
 ///
 /// This type is typically created by calling `BoxBiConsumerOnce::when()` and is
 /// designed to work with the `or_else()` method to create if-then-else logic.
@@ -36,7 +35,8 @@ use super::{
 /// - **Single Ownership**: Not cloneable, consumes `self` on use
 /// - **Conditional Execution**: Only consumes when predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
-/// - **Implements BiConsumerOnce**: Can be used anywhere a `BiConsumerOnce` is expected
+/// - **Implements BiConsumerOnce**: Can be used anywhere a `BiConsumerOnce` is
+///   expected
 ///
 /// # Examples
 ///
@@ -76,7 +76,6 @@ use super::{
 /// consumer.accept(&5, &3);
 /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]); // when branch executed
 /// ```
-///
 pub struct BoxConditionalBiConsumerOnce<T, U> {
     pub(super) consumer: BoxBiConsumerOnce<T, U>,
     pub(super) predicate: BoxBiPredicate<T, U>,

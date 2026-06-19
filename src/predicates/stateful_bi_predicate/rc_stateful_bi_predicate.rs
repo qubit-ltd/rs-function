@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcStatefulBiPredicate` public type.
 
@@ -37,7 +35,8 @@ pub struct RcStatefulBiPredicate<T, U> {
 }
 
 impl<T, U> RcStatefulBiPredicate<T, U> {
-    // Generates: new(), new_with_name(), name(), set_name(), always_true(), always_false()
+    // Generates: new(), new_with_name(), name(), set_name(), always_true(),
+    // always_false()
     impl_predicate_common_methods!(
         RcStatefulBiPredicate<T, U>,
         (FnMut(&T, &U) -> bool + 'static),
@@ -182,7 +181,9 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function;
-        RcStatefulBiPredicate::new(move |first, second| !((function.borrow_mut())(first, second)))
+        RcStatefulBiPredicate::new(move |first, second| {
+            !((function.borrow_mut())(first, second))
+        })
     }
 }
 
@@ -195,14 +196,17 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function.clone();
-        RcStatefulBiPredicate::new(move |first, second| !((function.borrow_mut())(first, second)))
+        RcStatefulBiPredicate::new(move |first, second| {
+            !((function.borrow_mut())(first, second))
+        })
     }
 }
 
 // Generates: impl Clone for RcStatefulBiPredicate<T, U>
 impl_predicate_clone!(RcStatefulBiPredicate<T, U>);
 
-// Generates: impl Debug for RcStatefulBiPredicate<T, U> and impl Display for RcStatefulBiPredicate<T, U>
+// Generates: impl Debug for RcStatefulBiPredicate<T, U> and impl Display for
+// RcStatefulBiPredicate<T, U>
 impl_predicate_debug_display!(RcStatefulBiPredicate<T, U>);
 
 impl<T, U> StatefulBiPredicate<T, U> for RcStatefulBiPredicate<T, U> {

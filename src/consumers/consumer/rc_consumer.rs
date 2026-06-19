@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcConsumer` public type.
 
@@ -69,7 +67,6 @@ use super::{
 /// consumer.accept(&5);
 /// clone.accept(&10);
 /// ```
-///
 pub struct RcConsumer<T> {
     pub(super) function: Rc<dyn Fn(&T)>,
     pub(super) name: Option<String>,
@@ -77,7 +74,9 @@ pub struct RcConsumer<T> {
 
 impl<T> RcConsumer<T> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
-    impl_consumer_common_methods!(RcConsumer<T>, (Fn(&T) + 'static), |f| Rc::new(f));
+    impl_consumer_common_methods!(RcConsumer<T>, (Fn(&T) + 'static), |f| {
+        Rc::new(f)
+    });
 
     // Generates: when() and and_then() methods that borrow &self (Rc can clone)
     impl_shared_consumer_methods!(

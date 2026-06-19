@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxPredicate` public type.
 
@@ -41,15 +39,19 @@ use super::{
 /// let combined = pred.and(BoxPredicate::new(|x| x % 2 == 0));
 /// assert!(combined.test(&4));
 /// ```
-///
 pub struct BoxPredicate<T> {
     pub(super) function: Box<dyn Fn(&T) -> bool>,
     pub(super) name: Option<String>,
 }
 
 impl<T> BoxPredicate<T> {
-    // Generates: new(), new_with_name(), name(), set_name(), always_true(), always_false()
-    impl_predicate_common_methods!(BoxPredicate<T>, (Fn(&T) -> bool + 'static), |f| Box::new(f));
+    // Generates: new(), new_with_name(), name(), set_name(), always_true(),
+    // always_false()
+    impl_predicate_common_methods!(
+        BoxPredicate<T>,
+        (Fn(&T) -> bool + 'static),
+        |f| Box::new(f)
+    );
 
     // Generates: and(), or(), nand(), xor(), nor()
     impl_box_predicate_methods!(BoxPredicate<T>);
@@ -66,7 +68,8 @@ where
     }
 }
 
-// Generates: impl Debug for BoxPredicate<T> and impl Display for BoxPredicate<T>
+// Generates: impl Debug for BoxPredicate<T> and impl Display for
+// BoxPredicate<T>
 impl_predicate_debug_display!(BoxPredicate<T>);
 
 // Implements Predicate trait for BoxPredicate<T>

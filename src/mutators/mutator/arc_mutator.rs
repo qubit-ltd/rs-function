@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcMutator` public type.
 
@@ -33,9 +31,9 @@ use super::{
 
 /// ArcMutator struct
 ///
-/// A stateless mutator implementation based on `Arc<dyn Fn(&mut T) + Send + Sync>`
-/// for thread-safe shared ownership scenarios. This type allows the mutator
-/// to be safely shared and used across multiple threads.
+/// A stateless mutator implementation based on `Arc<dyn Fn(&mut T) + Send +
+/// Sync>` for thread-safe shared ownership scenarios. This type allows the
+/// mutator to be safely shared and used across multiple threads.
 ///
 /// # Features
 ///
@@ -47,7 +45,8 @@ use super::{
 /// # Use Cases
 ///
 /// Choose `ArcMutator` when:
-/// - The mutator needs to be shared across multiple threads for stateless operations
+/// - The mutator needs to be shared across multiple threads for stateless
+///   operations
 /// - Concurrent task processing (e.g., thread pools)
 /// - Thread safety is required (Send + Sync)
 ///
@@ -63,15 +62,19 @@ use super::{
 /// mutator.apply(&mut value);
 /// assert_eq!(value, 10);
 /// ```
-///
 pub struct ArcMutator<T> {
     pub(super) function: ArcMutatorFn<T>,
     pub(super) name: Option<String>,
 }
 
 impl<T> ArcMutator<T> {
-    // Generate common mutator methods (new, new_with_name, name, set_name, noop)
-    impl_mutator_common_methods!(ArcMutator<T>, (Fn(&mut T) + Send + Sync + 'static), |f| { Arc::new(f) });
+    // Generate common mutator methods (new, new_with_name, name, set_name,
+    // noop)
+    impl_mutator_common_methods!(
+        ArcMutator<T>,
+        (Fn(&mut T) + Send + Sync + 'static),
+        |f| { Arc::new(f) }
+    );
 
     // Generate shared mutator methods (when, and_then, or_else, conversions)
     impl_shared_mutator_methods!(

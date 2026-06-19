@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # StatefulBiPredicate Abstraction
 //!
 //! Provides bi-predicate wrappers for closures that implement
@@ -17,7 +15,6 @@
 //! `Fn(&T, &U) -> bool` predicates and `StatefulBiPredicate` when the
 //! predicate needs native `FnMut` semantics, such as counters, rolling
 //! windows, sampling, or stateful filters over pairs of values.
-//!
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
@@ -90,7 +87,9 @@ pub trait StatefulBiPredicate<T, U> {
     where
         Self: Sized + 'static,
     {
-        BoxStatefulBiPredicate::new(move |first: &T, second: &U| self.test(first, second))
+        BoxStatefulBiPredicate::new(move |first: &T, second: &U| {
+            self.test(first, second)
+        })
     }
 
     /// Converts this bi-predicate into an `RcStatefulBiPredicate`.
@@ -105,7 +104,9 @@ pub trait StatefulBiPredicate<T, U> {
     where
         Self: Sized + 'static,
     {
-        RcStatefulBiPredicate::new(move |first: &T, second: &U| self.test(first, second))
+        RcStatefulBiPredicate::new(move |first: &T, second: &U| {
+            self.test(first, second)
+        })
     }
 
     /// Converts this bi-predicate into an `ArcStatefulBiPredicate`.
@@ -121,7 +122,9 @@ pub trait StatefulBiPredicate<T, U> {
     where
         Self: Sized + Send + 'static,
     {
-        ArcStatefulBiPredicate::new(move |first: &T, second: &U| self.test(first, second))
+        ArcStatefulBiPredicate::new(move |first: &T, second: &U| {
+            self.test(first, second)
+        })
     }
 
     /// Converts this bi-predicate into a closure implementing

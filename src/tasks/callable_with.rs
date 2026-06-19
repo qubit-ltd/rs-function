@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # CallableWith Types
 //!
 //! Provides fallible, reusable computations that operate on a mutable input.
@@ -18,7 +16,6 @@
 //!
 //! The trait itself does not require `Send`; concurrent executors should add
 //! `+ Send + 'static` at their API boundary.
-//!
 
 use crate::tasks::runnable_with::BoxRunnableWith;
 
@@ -40,7 +37,6 @@ pub use arc_callable_with::ArcCallableWith;
 /// * `T` - The mutable input type.
 /// * `R` - The success value returned by the computation.
 /// * `E` - The error value returned when the computation fails.
-///
 pub trait CallableWith<T, R, E> {
     /// Executes the computation with mutable input.
     ///

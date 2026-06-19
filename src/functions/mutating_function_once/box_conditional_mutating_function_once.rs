@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalMutatingFunctionOnce` public type.
 
@@ -29,8 +27,8 @@ use super::{
 /// satisfied. Uses `BoxMutatingFunctionOnce` and `BoxPredicate` for single
 /// ownership semantics.
 ///
-/// This type is typically created by calling `BoxMutatingFunctionOnce::when()` and
-/// is designed to work with the `or_else()` method to create if-then-else
+/// This type is typically created by calling `BoxMutatingFunctionOnce::when()`
+/// and is designed to work with the `or_else()` method to create if-then-else
 /// logic.
 ///
 /// # Features
@@ -71,7 +69,6 @@ use super::{
 /// let mut negative = -5;
 /// assert_eq!(conditional2.apply(&mut negative), 5); // or_else branch executed
 /// ```
-///
 pub struct BoxConditionalMutatingFunctionOnce<T, R> {
     pub(super) function: BoxMutatingFunctionOnce<T, R>,
     pub(super) predicate: BoxPredicate<T>,

@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # TransformerOnce Types
 //!
 //! Provides Rust implementations of consuming transformer traits similar to
@@ -17,7 +15,6 @@
 //! implementations:
 //!
 //! - [`BoxTransformerOnce`]: Single ownership, one-time use
-//!
 
 use crate::macros::{
     impl_box_once_conversions,
@@ -61,7 +58,6 @@ pub use box_conditional_transformer_once::BoxConditionalTransformerOnce;
 ///
 /// * `T` - The type of the input value (consumed)
 /// * `R` - The type of the output value
-///
 pub trait TransformerOnce<T, R> {
     /// Transforms the input value, consuming both self and input
     ///

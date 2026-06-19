@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # MutatorOnce Demo
 //!
 //! Demonstrates various usage scenarios of MutatorOnce
@@ -161,7 +159,10 @@ fn main() {
     // 7. Generic function usage
     println!("7. Generic function usage");
 
-    fn apply_transformation<M: MutatorOnce<Vec<i32>>>(mutator: M, initial: Vec<i32>) -> Vec<i32> {
+    fn apply_transformation<M: MutatorOnce<Vec<i32>>>(
+        mutator: M,
+        initial: Vec<i32>,
+    ) -> Vec<i32> {
         let mut val = initial;
         mutator.apply(&mut val);
         val

@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcRunnableWith` public type.
 
@@ -29,13 +27,13 @@ use crate::{
     },
 };
 
-type ArcRunnableWithFn<T, E> = Arc<Mutex<dyn FnMut(&mut T) -> Result<(), E> + Send>>;
+type ArcRunnableWithFn<T, E> =
+    Arc<Mutex<dyn FnMut(&mut T) -> Result<(), E> + Send>>;
 
 /// Thread-safe shared runnable with mutable input.
 ///
 /// `ArcRunnableWith<T, E>` stores an
 /// `Arc<Mutex<dyn FnMut(&mut T) -> Result<(), E> + Send>>`.
-///
 pub struct ArcRunnableWith<T, E> {
     /// The stateful closure executed by this runnable.
     pub(super) function: ArcRunnableWithFn<T, E>,

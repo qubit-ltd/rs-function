@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! # Supplier Debug Display Macro
 //!
@@ -32,7 +30,6 @@
 //! // For supplier once
 //! impl_supplier_debug_display!(BoxSupplierOnce<T>);
 //! ```
-//!
 
 /// Generates Debug and Display trait implementations for Supplier structs
 ///
@@ -58,7 +55,6 @@
 /// // For supplier once
 /// impl_supplier_debug_display!(BoxSupplierOnce<T>);
 /// ```
-///
 macro_rules! impl_supplier_debug_display {
     // Single generic parameter
     ($struct_name:ident < $t:ident >) => {
@@ -74,7 +70,9 @@ macro_rules! impl_supplier_debug_display {
         impl<$t> std::fmt::Display for $struct_name<$t> {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 match &self.name {
-                    Some(name) => write!(f, "{}({})", stringify!($struct_name), name),
+                    Some(name) => {
+                        write!(f, "{}({})", stringify!($struct_name), name)
+                    }
                     None => write!(f, "{}", stringify!($struct_name)),
                 }
             }

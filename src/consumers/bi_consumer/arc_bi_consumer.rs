@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcBiConsumer` public type.
 
@@ -43,8 +41,7 @@ use super::{
 /// - **Shared Ownership**: Cloneable via `Arc`, multiple owners allowed
 /// - **Thread-Safe**: Implements `Send + Sync`, safe for concurrent use
 /// - **Lock-free Wrapper**: No Mutex protection needed by the wrapper
-/// - **Non-Consuming API**: `and_then` borrows `&self`, original remains
-///   usable
+/// - **Non-Consuming API**: `and_then` borrows `&self`, original remains usable
 ///
 /// # Use Cases
 ///
@@ -72,7 +69,6 @@ use super::{
 /// consumer.accept(&5, &3);
 /// clone.accept(&10, &20);
 /// ```
-///
 pub struct ArcBiConsumer<T, U> {
     pub(super) function: Arc<ThreadSafeBiConsumerFn<T, U>>,
     pub(super) name: Option<String>,
@@ -86,7 +82,8 @@ impl<T, U> ArcBiConsumer<T, U> {
         |f| Arc::new(f)
     );
 
-    // Generates: when() and and_then() methods that borrow &self (Arc can clone)
+    // Generates: when() and and_then() methods that borrow &self (Arc can
+    // clone)
     impl_shared_consumer_methods!(
         ArcBiConsumer<T, U>,
         ArcConditionalBiConsumer,

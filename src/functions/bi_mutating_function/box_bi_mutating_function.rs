@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxBiMutatingFunction` public type.
 
@@ -39,9 +37,9 @@ type BoxBiMutatingFunctionFn<T, U, R> = Box<dyn Fn(&mut T, &mut U) -> R>;
 ///
 /// - **Based on**: `Box<dyn Fn(&mut T, &mut U) -> R>`
 /// - **Ownership**: Single ownership, cannot be cloned
-/// - **Reusability**: Can be called multiple times (borrows inputs mutably each time)
+/// - **Reusability**: Can be called multiple times (borrows inputs mutably each
+///   time)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
-///
 pub struct BoxBiMutatingFunction<T, U, R> {
     pub(super) function: BoxBiMutatingFunctionFn<T, U, R>,
     pub(super) name: Option<String>,
@@ -49,7 +47,8 @@ pub struct BoxBiMutatingFunction<T, U, R> {
 
 // Implement BoxBiMutatingFunction
 impl<T, U, R> BoxBiMutatingFunction<T, U, R> {
-    // Generates: new(), new_with_name(), new_with_optional_name(), name(), set_name()
+    // Generates: new(), new_with_name(), new_with_optional_name(), name(),
+    // set_name()
     impl_function_common_methods!(
         BoxBiMutatingFunction<T, U, R>,
         (Fn(&mut T, &mut U) -> R + 'static),

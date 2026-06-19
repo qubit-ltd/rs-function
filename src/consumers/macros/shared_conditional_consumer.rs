@@ -1,24 +1,24 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Shared Conditional Consumer Macro
 //!
 //! Generates Arc/Rc-based Conditional Consumer implementations
 //!
-//! For Arc/Rc-based conditional consumers, generates `and_then` and `or_else` methods,
-//! as well as complete Consumer/BiConsumer trait implementations.
+//! For Arc/Rc-based conditional consumers, generates `and_then` and `or_else`
+//! methods, as well as complete Consumer/BiConsumer trait implementations.
 //!
 //! Arc/Rc type characteristics:
 //! - `and_then` and `or_else` borrow &self (because Arc/Rc can Clone)
 //! - Uses trait default implementations for `into_arc()` and `to_arc()`
-//! - Arc types will work with `into_arc()` and `to_arc()` (satisfy Send + Sync constraints)
-//! - Rc types will get compile errors if trying to use `into_arc()` or `to_arc()` (don't satisfy Send + Sync)
+//! - Arc types will work with `into_arc()` and `to_arc()` (satisfy Send + Sync
+//!   constraints)
+//! - Rc types will get compile errors if trying to use `into_arc()` or
+//!   `to_arc()` (don't satisfy Send + Sync)
 //! - Implement complete `to_xxx()` methods (because they can Clone)
 //!
 //! # Parameters
@@ -26,7 +26,8 @@
 //! * `$struct_name<$generics>` - Struct name with generic parameters
 //! * `$consumer_type` - Consumer wrapper type name
 //! * `$consumer_trait` - Consumer trait name
-//! * `$predicate_conversion` - Predicate conversion method (into_arc or into_rc)
+//! * `$predicate_conversion` - Predicate conversion method (into_arc or
+//!   into_rc)
 //! * `$extra_bounds` - Extra trait bounds
 //!
 //! # Usage Examples
@@ -68,20 +69,21 @@
 //!     'static
 //! );
 //! ```
-//!
 
 /// Generates Arc/Rc-based Conditional Consumer implementations
 ///
 /// This macro should be used at the top level (outside of any impl block) as
 /// it generates a complete impl block with methods for the specified struct.
-/// For Arc/Rc-based conditional consumers, generates `and_then` and `or_else` methods,
-/// as well as complete Consumer/BiConsumer trait implementations.
+/// For Arc/Rc-based conditional consumers, generates `and_then` and `or_else`
+/// methods, as well as complete Consumer/BiConsumer trait implementations.
 ///
 /// Arc/Rc type characteristics:
 /// - `and_then` and `or_else` borrow &self (because Arc/Rc can Clone)
 /// - Uses trait default implementations for `into_arc()` and `to_arc()`
-/// - Arc types will work with `into_arc()` and `to_arc()` (satisfy Send + Sync constraints)
-/// - Rc types will get compile errors if trying to use `into_arc()` or `to_arc()` (don't satisfy Send + Sync)
+/// - Arc types will work with `into_arc()` and `to_arc()` (satisfy Send + Sync
+///   constraints)
+/// - Rc types will get compile errors if trying to use `into_arc()` or
+///   `to_arc()` (don't satisfy Send + Sync)
 /// - Implement complete `to_xxx()` methods (because they can Clone)
 ///
 /// # Parameters
@@ -89,7 +91,8 @@
 /// * `$struct_name<$generics>` - Struct name with generic parameters
 /// * `$consumer_type` - Consumer wrapper type name
 /// * `$consumer_trait` - Consumer trait name
-/// * `$predicate_conversion` - Predicate conversion method (into_arc or into_rc)
+/// * `$predicate_conversion` - Predicate conversion method (into_arc or
+///   into_rc)
 /// * `$extra_bounds` - Extra trait bounds
 ///
 /// # Usage Examples
@@ -145,7 +148,6 @@
 ///     let _ = (*x, *y);
 /// }));
 /// ```
-///
 macro_rules! impl_shared_conditional_consumer {
     (@let_consumer Consumer, $name:ident, $value:expr) => {
         let $name = $value;

@@ -1,16 +1,14 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! Demonstrates the usage of FnTransformerOnceOps extension trait
 //!
-//! This example shows how to directly use and_then and when methods on FnOnce closures,
-//! without explicitly wrapping them in BoxTransformerOnce.
+//! This example shows how to directly use and_then and when methods on FnOnce
+//! closures, without explicitly wrapping them in BoxTransformerOnce.
 
 use qubit_function::{
     FnTransformerOnceOps,
@@ -74,7 +72,9 @@ fn main() {
         .and_then(double.when(|x: &i32| *x > 5).or_else(triple))
         .and_then(to_string);
 
-    println!("   parse.and_then(double.when(x > 5).or_else(triple)).and_then(to_string):");
+    println!(
+        "   parse.and_then(double.when(x > 5).or_else(triple)).and_then(to_string):"
+    );
     println!("     transform(\"3\") = {}", complex.apply("3".to_string())); // 3 <= 5, so 3 * 3 = 9
 
     let parse2 = |s: String| s.parse::<i32>().unwrap_or(0);

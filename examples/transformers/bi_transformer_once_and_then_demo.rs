@@ -1,15 +1,14 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! BoxBiTransformerOnce and_then method example
 //!
-//! Demonstrates how to use BoxBiTransformerOnce's and_then method for chained composition.
+//! Demonstrates how to use BoxBiTransformerOnce's and_then method for chained
+//! composition.
 
 use qubit_function::{
     BiTransformerOnce,
@@ -52,7 +51,9 @@ fn main() {
 
     // Example 4: String operations
     println!("Example 4: String operations");
-    let concat = BoxBiTransformerOnce::new(|x: String, y: String| format!("{} {}", x, y));
+    let concat = BoxBiTransformerOnce::new(|x: String, y: String| {
+        format!("{} {}", x, y)
+    });
     let uppercase = |s: String| s.to_uppercase();
     let composed4 = concat.and_then(uppercase);
     let result4 = composed4.apply("hello".to_string(), "world".to_string());
@@ -72,7 +73,10 @@ fn main() {
 
     // Example 6: Complex business logic
     println!("Example 6: Complex business logic");
-    let calculate_total = BoxBiTransformerOnce::new(|price: f64, quantity: i32| price * quantity as f64);
+    let calculate_total =
+        BoxBiTransformerOnce::new(|price: f64, quantity: i32| {
+            price * quantity as f64
+        });
     let apply_discount = |total: f64| {
         if total > 100.0 {
             total * 0.9 // 10% discount
@@ -81,7 +85,9 @@ fn main() {
         }
     };
     let format_price = |total: f64| format!("${:.2}", total);
-    let composed6 = calculate_total.and_then(apply_discount).and_then(format_price);
+    let composed6 = calculate_total
+        .and_then(apply_discount)
+        .and_then(format_price);
     let result6 = composed6.apply(15.5, 8);
     println!("  Price: $15.5, Quantity: 8");
     println!("  Total price (with discount): {}", result6);

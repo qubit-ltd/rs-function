@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 use qubit_function::{
     ArcPredicate,
     BoxPredicate,
@@ -115,7 +113,8 @@ fn main() {
     // Scenario 1: Default pass-all filter
     let numbers = vec![1, 2, 3, 4, 5];
     let pass_all = BoxPredicate::<i32>::always_true();
-    let filtered: Vec<_> = numbers.iter().copied().filter(pass_all.into_fn()).collect();
+    let filtered: Vec<_> =
+        numbers.iter().copied().filter(pass_all.into_fn()).collect();
     println!("Default pass all elements: {:?} -> {:?}", numbers, filtered);
 
     // Scenario 2: Default reject-all filter

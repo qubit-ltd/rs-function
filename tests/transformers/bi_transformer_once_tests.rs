@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Tests for BiTransformerOnce trait and implementations
 
@@ -36,8 +34,15 @@ mod trait_tests {
         #[derive(Clone, Debug)]
         struct BorrowedRcBiTransformerOnce;
 
-        impl<'a> BiTransformerOnce<BorrowedRc<'a>, BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcBiTransformerOnce {
-            fn apply(self, first: BorrowedRc<'a>, second: BorrowedRc<'a>) -> BorrowedRc<'a> {
+        impl<'a>
+            BiTransformerOnce<BorrowedRc<'a>, BorrowedRc<'a>, BorrowedRc<'a>>
+            for BorrowedRcBiTransformerOnce
+        {
+            fn apply(
+                self,
+                first: BorrowedRc<'a>,
+                second: BorrowedRc<'a>,
+            ) -> BorrowedRc<'a> {
                 assert_eq!(second.value, "right");
                 first
             }
@@ -49,8 +54,12 @@ mod trait_tests {
 
         let left = String::from("left");
         let right = String::from("right");
-        let first = || BorrowedRc { value: left.as_str() };
-        let second = || BorrowedRc { value: right.as_str() };
+        let first = || BorrowedRc {
+            value: left.as_str(),
+        };
+        let second = || BorrowedRc {
+            value: right.as_str(),
+        };
         let transformer = BorrowedRcBiTransformerOnce;
 
         assert_left(transformer.clone().into_box().apply(first(), second()));
@@ -170,7 +179,10 @@ mod trait_tests {
         };
         let concat = move |x: String, y: String| op.call(x, y);
         let boxed = concat.to_box();
-        assert_eq!(boxed.apply("hello".to_string(), "world".to_string()), "hello-world");
+        assert_eq!(
+            boxed.apply("hello".to_string(), "world".to_string()),
+            "hello-world"
+        );
         // Original closure still usable
         assert_eq!(concat("foo".to_string(), "bar".to_string()), "foo-bar");
     }
@@ -256,9 +268,15 @@ mod trait_default_impl_tests {
             separator: " | ".to_string(),
         };
         let boxed = transformer.to_box();
-        assert_eq!(boxed.apply("hello".to_string(), "world".to_string()), "hello | world");
+        assert_eq!(
+            boxed.apply("hello".to_string(), "world".to_string()),
+            "hello | world"
+        );
         // Original transformer still usable
-        assert_eq!(transformer.apply("foo".to_string(), "bar".to_string()), "foo | bar");
+        assert_eq!(
+            transformer.apply("foo".to_string(), "bar".to_string()),
+            "foo | bar"
+        );
     }
 
     #[test]
@@ -328,8 +346,13 @@ mod box_bi_transformer_once_tests {
 
     #[test]
     fn test_new_with_string() {
-        let concat = BoxBiTransformerOnce::new(|x: String, y: String| format!("{} {}", x, y));
-        assert_eq!(concat.apply("hello".to_string(), "world".to_string()), "hello world");
+        let concat = BoxBiTransformerOnce::new(|x: String, y: String| {
+            format!("{} {}", x, y)
+        });
+        assert_eq!(
+            concat.apply("hello".to_string(), "world".to_string()),
+            "hello world"
+        );
     }
 
     #[test]
@@ -346,7 +369,9 @@ mod box_bi_transformer_once_tests {
 
     #[test]
     fn test_transform_consumes_inputs() {
-        let concat = BoxBiTransformerOnce::new(|x: String, y: String| format!("{}-{}", x, y));
+        let concat = BoxBiTransformerOnce::new(|x: String, y: String| {
+            format!("{}-{}", x, y)
+        });
         let s1 = String::from("hello");
         let s2 = String::from("world");
         let result = concat.apply(s1, s2);
@@ -395,10 +420,15 @@ mod box_bi_transformer_once_tests {
 
     #[test]
     fn test_and_then_with_string_transformation() {
-        let concat = BoxBiTransformerOnce::new(|x: String, y: String| format!("{} {}", x, y));
+        let concat = BoxBiTransformerOnce::new(|x: String, y: String| {
+            format!("{} {}", x, y)
+        });
         let uppercase = |s: String| s.to_uppercase();
         let composed = concat.and_then(uppercase);
-        assert_eq!(composed.apply("hello".to_string(), "world".to_string()), "HELLO WORLD");
+        assert_eq!(
+            composed.apply("hello".to_string(), "world".to_string()),
+            "HELLO WORLD"
+        );
     }
 
     #[test]
@@ -411,7 +441,10 @@ mod box_bi_transformer_once_tests {
 
     #[test]
     fn test_display_with_name() {
-        let transformer = BoxBiTransformerOnce::new_with_name("multiply", |x: i32, y: i32| x * y);
+        let transformer = BoxBiTransformerOnce::new_with_name(
+            "multiply",
+            |x: i32, y: i32| x * y,
+        );
         let display_str = format!("{}", transformer);
         assert_eq!(display_str, "BoxBiTransformerOnce(multiply)");
     }
@@ -439,7 +472,9 @@ mod conditional_tests {
     fn test_when_with_or_else_condition_true() {
         let add = BoxBiTransformerOnce::new(|x: i32, y: i32| x + y);
         let multiply = BoxBiTransformerOnce::new(|x: i32, y: i32| x * y);
-        let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply);
+        let conditional = add
+            .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
+            .or_else(multiply);
         assert_eq!(conditional.apply(5, 3), 8); // add
     }
 
@@ -447,7 +482,9 @@ mod conditional_tests {
     fn test_when_with_or_else_condition_false() {
         let add = BoxBiTransformerOnce::new(|x: i32, y: i32| x + y);
         let multiply = BoxBiTransformerOnce::new(|x: i32, y: i32| x * y);
-        let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply);
+        let conditional = add
+            .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
+            .or_else(multiply);
         assert_eq!(conditional.apply(-5, 3), -15); // multiply
     }
 
@@ -471,31 +508,49 @@ mod conditional_tests {
 
     #[test]
     fn test_when_with_complex_predicate() {
-        let concat = BoxBiTransformerOnce::new(|x: String, y: String| format!("{}-{}", x, y));
-        let reverse_concat = BoxBiTransformerOnce::new(|x: String, y: String| format!("{}-{}", y, x));
+        let concat = BoxBiTransformerOnce::new(|x: String, y: String| {
+            format!("{}-{}", x, y)
+        });
+        let reverse_concat =
+            BoxBiTransformerOnce::new(|x: String, y: String| {
+                format!("{}-{}", y, x)
+            });
         let conditional = concat
             .when(|x: &String, y: &String| x.len() > y.len())
             .or_else(reverse_concat);
 
-        assert_eq!(conditional.apply("hello".to_string(), "hi".to_string()), "hello-hi");
+        assert_eq!(
+            conditional.apply("hello".to_string(), "hi".to_string()),
+            "hello-hi"
+        );
     }
 
     #[test]
     fn test_when_with_complex_predicate_false() {
-        let concat = BoxBiTransformerOnce::new(|x: String, y: String| format!("{}-{}", x, y));
-        let reverse_concat = BoxBiTransformerOnce::new(|x: String, y: String| format!("{}-{}", y, x));
+        let concat = BoxBiTransformerOnce::new(|x: String, y: String| {
+            format!("{}-{}", x, y)
+        });
+        let reverse_concat =
+            BoxBiTransformerOnce::new(|x: String, y: String| {
+                format!("{}-{}", y, x)
+            });
         let conditional = concat
             .when(|x: &String, y: &String| x.len() > y.len())
             .or_else(reverse_concat);
 
-        assert_eq!(conditional.apply("hi".to_string(), "hello".to_string()), "hello-hi");
+        assert_eq!(
+            conditional.apply("hi".to_string(), "hello".to_string()),
+            "hello-hi"
+        );
     }
 
     #[test]
     fn test_when_both_inputs_zero() {
         let add = BoxBiTransformerOnce::new(|x: i32, y: i32| x + y);
         let constant = BoxBiTransformerOnce::constant(0);
-        let conditional = add.when(|x: &i32, y: &i32| *x != 0 || *y != 0).or_else(constant);
+        let conditional = add
+            .when(|x: &i32, y: &i32| *x != 0 || *y != 0)
+            .or_else(constant);
         assert_eq!(conditional.apply(0, 0), 0); // constant
     }
 
@@ -503,7 +558,9 @@ mod conditional_tests {
     fn test_when_one_input_zero() {
         let add = BoxBiTransformerOnce::new(|x: i32, y: i32| x + y);
         let constant = BoxBiTransformerOnce::constant(0);
-        let conditional = add.when(|x: &i32, y: &i32| *x != 0 || *y != 0).or_else(constant);
+        let conditional = add
+            .when(|x: &i32, y: &i32| *x != 0 || *y != 0)
+            .or_else(constant);
         assert_eq!(conditional.apply(5, 0), 5); // add
     }
 }
@@ -533,41 +590,61 @@ mod type_tests {
 
     #[test]
     fn test_with_strings() {
-        let concat = BoxBiTransformerOnce::new(|x: String, y: String| format!("{}{}", x, y));
-        assert_eq!(concat.apply("hello".to_string(), "world".to_string()), "helloworld");
+        let concat = BoxBiTransformerOnce::new(|x: String, y: String| {
+            format!("{}{}", x, y)
+        });
+        assert_eq!(
+            concat.apply("hello".to_string(), "world".to_string()),
+            "helloworld"
+        );
     }
 
     #[test]
     fn test_with_mixed_types() {
-        let format_pair = BoxBiTransformerOnce::new(|x: i32, y: String| format!("number: {}, text: {}", x, y));
-        assert_eq!(format_pair.apply(42, "hello".to_string()), "number: 42, text: hello");
+        let format_pair = BoxBiTransformerOnce::new(|x: i32, y: String| {
+            format!("number: {}, text: {}", x, y)
+        });
+        assert_eq!(
+            format_pair.apply(42, "hello".to_string()),
+            "number: 42, text: hello"
+        );
     }
 
     #[test]
     fn test_with_vectors() {
-        let merge = BoxBiTransformerOnce::new(|mut x: Vec<i32>, y: Vec<i32>| {
-            x.extend(y);
-            x
-        });
+        let merge =
+            BoxBiTransformerOnce::new(|mut x: Vec<i32>, y: Vec<i32>| {
+                x.extend(y);
+                x
+            });
         assert_eq!(merge.apply(vec![1, 2], vec![3, 4]), vec![1, 2, 3, 4]);
     }
 
     #[test]
     fn test_with_options() {
-        let combine = BoxBiTransformerOnce::new(|x: Option<i32>, y: Option<i32>| match (x, y) {
-            (Some(a), Some(b)) => Some(a + b),
-            (Some(a), None) => Some(a),
-            (None, Some(b)) => Some(b),
-            (None, None) => None,
-        });
+        let combine = BoxBiTransformerOnce::new(
+            |x: Option<i32>, y: Option<i32>| match (x, y) {
+                (Some(a), Some(b)) => Some(a + b),
+                (Some(a), None) => Some(a),
+                (None, Some(b)) => Some(b),
+                (None, None) => None,
+            },
+        );
         assert_eq!(combine.apply(Some(5), Some(3)), Some(8));
     }
 
     #[test]
     fn test_with_tuples() {
-        let swap = BoxBiTransformerOnce::new(|x: (i32, String), y: (String, i32)| ((y.1, x.1), (x.0, y.0)));
-        let result = swap.apply((42, "hello".to_string()), ("world".to_string(), 99));
-        assert_eq!(result, ((99, "hello".to_string()), (42, "world".to_string())));
+        let swap =
+            BoxBiTransformerOnce::new(|x: (i32, String), y: (String, i32)| {
+                ((y.1, x.1), (x.0, y.0))
+            });
+        let result =
+            swap.apply((42, "hello".to_string()), ("world".to_string(), 99));
+        assert_eq!(
+            result,
+            ((99, "hello".to_string()), (42, "world".to_string()))
+        );
     }
 }
 
@@ -584,7 +661,9 @@ mod edge_case_tests {
 
     #[test]
     fn test_with_empty_strings() {
-        let concat = BoxBiTransformerOnce::new(|x: String, y: String| format!("{}{}", x, y));
+        let concat = BoxBiTransformerOnce::new(|x: String, y: String| {
+            format!("{}{}", x, y)
+        });
         assert_eq!(concat.apply(String::new(), String::new()), String::new());
     }
 
@@ -614,8 +693,13 @@ mod edge_case_tests {
 
     #[test]
     fn test_with_unicode_strings() {
-        let concat = BoxBiTransformerOnce::new(|x: String, y: String| format!("{}{}", x, y));
-        assert_eq!(concat.apply("Hello".to_string(), "World".to_string()), "HelloWorld");
+        let concat = BoxBiTransformerOnce::new(|x: String, y: String| {
+            format!("{}{}", x, y)
+        });
+        assert_eq!(
+            concat.apply("Hello".to_string(), "World".to_string()),
+            "HelloWorld"
+        );
     }
 }
 
@@ -632,13 +716,18 @@ mod complex_transformation_tests {
 
     #[test]
     fn test_nested_structure_transformation() {
-        let merge_nested = BoxBiTransformerOnce::new(|x: Vec<Vec<i32>>, y: Vec<Vec<i32>>| -> Vec<Vec<i32>> {
-            let mut result = x;
-            result.extend(y);
-            result
-        });
+        let merge_nested = BoxBiTransformerOnce::new(
+            |x: Vec<Vec<i32>>, y: Vec<Vec<i32>>| -> Vec<Vec<i32>> {
+                let mut result = x;
+                result.extend(y);
+                result
+            },
+        );
         assert_eq!(
-            merge_nested.apply(vec![vec![1, 2], vec![3, 4]], vec![vec![5, 6], vec![7, 8]]),
+            merge_nested.apply(
+                vec![vec![1, 2], vec![3, 4]],
+                vec![vec![5, 6], vec![7, 8]]
+            ),
             vec![vec![1, 2], vec![3, 4], vec![5, 6], vec![7, 8]]
         );
     }
@@ -666,8 +755,10 @@ mod complex_transformation_tests {
 
     #[test]
     fn test_conditional_with_complex_logic() {
-        let complex_add = BoxBiTransformerOnce::new(|x: i32, y: i32| x + y + 10);
-        let complex_multiply = BoxBiTransformerOnce::new(|x: i32, y: i32| x * y - 5);
+        let complex_add =
+            BoxBiTransformerOnce::new(|x: i32, y: i32| x + y + 10);
+        let complex_multiply =
+            BoxBiTransformerOnce::new(|x: i32, y: i32| x * y - 5);
         let conditional = complex_add
             .when(|x: &i32, y: &i32| (*x + *y) % 2 == 0)
             .or_else(complex_multiply);
@@ -677,8 +768,10 @@ mod complex_transformation_tests {
 
     #[test]
     fn test_conditional_with_complex_logic_odd() {
-        let complex_add = BoxBiTransformerOnce::new(|x: i32, y: i32| x + y + 10);
-        let complex_multiply = BoxBiTransformerOnce::new(|x: i32, y: i32| x * y - 5);
+        let complex_add =
+            BoxBiTransformerOnce::new(|x: i32, y: i32| x + y + 10);
+        let complex_multiply =
+            BoxBiTransformerOnce::new(|x: i32, y: i32| x * y - 5);
         let conditional = complex_add
             .when(|x: &i32, y: &i32| (*x + *y) % 2 == 0)
             .or_else(complex_multiply);
@@ -700,7 +793,9 @@ mod ownership_tests {
 
     #[test]
     fn test_consumes_owned_values() {
-        let concat = BoxBiTransformerOnce::new(|x: String, y: String| format!("{}-{}", x, y));
+        let concat = BoxBiTransformerOnce::new(|x: String, y: String| {
+            format!("{}-{}", x, y)
+        });
         let s1 = String::from("hello");
         let s2 = String::from("world");
         let result = concat.apply(s1, s2);
@@ -710,10 +805,11 @@ mod ownership_tests {
 
     #[test]
     fn test_consumes_vectors() {
-        let merge = BoxBiTransformerOnce::new(|mut x: Vec<i32>, y: Vec<i32>| {
-            x.extend(y);
-            x
-        });
+        let merge =
+            BoxBiTransformerOnce::new(|mut x: Vec<i32>, y: Vec<i32>| {
+                x.extend(y);
+                x
+            });
         let v1 = vec![1, 2, 3];
         let v2 = vec![4, 5, 6];
         let result = merge.apply(v1, v2);
@@ -724,7 +820,9 @@ mod ownership_tests {
     #[test]
     fn test_closure_captures_and_consumes() {
         let prefix = String::from("Result: ");
-        let concat = BoxBiTransformerOnce::new(move |x: String, y: String| format!("{}{}-{}", prefix, x, y));
+        let concat = BoxBiTransformerOnce::new(move |x: String, y: String| {
+            format!("{}{}-{}", prefix, x, y)
+        });
         let result = concat.apply("hello".to_string(), "world".to_string());
         assert_eq!(result, "Result: hello-world");
         // prefix is moved into closure

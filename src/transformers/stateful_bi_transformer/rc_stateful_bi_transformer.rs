@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcStatefulBiTransformer` public type.
 
@@ -44,7 +42,6 @@ use super::{
 ///   inputs)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync`)
 /// - **Clonable**: Cheap cloning via `Rc::clone`
-///
 pub struct RcStatefulBiTransformer<T, U, R> {
     pub(super) function: Rc<RefCell<dyn FnMut(T, U) -> R>>,
     pub(super) name: Option<String>,
@@ -76,7 +73,9 @@ impl_transformer_debug_display!(RcStatefulBiTransformer<T, U, R>);
 impl_transformer_clone!(RcStatefulBiTransformer<T, U, R>);
 
 // Implement StatefulBiTransformer trait for RcStatefulBiTransformer
-impl<T, U, R> StatefulBiTransformer<T, U, R> for RcStatefulBiTransformer<T, U, R> {
+impl<T, U, R> StatefulBiTransformer<T, U, R>
+    for RcStatefulBiTransformer<T, U, R>
+{
     fn apply(&mut self, first: T, second: U) -> R {
         let mut self_fn = self.function.borrow_mut();
         self_fn(first, second)

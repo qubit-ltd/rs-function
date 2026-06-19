@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalStatefulConsumer` public type.
 
@@ -28,10 +26,12 @@ use super::{
 /// BoxConditionalStatefulConsumer struct
 ///
 /// A conditional consumer that only executes when a predicate is satisfied.
-/// Uses `BoxStatefulConsumer` and `BoxPredicate` for single ownership semantics.
+/// Uses `BoxStatefulConsumer` and `BoxPredicate` for single ownership
+/// semantics.
 ///
-/// This type is typically created by calling `BoxStatefulConsumer::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
+/// This type is typically created by calling `BoxStatefulConsumer::when()` and
+/// is designed to work with the `or_else()` method to create if-then-else
+/// logic.
 ///
 /// # Features
 ///
@@ -85,7 +85,6 @@ use super::{
 /// consumer.accept(&-5);
 /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5, 5]); // or_else branch executed
 /// ```
-///
 pub struct BoxConditionalStatefulConsumer<T> {
     pub(super) consumer: BoxStatefulConsumer<T>,
     pub(super) predicate: BoxPredicate<T>,
@@ -102,7 +101,11 @@ impl<T> StatefulConsumer<T> for BoxConditionalStatefulConsumer<T> {
     }
 
     // Generates: into_box(), into_rc(), into_fn()
-    impl_conditional_consumer_conversions!(BoxStatefulConsumer<T>, RcStatefulConsumer, FnMut);
+    impl_conditional_consumer_conversions!(
+        BoxStatefulConsumer<T>,
+        RcStatefulConsumer,
+        FnMut
+    );
 }
 
 // Use macro to generate Debug and Display implementations

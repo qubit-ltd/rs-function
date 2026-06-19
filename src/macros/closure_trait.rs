@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 /// Implement trait for closures with automatic type inference
 ///
@@ -16,10 +14,12 @@
 ///
 /// # Parameters
 ///
-/// * `$trait_name<$(generics),*>` - Full trait name with generics (e.g., `Consumer<T>`, `Function<T, R>`)
+/// * `$trait_name<$(generics),*>` - Full trait name with generics (e.g.,
+///   `Consumer<T>`, `Function<T, R>`)
 /// * `$method_name` - Core method name (e.g., `accept`, `apply`, `test`)
 /// * `$once_type` - Optional once wrapper type (e.g., `BoxConsumerOnce`)
-/// * `$fn_signature` - Function signature (e.g., `Fn(value: &T)`, `FnMut(input: &T) -> R`)
+/// * `$fn_signature` - Function signature (e.g., `Fn(value: &T)`, `FnMut(input:
+///   &T) -> R`)
 ///
 /// # Generated implementation
 ///
@@ -64,7 +64,6 @@
 /// //     FnMut(value: &i32)
 /// // );
 /// ```
-///
 macro_rules! impl_closure_trait {
   // ==================== Helper macro: generate into_once methods ====================
 

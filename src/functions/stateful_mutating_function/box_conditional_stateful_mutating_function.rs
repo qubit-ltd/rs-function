@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalStatefulMutatingFunction` public type.
 
@@ -20,16 +18,19 @@ use super::{
 };
 
 // ============================================================================
-// BoxConditionalStatefulMutatingFunction - Box-based Conditional Stateful Mutating Function
+// BoxConditionalStatefulMutatingFunction - Box-based Conditional Stateful
+// Mutating Function
 // ============================================================================
 
 /// BoxConditionalStatefulMutatingFunction struct
 ///
 /// A conditional function that only executes when a predicate is satisfied.
-/// Uses `BoxStatefulMutatingFunction` and `BoxPredicate` for single ownership semantics.
+/// Uses `BoxStatefulMutatingFunction` and `BoxPredicate` for single ownership
+/// semantics.
 ///
-/// This type is typically created by calling `BoxStatefulMutatingFunction::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
+/// This type is typically created by calling
+/// `BoxStatefulMutatingFunction::when()` and is designed to work with the
+/// `or_else()` method to create if-then-else logic.
 ///
 /// # Features
 ///
@@ -60,7 +61,6 @@ use super::{
 /// assert_eq!(conditional.apply(&mut positive), 10); // when branch executed
 /// assert_eq!(conditional.apply(&mut negative), 5); // or_else branch executed
 /// ```
-///
 pub struct BoxConditionalStatefulMutatingFunction<T, R> {
     pub(super) function: BoxStatefulMutatingFunction<T, R>,
     pub(super) predicate: BoxPredicate<T>,

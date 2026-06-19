@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulMutator` public type.
 
@@ -66,17 +64,24 @@ use super::{
 /// mutator.apply(&mut value);
 /// assert_eq!(value, 10);
 /// ```
-///
 pub struct BoxStatefulMutator<T> {
     pub(super) function: Box<dyn FnMut(&mut T)>,
     pub(super) name: Option<String>,
 }
 
 impl<T> BoxStatefulMutator<T> {
-    impl_mutator_common_methods!(BoxStatefulMutator<T>, (FnMut(&mut T) + 'static), |f| { Box::new(f) });
+    impl_mutator_common_methods!(
+        BoxStatefulMutator<T>,
+        (FnMut(&mut T) + 'static),
+        |f| { Box::new(f) }
+    );
 
     // Generate box mutator methods (when, and_then, or_else, etc.)
-    impl_box_mutator_methods!(BoxStatefulMutator<T>, BoxConditionalStatefulMutator, StatefulMutator);
+    impl_box_mutator_methods!(
+        BoxStatefulMutator<T>,
+        BoxConditionalStatefulMutator,
+        StatefulMutator
+    );
 }
 
 impl<T> StatefulMutator<T> for BoxStatefulMutator<T> {
@@ -85,7 +90,12 @@ impl<T> StatefulMutator<T> for BoxStatefulMutator<T> {
     }
 
     // Generates: into_box(), into_rc(), into_fn(), into_once()
-    impl_box_conversions!(BoxStatefulMutator<T>, RcStatefulMutator, FnMut(&mut T), BoxMutatorOnce);
+    impl_box_conversions!(
+        BoxStatefulMutator<T>,
+        RcStatefulMutator,
+        FnMut(&mut T),
+        BoxMutatorOnce
+    );
 }
 
 // Generate Debug and Display trait implementations

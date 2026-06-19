@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxRunnable` public type.
 
@@ -52,7 +50,6 @@ use crate::{
 /// let mut task = BoxRunnable::new(|| Ok::<(), String>(()));
 /// assert_eq!(task.run(), Ok(()));
 /// ```
-///
 pub struct BoxRunnable<E> {
     /// The stateful closure executed by this runnable.
     pub(super) function: Box<dyn FnMut() -> Result<(), E>>,

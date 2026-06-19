@@ -1,17 +1,15 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! Demonstrates the usage of StatefulTransformer types
 //!
-//! This example shows how to use BoxStatefulTransformer, RcStatefulTransformer, and ArcStatefulTransformer
-//! for stateful value transformation.
+//! This example shows how to use BoxStatefulTransformer, RcStatefulTransformer,
+//! and ArcStatefulTransformer for stateful value transformation.
 
 use qubit_function::{
     ArcStatefulTransformer,
@@ -139,7 +137,9 @@ fn main() {
     println!("  {}", pipeline.apply(200));
 
     // 7. TransformerOnce implementation - consuming transformers
-    println!("\n7. TransformerOnce implementation - consuming StatefulTransformers:");
+    println!(
+        "\n7. TransformerOnce implementation - consuming StatefulTransformers:"
+    );
 
     // BoxStatefulTransformer can be consumed as TransformerOnce
     let mut counter = 0;

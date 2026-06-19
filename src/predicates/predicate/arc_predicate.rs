@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcPredicate` public type.
 
@@ -51,17 +49,19 @@ use super::{
 ///     assert!(pred_clone.test(&10));
 /// }).join().expect("thread should not panic");
 /// ```
-///
 pub struct ArcPredicate<T> {
     pub(super) function: Arc<dyn Fn(&T) -> bool + Send + Sync>,
     pub(super) name: Option<String>,
 }
 
 impl<T> ArcPredicate<T> {
-    // Generates: new(), new_with_name(), name(), set_name(), always_true(), always_false()
-    impl_predicate_common_methods!(ArcPredicate<T>, (Fn(&T) -> bool + Send + Sync + 'static), |f| Arc::new(
-        f
-    ));
+    // Generates: new(), new_with_name(), name(), set_name(), always_true(),
+    // always_false()
+    impl_predicate_common_methods!(
+        ArcPredicate<T>,
+        (Fn(&T) -> bool + Send + Sync + 'static),
+        |f| Arc::new(f)
+    );
 
     // Generates: and(), or(), nand(), xor(), nor()
     impl_shared_predicate_methods!(ArcPredicate<T>, Send + Sync + 'static);
@@ -94,7 +94,8 @@ where
 // Generates: impl Clone for ArcPredicate<T>
 impl_predicate_clone!(ArcPredicate<T>);
 
-// Generates: impl Debug for ArcPredicate<T> and impl Display for ArcPredicate<T>
+// Generates: impl Debug for ArcPredicate<T> and impl Display for
+// ArcPredicate<T>
 impl_predicate_debug_display!(ArcPredicate<T>);
 
 // Implements Predicate trait for ArcPredicate<T>
@@ -103,7 +104,8 @@ impl<T> Predicate<T> for ArcPredicate<T> {
         (self.function)(value)
     }
 
-    // Generates: into_box, into_rc, into_arc, into_fn, to_box, to_rc, to_arc, to_fn
+    // Generates: into_box, into_rc, into_arc, into_fn, to_box, to_rc, to_arc,
+    // to_fn
     impl_arc_conversions!(
         ArcPredicate<T>,
         BoxPredicate,

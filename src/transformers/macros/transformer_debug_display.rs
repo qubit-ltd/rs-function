@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Transformer Debug Display Macro
 //!
 //! Generates Debug and Display trait implementations for Transformer structs
@@ -28,7 +26,6 @@
 //! // For three type parameters
 //! impl_transformer_debug_display!(BoxBiTransformer<T, U, V>);
 //! ```
-//!
 
 /// Generates Debug and Display trait implementations for Transformer structs
 ///
@@ -53,7 +50,6 @@
 /// // For three type parameters
 /// impl_transformer_debug_display!(BoxBiTransformer<T, U, V>);
 /// ```
-///
 macro_rules! impl_transformer_debug_display {
     // Two generic parameters
     ($struct_name:ident < $t:ident, $r:ident >) => {
@@ -69,7 +65,9 @@ macro_rules! impl_transformer_debug_display {
         impl<$t, $r> std::fmt::Display for $struct_name<$t, $r> {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 match &self.name {
-                    Some(name) => write!(f, "{}({})", stringify!($struct_name), name),
+                    Some(name) => {
+                        write!(f, "{}({})", stringify!($struct_name), name)
+                    }
                     None => write!(f, "{}", stringify!($struct_name)),
                 }
             }
@@ -90,7 +88,9 @@ macro_rules! impl_transformer_debug_display {
         impl<$t, $u, $r> std::fmt::Display for $struct_name<$t, $u, $r> {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 match &self.name {
-                    Some(name) => write!(f, "{}({})", stringify!($struct_name), name),
+                    Some(name) => {
+                        write!(f, "{}({})", stringify!($struct_name), name)
+                    }
                     None => write!(f, "{}", stringify!($struct_name)),
                 }
             }

@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcCallable` public type.
 
@@ -43,7 +41,6 @@ use crate::{
 ///
 /// * `R` - The success value returned by the computation.
 /// * `E` - The error value returned when the computation fails.
-///
 pub struct RcCallable<R, E> {
     /// The stateful closure executed by this callable.
     pub(super) function: Rc<RefCell<dyn FnMut() -> Result<R, E>>>,
@@ -110,7 +107,10 @@ impl<R, E> Callable<R, E> for RcCallable<R, E> {
     {
         let name = self.name;
         let function = self.function;
-        LocalBoxCallableOnce::new_with_optional_name(move || (function.borrow_mut())(), name)
+        LocalBoxCallableOnce::new_with_optional_name(
+            move || (function.borrow_mut())(),
+            name,
+        )
     }
 
     /// Converts this shared callable into a local boxed one-time callable
@@ -132,6 +132,9 @@ impl<R, E> Callable<R, E> for RcCallable<R, E> {
     {
         let name = self.name;
         let function = self.function;
-        BoxRunnable::new_with_optional_name(move || (function.borrow_mut())().map(|_| ()), name)
+        BoxRunnable::new_with_optional_name(
+            move || (function.borrow_mut())().map(|_| ()),
+            name,
+        )
     }
 }

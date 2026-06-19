@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! Comprehensive tests for FunctionOnce trait and BoxFunctionOnce
 
@@ -82,7 +80,9 @@ fn test_function_once_default_conversions_allow_relaxed_generic_types() {
     #[derive(Clone, Copy, Debug, Eq, PartialEq)]
     struct BorrowedRcIdentityOnce;
 
-    impl<'a> FunctionOnce<BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcIdentityOnce {
+    impl<'a> FunctionOnce<BorrowedRc<'a>, BorrowedRc<'a>>
+        for BorrowedRcIdentityOnce
+    {
         fn apply(self, value: &BorrowedRc<'a>) -> BorrowedRc<'a> {
             value.clone()
         }
@@ -93,7 +93,9 @@ fn test_function_once_default_conversions_allow_relaxed_generic_types() {
     }
 
     let text = String::from("left");
-    let value = BorrowedRc { value: text.as_str() };
+    let value = BorrowedRc {
+        value: text.as_str(),
+    };
     let identity = BorrowedRcIdentityOnce;
 
     assert_left(identity.into_box().apply(&value));
@@ -116,7 +118,8 @@ fn test_box_function_once_new() {
 #[test]
 fn test_box_function_once_new_allows_non_static_t() {
     fn run<'a>(value: &'a str) -> usize {
-        let func: BoxFunctionOnce<&'a str, usize> = BoxFunctionOnce::new(|x: &&'a str| x.len());
+        let func: BoxFunctionOnce<&'a str, usize> =
+            BoxFunctionOnce::new(|x: &&'a str| x.len());
         func.apply(&value)
     }
 
@@ -127,7 +130,8 @@ fn test_box_function_once_new_allows_non_static_t() {
 #[test]
 fn test_box_function_once_new_allows_non_static_r() {
     fn run<'a>(value: &'a str) -> &'a str {
-        let func: BoxFunctionOnce<&'a str, &'a str> = BoxFunctionOnce::new(|x: &&'a str| *x);
+        let func: BoxFunctionOnce<&'a str, &'a str> =
+            BoxFunctionOnce::new(|x: &&'a str| *x);
         func.apply(&value)
     }
 
@@ -348,14 +352,16 @@ fn test_function_once_with_vec() {
 #[test]
 fn test_function_once_with_option() {
     // Test function with Option type
-    let unwrap_or_zero = BoxFunctionOnce::new(|opt: &Option<i32>| opt.unwrap_or(0));
+    let unwrap_or_zero =
+        BoxFunctionOnce::new(|opt: &Option<i32>| opt.unwrap_or(0));
     assert_eq!(unwrap_or_zero.apply(&Some(42)), 42);
 }
 
 #[test]
 fn test_function_once_with_option_none() {
     // Test function with None
-    let unwrap_or_zero = BoxFunctionOnce::new(|opt: &Option<i32>| opt.unwrap_or(0));
+    let unwrap_or_zero =
+        BoxFunctionOnce::new(|opt: &Option<i32>| opt.unwrap_or(0));
     assert_eq!(unwrap_or_zero.apply(&None), 0);
 }
 
@@ -384,7 +390,8 @@ fn test_function_once_with_moved_vec() {
 fn test_function_once_with_moved_string() {
     // Test function that moves a String
     let prefix = String::from("Hello, ");
-    let func = BoxFunctionOnce::new(move |s: &String| format!("{}{}", prefix, s));
+    let func =
+        BoxFunctionOnce::new(move |s: &String| format!("{}{}", prefix, s));
     assert_eq!(func.apply(&String::from("World")), "Hello, World");
 }
 
@@ -393,7 +400,12 @@ fn test_function_once_with_complex_closure() {
     // Test function with complex closure logic
     let threshold = 10;
     let multiplier = 2;
-    let func = BoxFunctionOnce::new(move |x: &i32| if *x > threshold { x * multiplier } else { *x });
+    let func =
+        BoxFunctionOnce::new(
+            move |x: &i32| {
+                if *x > threshold { x * multiplier } else { *x }
+            },
+        );
     assert_eq!(func.apply(&15), 30);
 }
 
@@ -402,7 +414,12 @@ fn test_function_once_with_complex_closure_below_threshold() {
     // Test complex closure with value below threshold
     let threshold = 10;
     let multiplier = 2;
-    let func = BoxFunctionOnce::new(move |x: &i32| if *x > threshold { x * multiplier } else { *x });
+    let func =
+        BoxFunctionOnce::new(
+            move |x: &i32| {
+                if *x > threshold { x * multiplier } else { *x }
+            },
+        );
     assert_eq!(func.apply(&5), 5);
 }
 
@@ -488,8 +505,8 @@ mod function_once_default_impl_tests {
         FunctionOnce,
     };
 
-    /// Custom struct that only implements the core apply method of FunctionOnce trait
-    /// All to_xxx_once() methods use default implementation
+    /// Custom struct that only implements the core apply method of FunctionOnce
+    /// trait All to_xxx_once() methods use default implementation
     struct CustomFunctionOnce {
         multiplier: i32,
     }
@@ -498,7 +515,8 @@ mod function_once_default_impl_tests {
         fn apply(self, input: &i32) -> i32 {
             input * self.multiplier
         }
-        // Does not override any to_xxx_once() methods, testing default implementations
+        // Does not override any to_xxx_once() methods, testing default
+        // implementations
     }
 
     /// Cloneable custom one-time function for testing to_xxx_once() methods
@@ -511,7 +529,8 @@ mod function_once_default_impl_tests {
         fn apply(self, input: &i32) -> i32 {
             input * self.multiplier
         }
-        // Does not override any to_xxx_once() methods, testing default implementations
+        // Does not override any to_xxx_once() methods, testing default
+        // implementations
     }
 
     #[test]
@@ -585,7 +604,8 @@ mod function_once_default_impl_tests {
 
 #[test]
 fn test_custom_cloneable_function_once_to_box() {
-    // Test to_box method on a custom struct that implements both FunctionOnce and Clone
+    // Test to_box method on a custom struct that implements both FunctionOnce
+    // and Clone
     #[derive(Clone, Debug)]
     struct MyCloneableFunction {
         multiplier: i32,
@@ -641,7 +661,8 @@ fn test_box_function_once_debug_display() {
     assert_eq!(display_str, "BoxFunctionOnce");
 
     // Test Debug and Display for BoxFunctionOnce with name
-    let named_double = BoxFunctionOnce::new_with_name("double", |x: &i32| x * 2);
+    let named_double =
+        BoxFunctionOnce::new_with_name("double", |x: &i32| x * 2);
     let named_debug_str = format!("{:?}", named_double);
     assert!(named_debug_str.contains("BoxFunctionOnce"));
     assert!(named_debug_str.contains("name"));
@@ -658,7 +679,8 @@ fn test_box_function_once_debug_display() {
 #[test]
 fn test_box_function_once_name_methods() {
     // Test new_with_name, name(), and set_name()
-    let mut double = BoxFunctionOnce::new_with_name("double_func_once", |x: &i32| x * 2);
+    let mut double =
+        BoxFunctionOnce::new_with_name("double_func_once", |x: &i32| x * 2);
 
     // Test name() returns the initial name
     assert_eq!(double.name(), Some("double_func_once"));
@@ -694,7 +716,8 @@ fn test_box_conditional_function_once_debug_display() {
     assert!(display_str.ends_with(")"));
 
     // Test Debug and Display for BoxConditionalFunctionOnce with name
-    let triple = BoxFunctionOnce::new_with_name("triple_func_once", |x: &i32| x * 3);
+    let triple =
+        BoxFunctionOnce::new_with_name("triple_func_once", |x: &i32| x * 3);
     let named_conditional = triple.when(|x: &i32| *x % 2 == 0);
 
     let named_debug_str = format!("{:?}", named_conditional);

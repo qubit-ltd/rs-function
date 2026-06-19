@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Mutator Types (Stateless)
 //!
 //! Provides Java-like `Mutator` interface implementations for performing
@@ -18,19 +16,19 @@
 //!
 //! - **`BoxMutator<T>`**: Box-based single ownership implementation for
 //!   one-time use scenarios and builder patterns
-//! - **`ArcMutator<T>`**: Arc-based thread-safe shared ownership
-//!   implementation for multi-threaded scenarios
-//! - **`RcMutator<T>`**: Rc-based single-threaded shared
-//!   ownership implementation with no lock overhead
+//! - **`ArcMutator<T>`**: Arc-based thread-safe shared ownership implementation
+//!   for multi-threaded scenarios
+//! - **`RcMutator<T>`**: Rc-based single-threaded shared ownership
+//!   implementation with no lock overhead
 //!
 //! It is similar to the `Fn(&mut T)` trait in the standard library.
 //!
 //! # Design Philosophy
 //!
 //! `Mutator` is designed for **stateless** operations using `Fn(&mut T)`.
-//! Unlike `StatefulMutator` which uses `FnMut(&mut T)` and can maintain internal
-//! state, `Mutator` operations are pure transformations without side effects on
-//! the mutator itself.
+//! Unlike `StatefulMutator` which uses `FnMut(&mut T)` and can maintain
+//! internal state, `Mutator` operations are pure transformations without side
+//! effects on the mutator itself.
 //!
 //! ## Mutator vs StatefulMutator vs Consumer
 //!
@@ -197,7 +195,6 @@
 //! branched.apply(&mut negative);
 //! assert_eq!(negative, -6); // or_else branch
 //! ```
-//!
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -260,9 +257,9 @@ pub use arc_conditional_mutator::ArcConditionalMutator;
 
 /// Mutator trait - Unified stateless mutator interface
 ///
-/// Defines the core behavior of all stateless mutator types. Performs operations
-/// that accept a mutable reference and modify the input value without maintaining
-/// internal state.
+/// Defines the core behavior of all stateless mutator types. Performs
+/// operations that accept a mutable reference and modify the input value
+/// without maintaining internal state.
 ///
 /// This trait is automatically implemented by:
 /// - All closures implementing `Fn(&mut T)` (stateless)
@@ -271,13 +268,15 @@ pub use arc_conditional_mutator::ArcConditionalMutator;
 /// # Design Rationale
 ///
 /// The trait provides a unified abstraction over different ownership models for
-/// **stateless** operations. Unlike `StatefulMutator` which uses `FnMut` and can
-/// modify its internal state, `Mutator` uses `Fn` for pure transformations.
+/// **stateless** operations. Unlike `StatefulMutator` which uses `FnMut` and
+/// can modify its internal state, `Mutator` uses `Fn` for pure transformations.
 ///
 /// # Features
 ///
-/// - **Stateless Operations**: No internal state modification (`&self` not `&mut self`)
-/// - **Unified Interface**: All mutator types share the same `mutate` method signature
+/// - **Stateless Operations**: No internal state modification (`&self` not
+///   `&mut self`)
+/// - **Unified Interface**: All mutator types share the same `mutate` method
+///   signature
 /// - **Automatic Implementation**: Closures automatically implement this trait
 /// - **Type Conversions**: Easy conversion between ownership models
 /// - **Generic Programming**: Write functions that work with any mutator type
@@ -321,7 +320,6 @@ pub use arc_conditional_mutator::ArcConditionalMutator;
 /// // let rc_mutator = closure.into_rc();  // closure moved
 /// // let arc_mutator = closure.into_arc(); // closure moved
 /// ```
-///
 pub trait Mutator<T> {
     /// Performs the stateless mutation operation
     ///
@@ -545,9 +543,9 @@ pub trait Mutator<T> {
 
     /// Create a non-consuming `ArcMutator<T>` that forwards to `self`.
     ///
-    /// The default implementation clones `self` (requires `Clone + Send + Sync`) and
-    /// returns an `Arc`-wrapped mutator that forwards calls to the clone.
-    /// Override when a more efficient conversion is available.
+    /// The default implementation clones `self` (requires `Clone + Send +
+    /// Sync`) and returns an `Arc`-wrapped mutator that forwards calls to
+    /// the clone. Override when a more efficient conversion is available.
     ///
     /// # Returns
     ///

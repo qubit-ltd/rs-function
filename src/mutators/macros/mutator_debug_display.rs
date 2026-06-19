@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Mutator Debug Display Macro
 //!
 //! Generates Debug and Display trait implementations for Mutator structs
@@ -25,7 +23,6 @@
 //! // For single type parameter
 //! impl_mutator_debug_display!(BoxMutator<T>);
 //! ```
-//!
 
 /// Generates Debug and Display trait implementations for Mutator structs
 ///
@@ -50,7 +47,6 @@
 /// // At the top level, outside of any impl block
 /// impl_mutator_debug_display!(BoxMutator<T>);
 /// ```
-///
 macro_rules! impl_mutator_debug_display {
     // Single generic parameter
     ($struct_name:ident < $generic:ident >) => {
@@ -66,7 +62,9 @@ macro_rules! impl_mutator_debug_display {
         impl<$generic> std::fmt::Display for $struct_name<$generic> {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 match &self.name {
-                    Some(name) => write!(f, "{}({})", stringify!($struct_name), name),
+                    Some(name) => {
+                        write!(f, "{}({})", stringify!($struct_name), name)
+                    }
                     None => write!(f, "{}", stringify!($struct_name)),
                 }
             }

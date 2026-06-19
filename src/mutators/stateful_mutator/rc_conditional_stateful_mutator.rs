@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcConditionalStatefulMutator` public type.
 
@@ -57,7 +55,6 @@ use super::{
 /// m.apply(&mut value);
 /// assert_eq!(value, 10);
 /// ```
-///
 pub struct RcConditionalStatefulMutator<T> {
     pub(super) mutator: RcStatefulMutator<T>,
     pub(super) predicate: RcPredicate<T>,
@@ -80,7 +77,11 @@ impl<T> StatefulMutator<T> for RcConditionalStatefulMutator<T> {
     }
 
     // Generates: into_box(), into_rc(), into_fn()
-    impl_conditional_mutator_conversions!(BoxStatefulMutator<T>, RcStatefulMutator, FnMut);
+    impl_conditional_mutator_conversions!(
+        BoxStatefulMutator<T>,
+        RcStatefulMutator,
+        FnMut
+    );
 }
 
 // Generate Clone trait implementation for conditional mutator

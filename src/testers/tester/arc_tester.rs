@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcTester` public type.
 
@@ -67,7 +65,6 @@ use super::{
 /// counter.fetch_add(1, Ordering::Relaxed);
 /// assert!(shared.test());
 /// ```
-///
 pub struct ArcTester {
     pub(super) function: Arc<dyn Fn() -> bool + Send + Sync>,
 }

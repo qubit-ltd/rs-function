@@ -1,16 +1,15 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Mutator Types
 //!
 //! Provides Java-like `Mutator` interface implementations for performing
-//! operations that accept a single mutable input parameter and return no result.
+//! operations that accept a single mutable input parameter and return no
+//! result.
 //!
 //! This module provides a unified `Mutator` trait and three concrete
 //! implementations based on different ownership models:
@@ -19,15 +18,16 @@
 //!   one-time use scenarios and builder patterns
 //! - **`ArcMutator<T>`**: Arc<Mutex<>>-based thread-safe shared ownership
 //!   implementation for multi-threaded scenarios
-//! - **`RcMutator<T>`**: Rc<RefCell<>>-based single-threaded shared
-//!   ownership implementation with no lock overhead
+//! - **`RcMutator<T>`**: Rc<RefCell<>>-based single-threaded shared ownership
+//!   implementation with no lock overhead
 //!
 //! It is similar to the `FnMut(&mut T)` trait in the standard library.
 //!
 //! # Design Philosophy
 //!
-//! Unlike `Consumer` which observes values without modifying them (`FnMut(&T)`),
-//! `Mutator` is designed to **modify input values** using `FnMut(&mut T)`.
+//! Unlike `Consumer` which observes values without modifying them
+//! (`FnMut(&T)`), `Mutator` is designed to **modify input values** using
+//! `FnMut(&mut T)`.
 //!
 //! ## Mutator vs Consumer
 //!
@@ -193,7 +193,6 @@
 //! branched.apply(&mut negative);
 //! assert_eq!(negative, -6); // or_else branch
 //! ```
-//!
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
@@ -260,7 +259,8 @@ pub use arc_conditional_stateful_mutator::ArcConditionalStatefulMutator;
 /// Mutator trait - Unified mutator interface
 ///
 /// Defines the core behavior of all mutator types. Performs operations that
-/// accept a mutable reference and modify the input value (not just side effects).
+/// accept a mutable reference and modify the input value (not just side
+/// effects).
 ///
 /// This trait is automatically implemented by:
 /// - All closures implementing `FnMut(&mut T)`
@@ -275,13 +275,12 @@ pub use arc_conditional_stateful_mutator::ArcConditionalStatefulMutator;
 ///
 /// # Features
 ///
-/// - **Unified Interface**: All mutator types share the same `mutate`
-///   method signature
-/// - **Automatic Implementation**: Closures automatically implement this
-///   trait with zero overhead
+/// - **Unified Interface**: All mutator types share the same `mutate` method
+///   signature
+/// - **Automatic Implementation**: Closures automatically implement this trait
+///   with zero overhead
 /// - **Type Conversions**: Easy conversion between ownership models
-/// - **Generic Programming**: Write functions that work with any mutator
-///   type
+/// - **Generic Programming**: Write functions that work with any mutator type
 ///
 /// # Examples
 ///
@@ -322,7 +321,6 @@ pub use arc_conditional_stateful_mutator::ArcConditionalStatefulMutator;
 /// // let rc_mutator = closure.into_rc();  // closure moved
 /// // let arc_mutator = closure.into_arc(); // closure moved
 /// ```
-///
 pub trait StatefulMutator<T> {
     /// Performs the mutation operation
     ///

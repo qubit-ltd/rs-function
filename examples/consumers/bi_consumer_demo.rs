@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! BiConsumer demonstration
 //!
@@ -38,7 +36,9 @@ fn main() {
     let l = log.clone();
     let box_consumer = BoxBiConsumer::new(move |x: &i32, y: &i32| {
         println!("  Processing: x={}, y={}", x, y);
-        l.lock().expect("mutex should not be poisoned").push(*x + *y);
+        l.lock()
+            .expect("mutex should not be poisoned")
+            .push(*x + *y);
     });
     box_consumer.accept(&10, &5);
     println!(
@@ -52,11 +52,15 @@ fn main() {
     let l1 = log.clone();
     let l2 = log.clone();
     let chained = BoxBiConsumer::new(move |x: &i32, y: &i32| {
-        l1.lock().expect("mutex should not be poisoned").push(*x + *y);
+        l1.lock()
+            .expect("mutex should not be poisoned")
+            .push(*x + *y);
         println!("  After first operation: sum = {}", x + y);
     })
     .and_then(move |x: &i32, y: &i32| {
-        l2.lock().expect("mutex should not be poisoned").push(*x * *y);
+        l2.lock()
+            .expect("mutex should not be poisoned")
+            .push(*x * *y);
         println!("  After second operation: product = {}", x * y);
     });
     chained.accept(&5, &3);
@@ -70,7 +74,9 @@ fn main() {
     let log = Arc::new(Mutex::new(Vec::new()));
     let l = log.clone();
     let arc_consumer = ArcBiConsumer::new(move |x: &i32, y: &i32| {
-        l.lock().expect("mutex should not be poisoned").push(*x + *y);
+        l.lock()
+            .expect("mutex should not be poisoned")
+            .push(*x + *y);
         println!("  Thread {:?}: sum = {}", thread::current().id(), x + y);
     });
 
@@ -129,10 +135,13 @@ fn main() {
     println!("6. Conditional BiConsumer:");
     let log = Arc::new(Mutex::new(Vec::new()));
     let l = log.clone();
-    let mut conditional = BoxStatefulBiConsumer::new(move |x: &i32, y: &i32| {
-        l.lock().expect("mutex should not be poisoned").push(*x + *y);
-    })
-    .when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+    let mut conditional =
+        BoxStatefulBiConsumer::new(move |x: &i32, y: &i32| {
+            l.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x + *y);
+        })
+        .when(|x: &i32, y: &i32| *x > 0 && *y > 0);
 
     conditional.accept(&5, &3);
     println!(
@@ -160,7 +169,10 @@ fn main() {
     });
 
     branch.accept(&15, &10);
-    println!("  When x > y: {:?}", *log.lock().expect("mutex should not be poisoned"));
+    println!(
+        "  When x > y: {:?}",
+        *log.lock().expect("mutex should not be poisoned")
+    );
 
     branch.accept(&5, &10);
     println!(
@@ -183,8 +195,14 @@ fn main() {
     stats_consumer.accept(&10, &2);
     stats_consumer.accept(&7, &8);
 
-    println!("  Count: {}", *count.lock().expect("mutex should not be poisoned"));
-    println!("  Sum: {}\n", *sum.lock().expect("mutex should not be poisoned"));
+    println!(
+        "  Count: {}",
+        *count.lock().expect("mutex should not be poisoned")
+    );
+    println!(
+        "  Sum: {}\n",
+        *sum.lock().expect("mutex should not be poisoned")
+    );
 
     // 9. Name support
     println!("9. Name support:");
