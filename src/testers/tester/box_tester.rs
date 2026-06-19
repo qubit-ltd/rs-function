@@ -99,7 +99,9 @@ impl BoxTester {
     where
         F: Fn() -> bool + 'static,
     {
-        BoxTester { function: Box::new(f) }
+        BoxTester {
+            function: Box::new(f),
+        }
     }
 
     /// Combines this tester with another tester using logical AND

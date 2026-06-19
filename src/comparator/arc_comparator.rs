@@ -65,7 +65,9 @@ impl<T> ArcComparator<T> {
     where
         F: Fn(&T, &T) -> Ordering + Send + Sync + 'static,
     {
-        Self { function: Arc::new(f) }
+        Self {
+            function: Arc::new(f),
+        }
     }
 
     /// Returns a comparator that imposes the reverse ordering.
