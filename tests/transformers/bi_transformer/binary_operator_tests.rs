@@ -23,7 +23,9 @@ where
     O: BinaryOperator<T>,
     T: Clone,
 {
-    values.into_iter().fold(initial, |acc, val| op.apply(acc, val))
+    values
+        .into_iter()
+        .fold(initial, |acc, val| op.apply(acc, val))
 }
 
 #[test]

@@ -122,7 +122,9 @@ fn test_runnable_closure_into_once_preserves_error() {
 #[test]
 fn test_runnable_to_box_clones_runnable() {
     let flag = Rc::new(Cell::new(false));
-    let mut task = ClonedRunnable { flag: Rc::clone(&flag) };
+    let mut task = ClonedRunnable {
+        flag: Rc::clone(&flag),
+    };
 
     let mut boxed = task.to_box();
 
@@ -137,7 +139,9 @@ fn test_runnable_to_box_clones_runnable() {
 #[test]
 fn test_runnable_to_fn_clones_runnable() {
     let flag = Rc::new(Cell::new(false));
-    let mut task = ClonedRunnable { flag: Rc::clone(&flag) };
+    let mut task = ClonedRunnable {
+        flag: Rc::clone(&flag),
+    };
 
     let mut function = task.to_fn();
 
@@ -177,7 +181,9 @@ impl Runnable<io::Error> for SharedAtomicRunnable {
 #[test]
 fn test_runnable_default_into_callable_returns_unit() {
     let flag = Rc::new(Cell::new(false));
-    let task = ClonedRunnable { flag: Rc::clone(&flag) };
+    let task = ClonedRunnable {
+        flag: Rc::clone(&flag),
+    };
 
     let mut callable = Runnable::into_callable(task);
 
@@ -215,8 +221,12 @@ fn test_runnable_to_rc_clones_source_after_boxed_runnable() {
     shared
         .run()
         .expect("to_rc should build shared runnable from cloneable source");
-    shared_clone.run().expect("shared clone should also execute");
-    source.run().expect("original cloneable runnable should remain usable");
+    shared_clone
+        .run()
+        .expect("shared clone should also execute");
+    source
+        .run()
+        .expect("original cloneable runnable should remain usable");
 
     assert_eq!(count.get(), 3);
 }
@@ -234,7 +244,9 @@ fn test_runnable_into_arc_runnable_preserves_name_and_state() {
     assert_eq!(count.load(Ordering::SeqCst), 0);
 
     shared.run().expect("shared runnable should succeed");
-    shared.run().expect("shared runnable should execute repeatedly");
+    shared
+        .run()
+        .expect("shared runnable should execute repeatedly");
     assert_eq!(count.load(Ordering::SeqCst), 2);
 }
 
@@ -250,8 +262,12 @@ fn test_runnable_to_arc_clones_source_after_boxed_runnable() {
     shared
         .run()
         .expect("to_arc should build shared runnable from cloneable source");
-    shared_clone.run().expect("shared arc clone should also execute");
-    source.run().expect("original cloneable runnable should remain usable");
+    shared_clone
+        .run()
+        .expect("shared arc clone should also execute");
+    source
+        .run()
+        .expect("original cloneable runnable should remain usable");
 
     assert_eq!(count.load(Ordering::SeqCst), 3);
 }
@@ -460,7 +476,9 @@ fn test_runnable_into_callable_returns_unit_callable() {
 
 #[test]
 fn test_runnable_into_callable_preserves_error() {
-    let task = BoxRunnable::<io::Error>::new_with_name("cleanup", || Err(io::Error::other("cleanup failed")));
+    let task = BoxRunnable::<io::Error>::new_with_name("cleanup", || {
+        Err(io::Error::other("cleanup failed"))
+    });
 
     let mut callable = task.into_callable();
     let error = callable

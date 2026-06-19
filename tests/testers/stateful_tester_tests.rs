@@ -53,7 +53,10 @@ fn test_stateful_tester_closure_mutates_state() {
 
 #[test]
 fn test_stateful_tester_into_fn_returns_fn_mut() {
-    let tester = ThresholdTester { count: 0, threshold: 3 };
+    let tester = ThresholdTester {
+        count: 0,
+        threshold: 3,
+    };
     let mut function = tester.into_fn();
 
     assert!(!function());
@@ -63,7 +66,10 @@ fn test_stateful_tester_into_fn_returns_fn_mut() {
 
 #[test]
 fn test_stateful_tester_into_mut_fn_returns_fn_mut() {
-    let tester = ThresholdTester { count: 0, threshold: 2 };
+    let tester = ThresholdTester {
+        count: 0,
+        threshold: 2,
+    };
     let mut function = tester.into_mut_fn();
 
     assert!(!function());
@@ -72,7 +78,10 @@ fn test_stateful_tester_into_mut_fn_returns_fn_mut() {
 
 #[test]
 fn test_stateful_tester_to_fn_uses_cloned_state() {
-    let tester = ThresholdTester { count: 0, threshold: 2 };
+    let tester = ThresholdTester {
+        count: 0,
+        threshold: 2,
+    };
     let mut function = tester.to_fn();
 
     assert!(!function());
@@ -84,7 +93,10 @@ fn test_stateful_tester_to_fn_uses_cloned_state() {
 
 #[test]
 fn test_stateful_tester_to_mut_fn_uses_cloned_state() {
-    let tester = ThresholdTester { count: 0, threshold: 2 };
+    let tester = ThresholdTester {
+        count: 0,
+        threshold: 2,
+    };
     let mut function = tester.to_mut_fn();
 
     assert!(!function());
@@ -96,7 +108,10 @@ fn test_stateful_tester_to_mut_fn_uses_cloned_state() {
 
 #[test]
 fn test_stateful_tester_default_wrapper_conversions() {
-    let tester = ThresholdTester { count: 0, threshold: 2 };
+    let tester = ThresholdTester {
+        count: 0,
+        threshold: 2,
+    };
 
     let mut boxed = tester.clone().into_box();
     assert!(!boxed.test());

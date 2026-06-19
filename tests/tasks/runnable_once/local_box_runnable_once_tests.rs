@@ -30,7 +30,8 @@ fn test_local_box_runnable_once_new_allows_non_send_capture() {
         Ok::<(), io::Error>(())
     });
 
-    task.run().expect("local runnable-once should allow non-send capture");
+    task.run()
+        .expect("local runnable-once should allow non-send capture");
     assert!(flag.get());
 }
 
@@ -110,7 +111,9 @@ fn test_local_box_runnable_once_then_callable_supports_local_callable() {
     let chained = task.then_callable(callable);
 
     assert_eq!(
-        chained.call().expect("local callable should run after runnable"),
+        chained
+            .call()
+            .expect("local callable should run after runnable"),
         "value"
     );
 }
