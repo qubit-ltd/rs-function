@@ -1,18 +1,18 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Conditional Mutator Debug Display Macro
 //!
-//! Generates Debug and Display trait implementations for Conditional Mutator structs
+//! Generates Debug and Display trait implementations for Conditional Mutator
+//! structs
 //!
 //! Generates standard Debug and Display trait implementations for Conditional
-//! Mutator structs that have `mutator` and `predicate` fields but no `name` field.
+//! Mutator structs that have `mutator` and `predicate` fields but no `name`
+//! field.
 //!
 //! # Parameters
 //!
@@ -25,9 +25,9 @@
 //! // For single type parameter
 //! // impl_conditional_mutator_debug_display!(BoxConditionalMutator<T>);
 //! ```
-//!
 
-/// Generates Debug and Display trait implementations for Conditional Mutator structs
+/// Generates Debug and Display trait implementations for Conditional Mutator
+/// structs
 ///
 /// This macro should be used at the top level (outside of any impl block)
 /// to generate Debug and Display trait implementations for Conditional Mutator
@@ -51,7 +51,6 @@
 /// // At the top level, outside of any impl block
 /// // impl_conditional_mutator_debug_display!(BoxConditionalMutator<T>);
 /// ```
-///
 macro_rules! impl_conditional_mutator_debug_display {
     // Single generic parameter
     ($struct_name:ident < $generic:ident >) => {

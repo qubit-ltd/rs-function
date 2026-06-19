@@ -1,23 +1,22 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Conditional Consumer Conversions Macro
 //!
 //! Generates conversion methods for Conditional Consumer implementations
 //!
-//! This macro generates the conversion methods (`into_box`, `into_rc`, `into_fn`) for
-//! conditional consumer types. It selects immutable or mutable captures from the
-//! generated closure trait (`Fn` or `FnMut`).
+//! This macro generates the conversion methods (`into_box`, `into_rc`,
+//! `into_fn`) for conditional consumer types. It selects immutable or mutable
+//! captures from the generated closure trait (`Fn` or `FnMut`).
 //!
 //! # Parameters
 //!
-//! * `$box_type<$t:ident>` - The box-based consumer type (e.g., `BoxConsumer<T>`)
+//! * `$box_type<$t:ident>` - The box-based consumer type (e.g.,
+//!   `BoxConsumer<T>`)
 //! * `$rc_type:ident` - The rc-based consumer type name (e.g., `RcConsumer`)
 //! * `$fn_trait:ident` - The function trait (e.g., `Fn` or `FnMut`)
 //!
@@ -50,20 +49,20 @@
 //!   according to the generated operation.
 //! - The `into_fn` method uses the provided `$fn_trait` parameter to match the
 //!   intended trait type
-//!
 
 /// Generates conversion methods for Conditional Consumer implementations
 ///
 /// This macro should be used inside an existing impl block (typically within
 /// a trait implementation block). It generates individual conversion methods
 /// but does not create a complete impl block itself. This macro generates the
-/// conversion methods (`into_box`, `into_rc`, `into_fn`) for conditional consumer
-/// types. It selects immutable or mutable captures from the generated closure
-/// trait (`Fn` or `FnMut`).
+/// conversion methods (`into_box`, `into_rc`, `into_fn`) for conditional
+/// consumer types. It selects immutable or mutable captures from the generated
+/// closure trait (`Fn` or `FnMut`).
 ///
 /// # Parameters
 ///
-/// * `$box_type<$t:ident>` - The box-based consumer type (e.g., `BoxConsumer<T>`)
+/// * `$box_type<$t:ident>` - The box-based consumer type (e.g.,
+///   `BoxConsumer<T>`)
 /// * `$rc_type:ident` - The rc-based consumer type name (e.g., `RcConsumer`)
 /// * `$fn_trait:ident` - The function trait (e.g., `Fn` or `FnMut`)
 ///
@@ -97,8 +96,6 @@
 ///   according to the generated operation.
 /// - The `into_fn` method uses the provided `$fn_trait` parameter to match the
 ///   intended trait type
-///
-///
 macro_rules! impl_conditional_consumer_conversions {
     (@let_consumer Fn, $name:ident, $value:expr) => {
         let $name = $value;

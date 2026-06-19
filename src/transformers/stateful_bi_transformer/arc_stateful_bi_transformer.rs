@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulBiTransformer` public type.
 
@@ -46,7 +44,6 @@ use super::{
 ///   inputs)
 /// - **Thread Safety**: Thread-safe (`Send + Sync` required)
 /// - **Clonable**: Cheap cloning via `Arc::clone`
-///
 pub struct ArcStatefulBiTransformer<T, U, R> {
     pub(super) function: Arc<Mutex<dyn FnMut(T, U) -> R + Send>>,
     pub(super) name: Option<String>,
@@ -78,7 +75,9 @@ impl_transformer_debug_display!(ArcStatefulBiTransformer<T, U, R>);
 impl_transformer_clone!(ArcStatefulBiTransformer<T, U, R>);
 
 // Implement StatefulBiTransformer trait for ArcStatefulBiTransformer
-impl<T, U, R> StatefulBiTransformer<T, U, R> for ArcStatefulBiTransformer<T, U, R> {
+impl<T, U, R> StatefulBiTransformer<T, U, R>
+    for ArcStatefulBiTransformer<T, U, R>
+{
     fn apply(&mut self, first: T, second: U) -> R {
         let mut func = self.function.lock();
         func(first, second)
@@ -98,7 +97,8 @@ impl<T, U, R> StatefulBiTransformer<T, U, R> for ArcStatefulBiTransformer<T, U, 
 // Blanket implementation for standard Fn trait
 // ============================================================================
 
-// Implement StatefulBiTransformer<T, U, R> for any type that implements FnMut(T, U) -> R
+// Implement StatefulBiTransformer<T, U, R> for any type that implements
+// FnMut(T, U) -> R
 impl_closure_trait!(
     StatefulBiTransformer<T, U, R>,
     apply,

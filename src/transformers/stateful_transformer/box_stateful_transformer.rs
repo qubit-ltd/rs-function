@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulTransformer` public type.
 
@@ -37,11 +35,10 @@ use super::{
 ///
 /// - **Based on**: `Box<dyn FnMut(T) -> R>`
 /// - **Ownership**: Single ownership, cannot be cloned
-/// - **Reusability**: Can be called multiple times (each call consumes
-///   its input)
+/// - **Reusability**: Can be called multiple times (each call consumes its
+///   input)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
 /// - **Statefulness**: Can modify internal state between calls
-///
 pub struct BoxStatefulTransformer<T, R> {
     pub(super) function: Box<dyn FnMut(T) -> R>,
     pub(super) name: Option<String>,
@@ -81,6 +78,7 @@ impl<T, R> StatefulTransformer<T, R> for BoxStatefulTransformer<T, R> {
         BoxTransformerOnce
     );
 
-    // do NOT override StatefulTransformer::to_xxx() because BoxStatefulTransformer is not Clone
-    // and calling BoxStatefulTransformer::to_xxx() will cause a compile error
+    // do NOT override StatefulTransformer::to_xxx() because
+    // BoxStatefulTransformer is not Clone and calling
+    // BoxStatefulTransformer::to_xxx() will cause a compile error
 }

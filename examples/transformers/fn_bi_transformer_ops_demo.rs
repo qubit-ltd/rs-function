@@ -1,16 +1,15 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! # FnBiTransformerOps Demo
 //!
-//! Demonstrates how to use the `FnBiTransformerOps` trait to provide `and_then` and `when` methods for closures.
+//! Demonstrates how to use the `FnBiTransformerOps` trait to provide `and_then`
+//! and `when` methods for closures.
 
 use qubit_function::{
     BiTransformer,
@@ -47,7 +46,9 @@ fn main() {
 
     let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply);
 
-    println!("   When both numbers are positive, perform addition, otherwise multiplication:");
+    println!(
+        "   When both numbers are positive, perform addition, otherwise multiplication:"
+    );
     println!("   conditional(5, 3) = {}", conditional.apply(5, 3));
     println!("   conditional(-5, 3) = {}", conditional.apply(-5, 3));
     println!();
@@ -59,7 +60,9 @@ fn main() {
 
     let conditional = add.when(|x: &i32, y: &i32| (*x + *y) < 100).or_else(subtract);
 
-    println!("   When sum is less than 100, perform addition, otherwise subtraction:");
+    println!(
+        "   When sum is less than 100, perform addition, otherwise subtraction:"
+    );
     println!("   conditional(30, 40) = {}", conditional.apply(30, 40));
     println!("   conditional(60, 50) = {}", conditional.apply(60, 50));
     println!();
@@ -108,7 +111,8 @@ fn main() {
     println!("8. Combining multiple operations:");
     let add = |x: i32, y: i32| x + y;
 
-    // First calculate the sum, then choose different formatting based on whether it's even
+    // First calculate the sum, then choose different formatting based on
+    // whether it's even
     let sum_and_format = add.and_then(|n| {
         if n % 2 == 0 {
             format!("{} is even", n)

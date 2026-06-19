@@ -1,18 +1,16 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Box Conditional Consumer Macro
 //!
 //! Generates Box-based Conditional Consumer implementations
 //!
-//! For Box-based conditional consumers, generates `and_then` and `or_else` methods,
-//! as well as complete Consumer/BiConsumer trait implementations.
+//! For Box-based conditional consumers, generates `and_then` and `or_else`
+//! methods, as well as complete Consumer/BiConsumer trait implementations.
 //!
 //! Box type characteristics:
 //! - `and_then` and `or_else` consume self (because Box cannot Clone)
@@ -42,14 +40,13 @@
 //! // Two-parameter BiConsumer
 //! impl_box_conditional_consumer!(i32, i32, i32);
 //! ```
-//!
 
 /// Generates Box-based Conditional Consumer implementations
 ///
 /// This macro should be used at the top level (outside of any impl block) as
 /// it generates a complete impl block with methods for the specified struct.
-/// For Box-based conditional consumers, generates `and_then` and `or_else` methods,
-/// as well as complete Consumer/BiConsumer trait implementations.
+/// For Box-based conditional consumers, generates `and_then` and `or_else`
+/// methods, as well as complete Consumer/BiConsumer trait implementations.
 ///
 /// Box type characteristics:
 /// - `and_then` and `or_else` consume self (because Box cannot Clone)
@@ -78,7 +75,6 @@
 /// // Two-parameter BiConsumer
 /// impl_box_conditional_consumer!(i32, i32, i32);
 /// ```
-///
 macro_rules! impl_box_conditional_consumer {
     (@let_consumer Consumer, $name:ident, $value:expr) => {
         let $name = $value;

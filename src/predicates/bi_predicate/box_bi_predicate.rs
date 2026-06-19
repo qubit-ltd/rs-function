@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxBiPredicate` public type.
 
@@ -42,14 +40,14 @@ use super::{
 /// let combined = pred.and(BoxBiPredicate::new(|x, y| x > y));
 /// assert!(combined.test(&10, &5));
 /// ```
-///
 pub struct BoxBiPredicate<T, U> {
     pub(super) function: Box<BiPredicateFn<T, U>>,
     pub(super) name: Option<String>,
 }
 
 impl<T, U> BoxBiPredicate<T, U> {
-    // Generates: new(), new_with_name(), name(), set_name(), always_true(), always_false()
+    // Generates: new(), new_with_name(), name(), set_name(), always_true(),
+    // always_false()
     impl_predicate_common_methods!(
         BoxBiPredicate<T, U>,
         (Fn(&T, &U) -> bool + 'static),
@@ -68,11 +66,14 @@ where
     type Output = BoxBiPredicate<T, U>;
 
     fn not(self) -> Self::Output {
-        BoxBiPredicate::new(move |first, second| !(self.function)(first, second))
+        BoxBiPredicate::new(move |first, second| {
+            !(self.function)(first, second)
+        })
     }
 }
 
-// Generates: impl Debug for BoxBiPredicate<T, U> and impl Display for BoxBiPredicate<T, U>
+// Generates: impl Debug for BoxBiPredicate<T, U> and impl Display for
+// BoxBiPredicate<T, U>
 impl_predicate_debug_display!(BoxBiPredicate<T, U>);
 
 impl<T, U> BiPredicate<T, U> for BoxBiPredicate<T, U> {

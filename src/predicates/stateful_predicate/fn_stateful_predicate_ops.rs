@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `FnStatefulPredicateOps` public type.
 
@@ -40,7 +38,9 @@ pub trait FnStatefulPredicateOps<T>: FnMut(&T) -> bool + Sized {
         P: StatefulPredicate<T> + 'static,
         T: 'static,
     {
-        BoxStatefulPredicate::new(move |value: &T| self(value) && other.test(value))
+        BoxStatefulPredicate::new(move |value: &T| {
+            self(value) && other.test(value)
+        })
     }
 
     /// Returns a predicate representing logical OR with another predicate.
@@ -62,7 +62,9 @@ pub trait FnStatefulPredicateOps<T>: FnMut(&T) -> bool + Sized {
         P: StatefulPredicate<T> + 'static,
         T: 'static,
     {
-        BoxStatefulPredicate::new(move |value: &T| self(value) || other.test(value))
+        BoxStatefulPredicate::new(move |value: &T| {
+            self(value) || other.test(value)
+        })
     }
 
     /// Returns a predicate representing logical negation.
@@ -100,7 +102,9 @@ pub trait FnStatefulPredicateOps<T>: FnMut(&T) -> bool + Sized {
         P: StatefulPredicate<T> + 'static,
         T: 'static,
     {
-        BoxStatefulPredicate::new(move |value: &T| !(self(value) && other.test(value)))
+        BoxStatefulPredicate::new(move |value: &T| {
+            !(self(value) && other.test(value))
+        })
     }
 
     /// Returns a predicate representing logical XOR with another predicate.
@@ -122,7 +126,9 @@ pub trait FnStatefulPredicateOps<T>: FnMut(&T) -> bool + Sized {
         P: StatefulPredicate<T> + 'static,
         T: 'static,
     {
-        BoxStatefulPredicate::new(move |value: &T| self(value) ^ other.test(value))
+        BoxStatefulPredicate::new(move |value: &T| {
+            self(value) ^ other.test(value)
+        })
     }
 
     /// Returns a predicate representing logical NOR with another predicate.
@@ -143,7 +149,9 @@ pub trait FnStatefulPredicateOps<T>: FnMut(&T) -> bool + Sized {
         P: StatefulPredicate<T> + 'static,
         T: 'static,
     {
-        BoxStatefulPredicate::new(move |value: &T| !(self(value) || other.test(value)))
+        BoxStatefulPredicate::new(move |value: &T| {
+            !(self(value) || other.test(value))
+        })
     }
 }
 

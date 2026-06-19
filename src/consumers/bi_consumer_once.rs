@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # BiConsumerOnce Types
 //!
 //! Provides one-time bi-consumer interface implementations for operations
@@ -17,8 +15,7 @@
 //! This module provides a unified `BiConsumerOnce` trait and one concrete
 //! implementation:
 //!
-//! - **`BoxBiConsumerOnce<T, U>`**: Box-based single ownership
-//!   implementation
+//! - **`BoxBiConsumerOnce<T, U>`**: Box-based single ownership implementation
 //!
 //! # Why No Arc/Rc Variants?
 //!
@@ -35,7 +32,6 @@
 //!
 //! Unlike BiConsumer, BiConsumerOnce consumes itself on first call. Suitable
 //! for initialization callbacks, cleanup callbacks, etc.
-//!
 use crate::{
     consumers::macros::{
         impl_box_conditional_consumer,
@@ -90,8 +86,8 @@ pub use box_conditional_bi_consumer_once::BoxConditionalBiConsumerOnce;
 ///
 /// - **Unified Interface**: All bi-consumer types share the same `accept`
 ///   method signature
-/// - **Automatic Implementation**: Closures automatically implement this
-///   trait with zero overhead
+/// - **Automatic Implementation**: Closures automatically implement this trait
+///   with zero overhead
 /// - **Type Conversions**: Can convert to BoxBiConsumerOnce
 /// - **Generic Programming**: Write functions accepting any one-time
 ///   bi-consumer type
@@ -118,7 +114,6 @@ pub use box_conditional_bi_consumer_once::BoxConditionalBiConsumerOnce;
 /// apply_consumer(box_con, &5, &3);
 /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
 /// ```
-///
 pub trait BiConsumerOnce<T, U> {
     /// Performs the one-time consumption operation
     ///

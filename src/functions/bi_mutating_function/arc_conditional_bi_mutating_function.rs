@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcConditionalBiMutatingFunction` public type.
 
@@ -27,11 +25,12 @@ use super::{
 /// ArcConditionalBiMutatingFunction struct
 ///
 /// A thread-safe conditional bi-mutating-function that only executes when a
-/// bi-predicate is satisfied. Uses `ArcBiMutatingFunction` and `ArcBiPredicate` for
-/// shared ownership across threads.
+/// bi-predicate is satisfied. Uses `ArcBiMutatingFunction` and `ArcBiPredicate`
+/// for shared ownership across threads.
 ///
-/// This type is typically created by calling `ArcBiMutatingFunction::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
+/// This type is typically created by calling `ArcBiMutatingFunction::when()`
+/// and is designed to work with the `or_else()` method to create if-then-else
+/// logic.
 ///
 /// # Features
 ///
@@ -39,7 +38,6 @@ use super::{
 /// - **Thread-Safe**: Implements `Send + Sync`, safe for concurrent use
 /// - **Conditional Execution**: Only computes when bi-predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
-///
 pub struct ArcConditionalBiMutatingFunction<T, U, R> {
     pub(super) function: ArcBiMutatingFunction<T, U, R>,
     pub(super) predicate: ArcBiPredicate<T, U>,

@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 // qubit-style: allow explicit-imports
 //! Comprehensive tests for StatefulFunction trait and its implementations
@@ -56,7 +54,9 @@ fn test_stateful_function_default_conversions_allow_relaxed_generic_types() {
         }
     }
 
-    impl<'a> StatefulFunction<BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcStatefulFunction {
+    impl<'a> StatefulFunction<BorrowedRc<'a>, BorrowedRc<'a>>
+        for BorrowedRcStatefulFunction
+    {
         fn apply(&mut self, value: &BorrowedRc<'a>) -> BorrowedRc<'a> {
             self.count.set(self.count.get() + 1);
             value.clone()
@@ -68,8 +68,12 @@ fn test_stateful_function_default_conversions_allow_relaxed_generic_types() {
     }
 
     let text = String::from("left");
-    let value = BorrowedRc { value: text.as_str() };
-    let function = BorrowedRcStatefulFunction { count: Cell::new(0) };
+    let value = BorrowedRc {
+        value: text.as_str(),
+    };
+    let function = BorrowedRcStatefulFunction {
+        count: Cell::new(0),
+    };
 
     assert_left(function.clone().into_box().apply(&value));
     assert_left(function.clone().into_rc().apply(&value));
@@ -141,7 +145,8 @@ fn test_stateful_function_trait_into_arc() {
     let counter = Arc::new(Mutex::new(0));
     let counter_clone = Arc::clone(&counter);
     let func = move |x: &i32| {
-        let mut current = counter_clone.lock().expect("mutex should not be poisoned");
+        let mut current =
+            counter_clone.lock().expect("mutex should not be poisoned");
         let result = x + *current;
         *current += 1;
         result
@@ -206,7 +211,8 @@ fn test_stateful_function_trait_to_arc() {
     let counter = Arc::new(Mutex::new(0));
     let counter_clone = Arc::clone(&counter);
     let func = move |x: &i32| {
-        let mut current = counter_clone.lock().expect("mutex should not be poisoned");
+        let mut current =
+            counter_clone.lock().expect("mutex should not be poisoned");
         let result = x + *current;
         *current += 1;
         result
@@ -262,7 +268,8 @@ fn test_stateful_function_trait_to_once() {
 
     let once_func = func.to_once();
     assert_eq!(once_func.apply(&10), 10);
-    // Note: Original func is consumed by to_once since it calls clone().into_once()
+    // Note: Original func is consumed by to_once since it calls
+    // clone().into_once()
 }
 
 // ============================================================================
@@ -442,7 +449,8 @@ fn test_arc_stateful_function_new() {
     let counter = Arc::new(Mutex::new(0));
     let counter_clone = Arc::clone(&counter);
     let mut func = ArcStatefulFunction::new(move |x: &i32| {
-        let mut current = counter_clone.lock().expect("mutex should not be poisoned");
+        let mut current =
+            counter_clone.lock().expect("mutex should not be poisoned");
         let result = x + *current;
         *current += 1;
         result
@@ -476,7 +484,8 @@ fn test_arc_stateful_function_apply() {
     let counter = Arc::new(Mutex::new(0));
     let counter_clone = Arc::clone(&counter);
     let mut func = ArcStatefulFunction::new(move |x: &i32| {
-        let mut current = counter_clone.lock().expect("mutex should not be poisoned");
+        let mut current =
+            counter_clone.lock().expect("mutex should not be poisoned");
         let result = x * *current;
         *current += 1;
         result
@@ -492,7 +501,8 @@ fn test_arc_stateful_function_clone() {
     let counter = Arc::new(Mutex::new(0));
     let counter_clone = Arc::clone(&counter);
     let func = ArcStatefulFunction::new(move |x: &i32| {
-        let mut current = counter_clone.lock().expect("mutex should not be poisoned");
+        let mut current =
+            counter_clone.lock().expect("mutex should not be poisoned");
         let result = x + *current;
         *current += 1;
         result
@@ -554,7 +564,8 @@ fn test_arc_stateful_function_when_with_predicate() {
     let counter = Arc::new(Mutex::new(0));
     let counter_clone = Arc::clone(&counter);
     let mut func = ArcStatefulFunction::new(move |x: &i32| {
-        let mut current = counter_clone.lock().expect("mutex should not be poisoned");
+        let mut current =
+            counter_clone.lock().expect("mutex should not be poisoned");
         let result = x * *current;
         *current += 1;
         result
@@ -577,7 +588,8 @@ fn test_arc_stateful_function_into_box() {
     let counter = Arc::new(Mutex::new(0));
     let counter_clone = Arc::clone(&counter);
     let func = ArcStatefulFunction::new(move |x: &i32| {
-        let mut current = counter_clone.lock().expect("mutex should not be poisoned");
+        let mut current =
+            counter_clone.lock().expect("mutex should not be poisoned");
         let result = x + *current;
         *current += 1;
         result
@@ -593,7 +605,8 @@ fn test_arc_stateful_function_into_rc() {
     let counter = Arc::new(Mutex::new(0));
     let counter_clone = Arc::clone(&counter);
     let func = ArcStatefulFunction::new(move |x: &i32| {
-        let mut current = counter_clone.lock().expect("mutex should not be poisoned");
+        let mut current =
+            counter_clone.lock().expect("mutex should not be poisoned");
         let result = x + *current;
         *current += 1;
         result
@@ -609,7 +622,8 @@ fn test_arc_stateful_function_into_arc() {
     let counter = Arc::new(Mutex::new(0));
     let counter_clone = Arc::clone(&counter);
     let func = ArcStatefulFunction::new(move |x: &i32| {
-        let mut current = counter_clone.lock().expect("mutex should not be poisoned");
+        let mut current =
+            counter_clone.lock().expect("mutex should not be poisoned");
         let result = x + *current;
         *current += 1;
         result
@@ -625,7 +639,8 @@ fn test_arc_stateful_function_into_fn() {
     let counter = Arc::new(Mutex::new(0));
     let counter_clone = Arc::clone(&counter);
     let func = ArcStatefulFunction::new(move |x: &i32| {
-        let mut current = counter_clone.lock().expect("mutex should not be poisoned");
+        let mut current =
+            counter_clone.lock().expect("mutex should not be poisoned");
         let result = x + *current;
         *current += 1;
         result
@@ -641,7 +656,8 @@ fn test_arc_stateful_function_to_box() {
     let counter = Arc::new(Mutex::new(0));
     let counter_clone = Arc::clone(&counter);
     let func = ArcStatefulFunction::new(move |x: &i32| {
-        let mut current = counter_clone.lock().expect("mutex should not be poisoned");
+        let mut current =
+            counter_clone.lock().expect("mutex should not be poisoned");
         let result = x + *current;
         *current += 1;
         result
@@ -658,7 +674,8 @@ fn test_arc_stateful_function_to_rc() {
     let counter = Arc::new(Mutex::new(0));
     let counter_clone = Arc::clone(&counter);
     let func = ArcStatefulFunction::new(move |x: &i32| {
-        let mut current = counter_clone.lock().expect("mutex should not be poisoned");
+        let mut current =
+            counter_clone.lock().expect("mutex should not be poisoned");
         let result = x + *current;
         *current += 1;
         result
@@ -675,7 +692,8 @@ fn test_arc_stateful_function_to_arc() {
     let counter = Arc::new(Mutex::new(0));
     let counter_clone = Arc::clone(&counter);
     let func = ArcStatefulFunction::new(move |x: &i32| {
-        let mut current = counter_clone.lock().expect("mutex should not be poisoned");
+        let mut current =
+            counter_clone.lock().expect("mutex should not be poisoned");
         let result = x + *current;
         *current += 1;
         result
@@ -692,7 +710,8 @@ fn test_arc_stateful_function_to_fn() {
     let counter = Arc::new(Mutex::new(0));
     let counter_clone = Arc::clone(&counter);
     let func = ArcStatefulFunction::new(move |x: &i32| {
-        let mut current = counter_clone.lock().expect("mutex should not be poisoned");
+        let mut current =
+            counter_clone.lock().expect("mutex should not be poisoned");
         let result = x + *current;
         *current += 1;
         result
@@ -713,7 +732,8 @@ fn test_arc_stateful_function_thread_safety() {
     let counter = Arc::new(Mutex::new(0));
     let counter_clone = Arc::clone(&counter);
     let func = ArcStatefulFunction::new(move |x: &i32| {
-        let mut current = counter_clone.lock().expect("mutex should not be poisoned");
+        let mut current =
+            counter_clone.lock().expect("mutex should not be poisoned");
         let result = x + *current;
         *current += 1;
         result
@@ -1345,7 +1365,8 @@ fn test_box_stateful_function_debug_display() {
     assert_eq!(display_str, "BoxStatefulFunction");
 
     // Test Debug and Display for BoxStatefulFunction with name
-    let mut named_double = BoxStatefulFunction::new_with_name("stateful_double", |x: &i32| x * 2);
+    let mut named_double =
+        BoxStatefulFunction::new_with_name("stateful_double", |x: &i32| x * 2);
     // Call apply to test the function
     assert_eq!(named_double.apply(&3), 6);
 
@@ -1375,7 +1396,10 @@ fn test_rc_stateful_function_debug_display() {
     assert_eq!(display_str, "RcStatefulFunction");
 
     // Test Debug and Display for RcStatefulFunction with name
-    let mut named_double = RcStatefulFunction::new_with_name("rc_stateful_double", |x: &i32| x * 2);
+    let mut named_double =
+        RcStatefulFunction::new_with_name("rc_stateful_double", |x: &i32| {
+            x * 2
+        });
     // Call apply to test the function
     assert_eq!(named_double.apply(&3), 6);
 
@@ -1405,7 +1429,10 @@ fn test_arc_stateful_function_debug_display() {
     assert_eq!(display_str, "ArcStatefulFunction");
 
     // Test Debug and Display for ArcStatefulFunction with name
-    let mut named_double = ArcStatefulFunction::new_with_name("arc_stateful_double", |x: &i32| x * 2);
+    let mut named_double =
+        ArcStatefulFunction::new_with_name("arc_stateful_double", |x: &i32| {
+            x * 2
+        });
     // Call apply to test the function
     assert_eq!(named_double.apply(&3), 6);
 
@@ -1415,7 +1442,10 @@ fn test_arc_stateful_function_debug_display() {
     assert!(named_debug_str.contains("function"));
 
     let named_display_str = format!("{}", named_double);
-    assert_eq!(named_display_str, "ArcStatefulFunction(arc_stateful_double)");
+    assert_eq!(
+        named_display_str,
+        "ArcStatefulFunction(arc_stateful_double)"
+    );
 }
 
 // ============================================================================
@@ -1426,7 +1456,10 @@ fn test_arc_stateful_function_debug_display() {
 fn test_box_stateful_function_name_methods() {
     // Test new_with_name, name(), and set_name()
 
-    let mut double = BoxStatefulFunction::new_with_name("box_stateful_func", move |x: &i32| x * 2);
+    let mut double = BoxStatefulFunction::new_with_name(
+        "box_stateful_func",
+        move |x: &i32| x * 2,
+    );
 
     // Test name() returns the initial name
     assert_eq!(double.name(), Some("box_stateful_func"));
@@ -1443,7 +1476,10 @@ fn test_box_stateful_function_name_methods() {
 fn test_rc_stateful_function_name_methods() {
     // Test new_with_name, name(), and set_name()
 
-    let mut double = RcStatefulFunction::new_with_name("rc_stateful_func", move |x: &i32| x * 2);
+    let mut double = RcStatefulFunction::new_with_name(
+        "rc_stateful_func",
+        move |x: &i32| x * 2,
+    );
 
     // Test name() returns the initial name
     assert_eq!(double.name(), Some("rc_stateful_func"));
@@ -1465,7 +1501,10 @@ fn test_rc_stateful_function_name_methods() {
 fn test_arc_stateful_function_name_methods() {
     // Test new_with_name, name(), and set_name()
 
-    let mut double = ArcStatefulFunction::new_with_name("arc_stateful_func", move |x: &i32| x * 2);
+    let mut double = ArcStatefulFunction::new_with_name(
+        "arc_stateful_func",
+        move |x: &i32| x * 2,
+    );
 
     // Test name() returns the initial name
     assert_eq!(double.name(), Some("arc_stateful_func"));
@@ -1510,7 +1549,8 @@ fn test_box_conditional_stateful_function_debug_display() {
     assert!(display_str.ends_with(")"));
 
     // Test Debug and Display for BoxConditionalStatefulFunction with name
-    let mut named_double = BoxStatefulFunction::new_with_name("stateful_double", |x: &i32| x * 2);
+    let mut named_double =
+        BoxStatefulFunction::new_with_name("stateful_double", |x: &i32| x * 2);
     // Call apply to test the function
     assert_eq!(named_double.apply(&3), 6);
 
@@ -1552,7 +1592,10 @@ fn test_rc_conditional_stateful_function_debug_display() {
     assert!(display_str.ends_with(")"));
 
     // Test Debug and Display for RcConditionalStatefulFunction with name
-    let mut named_double = RcStatefulFunction::new_with_name("rc_stateful_double", |x: &i32| x * 2);
+    let mut named_double =
+        RcStatefulFunction::new_with_name("rc_stateful_double", |x: &i32| {
+            x * 2
+        });
     // Call apply to test the function
     assert_eq!(named_double.apply(&3), 6);
 
@@ -1566,7 +1609,9 @@ fn test_rc_conditional_stateful_function_debug_display() {
 
     let named_display_str = format!("{}", named_conditional);
     assert!(named_display_str.starts_with("RcConditionalStatefulFunction("));
-    assert!(named_display_str.contains("RcStatefulFunction(rc_stateful_double)"));
+    assert!(
+        named_display_str.contains("RcStatefulFunction(rc_stateful_double)")
+    );
     assert!(named_display_str.contains("RcPredicate"));
     assert!(named_display_str.ends_with(")"));
 }
@@ -1594,7 +1639,10 @@ fn test_arc_conditional_stateful_function_debug_display() {
     assert!(display_str.ends_with(")"));
 
     // Test Debug and Display for ArcConditionalStatefulFunction with name
-    let mut named_double = ArcStatefulFunction::new_with_name("arc_stateful_double", |x: &i32| x * 2);
+    let mut named_double =
+        ArcStatefulFunction::new_with_name("arc_stateful_double", |x: &i32| {
+            x * 2
+        });
     // Call apply to test the function
     assert_eq!(named_double.apply(&3), 6);
 
@@ -1608,7 +1656,9 @@ fn test_arc_conditional_stateful_function_debug_display() {
 
     let named_display_str = format!("{}", named_conditional);
     assert!(named_display_str.starts_with("ArcConditionalStatefulFunction("));
-    assert!(named_display_str.contains("ArcStatefulFunction(arc_stateful_double)"));
+    assert!(
+        named_display_str.contains("ArcStatefulFunction(arc_stateful_double)")
+    );
     assert!(named_display_str.contains("ArcPredicate"));
     assert!(named_display_str.ends_with(")"));
 }

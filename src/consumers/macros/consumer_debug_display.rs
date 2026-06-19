@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Consumer Debug Display Macro
 //!
 //! Generates Debug and Display trait implementations for Consumer structs
@@ -37,7 +35,6 @@
 //! // For two type parameters
 //! impl_consumer_debug_display!(BoxBiConsumer<i32, i32>);
 //! ```
-//!
 
 /// Generates Debug and Display trait implementations for Consumer structs
 ///
@@ -70,7 +67,6 @@
 /// // For two type parameters
 /// impl_consumer_debug_display!(BoxBiConsumer<i32, i32>);
 /// ```
-///
 macro_rules! impl_consumer_debug_display {
     // Single generic parameter - Consumer types
     ($struct_name:ident < $t:ident >) => {
@@ -86,7 +82,9 @@ macro_rules! impl_consumer_debug_display {
         impl<$t> std::fmt::Display for $struct_name<$t> {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 match &self.name {
-                    Some(name) => write!(f, "{}({})", stringify!($struct_name), name),
+                    Some(name) => {
+                        write!(f, "{}({})", stringify!($struct_name), name)
+                    }
                     None => write!(f, "{}", stringify!($struct_name)),
                 }
             }
@@ -106,7 +104,9 @@ macro_rules! impl_consumer_debug_display {
         impl<$t, $u> std::fmt::Display for $struct_name<$t, $u> {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 match &self.name {
-                    Some(name) => write!(f, "{}({})", stringify!($struct_name), name),
+                    Some(name) => {
+                        write!(f, "{}({})", stringify!($struct_name), name)
+                    }
                     None => write!(f, "{}", stringify!($struct_name)),
                 }
             }

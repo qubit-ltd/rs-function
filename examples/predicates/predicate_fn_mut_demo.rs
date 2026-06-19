@@ -1,14 +1,13 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
-//! Demonstrates how Predicate's into_fn/to_fn methods can be used in scenarios requiring FnMut
+//! Demonstrates how Predicate's into_fn/to_fn methods can be used in scenarios
+//! requiring FnMut
 
 use qubit_function::{
     ArcPredicate,
@@ -32,7 +31,8 @@ fn demo_with_iterator_filter() {
 
     let pred = BoxPredicate::new(|x: &i32| *x > 0);
     let numbers = vec![-2, -1, 0, 1, 2, 3];
-    let positives: Vec<_> = numbers.iter().copied().filter(pred.into_fn()).collect();
+    let positives: Vec<_> =
+        numbers.iter().copied().filter(pred.into_fn()).collect();
     println!("   Original data: {:?}", numbers);
     println!("   Filtered result: {:?}", positives);
     assert_eq!(positives, vec![1, 2, 3]);
@@ -78,8 +78,12 @@ fn demo_with_generic_function() {
     println!("   Second call: count = {}", count2);
     assert_eq!(count2, 2);
 
-    println!("   ✓ RcPredicate::to_fn() can be passed to generic functions requiring FnMut");
-    println!("   ✓ Original predicate can be converted and used multiple times\n");
+    println!(
+        "   ✓ RcPredicate::to_fn() can be passed to generic functions requiring FnMut"
+    );
+    println!(
+        "   ✓ Original predicate can be converted and used multiple times\n"
+    );
 }
 
 /// Demonstrates thread-safe usage
@@ -87,7 +91,8 @@ fn demo_thread_safe() {
     println!("4. Thread-safe usage");
 
     let pred = ArcPredicate::new(|x: &i32| *x > 0);
-    // clone and convert into a 'static closure so it can be moved to another thread
+    // clone and convert into a 'static closure so it can be moved to another
+    // thread
     let closure = pred.clone().into_fn();
 
     // Closure can be passed between threads

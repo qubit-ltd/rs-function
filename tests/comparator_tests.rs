@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 use qubit_function::comparator::{
     ArcComparator,
@@ -28,7 +26,11 @@ fn test_comparator_default_conversions_allow_relaxed_generic_types() {
     struct BorrowedRcComparator;
 
     impl<'a> Comparator<BorrowedRc<'a>> for BorrowedRcComparator {
-        fn compare(&self, first: &BorrowedRc<'a>, second: &BorrowedRc<'a>) -> Ordering {
+        fn compare(
+            &self,
+            first: &BorrowedRc<'a>,
+            second: &BorrowedRc<'a>,
+        ) -> Ordering {
             first.value.cmp(second.value)
         }
     }
@@ -283,7 +285,10 @@ mod arc_comparator_tests {
             .map(|i| {
                 let cmp_clone = cmp.clone();
                 std::thread::spawn(move || {
-                    assert_eq!(cmp_clone.compare(&(i + 1), &i), Ordering::Greater);
+                    assert_eq!(
+                        cmp_clone.compare(&(i + 1), &i),
+                        Ordering::Greater
+                    );
                 })
             })
             .collect();
@@ -525,7 +530,10 @@ mod generic_tests {
         RcComparator,
     };
 
-    fn sort_with_comparator<C: Comparator<i32>>(cmp: &C, mut vec: Vec<i32>) -> Vec<i32> {
+    fn sort_with_comparator<C: Comparator<i32>>(
+        cmp: &C,
+        mut vec: Vec<i32>,
+    ) -> Vec<i32> {
         vec.sort_by(|a, b| cmp.compare(a, b));
         vec
     }
@@ -591,8 +599,10 @@ mod edge_cases {
 
     #[test]
     fn test_long_chain() {
-        let cmp1 = BoxComparator::new(|a: &i32, b: &i32| (a / 10).cmp(&(b / 10)));
-        let cmp2 = BoxComparator::new(|a: &i32, b: &i32| (a % 10).cmp(&(b % 10)));
+        let cmp1 =
+            BoxComparator::new(|a: &i32, b: &i32| (a / 10).cmp(&(b / 10)));
+        let cmp2 =
+            BoxComparator::new(|a: &i32, b: &i32| (a % 10).cmp(&(b % 10)));
         let chained = cmp1.then_comparing(cmp2);
         assert_eq!(chained.compare(&15, &12), Ordering::Greater);
         assert_eq!(chained.compare(&12, &15), Ordering::Less);

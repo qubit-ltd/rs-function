@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Runnable Types
 //!
 //! Provides fallible, reusable, zero-argument actions.
@@ -17,7 +15,6 @@
 //!
 //! The trait itself does not require `Send`; concurrent executors should add
 //! `+ Send + 'static` at their API boundary.
-//!
 
 use crate::{
     macros::impl_closure_trait,
@@ -62,7 +59,6 @@ pub use arc_runnable::ArcRunnable;
 /// let mut task = || Ok::<(), String>(());
 /// assert_eq!(task.run(), Ok(()));
 /// ```
-///
 pub trait Runnable<E> {
     /// Executes the action, borrowing `self` mutably.
     ///

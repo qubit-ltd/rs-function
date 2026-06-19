@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! # Function Constant Method Macro
 //!
@@ -15,8 +13,8 @@
 //! This macro generates an `impl` block that implements the `constant()` method
 //! for function types that return a constant value regardless of input.
 //!
-//! This macro supports both single-parameter and two-parameter functions through
-//! pattern matching on the struct signature.
+//! This macro supports both single-parameter and two-parameter functions
+//! through pattern matching on the struct signature.
 //!
 //! # Parameters
 //!
@@ -81,15 +79,14 @@
 //!     }
 //! }
 //! ```
-//!
 
 /// Generates constant method implementation for function types.
 ///
 /// This macro generates an `impl` block that implements the `constant()` method
 /// for function types that return a constant value regardless of input.
 ///
-/// This macro supports both single-parameter and two-parameter functions through
-/// pattern matching on the struct signature.
+/// This macro supports both single-parameter and two-parameter functions
+/// through pattern matching on the struct signature.
 ///
 /// # Parameters
 ///
@@ -106,7 +103,6 @@
 /// // Two-parameter function
 /// impl_function_constant_method!(BoxBiFunction<T, U, R>);
 /// ```
-///
 macro_rules! impl_function_constant_method {
     // Two generic parameters - Function
     ($struct_name:ident < $t:ident, $r:ident >, $($extra_bounds:tt)+) => {

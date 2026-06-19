@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcStatefulSupplier` public type.
 
@@ -87,7 +85,6 @@ use super::{
 /// assert_eq!(d.get(), 20);
 /// assert_eq!(t.get(), 30);
 /// ```
-///
 pub struct RcStatefulSupplier<T> {
     pub(super) function: Rc<RefCell<dyn FnMut() -> T>>,
     pub(super) name: Option<String>,

@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # MutatingFunction Types
 //!
 //! Provides Java-like `MutatingFunction` interface implementations for
@@ -17,12 +15,11 @@
 //! This module provides a unified `MutatingFunction` trait and three concrete
 //! implementations based on different ownership models:
 //!
-//! - **`BoxMutatingFunction<T, R>`**: Box-based single ownership
-//!   implementation
+//! - **`BoxMutatingFunction<T, R>`**: Box-based single ownership implementation
 //! - **`ArcMutatingFunction<T, R>`**: Arc-based thread-safe shared ownership
 //!   implementation
-//! - **`RcMutatingFunction<T, R>`**: Rc-based single-threaded shared
-//!   ownership implementation
+//! - **`RcMutatingFunction<T, R>`**: Rc-based single-threaded shared ownership
+//!   implementation
 //!
 //! # Design Philosophy
 //!
@@ -120,7 +117,6 @@
 //! assert_eq!(old_value, Some(10));
 //! assert_eq!(cache.get("key"), Some(&42));
 //! ```
-//!
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -197,10 +193,9 @@ pub use fn_mutating_function_ops::FnMutatingFunctionOps;
 ///
 /// # Features
 ///
-/// - **Unified Interface**: All mutating function types share the same
-///   `apply` method signature
-/// - **Automatic Implementation**: Closures automatically implement this
-///   trait
+/// - **Unified Interface**: All mutating function types share the same `apply`
+///   method signature
+/// - **Automatic Implementation**: Closures automatically implement this trait
 /// - **Type Conversions**: Easy conversion between ownership models
 /// - **Generic Programming**: Write functions that work with any mutating
 ///   function type
@@ -244,7 +239,6 @@ pub use fn_mutating_function_ops::FnMutatingFunctionOps;
 /// // let rc_func = closure.into_rc();  // closure moved
 /// // let arc_func = closure.into_arc(); // closure moved
 /// ```
-///
 pub trait MutatingFunction<T, R> {
     /// Applies the function to the mutable reference and returns a result
     ///
@@ -531,7 +525,8 @@ pub trait MutatingFunction<T, R> {
     /// Convert to MutatingFunctionOnce without consuming self
     ///
     /// **⚠️ Requires Clone**: This method requires `Self` to implement `Clone`.
-    /// Clones the current function and converts the clone to a one-time function.
+    /// Clones the current function and converts the clone to a one-time
+    /// function.
     ///
     /// # Returns
     ///

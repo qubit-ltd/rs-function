@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalFunction` public type.
 
@@ -52,7 +50,6 @@ use super::{
 /// assert_eq!(conditional.apply(&5), 10); // when branch executed
 /// assert_eq!(conditional.apply(&-5), 5); // or_else branch executed
 /// ```
-///
 pub struct BoxConditionalFunction<T, R> {
     pub(super) function: BoxFunction<T, R>,
     pub(super) predicate: BoxPredicate<T>,

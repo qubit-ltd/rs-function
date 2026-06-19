@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! # Arc Conversions Macro
 //!
@@ -18,7 +16,6 @@
 //! - Parameter types
 //! - Return type
 //! - Call mode (Fn → direct, FnMut → lock_unwrap)
-//!
 
 /// Public interface macro for Arc-based conversions.
 ///
@@ -85,7 +82,6 @@
 /// //                       RcMutatingFunction, BoxMutatingFunctionOnce,
 /// //                       Fn(input: &mut T) -> R);
 /// ```
-///
 macro_rules! impl_arc_conversions {
     // ==================== Core Macro: Generate Single Method ====================
 

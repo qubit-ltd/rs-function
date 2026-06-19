@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcStatefulConsumer` public type.
 
@@ -42,8 +40,8 @@ type RcStatefulConsumerFn<T> = Rc<RefCell<dyn FnMut(&T)>>;
 /// - **Shared Ownership**: Cloneable through `Rc`, allowing multiple owners
 /// - **Single-Threaded**: Not thread-safe, cannot be sent across threads
 /// - **Interior Mutability**: Uses `RefCell` for runtime borrowing checks
-/// - **No Lock Overhead**: More efficient than `ArcStatefulConsumer` for single-threaded
-///   use
+/// - **No Lock Overhead**: More efficient than `ArcStatefulConsumer` for
+///   single-threaded use
 /// - **Non-Consuming API**: `and_then` borrows `&self`, original object remains
 ///   usable
 ///
@@ -58,7 +56,8 @@ type RcStatefulConsumerFn<T> = Rc<RefCell<dyn FnMut(&T)>>;
 ///
 /// # Performance Considerations
 ///
-/// `RcStatefulConsumer` performs better than `ArcStatefulConsumer` in single-threaded scenarios:
+/// `RcStatefulConsumer` performs better than `ArcStatefulConsumer` in
+/// single-threaded scenarios:
 /// - **Non-Atomic Counting**: clone/drop is cheaper than `Arc`
 /// - **No Lock Overhead**: `RefCell` uses runtime checks, no locks
 /// - **Better Cache Locality**: No atomic operations means better CPU cache
@@ -70,9 +69,9 @@ type RcStatefulConsumerFn<T> = Rc<RefCell<dyn FnMut(&T)>>;
 ///
 /// # Safety
 ///
-/// `RcStatefulConsumer` is not thread-safe and does not implement `Send` or `Sync`.
-/// Attempting to send it to another thread will result in a compilation error.
-/// For thread-safe sharing, use `ArcStatefulConsumer` instead.
+/// `RcStatefulConsumer` is not thread-safe and does not implement `Send` or
+/// `Sync`. Attempting to send it to another thread will result in a compilation
+/// error. For thread-safe sharing, use `ArcStatefulConsumer` instead.
 ///
 /// # Examples
 ///
@@ -91,7 +90,6 @@ type RcStatefulConsumerFn<T> = Rc<RefCell<dyn FnMut(&T)>>;
 /// consumer.accept(&5);
 /// assert_eq!(*log.borrow(), vec![10]);
 /// ```
-///
 pub struct RcStatefulConsumer<T> {
     pub(super) function: RcStatefulConsumerFn<T>,
     pub(super) name: Option<String>,
@@ -99,9 +97,11 @@ pub struct RcStatefulConsumer<T> {
 
 impl<T> RcStatefulConsumer<T> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
-    impl_consumer_common_methods!(RcStatefulConsumer<T>, (FnMut(&T) + 'static), |f| Rc::new(RefCell::new(
-        f
-    )));
+    impl_consumer_common_methods!(
+        RcStatefulConsumer<T>,
+        (FnMut(&T) + 'static),
+        |f| Rc::new(RefCell::new(f))
+    );
 
     // Generates: when() and and_then() methods that borrow &self (Rc can clone)
     impl_shared_consumer_methods!(

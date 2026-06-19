@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxCallableOnce` public type.
 
@@ -54,7 +52,6 @@ use crate::{
 /// let task = BoxCallableOnce::new(|| Ok::<i32, String>(42));
 /// assert_eq!(task.call(), Ok(42));
 /// ```
-///
 pub struct BoxCallableOnce<R, E> {
     /// The one-time closure executed by this callable.
     pub(super) function: Box<dyn FnOnce() -> Result<R, E> + Send>,
@@ -109,7 +106,10 @@ impl<R, E> BoxCallableOnce<R, E> {
     {
         let name = self.name;
         let function = self.function;
-        BoxCallableOnce::new_with_optional_name(move || function().map(mapper), name)
+        BoxCallableOnce::new_with_optional_name(
+            move || function().map(mapper),
+            name,
+        )
     }
 
     /// Maps the error value of this callable.
@@ -130,7 +130,10 @@ impl<R, E> BoxCallableOnce<R, E> {
     {
         let name = self.name;
         let function = self.function;
-        BoxCallableOnce::new_with_optional_name(move || function().map_err(mapper), name)
+        BoxCallableOnce::new_with_optional_name(
+            move || function().map_err(mapper),
+            name,
+        )
     }
 
     /// Chains another fallible computation after this callable succeeds.
@@ -152,7 +155,10 @@ impl<R, E> BoxCallableOnce<R, E> {
     {
         let name = self.name;
         let function = self.function;
-        BoxCallableOnce::new_with_optional_name(move || function().and_then(next), name)
+        BoxCallableOnce::new_with_optional_name(
+            move || function().and_then(next),
+            name,
+        )
     }
 }
 
@@ -174,7 +180,10 @@ impl<R, E> CallableOnce<R, E> for BoxCallableOnce<R, E> {
     {
         let name = self.name;
         let function = self.function;
-        BoxRunnableOnce::new_with_optional_name(move || function().map(|_| ()), name)
+        BoxRunnableOnce::new_with_optional_name(
+            move || function().map(|_| ()),
+            name,
+        )
     }
 
     /// Converts this boxed callable into a local boxed callable while
@@ -198,7 +207,10 @@ impl<R, E> CallableOnce<R, E> for BoxCallableOnce<R, E> {
     {
         let name = self.name;
         let function = self.function;
-        LocalBoxRunnableOnce::new_with_optional_name(move || function().map(|_| ()), name)
+        LocalBoxRunnableOnce::new_with_optional_name(
+            move || function().map(|_| ()),
+            name,
+        )
     }
 }
 

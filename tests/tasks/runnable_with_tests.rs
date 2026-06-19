@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! Unit tests for runnable-with task types.
 
@@ -51,7 +49,8 @@ fn test_runnable_with_closure_run_with_returns_success() {
         Ok::<(), io::Error>(())
     };
 
-    RunnableWith::run_with(&mut task, &mut input).expect("runnable-with closure should succeed");
+    RunnableWith::run_with(&mut task, &mut input)
+        .expect("runnable-with closure should succeed");
 
     assert_eq!(input, 15);
 }
@@ -61,7 +60,8 @@ fn test_runnable_with_closure_run_with_returns_error() {
     let mut input = 10;
     let mut task = |_value: &mut i32| Err::<(), _>(io::Error::other("failed"));
 
-    let error = RunnableWith::run_with(&mut task, &mut input).expect_err("runnable-with closure should fail");
+    let error = RunnableWith::run_with(&mut task, &mut input)
+        .expect_err("runnable-with closure should fail");
 
     assert_eq!(error.kind(), io::ErrorKind::Other);
     assert_eq!(error.to_string(), "failed");
@@ -76,7 +76,8 @@ fn test_runnable_with_closure_into_box_executes_repeatedly() {
     });
     let mut input = 1;
 
-    task.run_with(&mut input).expect("boxed runnable-with should succeed");
+    task.run_with(&mut input)
+        .expect("boxed runnable-with should succeed");
     task.run_with(&mut input)
         .expect("boxed runnable-with should execute again");
 
@@ -103,7 +104,9 @@ fn test_runnable_with_to_box_clones_runnable() {
     let mut task = AddRunnableWith { amount: 3 };
     let mut boxed = task.to_box();
 
-    boxed.run_with(&mut input).expect("boxed clone should succeed");
+    boxed
+        .run_with(&mut input)
+        .expect("boxed clone should succeed");
     task.run_with(&mut input)
         .expect("original runnable-with should remain usable");
 
@@ -125,10 +128,13 @@ fn test_runnable_with_default_into_callable_returns_unit() {
 
 #[test]
 fn test_box_runnable_with_name_management() {
-    let mut task = BoxRunnableWith::<i32, io::Error>::new_with_name("adjust", |input: &mut i32| {
-        *input += 1;
-        Ok(())
-    });
+    let mut task = BoxRunnableWith::<i32, io::Error>::new_with_name(
+        "adjust",
+        |input: &mut i32| {
+            *input += 1;
+            Ok(())
+        },
+    );
 
     assert_eq!(task.name(), Some("adjust"));
     assert_eq!(task.to_string(), "BoxRunnableWith(adjust)");
@@ -175,7 +181,9 @@ fn test_box_runnable_with_then_callable_runs_after_success() {
 
     assert_eq!(callable.name(), Some("prepare"));
     assert_eq!(
-        callable.call_with(&mut input).expect("callable-with should succeed"),
+        callable
+            .call_with(&mut input)
+            .expect("callable-with should succeed"),
         14
     );
     assert_eq!(input, 14);
@@ -210,8 +218,12 @@ fn test_runnable_with_to_rc_clones_source() {
     shared
         .run_with(&mut input)
         .expect("shared runnable-with should succeed");
-    clone.run_with(&mut input).expect("shared clone should succeed");
-    source.run_with(&mut input).expect("original should remain usable");
+    clone
+        .run_with(&mut input)
+        .expect("shared clone should succeed");
+    source
+        .run_with(&mut input)
+        .expect("original should remain usable");
 
     assert_eq!(input, 6);
 }
@@ -302,21 +314,26 @@ fn test_box_runnable_with_conversions_preserve_behavior_and_name() {
     function(&mut input).expect("function should run");
     assert_eq!(input, 6);
 
-    let boxed = BoxRunnableWith::new_with_name("callable", |value: &mut i32| {
-        *value += 4;
-        Ok::<(), io::Error>(())
-    });
+    let boxed =
+        BoxRunnableWith::new_with_name("callable", |value: &mut i32| {
+            *value += 4;
+            Ok::<(), io::Error>(())
+        });
     let mut callable = RunnableWith::into_callable_with(boxed);
     assert_eq!(callable.name(), Some("callable"));
-    callable.call_with(&mut input).expect("callable conversion should run");
+    callable
+        .call_with(&mut input)
+        .expect("callable conversion should run");
     assert_eq!(input, 10);
 }
 
 #[test]
 fn test_box_runnable_with_into_callable_preserves_error() {
     let mut input = 0;
-    let boxed =
-        BoxRunnableWith::<i32, io::Error>::new_with_name("callable", |_value| Err(io::Error::other("callable failed")));
+    let boxed = BoxRunnableWith::<i32, io::Error>::new_with_name(
+        "callable",
+        |_value| Err(io::Error::other("callable failed")),
+    );
 
     let mut callable = RunnableWith::into_callable_with(boxed);
     let error = callable
@@ -332,11 +349,12 @@ fn test_box_runnable_with_into_callable_preserves_error() {
 fn test_rc_runnable_with_conversions_preserve_shared_state() {
     let count = Rc::new(Cell::new(0));
     let captured = Rc::clone(&count);
-    let shared = RcRunnableWith::new_with_name("shared", move |input: &mut i32| {
-        *input += 1;
-        captured.set(captured.get() + 1);
-        Ok::<(), io::Error>(())
-    });
+    let shared =
+        RcRunnableWith::new_with_name("shared", move |input: &mut i32| {
+            *input += 1;
+            captured.set(captured.get() + 1);
+            Ok::<(), io::Error>(())
+        });
     let mut input = 0;
 
     let mut boxed = shared.clone().into_box();
@@ -367,11 +385,12 @@ fn test_rc_runnable_with_conversions_preserve_shared_state() {
 fn test_arc_runnable_with_conversions_preserve_shared_state() {
     let count = Arc::new(AtomicUsize::new(0));
     let captured = Arc::clone(&count);
-    let shared = ArcRunnableWith::new_with_name("shared", move |input: &mut i32| {
-        *input += 2;
-        captured.fetch_add(1, Ordering::SeqCst);
-        Ok::<(), io::Error>(())
-    });
+    let shared =
+        ArcRunnableWith::new_with_name("shared", move |input: &mut i32| {
+            *input += 2;
+            captured.fetch_add(1, Ordering::SeqCst);
+            Ok::<(), io::Error>(())
+        });
     let mut input = 0;
 
     let mut boxed = shared.clone().into_box();
@@ -410,25 +429,30 @@ fn test_box_runnable_with_combinators_cover_error_branches() {
     let mut input = 0;
     let next_ran = Rc::new(Cell::new(false));
     let next_ran_capture = Rc::clone(&next_ran);
-    let mut chained = BoxRunnableWith::<i32, io::Error>::new(|_value| Err(io::Error::other("first failed"))).and_then(
-        move |value: &mut i32| {
-            next_ran_capture.set(true);
-            *value += 1;
-            Ok::<(), io::Error>(())
-        },
-    );
-    let error = chained.run_with(&mut input).expect_err("and_then should short-circuit");
+    let mut chained = BoxRunnableWith::<i32, io::Error>::new(|_value| {
+        Err(io::Error::other("first failed"))
+    })
+    .and_then(move |value: &mut i32| {
+        next_ran_capture.set(true);
+        *value += 1;
+        Ok::<(), io::Error>(())
+    });
+    let error = chained
+        .run_with(&mut input)
+        .expect_err("and_then should short-circuit");
     assert_eq!(error.to_string(), "first failed");
     assert!(!next_ran.get());
     assert_eq!(input, 0);
 
     let callable_ran = Rc::new(Cell::new(false));
     let callable_ran_capture = Rc::clone(&callable_ran);
-    let mut callable = BoxRunnableWith::<i32, io::Error>::new(|_value| Err(io::Error::other("prepare failed")))
-        .then_callable_with(move |value: &mut i32| {
-            callable_ran_capture.set(true);
-            Ok::<i32, io::Error>(*value + 1)
-        });
+    let mut callable = BoxRunnableWith::<i32, io::Error>::new(|_value| {
+        Err(io::Error::other("prepare failed"))
+    })
+    .then_callable_with(move |value: &mut i32| {
+        callable_ran_capture.set(true);
+        Ok::<i32, io::Error>(*value + 1)
+    });
     let error = callable
         .call_with(&mut input)
         .expect_err("then_callable_with should short-circuit");

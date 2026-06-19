@@ -1,18 +1,15 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Consumers Module
 //!
 //! This module provides consumer-related functional programming abstractions,
 //! including single-parameter consumers, bi-consumers, and their stateful
 //! variants.
-//!
 
 pub mod bi_consumer;
 pub mod bi_consumer_once;

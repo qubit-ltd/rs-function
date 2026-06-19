@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # BiPredicate Abstraction
 //!
 //! Provides a Rust implementation similar to Java's `BiPredicate`
@@ -19,8 +17,8 @@
 //! be:
 //!
 //! - **Read-only**: Does not modify the tested values
-//! - **Side-effect free**: Does not change external state (from the
-//!   user's perspective)
+//! - **Side-effect free**: Does not change external state (from the user's
+//!   perspective)
 //! - **Repeatable**: Same inputs should produce the same result
 //! - **Deterministic**: Judgment logic should be predictable
 //!
@@ -30,14 +28,14 @@
 //!
 //! This module follows the same principles as the `Predicate` module:
 //!
-//! 1. **Single Trait**: Only one `BiPredicate<T, U>` trait with
-//!    `&self`, keeping the API simple and semantically clear
-//! 2. **No BiPredicateMut**: All stateful scenarios use interior
-//!    mutability (`RefCell`, `Cell`, `Mutex`) instead of `&mut self`
-//! 3. **No BiPredicateOnce**: Violates bi-predicate semantics -
-//!    judgments should be repeatable
-//! 4. **Three Implementations**: `BoxBiPredicate`, `RcBiPredicate`,
-//!    and `ArcBiPredicate` cover all ownership scenarios
+//! 1. **Single Trait**: Only one `BiPredicate<T, U>` trait with `&self`,
+//!    keeping the API simple and semantically clear
+//! 2. **No BiPredicateMut**: All stateful scenarios use interior mutability
+//!    (`RefCell`, `Cell`, `Mutex`) instead of `&mut self`
+//! 3. **No BiPredicateOnce**: Violates bi-predicate semantics - judgments
+//!    should be repeatable
+//! 4. **Three Implementations**: `BoxBiPredicate`, `RcBiPredicate`, and
+//!    `ArcBiPredicate` cover all ownership scenarios
 //!
 //! ## Type Selection Guide
 //!
@@ -141,7 +139,6 @@
 //! assert!(pred.test(&5, &3));
 //! assert!(!pred.test(&-8, &-3));
 //! ```
-//!
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -165,15 +162,15 @@ use crate::predicates::macros::{
 
 /// Type alias for bi-predicate function to simplify complex types.
 ///
-/// This type alias represents a function that takes two references and returns a boolean.
-/// It is used to reduce type complexity in struct definitions.
+/// This type alias represents a function that takes two references and returns
+/// a boolean. It is used to reduce type complexity in struct definitions.
 type BiPredicateFn<T, U> = dyn Fn(&T, &U) -> bool;
 
 /// Type alias for thread-safe bi-predicate function to simplify complex types.
 ///
-/// This type alias represents a function that takes two references and returns a boolean,
-/// with Send + Sync bounds for thread-safe usage. It is used to reduce type complexity
-/// in Arc-based struct definitions.
+/// This type alias represents a function that takes two references and returns
+/// a boolean, with Send + Sync bounds for thread-safe usage. It is used to
+/// reduce type complexity in Arc-based struct definitions.
 type SendSyncBiPredicateFn<T, U> = dyn Fn(&T, &U) -> bool + Send + Sync;
 
 mod box_bi_predicate;
@@ -209,19 +206,17 @@ pub use fn_bi_predicate_ops::FnBiPredicateOps;
 ///
 /// - `BoxBiPredicate`: Methods consume `self` (single ownership)
 /// - `RcBiPredicate`: Methods borrow `&self` (shared ownership)
-/// - `ArcBiPredicate`: Methods borrow `&self` (thread-safe shared
-///   ownership)
+/// - `ArcBiPredicate`: Methods borrow `&self` (thread-safe shared ownership)
 ///
 /// ## Why `&self` Instead of `&mut self`?
 ///
 /// Bi-predicates use `&self` because:
 ///
-/// 1. **Semantic Clarity**: A bi-predicate is a judgment, not a
-///    mutation
+/// 1. **Semantic Clarity**: A bi-predicate is a judgment, not a mutation
 /// 2. **Flexibility**: Can be used in immutable contexts
 /// 3. **Simplicity**: No need for `mut` in user code
-/// 4. **Interior Mutability**: State (if needed) can be managed with
-///    `RefCell`, `Cell`, or `Mutex`
+/// 4. **Interior Mutability**: State (if needed) can be managed with `RefCell`,
+///    `Cell`, or `Mutex`
 ///
 /// ## Automatic Implementation for Closures
 ///
@@ -269,7 +264,6 @@ pub use fn_bi_predicate_ops::FnBiPredicateOps;
 /// assert!(counting_pred.test(&5, &3));
 /// assert!(!counting_pred.test(&-5, &-3));
 /// ```
-///
 pub trait BiPredicate<T, U> {
     /// Tests whether the given values satisfy this bi-predicate.
     ///

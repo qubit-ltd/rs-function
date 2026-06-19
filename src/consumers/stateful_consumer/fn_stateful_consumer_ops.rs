@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `FnStatefulConsumerOps` public type.
 
@@ -34,8 +32,8 @@ use super::{
 /// # Features
 ///
 /// - **Natural Syntax**: Direct method chaining on closures
-/// - **Returns BoxStatefulConsumer**: Composition results in `BoxStatefulConsumer<T>`, can
-///   continue chaining
+/// - **Returns BoxStatefulConsumer**: Composition results in
+///   `BoxStatefulConsumer<T>`, can continue chaining
 /// - **Zero Cost**: No overhead when composing closures
 /// - **Automatic Implementation**: All `FnMut(&T)` closures automatically get
 ///   these methods
@@ -58,12 +56,12 @@ use super::{
 /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![10, 15]);
 /// // (5 * 2), (5 + 10)
 /// ```
-///
 pub trait FnStatefulConsumerOps<T>: FnMut(&T) + Sized {
     /// Sequentially chain another consumer
     ///
-    /// Returns a new consumer that executes the current operation first, then the
-    /// next operation. Consumes the current closure and returns `BoxStatefulConsumer<T>`.
+    /// Returns a new consumer that executes the current operation first, then
+    /// the next operation. Consumes the current closure and returns
+    /// `BoxStatefulConsumer<T>`.
     ///
     /// # Type Parameters
     ///
@@ -72,9 +70,9 @@ pub trait FnStatefulConsumerOps<T>: FnMut(&T) + Sized {
     /// # Parameters
     ///
     /// * `next` - Consumer to execute after the current operation. **Note: This
-    ///   parameter is passed by value and will transfer ownership.** If you need
-    ///   to preserve the original consumer, clone it first (if it implements
-    ///   `Clone`). Can be:
+    ///   parameter is passed by value and will transfer ownership.** If you
+    ///   need to preserve the original consumer, clone it first (if it
+    ///   implements `Clone`). Can be:
     ///   - A closure: `|x: &T|`
     ///   - A `BoxStatefulConsumer<T>`
     ///   - An `RcStatefulConsumer<T>`

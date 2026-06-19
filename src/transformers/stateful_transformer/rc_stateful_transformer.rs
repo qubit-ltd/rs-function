@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcStatefulTransformer` public type.
 
@@ -39,12 +37,11 @@ use super::{
 ///
 /// - **Based on**: `Rc<RefCell<dyn FnMut(T) -> R>>`
 /// - **Ownership**: Shared ownership via reference counting (non-atomic)
-/// - **Reusability**: Can be called multiple times (each call consumes
-///   its input)
+/// - **Reusability**: Can be called multiple times (each call consumes its
+///   input)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync`)
 /// - **Clonable**: Cheap cloning via `Rc::clone`
 /// - **Statefulness**: Can modify internal state between calls
-///
 pub struct RcStatefulTransformer<T, R> {
     pub(super) function: Rc<RefCell<dyn FnMut(T) -> R>>,
     pub(super) name: Option<String>,

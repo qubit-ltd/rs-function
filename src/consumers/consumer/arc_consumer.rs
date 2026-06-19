@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcConsumer` public type.
 
@@ -32,9 +30,9 @@ use super::{
 
 /// ArcConsumer struct
 ///
-/// Non-mutating consumer implementation based on `Arc<dyn Fn(&T) + Send + Sync>`,
-/// for thread-safe shared ownership scenarios. The wrapper does not need
-/// `Mutex` because it only invokes a shared `Fn`.
+/// Non-mutating consumer implementation based on `Arc<dyn Fn(&T) + Send +
+/// Sync>`, for thread-safe shared ownership scenarios. The wrapper does not
+/// need `Mutex` because it only invokes a shared `Fn`.
 ///
 /// # Features
 ///
@@ -69,7 +67,6 @@ use super::{
 /// consumer.accept(&5);
 /// clone.accept(&10);
 /// ```
-///
 pub struct ArcConsumer<T> {
     pub(super) function: Arc<dyn Fn(&T) + Send + Sync>,
     pub(super) name: Option<String>,
@@ -77,9 +74,14 @@ pub struct ArcConsumer<T> {
 
 impl<T> ArcConsumer<T> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
-    impl_consumer_common_methods!(ArcConsumer<T>, (Fn(&T) + Send + Sync + 'static), |f| { Arc::new(f) });
+    impl_consumer_common_methods!(
+        ArcConsumer<T>,
+        (Fn(&T) + Send + Sync + 'static),
+        |f| { Arc::new(f) }
+    );
 
-    // Generates: when() and and_then() methods that borrow &self (Arc can clone)
+    // Generates: when() and and_then() methods that borrow &self (Arc can
+    // clone)
     impl_shared_consumer_methods!(
         ArcConsumer<T>,
         ArcConditionalConsumer,

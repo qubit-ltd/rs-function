@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 use qubit_function::{
     ArcBiTransformer,
@@ -26,8 +24,14 @@ fn test_bi_transformer_default_conversions_allow_relaxed_generic_types() {
     #[derive(Clone, Debug)]
     struct BorrowedRcBiTransformer;
 
-    impl<'a> BiTransformer<BorrowedRc<'a>, BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcBiTransformer {
-        fn apply(&self, first: BorrowedRc<'a>, second: BorrowedRc<'a>) -> BorrowedRc<'a> {
+    impl<'a> BiTransformer<BorrowedRc<'a>, BorrowedRc<'a>, BorrowedRc<'a>>
+        for BorrowedRcBiTransformer
+    {
+        fn apply(
+            &self,
+            first: BorrowedRc<'a>,
+            second: BorrowedRc<'a>,
+        ) -> BorrowedRc<'a> {
             assert_eq!(second.value, "right");
             first
         }
@@ -39,8 +43,12 @@ fn test_bi_transformer_default_conversions_allow_relaxed_generic_types() {
 
     let left = String::from("left");
     let right = String::from("right");
-    let first = || BorrowedRc { value: left.as_str() };
-    let second = || BorrowedRc { value: right.as_str() };
+    let first = || BorrowedRc {
+        value: left.as_str(),
+    };
+    let second = || BorrowedRc {
+        value: right.as_str(),
+    };
     let transformer = BorrowedRcBiTransformer;
 
     assert_left(transformer.clone().into_box().apply(first(), second()));
@@ -104,33 +112,46 @@ mod box_bi_transformer_tests {
 
     #[test]
     fn test_with_string() {
-        let concat = BoxBiTransformer::new(|s1: String, s2: String| format!("{}{}", s1, s2));
-        assert_eq!(concat.apply("hello".to_string(), "world".to_string()), "helloworld");
+        let concat = BoxBiTransformer::new(|s1: String, s2: String| {
+            format!("{}{}", s1, s2)
+        });
+        assert_eq!(
+            concat.apply("hello".to_string(), "world".to_string()),
+            "helloworld"
+        );
     }
 
     #[test]
     fn test_captured_variable() {
         let multiplier = 3;
-        let weighted_sum = BoxBiTransformer::new(move |x: i32, y: i32| x * multiplier + y * multiplier);
+        let weighted_sum = BoxBiTransformer::new(move |x: i32, y: i32| {
+            x * multiplier + y * multiplier
+        });
         assert_eq!(weighted_sum.apply(2, 3), 15); // (2 * 3) + (3 * 3) = 15
     }
 
     #[test]
     fn test_different_types() {
-        let format = BoxBiTransformer::new(|name: String, age: i32| format!("{} is {}", name, age));
+        let format = BoxBiTransformer::new(|name: String, age: i32| {
+            format!("{} is {}", name, age)
+        });
         assert_eq!(format.apply("Alice".to_string(), 30), "Alice is 30");
     }
 
     #[test]
     fn test_with_option() {
-        let safe_divide = BoxBiTransformer::new(|x: i32, y: i32| if y == 0 { None } else { Some(x / y) });
+        let safe_divide =
+            BoxBiTransformer::new(
+                |x: i32, y: i32| if y == 0 { None } else { Some(x / y) },
+            );
         assert_eq!(safe_divide.apply(42, 2), Some(21));
         assert_eq!(safe_divide.apply(42, 0), None);
     }
 
     #[test]
     fn test_display_with_name() {
-        let transformer = BoxBiTransformer::new_with_name("add", |x: i32, y: i32| x + y);
+        let transformer =
+            BoxBiTransformer::new_with_name("add", |x: i32, y: i32| x + y);
         let display_str = format!("{}", transformer);
         assert_eq!(display_str, "BoxBiTransformer(add)");
     }
@@ -208,13 +229,16 @@ mod arc_bi_transformer_tests {
 
     #[test]
     fn test_with_different_types() {
-        let format = ArcBiTransformer::new(|name: String, age: i32| format!("{} is {}", name, age));
+        let format = ArcBiTransformer::new(|name: String, age: i32| {
+            format!("{} is {}", name, age)
+        });
         assert_eq!(format.apply("Alice".to_string(), 30), "Alice is 30");
     }
 
     #[test]
     fn test_display_with_name() {
-        let transformer = ArcBiTransformer::new_with_name("multiply", |x: i32, y: i32| x * y);
+        let transformer =
+            ArcBiTransformer::new_with_name("multiply", |x: i32, y: i32| x * y);
         let display_str = format!("{}", transformer);
         assert_eq!(display_str, "ArcBiTransformer(multiply)");
     }
@@ -261,32 +285,47 @@ mod rc_bi_transformer_tests {
 
     #[test]
     fn test_shared_usage() {
-        let concat = RcBiTransformer::new(|s1: String, s2: String| format!("{}{}", s1, s2));
+        let concat = RcBiTransformer::new(|s1: String, s2: String| {
+            format!("{}{}", s1, s2)
+        });
 
         let func1 = concat.clone();
         let func2 = concat.clone();
 
-        assert_eq!(concat.apply("hello".to_string(), "world".to_string()), "helloworld");
+        assert_eq!(
+            concat.apply("hello".to_string(), "world".to_string()),
+            "helloworld"
+        );
         assert_eq!(func1.apply("foo".to_string(), "bar".to_string()), "foobar");
-        assert_eq!(func2.apply("rust".to_string(), "lang".to_string()), "rustlang");
+        assert_eq!(
+            func2.apply("rust".to_string(), "lang".to_string()),
+            "rustlang"
+        );
     }
 
     #[test]
     fn test_with_different_types() {
-        let format = RcBiTransformer::new(|name: String, age: i32| format!("{} is {}", name, age));
+        let format = RcBiTransformer::new(|name: String, age: i32| {
+            format!("{} is {}", name, age)
+        });
         assert_eq!(format.apply("Alice".to_string(), 30), "Alice is 30");
     }
 
     #[test]
     fn test_display_with_name() {
-        let transformer = RcBiTransformer::new_with_name("concat", |s1: String, s2: String| format!("{}{}", s1, s2));
+        let transformer = RcBiTransformer::new_with_name(
+            "concat",
+            |s1: String, s2: String| format!("{}{}", s1, s2),
+        );
         let display_str = format!("{}", transformer);
         assert_eq!(display_str, "RcBiTransformer(concat)");
     }
 
     #[test]
     fn test_display_without_name() {
-        let transformer = RcBiTransformer::new(|s1: String, s2: String| format!("{}{}", s1, s2));
+        let transformer = RcBiTransformer::new(|s1: String, s2: String| {
+            format!("{}{}", s1, s2)
+        });
         let display_str = format!("{}", transformer);
         assert_eq!(display_str, "RcBiTransformer");
     }
@@ -307,7 +346,8 @@ mod box_conditional_tests {
     #[test]
     fn test_when_or_else() {
         let add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
-        let both_positive = BoxBiPredicate::new(|x: &i32, y: &i32| *x > 0 && *y > 0);
+        let both_positive =
+            BoxBiPredicate::new(|x: &i32, y: &i32| *x > 0 && *y > 0);
         let multiply = BoxBiTransformer::new(|x: i32, y: i32| x * y);
         let result = add.when(both_positive).or_else(multiply);
 
@@ -339,7 +379,8 @@ mod arc_conditional_tests {
     #[test]
     fn test_when_or_else() {
         let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
-        let both_positive = ArcBiPredicate::new(|x: &i32, y: &i32| *x > 0 && *y > 0);
+        let both_positive =
+            ArcBiPredicate::new(|x: &i32, y: &i32| *x > 0 && *y > 0);
         let multiply = ArcBiTransformer::new(|x: i32, y: i32| x * y);
         let result = add.when(both_positive).or_else(multiply);
 
@@ -386,7 +427,8 @@ mod rc_conditional_tests {
     #[test]
     fn test_when_or_else() {
         let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
-        let both_positive = RcBiPredicate::new(|x: &i32, y: &i32| *x > 0 && *y > 0);
+        let both_positive =
+            RcBiPredicate::new(|x: &i32, y: &i32| *x > 0 && *y > 0);
         let multiply = RcBiTransformer::new(|x: i32, y: i32| x * y);
         let result = add.when(both_positive).or_else(multiply);
 
@@ -535,7 +577,11 @@ mod trait_usage_tests {
 
     #[test]
     fn test_bi_transformer_trait() {
-        fn apply_bi_transformer<F: BiTransformer<i32, i32, i32>>(f: &F, x: i32, y: i32) -> i32 {
+        fn apply_bi_transformer<F: BiTransformer<i32, i32, i32>>(
+            f: &F,
+            x: i32,
+            y: i32,
+        ) -> i32 {
             f.apply(x, y)
         }
 
@@ -545,7 +591,11 @@ mod trait_usage_tests {
 
     #[test]
     fn test_closure_as_bi_transformer() {
-        fn apply_bi_transformer<F: BiTransformer<i32, i32, i32>>(f: &F, x: i32, y: i32) -> i32 {
+        fn apply_bi_transformer<F: BiTransformer<i32, i32, i32>>(
+            f: &F,
+            x: i32,
+            y: i32,
+        ) -> i32 {
             f.apply(x, y)
         }
 
@@ -555,12 +605,21 @@ mod trait_usage_tests {
 
     #[test]
     fn test_with_different_types() {
-        fn apply_bi_transformer<T, U, R, F: BiTransformer<T, U, R>>(f: &F, x: T, y: U) -> R {
+        fn apply_bi_transformer<T, U, R, F: BiTransformer<T, U, R>>(
+            f: &F,
+            x: T,
+            y: U,
+        ) -> R {
             f.apply(x, y)
         }
 
-        let format = BoxBiTransformer::new(|name: String, age: i32| format!("{} is {}", name, age));
-        assert_eq!(apply_bi_transformer(&format, "Alice".to_string(), 30), "Alice is 30");
+        let format = BoxBiTransformer::new(|name: String, age: i32| {
+            format!("{} is {}", name, age)
+        });
+        assert_eq!(
+            apply_bi_transformer(&format, "Alice".to_string(), 30),
+            "Alice is 30"
+        );
     }
 }
 
@@ -585,20 +644,24 @@ mod edge_cases_tests {
 
     #[test]
     fn test_with_option() {
-        let safe_divide = BoxBiTransformer::new(|x: i32, y: i32| if y == 0 { None } else { Some(x / y) });
+        let safe_divide =
+            BoxBiTransformer::new(
+                |x: i32, y: i32| if y == 0 { None } else { Some(x / y) },
+            );
         assert_eq!(safe_divide.apply(42, 2), Some(21));
         assert_eq!(safe_divide.apply(42, 0), None);
     }
 
     #[test]
     fn test_with_result() {
-        let safe_divide = BoxBiTransformer::new(|x: i32, y: i32| -> Result<i32, String> {
-            if y == 0 {
-                Err("Division by zero".to_string())
-            } else {
-                Ok(x / y)
-            }
-        });
+        let safe_divide =
+            BoxBiTransformer::new(|x: i32, y: i32| -> Result<i32, String> {
+                if y == 0 {
+                    Err("Division by zero".to_string())
+                } else {
+                    Ok(x / y)
+                }
+            });
         assert_eq!(safe_divide.apply(42, 2), Ok(21));
         assert!(safe_divide.apply(42, 0).is_err());
     }
@@ -610,13 +673,17 @@ mod edge_cases_tests {
             result.extend(v2);
             result
         });
-        assert_eq!(combine.apply(vec![1, 2, 3], vec![4, 5, 6]), vec![1, 2, 3, 4, 5, 6]);
+        assert_eq!(
+            combine.apply(vec![1, 2, 3], vec![4, 5, 6]),
+            vec![1, 2, 3, 4, 5, 6]
+        );
     }
 
     #[test]
     fn test_arc_with_large_data() {
-        let sum_vecs =
-            ArcBiTransformer::new(|v1: Vec<i32>, v2: Vec<i32>| v1.iter().sum::<i32>() + v2.iter().sum::<i32>());
+        let sum_vecs = ArcBiTransformer::new(|v1: Vec<i32>, v2: Vec<i32>| {
+            v1.iter().sum::<i32>() + v2.iter().sum::<i32>()
+        });
         let data1 = (1..=50).collect::<Vec<_>>();
         let data2 = (51..=100).collect::<Vec<_>>();
         assert_eq!(sum_vecs.apply(data1, data2), 5050);
@@ -630,8 +697,13 @@ mod edge_cases_tests {
 
     #[test]
     fn test_string_operations() {
-        let join = BoxBiTransformer::new(|s1: String, s2: String| format!("{} {}", s1, s2));
-        assert_eq!(join.apply("Hello".to_string(), "World".to_string()), "Hello World");
+        let join = BoxBiTransformer::new(|s1: String, s2: String| {
+            format!("{} {}", s1, s2)
+        });
+        assert_eq!(
+            join.apply("Hello".to_string(), "World".to_string()),
+            "Hello World"
+        );
     }
 }
 
@@ -736,7 +808,10 @@ mod closure_bi_transformer_tests {
     #[test]
     fn test_closure_transform_with_string() {
         let concat = |s1: String, s2: String| format!("{}{}", s1, s2);
-        assert_eq!(concat.apply("Hello".to_string(), "World".to_string()), "HelloWorld");
+        assert_eq!(
+            concat.apply("Hello".to_string(), "World".to_string()),
+            "HelloWorld"
+        );
     }
 
     #[test]
@@ -812,7 +887,8 @@ mod custom_bi_transformer_tests {
         thread,
     };
 
-    /// Custom BiTransformer implementation for testing default into_xxx() methods
+    /// Custom BiTransformer implementation for testing default into_xxx()
+    /// methods
     struct CustomBiTransformer {
         multiplier: i32,
     }
@@ -937,7 +1013,10 @@ mod custom_bi_transformer_tests {
     fn test_custom_string_bi_transformer_into_box() {
         let combiner = StringCombiner::new(" - ");
         let boxed = combiner.into_box();
-        assert_eq!(boxed.apply("Hello".to_string(), "World".to_string()), "Hello - World");
+        assert_eq!(
+            boxed.apply("Hello".to_string(), "World".to_string()),
+            "Hello - World"
+        );
         assert_eq!(
             boxed.apply("Rust".to_string(), "Language".to_string()),
             "Rust - Language"
@@ -967,7 +1046,8 @@ mod custom_bi_transformer_tests {
     }
 
     /// Test custom BiTransformer's default to_xxx() implementations
-    /// These are default implementations provided by the BiTransformer trait, requiring the type to implement Clone
+    /// These are default implementations provided by the BiTransformer trait,
+    /// requiring the type to implement Clone
     #[derive(Clone)]
     struct CloneableCustomBiTransformer {
         multiplier: i32,
@@ -987,7 +1067,8 @@ mod custom_bi_transformer_tests {
 
     #[test]
     fn test_custom_bi_transformer_default_to_box() {
-        // Test the default to_box() implementation provided by BiTransformer trait
+        // Test the default to_box() implementation provided by BiTransformer
+        // trait
         let transformer = CloneableCustomBiTransformer::new(3);
         let boxed = transformer.to_box();
         assert_eq!(boxed.apply(5, 10), 45); // (5 + 10) * 3 = 45
@@ -998,7 +1079,8 @@ mod custom_bi_transformer_tests {
 
     #[test]
     fn test_custom_bi_transformer_default_to_rc() {
-        // Test the default to_rc() implementation provided by BiTransformer trait
+        // Test the default to_rc() implementation provided by BiTransformer
+        // trait
         let transformer = CloneableCustomBiTransformer::new(4);
         let rc = transformer.to_rc();
         assert_eq!(rc.apply(3, 7), 40); // (3 + 7) * 4 = 40
@@ -1013,7 +1095,8 @@ mod custom_bi_transformer_tests {
 
     #[test]
     fn test_custom_bi_transformer_default_to_fn() {
-        // Test the default to_fn() implementation provided by BiTransformer trait
+        // Test the default to_fn() implementation provided by BiTransformer
+        // trait
         let transformer = CloneableCustomBiTransformer::new(5);
         let func = transformer.to_fn();
         assert_eq!(func(4, 6), 50); // (4 + 6) * 5 = 50
@@ -1046,7 +1129,8 @@ mod custom_bi_transformer_tests {
 
     #[test]
     fn test_custom_bi_transformer_default_to_arc() {
-        // Test the default to_arc() implementation provided by BiTransformer trait
+        // Test the default to_arc() implementation provided by BiTransformer
+        // trait
         let transformer = ThreadSafeCloneableBiTransformer::new(3);
         let arc = transformer.to_arc();
         assert_eq!(arc.apply(10, 5), 45); // (10 + 5) * 3 = 45
@@ -1108,10 +1192,16 @@ mod custom_bi_transformer_tests {
     fn test_custom_string_bi_transformer_default_to_box() {
         let combiner = CloneableStringCombiner::new(" - ");
         let boxed = combiner.to_box();
-        assert_eq!(boxed.apply("Hello".to_string(), "World".to_string()), "Hello - World");
+        assert_eq!(
+            boxed.apply("Hello".to_string(), "World".to_string()),
+            "Hello - World"
+        );
 
         // Original still usable
-        assert_eq!(combiner.apply("Rust".to_string(), "Lang".to_string()), "Rust - Lang");
+        assert_eq!(
+            combiner.apply("Rust".to_string(), "Lang".to_string()),
+            "Rust - Lang"
+        );
     }
 
     #[test]
@@ -1135,7 +1225,10 @@ mod custom_bi_transformer_tests {
         assert_eq!(func("Cat".to_string(), "Dog".to_string()), "Cat & Dog");
 
         // Original still usable
-        assert_eq!(combiner.apply("One".to_string(), "Two".to_string()), "One & Two");
+        assert_eq!(
+            combiner.apply("One".to_string(), "Two".to_string()),
+            "One & Two"
+        );
     }
 }
 
@@ -1152,7 +1245,8 @@ mod box_bi_transformer_to_methods_tests {
 
     #[test]
     fn test_box_into_box() {
-        // BoxBiTransformer::into_box() returns itself directly (zero-cost operation)
+        // BoxBiTransformer::into_box() returns itself directly (zero-cost
+        // operation)
         let add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
         let result = add.into_box();
         assert_eq!(result.apply(10, 20), 30);
@@ -1675,8 +1769,8 @@ mod conversion_chain_tests {
     fn test_rc_to_arc_chain() {
         let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
         let _boxed = add.into_box();
-        // Note: BoxBiTransformer is not Send+Sync, so cannot convert to ArcBiTransformer
-        // Test with ArcBiTransformer instead
+        // Note: BoxBiTransformer is not Send+Sync, so cannot convert to
+        // ArcBiTransformer Test with ArcBiTransformer instead
         let arc_add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
         let boxed_arc = arc_add.into_box();
         let rc_arc = boxed_arc.into_rc();
@@ -1710,9 +1804,15 @@ mod complex_types_conversion_tests {
         let concat = |s1: String, s2: String| format!("{}{}", s1, s2);
         let boxed = concat.to_box();
 
-        assert_eq!(boxed.apply("Hello".to_string(), "World".to_string()), "HelloWorld");
+        assert_eq!(
+            boxed.apply("Hello".to_string(), "World".to_string()),
+            "HelloWorld"
+        );
         // Original still usable
-        assert_eq!(concat.apply("Foo".to_string(), "Bar".to_string()), "FooBar");
+        assert_eq!(
+            concat.apply("Foo".to_string(), "Bar".to_string()),
+            "FooBar"
+        );
     }
 
     #[test]
@@ -1720,10 +1820,16 @@ mod complex_types_conversion_tests {
         let concat = |s1: String, s2: String| format!("{}{}", s1, s2);
         let rc = concat.to_rc();
 
-        assert_eq!(rc.apply("Hello".to_string(), "World".to_string()), "HelloWorld");
+        assert_eq!(
+            rc.apply("Hello".to_string(), "World".to_string()),
+            "HelloWorld"
+        );
 
         let rc_clone = rc.clone();
-        assert_eq!(rc_clone.apply("Foo".to_string(), "Bar".to_string()), "FooBar");
+        assert_eq!(
+            rc_clone.apply("Foo".to_string(), "Bar".to_string()),
+            "FooBar"
+        );
     }
 
     #[test]
@@ -1743,7 +1849,8 @@ mod complex_types_conversion_tests {
 
     #[test]
     fn test_option_safe_divide_to_rc() {
-        let safe_divide = |x: i32, y: i32| if y == 0 { None } else { Some(x / y) };
+        let safe_divide =
+            |x: i32, y: i32| if y == 0 { None } else { Some(x / y) };
         let rc = safe_divide.to_rc();
 
         assert_eq!(rc.apply(10, 2), Some(5));
@@ -1837,7 +1944,9 @@ mod box_bi_transformer_once_tests {
 
     #[test]
     fn test_string_concatenation_once() {
-        let concat = BoxBiTransformer::new(|x: String, y: String| format!("{} {}", x, y));
+        let concat = BoxBiTransformer::new(|x: String, y: String| {
+            format!("{} {}", x, y)
+        });
         let result = concat.apply("Hello".to_string(), "World".to_string());
         assert_eq!(result, "Hello World");
     }
@@ -1902,7 +2011,8 @@ mod rc_bi_transformer_once_tests {
 
     #[test]
     fn test_string_concatenation_once() {
-        let concat = RcBiTransformer::new(|x: String, y: String| format!("{} {}", x, y));
+        let concat =
+            RcBiTransformer::new(|x: String, y: String| format!("{} {}", x, y));
         let result = concat.apply("Hello".to_string(), "World".to_string());
         assert_eq!(result, "Hello World");
     }
@@ -1968,7 +2078,9 @@ mod arc_bi_transformer_once_tests {
 
     #[test]
     fn test_string_concatenation_once() {
-        let concat = ArcBiTransformer::new(|x: String, y: String| format!("{} {}", x, y));
+        let concat = ArcBiTransformer::new(|x: String, y: String| {
+            format!("{} {}", x, y)
+        });
         let result = concat.apply("Hello".to_string(), "World".to_string());
         assert_eq!(result, "Hello World");
     }
@@ -2093,7 +2205,8 @@ mod conditional_transformer_display_debug_tests {
 }
 
 // ============================================================================
-// Custom BiTransformer Implementation Tests - Test Trait Default Methods (into_*)
+// Custom BiTransformer Implementation Tests - Test Trait Default Methods
+// (into_*)
 // ============================================================================
 
 #[cfg(test)]
@@ -2104,7 +2217,8 @@ mod custom_bi_transformer_into_tests {
     };
     use qubit_function::BiTransformerOnce;
 
-    /// Test custom BiTransformer that implements into_* methods by consuming self
+    /// Test custom BiTransformer that implements into_* methods by consuming
+    /// self
     #[derive(Clone)]
     struct CustomBiTransformer {
         multiplier: i32,
@@ -2124,7 +2238,8 @@ mod custom_bi_transformer_into_tests {
 
     #[test]
     fn test_custom_bi_transformer_default_into_box() {
-        // Test the default into_box() implementation provided by BiTransformer trait
+        // Test the default into_box() implementation provided by BiTransformer
+        // trait
         let transformer = CustomBiTransformer::new(3);
         let boxed = transformer.into_box();
         assert_eq!(boxed.apply(5, 10), 45); // (5 + 10) * 3 = 45
@@ -2132,7 +2247,8 @@ mod custom_bi_transformer_into_tests {
 
     #[test]
     fn test_custom_bi_transformer_default_into_rc() {
-        // Test the default into_rc() implementation provided by BiTransformer trait
+        // Test the default into_rc() implementation provided by BiTransformer
+        // trait
         let transformer = CustomBiTransformer::new(4);
         let rc = transformer.into_rc();
         assert_eq!(rc.apply(3, 7), 40); // (3 + 7) * 4 = 40
@@ -2144,7 +2260,8 @@ mod custom_bi_transformer_into_tests {
 
     #[test]
     fn test_custom_bi_transformer_default_into_fn() {
-        // Test the default into_fn() implementation provided by BiTransformer trait
+        // Test the default into_fn() implementation provided by BiTransformer
+        // trait
         let transformer = CustomBiTransformer::new(5);
         let func = transformer.into_fn();
         assert_eq!(func(4, 6), 50); // (4 + 6) * 5 = 50
@@ -2152,13 +2269,15 @@ mod custom_bi_transformer_into_tests {
 
     #[test]
     fn test_custom_bi_transformer_default_into_once() {
-        // Test the default into_once() implementation provided by BiTransformer trait
+        // Test the default into_once() implementation provided by BiTransformer
+        // trait
         let transformer = CustomBiTransformer::new(2);
         let once = transformer.into_once();
         assert_eq!(once.apply(1, 2), 6); // (1 + 2) * 2 = 6
     }
 
-    /// Test custom Send + Sync BiTransformer's default into_arc() implementation
+    /// Test custom Send + Sync BiTransformer's default into_arc()
+    /// implementation
     #[derive(Clone)]
     struct ThreadSafeBiTransformer {
         multiplier: i32,
@@ -2182,7 +2301,8 @@ mod custom_bi_transformer_into_tests {
 
     #[test]
     fn test_custom_bi_transformer_default_into_arc() {
-        // Test the default into_arc() implementation provided by BiTransformer trait
+        // Test the default into_arc() implementation provided by BiTransformer
+        // trait
         let transformer = ThreadSafeBiTransformer::new(3);
         let arc = transformer.into_arc();
         assert_eq!(arc.apply(10, 5), 45); // (10 + 5) * 3 = 45
@@ -2199,7 +2319,8 @@ mod custom_bi_transformer_into_tests {
 
     #[test]
     fn test_custom_bi_transformer_default_to_once() {
-        // Test the default to_once() implementation provided by BiTransformer trait (requires Clone)
+        // Test the default to_once() implementation provided by BiTransformer
+        // trait (requires Clone)
         let transformer = CustomBiTransformer::new(6);
         let once = transformer.to_once();
         assert_eq!(once.apply(2, 4), 36); // (2 + 4) * 6 = 36

@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcTester` public type.
 
@@ -57,7 +55,6 @@ use super::{
 /// // Non-consuming combination
 /// let combined = shared.and(&clone1);
 /// ```
-///
 pub struct RcTester {
     pub(super) function: Rc<dyn Fn() -> bool>,
 }

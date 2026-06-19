@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcSupplier` public type.
 
@@ -78,7 +76,6 @@ use super::{
 /// assert_eq!(doubled.get(), 20);
 /// assert_eq!(tripled.get(), 30);
 /// ```
-///
 pub struct RcSupplier<T> {
     pub(super) function: Rc<dyn Fn() -> T>,
     pub(super) name: Option<String>,
@@ -86,7 +83,9 @@ pub struct RcSupplier<T> {
 
 impl<T> RcSupplier<T> {
     // Generates: new(), new_with_name(), name(), set_name(), constant()
-    impl_supplier_common_methods!(RcSupplier<T>, (Fn() -> T + 'static), |f| Rc::new(f));
+    impl_supplier_common_methods!(RcSupplier<T>, (Fn() -> T + 'static), |f| {
+        Rc::new(f)
+    });
 
     // Generates: map(), filter(), zip()
     impl_shared_supplier_methods!(

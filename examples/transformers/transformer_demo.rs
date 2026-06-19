@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 use qubit_function::{
     ArcTransformer,
@@ -81,7 +79,8 @@ fn main() {
 
     // Example 2: Type conversion pipeline
     println!("--- Type Conversion Pipeline ---");
-    let parse_int = BoxTransformer::new(|s: String| s.parse::<i32>().unwrap_or(0));
+    let parse_int =
+        BoxTransformer::new(|s: String| s.parse::<i32>().unwrap_or(0));
     let double_int = BoxTransformer::new(|x: i32| x * 2);
     let to_string = BoxTransformer::new(|x: i32| x.to_string());
 
@@ -104,7 +103,8 @@ fn main() {
 
     // Example 4: Transformer registry
     println!("--- Transformer Registry ---");
-    let mut transformers: HashMap<String, RcTransformer<i32, String>> = HashMap::new();
+    let mut transformers: HashMap<String, RcTransformer<i32, String>> =
+        HashMap::new();
 
     transformers.insert(
         "double".to_string(),

@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcConditionalStatefulConsumer` public type.
 
@@ -30,11 +28,12 @@ use super::{
 /// ArcConditionalStatefulConsumer struct
 ///
 /// A thread-safe conditional consumer that only executes when a predicate is
-/// satisfied. Uses `ArcStatefulConsumer` and `ArcPredicate` for shared ownership across
-/// threads.
+/// satisfied. Uses `ArcStatefulConsumer` and `ArcPredicate` for shared
+/// ownership across threads.
 ///
-/// This type is typically created by calling `ArcStatefulConsumer::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
+/// This type is typically created by calling `ArcStatefulConsumer::when()` and
+/// is designed to work with the `or_else()` method to create if-then-else
+/// logic.
 ///
 /// # Features
 ///
@@ -63,7 +62,6 @@ use super::{
 /// m.accept(&value);
 /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
 /// ```
-///
 pub struct ArcConditionalStatefulConsumer<T> {
     pub(super) consumer: ArcStatefulConsumer<T>,
     pub(super) predicate: ArcPredicate<T>,
@@ -86,7 +84,11 @@ impl<T> StatefulConsumer<T> for ArcConditionalStatefulConsumer<T> {
     }
 
     // Generates: into_box(), into_rc(), into_fn()
-    impl_conditional_consumer_conversions!(BoxStatefulConsumer<T>, RcStatefulConsumer, FnMut);
+    impl_conditional_consumer_conversions!(
+        BoxStatefulConsumer<T>,
+        RcStatefulConsumer,
+        FnMut
+    );
 }
 
 // Use macro to generate Clone implementation

@@ -1,19 +1,17 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Conditional Mutator Conversions Macro
 //!
 //! Generates conversion methods for Conditional Mutator implementations
 //!
-//! This macro generates the conversion methods (`into_box`, `into_rc`, `into_fn`) for
-//! conditional mutator types. It selects immutable or mutable captures from the
-//! generated closure trait (`Fn` or `FnMut`).
+//! This macro generates the conversion methods (`into_box`, `into_rc`,
+//! `into_fn`) for conditional mutator types. It selects immutable or mutable
+//! captures from the generated closure trait (`Fn` or `FnMut`).
 //!
 //! # Parameters
 //!
@@ -72,7 +70,6 @@
 //!   according to the generated operation.
 //! - The `into_fn` method uses the provided `$fn_trait` parameter to match the
 //!   intended trait type
-//!
 
 /// Generates conversion methods for Conditional Mutator implementations
 ///
@@ -143,7 +140,6 @@
 ///   according to the generated operation.
 /// - The `into_fn` method uses the provided `$fn_trait` parameter to match the
 ///   intended trait type
-///
 macro_rules! impl_conditional_mutator_conversions {
     (@let_mutator Fn, $name:ident, $value:expr) => {
         let $name = $value;

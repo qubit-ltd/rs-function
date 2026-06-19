@@ -1,16 +1,15 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! Demonstrates the usage of FnTransformerOps extension trait
 //!
-//! This example shows how to directly use and_then, compose, and when methods on closures,
-//! without explicitly wrapping them in BoxTransformer, RcTransformer, or ArcTransformer.
+//! This example shows how to directly use and_then, compose, and when methods
+//! on closures, without explicitly wrapping them in BoxTransformer,
+//! RcTransformer, or ArcTransformer.
 
 use qubit_function::{
     FnTransformerOps,
@@ -68,7 +67,9 @@ fn main() {
         .and_then(double.when(|x: &i32| *x > 5).or_else(triple))
         .and_then(to_string);
 
-    println!("   add_one.and_then(double.when(x > 5).or_else(triple)).and_then(to_string):");
+    println!(
+        "   add_one.and_then(double.when(x > 5).or_else(triple)).and_then(to_string):"
+    );
     println!("     transform(1) = {}", complex.apply(1)); // (1 + 1) = 2 <= 5, so 2 * 3 = 6
     println!("     transform(5) = {}", complex.apply(5)); // (5 + 1) = 6 > 5, so 6 * 2 = 12
     println!("     transform(10) = {}", complex.apply(10)); // (10 + 1) = 11 > 5, so 11 * 2 = 22

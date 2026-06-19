@@ -1,18 +1,17 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 /**
- * Demonstrates various operations on closures using StatefulSupplier trait.
+ * Demonstrates various operations on closures using StatefulSupplier
+ * trait.
  *
- * This example showcases how to use the StatefulSupplier trait with closures,
- * including mapping, filtering, and memoization.
+ * This example showcases how to use the StatefulSupplier trait with
+ * closures, including mapping, filtering, and memoization.
  */
 use qubit_function::{
     FnStatefulSupplierOps,
@@ -68,12 +67,14 @@ fn main() {
     println!("   Second call: {}", memoized.get());
     println!("   Third call: {}\n", memoized.get());
 
-    // 4. Fn closure using map (Fn also implements FnMut, so can use FnSupplierOps)
+    // 4. Fn closure using map (Fn also implements FnMut, so can use
+    //    FnSupplierOps)
     println!("4. Fn closure using map:");
     let mut mapped_stateless = (|| 10).map(|x| x * 3).map(|x| x + 5);
     println!("   Result: {}\n", mapped_stateless.get());
 
-    // 5. Fn closure using filter (Fn also implements FnMut, so can use FnSupplierOps)
+    // 5. Fn closure using filter (Fn also implements FnMut, so can use
+    //    FnSupplierOps)
     println!("5. Fn closure using filter:");
     let mut filtered_stateless = (|| 42).filter(is_even_i32);
     println!("   Filtered even number: {:?}\n", filtered_stateless.get());

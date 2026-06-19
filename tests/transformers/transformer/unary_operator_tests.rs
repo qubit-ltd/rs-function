@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 use qubit_function::{
     ArcUnaryOperator,
@@ -63,6 +61,7 @@ fn test_rc_unary_operator_clone() {
 
 #[test]
 fn test_box_unary_operator_once() {
-    let double: BoxUnaryOperatorOnce<i32> = BoxUnaryOperatorOnce::new(|x| x * 2);
+    let double: BoxUnaryOperatorOnce<i32> =
+        BoxUnaryOperatorOnce::new(|x| x * 2);
     assert_eq!(double.apply(21), 42);
 }

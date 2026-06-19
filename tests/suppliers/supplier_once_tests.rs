@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 // qubit-style: allow explicit-imports
 //! Unit tests for SupplierOnce types
@@ -376,7 +374,9 @@ mod test_box_supplier_once {
 
         #[test]
         fn test_with_result_err() {
-            let once = BoxSupplierOnce::new(|| Err::<i32, String>(String::from("error")));
+            let once = BoxSupplierOnce::new(|| {
+                Err::<i32, String>(String::from("error"))
+            });
             assert_eq!(once.get(), Err(String::from("error")));
         }
     }
@@ -610,7 +610,8 @@ mod test_supplier_once_debug_display {
         #[test]
         fn test_debug_with_name() {
             // Test Debug formatting for BoxSupplierOnce with name
-            let supplier = BoxSupplierOnce::new_with_name("test_supplier", || 42);
+            let supplier =
+                BoxSupplierOnce::new_with_name("test_supplier", || 42);
             let debug_str = format!("{:?}", supplier);
             assert!(debug_str.contains("BoxSupplierOnce"));
             assert!(debug_str.contains("name: Some(\"test_supplier\")"));
@@ -628,7 +629,8 @@ mod test_supplier_once_debug_display {
         #[test]
         fn test_display_with_name() {
             // Test Display formatting for BoxSupplierOnce with name
-            let supplier = BoxSupplierOnce::new_with_name("test_supplier", || 42);
+            let supplier =
+                BoxSupplierOnce::new_with_name("test_supplier", || 42);
             let display_str = format!("{}", supplier);
             assert_eq!(display_str, "BoxSupplierOnce(test_supplier)");
         }

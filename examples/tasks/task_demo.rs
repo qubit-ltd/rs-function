@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 use qubit_function::{
     ArcCallable,
@@ -75,7 +73,8 @@ fn demo_mutable_input_tasks() {
 fn demo_once_tasks() {
     println!("--- One-time tasks ---");
 
-    let callable_once = BoxCallableOnce::new(|| Ok::<String, String>(String::from("ready")));
+    let callable_once =
+        BoxCallableOnce::new(|| Ok::<String, String>(String::from("ready")));
     println!("CallableOnce result: {:?}", callable_once.call());
 
     let runnable_once = BoxRunnableOnce::new(|| {

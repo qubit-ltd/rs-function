@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxMutatorOnce` public type.
 
@@ -98,7 +96,6 @@ use super::{
 /// chained.apply(&mut target);
 /// assert_eq!(target, vec![0, 1, 2, 3, 4]);
 /// ```
-///
 pub struct BoxMutatorOnce<T> {
     pub(super) function: Box<dyn FnOnce(&mut T)>,
     pub(super) name: Option<String>,
@@ -106,10 +103,18 @@ pub struct BoxMutatorOnce<T> {
 
 impl<T> BoxMutatorOnce<T> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
-    impl_mutator_common_methods!(BoxMutatorOnce<T>, (FnOnce(&mut T) + 'static), |f| Box::new(f));
+    impl_mutator_common_methods!(
+        BoxMutatorOnce<T>,
+        (FnOnce(&mut T) + 'static),
+        |f| Box::new(f)
+    );
 
     // Generate box mutator methods (when, and_then, or_else, etc.)
-    impl_box_mutator_methods!(BoxMutatorOnce<T>, BoxConditionalMutatorOnce, MutatorOnce);
+    impl_box_mutator_methods!(
+        BoxMutatorOnce<T>,
+        BoxConditionalMutatorOnce,
+        MutatorOnce
+    );
 }
 
 impl<T> MutatorOnce<T> for BoxMutatorOnce<T> {

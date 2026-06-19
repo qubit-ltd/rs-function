@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcConditionalStatefulFunction` public type.
 
@@ -27,11 +25,11 @@ use super::{
 /// RcConditionalStatefulFunction struct
 ///
 /// A single-threaded conditional function that only executes when a
-/// predicate is satisfied. Uses `RcStatefulFunction` and `RcPredicate` for shared
-/// ownership within a single thread.
+/// predicate is satisfied. Uses `RcStatefulFunction` and `RcPredicate` for
+/// shared ownership within a single thread.
 ///
-/// This type is typically created by calling `RcStatefulFunction::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else
+/// This type is typically created by calling `RcStatefulFunction::when()` and
+/// is designed to work with the `or_else()` method to create if-then-else
 /// logic.
 ///
 /// # Features
@@ -55,7 +53,6 @@ use super::{
 /// assert_eq!(function.apply(&5), 10);
 /// assert_eq!(function_clone.apply(&-5), 5);
 /// ```
-///
 pub struct RcConditionalStatefulFunction<T, R> {
     pub(super) function: RcStatefulFunction<T, R>,
     pub(super) predicate: RcPredicate<T>,

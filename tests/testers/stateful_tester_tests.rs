@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 use qubit_function::testers::stateful_tester::{
     StatefulTester,
@@ -154,44 +152,55 @@ fn test_box_stateful_tester_conversions_and_negation() {
 fn test_box_stateful_tester_logical_operations_cover_branches() {
     let skipped = Rc::new(RefCell::new(false));
     let skipped_clone = Rc::clone(&skipped);
-    let mut and_short = BoxStatefulTester::new(|| false).and(BoxStatefulTester::new(move || {
-        *skipped_clone.borrow_mut() = true;
-        true
-    }));
+    let mut and_short = BoxStatefulTester::new(|| false).and(
+        BoxStatefulTester::new(move || {
+            *skipped_clone.borrow_mut() = true;
+            true
+        }),
+    );
     assert!(!and_short.test());
     assert!(!*skipped.borrow());
 
-    let mut and_true = BoxStatefulTester::new(|| true).and(BoxStatefulTester::new(|| true));
+    let mut and_true =
+        BoxStatefulTester::new(|| true).and(BoxStatefulTester::new(|| true));
     assert!(and_true.test());
 
     let skipped = Rc::new(RefCell::new(false));
     let skipped_clone = Rc::clone(&skipped);
-    let mut or_short = BoxStatefulTester::new(|| true).or(BoxStatefulTester::new(move || {
-        *skipped_clone.borrow_mut() = true;
-        false
-    }));
+    let mut or_short =
+        BoxStatefulTester::new(|| true).or(BoxStatefulTester::new(move || {
+            *skipped_clone.borrow_mut() = true;
+            false
+        }));
     assert!(or_short.test());
     assert!(!*skipped.borrow());
 
-    let mut or_false = BoxStatefulTester::new(|| false).or(BoxStatefulTester::new(|| false));
+    let mut or_false =
+        BoxStatefulTester::new(|| false).or(BoxStatefulTester::new(|| false));
     assert!(!or_false.test());
 
-    let mut nand_false = BoxStatefulTester::new(|| true).nand(BoxStatefulTester::new(|| true));
+    let mut nand_false =
+        BoxStatefulTester::new(|| true).nand(BoxStatefulTester::new(|| true));
     assert!(!nand_false.test());
 
-    let mut nand_true = BoxStatefulTester::new(|| false).nand(BoxStatefulTester::new(|| true));
+    let mut nand_true =
+        BoxStatefulTester::new(|| false).nand(BoxStatefulTester::new(|| true));
     assert!(nand_true.test());
 
-    let mut xor_true = BoxStatefulTester::new(|| true).xor(BoxStatefulTester::new(|| false));
+    let mut xor_true =
+        BoxStatefulTester::new(|| true).xor(BoxStatefulTester::new(|| false));
     assert!(xor_true.test());
 
-    let mut xor_false = BoxStatefulTester::new(|| true).xor(BoxStatefulTester::new(|| true));
+    let mut xor_false =
+        BoxStatefulTester::new(|| true).xor(BoxStatefulTester::new(|| true));
     assert!(!xor_false.test());
 
-    let mut nor_true = BoxStatefulTester::new(|| false).nor(BoxStatefulTester::new(|| false));
+    let mut nor_true =
+        BoxStatefulTester::new(|| false).nor(BoxStatefulTester::new(|| false));
     assert!(nor_true.test());
 
-    let mut nor_false = BoxStatefulTester::new(|| true).nor(BoxStatefulTester::new(|| false));
+    let mut nor_false =
+        BoxStatefulTester::new(|| true).nor(BoxStatefulTester::new(|| false));
     assert!(!nor_false.test());
 }
 

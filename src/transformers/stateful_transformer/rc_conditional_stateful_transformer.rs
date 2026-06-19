@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcConditionalStatefulTransformer` public type.
 
@@ -27,11 +25,11 @@ use super::{
 /// RcConditionalStatefulTransformer struct
 ///
 /// A single-threaded conditional transformer that only executes when a
-/// predicate is satisfied. Uses `RcStatefulTransformer` and `RcPredicate` for shared
-/// ownership within a single thread.
+/// predicate is satisfied. Uses `RcStatefulTransformer` and `RcPredicate` for
+/// shared ownership within a single thread.
 ///
-/// This type is typically created by calling `RcStatefulTransformer::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else
+/// This type is typically created by calling `RcStatefulTransformer::when()`
+/// and is designed to work with the `or_else()` method to create if-then-else
 /// logic.
 ///
 /// # Features
@@ -39,7 +37,8 @@ use super::{
 /// - **Shared Ownership**: Cloneable via `Rc`, multiple owners allowed
 /// - **Single-Threaded**: Not thread-safe, cannot be sent across threads
 /// - **Conditional Execution**: Only maps when predicate returns `true`
-/// - **No Lock Overhead**: More efficient than `ArcConditionalStatefulTransformer`
+/// - **No Lock Overhead**: More efficient than
+///   `ArcConditionalStatefulTransformer`
 ///
 /// # Examples
 ///
@@ -55,7 +54,6 @@ use super::{
 /// assert_eq!(transformer.apply(5), 10);
 /// assert_eq!(transformer_clone.apply(-5), 5);
 /// ```
-///
 pub struct RcConditionalStatefulTransformer<T, R> {
     pub(super) transformer: RcStatefulTransformer<T, R>,
     pub(super) predicate: RcPredicate<T>,

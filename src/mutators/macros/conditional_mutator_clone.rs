@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Conditional Mutator Clone Macro
 //!
 //! Generates Clone trait implementation for Conditional Mutator types
@@ -27,7 +25,6 @@
 //! // impl_conditional_mutator_clone!(ArcConditionalMutator<T>);
 //! // impl_conditional_mutator_clone!(RcConditionalMutator<T>);
 //! ```
-//!
 
 /// Generates Clone trait implementation for Conditional Mutator types
 ///
@@ -54,7 +51,6 @@
 /// // impl_conditional_mutator_clone!(ArcConditionalMutator<T>);
 /// // impl_conditional_mutator_clone!(RcConditionalMutator<T>);
 /// ```
-///
 macro_rules! impl_conditional_mutator_clone {
     // Single generic parameter
     ($struct_name:ident < $generic:ident >) => {

@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcStatefulBiConsumer` public type.
 
@@ -45,8 +43,7 @@ type RcStatefulBiConsumerFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U)>>;
 /// - **Interior Mutability**: Uses `RefCell` for runtime borrow checking
 /// - **No Lock Overhead**: More efficient than `ArcStatefulBiConsumer` for
 ///   single-threaded use
-/// - **Non-Consuming API**: `and_then` borrows `&self`, original remains
-///   usable
+/// - **Non-Consuming API**: `and_then` borrows `&self`, original remains usable
 ///
 /// # Use Cases
 ///
@@ -59,12 +56,12 @@ type RcStatefulBiConsumerFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U)>>;
 ///
 /// # Performance Considerations
 ///
-/// `RcStatefulBiConsumer` performs better than `ArcStatefulBiConsumer` in single-threaded
-/// scenarios:
+/// `RcStatefulBiConsumer` performs better than `ArcStatefulBiConsumer` in
+/// single-threaded scenarios:
 /// - **Non-Atomic Counting**: clone/drop cheaper than `Arc`
 /// - **No Lock Overhead**: `RefCell` uses runtime checking, no locks
-/// - **Better Cache Locality**: No atomic operations means better CPU
-///   cache behavior
+/// - **Better Cache Locality**: No atomic operations means better CPU cache
+///   behavior
 ///
 /// But still has slight overhead compared to `BoxStatefulBiConsumer`:
 /// - **Reference Counting**: Though non-atomic, still exists
@@ -93,7 +90,6 @@ type RcStatefulBiConsumerFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U)>>;
 /// consumer.accept(&5, &3);
 /// assert_eq!(*log.borrow(), vec![8]);
 /// ```
-///
 pub struct RcStatefulBiConsumer<T, U> {
     pub(super) function: RcStatefulBiConsumerFn<T, U>,
     pub(super) name: Option<String>,

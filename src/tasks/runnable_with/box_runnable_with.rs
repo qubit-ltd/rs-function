@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxRunnableWith` public type.
 
@@ -31,7 +29,6 @@ type BoxRunnableWithFn<T, E> = Box<dyn FnMut(&mut T) -> Result<(), E>>;
 ///
 /// `BoxRunnableWith<T, E>` stores a
 /// `Box<dyn FnMut(&mut T) -> Result<(), E>>` and can be called repeatedly.
-///
 pub struct BoxRunnableWith<T, E> {
     /// The stateful closure executed by this runnable.
     pub(super) function: BoxRunnableWithFn<T, E>,
@@ -88,7 +85,10 @@ impl<T, E> BoxRunnableWith<T, E> {
     ///
     /// A callable producing the second computation's result.
     #[inline]
-    pub fn then_callable_with<R, C>(self, callable: C) -> BoxCallableWith<T, R, E>
+    pub fn then_callable_with<R, C>(
+        self,
+        callable: C,
+    ) -> BoxCallableWith<T, R, E>
     where
         C: crate::tasks::callable_with::CallableWith<T, R, E> + 'static,
         T: 'static,

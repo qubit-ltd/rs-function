@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 // qubit-style: allow explicit-imports
 use qubit_function::{
@@ -24,7 +22,9 @@ fn test_transformer_once_default_conversions_allow_relaxed_generic_types() {
     #[derive(Clone, Debug)]
     struct BorrowedRcTransformerOnce;
 
-    impl<'a> TransformerOnce<BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcTransformerOnce {
+    impl<'a> TransformerOnce<BorrowedRc<'a>, BorrowedRc<'a>>
+        for BorrowedRcTransformerOnce
+    {
         fn apply(self, value: BorrowedRc<'a>) -> BorrowedRc<'a> {
             value
         }
@@ -35,7 +35,9 @@ fn test_transformer_once_default_conversions_allow_relaxed_generic_types() {
     }
 
     let text = String::from("left");
-    let value = || BorrowedRc { value: text.as_str() };
+    let value = || BorrowedRc {
+        value: text.as_str(),
+    };
     let transformer = BorrowedRcTransformerOnce;
 
     assert_left(transformer.clone().into_box().apply(value()));
@@ -57,7 +59,8 @@ mod box_transformer_once_tests {
 
     #[test]
     fn test_new_and_transform() {
-        let parse = BoxTransformerOnce::new(|s: String| s.parse::<i32>().unwrap_or(0));
+        let parse =
+            BoxTransformerOnce::new(|s: String| s.parse::<i32>().unwrap_or(0));
 
         assert_eq!(parse.apply("42".to_string()), 42);
     }
@@ -113,14 +116,18 @@ mod box_transformer_once_tests {
 
     #[test]
     fn test_display_with_name() {
-        let transformer = BoxTransformerOnce::new_with_name("parse", |s: String| s.parse::<i32>().unwrap_or(0));
+        let transformer =
+            BoxTransformerOnce::new_with_name("parse", |s: String| {
+                s.parse::<i32>().unwrap_or(0)
+            });
         let display_str = format!("{}", transformer);
         assert_eq!(display_str, "BoxTransformerOnce(parse)");
     }
 
     #[test]
     fn test_display_without_name() {
-        let transformer = BoxTransformerOnce::new(|s: String| s.parse::<i32>().unwrap_or(0));
+        let transformer =
+            BoxTransformerOnce::new(|s: String| s.parse::<i32>().unwrap_or(0));
         let display_str = format!("{}", transformer);
         assert_eq!(display_str, "BoxTransformerOnce");
     }
@@ -236,7 +243,8 @@ mod complex_composition_tests {
 
     #[test]
     fn test_mixed_composition() {
-        let parse = BoxTransformerOnce::new(|s: String| s.parse::<i32>().unwrap_or(0));
+        let parse =
+            BoxTransformerOnce::new(|s: String| s.parse::<i32>().unwrap_or(0));
         let double = |x: i32| x * 2;
         let to_string = |x: i32| format!("Result: {}", x);
         let pipeline = parse.and_then(double).and_then(to_string);
@@ -292,7 +300,9 @@ mod edge_cases_tests {
 
     #[test]
     fn test_with_vec() {
-        let split = BoxTransformerOnce::new(|s: String| s.split(',').map(|s| s.to_string()).collect::<Vec<_>>());
+        let split = BoxTransformerOnce::new(|s: String| {
+            s.split(',').map(|s| s.to_string()).collect::<Vec<_>>()
+        });
         assert_eq!(
             split.apply("a,b,c".to_string()),
             vec!["a".to_string(), "b".to_string(), "c".to_string()]
@@ -335,7 +345,10 @@ mod trait_usage_tests {
 
     #[test]
     fn test_transformer_once_trait() {
-        fn apply_transformer_once<F: TransformerOnce<i32, i32>>(f: F, x: i32) -> i32 {
+        fn apply_transformer_once<F: TransformerOnce<i32, i32>>(
+            f: F,
+            x: i32,
+        ) -> i32 {
             f.apply(x)
         }
 
@@ -345,7 +358,10 @@ mod trait_usage_tests {
 
     #[test]
     fn test_closure_as_transformer_once() {
-        fn apply_transformer_once<F: TransformerOnce<i32, i32>>(f: F, x: i32) -> i32 {
+        fn apply_transformer_once<F: TransformerOnce<i32, i32>>(
+            f: F,
+            x: i32,
+        ) -> i32 {
             f.apply(x)
         }
 
@@ -355,7 +371,10 @@ mod trait_usage_tests {
 
     #[test]
     fn test_with_different_types() {
-        fn apply_transformer_once<T, R, F: TransformerOnce<T, R>>(f: F, x: T) -> R {
+        fn apply_transformer_once<T, R, F: TransformerOnce<T, R>>(
+            f: F,
+            x: T,
+        ) -> R {
             f.apply(x)
         }
 
@@ -405,23 +424,27 @@ mod type_conversion_tests {
 
     #[test]
     fn test_closure_to_box_and_preserve_original() {
-        // to_box borrows &self and requires Clone; non-capturing closures are Clone
+        // to_box borrows &self and requires Clone; non-capturing closures are
+        // Clone
         let double = |x: i32| x * 2;
         let boxed = double.to_box();
         assert_eq!(boxed.apply(21), 42);
 
-        // Original closure is still available (to_box does not consume the original object)
+        // Original closure is still available (to_box does not consume the
+        // original object)
         assert_eq!(double.apply(10), 20);
     }
 
     #[test]
     fn test_closure_to_fn_and_preserve_original() {
-        // to_fn borrows &self and requires Clone; non-capturing closures are Clone
+        // to_fn borrows &self and requires Clone; non-capturing closures are
+        // Clone
         let double = |x: i32| x * 2;
         let func = double.to_fn();
         assert_eq!(func(14), 28);
 
-        // Original closure is still available (to_fn does not consume the original object)
+        // Original closure is still available (to_fn does not consume the
+        // original object)
         assert_eq!(double.apply(7), 14);
     }
 
@@ -500,7 +523,8 @@ mod zero_cost_specialization_tests {
 
     #[test]
     fn test_box_into_box_is_zero_cost() {
-        // BoxTransformerOnce::into_box() should directly return itself, zero cost
+        // BoxTransformerOnce::into_box() should directly return itself, zero
+        // cost
         let add = BoxTransformerOnce::new(|x: i32| x + 10);
         let boxed = add.into_box();
         assert_eq!(boxed.apply(20), 30);
@@ -508,7 +532,8 @@ mod zero_cost_specialization_tests {
 
     #[test]
     fn test_box_into_fn_is_zero_cost() {
-        // BoxTransformerOnce::into_fn() should directly return the inner function, zero cost
+        // BoxTransformerOnce::into_fn() should directly return the inner
+        // function, zero cost
         let add = BoxTransformerOnce::new(|x: i32| x + 10);
         let func = add.into_fn();
         assert_eq!(func(20), 30);
@@ -713,7 +738,8 @@ mod custom_type_default_impl_tests {
         let func = boxed.into_fn();
         assert_eq!(func(42), "[42]");
 
-        // Original transformer is still available (because to_box was used, not into_box)
+        // Original transformer is still available (because to_box was used, not
+        // into_box)
         assert_eq!(transformer.apply(100), "[100]");
     }
 }
@@ -759,7 +785,8 @@ mod box_transformer_transformer_once_tests {
 
     #[test]
     fn test_box_transformer_complex_transformation() {
-        let parse_and_double = BoxTransformer::new(|s: String| s.parse::<i32>().unwrap_or(0) * 2);
+        let parse_and_double =
+            BoxTransformer::new(|s: String| s.parse::<i32>().unwrap_or(0) * 2);
         let result = parse_and_double.apply("21".to_string());
         assert_eq!(result, 42);
     }
@@ -806,7 +833,8 @@ mod rc_transformer_transformer_once_tests {
 
     #[test]
     fn test_rc_transformer_complex_transformation() {
-        let parse_and_double = RcTransformer::new(|s: String| s.parse::<i32>().unwrap_or(0) * 2);
+        let parse_and_double =
+            RcTransformer::new(|s: String| s.parse::<i32>().unwrap_or(0) * 2);
         let result = parse_and_double.apply("21".to_string());
         assert_eq!(result, 42);
     }
@@ -865,7 +893,8 @@ mod arc_transformer_transformer_once_tests {
 
     #[test]
     fn test_arc_transformer_complex_transformation() {
-        let parse_and_double = ArcTransformer::new(|s: String| s.parse::<i32>().unwrap_or(0) * 2);
+        let parse_and_double =
+            ArcTransformer::new(|s: String| s.parse::<i32>().unwrap_or(0) * 2);
         let result = parse_and_double.apply("21".to_string());
         assert_eq!(result, 42);
     }
@@ -886,8 +915,8 @@ mod arc_transformer_transformer_once_tests {
         let _double_arc = Arc::new(double);
 
         let handle = thread::spawn(move || {
-            // We can't move out of Arc, so we need to use the regular apply method
-            // or create a new transformer in the thread
+            // We can't move out of Arc, so we need to use the regular apply
+            // method or create a new transformer in the thread
             let new_double = ArcTransformer::new(|x: i32| x * 2);
             new_double.apply(21)
         });

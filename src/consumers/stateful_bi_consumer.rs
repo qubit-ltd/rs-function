@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # BiConsumer Types
 //!
 //! Provides bi-consumer interface implementations for operations accepting
@@ -17,11 +15,12 @@
 //! This module provides a unified `BiConsumer` trait and three concrete
 //! implementations based on different ownership models:
 //!
-//! - **`BoxStatefulBiConsumer<T, U>`**: Box-based single ownership for one-time use
+//! - **`BoxStatefulBiConsumer<T, U>`**: Box-based single ownership for one-time
+//!   use
 //! - **`ArcStatefulBiConsumer<T, U>`**: Arc<Mutex<>>-based thread-safe shared
 //!   ownership
-//! - **`RcStatefulBiConsumer<T, U>`**: Rc<RefCell<>>-based single-threaded shared
-//!   ownership
+//! - **`RcStatefulBiConsumer<T, U>`**: Rc<RefCell<>>-based single-threaded
+//!   shared ownership
 //!
 //! # Design Philosophy
 //!
@@ -30,7 +29,6 @@
 //!
 //! Suitable for statistics, accumulation, and event processing scenarios
 //! involving two parameters.
-//!
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
@@ -98,17 +96,17 @@ pub use rc_conditional_stateful_bi_consumer::RcConditionalStatefulBiConsumer;
 /// # Automatic Implementations
 ///
 /// - All closures implementing `FnMut(&T, &U)`
-/// - `BoxStatefulBiConsumer<T, U>`, `ArcStatefulBiConsumer<T, U>`, `RcStatefulBiConsumer<T, U>`
+/// - `BoxStatefulBiConsumer<T, U>`, `ArcStatefulBiConsumer<T, U>`,
+///   `RcStatefulBiConsumer<T, U>`
 ///
 /// # Features
 ///
 /// - **Unified Interface**: All bi-consumer types share the same `accept`
 ///   method signature
-/// - **Automatic Implementation**: Closures automatically implement this
-///   trait with zero overhead
+/// - **Automatic Implementation**: Closures automatically implement this trait
+///   with zero overhead
 /// - **Type Conversions**: Easy conversion between ownership models
-/// - **Generic Programming**: Write functions accepting any bi-consumer
-///   type
+/// - **Generic Programming**: Write functions accepting any bi-consumer type
 ///
 /// # Examples
 ///
@@ -134,7 +132,6 @@ pub use rc_conditional_stateful_bi_consumer::RcConditionalStatefulBiConsumer;
 /// apply_bi_consumer(&mut box_con, &5, &3);
 /// assert_eq!(*log.borrow(), vec![8]);
 /// ```
-///
 pub trait StatefulBiConsumer<T, U> {
     /// Performs the consumption operation
     ///
@@ -276,10 +273,12 @@ pub trait StatefulBiConsumer<T, U> {
 
     /// Convert to BiConsumerOnce
     ///
-    /// **⚠️ Consumes `self`**: The original consumer will be unavailable after calling this method.
+    /// **⚠️ Consumes `self`**: The original consumer will be unavailable after
+    /// calling this method.
     ///
-    /// Converts a reusable stateful bi-consumer to a one-time consumer that consumes itself on use.
-    /// This enables passing `StatefulBiConsumer` to functions that require `BiConsumerOnce`.
+    /// Converts a reusable stateful bi-consumer to a one-time consumer that
+    /// consumes itself on use. This enables passing `StatefulBiConsumer` to
+    /// functions that require `BiConsumerOnce`.
     ///
     /// # Returns
     ///
@@ -298,14 +297,14 @@ pub trait StatefulBiConsumer<T, U> {
     ///
     /// **⚠️ Requires Clone**: Original consumer must implement Clone.
     ///
-    /// Converts the current bi-consumer to `BoxStatefulBiConsumer<T, U>` by cloning
-    /// it first.
+    /// Converts the current bi-consumer to `BoxStatefulBiConsumer<T, U>` by
+    /// cloning it first.
     ///
     /// # Ownership
     ///
     /// This method does **not consume** the consumer. It clones the consumer
-    /// and then converts the clone to `BoxStatefulBiConsumer<T, U>`. The original
-    /// consumer remains available after calling this method.
+    /// and then converts the clone to `BoxStatefulBiConsumer<T, U>`. The
+    /// original consumer remains available after calling this method.
     ///
     /// # Returns
     ///
@@ -340,14 +339,14 @@ pub trait StatefulBiConsumer<T, U> {
     ///
     /// **⚠️ Requires Clone**: Original consumer must implement Clone.
     ///
-    /// Converts the current bi-consumer to `RcStatefulBiConsumer<T, U>` by cloning
-    /// it first.
+    /// Converts the current bi-consumer to `RcStatefulBiConsumer<T, U>` by
+    /// cloning it first.
     ///
     /// # Ownership
     ///
     /// This method does **not consume** the consumer. It clones the consumer
-    /// and then converts the clone to `RcStatefulBiConsumer<T, U>`. The original
-    /// consumer remains available after calling this method.
+    /// and then converts the clone to `RcStatefulBiConsumer<T, U>`. The
+    /// original consumer remains available after calling this method.
     ///
     /// # Returns
     ///
@@ -383,14 +382,14 @@ pub trait StatefulBiConsumer<T, U> {
     /// **⚠️ Requires Clone + Send**: Original consumer must implement Clone +
     /// Send.
     ///
-    /// Converts the current bi-consumer to `ArcStatefulBiConsumer<T, U>` by cloning
-    /// it first.
+    /// Converts the current bi-consumer to `ArcStatefulBiConsumer<T, U>` by
+    /// cloning it first.
     ///
     /// # Ownership
     ///
     /// This method does **not consume** the consumer. It clones the consumer
-    /// and then converts the clone to `ArcStatefulBiConsumer<T, U>`. The original
-    /// consumer remains available after calling this method.
+    /// and then converts the clone to `ArcStatefulBiConsumer<T, U>`. The
+    /// original consumer remains available after calling this method.
     ///
     /// # Returns
     ///
@@ -468,7 +467,8 @@ pub trait StatefulBiConsumer<T, U> {
     /// Convert to BiConsumerOnce without consuming self
     ///
     /// **⚠️ Requires Clone**: This method requires `Self` to implement `Clone`.
-    /// Clones the current consumer and converts the clone to a one-time consumer.
+    /// Clones the current consumer and converts the clone to a one-time
+    /// consumer.
     ///
     /// # Returns
     ///

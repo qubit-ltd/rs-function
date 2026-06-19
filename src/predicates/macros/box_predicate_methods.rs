@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! # Box Predicate Methods Macro
 //!
@@ -15,8 +13,8 @@
 //! Generates basic logical operations (and, or, nand, xor, nor) for Box-based
 //! predicates that consume self (because Box cannot be cloned).
 //!
-//! This macro supports both single-parameter and two-parameter predicates through
-//! pattern matching on the struct signature.
+//! This macro supports both single-parameter and two-parameter predicates
+//! through pattern matching on the struct signature.
 //!
 //! # Parameters
 //!
@@ -33,7 +31,6 @@
 //! // Two-parameter predicate
 //! impl_box_predicate_methods!(BoxBiPredicate<T, U>);
 //! ```
-//!
 
 /// Generates logical operation method implementations for Box-based Predicate
 ///
@@ -42,8 +39,8 @@
 /// Generates basic logical operations (and, or, nand, xor, nor) for Box-based
 /// predicates that consume self (because Box cannot be cloned).
 ///
-/// This macro supports both single-parameter and two-parameter predicates through
-/// pattern matching on the struct signature.
+/// This macro supports both single-parameter and two-parameter predicates
+/// through pattern matching on the struct signature.
 ///
 /// # Parameters
 ///
@@ -60,7 +57,6 @@
 /// // Two-parameter predicate
 /// impl_box_predicate_methods!(BoxBiPredicate<T, U>);
 /// ```
-///
 macro_rules! impl_box_predicate_methods {
     // Internal macro for generating logical operations
     (@logical_ops $struct_name:ident < $t:ident >, $trait_name:ident) => {

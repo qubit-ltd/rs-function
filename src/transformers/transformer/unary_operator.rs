@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `UnaryOperator` public type.
 
@@ -20,8 +18,8 @@ use super::Transformer;
 ///
 /// A unary operator transforms a value of type `T` to another value of the
 /// same type `T`. This trait extends `Transformer<T, T>` to provide semantic
-/// clarity for same-type transformations. Equivalent to Java's `UnaryOperator<T>`
-/// which extends `Function<T, T>`.
+/// clarity for same-type transformations. Equivalent to Java's
+/// `UnaryOperator<T>` which extends `Function<T, T>`.
 ///
 /// # Automatic Implementation
 ///
@@ -64,14 +62,12 @@ use super::Transformer;
 /// let op = create_incrementer();
 /// assert_eq!(op.apply(41), 42);
 /// ```
-///
 pub trait UnaryOperator<T>: Transformer<T, T> {}
 
 /// Blanket implementation of UnaryOperator for all Transformer<T, T>
 ///
 /// This automatically implements `UnaryOperator<T>` for any type that
 /// implements `Transformer<T, T>`.
-///
 impl<F, T> UnaryOperator<T> for F
 where
     F: Transformer<T, T>,

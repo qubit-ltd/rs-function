@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `FnBiTransformerOnceOps` public type.
 
@@ -17,7 +15,8 @@ use super::{
 };
 
 // ============================================================================
-// FnBiTransformerOnceOps - Extension trait for FnOnce(T, U) -> R bi-transformers
+// FnBiTransformerOnceOps - Extension trait for FnOnce(T, U) -> R
+// bi-transformers
 // ============================================================================
 
 /// Extension trait for closures implementing `FnOnce(T, U) -> R`
@@ -61,7 +60,6 @@ use super::{
 /// let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply);
 /// assert_eq!(conditional.apply(5, 3), 8); // add
 /// ```
-///
 pub trait FnBiTransformerOnceOps<T, U, R>: FnOnce(T, U) -> R + Sized {
     /// Chain composition - applies self first, then after
     ///
@@ -72,7 +70,8 @@ pub trait FnBiTransformerOnceOps<T, U, R>: FnOnce(T, U) -> R + Sized {
     /// # Type Parameters
     ///
     /// * `S` - The output type of the after transformer
-    /// * `F` - The type of the after transformer (must implement TransformerOnce<R, S>)
+    /// * `F` - The type of the after transformer (must implement
+    ///   TransformerOnce<R, S>)
     ///
     /// # Parameters
     ///
@@ -106,7 +105,8 @@ pub trait FnBiTransformerOnceOps<T, U, R>: FnOnce(T, U) -> R + Sized {
     where
         Self: 'static,
         S: 'static,
-        F: crate::transformers::transformer_once::TransformerOnce<R, S> + 'static,
+        F: crate::transformers::transformer_once::TransformerOnce<R, S>
+            + 'static,
         T: 'static,
         U: 'static,
         R: 'static,
@@ -124,8 +124,8 @@ pub trait FnBiTransformerOnceOps<T, U, R>: FnOnce(T, U) -> R + Sized {
     ///
     /// * `predicate` - The condition to check. **Note: This parameter is passed
     ///   by value and will transfer ownership.** If you need to preserve the
-    ///   original bi-predicate, clone it first (if it implements `Clone`).
-    ///   Can be:
+    ///   original bi-predicate, clone it first (if it implements `Clone`). Can
+    ///   be:
     ///   - A closure: `|x: &T, y: &U| -> bool`
     ///   - A function pointer: `fn(&T, &U) -> bool`
     ///   - A `BoxBiPredicate<T, U>`
@@ -185,5 +185,5 @@ pub trait FnBiTransformerOnceOps<T, U, R>: FnOnce(T, U) -> R + Sized {
 ///
 /// Automatically implements `FnBiTransformerOnceOps<T, U, R>` for any type that
 /// implements `FnOnce(T, U) -> R`.
-///
-impl<T, U, R, F> FnBiTransformerOnceOps<T, U, R> for F where F: FnOnce(T, U) -> R {}
+impl<T, U, R, F> FnBiTransformerOnceOps<T, U, R> for F where F: FnOnce(T, U) -> R
+{}

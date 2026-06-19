@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `FnBiFunctionOps` public type.
 
@@ -63,7 +61,6 @@ use super::{
 /// assert_eq!(conditional.apply(&5, &3), 8);   // add
 /// assert_eq!(conditional.apply(&-5, &3), -15); // multiply
 /// ```
-///
 pub trait FnBiFunctionOps<T, U, R>: Fn(&T, &U) -> R + Sized {
     /// Chain composition - applies self first, then after
     ///
@@ -78,10 +75,10 @@ pub trait FnBiFunctionOps<T, U, R>: Fn(&T, &U) -> R + Sized {
     ///
     /// # Parameters
     ///
-    /// * `after` - The function to apply after self. **Note: This parameter
-    ///   is passed by value and will transfer ownership.** If you need to
-    ///   preserve the original function, clone it first (if it implements
-    ///   `Clone`). Can be:
+    /// * `after` - The function to apply after self. **Note: This parameter is
+    ///   passed by value and will transfer ownership.** If you need to preserve
+    ///   the original function, clone it first (if it implements `Clone`). Can
+    ///   be:
     ///   - A closure: `|x: R| -> S`
     ///   - A function pointer: `fn(R) -> S`
     ///   - A `BoxFunction<R, S>`
@@ -148,8 +145,8 @@ pub trait FnBiFunctionOps<T, U, R>: Fn(&T, &U) -> R + Sized {
     ///
     /// * `predicate` - The condition to check. **Note: This parameter is passed
     ///   by value and will transfer ownership.** If you need to preserve the
-    ///   original bi-predicate, clone it first (if it implements `Clone`).
-    ///   Can be:
+    ///   original bi-predicate, clone it first (if it implements `Clone`). Can
+    ///   be:
     ///   - A closure: `|x: &T, y: &U| -> bool`
     ///   - A function pointer: `fn(&T, &U) -> bool`
     ///   - A `BoxBiPredicate<T, U>`
@@ -212,5 +209,4 @@ pub trait FnBiFunctionOps<T, U, R>: Fn(&T, &U) -> R + Sized {
 ///
 /// Automatically implements `FnBiFunctionOps<T, U, R>` for any type that
 /// implements `Fn(&T, &U) -> R`.
-///
 impl<T, U, R, F> FnBiFunctionOps<T, U, R> for F where F: Fn(&T, &U) -> R {}

@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 //! Comprehensive tests for Function trait and its implementations
 
@@ -128,7 +126,9 @@ fn test_function_default_conversions_allow_relaxed_generic_types() {
     }
 
     let text = String::from("left");
-    let value = BorrowedRc { value: text.as_str() };
+    let value = BorrowedRc {
+        value: text.as_str(),
+    };
     let identity = BorrowedRcIdentity;
 
     assert_left(identity.into_box().apply(&value));
@@ -147,7 +147,8 @@ fn test_function_default_conversions_allow_relaxed_generic_types() {
 #[test]
 fn test_box_function_new_allows_non_static_t() {
     fn run<'a>(value: &'a str) -> usize {
-        let func: BoxFunction<&'a str, usize> = BoxFunction::new(|x: &&'a str| x.len());
+        let func: BoxFunction<&'a str, usize> =
+            BoxFunction::new(|x: &&'a str| x.len());
         func.apply(&value)
     }
 
@@ -158,7 +159,8 @@ fn test_box_function_new_allows_non_static_t() {
 #[test]
 fn test_box_function_new_allows_non_static_r() {
     fn run<'a>(value: &'a str) -> &'a str {
-        let func: BoxFunction<&'a str, &'a str> = BoxFunction::new(|x: &&'a str| *x);
+        let func: BoxFunction<&'a str, &'a str> =
+            BoxFunction::new(|x: &&'a str| *x);
         func.apply(&value)
     }
 
@@ -169,7 +171,8 @@ fn test_box_function_new_allows_non_static_r() {
 #[test]
 fn test_rc_function_new_allows_non_static_t() {
     fn run<'a>(value: &'a str) -> usize {
-        let func: RcFunction<&'a str, usize> = RcFunction::new(|x: &&'a str| x.len());
+        let func: RcFunction<&'a str, usize> =
+            RcFunction::new(|x: &&'a str| x.len());
         func.apply(&value)
     }
 
@@ -180,7 +183,8 @@ fn test_rc_function_new_allows_non_static_t() {
 #[test]
 fn test_arc_function_new_allows_non_static_t() {
     fn run<'a>(value: &'a str) -> usize {
-        let func: ArcFunction<&'a str, usize> = ArcFunction::new(|x: &&'a str| x.len() + 1);
+        let func: ArcFunction<&'a str, usize> =
+            ArcFunction::new(|x: &&'a str| x.len() + 1);
         func.apply(&value)
     }
 
@@ -191,7 +195,8 @@ fn test_arc_function_new_allows_non_static_t() {
 #[test]
 fn test_rc_function_new_allows_non_static_r() {
     fn run<'a>(value: &'a str) -> &'a str {
-        let func: RcFunction<&'a str, &'a str> = RcFunction::new(|x: &&'a str| *x);
+        let func: RcFunction<&'a str, &'a str> =
+            RcFunction::new(|x: &&'a str| *x);
         func.apply(&value)
     }
 
@@ -432,7 +437,9 @@ fn test_arc_function_when_with_predicate() {
     // Test when with ArcPredicate
     let double = ArcFunction::new(|x: &i32| x * 2);
     let is_positive = ArcPredicate::new(|x: &i32| *x > 0);
-    let conditional = double.when(is_positive.clone()).or_else(ArcFunction::identity());
+    let conditional = double
+        .when(is_positive.clone())
+        .or_else(ArcFunction::identity());
 
     assert_eq!(conditional.apply(&5), 10);
     assert!(is_positive.test(&3));
@@ -623,9 +630,10 @@ fn test_rc_function_when_with_predicate() {
     // Test when with RcPredicate
     let double = RcFunction::new(|x: &i32| x * 2);
     let is_positive = RcPredicate::new(|x: &i32| *x > 0);
-    let conditional = double
-        .when(is_positive.clone())
-        .or_else(RcFunction::<i32, i32>::identity());
+    let conditional =
+        double
+            .when(is_positive.clone())
+            .or_else(RcFunction::<i32, i32>::identity());
 
     assert_eq!(conditional.apply(&5), 10);
     assert!(is_positive.test(&3));
@@ -830,8 +838,8 @@ mod function_default_impl_tests {
         FunctionOnce,
     };
 
-    /// Custom struct that only implements the core apply method of Function trait
-    /// All into_xxx() and to_xxx() methods use default implementation
+    /// Custom struct that only implements the core apply method of Function
+    /// trait All into_xxx() and to_xxx() methods use default implementation
     struct CustomFunction {
         multiplier: i32,
     }
@@ -840,7 +848,8 @@ mod function_default_impl_tests {
         fn apply(&self, input: &i32) -> i32 {
             input * self.multiplier
         }
-        // Does not override any into_xxx() or to_xxx() methods, testing default implementations
+        // Does not override any into_xxx() or to_xxx() methods, testing default
+        // implementations
     }
 
     /// Cloneable custom function for testing to_xxx() methods
@@ -853,7 +862,8 @@ mod function_default_impl_tests {
         fn apply(&self, input: &i32) -> i32 {
             input * self.multiplier
         }
-        // Does not override any into_xxx() or to_xxx() methods, testing default implementations
+        // Does not override any into_xxx() or to_xxx() methods, testing default
+        // implementations
     }
 
     #[test]
@@ -990,7 +1000,8 @@ mod function_default_impl_tests {
 
     #[test]
     fn test_cloneable_custom_function_to_once() {
-        // Test Function trait default to_once method on cloneable custom implementation
+        // Test Function trait default to_once method on cloneable custom
+        // implementation
         #[derive(Clone)]
         struct CloneableCustomFunction {
             multiplier: i32,
@@ -1323,11 +1334,18 @@ fn test_box_function_clear_name() {
 
 #[test]
 fn test_box_function_set_name_same_value_keeps_storage() {
-    let mut function = BoxFunction::new_with_name("stable_name", |x: &i32| x * 2);
-    let ptr_before = function.name().expect("name should be initialized").as_ptr();
+    let mut function =
+        BoxFunction::new_with_name("stable_name", |x: &i32| x * 2);
+    let ptr_before = function
+        .name()
+        .expect("name should be initialized")
+        .as_ptr();
 
     function.set_name("stable_name");
-    let ptr_after = function.name().expect("name should remain initialized").as_ptr();
+    let ptr_after = function
+        .name()
+        .expect("name should remain initialized")
+        .as_ptr();
 
     assert_eq!(function.name(), Some("stable_name"));
     assert_eq!(ptr_before, ptr_after);

@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 // qubit-style: allow explicit-imports
 //! Tests for Consumer types
@@ -38,7 +36,9 @@ fn test_consumer_default_conversions_allow_relaxed_generic_types() {
     }
 
     let text = String::from("left");
-    let value = BorrowedRc { value: text.as_str() };
+    let value = BorrowedRc {
+        value: text.as_str(),
+    };
     let consumer = BorrowedRcConsumer;
 
     consumer.clone().into_box().accept(&value);
@@ -635,8 +635,9 @@ mod conversion_tests {
         box_consumer.accept(&5);
     }
 
-    // Note: Box and Rc cannot be converted to Arc because they don't implement Send+Sync
-    // These conversions are prevented at compile time, not runtime
+    // Note: Box and Rc cannot be converted to Arc because they don't implement
+    // Send+Sync These conversions are prevented at compile time, not
+    // runtime
 }
 
 #[cfg(test)]
@@ -1175,7 +1176,8 @@ mod to_xxx_methods_tests {
         closure.accept(&2);
         assert_eq!(counter.load(Ordering::SeqCst), 2);
 
-        // Verify that the consumer created by to_box uses an independent closure copy
+        // Verify that the consumer created by to_box uses an independent
+        // closure copy
         let another_closure = move |_x: &i32| {
             c2.fetch_add(1, Ordering::SeqCst);
         };
@@ -1252,7 +1254,8 @@ mod to_xxx_methods_tests {
             c.fetch_add(1, Ordering::SeqCst);
         });
 
-        // Call all to_xxx methods in sequence to verify the original object is not consumed
+        // Call all to_xxx methods in sequence to verify the original object is
+        // not consumed
         let box_consumer = consumer.to_box();
         box_consumer.accept(&1);
         assert_eq!(counter.load(Ordering::SeqCst), 1);
@@ -1282,7 +1285,8 @@ mod to_xxx_methods_tests {
             *c.borrow_mut() += 1;
         });
 
-        // Call all to_xxx methods in sequence to verify the original object is not consumed
+        // Call all to_xxx methods in sequence to verify the original object is
+        // not consumed
         let box_consumer = consumer.to_box();
         box_consumer.accept(&1);
         assert_eq!(*counter.borrow(), 1);
@@ -1309,7 +1313,8 @@ mod to_xxx_methods_tests {
             c.fetch_add(1, Ordering::SeqCst);
         };
 
-        // Call all to_xxx methods in sequence to verify the original closure is not consumed
+        // Call all to_xxx methods in sequence to verify the original closure is
+        // not consumed
         let box_consumer = closure.to_box();
         box_consumer.accept(&1);
         assert_eq!(counter.load(Ordering::SeqCst), 1);
@@ -1351,7 +1356,8 @@ mod to_once_tests {
     #[test]
     fn test_custom_consumer_to_once() {
         let counter = Arc::new(AtomicUsize::new(0));
-        let my_consumer = super::custom_struct_tests::MyConsumer::new(counter.clone());
+        let my_consumer =
+            super::custom_struct_tests::MyConsumer::new(counter.clone());
 
         // Test to_once() - should not consume the original
         let once_consumer = my_consumer.to_once();
@@ -1366,7 +1372,8 @@ mod to_once_tests {
     #[test]
     fn test_custom_consumer_into_once() {
         let counter = Arc::new(AtomicUsize::new(0));
-        let my_consumer = super::custom_struct_tests::MyConsumer::new(counter.clone());
+        let my_consumer =
+            super::custom_struct_tests::MyConsumer::new(counter.clone());
 
         // Test into_once() - should consume the original
         let once_consumer = my_consumer.into_once();
@@ -1434,14 +1441,22 @@ mod box_conditional_consumer_tests {
 
         let conditional = consumer.when(|x: &i32| *x > 0);
         let chained = conditional.and_then(move |x: &i32| {
-            l2.lock().expect("mutex should not be poisoned").push(*x * 2);
+            l2.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x * 2);
         });
 
         chained.accept(&5);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5, 10]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![5, 10]
+        );
 
         chained.accept(&-5);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5, 10, -10]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![5, 10, -10]
+        );
     }
 
     #[test]
@@ -1454,15 +1469,21 @@ mod box_conditional_consumer_tests {
             l1.lock().expect("mutex should not be poisoned").push(*x);
         });
 
-        let conditional = consumer.when(|x: &i32| *x > 0).or_else(move |x: &i32| {
-            l2.lock().expect("mutex should not be poisoned").push(*x * 10);
-        });
+        let conditional =
+            consumer.when(|x: &i32| *x > 0).or_else(move |x: &i32| {
+                l2.lock()
+                    .expect("mutex should not be poisoned")
+                    .push(*x * 10);
+            });
 
         conditional.accept(&5);
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
 
         conditional.accept(&-5);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5, -50]);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![5, -50]
+        );
     }
 
     #[test]
@@ -1585,9 +1606,10 @@ mod arc_conditional_consumer_tests {
             c1.fetch_add(1, Ordering::SeqCst);
         });
 
-        let conditional = consumer.when(|x: &i32| *x > 0).or_else(move |_x: &i32| {
-            c2.fetch_add(100, Ordering::SeqCst);
-        });
+        let conditional =
+            consumer.when(|x: &i32| *x > 0).or_else(move |_x: &i32| {
+                c2.fetch_add(100, Ordering::SeqCst);
+            });
 
         conditional.accept(&5);
         assert_eq!(counter.load(Ordering::SeqCst), 1);
@@ -1812,9 +1834,10 @@ mod rc_conditional_consumer_tests {
             l1.borrow_mut().push(*x);
         });
 
-        let conditional = consumer.when(|x: &i32| *x > 0).or_else(move |x: &i32| {
-            l2.borrow_mut().push(*x * 10);
-        });
+        let conditional =
+            consumer.when(|x: &i32| *x > 0).or_else(move |x: &i32| {
+                l2.borrow_mut().push(*x * 10);
+            });
 
         conditional.accept(&5);
         assert_eq!(*log.borrow(), vec![5]);

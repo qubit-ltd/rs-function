@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalStatefulBiConsumer` public type.
 
@@ -28,10 +26,12 @@ use super::{
 /// BoxConditionalBiConsumer struct
 ///
 /// A conditional bi-consumer that only executes when a predicate is satisfied.
-/// Uses `BoxStatefulBiConsumer` and `BoxBiPredicate` for single ownership semantics.
+/// Uses `BoxStatefulBiConsumer` and `BoxBiPredicate` for single ownership
+/// semantics.
 ///
-/// This type is typically created by calling `BoxStatefulBiConsumer::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
+/// This type is typically created by calling `BoxStatefulBiConsumer::when()`
+/// and is designed to work with the `or_else()` method to create if-then-else
+/// logic.
 ///
 /// # Features
 ///
@@ -84,7 +84,6 @@ use super::{
 /// consumer.accept(&-5, &3);
 /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8, -15]); // or_else branch executed
 /// ```
-///
 pub struct BoxConditionalStatefulBiConsumer<T, U> {
     pub(super) consumer: BoxStatefulBiConsumer<T, U>,
     pub(super) predicate: BoxBiPredicate<T, U>,

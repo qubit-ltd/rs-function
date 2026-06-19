@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # MutatorOnce Conditional Execution Demo
 //!
 //! Demonstrates conditional execution features of BoxMutatorOnce
@@ -249,8 +247,12 @@ fn main() {
         }
 
         fn process(mut self, data: &mut Vec<String>) {
-            let is_valid = !data.is_empty() && data.iter().all(|s| !s.is_empty());
-            println!("   Data validation: {}", if is_valid { "VALID" } else { "INVALID" });
+            let is_valid =
+                !data.is_empty() && data.iter().all(|s| !s.is_empty());
+            println!(
+                "   Data validation: {}",
+                if is_valid { "VALID" } else { "INVALID" }
+            );
 
             if is_valid {
                 if let Some(callback) = self.on_valid.take() {

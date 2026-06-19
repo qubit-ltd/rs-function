@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Predicate Abstraction
 //!
 //! Provides a Rust implementation similar to Java's `Predicate` interface
@@ -29,13 +27,13 @@
 //!
 //! This module follows these principles:
 //!
-//! 1. **Single Trait**: Only one `Predicate<T>` trait with `&self`, keeping
-//!    the API simple and semantically clear
+//! 1. **Single Trait**: Only one `Predicate<T>` trait with `&self`, keeping the
+//!    API simple and semantically clear
 //! 2. **Dedicated Stateful API**: Use
 //!    [`StatefulPredicate`](crate::StatefulPredicate) for `FnMut(&T) -> bool`
 //!    closures that need `&mut self`
-//! 3. **No PredicateOnce**: Violates predicate semantics - judgments should
-//!    be repeatable
+//! 3. **No PredicateOnce**: Violates predicate semantics - judgments should be
+//!    repeatable
 //! 4. **Three Implementations**: `BoxPredicate`, `RcPredicate`, and
 //!    `ArcPredicate` cover all ownership scenarios
 //!
@@ -169,7 +167,6 @@
 //! assert!(pred.test(&5));
 //! assert!(!pred.test(&-3));
 //! ```
-//!
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -275,7 +272,6 @@ pub use fn_predicate_ops::FnPredicateOps;
 /// assert!(counting_pred.test(&5));
 /// assert!(!counting_pred.test(&-3));
 /// ```
-///
 pub trait Predicate<T> {
     /// Tests whether the given value satisfies this predicate.
     ///

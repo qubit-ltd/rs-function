@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 // qubit-style: allow explicit-imports
 use qubit_function::{
@@ -63,12 +61,14 @@ mod tests {
         let add = |x: i32, y: i32| x + y;
         let subtract = |x: i32, y: i32| x - y;
 
-        let conditional = add.when(|x: &i32, _y: &i32| *x > 0).or_else(subtract);
+        let conditional =
+            add.when(|x: &i32, _y: &i32| *x > 0).or_else(subtract);
         assert_eq!(conditional.apply(10, 3), 13); // x > 0, execute addition
 
         let add2 = |x: i32, y: i32| x + y;
         let subtract2 = |x: i32, y: i32| x - y;
-        let conditional2 = add2.when(|x: &i32, _y: &i32| *x > 0).or_else(subtract2);
+        let conditional2 =
+            add2.when(|x: &i32, _y: &i32| *x > 0).or_else(subtract2);
         assert_eq!(conditional2.apply(-10, 3), -13); // x <= 0, execute subtraction
     }
 
@@ -108,8 +108,9 @@ mod tests {
 
     #[test]
     fn test_chained_and_then() {
-        // Test chained and_then - Note: the first and_then returns BoxBiTransformerOnce,
-        // which doesn't have an and_then method, so we need to do it step by step
+        // Test chained and_then - Note: the first and_then returns
+        // BoxBiTransformerOnce, which doesn't have an and_then method,
+        // so we need to do it step by step
         let add = |x: i32, y: i32| x + y;
         let double = |x: i32| x * 2;
 
@@ -122,7 +123,8 @@ mod tests {
     fn test_and_then_with_consuming_closure() {
         // Test and_then with consuming closure
         let owned_value = String::from("prefix-");
-        let concat = move |x: String, y: String| format!("{}{}{}", owned_value, x, y);
+        let concat =
+            move |x: String, y: String| format!("{}{}{}", owned_value, x, y);
         let uppercase = |s: String| s.to_uppercase();
 
         let composed = concat.and_then(uppercase);

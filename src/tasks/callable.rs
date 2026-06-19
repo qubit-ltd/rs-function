@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Callable Types
 //!
 //! Provides fallible, reusable, zero-argument computations.
@@ -18,7 +16,6 @@
 //!
 //! The trait itself does not require `Send`; concurrent executors should add
 //! `+ Send + 'static` at their API boundary.
-//!
 
 use crate::{
     tasks::callable_once::{
@@ -41,11 +38,12 @@ pub use arc_callable::ArcCallable;
 
 /// A fallible, reusable zero-argument computation.
 ///
-/// Conceptually this is the same shape as `FnMut() -> Result<R, E>`: `call` takes
-/// `&mut self` and returns `Result<R, E>`, but the API uses task-oriented naming
-/// and helpers. In this crate it aligns with
+/// Conceptually this is the same shape as `FnMut() -> Result<R, E>`: `call`
+/// takes `&mut self` and returns `Result<R, E>`, but the API uses task-oriented
+/// naming and helpers. In this crate it aligns with
 /// [`Supplier`](crate::suppliers::Supplier) of `Result<R, E>`—a fallible
-/// supplier—while emphasizing executable work rather than plain value production.
+/// supplier—while emphasizing executable work rather than plain value
+/// production.
 ///
 /// Choose **`Callable`** when callers need the success value `R`. When only
 /// success or failure matters, use [`Runnable`](crate::tasks::Runnable), whose
@@ -64,7 +62,6 @@ pub use arc_callable::ArcCallable;
 /// let mut task = || Ok::<i32, String>(21 * 2);
 /// assert_eq!(task.call().expect("call should succeed"), 42);
 /// ```
-///
 pub trait Callable<R, E> {
     /// Executes the computation, borrowing `self` mutably.
     ///

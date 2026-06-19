@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcRunnable` public type.
 
@@ -41,7 +39,6 @@ use crate::{
 /// # Type Parameters
 ///
 /// * `E` - The error value returned when the action fails.
-///
 pub struct RcRunnable<E> {
     /// The stateful closure executed by this runnable.
     pub(super) function: Rc<RefCell<dyn FnMut() -> Result<(), E>>>,

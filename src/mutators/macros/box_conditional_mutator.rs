@@ -1,18 +1,16 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Box Conditional Mutator Macro
 //!
 //! Generates Box-based Conditional Mutator implementations
 //!
-//! For Box-based conditional mutators, generates `and_then` and `or_else` methods,
-//! as well as complete Mutator trait implementations.
+//! For Box-based conditional mutators, generates `and_then` and `or_else`
+//! methods, as well as complete Mutator trait implementations.
 //!
 //! Box type characteristics:
 //! - `and_then` and `or_else` consume self (because Box cannot Clone)
@@ -35,7 +33,6 @@
 //! //     Mutator
 //! // );
 //! ```
-//!
 
 /// Generates Box-based Conditional Mutator implementations
 ///
@@ -71,7 +68,6 @@
 /// //     Mutator
 /// // );
 /// ```
-///
 macro_rules! impl_box_conditional_mutator {
     (@let_mutator Mutator, $name:ident, $value:expr) => {
         let $name = $value;

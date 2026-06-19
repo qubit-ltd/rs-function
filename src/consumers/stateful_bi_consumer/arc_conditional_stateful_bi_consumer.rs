@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcConditionalStatefulBiConsumer` public type.
 
@@ -30,11 +28,12 @@ use super::{
 /// ArcConditionalStatefulBiConsumer struct
 ///
 /// A thread-safe conditional bi-consumer that only executes when a predicate is
-/// satisfied. Uses `ArcStatefulBiConsumer` and `ArcBiPredicate` for shared ownership across
-/// threads.
+/// satisfied. Uses `ArcStatefulBiConsumer` and `ArcBiPredicate` for shared
+/// ownership across threads.
 ///
-/// This type is typically created by calling `ArcStatefulBiConsumer::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
+/// This type is typically created by calling `ArcStatefulBiConsumer::when()`
+/// and is designed to work with the `or_else()` method to create if-then-else
+/// logic.
 ///
 /// # Features
 ///
@@ -62,7 +61,6 @@ use super::{
 /// m.accept(&value, &3);
 /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
 /// ```
-///
 pub struct ArcConditionalStatefulBiConsumer<T, U> {
     pub(super) consumer: ArcStatefulBiConsumer<T, U>,
     pub(super) predicate: ArcBiPredicate<T, U>,

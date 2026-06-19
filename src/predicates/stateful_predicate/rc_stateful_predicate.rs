@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcStatefulPredicate` public type.
 
@@ -37,10 +35,13 @@ pub struct RcStatefulPredicate<T> {
 }
 
 impl<T> RcStatefulPredicate<T> {
-    // Generates: new(), new_with_name(), name(), set_name(), always_true(), always_false()
-    impl_predicate_common_methods!(RcStatefulPredicate<T>, (FnMut(&T) -> bool + 'static), |f| {
-        Rc::new(RefCell::new(f))
-    });
+    // Generates: new(), new_with_name(), name(), set_name(), always_true(),
+    // always_false()
+    impl_predicate_common_methods!(
+        RcStatefulPredicate<T>,
+        (FnMut(&T) -> bool + 'static),
+        |f| { Rc::new(RefCell::new(f)) }
+    );
 
     /// Returns a predicate representing logical AND with another predicate.
     ///
@@ -193,7 +194,8 @@ where
 // Generates: impl Clone for RcStatefulPredicate<T>
 impl_predicate_clone!(RcStatefulPredicate<T>);
 
-// Generates: impl Debug for RcStatefulPredicate<T> and impl Display for RcStatefulPredicate<T>
+// Generates: impl Debug for RcStatefulPredicate<T> and impl Display for
+// RcStatefulPredicate<T>
 impl_predicate_debug_display!(RcStatefulPredicate<T>);
 
 // Implements StatefulPredicate trait for RcStatefulPredicate<T>

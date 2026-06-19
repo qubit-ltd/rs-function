@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxSupplierOnce` public type.
 
@@ -57,7 +55,6 @@ use super::{
 /// let value = once.get();
 /// assert_eq!(value, "data");
 /// ```
-///
 pub struct BoxSupplierOnce<T> {
     pub(super) function: Box<dyn FnOnce() -> T>,
     pub(super) name: Option<String>,
@@ -65,7 +62,11 @@ pub struct BoxSupplierOnce<T> {
 
 impl<T> BoxSupplierOnce<T> {
     // Generates: new(), new_with_name(), name(), set_name(), constant()
-    impl_supplier_common_methods!(BoxSupplierOnce<T>, (FnOnce() -> T + 'static), |f| Box::new(f));
+    impl_supplier_common_methods!(
+        BoxSupplierOnce<T>,
+        (FnOnce() -> T + 'static),
+        |f| Box::new(f)
+    );
 
     // Generates: map(), filter(), zip()
     impl_box_supplier_methods!(BoxSupplierOnce<T>, SupplierOnce);

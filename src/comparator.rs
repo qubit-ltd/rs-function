@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Comparator Abstraction
 //!
 //! Provides a Rust implementation similar to Java's `Comparator` interface
@@ -22,32 +20,30 @@
 //! ### Core Components
 //!
 //! 1. **`Comparator<T>` trait**: A minimalist unified interface that only
-//!    defines the core `compare` method and type conversion methods
-//!    (`into_*`). It does NOT include chaining methods like
-//!    `then_comparing`, etc.
+//!    defines the core `compare` method and type conversion methods (`into_*`).
+//!    It does NOT include chaining methods like `then_comparing`, etc.
 //!
 //! 2. **Three Concrete Struct Implementations**:
-//!    - [`BoxComparator<T>`]: Box-based single ownership implementation
-//!      for one-time use scenarios
+//!    - [`BoxComparator<T>`]: Box-based single ownership implementation for
+//!      one-time use scenarios
 //!    - [`ArcComparator<T>`]: Arc-based thread-safe shared ownership
 //!      implementation for multi-threaded scenarios
 //!    - [`RcComparator<T>`]: Rc-based single-threaded shared ownership
 //!      implementation for single-threaded reuse
 //!
 //! 3. **Specialized Composition Methods**: Each struct implements its own
-//!    inherent methods (`reversed`, `then_comparing`, etc.) that return
-//!    the same concrete type, preserving their specific characteristics
-//!    (e.g., `ArcComparator` compositions remain `ArcComparator` and stay
-//!    cloneable and thread-safe).
+//!    inherent methods (`reversed`, `then_comparing`, etc.) that return the
+//!    same concrete type, preserving their specific characteristics (e.g.,
+//!    `ArcComparator` compositions remain `ArcComparator` and stay cloneable
+//!    and thread-safe).
 //!
-//! 4. **Extension Trait for Closures**: The `FnComparatorOps<T>`
-//!    extension trait provides composition methods for all closures and
-//!    function pointers, returning `BoxComparator<T>` to initiate method
-//!    chaining.
+//! 4. **Extension Trait for Closures**: The `FnComparatorOps<T>` extension
+//!    trait provides composition methods for all closures and function
+//!    pointers, returning `BoxComparator<T>` to initiate method chaining.
 //!
-//! 5. **Unified Trait Implementation**: All closures and the three
-//!    structs implement the `Comparator<T>` trait, enabling them to be
-//!    handled uniformly by generic functions.
+//! 5. **Unified Trait Implementation**: All closures and the three structs
+//!    implement the `Comparator<T>` trait, enabling them to be handled
+//!    uniformly by generic functions.
 //!
 //! ## Ownership Model Coverage
 //!
@@ -166,7 +162,6 @@
 //! let p2 = Person { name: "Alice".to_string(), age: 25 };
 //! assert_eq!(cmp.compare(&p1, &p2), Ordering::Greater);
 //! ```
-//!
 use std::cmp::Ordering;
 use std::rc::Rc;
 use std::sync::Arc;
@@ -204,7 +199,6 @@ pub use fn_comparator_ops::FnComparatorOps;
 /// let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
 /// assert_eq!(cmp.compare(&5, &3), Ordering::Greater);
 /// ```
-///
 pub trait Comparator<T> {
     /// Compares two values and returns an ordering.
     ///

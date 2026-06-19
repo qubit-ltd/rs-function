@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `ArcCallable` public type.
 
@@ -43,14 +41,13 @@ use crate::{
 
 /// Thread-safe callable.
 ///
-/// `ArcCallable<R, E>` stores a `Arc<Mutex<dyn FnMut() -> Result<R, E> + Send>>`
-/// and can be called repeatedly across threads.
+/// `ArcCallable<R, E>` stores a `Arc<Mutex<dyn FnMut() -> Result<R, E> +
+/// Send>>` and can be called repeatedly across threads.
 ///
 /// # Type Parameters
 ///
 /// * `R` - The success value returned by the computation.
 /// * `E` - The error value returned when the computation fails.
-///
 pub struct ArcCallable<R, E> {
     /// The stateful closure executed by this callable.
     pub(super) function: Arc<Mutex<dyn FnMut() -> Result<R, E> + Send>>,
@@ -119,7 +116,10 @@ impl<R, E> Callable<R, E> for ArcCallable<R, E> {
     {
         let name = self.name;
         let function = self.function;
-        LocalBoxCallableOnce::new_with_optional_name(move || (function.lock())(), name)
+        LocalBoxCallableOnce::new_with_optional_name(
+            move || (function.lock())(),
+            name,
+        )
     }
 
     /// Converts this shared callable into a local boxed one-time callable
@@ -141,7 +141,10 @@ impl<R, E> Callable<R, E> for ArcCallable<R, E> {
     {
         let name = self.name;
         let function = self.function;
-        BoxRunnable::new_with_optional_name(move || (function.lock())().map(|_| ()), name)
+        BoxRunnable::new_with_optional_name(
+            move || (function.lock())().map(|_| ()),
+            name,
+        )
     }
 }
 

@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConsumer` public type.
 
@@ -57,7 +55,6 @@ use super::{
 /// });
 /// consumer.accept(&5);
 /// ```
-///
 pub struct BoxConsumer<T> {
     pub(super) function: Box<dyn Fn(&T)>,
     pub(super) name: Option<String>,
@@ -65,10 +62,16 @@ pub struct BoxConsumer<T> {
 
 impl<T> BoxConsumer<T> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
-    impl_consumer_common_methods!(BoxConsumer<T>, (Fn(&T) + 'static), |f| Box::new(f));
+    impl_consumer_common_methods!(BoxConsumer<T>, (Fn(&T) + 'static), |f| {
+        Box::new(f)
+    });
 
     // Generates: when() and and_then() methods that consume self
-    impl_box_consumer_methods!(BoxConsumer<T>, BoxConditionalConsumer, Consumer);
+    impl_box_consumer_methods!(
+        BoxConsumer<T>,
+        BoxConditionalConsumer,
+        Consumer
+    );
 }
 
 impl<T> Consumer<T> for BoxConsumer<T> {

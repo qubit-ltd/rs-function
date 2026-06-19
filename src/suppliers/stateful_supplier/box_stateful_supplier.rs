@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulSupplier` public type.
 
@@ -74,7 +72,6 @@ use super::{
 ///
 /// assert_eq!(pipeline.get(), 25);
 /// ```
-///
 pub struct BoxStatefulSupplier<T> {
     pub(super) function: Box<dyn FnMut() -> T>,
     pub(super) name: Option<String>,
@@ -82,7 +79,11 @@ pub struct BoxStatefulSupplier<T> {
 
 impl<T> BoxStatefulSupplier<T> {
     // Generates: new(), new_with_name(), name(), set_name(), constant()
-    impl_supplier_common_methods!(BoxStatefulSupplier<T>, (FnMut() -> T + 'static), |f| { Box::new(f) });
+    impl_supplier_common_methods!(
+        BoxStatefulSupplier<T>,
+        (FnMut() -> T + 'static),
+        |f| { Box::new(f) }
+    );
 
     // Generates: map(), filter(), zip()
     impl_box_supplier_methods!(BoxStatefulSupplier<T>, StatefulSupplier);

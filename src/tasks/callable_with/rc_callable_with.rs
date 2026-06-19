@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcCallableWith` public type.
 
@@ -34,7 +32,6 @@ type RcCallableWithFn<T, R, E> = Rc<RefCell<dyn FnMut(&mut T) -> Result<R, E>>>;
 ///
 /// `RcCallableWith<T, R, E>` stores a
 /// `Rc<RefCell<dyn FnMut(&mut T) -> Result<R, E>>>`.
-///
 pub struct RcCallableWith<T, R, E> {
     /// The stateful closure executed by this callable.
     pub(super) function: RcCallableWithFn<T, R, E>,

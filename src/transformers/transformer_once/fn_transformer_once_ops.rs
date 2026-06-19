@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `FnTransformerOnceOps` public type.
 
@@ -73,7 +71,6 @@ use super::{
 ///
 /// assert_eq!(conditional.apply(5), 10);
 /// ```
-///
 pub trait FnTransformerOnceOps<T, R>: FnOnce(T) -> R + Sized {
     /// Chain composition - applies self first, then after
     ///
@@ -195,5 +192,4 @@ pub trait FnTransformerOnceOps<T, R>: FnOnce(T) -> R + Sized {
 ///
 /// Automatically implements `FnTransformerOnceOps<T, R>` for any type that
 /// implements `FnOnce(T) -> R`.
-///
 impl<T, R, F> FnTransformerOnceOps<T, R> for F where F: FnOnce(T) -> R {}

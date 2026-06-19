@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `FnComparatorOps` public type.
 
@@ -34,7 +32,6 @@ use super::{
 ///
 /// assert_eq!(cmp.compare(&5, &3), Ordering::Less);
 /// ```
-///
 pub trait FnComparatorOps<T>: Fn(&T, &T) -> Ordering + Sized {
     /// Returns a comparator that imposes the reverse ordering.
     ///

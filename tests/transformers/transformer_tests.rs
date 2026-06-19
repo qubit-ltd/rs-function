@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 
 // qubit-style: allow explicit-imports
 use qubit_function::Transformer;
@@ -32,7 +30,9 @@ fn test_transformer_default_conversions_allow_relaxed_generic_types() {
     }
 
     let text = String::from("left");
-    let value = || BorrowedRc { value: text.as_str() };
+    let value = || BorrowedRc {
+        value: text.as_str(),
+    };
     let transformer = BorrowedRcTransformer;
 
     assert_left(transformer.clone().into_box().apply(value()));
@@ -47,7 +47,10 @@ fn test_transformer_default_conversions_allow_relaxed_generic_types() {
     assert_left(transformer.to_box().apply(value()));
     assert_left(transformer.to_rc().apply(value()));
     assert_left(transformer.to_arc().apply(value()));
-    assert_left(qubit_function::TransformerOnce::apply(transformer.to_once(), value()));
+    assert_left(qubit_function::TransformerOnce::apply(
+        transformer.to_once(),
+        value(),
+    ));
     assert_left(transformer.to_fn()(value()));
 }
 
@@ -122,7 +125,8 @@ mod box_transformer_tests {
 
     #[test]
     fn test_display_with_name() {
-        let transformer = BoxTransformer::new_with_name("double", |x: i32| x * 2);
+        let transformer =
+            BoxTransformer::new_with_name("double", |x: i32| x * 2);
         let display_str = format!("{}", transformer);
         assert_eq!(display_str, "BoxTransformer(double)");
     }
@@ -297,7 +301,8 @@ mod rc_transformer_tests {
 
     #[test]
     fn test_display_with_name() {
-        let transformer = RcTransformer::new_with_name("double", |x: i32| x * 2);
+        let transformer =
+            RcTransformer::new_with_name("double", |x: i32| x * 2);
         let display_str = format!("{}", transformer);
         assert_eq!(display_str, "RcTransformer(double)");
     }
@@ -325,7 +330,8 @@ mod box_conditional_tests {
     fn test_when_or_else() {
         let double_fn = |x: i32| x * 2;
         let negate_fn = |x: i32| -x;
-        let conditional = FnTransformerOps::when(double_fn, |x: &i32| *x > 0).or_else(negate_fn);
+        let conditional = FnTransformerOps::when(double_fn, |x: &i32| *x > 0)
+            .or_else(negate_fn);
         let result = conditional.into_box();
 
         assert_eq!(result.apply(5), 10);
@@ -335,7 +341,8 @@ mod box_conditional_tests {
     #[test]
     fn test_when_or_else_with_closure() {
         let double_fn = |x: i32| x * 2;
-        let result = FnTransformerOps::when(double_fn, |x: &i32| *x > 0).or_else(|x: i32| -x);
+        let result = FnTransformerOps::when(double_fn, |x: &i32| *x > 0)
+            .or_else(|x: i32| -x);
 
         assert_eq!(result.apply(5), 10);
         assert_eq!(result.apply(-5), 5);
@@ -354,7 +361,8 @@ mod arc_conditional_tests {
     fn test_when_or_else() {
         let double_fn = |x: i32| x * 2;
         let negate_fn = |x: i32| -x;
-        let result = FnTransformerOps::when(double_fn, |x: &i32| *x > 0).or_else(negate_fn);
+        let result = FnTransformerOps::when(double_fn, |x: &i32| *x > 0)
+            .or_else(negate_fn);
 
         assert_eq!(result.apply(5), 10);
         assert_eq!(result.apply(-5), 5);
@@ -363,7 +371,8 @@ mod arc_conditional_tests {
     #[test]
     fn test_when_or_else_with_closure() {
         let double_fn = |x: i32| x * 2;
-        let result = FnTransformerOps::when(double_fn, |x: &i32| *x > 0).or_else(|x: i32| -x);
+        let result = FnTransformerOps::when(double_fn, |x: &i32| *x > 0)
+            .or_else(|x: i32| -x);
 
         assert_eq!(result.apply(5), 10);
         assert_eq!(result.apply(-5), 5);
@@ -373,7 +382,8 @@ mod arc_conditional_tests {
     #[test]
     fn test_conditional_or_else() {
         let double_fn = |x: i32| x * 2;
-        let result = FnTransformerOps::when(double_fn, |x: &i32| *x > 0).or_else(|x: i32| -x);
+        let result = FnTransformerOps::when(double_fn, |x: &i32| *x > 0)
+            .or_else(|x: i32| -x);
 
         assert_eq!(result.apply(5), 10);
         assert_eq!(result.apply(-5), 5);
@@ -391,7 +401,8 @@ mod rc_conditional_tests {
     fn test_when_or_else() {
         let double_fn = |x: i32| x * 2;
         let negate_fn = |x: i32| -x;
-        let result = FnTransformerOps::when(double_fn, |x: &i32| *x > 0).or_else(negate_fn);
+        let result = FnTransformerOps::when(double_fn, |x: &i32| *x > 0)
+            .or_else(negate_fn);
 
         assert_eq!(result.apply(5), 10);
         assert_eq!(result.apply(-5), 5);
@@ -400,7 +411,8 @@ mod rc_conditional_tests {
     #[test]
     fn test_when_or_else_with_closure() {
         let double_fn = |x: i32| x * 2;
-        let result = FnTransformerOps::when(double_fn, |x: &i32| *x > 0).or_else(|x: i32| -x);
+        let result = FnTransformerOps::when(double_fn, |x: &i32| *x > 0)
+            .or_else(|x: i32| -x);
 
         assert_eq!(result.apply(5), 10);
         assert_eq!(result.apply(-5), 5);
@@ -410,7 +422,8 @@ mod rc_conditional_tests {
     #[test]
     fn test_conditional_or_else() {
         let double_fn = |x: i32| x * 2;
-        let result = FnTransformerOps::when(double_fn, |x: &i32| *x > 0).or_else(|x: i32| -x);
+        let result = FnTransformerOps::when(double_fn, |x: &i32| *x > 0)
+            .or_else(|x: i32| -x);
 
         assert_eq!(result.apply(5), 10);
         assert_eq!(result.apply(-5), 5);
@@ -751,7 +764,8 @@ mod to_conversion_tests {
 
     #[test]
     fn test_display_with_name() {
-        let transformer = ArcTransformer::new_with_name("double", |x: i32| x * 2);
+        let transformer =
+            ArcTransformer::new_with_name("double", |x: i32| x * 2);
         let display_str = format!("{}", transformer);
         assert_eq!(display_str, "ArcTransformer(double)");
     }
@@ -842,7 +856,8 @@ mod complex_composition_tests {
         let add_one = ArcTransformer::new(|x: i32| x + 1);
         let double = ArcTransformer::new(|x: i32| x * 2);
         let to_string = ArcTransformer::new(|x: i32| x.to_string());
-        let composed = add_one.and_then(double.clone()).and_then(to_string.clone());
+        let composed =
+            add_one.and_then(double.clone()).and_then(to_string.clone());
         assert_eq!(composed.apply(5), "12");
         // Original transformers still usable
         assert_eq!(add_one.apply(5), 6);
@@ -854,7 +869,8 @@ mod complex_composition_tests {
         let add_one = RcTransformer::new(|x: i32| x + 1);
         let double = RcTransformer::new(|x: i32| x * 2);
         let square = RcTransformer::new(|x: i32| x * x);
-        let composed = add_one.and_then(double.clone()).and_then(square.clone());
+        let composed =
+            add_one.and_then(double.clone()).and_then(square.clone());
         assert_eq!(composed.apply(5), 144); // (5 + 1) * 2 = 12, then 12 * 12 = 144
         // Original transformers still usable
         assert_eq!(add_one.apply(5), 6);
@@ -907,7 +923,9 @@ mod edge_cases_tests {
 
     #[test]
     fn test_with_vec() {
-        let split = BoxTransformer::new(|s: String| s.split(',').map(|s| s.to_string()).collect::<Vec<_>>());
+        let split = BoxTransformer::new(|s: String| {
+            s.split(',').map(|s| s.to_string()).collect::<Vec<_>>()
+        });
         assert_eq!(
             split.apply("a,b,c".to_string()),
             vec!["a".to_string(), "b".to_string(), "c".to_string()]
@@ -1258,7 +1276,8 @@ mod specialized_into_fn_tests {
     fn test_into_fn_preserves_behavior() {
         // Test that into_fn preserves the exact behavior of the
         // original transformer
-        let transformer = RcTransformer::new(|x: i32| if x > 0 { x * 2 } else { x * 3 });
+        let transformer =
+            RcTransformer::new(|x: i32| if x > 0 { x * 2 } else { x * 3 });
 
         let original_result1 = transformer.apply(5);
         let original_result2 = transformer.apply(-5);
@@ -1701,7 +1720,13 @@ mod transformer_default_to_methods_tests {
 
     #[test]
     fn test_rc_to_fn_with_result() {
-        let divide = RcTransformer::new(|x: i32| if x == 0 { Err("Division by zero") } else { Ok(100 / x) });
+        let divide = RcTransformer::new(|x: i32| {
+            if x == 0 {
+                Err("Division by zero")
+            } else {
+                Ok(100 / x)
+            }
+        });
         let func = divide.to_fn();
 
         assert_eq!(func(10), Ok(10));
@@ -2234,7 +2259,9 @@ mod transformer_once_tests {
 
         #[test]
         fn test_box_transformer_complex_transformation() {
-            let parse_and_double = BoxTransformer::new(|s: String| s.parse::<i32>().unwrap_or(0) * 2);
+            let parse_and_double = BoxTransformer::new(|s: String| {
+                s.parse::<i32>().unwrap_or(0) * 2
+            });
             let result = parse_and_double.apply("21".to_string());
             assert_eq!(result, 42);
         }
@@ -2294,7 +2321,9 @@ mod transformer_once_tests {
 
         #[test]
         fn test_rc_transformer_complex_transformation() {
-            let parse_and_double = RcTransformer::new(|s: String| s.parse::<i32>().unwrap_or(0) * 2);
+            let parse_and_double = RcTransformer::new(|s: String| {
+                s.parse::<i32>().unwrap_or(0) * 2
+            });
             let result = parse_and_double.apply("21".to_string());
             assert_eq!(result, 42);
         }
@@ -2529,7 +2558,9 @@ mod transformer_once_tests {
 
         #[test]
         fn test_arc_transformer_complex_transformation() {
-            let parse_and_double = ArcTransformer::new(|s: String| s.parse::<i32>().unwrap_or(0) * 2);
+            let parse_and_double = ArcTransformer::new(|s: String| {
+                s.parse::<i32>().unwrap_or(0) * 2
+            });
             let result = parse_and_double.apply("21".to_string());
             assert_eq!(result, 42);
         }
@@ -2568,7 +2599,8 @@ mod transformer_once_tests {
             let _double_clone = Arc::clone(&double_arc);
 
             let handle = thread::spawn(move || {
-                // Create a new transformer in the thread to demonstrate thread safety
+                // Create a new transformer in the thread to demonstrate thread
+                // safety
                 let new_double = ArcTransformer::new(|x: i32| x * 2);
                 new_double.apply(21)
             });

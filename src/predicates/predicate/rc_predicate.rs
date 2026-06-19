@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 // qubit-style: allow explicit-imports
 //! Defines the `RcPredicate` public type.
 
@@ -43,15 +41,19 @@ use super::{
 /// let combined = pred.and(RcPredicate::new(|x| x % 2 == 0));
 /// assert!(pred.test(&5));  // Still works
 /// ```
-///
 pub struct RcPredicate<T> {
     pub(super) function: Rc<dyn Fn(&T) -> bool>,
     pub(super) name: Option<String>,
 }
 
 impl<T> RcPredicate<T> {
-    // Generates: new(), new_with_name(), name(), set_name(), always_true(), always_false()
-    impl_predicate_common_methods!(RcPredicate<T>, (Fn(&T) -> bool + 'static), |f| Rc::new(f));
+    // Generates: new(), new_with_name(), name(), set_name(), always_true(),
+    // always_false()
+    impl_predicate_common_methods!(
+        RcPredicate<T>,
+        (Fn(&T) -> bool + 'static),
+        |f| Rc::new(f)
+    );
 
     // Generates: and(), or(), nand(), xor(), nor()
     impl_shared_predicate_methods!(RcPredicate<T>, 'static);

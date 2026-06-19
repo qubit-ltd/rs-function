@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # Tester Types
 //!
 //! Provides zero-argument tester abstractions that return boolean values.
@@ -33,9 +31,9 @@
 //!
 //! # Three Implementations
 //!
-//! - **`BoxTester`** / **`BoxStatefulTester`**: Single ownership using
-//!   `Box<dyn Fn() -> bool>` or `Box<dyn FnMut() -> bool>`. Best for one-time
-//!   use and builder patterns.
+//! - **`BoxTester`** / **`BoxStatefulTester`**: Single ownership using `Box<dyn
+//!   Fn() -> bool>` or `Box<dyn FnMut() -> bool>`. Best for one-time use and
+//!   builder patterns.
 //!
 //! - **`ArcTester`** / **`ArcStatefulTester`**: Thread-safe shared ownership.
 //!   Stateless testers use `Arc<dyn Fn() -> bool + Send + Sync>`, while
@@ -155,7 +153,6 @@
 //!
 //! assert!(handle.join().expect("thread should not panic"));
 //! ```
-//!
 use std::rc::Rc;
 use std::sync::Arc;
 

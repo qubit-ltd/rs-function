@@ -1,12 +1,10 @@
-/*******************************************************************************
- *
- *    Copyright (c) 2025 - 2026 Haixing Hu.
- *
- *    SPDX-License-Identifier: Apache-2.0
- *
- *    Licensed under the Apache License, Version 2.0.
- *
- ******************************************************************************/
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
 //! # StatefulBiTransformer Types
 //!
 //! Provides Rust implementations of stateful bi-transformer traits for type
@@ -19,7 +17,6 @@
 //! - [`BoxStatefulBiTransformer`]: Single ownership, not cloneable
 //! - [`ArcStatefulBiTransformer`]: Thread-safe shared ownership, cloneable
 //! - [`RcStatefulBiTransformer`]: Single-threaded shared ownership, cloneable
-//!
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
@@ -92,7 +89,6 @@ pub use arc_conditional_stateful_bi_transformer::ArcConditionalStatefulBiTransfo
 /// * `T` - The type of the first input value (consumed)
 /// * `U` - The type of the second input value (consumed)
 /// * `R` - The type of the output value
-///
 pub trait StatefulBiTransformer<T, U, R> {
     /// Transforms two input values to produce an output value
     ///
@@ -114,8 +110,8 @@ pub trait StatefulBiTransformer<T, U, R> {
     /// # Default Implementation
     ///
     /// The default implementation wraps `self` in a `Box` and creates a
-    /// `BoxStatefulBiTransformer`. Types can override this method to provide more
-    /// efficient conversions.
+    /// `BoxStatefulBiTransformer`. Types can override this method to provide
+    /// more efficient conversions.
     ///
     /// # Returns
     ///
@@ -136,8 +132,8 @@ pub trait StatefulBiTransformer<T, U, R> {
     /// # Default Implementation
     ///
     /// The default implementation wraps `self` in an `Rc` and creates an
-    /// `RcStatefulBiTransformer`. Types can override this method to provide more
-    /// efficient conversions.
+    /// `RcStatefulBiTransformer`. Types can override this method to provide
+    /// more efficient conversions.
     ///
     /// # Returns
     ///
@@ -158,8 +154,8 @@ pub trait StatefulBiTransformer<T, U, R> {
     /// # Default Implementation
     ///
     /// The default implementation wraps `self` in an `Arc` and creates an
-    /// `ArcStatefulBiTransformer`. Types can override this method to provide more
-    /// efficient conversions.
+    /// `ArcStatefulBiTransformer`. Types can override this method to provide
+    /// more efficient conversions.
     ///
     /// # Returns
     ///
@@ -198,7 +194,8 @@ pub trait StatefulBiTransformer<T, U, R> {
     /// method name.
     ///
     /// This is a naming alias of [`StatefulBiTransformer::into_fn`] to avoid
-    /// confusion with non-stateful `into_fn` methods that typically return `Fn`.
+    /// confusion with non-stateful `into_fn` methods that typically return
+    /// `Fn`.
     fn into_mut_fn(self) -> impl FnMut(T, U) -> R
     where
         Self: Sized + 'static,
