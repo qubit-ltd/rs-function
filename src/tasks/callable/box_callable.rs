@@ -46,7 +46,8 @@ pub struct BoxCallable<R, E> {
 
 impl<R, E> BoxCallable<R, E> {
     impl_common_new_methods!(
-        (FnMut() -> Result<R, E> + 'static),
+        semantic_mut (Callable<R, E> + 'static),
+        |source| move || source.call(),
         |function| Box::new(function),
         "callable"
     );

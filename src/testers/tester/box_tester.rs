@@ -91,12 +91,12 @@ impl BoxTester {
     /// let tester = BoxTester::new(|| true);
     /// ```
     #[inline]
-    pub fn new<F>(f: F) -> Self
+    pub fn new<F>(source: F) -> Self
     where
-        F: Fn() -> bool + 'static,
+        F: Tester + 'static,
     {
         BoxTester {
-            function: Box::new(f),
+            function: Box::new(move || source.test()),
         }
     }
 

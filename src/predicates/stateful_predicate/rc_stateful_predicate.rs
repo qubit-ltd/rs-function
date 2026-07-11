@@ -52,7 +52,7 @@ impl<T> RcStatefulPredicate<T> {
         T: 'static,
     {
         let self_fn = self.function.clone();
-        RcStatefulPredicate::new(move |value| {
+        RcStatefulPredicate::new(move |value: &T| {
             let matched = (self_fn.borrow_mut())(value);
             matched && other.test(value)
         })
@@ -77,7 +77,7 @@ impl<T> RcStatefulPredicate<T> {
         T: 'static,
     {
         let self_fn = self.function.clone();
-        RcStatefulPredicate::new(move |value| {
+        RcStatefulPredicate::new(move |value: &T| {
             let matched = (self_fn.borrow_mut())(value);
             matched || other.test(value)
         })
@@ -101,7 +101,7 @@ impl<T> RcStatefulPredicate<T> {
         T: 'static,
     {
         let self_fn = self.function.clone();
-        RcStatefulPredicate::new(move |value| {
+        RcStatefulPredicate::new(move |value: &T| {
             let matched = (self_fn.borrow_mut())(value);
             !(matched && other.test(value))
         })
@@ -126,7 +126,7 @@ impl<T> RcStatefulPredicate<T> {
         T: 'static,
     {
         let self_fn = self.function.clone();
-        RcStatefulPredicate::new(move |value| {
+        RcStatefulPredicate::new(move |value: &T| {
             let matched = (self_fn.borrow_mut())(value);
             matched ^ other.test(value)
         })
@@ -150,7 +150,7 @@ impl<T> RcStatefulPredicate<T> {
         T: 'static,
     {
         let self_fn = self.function.clone();
-        RcStatefulPredicate::new(move |value| {
+        RcStatefulPredicate::new(move |value: &T| {
             let matched = (self_fn.borrow_mut())(value);
             !(matched || other.test(value))
         })
@@ -165,7 +165,7 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function;
-        RcStatefulPredicate::new(move |value| !((function.borrow_mut())(value)))
+        RcStatefulPredicate::new(move |value: &T| !((function.borrow_mut())(value)))
     }
 }
 
@@ -177,7 +177,7 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function.clone();
-        RcStatefulPredicate::new(move |value| !((function.borrow_mut())(value)))
+        RcStatefulPredicate::new(move |value: &T| !((function.borrow_mut())(value)))
     }
 }
 

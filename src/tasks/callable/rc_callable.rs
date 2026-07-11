@@ -49,7 +49,8 @@ impl<R, E> Clone for RcCallable<R, E> {
 
 impl<R, E> RcCallable<R, E> {
     impl_common_new_methods!(
-        (FnMut() -> Result<R, E> + 'static),
+        semantic_mut (Callable<R, E> + 'static),
+        |source| move || source.call(),
         |function| Rc::new(RefCell::new(function)),
         "callable"
     );

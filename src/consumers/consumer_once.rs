@@ -39,7 +39,7 @@ use crate::consumers::macros::{
     impl_conditional_consumer_debug_display, impl_consumer_common_methods,
     impl_consumer_debug_display,
 };
-use crate::macros::{impl_box_once_conversions, impl_closure_once_trait};
+use crate::macros::{ impl_closure_once_trait};
 use crate::predicates::predicate::{BoxPredicate, Predicate};
 
 mod box_consumer_once;

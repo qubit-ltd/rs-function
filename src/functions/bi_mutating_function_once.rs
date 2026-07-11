@@ -25,7 +25,7 @@ use crate::functions::{
     },
     mutating_function_once::MutatingFunctionOnce,
 };
-use crate::macros::{impl_box_once_conversions, impl_closure_once_trait};
+use crate::macros::{ impl_closure_once_trait};
 use crate::predicates::bi_predicate::{BiPredicate, BoxBiPredicate};
 
 mod box_bi_mutating_function_once;

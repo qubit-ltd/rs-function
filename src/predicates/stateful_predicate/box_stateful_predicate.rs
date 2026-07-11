@@ -52,7 +52,7 @@ impl<T> BoxStatefulPredicate<T> {
         P: StatefulPredicate<T> + 'static,
         T: 'static,
     {
-        BoxStatefulPredicate::new(move |value| self.test(value) && other.test(value))
+        BoxStatefulPredicate::new(move |value: &T| self.test(value) && other.test(value))
     }
 
     /// Returns a predicate representing logical OR with another predicate.
@@ -73,7 +73,7 @@ impl<T> BoxStatefulPredicate<T> {
         P: StatefulPredicate<T> + 'static,
         T: 'static,
     {
-        BoxStatefulPredicate::new(move |value| self.test(value) || other.test(value))
+        BoxStatefulPredicate::new(move |value: &T| self.test(value) || other.test(value))
     }
 
     /// Returns a predicate representing logical NAND with another predicate.
@@ -93,7 +93,7 @@ impl<T> BoxStatefulPredicate<T> {
         P: StatefulPredicate<T> + 'static,
         T: 'static,
     {
-        BoxStatefulPredicate::new(move |value| !(self.test(value) && other.test(value)))
+        BoxStatefulPredicate::new(move |value: &T| !(self.test(value) && other.test(value)))
     }
 
     /// Returns a predicate representing logical XOR with another predicate.
@@ -114,7 +114,7 @@ impl<T> BoxStatefulPredicate<T> {
         P: StatefulPredicate<T> + 'static,
         T: 'static,
     {
-        BoxStatefulPredicate::new(move |value| self.test(value) ^ other.test(value))
+        BoxStatefulPredicate::new(move |value: &T| self.test(value) ^ other.test(value))
     }
 
     /// Returns a predicate representing logical NOR with another predicate.
@@ -134,7 +134,7 @@ impl<T> BoxStatefulPredicate<T> {
         P: StatefulPredicate<T> + 'static,
         T: 'static,
     {
-        BoxStatefulPredicate::new(move |value| !(self.test(value) || other.test(value)))
+        BoxStatefulPredicate::new(move |value: &T| !(self.test(value) || other.test(value)))
     }
 }
 
@@ -145,7 +145,7 @@ where
     type Output = BoxStatefulPredicate<T>;
 
     fn not(mut self) -> Self::Output {
-        BoxStatefulPredicate::new(move |value| !self.test(value))
+        BoxStatefulPredicate::new(move |value: &T| !self.test(value))
     }
 }
 

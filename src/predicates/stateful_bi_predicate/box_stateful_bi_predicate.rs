@@ -55,7 +55,7 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
         T: 'static,
         U: 'static,
     {
-        BoxStatefulBiPredicate::new(move |first, second| {
+        BoxStatefulBiPredicate::new(move |first: &T, second: &U| {
             self.test(first, second) && other.test(first, second)
         })
     }
@@ -79,7 +79,7 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
         T: 'static,
         U: 'static,
     {
-        BoxStatefulBiPredicate::new(move |first, second| {
+        BoxStatefulBiPredicate::new(move |first: &T, second: &U| {
             self.test(first, second) || other.test(first, second)
         })
     }
@@ -102,7 +102,7 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
         T: 'static,
         U: 'static,
     {
-        BoxStatefulBiPredicate::new(move |first, second| {
+        BoxStatefulBiPredicate::new(move |first: &T, second: &U| {
             !(self.test(first, second) && other.test(first, second))
         })
     }
@@ -126,7 +126,7 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
         T: 'static,
         U: 'static,
     {
-        BoxStatefulBiPredicate::new(move |first, second| {
+        BoxStatefulBiPredicate::new(move |first: &T, second: &U| {
             self.test(first, second) ^ other.test(first, second)
         })
     }
@@ -149,7 +149,7 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
         T: 'static,
         U: 'static,
     {
-        BoxStatefulBiPredicate::new(move |first, second| {
+        BoxStatefulBiPredicate::new(move |first: &T, second: &U| {
             !(self.test(first, second) || other.test(first, second))
         })
     }
@@ -163,7 +163,7 @@ where
     type Output = BoxStatefulBiPredicate<T, U>;
 
     fn not(mut self) -> Self::Output {
-        BoxStatefulBiPredicate::new(move |first, second| !self.test(first, second))
+        BoxStatefulBiPredicate::new(move |first: &T, second: &U| !self.test(first, second))
     }
 }
 

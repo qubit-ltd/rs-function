@@ -23,10 +23,9 @@ use std::sync::Arc;
 
 use parking_lot::Mutex;
 
-use crate::macros::{impl_arc_conversions, impl_closure_trait, impl_rc_conversions};
+use crate::macros::{ impl_closure_trait,};
 use crate::predicates::bi_predicate::{ArcBiPredicate, BiPredicate, BoxBiPredicate, RcBiPredicate};
 use crate::transformers::{
-    bi_transformer_once::BoxBiTransformerOnce,
     macros::{
         impl_box_conditional_transformer, impl_box_transformer_methods,
         impl_conditional_transformer_clone, impl_conditional_transformer_debug_display,

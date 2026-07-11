@@ -43,7 +43,8 @@ impl<T, R, E> Clone for ArcCallableWith<T, R, E> {
 
 impl<T, R, E> ArcCallableWith<T, R, E> {
     impl_common_new_methods!(
-        (FnMut(&mut T) -> Result<R, E> + Send + 'static),
+        semantic_mut (CallableWith<T, R, E> + Send + 'static),
+        |source| move |input: &mut T| source.call_with(input),
         |function| Arc::new(Mutex::new(function)),
         "callable-with"
     );

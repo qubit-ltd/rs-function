@@ -32,6 +32,9 @@ pub(crate) use fn_ops_trait::impl_transformer_fn_ops_trait;
 pub(crate) use shared_conditional_transformer::impl_shared_conditional_transformer;
 pub(crate) use shared_transformer_methods::impl_shared_transformer_methods;
 pub(crate) use transformer_clone::impl_transformer_clone;
-pub(crate) use transformer_common_methods::impl_transformer_common_methods;
+pub(crate) use transformer_common_methods::{
+    impl_transformer_common_methods,
+    impl_transformer_new_methods,
+};
 pub(crate) use transformer_constant_method::impl_transformer_constant_method;
 pub(crate) use transformer_debug_display::impl_transformer_debug_display;

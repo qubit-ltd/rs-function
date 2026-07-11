@@ -55,7 +55,7 @@ impl<T, U> RcStatefulBiPredicate<T, U> {
         U: 'static,
     {
         let self_fn = self.function.clone();
-        RcStatefulBiPredicate::new(move |first, second| {
+        RcStatefulBiPredicate::new(move |first: &T, second: &U| {
             let matched = (self_fn.borrow_mut())(first, second);
             matched && other.test(first, second)
         })
@@ -81,7 +81,7 @@ impl<T, U> RcStatefulBiPredicate<T, U> {
         U: 'static,
     {
         let self_fn = self.function.clone();
-        RcStatefulBiPredicate::new(move |first, second| {
+        RcStatefulBiPredicate::new(move |first: &T, second: &U| {
             let matched = (self_fn.borrow_mut())(first, second);
             matched || other.test(first, second)
         })
@@ -106,7 +106,7 @@ impl<T, U> RcStatefulBiPredicate<T, U> {
         U: 'static,
     {
         let self_fn = self.function.clone();
-        RcStatefulBiPredicate::new(move |first, second| {
+        RcStatefulBiPredicate::new(move |first: &T, second: &U| {
             let matched = (self_fn.borrow_mut())(first, second);
             !(matched && other.test(first, second))
         })
@@ -132,7 +132,7 @@ impl<T, U> RcStatefulBiPredicate<T, U> {
         U: 'static,
     {
         let self_fn = self.function.clone();
-        RcStatefulBiPredicate::new(move |first, second| {
+        RcStatefulBiPredicate::new(move |first: &T, second: &U| {
             let matched = (self_fn.borrow_mut())(first, second);
             matched ^ other.test(first, second)
         })
@@ -157,7 +157,7 @@ impl<T, U> RcStatefulBiPredicate<T, U> {
         U: 'static,
     {
         let self_fn = self.function.clone();
-        RcStatefulBiPredicate::new(move |first, second| {
+        RcStatefulBiPredicate::new(move |first: &T, second: &U| {
             let matched = (self_fn.borrow_mut())(first, second);
             !(matched || other.test(first, second))
         })
@@ -173,7 +173,7 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function;
-        RcStatefulBiPredicate::new(move |first, second| !((function.borrow_mut())(first, second)))
+        RcStatefulBiPredicate::new(move |first: &T, second: &U| !((function.borrow_mut())(first, second)))
     }
 }
 
@@ -186,7 +186,7 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function.clone();
-        RcStatefulBiPredicate::new(move |first, second| !((function.borrow_mut())(first, second)))
+        RcStatefulBiPredicate::new(move |first: &T, second: &U| !((function.borrow_mut())(first, second)))
     }
 }
 

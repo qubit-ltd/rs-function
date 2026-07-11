@@ -20,10 +20,8 @@
 use std::rc::Rc;
 use std::sync::Arc;
 
-use crate::macros::{impl_arc_conversions, impl_box_conversions, impl_rc_conversions};
 use crate::predicates::bi_predicate::{ArcBiPredicate, BiPredicate, BoxBiPredicate, RcBiPredicate};
 use crate::transformers::{
-    bi_transformer_once::BoxBiTransformerOnce,
     macros::{
         impl_box_conditional_transformer, impl_box_transformer_methods,
         impl_conditional_transformer_clone, impl_conditional_transformer_debug_display,
@@ -84,4 +82,13 @@ pub trait BiTransformer<T, U, R> {
     ///
     /// The transformed output value
     fn apply(&self, first: T, second: U) -> R;
+}
+
+impl<T, U, R, F> BiTransformer<T, U, R> for F
+where
+    F: Fn(T, U) -> R,
+{
+    fn apply(&self, first: T, second: U) -> R {
+        self(first, second)
+    }
 }

@@ -39,7 +39,8 @@ pub struct LocalBoxCallableOnce<R, E> {
 
 impl<R, E> LocalBoxCallableOnce<R, E> {
     impl_common_new_methods!(
-        (FnOnce() -> Result<R, E> + 'static),
+        semantic (CallableOnce<R, E> + 'static),
+        |source| move || source.call(),
         |function| Box::new(function),
         "local callable"
     );

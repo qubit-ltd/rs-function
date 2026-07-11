@@ -25,20 +25,16 @@ use std::sync::Arc;
 
 use parking_lot::Mutex;
 
-use crate::macros::{
-    impl_arc_conversions, impl_box_conversions, impl_closure_trait, impl_rc_conversions,
+use crate::macros::{ impl_closure_trait,
 };
 use crate::predicates::predicate::{ArcPredicate, BoxPredicate, Predicate, RcPredicate};
-use crate::transformers::{
-    macros::{
+use crate::transformers::macros::{
         impl_box_conditional_transformer, impl_box_transformer_methods,
         impl_conditional_transformer_clone, impl_conditional_transformer_debug_display,
         impl_shared_conditional_transformer, impl_shared_transformer_methods,
         impl_transformer_clone, impl_transformer_common_methods, impl_transformer_constant_method,
         impl_transformer_debug_display,
-    },
-    transformer_once::BoxTransformerOnce,
-};
+    };
 
 mod box_stateful_transformer;
 pub use box_stateful_transformer::BoxStatefulTransformer;

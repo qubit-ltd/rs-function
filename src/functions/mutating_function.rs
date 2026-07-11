@@ -128,10 +128,8 @@ use crate::functions::{
         impl_function_common_methods, impl_function_debug_display, impl_function_identity_method,
         impl_shared_conditional_function, impl_shared_function_methods,
     },
-    mutating_function_once::BoxMutatingFunctionOnce,
 };
-use crate::macros::{
-    impl_arc_conversions, impl_box_conversions, impl_closure_trait, impl_rc_conversions,
+use crate::macros::{ impl_closure_trait,
 };
 use crate::predicates::predicate::{ArcPredicate, BoxPredicate, Predicate, RcPredicate};
 

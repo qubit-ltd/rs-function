@@ -97,6 +97,17 @@
 /// * `set_name()` - Sets the name of the predicate
 /// * `always_true()` - Creates a predicate that always returns true
 /// * `always_false()` - Creates a predicate that always returns false
+macro_rules! impl_stateful_predicate_new_methods {
+    (BoxStatefulPredicate<$t:ident>, |$f:ident| $w:expr) => { $crate::predicates::macros::impl_stateful_predicate_new_methods!(@one $t, ('static), |$f| $w); };
+    (RcStatefulPredicate<$t:ident>, |$f:ident| $w:expr) => { $crate::predicates::macros::impl_stateful_predicate_new_methods!(@one $t, ('static), |$f| $w); };
+    (ArcStatefulPredicate<$t:ident>, |$f:ident| $w:expr) => { $crate::predicates::macros::impl_stateful_predicate_new_methods!(@one $t, (Send + 'static), |$f| $w); };
+    (BoxStatefulBiPredicate<$t:ident, $u:ident>, |$f:ident| $w:expr) => { $crate::predicates::macros::impl_stateful_predicate_new_methods!(@two $t, $u, ('static), |$f| $w); };
+    (RcStatefulBiPredicate<$t:ident, $u:ident>, |$f:ident| $w:expr) => { $crate::predicates::macros::impl_stateful_predicate_new_methods!(@two $t, $u, ('static), |$f| $w); };
+    (ArcStatefulBiPredicate<$t:ident, $u:ident>, |$f:ident| $w:expr) => { $crate::predicates::macros::impl_stateful_predicate_new_methods!(@two $t, $u, (Send + 'static), |$f| $w); };
+    (@one $t:ident, ($($b:tt)+), |$f:ident| $w:expr) => { crate::macros::impl_common_new_methods!(semantic_mut (StatefulPredicate<$t> + $($b)+), |source| move |value: &$t| source.test(value), |$f| $w, "predicate"); };
+    (@two $t:ident, $u:ident, ($($b:tt)+), |$f:ident| $w:expr) => { crate::macros::impl_common_new_methods!(semantic_mut (StatefulBiPredicate<$t, $u> + $($b)+), |source| move |first: &$t, second: &$u| source.test(first, second), |$f| $w, "bi-predicate"); };
+}
+
 macro_rules! impl_predicate_common_methods {
     // Single generic parameter with a semantic Predicate adapter.
     (
@@ -176,11 +187,7 @@ macro_rules! impl_predicate_common_methods {
         ($($fn_trait_with_bounds:tt)+),
         |$f:ident| $wrapper_expr:expr
     ) => {
-        crate::macros::impl_common_new_methods!(
-            ($($fn_trait_with_bounds)+),
-            |$f| $wrapper_expr,
-            "predicate"
-        );
+        $crate::predicates::macros::impl_stateful_predicate_new_methods!($struct_name<$t>, |$f| $wrapper_expr);
         crate::macros::impl_common_name_methods!("predicate");
 
         /// Creates a predicate that always returns `true`.
@@ -190,7 +197,7 @@ macro_rules! impl_predicate_common_methods {
         #[doc = concat!("A new `", stringify!($struct_name), "` that always returns `true`.")]
         #[inline]
         pub fn always_true() -> Self {
-            Self::new_with_name(ALWAYS_TRUE_NAME, |_| true)
+            Self::new_with_name(ALWAYS_TRUE_NAME, |_: &$t| true)
         }
 
         /// Creates a predicate that always returns `false`.
@@ -200,7 +207,7 @@ macro_rules! impl_predicate_common_methods {
         #[doc = concat!("A new `", stringify!($struct_name), "` that always returns `false`.")]
         #[inline]
         pub fn always_false() -> Self {
-            Self::new_with_name(ALWAYS_FALSE_NAME, |_| false)
+            Self::new_with_name(ALWAYS_FALSE_NAME, |_: &$t| false)
         }
     };
 
@@ -210,11 +217,7 @@ macro_rules! impl_predicate_common_methods {
         ($($fn_trait_with_bounds:tt)+),
         |$f:ident| $wrapper_expr:expr
     ) => {
-        crate::macros::impl_common_new_methods!(
-            ($($fn_trait_with_bounds)+),
-            |$f| $wrapper_expr,
-            "bi-predicate"
-        );
+        $crate::predicates::macros::impl_stateful_predicate_new_methods!($struct_name<$t, $u>, |$f| $wrapper_expr);
         crate::macros::impl_common_name_methods!("bi-predicate");
 
         /// Creates a bi-predicate that always returns `true`.
@@ -224,7 +227,7 @@ macro_rules! impl_predicate_common_methods {
         #[doc = concat!("A new `", stringify!($struct_name), "` that always returns `true`.")]
         #[inline]
         pub fn always_true() -> Self {
-            Self::new_with_name(ALWAYS_TRUE_NAME, |_, _| true)
+            Self::new_with_name(ALWAYS_TRUE_NAME, |_: &$t, _: &$u| true)
         }
 
         /// Creates a bi-predicate that always returns `false`.
@@ -234,9 +237,10 @@ macro_rules! impl_predicate_common_methods {
         #[doc = concat!("A new `", stringify!($struct_name), "` that always returns `false`.")]
         #[inline]
         pub fn always_false() -> Self {
-            Self::new_with_name(ALWAYS_FALSE_NAME, |_, _| false)
+            Self::new_with_name(ALWAYS_FALSE_NAME, |_: &$t, _: &$u| false)
         }
     };
 }
 
 pub(crate) use impl_predicate_common_methods;
+pub(crate) use impl_stateful_predicate_new_methods;

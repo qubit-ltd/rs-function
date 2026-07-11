@@ -47,7 +47,8 @@ pub struct BoxRunnable<E> {
 
 impl<E> BoxRunnable<E> {
     impl_common_new_methods!(
-        (FnMut() -> Result<(), E> + 'static),
+        semantic_mut (Runnable<E> + 'static),
+        |source| move || source.run(),
         |function| Box::new(function),
         "runnable"
     );
