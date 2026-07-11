@@ -16,13 +16,18 @@ This crate provides a complete set of functional programming abstractions inspir
 ## Key Features
 
 - **Complete Functional Interface Suite**: broad functional abstraction families with reusable, one-time, stateful, mutating, and fallible variants
-- **High-Performance Concurrency**: Uses parking_lot Mutex for superior thread synchronization performance
+- **Thread-safe callback adapters**: Arc stateful adapters serialize callback execution with a `parking_lot::Mutex`
 - **Multiple Ownership Models**: Box-based single ownership, Arc-based thread-safe sharing, and Rc-based single-threaded sharing
 - **Flexible API Design**: Trait-based unified interface with concrete implementations optimized for different scenarios
 - **Type-Oriented Module Layout**: Public source files are organized around a single exported type, keeping modules shorter and easier to scan
 - **Method Chaining**: All types support fluent API and functional composition
 - **Thread-Safety Options**: Choose between thread-safe (Arc) and efficient single-threaded (Rc) implementations
-- **Zero-Cost Abstractions**: Efficient implementations with minimal runtime overhead
+- **Ergonomic callback abstractions**: Box uses dynamic dispatch, Rc/Arc add reference counting, and stateful Arc adapters add locking
+
+Cargo features keep optional API costs explicit: `rc` enables single-threaded
+shared wrappers, `once` enables one-shot families, `stateful` enables mutable
+callback families and `parking_lot`, and `combinators` exposes conditional and
+extension APIs. `full` enables every layer; the default feature set is empty.
 
 ## Installation
 
@@ -862,7 +867,7 @@ This crate adopts the **Trait + Multiple Implementations** pattern:
 2. **Specialized Implementations**: Multiple concrete types optimized for different scenarios
 3. **Type Preservation**: Composition methods return the same concrete type
 4. **Ownership Flexibility**: Choose between single ownership, thread-safe sharing, or single-threaded sharing
-5. **High-Performance Concurrency**: Uses parking_lot Mutex for superior synchronization performance
+5. **Thread-safe callbacks**: Stateful Arc adapters serialize calls with a mutex; callbacks run while the lock is held
 6. **Ergonomic API**: Natural method chaining and functional composition
 
 ## Examples
