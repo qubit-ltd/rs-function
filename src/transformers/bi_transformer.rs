@@ -16,7 +16,7 @@
 //!
 //! - [`BoxBiTransformer`]: Single ownership, not cloneable
 //! - [`ArcBiTransformer`]: Thread-safe shared ownership, cloneable
-//! - [`RcBiTransformer`]: Single-threaded shared ownership, cloneable
+//! - `RcBiTransformer`: Single-threaded shared ownership, cloneable
 #[cfg(feature = "rc")]
 use std::rc::Rc;
 use std::sync::Arc;

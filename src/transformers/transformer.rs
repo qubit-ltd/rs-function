@@ -17,7 +17,7 @@
 //!
 //! - [`BoxTransformer`]: Single ownership, not cloneable
 //! - [`ArcTransformer`]: Thread-safe shared ownership, cloneable
-//! - [`RcTransformer`]: Single-threaded shared ownership, cloneable
+//! - `RcTransformer`: Single-threaded shared ownership, cloneable
 #[cfg(feature = "rc")]
 use std::rc::Rc;
 use std::sync::Arc;

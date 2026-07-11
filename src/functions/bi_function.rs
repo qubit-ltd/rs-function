@@ -19,7 +19,7 @@
 //!
 //! - [`BoxBiFunction`]: Single ownership, not cloneable
 //! - [`ArcBiFunction`]: Thread-safe shared ownership, cloneable
-//! - [`RcBiFunction`]: Single-threaded shared ownership, cloneable
+//! - `RcBiFunction`: Single-threaded shared ownership, cloneable
 #[cfg(feature = "rc")]
 use std::rc::Rc;
 use std::sync::Arc;

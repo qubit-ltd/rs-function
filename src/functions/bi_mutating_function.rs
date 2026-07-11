@@ -19,7 +19,7 @@
 //!
 //! - [`BoxBiMutatingFunction`]: Single ownership, not cloneable
 //! - [`ArcBiMutatingFunction`]: Thread-safe shared ownership, cloneable
-//! - [`RcBiMutatingFunction`]: Single-threaded shared ownership, cloneable
+//! - `RcBiMutatingFunction`: Single-threaded shared ownership, cloneable
 
 #[cfg(feature = "rc")]
 use std::rc::Rc;

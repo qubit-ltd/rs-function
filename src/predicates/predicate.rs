@@ -29,9 +29,8 @@
 //!
 //! 1. **Single Trait**: Only one `Predicate<T>` trait with `&self`, keeping the
 //!    API simple and semantically clear
-//! 2. **Dedicated Stateful API**: Use
-//!    [`StatefulPredicate`](crate::StatefulPredicate) for `FnMut(&T) -> bool`
-//!    closures that need `&mut self`
+//! 2. **Dedicated Stateful API**: Use `StatefulPredicate` for `FnMut(&T) ->
+//!    bool` closures that need `&mut self`
 //! 3. **No PredicateOnce**: Violates predicate semantics - judgments should be
 //!    repeatable
 //! 4. **Three Implementations**: `BoxPredicate`, `RcPredicate`, and
@@ -226,9 +225,8 @@ pub use fn_predicate_ops::FnPredicateOps;
 /// 1. **Semantic Clarity**: A predicate is a judgment, not a mutation
 /// 2. **Flexibility**: Can be used in immutable contexts
 /// 3. **Simplicity**: No need for `mut` in user code
-/// 4. **Explicit Stateful Alternative**: Use
-///    [`StatefulPredicate`](crate::StatefulPredicate) when the predicate
-///    closure needs native `FnMut(&T) -> bool` semantics
+/// 4. **Explicit Stateful Alternative**: Use `StatefulPredicate` when the
+///    predicate closure needs native `FnMut(&T) -> bool` semantics
 ///
 /// ## Automatic Implementation for Closures
 ///

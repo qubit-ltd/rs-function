@@ -18,7 +18,7 @@
 //!
 //! - [`BoxFunction`]: Single ownership, not cloneable
 //! - [`ArcFunction`]: Thread-safe shared ownership, cloneable
-//! - [`RcFunction`]: Single-threaded shared ownership, cloneable
+//! - `RcFunction`: Single-threaded shared ownership, cloneable
 #[cfg(feature = "rc")]
 use std::rc::Rc;
 use std::sync::Arc;
