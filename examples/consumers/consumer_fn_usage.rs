@@ -118,9 +118,7 @@ fn main() {
             .push(format!("B: {}", x));
     });
 
-    [1, 2]
-        .iter()
-        .for_each(move |value| chained.accept(value));
+    [1, 2].iter().for_each(move |value| chained.accept(value));
     println!(
         "   Result: {:?}\n",
         *log5.lock().expect("mutex should not be poisoned")

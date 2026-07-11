@@ -22,7 +22,6 @@ use qubit_function::{
 // BoxMutatingFunction Tests
 // ============================================================================
 
-
 #[cfg(test)]
 mod test_box_mutating_function {
     use super::{
@@ -122,9 +121,6 @@ mod test_box_mutating_function {
         assert_eq!(mapped.apply(&mut value), "10");
         assert_eq!(value, 10);
     }
-
-
-
 }
 
 // ============================================================================
@@ -184,12 +180,6 @@ mod test_rc_mutating_function {
         assert_eq!(mapped.apply(&mut value), "10");
         assert_eq!(value, 10);
     }
-
-
-
-
-
-
 }
 
 // ============================================================================
@@ -267,14 +257,6 @@ mod test_arc_mutating_function {
         assert_eq!(mapped.apply(&mut value), "10");
         assert_eq!(value, 10);
     }
-
-
-
-
-
-
-
-
 }
 
 // ============================================================================
@@ -326,16 +308,6 @@ mod test_closure {
         assert_eq!(mapped.apply(&mut value), "10");
         assert_eq!(value, 10);
     }
-
-
-
-
-
-
-
-
-
-
 }
 
 // ============================================================================
@@ -370,17 +342,7 @@ impl Clone for TestMutatingFunction {
 }
 
 #[cfg(test)]
-mod test_mutating_function_default_impl {
-
-
-
-
-
-
-
-
-
-}
+mod test_mutating_function_default_impl {}
 
 // ============================================================================
 // MutatingFunction Debug and Display Tests
@@ -686,10 +648,4 @@ fn test_arc_conditional_mutating_function_debug_display() {
 // ============================================================================
 
 #[cfg(test)]
-mod test_mutating_function_trait_default_methods {
-
-
-
-
-
-}
+mod test_mutating_function_trait_default_methods {}

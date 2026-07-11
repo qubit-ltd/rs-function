@@ -27,17 +27,26 @@ use std::sync::Arc;
 use crate::functions::{
     function::Function,
     macros::{
-        impl_box_conditional_function, impl_box_function_methods, impl_conditional_function_clone,
-        impl_conditional_function_debug_display, impl_function_clone, impl_function_common_methods,
-        impl_function_constant_method, impl_function_debug_display,
-        impl_shared_conditional_function, impl_shared_function_methods,
+        impl_box_conditional_function,
+        impl_box_function_methods,
+        impl_conditional_function_clone,
+        impl_conditional_function_debug_display,
+        impl_function_clone,
+        impl_function_common_methods,
+        impl_function_constant_method,
+        impl_function_debug_display,
+        impl_shared_conditional_function,
+        impl_shared_function_methods,
     },
 };
-use crate::macros::{ impl_closure_trait,
-};
-use crate::predicates::bi_predicate::{ArcBiPredicate, BiPredicate, BoxBiPredicate};
+use crate::macros::impl_closure_trait;
 #[cfg(feature = "rc")]
 use crate::predicates::bi_predicate::RcBiPredicate;
+use crate::predicates::bi_predicate::{
+    ArcBiPredicate,
+    BiPredicate,
+    BoxBiPredicate,
+};
 
 mod box_bi_function;
 pub use box_bi_function::BoxBiFunction;

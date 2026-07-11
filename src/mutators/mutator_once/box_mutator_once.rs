@@ -9,8 +9,13 @@
 //! Defines the `BoxMutatorOnce` public type.
 
 use super::{
-    BoxConditionalMutatorOnce, MutatorOnce, Predicate, impl_box_mutator_methods,
-    impl_closure_once_trait, impl_mutator_common_methods, impl_mutator_debug_display,
+    BoxConditionalMutatorOnce,
+    MutatorOnce,
+    Predicate,
+    impl_box_mutator_methods,
+    impl_closure_once_trait,
+    impl_mutator_common_methods,
+    impl_mutator_debug_display,
 };
 
 // ============================================================================
@@ -97,12 +102,18 @@ pub struct BoxMutatorOnce<T> {
 
 impl<T> BoxMutatorOnce<T> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
-    impl_mutator_common_methods!(BoxMutatorOnce<T>, (FnOnce(&mut T) + 'static), |f| Box::new(
-        f
-    ));
+    impl_mutator_common_methods!(
+        BoxMutatorOnce<T>,
+        (FnOnce(&mut T) + 'static),
+        |f| Box::new(f)
+    );
 
     // Generate box mutator methods (when, and_then, or_else, etc.)
-    impl_box_mutator_methods!(BoxMutatorOnce<T>, BoxConditionalMutatorOnce, MutatorOnce);
+    impl_box_mutator_methods!(
+        BoxMutatorOnce<T>,
+        BoxConditionalMutatorOnce,
+        MutatorOnce
+    );
 }
 
 impl<T> MutatorOnce<T> for BoxMutatorOnce<T> {

@@ -22,18 +22,26 @@
 use std::rc::Rc;
 use std::sync::Arc;
 
-use crate::macros::{ impl_closure_trait,
-};
-use crate::predicates::predicate::{ArcPredicate, BoxPredicate, Predicate};
+use crate::macros::impl_closure_trait;
 #[cfg(feature = "rc")]
 use crate::predicates::predicate::RcPredicate;
+use crate::predicates::predicate::{
+    ArcPredicate,
+    BoxPredicate,
+    Predicate,
+};
 use crate::transformers::macros::{
-        impl_box_conditional_transformer, impl_box_transformer_methods,
-        impl_conditional_transformer_clone, impl_conditional_transformer_debug_display,
-        impl_shared_conditional_transformer, impl_shared_transformer_methods,
-        impl_transformer_clone, impl_transformer_common_methods, impl_transformer_constant_method,
-        impl_transformer_debug_display,
-    };
+    impl_box_conditional_transformer,
+    impl_box_transformer_methods,
+    impl_conditional_transformer_clone,
+    impl_conditional_transformer_debug_display,
+    impl_shared_conditional_transformer,
+    impl_shared_transformer_methods,
+    impl_transformer_clone,
+    impl_transformer_common_methods,
+    impl_transformer_constant_method,
+    impl_transformer_debug_display,
+};
 
 mod box_transformer;
 pub use box_transformer::BoxTransformer;

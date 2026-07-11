@@ -82,10 +82,6 @@ fn test_callable_with_closure_call_with_returns_error() {
     assert_eq!(value, 10);
 }
 
-
-
-
-
 #[test]
 fn test_box_callable_with_name_management() {
     let mut task = BoxCallableWith::<i32, i32, io::Error>::new_with_name(
@@ -179,7 +175,6 @@ fn test_rc_callable_with_shares_state_between_clones() {
     assert_eq!(input, 2);
 }
 
-
 #[test]
 fn test_arc_callable_with_shares_state_between_clones() {
     let count = Arc::new(AtomicUsize::new(0));
@@ -198,17 +193,14 @@ fn test_arc_callable_with_shares_state_between_clones() {
     assert_eq!(input, 4);
 }
 
-
-
-
-
 #[test]
 fn test_box_callable_with_combinators_cover_error_branches() {
     let mut input = 0;
-    let mut mapped = BoxCallableWith::<i32, i32, io::Error>::new(|_value: &mut i32| {
-        Err(io::Error::other("map source failed"))
-    })
-    .map(|value| value + 1);
+    let mut mapped =
+        BoxCallableWith::<i32, i32, io::Error>::new(|_value: &mut i32| {
+            Err(io::Error::other("map source failed"))
+        })
+        .map(|value| value + 1);
     let error = mapped
         .call_with(&mut input)
         .expect_err("map should propagate source errors");
@@ -228,14 +220,15 @@ fn test_box_callable_with_combinators_cover_error_branches() {
 
     let next_ran = Rc::new(Cell::new(false));
     let next_ran_capture = Rc::clone(&next_ran);
-    let mut chained = BoxCallableWith::<i32, i32, io::Error>::new(|_value: &mut i32| {
-        Err(io::Error::other("first failed"))
-    })
-    .and_then(move |value, input| {
-        *input += value;
-        next_ran_capture.set(true);
-        Ok::<i32, io::Error>(*input)
-    });
+    let mut chained =
+        BoxCallableWith::<i32, i32, io::Error>::new(|_value: &mut i32| {
+            Err(io::Error::other("first failed"))
+        })
+        .and_then(move |value, input| {
+            *input += value;
+            next_ran_capture.set(true);
+            Ok::<i32, io::Error>(*input)
+        });
     let error = chained
         .call_with(&mut input)
         .expect_err("and_then should short-circuit");

@@ -34,11 +34,6 @@ fn test_function_once_trait_apply_with_move() {
     assert_eq!(append.apply(&String::from("world")), "world hello");
 }
 
-
-
-
-
-
 // ============================================================================
 // BoxFunctionOnce Tests - Constructor and Basic Operations
 // ============================================================================
@@ -200,9 +195,6 @@ fn test_box_function_once_when_with_move() {
 // ============================================================================
 // BoxFunctionOnce Tests - Type Conversions
 // ============================================================================
-
-
-
 
 // ============================================================================
 // Edge Cases and Boundary Tests
@@ -447,12 +439,6 @@ mod function_once_default_impl_tests {
         // implementations
     }
 
-
-
-
-
-
-
     #[test]
     fn test_custom_with_captured_value() {
         let captured = [1, 2, 3];
@@ -466,7 +452,6 @@ mod function_once_default_impl_tests {
         assert_eq!(func.apply(&10), 23); // 10 * 2 + 3
     }
 }
-
 
 // ============================================================================
 // FunctionOnce Debug and Display Tests

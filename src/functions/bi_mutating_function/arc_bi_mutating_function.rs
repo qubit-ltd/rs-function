@@ -9,12 +9,21 @@
 //! Defines the `ArcBiMutatingFunction` public type.
 
 use super::{
-    Arc, ArcConditionalBiMutatingFunction, BiMutatingFunction, BiPredicate, MutatingFunction,
-    impl_closure_trait, impl_function_clone, impl_function_common_methods,
-    impl_function_constant_method, impl_function_debug_display, impl_shared_function_methods,
+    Arc,
+    ArcConditionalBiMutatingFunction,
+    BiMutatingFunction,
+    BiPredicate,
+    MutatingFunction,
+    impl_closure_trait,
+    impl_function_clone,
+    impl_function_common_methods,
+    impl_function_constant_method,
+    impl_function_debug_display,
+    impl_shared_function_methods,
 };
 
-type ArcBiMutatingFunctionFn<T, U, R> = Arc<dyn Fn(&mut T, &mut U) -> R + Send + Sync>;
+type ArcBiMutatingFunctionFn<T, U, R> =
+    Arc<dyn Fn(&mut T, &mut U) -> R + Send + Sync>;
 
 // ============================================================================
 // ArcBiMutatingFunction - Arc<dyn Fn(&mut T, &mut U) -> R + Send + Sync>

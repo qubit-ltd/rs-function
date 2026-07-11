@@ -23,7 +23,6 @@ mod tests {
     // implementations
     // ========================================================================
 
-
     #[test]
     fn test_bi_predicate_not_operator() {
         let boxed = !BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
@@ -655,8 +654,6 @@ mod tests {
             assert_eq!(pred.name(), Some("updated_name"));
         }
 
-
-
         #[test]
         fn test_thread_safety() {
             let pred = ArcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
@@ -915,12 +912,6 @@ mod tests {
             pred.set_name("updated_name");
             assert_eq!(pred.name(), Some("updated_name"));
         }
-
-
-
-
-
-
     }
 
     // ========================================================================
@@ -933,26 +924,6 @@ mod tests {
             BiPredicate,
             BoxBiPredicate,
         };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         #[test]
         fn test_struct_storing_arc_bi_predicate() {
@@ -985,18 +956,7 @@ mod tests {
     // into_fn Tests - Test conversion to FnMut for use with iterators
     // ========================================================================
 
-    mod into_fn_tests {
-
-
-
-
-
-
-
-
-
-
-    }
+    mod into_fn_tests {}
 
     // ========================================================================
     // Generic Constraint Tests - Test use with generic functions
@@ -1277,11 +1237,6 @@ mod tests {
             assert!(!pred.test(&3, &4));
         }
 
-
-
-
-
-
         #[test]
         fn test_custom_type_can_be_used_in_generic_context() {
             fn accepts_predicate<P>(pred: &P, x: i32, y: i32) -> bool
@@ -1296,20 +1251,9 @@ mod tests {
             assert!(!accepts_predicate(&pred, 3, 4));
         }
 
-
-
         // ========================================================================
         // Test default to_xxx implementations
         // ========================================================================
-
-
-
-
-
-
-
-
-
     }
 
     // ========================================================================
@@ -1452,24 +1396,4 @@ mod tests {
 }
 
 #[cfg(test)]
-mod to_fn_tests {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}
+mod to_fn_tests {}

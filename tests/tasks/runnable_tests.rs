@@ -64,12 +64,6 @@ fn test_runnable_closure_run_returns_error() {
     assert_eq!(error.to_string(), "failed");
 }
 
-
-
-
-
-
-
 #[derive(Clone)]
 struct SharedCounterRunnable {
     count: Rc<Cell<u32>>,
@@ -93,11 +87,6 @@ impl Runnable<io::Error> for SharedAtomicRunnable {
         Ok(())
     }
 }
-
-
-
-
-
 
 #[test]
 fn test_rc_runnable_from_supplier() {
@@ -178,8 +167,6 @@ fn test_box_runnable_set_name_handles_empty_and_same_name() {
     task.set_name("cleanup");
     assert_eq!(task.name(), Some("cleanup"));
 }
-
-
 
 #[test]
 fn test_box_runnable_from_supplier() {

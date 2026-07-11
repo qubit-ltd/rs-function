@@ -9,7 +9,11 @@
 //! Defines the `BoxConditionalStatefulMutator` public type.
 
 use super::{
-    BoxPredicate, BoxStatefulMutator, Predicate, StatefulMutator, impl_box_conditional_mutator,
+    BoxPredicate,
+    BoxStatefulMutator,
+    Predicate,
+    StatefulMutator,
+    impl_box_conditional_mutator,
     impl_conditional_mutator_debug_display,
 };
 

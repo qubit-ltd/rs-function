@@ -9,8 +9,13 @@
 //! Defines the `BoxBiMutatingFunction` public type.
 
 use super::{
-    BiMutatingFunction, BiPredicate, BoxConditionalBiMutatingFunction, MutatingFunction,
-    impl_box_function_methods, impl_function_common_methods, impl_function_constant_method,
+    BiMutatingFunction,
+    BiPredicate,
+    BoxConditionalBiMutatingFunction,
+    MutatingFunction,
+    impl_box_function_methods,
+    impl_function_common_methods,
+    impl_function_constant_method,
     impl_function_debug_display,
 };
 

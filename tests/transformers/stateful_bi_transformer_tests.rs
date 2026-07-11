@@ -23,7 +23,6 @@ use qubit_function::{
     StatefulBinaryOperator,
 };
 
-
 #[test]
 fn test_stateful_binary_operator_trait_bound() {
     fn reduce<T, O>(values: Vec<T>, initial: T, mut op: O) -> T
@@ -153,9 +152,6 @@ fn test_box_stateful_bi_transformer_when_with_predicate() {
     assert_eq!(transformer.apply(15, 20), 35); // both >= 10, add
     assert_eq!(transformer.apply(5, 20), 100); // not both >= 10, multiply
 }
-
-
-
 
 #[test]
 fn test_box_stateful_bi_transformer_with_string_types() {
@@ -340,11 +336,6 @@ fn test_arc_stateful_bi_transformer_when_preserves_original() {
     assert_eq!(original.apply(10, 20), 30);
 }
 
-
-
-
-
-
 #[test]
 fn test_arc_stateful_bi_transformer_thread_safe() {
     // Test thread safety
@@ -495,10 +486,6 @@ fn test_rc_stateful_bi_transformer_when_preserves_original() {
     assert_eq!(original.apply(10, 20), 30);
 }
 
-
-
-
-
 // ============================================================================
 // Closure StatefulBiTransformer Tests
 // ============================================================================
@@ -515,10 +502,6 @@ fn test_closure_as_stateful_bi_transformer() {
     // Use StatefulBiTransformer::apply which takes &mut self
     assert_eq!(transformer.apply(10, 20), 31);
 }
-
-
-
-
 
 // ============================================================================
 // FnStatefulBiTransformerOps Tests
@@ -584,9 +567,6 @@ fn test_fn_stateful_bi_transformer_ops_when_with_predicate() {
     assert_eq!(transformer.apply(15, 5), 20); // x >= 10, add
     assert_eq!(transformer.apply(5, 10), 50); // x < 10, multiply
 }
-
-
-
 
 // ============================================================================
 // BoxConditionalStatefulBiTransformer Tests
@@ -793,8 +773,6 @@ fn test_arc_stateful_bi_transformer_apply() {
     assert_eq!(transformer.apply(10, 20), 31);
 }
 
-
-
 // ============================================================================
 // Conditional StatefulBiTransformer Display/Debug Tests
 // ============================================================================
@@ -933,7 +911,6 @@ mod conditional_stateful_bi_transformer_display_debug_tests {
 mod stateful_bi_transformer_trait_default_methods_tests {
     use super::StatefulBiTransformer;
 
-
     // Custom struct implementing StatefulBiTransformer to test default methods
     #[derive(Clone)]
     struct TestStatefulBiTransformer {
@@ -954,16 +931,6 @@ mod stateful_bi_transformer_trait_default_methods_tests {
             first + second + self.state
         }
     }
-
-
-
-
-
-
-
-
-
-
 }
 
 // ============================================================================

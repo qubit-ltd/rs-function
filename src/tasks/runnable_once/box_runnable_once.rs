@@ -9,10 +9,19 @@
 //! Defines the `BoxRunnableOnce` public type.
 
 use crate::{
-    macros::{impl_common_name_methods, impl_common_new_methods},
-    suppliers::{macros::impl_supplier_debug_display, supplier_once::SupplierOnce},
+    macros::{
+        impl_common_name_methods,
+        impl_common_new_methods,
+    },
+    suppliers::{
+        macros::impl_supplier_debug_display,
+        supplier_once::SupplierOnce,
+    },
     tasks::{
-        callable_once::{BoxCallableOnce, CallableOnce},
+        callable_once::{
+            BoxCallableOnce,
+            CallableOnce,
+        },
         runnable_once::RunnableOnce,
     },
 };
@@ -49,7 +58,7 @@ pub struct BoxRunnableOnce<E> {
 
 impl<E> BoxRunnableOnce<E> {
     impl_common_new_methods!(
-        semantic (RunnableOnce<E> + Send + 'static),
+        semantic(RunnableOnce<E> + Send + 'static),
         |source| move || source.run(),
         |function| Box::new(function),
         "runnable"

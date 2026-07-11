@@ -9,9 +9,16 @@
 //! Defines the `RcStatefulTransformer` public type.
 
 use super::{
-    Predicate, Rc, RcConditionalStatefulTransformer, RefCell, StatefulTransformer,
-    impl_shared_transformer_methods, impl_transformer_clone, impl_transformer_common_methods,
-    impl_transformer_constant_method, impl_transformer_debug_display,
+    Predicate,
+    Rc,
+    RcConditionalStatefulTransformer,
+    RefCell,
+    StatefulTransformer,
+    impl_shared_transformer_methods,
+    impl_transformer_clone,
+    impl_transformer_common_methods,
+    impl_transformer_constant_method,
+    impl_transformer_debug_display,
 };
 
 // ============================================================================

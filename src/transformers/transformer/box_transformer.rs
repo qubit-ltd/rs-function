@@ -9,8 +9,12 @@
 //! Defines the `BoxTransformer` public type.
 
 use super::{
-    BoxConditionalTransformer, Predicate, Transformer, impl_box_transformer_methods,
-    impl_transformer_common_methods, impl_transformer_constant_method,
+    BoxConditionalTransformer,
+    Predicate,
+    Transformer,
+    impl_box_transformer_methods,
+    impl_transformer_common_methods,
+    impl_transformer_constant_method,
     impl_transformer_debug_display,
 };
 

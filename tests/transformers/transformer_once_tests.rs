@@ -12,7 +12,6 @@ use qubit_function::{
     TransformerOnce,
 };
 
-
 // ============================================================================
 // BoxTransformerOnce Tests - Consuming, single ownership
 // ============================================================================
@@ -150,12 +149,7 @@ mod conditional_tests {
 // ============================================================================
 
 #[cfg(test)]
-mod conversion_tests {
-
-
-
-
-}
+mod conversion_tests {}
 
 // ============================================================================
 // Complex Composition Tests
@@ -333,17 +327,7 @@ mod trait_usage_tests {
 // ============================================================================
 
 #[cfg(test)]
-mod type_conversion_tests {
-
-
-
-
-
-
-
-
-
-}
+mod type_conversion_tests {}
 
 // ============================================================================
 // Default Implementation Tests
@@ -364,9 +348,6 @@ mod default_implementation_tests {
         }
         // Use default into_box and into_fn implementations
     }
-
-
-
 }
 
 // ============================================================================
@@ -374,14 +355,7 @@ mod default_implementation_tests {
 // ============================================================================
 
 #[cfg(test)]
-mod zero_cost_specialization_tests {
-
-
-
-
-
-
-}
+mod zero_cost_specialization_tests {}
 
 // ============================================================================
 // Custom Type Default Implementation Tests
@@ -406,13 +380,6 @@ mod custom_type_default_impl_tests {
         }
     }
 
-
-
-
-
-
-
-
     /// Custom transformer with complex state
     #[derive(Clone)]
     struct ComplexTransformer {
@@ -425,9 +392,6 @@ mod custom_type_default_impl_tests {
             format!("{}{}{}", self.prefix, input, self.suffix)
         }
     }
-
-
-
 }
 
 // ============================================================================
@@ -447,8 +411,6 @@ mod box_transformer_transformer_once_tests {
         let result = double.apply(21);
         assert_eq!(result, 42);
     }
-
-
 
     #[test]
     fn test_box_transformer_string_transformation() {
@@ -483,8 +445,6 @@ mod rc_transformer_transformer_once_tests {
         let result = double.apply(21);
         assert_eq!(result, 42);
     }
-
-
 
     #[test]
     fn test_rc_transformer_string_transformation() {
@@ -532,8 +492,6 @@ mod arc_transformer_transformer_once_tests {
         assert_eq!(result, 42);
     }
 
-
-
     #[test]
     fn test_arc_transformer_string_transformation() {
         let uppercase = ArcTransformer::new(|s: String| s.to_uppercase());
@@ -574,5 +532,4 @@ mod arc_transformer_transformer_once_tests {
         let result = handle.join().expect("thread should not panic");
         assert_eq!(result, 42);
     }
-
 }

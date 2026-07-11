@@ -13,7 +13,10 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::{
-    macros::{impl_common_name_methods, impl_common_new_methods},
+    macros::{
+        impl_common_name_methods,
+        impl_common_new_methods,
+    },
     suppliers::supplier::Supplier,
     tasks::callable::Callable,
 };
@@ -55,7 +58,7 @@ impl<R, E> Clone for RcCallable<R, E> {
 
 impl<R, E> RcCallable<R, E> {
     impl_common_new_methods!(
-        semantic_mut (Callable<R, E> + 'static),
+        semantic_mut(Callable<R, E> + 'static),
         |source| move || source.call(),
         |function| Rc::new(RefCell::new(function)),
         "callable"

@@ -128,18 +128,24 @@
 //! assert_eq!(data.value, 0);
 //! assert!(result.is_err());
 //! ```
+#[cfg(feature = "combinators")]
+use crate::functions::macros::impl_fn_ops_trait;
 use crate::functions::{
     function_once::FunctionOnce,
     macros::{
-        impl_box_conditional_function, impl_box_function_methods,
-        impl_conditional_function_debug_display, impl_function_common_methods,
-        impl_function_debug_display, impl_function_identity_method,
+        impl_box_conditional_function,
+        impl_box_function_methods,
+        impl_conditional_function_debug_display,
+        impl_function_common_methods,
+        impl_function_debug_display,
+        impl_function_identity_method,
     },
 };
-#[cfg(feature = "combinators")]
-use crate::functions::macros::impl_fn_ops_trait;
-use crate::macros::{ impl_closure_once_trait};
-use crate::predicates::predicate::{BoxPredicate, Predicate};
+use crate::macros::impl_closure_once_trait;
+use crate::predicates::predicate::{
+    BoxPredicate,
+    Predicate,
+};
 
 mod box_mutating_function_once;
 pub use box_mutating_function_once::BoxMutatingFunctionOnce;

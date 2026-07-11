@@ -11,8 +11,14 @@
 use std::ops::Not;
 
 use super::{
-    ALWAYS_FALSE_NAME, ALWAYS_TRUE_NAME, Rc, RefCell, StatefulBiPredicate, impl_predicate_clone,
-    impl_predicate_common_methods, impl_predicate_debug_display,
+    ALWAYS_FALSE_NAME,
+    ALWAYS_TRUE_NAME,
+    Rc,
+    RefCell,
+    StatefulBiPredicate,
+    impl_predicate_clone,
+    impl_predicate_common_methods,
+    impl_predicate_debug_display,
 };
 
 type RcStatefulBiPredicateFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U) -> bool>>;
@@ -178,7 +184,9 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function;
-        RcStatefulBiPredicate::new(move |first: &T, second: &U| !((function.borrow_mut())(first, second)))
+        RcStatefulBiPredicate::new(move |first: &T, second: &U| {
+            !((function.borrow_mut())(first, second))
+        })
     }
 }
 
@@ -191,7 +199,9 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function.clone();
-        RcStatefulBiPredicate::new(move |first: &T, second: &U| !((function.borrow_mut())(first, second)))
+        RcStatefulBiPredicate::new(move |first: &T, second: &U| {
+            !((function.borrow_mut())(first, second))
+        })
     }
 }
 

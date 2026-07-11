@@ -18,7 +18,6 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
 
-
 #[cfg(test)]
 mod box_non_mutating_bi_consumer_tests {
     use super::{
@@ -58,9 +57,6 @@ mod box_non_mutating_bi_consumer_tests {
         // Should not panic
     }
 
-
-
-
     #[test]
     fn test_name() {
         let mut consumer = BoxBiConsumer::<i32, i32>::noop();
@@ -91,7 +87,6 @@ mod box_non_mutating_bi_consumer_tests {
         let display_str = format!("{}", consumer);
         assert_eq!(display_str, "BoxBiConsumer(my_consumer)");
     }
-
 }
 
 #[cfg(test)]
@@ -146,9 +141,6 @@ mod arc_non_mutating_bi_consumer_tests {
         assert_eq!(counter.load(std::sync::atomic::Ordering::SeqCst), 2);
     }
 
-
-
-
     #[test]
     fn test_name() {
         let mut consumer = ArcBiConsumer::new(|_x: &i32, _y: &i32| {});
@@ -179,9 +171,6 @@ mod arc_non_mutating_bi_consumer_tests {
         let display_str = format!("{}", consumer);
         assert_eq!(display_str, "ArcBiConsumer(my_consumer)");
     }
-
-
-
 }
 
 #[cfg(test)]
@@ -236,8 +225,6 @@ mod rc_non_mutating_bi_consumer_tests {
         assert_eq!(counter.get(), 2);
     }
 
-
-
     #[test]
     fn test_name() {
         let mut consumer = RcBiConsumer::new(|_x: &i32, _y: &i32| {});
@@ -268,8 +255,6 @@ mod rc_non_mutating_bi_consumer_tests {
         let display_str = format!("{}", consumer);
         assert_eq!(display_str, "RcBiConsumer(test_consumer)");
     }
-
-
 }
 
 #[cfg(test)]
@@ -303,8 +288,6 @@ mod closure_tests {
         chained.accept(&5, &3);
         assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 2);
     }
-
-
 }
 
 // ============================================================================
@@ -432,8 +415,6 @@ mod edge_cases_tests {
         // Name is not preserved through and_then
         assert_eq!(chained.name(), None);
     }
-
-
 }
 
 // ============================================================================
@@ -441,15 +422,7 @@ mod edge_cases_tests {
 // ============================================================================
 
 #[cfg(test)]
-mod conversion_tests {
-
-
-
-
-
-
-
-}
+mod conversion_tests {}
 
 // ============================================================================
 // Name Tests - Testing name() and set_name() methods
@@ -550,13 +523,6 @@ mod name_tests {
         consumer.set_name("name2");
         assert_eq!(consumer.name(), Some("name2"));
     }
-
-
-
-
-
-
-
 }
 
 // ============================================================================
@@ -676,17 +642,6 @@ mod custom_non_mutating_bi_consumer_tests {
         }
         // Use default into_xxx implementations from the trait
     }
-
-
-
-
-
-
-
-
-
-
-
 }
 
 #[cfg(test)]
@@ -780,26 +735,13 @@ mod to_methods_tests {
     // ArcBiConsumer to_xxx tests
     // ========================================================================
 
-
-
-
-
-
     // ========================================================================
     // RcBiConsumer to_xxx tests
     // ========================================================================
 
-
-
-
-
     // ========================================================================
     // Closure to_xxx tests
     // ========================================================================
-
-
-
-
 
     // ========================================================================
     // Custom BiConsumer to_xxx tests
@@ -827,17 +769,6 @@ mod to_methods_tests {
 
     unsafe impl Send for CustomConsumer {}
     unsafe impl Sync for CustomConsumer {}
-
-
-
-
-
-
-
-
-
-
-
 }
 
 // ============================================================================
@@ -845,13 +776,7 @@ mod to_methods_tests {
 // ============================================================================
 
 #[cfg(test)]
-mod to_once_tests {
-
-
-
-
-
-}
+mod to_once_tests {}
 
 // ============================================================================
 // Conditional BiConsumer Tests
@@ -947,9 +872,6 @@ mod box_conditional_bi_consumer_tests {
         conditional.accept(&-5, &3);
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
     }
-
-
-
 }
 
 #[cfg(test)]
@@ -1026,14 +948,6 @@ mod arc_conditional_bi_consumer_tests {
         conditional.accept(&-5, &3);
         assert_eq!(counter.load(Ordering::SeqCst), 1);
     }
-
-
-
-
-
-
-
-
 }
 
 #[cfg(test)]
@@ -1107,10 +1021,4 @@ mod rc_conditional_bi_consumer_tests {
         conditional.accept(&-5, &3);
         assert_eq!(*log.borrow(), vec![8]);
     }
-
-
-
-
-
-
 }

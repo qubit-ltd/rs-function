@@ -8,7 +8,10 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnStatefulPredicateOps` public type.
 
-use super::{BoxStatefulPredicate, StatefulPredicate};
+use super::{
+    BoxStatefulPredicate,
+    StatefulPredicate,
+};
 
 /// Extension trait providing logical composition methods for stateful closures.
 ///
@@ -35,7 +38,9 @@ pub trait FnStatefulPredicateOps<T>: FnMut(&T) -> bool + Sized {
         P: StatefulPredicate<T> + 'static,
         T: 'static,
     {
-        BoxStatefulPredicate::new(move |value: &T| self(value) && other.test(value))
+        BoxStatefulPredicate::new(move |value: &T| {
+            self(value) && other.test(value)
+        })
     }
 
     /// Returns a predicate representing logical OR with another predicate.
@@ -57,7 +62,9 @@ pub trait FnStatefulPredicateOps<T>: FnMut(&T) -> bool + Sized {
         P: StatefulPredicate<T> + 'static,
         T: 'static,
     {
-        BoxStatefulPredicate::new(move |value: &T| self(value) || other.test(value))
+        BoxStatefulPredicate::new(move |value: &T| {
+            self(value) || other.test(value)
+        })
     }
 
     /// Returns a predicate representing logical negation.
@@ -95,7 +102,9 @@ pub trait FnStatefulPredicateOps<T>: FnMut(&T) -> bool + Sized {
         P: StatefulPredicate<T> + 'static,
         T: 'static,
     {
-        BoxStatefulPredicate::new(move |value: &T| !(self(value) && other.test(value)))
+        BoxStatefulPredicate::new(move |value: &T| {
+            !(self(value) && other.test(value))
+        })
     }
 
     /// Returns a predicate representing logical XOR with another predicate.
@@ -117,7 +126,9 @@ pub trait FnStatefulPredicateOps<T>: FnMut(&T) -> bool + Sized {
         P: StatefulPredicate<T> + 'static,
         T: 'static,
     {
-        BoxStatefulPredicate::new(move |value: &T| self(value) ^ other.test(value))
+        BoxStatefulPredicate::new(move |value: &T| {
+            self(value) ^ other.test(value)
+        })
     }
 
     /// Returns a predicate representing logical NOR with another predicate.
@@ -138,7 +149,9 @@ pub trait FnStatefulPredicateOps<T>: FnMut(&T) -> bool + Sized {
         P: StatefulPredicate<T> + 'static,
         T: 'static,
     {
-        BoxStatefulPredicate::new(move |value: &T| !(self(value) || other.test(value)))
+        BoxStatefulPredicate::new(move |value: &T| {
+            !(self(value) || other.test(value))
+        })
     }
 }
 

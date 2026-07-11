@@ -8,7 +8,10 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnBiConsumerOnceOps` public type.
 
-use super::{BiConsumerOnce, BoxBiConsumerOnce};
+use super::{
+    BiConsumerOnce,
+    BoxBiConsumerOnce,
+};
 
 // =======================================================================
 // 4. Provide extension methods for closures

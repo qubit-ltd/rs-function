@@ -32,7 +32,6 @@ use std::sync::{
 // BoxStatefulBiConsumer Tests
 // ============================================================================
 
-
 #[cfg(test)]
 mod box_stateful_bi_consumer_tests {
     use super::{
@@ -1578,14 +1577,6 @@ impl StatefulBiConsumer<i32, i32> for CustomStatefulBiConsumer {
 unsafe impl Send for CustomStatefulBiConsumer {}
 unsafe impl Sync for CustomStatefulBiConsumer {}
 
-
-
-
-
-
-
-
-
 // ============================================================================
 // Custom Struct into_once/to_once Tests - Testing StatefulBiConsumer trait
 // default implementations
@@ -1629,10 +1620,4 @@ mod custom_struct_once_tests {
             }
         }
     }
-
-
-
-
-
-
 }

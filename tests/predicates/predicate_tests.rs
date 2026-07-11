@@ -39,7 +39,6 @@ fn test_new_accepts_custom_predicate() {
     assert!(!shared.test(&-1));
 }
 
-
 #[test]
 fn test_predicate_not_operator() {
     let boxed = !BoxPredicate::new(|x: &i32| *x > 0);
@@ -105,7 +104,6 @@ mod closure_predicate_tests {
         assert!(is_not_positive.test(&-3));
         assert!(is_not_positive.test(&0));
     }
-
 }
 
 #[cfg(test)]
@@ -220,7 +218,6 @@ mod box_predicate_tests {
         assert!(!combined.test(&12));
         assert!(!combined.test(&-2));
     }
-
 }
 
 #[cfg(test)]
@@ -323,8 +320,6 @@ mod rc_predicate_tests {
         assert!(combined1.test(&4));
         assert!(combined2.test(&5));
     }
-
-
 }
 
 #[cfg(test)]
@@ -441,9 +436,6 @@ mod arc_predicate_tests {
         assert!(combined.test(&4));
         handle.join().expect("thread should not panic");
     }
-
-
-
 }
 
 #[cfg(test)]
@@ -538,15 +530,7 @@ mod interior_mutability_tests {
 }
 
 #[cfg(test)]
-mod type_conversion_tests {
-
-
-
-
-
-
-
-}
+mod type_conversion_tests {}
 
 #[cfg(test)]
 mod different_types_tests {
@@ -1785,15 +1769,7 @@ mod always_predicates_tests {
 }
 
 #[cfg(test)]
-mod to_fn_tests {
-
-
-
-
-
-
-
-}
+mod to_fn_tests {}
 
 #[cfg(test)]
 mod not_composition_tests {
@@ -1939,19 +1915,7 @@ mod not_composition_tests {
 // ============================================================================
 
 #[cfg(test)]
-mod additional_type_conversion_tests {
-
-
-
-
-
-
-
-
-
-
-
-}
+mod additional_type_conversion_tests {}
 
 // ============================================================================
 // Custom Predicate Type Tests (Default Implementation)
@@ -1985,14 +1949,6 @@ mod custom_predicate_tests {
         assert!(!pred.test(&-5));
     }
 
-
-
-
-
-
-
-
-
     // Custom predicate with generic type parameter
     struct LengthPredicate {
         min_length: usize,
@@ -2013,9 +1969,6 @@ mod custom_predicate_tests {
         assert!(!pred.test(&"hi".to_string()));
         assert!(!pred.test(&"".to_string()));
     }
-
-
-
 }
 
 // ============================================================================
@@ -2109,30 +2062,13 @@ mod to_methods_comprehensive_tests {
     // RcPredicate to_xxx methods
     // ========================================================================
 
-
-
-
-
-
     // ========================================================================
     // ArcPredicate to_xxx methods
     // ========================================================================
 
-
-
-
-
-
-
-
-
     // ========================================================================
     // Closure to_xxx methods (testing the blanket implementation)
     // ========================================================================
-
-
-
-
 
     // ========================================================================
     // Custom Predicate with Clone - testing default to_xxx implementations
@@ -2149,14 +2085,6 @@ mod to_methods_comprehensive_tests {
         }
         // Using all default implementations for to_xxx methods
     }
-
-
-
-
-
-
-
-
 
     // ========================================================================
     // Custom Predicate with Send + Sync for Arc conversion
@@ -2178,15 +2106,9 @@ mod to_methods_comprehensive_tests {
         }
     }
 
-
-
     // ========================================================================
     // Complex scenarios with to_xxx methods
     // ========================================================================
-
-
-
-
 
     // ========================================================================
     // Custom predicate with state
@@ -2203,20 +2125,13 @@ mod to_methods_comprehensive_tests {
         }
     }
 
-
-
-
     // ========================================================================
     // Test String predicate with to_xxx methods
     // ========================================================================
 
-
-
     // ========================================================================
     // Test with complex types
     // ========================================================================
-
-
 }
 
 // ============================================================================

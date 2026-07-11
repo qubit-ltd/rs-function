@@ -28,18 +28,12 @@ use std::thread;
 // StatefulSupplier Trait Tests (for closures)
 // ==========================================================================
 
-
 #[cfg(test)]
 mod test_stateful_supplier_trait {
     use super::{
         BoxStatefulSupplier,
         StatefulSupplier,
     };
-
-
-
-
-
 
     #[test]
     fn test_closure_stateful() {
@@ -52,9 +46,6 @@ mod test_stateful_supplier_trait {
         assert_eq!(boxed.get(), 2);
         assert_eq!(boxed.get(), 3);
     }
-
-
-
 
     #[test]
     fn test_closure_get() {
@@ -73,10 +64,6 @@ mod test_stateful_supplier_trait {
         assert_eq!(closure.get(), 42);
         assert_eq!(closure.get(), 42);
     }
-
-
-
-
 }
 
 // ==========================================================================
@@ -331,24 +318,11 @@ mod test_box_stateful_supplier {
         }
     }
 
-    mod test_into_box {
+    mod test_into_box {}
 
+    mod test_into_rc {}
 
-    }
-
-    mod test_into_rc {
-
-
-    }
-
-    mod test_into_fn {
-
-
-
-
-
-
-    }
+    mod test_into_fn {}
 }
 
 // ==========================================================================
@@ -684,50 +658,21 @@ mod test_arc_stateful_supplier {
         }
     }
 
-    mod test_into_box {
+    mod test_into_box {}
 
+    mod test_into_rc {}
 
-    }
+    mod test_into_arc {}
 
-    mod test_into_rc {
+    mod test_into_fn {}
 
+    mod test_to_box {}
 
-    }
+    mod test_to_rc {}
 
-    mod test_into_arc {
+    mod test_to_arc {}
 
-
-    }
-
-    mod test_into_fn {
-
-
-
-
-
-
-
-    }
-
-    mod test_to_box {
-
-
-    }
-
-    mod test_to_rc {
-
-
-    }
-
-    mod test_to_arc {
-
-
-    }
-
-    mod test_to_fn {
-
-
-    }
+    mod test_to_fn {}
 }
 
 // ==========================================================================
@@ -819,20 +764,11 @@ mod test_rc_stateful_supplier {
         }
     }
 
-    mod test_to_box {
+    mod test_to_box {}
 
+    mod test_to_rc {}
 
-    }
-
-    mod test_to_rc {
-
-
-    }
-
-    mod test_to_fn {
-
-
-    }
+    mod test_to_fn {}
 
     mod test_clone {
         use super::{
@@ -1023,25 +959,11 @@ mod test_rc_stateful_supplier {
         }
     }
 
-    mod test_into_box {
+    mod test_into_box {}
 
+    mod test_into_rc {}
 
-    }
-
-    mod test_into_rc {
-
-
-    }
-
-    mod test_into_fn {
-
-
-
-
-
-
-
-    }
+    mod test_into_fn {}
 
     // Note: RcStatefulSupplier cannot be converted to ArcStatefulSupplier
     // because Rc is not Send. This is prevented at compile time by the
@@ -1108,21 +1030,9 @@ mod test_box_stateful_supplier_once {
         }
     }
 
-    mod test_into_box {
+    mod test_into_box {}
 
-
-
-
-    }
-
-    mod test_into_fn {
-
-
-
-
-
-
-    }
+    mod test_into_fn {}
 }
 
 // ==========================================================================
@@ -1216,34 +1126,13 @@ mod test_arc_stateful_supplier_once {
         }
     }
 
-    mod test_into_box {
+    mod test_into_box {}
 
+    mod test_into_fn {}
 
+    mod test_to_box {}
 
-
-    }
-
-    mod test_into_fn {
-
-
-
-
-
-    }
-
-    mod test_to_box {
-
-
-
-
-    }
-
-    mod test_to_fn {
-
-
-
-
-    }
+    mod test_to_fn {}
 }
 
 // ==========================================================================
@@ -1328,34 +1217,13 @@ mod test_rc_stateful_supplier_once {
         }
     }
 
-    mod test_into_box {
+    mod test_into_box {}
 
+    mod test_into_fn {}
 
+    mod test_to_box {}
 
-
-    }
-
-    mod test_into_fn {
-
-
-
-
-
-    }
-
-    mod test_to_box {
-
-
-
-
-    }
-
-    mod test_to_fn {
-
-
-
-
-    }
+    mod test_to_fn {}
 }
 
 // ==========================================================================
@@ -1387,17 +1255,6 @@ mod test_custom_stateful_supplier_default_impl {
         // Note: into_box(), into_rc(), and into_arc() use the
         // default implementations from the trait
     }
-
-
-
-
-
-
-
-
-
-
-
 }
 
 // ==========================================================================
@@ -1747,10 +1604,6 @@ mod test_custom_clone_stateful_supplier {
             self.value
         }
     }
-
-
-
-
 }
 
 // ======================================================================
@@ -1909,12 +1762,4 @@ mod test_stateful_supplier_debug_display {
 // ============================================================================
 
 #[cfg(test)]
-mod test_stateful_supplier_trait_default_methods {
-
-
-
-
-
-
-
-}
+mod test_stateful_supplier_trait_default_methods {}

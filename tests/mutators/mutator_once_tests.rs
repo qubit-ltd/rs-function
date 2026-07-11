@@ -17,9 +17,7 @@ use qubit_function::{
     MutatorOnce,
 };
 
-
 // Test closures specialization and default behaviors
-
 
 // Custom MutatorOnce using default into_box/into_fn/to_box/to_fn
 struct MyMutatorOnce {
@@ -32,11 +30,9 @@ impl MutatorOnce<Vec<i32>> for MyMutatorOnce {
     }
 }
 
-
 // ============================================================================
 // Tests for MutatorOnce trait default implementations
 // ============================================================================
-
 
 // ============================================================================
 // Tests for BoxMutatorOnce
@@ -82,7 +78,6 @@ fn test_box_mutator_once_when() {
     assert_eq!(target2, vec![0]); // Should not execute
 }
 
-
 // ============================================================================
 // Tests for BoxConditionalMutatorOnce
 // ============================================================================
@@ -111,8 +106,6 @@ fn test_box_conditional_mutator_once_mutate() {
     conditional2.apply(&mut target2);
     assert_eq!(target2, vec![0]); // Should remain unchanged
 }
-
-
 
 #[test]
 fn test_box_conditional_mutator_once_and_then() {
@@ -191,7 +184,6 @@ fn test_box_conditional_mutator_once_or_else() {
 // ============================================================================
 // Tests for closure implementations
 // ============================================================================
-
 
 #[test]
 fn test_closure_and_then() {
@@ -337,7 +329,4 @@ mod custom_mutator_to_methods_tests {
                 .push(*value);
         }
     }
-
-
-
 }

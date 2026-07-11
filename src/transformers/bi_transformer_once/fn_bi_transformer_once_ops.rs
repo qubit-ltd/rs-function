@@ -8,7 +8,11 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnBiTransformerOnceOps` public type.
 
-use super::{BiPredicate, BoxBiTransformerOnce, BoxConditionalBiTransformerOnce};
+use super::{
+    BiPredicate,
+    BoxBiTransformerOnce,
+    BoxConditionalBiTransformerOnce,
+};
 
 // ============================================================================
 // FnBiTransformerOnceOps - Extension trait for FnOnce(T, U) -> R
@@ -101,7 +105,8 @@ pub trait FnBiTransformerOnceOps<T, U, R>: FnOnce(T, U) -> R + Sized {
     where
         Self: 'static,
         S: 'static,
-        F: crate::transformers::transformer_once::TransformerOnce<R, S> + 'static,
+        F: crate::transformers::transformer_once::TransformerOnce<R, S>
+            + 'static,
         T: 'static,
         U: 'static,
         R: 'static,
@@ -180,4 +185,5 @@ pub trait FnBiTransformerOnceOps<T, U, R>: FnOnce(T, U) -> R + Sized {
 ///
 /// Automatically implements `FnBiTransformerOnceOps<T, U, R>` for any type that
 /// implements `FnOnce(T, U) -> R`.
-impl<T, U, R, F> FnBiTransformerOnceOps<T, U, R> for F where F: FnOnce(T, U) -> R {}
+impl<T, U, R, F> FnBiTransformerOnceOps<T, U, R> for F where F: FnOnce(T, U) -> R
+{}

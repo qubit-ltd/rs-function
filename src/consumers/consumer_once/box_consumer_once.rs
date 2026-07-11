@@ -9,8 +9,13 @@
 //! Defines the `BoxConsumerOnce` public type.
 
 use super::{
-    BoxConditionalConsumerOnce, ConsumerOnce, Predicate, impl_box_consumer_methods,
-    impl_closure_once_trait, impl_consumer_common_methods, impl_consumer_debug_display,
+    BoxConditionalConsumerOnce,
+    ConsumerOnce,
+    Predicate,
+    impl_box_consumer_methods,
+    impl_closure_once_trait,
+    impl_consumer_common_methods,
+    impl_consumer_debug_display,
 };
 
 // ============================================================================
@@ -64,10 +69,18 @@ pub struct BoxConsumerOnce<T> {
 // All methods require T: 'static because Box<dyn FnOnce(&T)> requires it
 impl<T> BoxConsumerOnce<T> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
-    impl_consumer_common_methods!(BoxConsumerOnce<T>, (FnOnce(&T) + 'static), |f| Box::new(f));
+    impl_consumer_common_methods!(
+        BoxConsumerOnce<T>,
+        (FnOnce(&T) + 'static),
+        |f| Box::new(f)
+    );
 
     // Generates: when() and and_then() methods that consume self
-    impl_box_consumer_methods!(BoxConsumerOnce<T>, BoxConditionalConsumerOnce, ConsumerOnce);
+    impl_box_consumer_methods!(
+        BoxConsumerOnce<T>,
+        BoxConditionalConsumerOnce,
+        ConsumerOnce
+    );
 }
 
 impl<T> ConsumerOnce<T> for BoxConsumerOnce<T> {

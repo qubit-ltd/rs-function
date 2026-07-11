@@ -9,8 +9,13 @@
 //! Defines the `BoxSupplierOnce` public type.
 
 use super::{
-    Predicate, SupplierOnce, Transformer, impl_box_supplier_methods, impl_closure_once_trait,
-    impl_supplier_common_methods, impl_supplier_debug_display,
+    Predicate,
+    SupplierOnce,
+    Transformer,
+    impl_box_supplier_methods,
+    impl_closure_once_trait,
+    impl_supplier_common_methods,
+    impl_supplier_debug_display,
 };
 
 // ==========================================================================
@@ -56,9 +61,11 @@ pub struct BoxSupplierOnce<T> {
 
 impl<T> BoxSupplierOnce<T> {
     // Generates: new(), new_with_name(), name(), set_name(), constant()
-    impl_supplier_common_methods!(BoxSupplierOnce<T>, (FnOnce() -> T + 'static), |f| Box::new(
-        f
-    ));
+    impl_supplier_common_methods!(
+        BoxSupplierOnce<T>,
+        (FnOnce() -> T + 'static),
+        |f| Box::new(f)
+    );
 
     // Generates: map(), filter(), zip()
     impl_box_supplier_methods!(BoxSupplierOnce<T>, SupplierOnce);

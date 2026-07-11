@@ -26,17 +26,26 @@ use std::sync::Arc;
 #[cfg(feature = "combinators")]
 use crate::functions::macros::impl_fn_ops_trait;
 use crate::functions::macros::{
-        impl_box_conditional_function, impl_box_function_methods, impl_conditional_function_clone,
-        impl_conditional_function_debug_display, impl_function_clone,
-        impl_function_common_methods, impl_function_constant_method, impl_function_debug_display,
-        impl_function_identity_method, impl_shared_conditional_function,
-        impl_shared_function_methods,
-    };
-use crate::macros::{ impl_closure_trait,
+    impl_box_conditional_function,
+    impl_box_function_methods,
+    impl_conditional_function_clone,
+    impl_conditional_function_debug_display,
+    impl_function_clone,
+    impl_function_common_methods,
+    impl_function_constant_method,
+    impl_function_debug_display,
+    impl_function_identity_method,
+    impl_shared_conditional_function,
+    impl_shared_function_methods,
 };
-use crate::predicates::predicate::{ArcPredicate, BoxPredicate, Predicate};
+use crate::macros::impl_closure_trait;
 #[cfg(feature = "rc")]
 use crate::predicates::predicate::RcPredicate;
+use crate::predicates::predicate::{
+    ArcPredicate,
+    BoxPredicate,
+    Predicate,
+};
 
 mod box_function;
 pub use box_function::BoxFunction;

@@ -9,8 +9,13 @@
 //! Defines the `BoxBiConsumerOnce` public type.
 
 use super::{
-    BiConsumerOnce, BiConsumerOnceFn, BiPredicate, BoxConditionalBiConsumerOnce,
-    impl_box_consumer_methods, impl_closure_once_trait, impl_consumer_common_methods,
+    BiConsumerOnce,
+    BiConsumerOnceFn,
+    BiPredicate,
+    BoxConditionalBiConsumerOnce,
+    impl_box_consumer_methods,
+    impl_closure_once_trait,
+    impl_consumer_common_methods,
     impl_consumer_debug_display,
 };
 

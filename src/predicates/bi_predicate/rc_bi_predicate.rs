@@ -11,8 +11,15 @@
 use std::ops::Not;
 
 use super::{
-    ALWAYS_FALSE_NAME, ALWAYS_TRUE_NAME, BiPredicate, BiPredicateFn, Rc, impl_predicate_clone,
-    impl_predicate_common_methods, impl_predicate_debug_display, impl_shared_predicate_methods,
+    ALWAYS_FALSE_NAME,
+    ALWAYS_TRUE_NAME,
+    BiPredicate,
+    BiPredicateFn,
+    Rc,
+    impl_predicate_clone,
+    impl_predicate_common_methods,
+    impl_predicate_debug_display,
+    impl_shared_predicate_methods,
 };
 
 /// An Rc-based bi-predicate with single-threaded shared ownership.
@@ -62,7 +69,9 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function;
-        RcBiPredicate::new(move |first: &T, second: &U| !function(first, second))
+        RcBiPredicate::new(move |first: &T, second: &U| {
+            !function(first, second)
+        })
     }
 }
 
@@ -75,7 +84,9 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function.clone();
-        RcBiPredicate::new(move |first: &T, second: &U| !function(first, second))
+        RcBiPredicate::new(move |first: &T, second: &U| {
+            !function(first, second)
+        })
     }
 }
 

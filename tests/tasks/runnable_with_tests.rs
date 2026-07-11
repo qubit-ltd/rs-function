@@ -68,10 +68,6 @@ fn test_runnable_with_closure_run_with_returns_error() {
     assert_eq!(input, 10);
 }
 
-
-
-
-
 #[test]
 fn test_box_runnable_with_name_management() {
     let mut task = BoxRunnableWith::<i32, io::Error>::new_with_name(
@@ -154,7 +150,6 @@ fn test_rc_runnable_with_shares_state_between_clones() {
     assert_eq!(input, 2);
 }
 
-
 #[test]
 fn test_arc_runnable_with_shares_state_between_clones() {
     let count = Arc::new(AtomicUsize::new(0));
@@ -174,24 +169,20 @@ fn test_arc_runnable_with_shares_state_between_clones() {
     assert_eq!(input, 4);
 }
 
-
-
-
-
-
 #[test]
 fn test_box_runnable_with_combinators_cover_error_branches() {
     let mut input = 0;
     let next_ran = Rc::new(Cell::new(false));
     let next_ran_capture = Rc::clone(&next_ran);
-    let mut chained = BoxRunnableWith::<i32, io::Error>::new(|_value: &mut i32| {
-        Err(io::Error::other("first failed"))
-    })
-    .and_then(move |value: &mut i32| {
-        next_ran_capture.set(true);
-        *value += 1;
-        Ok::<(), io::Error>(())
-    });
+    let mut chained =
+        BoxRunnableWith::<i32, io::Error>::new(|_value: &mut i32| {
+            Err(io::Error::other("first failed"))
+        })
+        .and_then(move |value: &mut i32| {
+            next_ran_capture.set(true);
+            *value += 1;
+            Ok::<(), io::Error>(())
+        });
     let error = chained
         .run_with(&mut input)
         .expect_err("and_then should short-circuit");
@@ -201,13 +192,14 @@ fn test_box_runnable_with_combinators_cover_error_branches() {
 
     let callable_ran = Rc::new(Cell::new(false));
     let callable_ran_capture = Rc::clone(&callable_ran);
-    let mut callable = BoxRunnableWith::<i32, io::Error>::new(|_value: &mut i32| {
-        Err(io::Error::other("prepare failed"))
-    })
-    .then_callable_with(move |value: &mut i32| {
-        callable_ran_capture.set(true);
-        Ok::<i32, io::Error>(*value + 1)
-    });
+    let mut callable =
+        BoxRunnableWith::<i32, io::Error>::new(|_value: &mut i32| {
+            Err(io::Error::other("prepare failed"))
+        })
+        .then_callable_with(move |value: &mut i32| {
+            callable_ran_capture.set(true);
+            Ok::<i32, io::Error>(*value + 1)
+        });
     let error = callable
         .call_with(&mut input)
         .expect_err("then_callable_with should short-circuit");

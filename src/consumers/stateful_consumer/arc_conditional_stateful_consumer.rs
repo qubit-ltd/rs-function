@@ -9,8 +9,12 @@
 //! Defines the `ArcConditionalStatefulConsumer` public type.
 
 use super::{
-    ArcPredicate, ArcStatefulConsumer, Predicate, StatefulConsumer,
-    impl_conditional_consumer_clone, impl_conditional_consumer_debug_display,
+    ArcPredicate,
+    ArcStatefulConsumer,
+    Predicate,
+    StatefulConsumer,
+    impl_conditional_consumer_clone,
+    impl_conditional_consumer_debug_display,
     impl_shared_conditional_consumer,
 };
 

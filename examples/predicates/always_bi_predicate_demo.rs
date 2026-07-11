@@ -158,7 +158,8 @@ fn main() {
     // Scenario 2: Default reject-all filter
     let pairs = vec![(1, 2), (3, 4), (5, 6)];
     let reject_all = BoxBiPredicate::<i32, i32>::always_false();
-    let closure = move |first: &i32, second: &i32| reject_all.test(first, second);
+    let closure =
+        move |first: &i32, second: &i32| reject_all.test(first, second);
     let filtered: Vec<_> =
         pairs.iter().filter(|(x, y)| closure(x, y)).collect();
     println!("Default reject all elements: {:?} -> {:?}", pairs, filtered);
@@ -175,13 +176,15 @@ fn main() {
     let pairs = vec![(1, 2), (3, 4), (5, 6)];
 
     let filter_enabled = configurable_filter(true);
-    let closure = move |first: &i32, second: &i32| filter_enabled.test(first, second);
+    let closure =
+        move |first: &i32, second: &i32| filter_enabled.test(first, second);
     let filtered: Vec<_> =
         pairs.iter().filter(|(x, y)| closure(x, y)).collect();
     println!("\nFilter enabled: {:?} -> {:?}", pairs, filtered);
 
     let filter_disabled = configurable_filter(false);
-    let closure = move |first: &i32, second: &i32| filter_disabled.test(first, second);
+    let closure =
+        move |first: &i32, second: &i32| filter_disabled.test(first, second);
     let filtered: Vec<_> =
         pairs.iter().filter(|(x, y)| closure(x, y)).collect();
     println!("Filter disabled: {:?} -> {:?}", pairs, filtered);

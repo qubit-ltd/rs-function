@@ -13,7 +13,10 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::{
-    macros::{impl_common_name_methods, impl_common_new_methods},
+    macros::{
+        impl_common_name_methods,
+        impl_common_new_methods,
+    },
     tasks::callable_with::CallableWith,
 };
 
@@ -47,7 +50,7 @@ impl<T, R, E> Clone for RcCallableWith<T, R, E> {
 
 impl<T, R, E> RcCallableWith<T, R, E> {
     impl_common_new_methods!(
-        semantic_mut (CallableWith<T, R, E> + 'static),
+        semantic_mut(CallableWith<T, R, E> + 'static),
         |source| move |input: &mut T| source.call_with(input),
         |function| Rc::new(RefCell::new(function)),
         "callable-with"

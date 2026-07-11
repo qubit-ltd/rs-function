@@ -9,8 +9,12 @@
 //! Defines the `ArcConditionalStatefulFunction` public type.
 
 use super::{
-    ArcPredicate, ArcStatefulFunction, Predicate, StatefulFunction,
-    impl_conditional_function_clone, impl_conditional_function_debug_display,
+    ArcPredicate,
+    ArcStatefulFunction,
+    Predicate,
+    StatefulFunction,
+    impl_conditional_function_clone,
+    impl_conditional_function_debug_display,
     impl_shared_conditional_function,
 };
 

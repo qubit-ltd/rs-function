@@ -16,12 +16,18 @@
 //!
 //! - [`BoxTransformerOnce`]: Single ownership, one-time use
 
-use crate::macros::{ impl_closure_once_trait};
-use crate::predicates::predicate::{BoxPredicate, Predicate};
+use crate::macros::impl_closure_once_trait;
+use crate::predicates::predicate::{
+    BoxPredicate,
+    Predicate,
+};
 use crate::transformers::macros::{
-    impl_box_conditional_transformer, impl_box_transformer_methods,
-    impl_conditional_transformer_debug_display, impl_transformer_common_methods,
-    impl_transformer_constant_method, impl_transformer_debug_display,
+    impl_box_conditional_transformer,
+    impl_box_transformer_methods,
+    impl_conditional_transformer_debug_display,
+    impl_transformer_common_methods,
+    impl_transformer_constant_method,
+    impl_transformer_debug_display,
 };
 
 mod box_transformer_once;

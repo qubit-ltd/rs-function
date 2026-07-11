@@ -9,7 +9,10 @@
 //! Defines the `BoxCallableWith` public type.
 
 use crate::{
-    macros::{impl_common_name_methods, impl_common_new_methods},
+    macros::{
+        impl_common_name_methods,
+        impl_common_new_methods,
+    },
     tasks::callable_with::CallableWith,
 };
 
@@ -28,7 +31,7 @@ pub struct BoxCallableWith<T, R, E> {
 
 impl<T, R, E> BoxCallableWith<T, R, E> {
     impl_common_new_methods!(
-        semantic_mut (CallableWith<T, R, E> + 'static),
+        semantic_mut(CallableWith<T, R, E> + 'static),
         |source| move |input: &mut T| source.call_with(input),
         |function| Box::new(function),
         "callable-with"
@@ -55,7 +58,10 @@ impl<T, R, E> BoxCallableWith<T, R, E> {
     {
         let name = self.name;
         let mut function = self.function;
-        BoxCallableWith::new_with_optional_name(move |input: &mut T| function(input).map(&mut mapper), name)
+        BoxCallableWith::new_with_optional_name(
+            move |input: &mut T| function(input).map(&mut mapper),
+            name,
+        )
     }
 
     /// Maps the error value of this callable.

@@ -9,8 +9,15 @@
 //! Defines the `RcMutator` public type.
 
 use super::{
-    Mutator, Predicate, Rc, RcConditionalMutator, RcMutatorFn, impl_mutator_clone,
-    impl_mutator_common_methods, impl_mutator_debug_display, impl_shared_mutator_methods,
+    Mutator,
+    Predicate,
+    Rc,
+    RcConditionalMutator,
+    RcMutatorFn,
+    impl_mutator_clone,
+    impl_mutator_common_methods,
+    impl_mutator_debug_display,
+    impl_shared_mutator_methods,
 };
 
 // ============================================================================
@@ -59,7 +66,9 @@ pub struct RcMutator<T> {
 impl<T> RcMutator<T> {
     // Generate common mutator methods (new, new_with_name, name, set_name,
     // noop)
-    impl_mutator_common_methods!(RcMutator<T>, (Fn(&mut T) + 'static), |f| { Rc::new(f) });
+    impl_mutator_common_methods!(RcMutator<T>, (Fn(&mut T) + 'static), |f| {
+        Rc::new(f)
+    });
 
     // Generate shared mutator methods (when, and_then, or_else, conversions)
     impl_shared_mutator_methods!(

@@ -19,7 +19,6 @@ use qubit_function::{
 use std::rc::Rc;
 use std::sync::Arc;
 
-
 #[cfg(test)]
 mod box_non_mutating_consumer_tests {
     use super::{
@@ -106,10 +105,6 @@ mod box_non_mutating_consumer_tests {
         noop.accept(&42);
         // Should not panic
     }
-
-
-
-
 
     #[test]
     fn test_name() {
@@ -205,11 +200,6 @@ mod arc_non_mutating_consumer_tests {
         second.accept(&15);
         assert_eq!(counter.load(std::sync::atomic::Ordering::SeqCst), 4);
     }
-
-
-
-
-
 
     #[test]
     fn test_name() {
@@ -324,10 +314,6 @@ mod rc_non_mutating_consumer_tests {
         assert_eq!(*counter.borrow(), 4);
     }
 
-
-
-
-
     #[test]
     fn test_name() {
         let mut consumer = RcConsumer::new(|_x: &i32| {});
@@ -370,10 +356,6 @@ mod closure_tests {
         closure.accept(&5);
     }
 
-
-
-
-
     #[test]
     fn test_closure_and_then() {
         let counter = Arc::new(std::sync::Mutex::new(0));
@@ -415,11 +397,6 @@ mod closure_tests {
 
 #[cfg(test)]
 mod conversion_tests {
-
-
-
-
-
 
     // Note: Box and Rc cannot be converted to Arc because they don't implement
     // Send+Sync These conversions are prevented at compile time, not
@@ -544,13 +521,6 @@ mod name_tests {
         consumer.accept(&1);
         assert_eq!(consumer.name(), Some("test_consumer"));
     }
-
-
-
-
-
-
-
 }
 
 // ============================================================================
@@ -663,7 +633,6 @@ mod custom_struct_tests {
         }
     }
 
-
     impl Clone for MyConsumer {
         fn clone(&self) -> Self {
             Self {
@@ -671,7 +640,6 @@ mod custom_struct_tests {
             }
         }
     }
-
 }
 
 // ============================================================================
@@ -681,25 +649,9 @@ mod custom_struct_tests {
 #[cfg(test)]
 mod to_xxx_methods_tests {
 
-
-
     // BoxConsumer cannot implement Clone because it uses Box<dyn Fn>
     // So it cannot have to_box, to_rc, to_fn methods
     // It can only have into_xxx methods
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
 // ============================================================================
@@ -707,15 +659,7 @@ mod to_xxx_methods_tests {
 // ============================================================================
 
 #[cfg(test)]
-mod to_once_tests {
-
-
-
-
-
-
-
-}
+mod to_once_tests {}
 
 // ============================================================================
 // Conditional Consumer Tests
@@ -804,9 +748,6 @@ mod box_conditional_consumer_tests {
         conditional.accept(&-5);
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
     }
-
-
-
 }
 
 #[cfg(test)]
@@ -882,14 +823,6 @@ mod arc_conditional_consumer_tests {
         conditional.accept(&-5);
         assert_eq!(counter.load(Ordering::SeqCst), 1);
     }
-
-
-
-
-
-
-
-
 }
 
 #[cfg(test)]
@@ -962,10 +895,4 @@ mod rc_conditional_consumer_tests {
         conditional.accept(&-5);
         assert_eq!(*log.borrow(), vec![5]);
     }
-
-
-
-
-
-
 }

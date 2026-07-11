@@ -9,8 +9,13 @@
 //! Defines the `RcConditionalStatefulFunction` public type.
 
 use super::{
-    Predicate, RcPredicate, RcStatefulFunction, StatefulFunction, impl_conditional_function_clone,
-    impl_conditional_function_debug_display, impl_shared_conditional_function,
+    Predicate,
+    RcPredicate,
+    RcStatefulFunction,
+    StatefulFunction,
+    impl_conditional_function_clone,
+    impl_conditional_function_debug_display,
+    impl_shared_conditional_function,
 };
 
 // ============================================================================

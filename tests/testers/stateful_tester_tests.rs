@@ -51,12 +51,6 @@ fn test_stateful_tester_closure_mutates_state() {
     assert!(StatefulTester::test(&mut tester));
 }
 
-
-
-
-
-
-
 #[test]
 fn test_box_stateful_tester_logical_operations_cover_branches() {
     let skipped = Rc::new(RefCell::new(false));
@@ -129,7 +123,6 @@ fn test_rc_stateful_tester_clone_shares_state() {
     assert_eq!(*calls.borrow(), 2);
 }
 
-
 #[test]
 fn test_rc_stateful_tester_logical_operations_cover_branches() {
     let first = RcStatefulTester::new(|| false);
@@ -191,7 +184,6 @@ fn test_arc_stateful_tester_clone_shares_state_across_threads() {
     assert!(handle.join().expect("thread should not panic"));
     assert_eq!(calls.load(Ordering::SeqCst), 2);
 }
-
 
 #[test]
 fn test_arc_stateful_tester_logical_operations_cover_branches() {

@@ -8,7 +8,10 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnMutStatefulMutatorOps` public type.
 
-use super::{BoxStatefulMutator, StatefulMutator};
+use super::{
+    BoxStatefulMutator,
+    StatefulMutator,
+};
 
 // ============================================================================
 // 6. Provide extension methods for closures

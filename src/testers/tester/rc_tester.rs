@@ -10,7 +10,10 @@
 
 use std::ops::Not;
 
-use super::{Rc, Tester};
+use super::{
+    Rc,
+    Tester,
+};
 
 // ============================================================================
 // RcTester: Single-Threaded Shared Ownership Implementation

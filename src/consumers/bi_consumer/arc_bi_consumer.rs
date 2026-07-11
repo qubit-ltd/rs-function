@@ -9,9 +9,16 @@
 //! Defines the `ArcBiConsumer` public type.
 
 use super::{
-    Arc, ArcConditionalBiConsumer, BiConsumer, BiPredicate, ThreadSafeBiConsumerFn,
-    impl_closure_trait, impl_consumer_clone, impl_consumer_common_methods,
-    impl_consumer_debug_display, impl_shared_consumer_methods,
+    Arc,
+    ArcConditionalBiConsumer,
+    BiConsumer,
+    BiPredicate,
+    ThreadSafeBiConsumerFn,
+    impl_closure_trait,
+    impl_consumer_clone,
+    impl_consumer_common_methods,
+    impl_consumer_debug_display,
+    impl_shared_consumer_methods,
 };
 
 // =======================================================================

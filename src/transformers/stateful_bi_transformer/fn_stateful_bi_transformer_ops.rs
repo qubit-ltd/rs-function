@@ -9,7 +9,10 @@
 //! Defines the `FnStatefulBiTransformerOps` public type.
 
 use super::{
-    BiPredicate, BoxConditionalStatefulBiTransformer, BoxStatefulBiTransformer, StatefulTransformer,
+    BiPredicate,
+    BoxConditionalStatefulBiTransformer,
+    BoxStatefulBiTransformer,
+    StatefulTransformer,
 };
 
 // ============================================================================
@@ -62,7 +65,9 @@ use super::{
 /// assert_eq!(conditional.apply(5, 3), 8);   // add
 /// assert_eq!(conditional.apply(-5, 3), -15); // multiply
 /// ```
-pub trait FnStatefulBiTransformerOps<T, U, R>: FnMut(T, U) -> R + Sized {
+pub trait FnStatefulBiTransformerOps<T, U, R>:
+    FnMut(T, U) -> R + Sized
+{
     /// Chain composition - applies self first, then after
     ///
     /// Creates a new bi-transformer that applies this bi-transformer first,
@@ -194,7 +199,10 @@ pub trait FnStatefulBiTransformerOps<T, U, R>: FnMut(T, U) -> R + Sized {
     /// // Original bi-predicate still usable
     /// assert!(both_positive.test(&5, &3));
     /// ```
-    fn when<P>(self, predicate: P) -> BoxConditionalStatefulBiTransformer<T, U, R>
+    fn when<P>(
+        self,
+        predicate: P,
+    ) -> BoxConditionalStatefulBiTransformer<T, U, R>
     where
         Self: 'static,
         P: BiPredicate<T, U> + 'static,
@@ -248,4 +256,7 @@ pub trait FnStatefulBiTransformerOps<T, U, R>: FnMut(T, U) -> R + Sized {
 ///
 /// Automatically implements `FnStatefulBiTransformerOps<T, U, R>` for any type
 /// that implements `FnMut(T, U) -> R`.
-impl<T, U, R, F> FnStatefulBiTransformerOps<T, U, R> for F where F: FnMut(T, U) -> R {}
+impl<T, U, R, F> FnStatefulBiTransformerOps<T, U, R> for F where
+    F: FnMut(T, U) -> R
+{
+}

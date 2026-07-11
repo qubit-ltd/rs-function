@@ -8,7 +8,10 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnStatefulConsumerOps` public type.
 
-use super::{BoxStatefulConsumer, StatefulConsumer};
+use super::{
+    BoxStatefulConsumer,
+    StatefulConsumer,
+};
 
 // ============================================================================
 // 6. Extension methods for closures

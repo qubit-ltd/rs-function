@@ -9,9 +9,15 @@
 //! Defines the `BoxFunctionOnce` public type.
 
 use super::{
-    BoxConditionalFunctionOnce, FunctionOnce, Predicate, impl_box_function_methods,
-    impl_closure_once_trait, impl_function_common_methods, impl_function_constant_method,
-    impl_function_debug_display, impl_function_identity_method,
+    BoxConditionalFunctionOnce,
+    FunctionOnce,
+    Predicate,
+    impl_box_function_methods,
+    impl_closure_once_trait,
+    impl_function_common_methods,
+    impl_function_constant_method,
+    impl_function_debug_display,
+    impl_function_identity_method,
 };
 
 // ============================================================================

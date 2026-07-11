@@ -16,14 +16,20 @@
 //! implementations:
 //!
 //! - [`BoxBiFunctionOnce`]: Single ownership, one-time use
-use crate::macros::{ impl_closure_once_trait};
-use crate::predicates::bi_predicate::{BiPredicate, BoxBiPredicate};
+use crate::macros::impl_closure_once_trait;
+use crate::predicates::bi_predicate::{
+    BiPredicate,
+    BoxBiPredicate,
+};
 use crate::{
     functions::function_once::FunctionOnce,
     functions::macros::{
-        impl_box_conditional_function, impl_box_function_methods,
-        impl_conditional_function_debug_display, impl_function_common_methods,
-        impl_function_constant_method, impl_function_debug_display,
+        impl_box_conditional_function,
+        impl_box_function_methods,
+        impl_conditional_function_debug_display,
+        impl_function_common_methods,
+        impl_function_constant_method,
+        impl_function_debug_display,
     },
 };
 

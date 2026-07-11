@@ -8,7 +8,12 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnTransformerOps` public type.
 
-use super::{BoxConditionalTransformer, BoxTransformer, Predicate, Transformer};
+use super::{
+    BoxConditionalTransformer,
+    BoxTransformer,
+    Predicate,
+    Transformer,
+};
 use crate::transformers::macros::impl_transformer_fn_ops_trait;
 
 // ============================================================================

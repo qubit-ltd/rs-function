@@ -71,8 +71,6 @@ fn test_local_box_runnable_once_and_then_supports_local_next_task() {
     assert_eq!(events.get(), 2);
 }
 
-
-
 #[test]
 fn test_local_box_runnable_once_then_callable_supports_local_callable() {
     let text = Rc::new(String::from("value"));

@@ -35,12 +35,17 @@
 //! initialization callbacks, cleanup callbacks, and similar scenarios.
 
 use crate::consumers::macros::{
-    impl_box_conditional_consumer, impl_box_consumer_methods,
-    impl_conditional_consumer_debug_display, impl_consumer_common_methods,
+    impl_box_conditional_consumer,
+    impl_box_consumer_methods,
+    impl_conditional_consumer_debug_display,
+    impl_consumer_common_methods,
     impl_consumer_debug_display,
 };
-use crate::macros::{ impl_closure_once_trait};
-use crate::predicates::predicate::{BoxPredicate, Predicate};
+use crate::macros::impl_closure_once_trait;
+use crate::predicates::predicate::{
+    BoxPredicate,
+    Predicate,
+};
 
 mod box_consumer_once;
 pub use box_consumer_once::BoxConsumerOnce;

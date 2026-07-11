@@ -9,7 +9,11 @@
 //! Defines the `BoxConditionalBiFunction` public type.
 
 use super::{
-    BiFunction, BiPredicate, BoxBiFunction, BoxBiPredicate, impl_box_conditional_function,
+    BiFunction,
+    BiPredicate,
+    BoxBiFunction,
+    BoxBiPredicate,
+    impl_box_conditional_function,
     impl_conditional_function_debug_display,
 };
 

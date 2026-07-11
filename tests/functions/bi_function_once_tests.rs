@@ -46,11 +46,6 @@ fn test_bi_function_once_trait_apply_with_different_types() {
     assert_eq!(multiply.apply(&3, &2.5), 7.5);
 }
 
-
-
-
-
-
 // ============================================================================
 // BoxBiFunctionOnce Tests - Box-based BiFunction Implementation
 // ============================================================================
@@ -168,9 +163,6 @@ fn test_box_bi_function_once_apply() {
     assert_eq!(multiply.apply(&6, &7), 42);
 }
 
-
-
-
 // ============================================================================
 // FnBiFunctionOnceOps Trait Tests - Extension Methods for Closures
 // ============================================================================
@@ -271,10 +263,6 @@ fn test_fn_bi_function_once_ops_when_with_arc_predicate() {
         .or_else(multiply2);
     assert_eq!(conditional2.apply(&-3, &4), 1); // when branch
 }
-
-
-
-
 
 #[test]
 fn test_closure_bi_function_once_and_then() {
@@ -586,12 +574,6 @@ fn test_bi_function_once_with_error_propagation() {
 // ============================================================================
 // Custom BiFunctionOnce Implementation Tests - Test Trait Default Methods
 // ============================================================================
-
-
-
-
-
-
 
 // ============================================================================
 // Performance and Edge Cases

@@ -9,7 +9,11 @@
 //! Defines the `BoxConditionalMutator` public type.
 
 use super::{
-    BoxMutator, BoxPredicate, Mutator, Predicate, impl_box_conditional_mutator,
+    BoxMutator,
+    BoxPredicate,
+    Mutator,
+    Predicate,
+    impl_box_conditional_mutator,
     impl_conditional_mutator_debug_display,
 };
 

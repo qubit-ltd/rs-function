@@ -9,8 +9,12 @@
 //! Defines the `BoxConditionalBiMutatingFunction` public type.
 
 use super::{
-    BiMutatingFunction, BiPredicate, BoxBiMutatingFunction, BoxBiPredicate,
-    impl_box_conditional_function, impl_conditional_function_debug_display,
+    BiMutatingFunction,
+    BiPredicate,
+    BoxBiMutatingFunction,
+    BoxBiPredicate,
+    impl_box_conditional_function,
+    impl_conditional_function_debug_display,
 };
 
 // ============================================================================

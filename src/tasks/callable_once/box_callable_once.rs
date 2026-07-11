@@ -10,7 +10,10 @@
 
 use crate::{
     functions::macros::impl_function_debug_display,
-    macros::{impl_common_name_methods, impl_common_new_methods},
+    macros::{
+        impl_common_name_methods,
+        impl_common_new_methods,
+    },
     suppliers::supplier_once::SupplierOnce,
     tasks::callable_once::CallableOnce,
 };
@@ -48,7 +51,7 @@ pub struct BoxCallableOnce<R, E> {
 
 impl<R, E> BoxCallableOnce<R, E> {
     impl_common_new_methods!(
-        semantic (CallableOnce<R, E> + Send + 'static),
+        semantic(CallableOnce<R, E> + Send + 'static),
         |source| move || source.call(),
         |function| Box::new(function),
         "callable"
@@ -94,7 +97,10 @@ impl<R, E> BoxCallableOnce<R, E> {
     {
         let name = self.name;
         let function = self.function;
-        BoxCallableOnce::new_with_optional_name(move || function().map(mapper), name)
+        BoxCallableOnce::new_with_optional_name(
+            move || function().map(mapper),
+            name,
+        )
     }
 
     /// Maps the error value of this callable.
@@ -115,7 +121,10 @@ impl<R, E> BoxCallableOnce<R, E> {
     {
         let name = self.name;
         let function = self.function;
-        BoxCallableOnce::new_with_optional_name(move || function().map_err(mapper), name)
+        BoxCallableOnce::new_with_optional_name(
+            move || function().map_err(mapper),
+            name,
+        )
     }
 
     /// Chains another fallible computation after this callable succeeds.
@@ -137,7 +146,10 @@ impl<R, E> BoxCallableOnce<R, E> {
     {
         let name = self.name;
         let function = self.function;
-        BoxCallableOnce::new_with_optional_name(move || function().and_then(next), name)
+        BoxCallableOnce::new_with_optional_name(
+            move || function().and_then(next),
+            name,
+        )
     }
 }
 

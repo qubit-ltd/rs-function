@@ -8,7 +8,11 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnBiFunctionOps` public type.
 
-use super::{BiPredicate, BoxBiFunction, BoxConditionalBiFunction};
+use super::{
+    BiPredicate,
+    BoxBiFunction,
+    BoxConditionalBiFunction,
+};
 
 // ============================================================================
 // FnBiFunctionOps - Extension trait for Fn(&T, &U) -> R bi-functions

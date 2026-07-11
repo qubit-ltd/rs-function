@@ -11,8 +11,13 @@
 use std::ops::Not;
 
 use super::{
-    ALWAYS_FALSE_NAME, ALWAYS_TRUE_NAME, BiPredicate, BiPredicateFn, impl_box_predicate_methods,
-    impl_predicate_common_methods, impl_predicate_debug_display,
+    ALWAYS_FALSE_NAME,
+    ALWAYS_TRUE_NAME,
+    BiPredicate,
+    BiPredicateFn,
+    impl_box_predicate_methods,
+    impl_predicate_common_methods,
+    impl_predicate_debug_display,
 };
 
 /// A Box-based bi-predicate with single ownership.
@@ -60,7 +65,9 @@ where
     type Output = BoxBiPredicate<T, U>;
 
     fn not(self) -> Self::Output {
-        BoxBiPredicate::new(move |first: &T, second: &U| !(self.function)(first, second))
+        BoxBiPredicate::new(move |first: &T, second: &U| {
+            !(self.function)(first, second)
+        })
     }
 }
 

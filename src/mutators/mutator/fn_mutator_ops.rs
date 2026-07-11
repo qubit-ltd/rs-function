@@ -8,7 +8,10 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnMutatorOps` public type.
 
-use super::{BoxMutator, Mutator};
+use super::{
+    BoxMutator,
+    Mutator,
+};
 
 // ============================================================================
 // 7. Provide extension methods for closures

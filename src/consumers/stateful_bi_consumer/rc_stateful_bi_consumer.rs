@@ -9,8 +9,14 @@
 //! Defines the `RcStatefulBiConsumer` public type.
 
 use super::{
-    BiPredicate, Rc, RcConditionalStatefulBiConsumer, RefCell, StatefulBiConsumer,
-    impl_consumer_clone, impl_consumer_common_methods, impl_consumer_debug_display,
+    BiPredicate,
+    Rc,
+    RcConditionalStatefulBiConsumer,
+    RefCell,
+    StatefulBiConsumer,
+    impl_consumer_clone,
+    impl_consumer_common_methods,
+    impl_consumer_debug_display,
     impl_shared_consumer_methods,
 };
 

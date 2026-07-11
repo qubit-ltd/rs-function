@@ -40,14 +40,7 @@ impl MutatingFunctionOnce<i32, i32> for TestMutatingFunctionOnce {
 }
 
 #[cfg(test)]
-mod test_mutating_function_once_default_impl {
-
-
-
-
-
-
-}
+mod test_mutating_function_once_default_impl {}
 
 // ============================================================================
 // BoxMutatingFunctionOnce Tests
@@ -289,10 +282,6 @@ mod test_closure {
         assert_eq!(target, vec![0, 1, 2, 3]);
     }
 
-
-
-
-
     #[test]
     fn test_move_semantics() {
         let data = vec![1, 2, 3];
@@ -308,8 +297,6 @@ mod test_closure {
         assert_eq!(old_len, 1);
         assert_eq!(target, vec![0, 1, 2, 3]);
     }
-
-
 }
 
 // ============================================================================

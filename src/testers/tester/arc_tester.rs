@@ -10,7 +10,10 @@
 
 use std::ops::Not;
 
-use super::{Arc, Tester};
+use super::{
+    Arc,
+    Tester,
+};
 
 // ============================================================================
 // ArcTester: Thread-Safe Shared Ownership Implementation

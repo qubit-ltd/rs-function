@@ -11,11 +11,18 @@
 use std::ops::Not;
 
 use super::{
-    ALWAYS_FALSE_NAME, ALWAYS_TRUE_NAME, Arc, Mutex, StatefulPredicate, impl_predicate_clone,
-    impl_predicate_common_methods, impl_predicate_debug_display,
+    ALWAYS_FALSE_NAME,
+    ALWAYS_TRUE_NAME,
+    Arc,
+    Mutex,
+    StatefulPredicate,
+    impl_predicate_clone,
+    impl_predicate_common_methods,
+    impl_predicate_debug_display,
 };
 
-type ArcStatefulPredicateFn<T> = Arc<Mutex<dyn FnMut(&T) -> bool + Send + 'static>>;
+type ArcStatefulPredicateFn<T> =
+    Arc<Mutex<dyn FnMut(&T) -> bool + Send + 'static>>;
 
 /// An Arc-based stateful predicate with thread-safe shared ownership.
 ///

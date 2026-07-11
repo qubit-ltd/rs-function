@@ -9,7 +9,11 @@
 //! Defines the `BoxConditionalConsumer` public type.
 
 use super::{
-    BoxConsumer, BoxPredicate, Consumer, Predicate, impl_box_conditional_consumer,
+    BoxConsumer,
+    BoxPredicate,
+    Consumer,
+    Predicate,
+    impl_box_conditional_consumer,
     impl_conditional_consumer_debug_display,
 };
 
@@ -72,7 +76,11 @@ pub struct BoxConditionalConsumer<T> {
 }
 
 // Use macro to generate conditional consumer implementations
-impl_box_conditional_consumer!(BoxConditionalConsumer<T>, BoxConsumer, Consumer);
+impl_box_conditional_consumer!(
+    BoxConditionalConsumer<T>,
+    BoxConsumer,
+    Consumer
+);
 
 // Consumer trait implementation
 impl<T> Consumer<T> for BoxConditionalConsumer<T> {

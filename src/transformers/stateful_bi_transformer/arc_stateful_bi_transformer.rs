@@ -9,9 +9,17 @@
 //! Defines the `ArcStatefulBiTransformer` public type.
 
 use super::{
-    Arc, ArcConditionalStatefulBiTransformer, BiPredicate, Mutex, StatefulBiTransformer,
-    StatefulTransformer, impl_closure_trait, impl_shared_transformer_methods,
-    impl_transformer_clone, impl_transformer_common_methods, impl_transformer_constant_method,
+    Arc,
+    ArcConditionalStatefulBiTransformer,
+    BiPredicate,
+    Mutex,
+    StatefulBiTransformer,
+    StatefulTransformer,
+    impl_closure_trait,
+    impl_shared_transformer_methods,
+    impl_transformer_clone,
+    impl_transformer_common_methods,
+    impl_transformer_constant_method,
     impl_transformer_debug_display,
 };
 
@@ -63,7 +71,9 @@ impl_transformer_debug_display!(ArcStatefulBiTransformer<T, U, R>);
 impl_transformer_clone!(ArcStatefulBiTransformer<T, U, R>);
 
 // Implement StatefulBiTransformer trait for ArcStatefulBiTransformer
-impl<T, U, R> StatefulBiTransformer<T, U, R> for ArcStatefulBiTransformer<T, U, R> {
+impl<T, U, R> StatefulBiTransformer<T, U, R>
+    for ArcStatefulBiTransformer<T, U, R>
+{
     fn apply(&mut self, first: T, second: U) -> R {
         let mut func = self.function.lock();
         func(first, second)

@@ -32,7 +32,6 @@ use std::sync::{
 // BoxConsumer Tests
 // ============================================================================
 
-
 #[cfg(test)]
 mod test_box_consumer {
     use super::{
@@ -271,9 +270,6 @@ mod test_box_consumer {
         let display_str = format!("{}", consumer);
         assert_eq!(display_str, "BoxStatefulConsumer(my_consumer)");
     }
-
-
-
 }
 
 // ============================================================================
@@ -435,10 +431,6 @@ mod test_arc_consumer {
         assert_eq!(display_str, "ArcStatefulConsumer(my_consumer)");
     }
 
-
-
-
-
     // ============================================================================
     // ArcConsumer ConsumerOnce Tests
     // ============================================================================
@@ -491,10 +483,6 @@ mod test_arc_consumer {
         consumer.accept(&flag);
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), "true");
     }
-
-
-
-
 
     #[test]
     fn test_consumer_once_with_state_modification() {
@@ -758,9 +746,6 @@ mod test_rc_consumer {
         assert_eq!(display_str, "RcStatefulConsumer(my_consumer)");
     }
 
-
-
-
     // Test into_box() preserves name
 
     // Test into_box() with no name
@@ -782,7 +767,6 @@ mod test_conversions {
         RefCell,
         StatefulConsumer,
     };
-
 
     // RcConsumer cannot be converted to ArcConsumer because Rc is not Send
 
@@ -833,10 +817,6 @@ mod test_conversions {
         consumer.accept(&flag);
         assert_eq!(*log.borrow(), "true");
     }
-
-
-
-
 
     #[test]
     fn test_consumer_once_with_state_modification() {
@@ -967,18 +947,10 @@ mod test_fn_consumer_ops {
         );
     }
 
-
-
-
-
     // Test closure's to_xxx methods
     // Note: Only Clone closures can use to_xxx methods
     // Since standard closures do not implement Clone, we use function pointers
     // (function pointers implement Clone)
-
-
-
-
 }
 
 // ============================================================================
@@ -1082,11 +1054,7 @@ mod test_consumer_names {
 // ============================================================================
 
 #[cfg(test)]
-mod test_to_fn {
-
-
-
-}
+mod test_to_fn {}
 
 // ============================================================================
 // Edge Cases Tests
@@ -1233,9 +1201,6 @@ mod test_edge_cases {
         );
     }
 
-
-
-
     #[test]
     fn test_box_conditional_and_then() {
         let log = Arc::new(Mutex::new(Vec::new()));
@@ -1295,10 +1260,6 @@ mod test_edge_cases {
             vec![5, 10]
         );
     }
-
-
-
-
 
     #[test]
     fn test_arc_conditional_or_else() {
@@ -1372,9 +1333,6 @@ mod test_edge_cases {
         assert_eq!(*log.borrow(), vec![5, 10]);
     }
 
-
-
-
     #[test]
     fn test_rc_conditional_or_else() {
         let log = Rc::new(RefCell::new(Vec::new()));
@@ -1442,12 +1400,7 @@ mod test_default_into_implementations {
         // Use default implementations
     }
 
-
-
-
-
     // Test custom Consumer composition with other Consumers
-
 
     // Define a stateful custom Consumer
     struct StatefulConsumerImpl {
@@ -1465,14 +1418,8 @@ mod test_default_into_implementations {
         }
     }
 
-
-
-
-
     // Test thread-safe custom Consumer
 }
-
-
 
 // ============================================================================
 // Closure to_xxx Tests - Testing closure's Consumer trait implementation
@@ -1489,17 +1436,6 @@ mod test_closure_to_methods {
 
     // Note: closures must implement Clone to use to_xxx methods
     // We need to use cloneable closures or wrapper types
-
-
-
-
-
-
-
-
-
-
-
 
     // ============================================================================
     // BoxConsumer ConsumerOnce Tests
@@ -1553,8 +1489,6 @@ mod test_closure_to_methods {
         consumer.accept(&flag);
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), "true");
     }
-
-
 
     #[test]
     fn test_consumer_once_with_state_modification() {
@@ -1610,9 +1544,6 @@ mod consumer_once_trait_tests {
         consumer.accept(value);
     }
 
-
-
-
     #[test]
     fn test_box_consumer_accept_once() {
         let log = Arc::new(Mutex::new(Vec::new()));
@@ -1654,12 +1585,6 @@ mod consumer_once_trait_tests {
         consumer.accept(&15);
         assert_eq!(*log.borrow(), vec![10]);
     }
-
-
-
-
-
-
 }
 
 // ============================================================================
@@ -1667,16 +1592,7 @@ mod consumer_once_trait_tests {
 // ============================================================================
 
 #[cfg(test)]
-mod test_closure_stateful_consumer_into_methods {
-
-
-
-
-
-
-
-
-}
+mod test_closure_stateful_consumer_into_methods {}
 
 // ============================================================================
 // FnStatefulConsumerOps and_then Tests
@@ -1885,10 +1801,4 @@ mod custom_struct_tests {
             }
         }
     }
-
-
-
-
-
-
 }

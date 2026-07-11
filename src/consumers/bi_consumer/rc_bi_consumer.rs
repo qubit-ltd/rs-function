@@ -9,8 +9,15 @@
 //! Defines the `RcBiConsumer` public type.
 
 use super::{
-    BiConsumer, BiConsumerFn, BiPredicate, Rc, RcConditionalBiConsumer, impl_consumer_clone,
-    impl_consumer_common_methods, impl_consumer_debug_display, impl_shared_consumer_methods,
+    BiConsumer,
+    BiConsumerFn,
+    BiPredicate,
+    Rc,
+    RcConditionalBiConsumer,
+    impl_consumer_clone,
+    impl_consumer_common_methods,
+    impl_consumer_debug_display,
+    impl_shared_consumer_methods,
 };
 
 // =======================================================================

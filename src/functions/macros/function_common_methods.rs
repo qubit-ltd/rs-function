@@ -132,31 +132,81 @@ macro_rules! impl_function_common_methods {
 pub(crate) use impl_function_common_methods;
 
 macro_rules! impl_function_new_callback {
-    ($_trait:ident, BoxMutatingFunction, $t:ident, |$v:ident| $body:block) => { BoxMutatingFunction::new(move |$v: &mut $t| $body) };
-    ($_trait:ident, RcMutatingFunction, $t:ident, |$v:ident| $body:block) => { RcMutatingFunction::new(move |$v: &mut $t| $body) };
-    ($_trait:ident, ArcMutatingFunction, $t:ident, |$v:ident| $body:block) => { ArcMutatingFunction::new(move |$v: &mut $t| $body) };
-    ($_trait:ident, BoxStatefulMutatingFunction, $t:ident, |$v:ident| $body:block) => { BoxStatefulMutatingFunction::new(move |$v: &mut $t| $body) };
-    ($_trait:ident, RcStatefulMutatingFunction, $t:ident, |$v:ident| $body:block) => { RcStatefulMutatingFunction::new(move |$v: &mut $t| $body) };
-    ($_trait:ident, ArcStatefulMutatingFunction, $t:ident, |$v:ident| $body:block) => { ArcStatefulMutatingFunction::new(move |$v: &mut $t| $body) };
-    ($_trait:ident, BoxMutatingFunctionOnce, $t:ident, |$v:ident| $body:block) => { BoxMutatingFunctionOnce::new(move |$v: &mut $t| $body) };
-    ($_trait:ident, BoxBiFunction, $t:ident, $u:ident, |$a:ident, $b:ident| $body:block) => { BoxBiFunction::new(move |$a: &$t, $b: &$u| $body) };
-    ($_trait:ident, RcBiFunction, $t:ident, $u:ident, |$a:ident, $b:ident| $body:block) => { RcBiFunction::new(move |$a: &$t, $b: &$u| $body) };
-    ($_trait:ident, ArcBiFunction, $t:ident, $u:ident, |$a:ident, $b:ident| $body:block) => { ArcBiFunction::new(move |$a: &$t, $b: &$u| $body) };
-    ($_trait:ident, BoxBiFunctionOnce, $t:ident, $u:ident, |$a:ident, $b:ident| $body:block) => { BoxBiFunctionOnce::new(move |$a: &$t, $b: &$u| $body) };
-    ($_trait:ident, BoxBiMutatingFunction, $t:ident, $u:ident, |$a:ident, $b:ident| $body:block) => { BoxBiMutatingFunction::new(move |$a: &mut $t, $b: &mut $u| $body) };
-    ($_trait:ident, RcBiMutatingFunction, $t:ident, $u:ident, |$a:ident, $b:ident| $body:block) => { RcBiMutatingFunction::new(move |$a: &mut $t, $b: &mut $u| $body) };
-    ($_trait:ident, ArcBiMutatingFunction, $t:ident, $u:ident, |$a:ident, $b:ident| $body:block) => { ArcBiMutatingFunction::new(move |$a: &mut $t, $b: &mut $u| $body) };
-    ($_trait:ident, BoxBiMutatingFunctionOnce, $t:ident, $u:ident, |$a:ident, $b:ident| $body:block) => { BoxBiMutatingFunctionOnce::new(move |$a: &mut $t, $b: &mut $u| $body) };
-    (Function, $wrapper:ident, $t:ident, |$value:ident| $body:block) => { $wrapper::new(move |$value: &$t| $body) };
-    (StatefulFunction, $wrapper:ident, $t:ident, |$value:ident| $body:block) => { $wrapper::new(move |$value: &$t| $body) };
-    (FunctionOnce, $wrapper:ident, $t:ident, |$value:ident| $body:block) => { $wrapper::new(move |$value: &$t| $body) };
-    (MutatingFunction, $wrapper:ident, $t:ident, |$value:ident| $body:block) => { $wrapper::new(move |$value: &mut $t| $body) };
-    (StatefulMutatingFunction, $wrapper:ident, $t:ident, |$value:ident| $body:block) => { $wrapper::new(move |$value: &mut $t| $body) };
-    (MutatingFunctionOnce, $wrapper:ident, $t:ident, |$value:ident| $body:block) => { $wrapper::new(move |$value: &mut $t| $body) };
-    (BiFunction, $wrapper:ident, $t:ident, $u:ident, |$first:ident, $second:ident| $body:block) => { $wrapper::new(move |$first: &$t, $second: &$u| $body) };
-    (BiFunctionOnce, $wrapper:ident, $t:ident, $u:ident, |$first:ident, $second:ident| $body:block) => { $wrapper::new(move |$first: &$t, $second: &$u| $body) };
-    (BiMutatingFunction, $wrapper:ident, $t:ident, $u:ident, |$first:ident, $second:ident| $body:block) => { $wrapper::new(move |$first: &mut $t, $second: &mut $u| $body) };
-    (BiMutatingFunctionOnce, $wrapper:ident, $t:ident, $u:ident, |$first:ident, $second:ident| $body:block) => { $wrapper::new(move |$first: &mut $t, $second: &mut $u| $body) };
+    ($_trait:ident, BoxMutatingFunction, $t:ident, |$v:ident| $body:block) => {
+        BoxMutatingFunction::new(move |$v: &mut $t| $body)
+    };
+    ($_trait:ident, RcMutatingFunction, $t:ident, |$v:ident| $body:block) => {
+        RcMutatingFunction::new(move |$v: &mut $t| $body)
+    };
+    ($_trait:ident, ArcMutatingFunction, $t:ident, |$v:ident| $body:block) => {
+        ArcMutatingFunction::new(move |$v: &mut $t| $body)
+    };
+    ($_trait:ident, BoxStatefulMutatingFunction, $t:ident, |$v:ident| $body:block) => {
+        BoxStatefulMutatingFunction::new(move |$v: &mut $t| $body)
+    };
+    ($_trait:ident, RcStatefulMutatingFunction, $t:ident, |$v:ident| $body:block) => {
+        RcStatefulMutatingFunction::new(move |$v: &mut $t| $body)
+    };
+    ($_trait:ident, ArcStatefulMutatingFunction, $t:ident, |$v:ident| $body:block) => {
+        ArcStatefulMutatingFunction::new(move |$v: &mut $t| $body)
+    };
+    ($_trait:ident, BoxMutatingFunctionOnce, $t:ident, |$v:ident| $body:block) => {
+        BoxMutatingFunctionOnce::new(move |$v: &mut $t| $body)
+    };
+    ($_trait:ident, BoxBiFunction, $t:ident, $u:ident, |$a:ident, $b:ident| $body:block) => {
+        BoxBiFunction::new(move |$a: &$t, $b: &$u| $body)
+    };
+    ($_trait:ident, RcBiFunction, $t:ident, $u:ident, |$a:ident, $b:ident| $body:block) => {
+        RcBiFunction::new(move |$a: &$t, $b: &$u| $body)
+    };
+    ($_trait:ident, ArcBiFunction, $t:ident, $u:ident, |$a:ident, $b:ident| $body:block) => {
+        ArcBiFunction::new(move |$a: &$t, $b: &$u| $body)
+    };
+    ($_trait:ident, BoxBiFunctionOnce, $t:ident, $u:ident, |$a:ident, $b:ident| $body:block) => {
+        BoxBiFunctionOnce::new(move |$a: &$t, $b: &$u| $body)
+    };
+    ($_trait:ident, BoxBiMutatingFunction, $t:ident, $u:ident, |$a:ident, $b:ident| $body:block) => {
+        BoxBiMutatingFunction::new(move |$a: &mut $t, $b: &mut $u| $body)
+    };
+    ($_trait:ident, RcBiMutatingFunction, $t:ident, $u:ident, |$a:ident, $b:ident| $body:block) => {
+        RcBiMutatingFunction::new(move |$a: &mut $t, $b: &mut $u| $body)
+    };
+    ($_trait:ident, ArcBiMutatingFunction, $t:ident, $u:ident, |$a:ident, $b:ident| $body:block) => {
+        ArcBiMutatingFunction::new(move |$a: &mut $t, $b: &mut $u| $body)
+    };
+    ($_trait:ident, BoxBiMutatingFunctionOnce, $t:ident, $u:ident, |$a:ident, $b:ident| $body:block) => {
+        BoxBiMutatingFunctionOnce::new(move |$a: &mut $t, $b: &mut $u| $body)
+    };
+    (Function, $wrapper:ident, $t:ident, |$value:ident| $body:block) => {
+        $wrapper::new(move |$value: &$t| $body)
+    };
+    (StatefulFunction, $wrapper:ident, $t:ident, |$value:ident| $body:block) => {
+        $wrapper::new(move |$value: &$t| $body)
+    };
+    (FunctionOnce, $wrapper:ident, $t:ident, |$value:ident| $body:block) => {
+        $wrapper::new(move |$value: &$t| $body)
+    };
+    (MutatingFunction, $wrapper:ident, $t:ident, |$value:ident| $body:block) => {
+        $wrapper::new(move |$value: &mut $t| $body)
+    };
+    (StatefulMutatingFunction, $wrapper:ident, $t:ident, |$value:ident| $body:block) => {
+        $wrapper::new(move |$value: &mut $t| $body)
+    };
+    (MutatingFunctionOnce, $wrapper:ident, $t:ident, |$value:ident| $body:block) => {
+        $wrapper::new(move |$value: &mut $t| $body)
+    };
+    (BiFunction, $wrapper:ident, $t:ident, $u:ident, |$first:ident, $second:ident| $body:block) => {
+        $wrapper::new(move |$first: &$t, $second: &$u| $body)
+    };
+    (BiFunctionOnce, $wrapper:ident, $t:ident, $u:ident, |$first:ident, $second:ident| $body:block) => {
+        $wrapper::new(move |$first: &$t, $second: &$u| $body)
+    };
+    (BiMutatingFunction, $wrapper:ident, $t:ident, $u:ident, |$first:ident, $second:ident| $body:block) => {
+        $wrapper::new(move |$first: &mut $t, $second: &mut $u| $body)
+    };
+    (BiMutatingFunctionOnce, $wrapper:ident, $t:ident, $u:ident, |$first:ident, $second:ident| $body:block) => {
+        $wrapper::new(move |$first: &mut $t, $second: &mut $u| $body)
+    };
 }
 
 pub(crate) use impl_function_new_callback;

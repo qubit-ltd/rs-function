@@ -9,9 +9,18 @@
 //! Defines the `ArcStatefulMutatingFunction` public type.
 
 use super::{
-    Arc, ArcConditionalStatefulMutatingFunction, ArcStatefulMutatingFunctionFn, Function, Mutex,
-    Predicate, StatefulMutatingFunction, impl_function_clone, impl_function_common_methods,
-    impl_function_debug_display, impl_function_identity_method, impl_shared_function_methods,
+    Arc,
+    ArcConditionalStatefulMutatingFunction,
+    ArcStatefulMutatingFunctionFn,
+    Function,
+    Mutex,
+    Predicate,
+    StatefulMutatingFunction,
+    impl_function_clone,
+    impl_function_common_methods,
+    impl_function_debug_display,
+    impl_function_identity_method,
+    impl_shared_function_methods,
 };
 
 // =======================================================================
@@ -95,7 +104,9 @@ impl_function_identity_method!(ArcStatefulMutatingFunction<T, T>, mutating);
 
 // Implement StatefulMutatingFunction trait for ArcStatefulMutatingFunction<T,
 // R>
-impl<T, R> StatefulMutatingFunction<T, R> for ArcStatefulMutatingFunction<T, R> {
+impl<T, R> StatefulMutatingFunction<T, R>
+    for ArcStatefulMutatingFunction<T, R>
+{
     fn apply(&mut self, t: &mut T) -> R {
         (self.function.lock())(t)
     }

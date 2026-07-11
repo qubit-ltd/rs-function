@@ -25,14 +25,12 @@ use std::thread;
 // Supplier Trait Tests (for closures)
 // ======================================================================
 
-
 #[cfg(test)]
 mod test_stateless_supplier_trait {
     use super::{
         BoxSupplier,
         Supplier,
     };
-
 
     #[test]
     fn test_closure_stateless() {
@@ -42,9 +40,6 @@ mod test_stateless_supplier_trait {
         assert_eq!(boxed.get(), 42);
         assert_eq!(boxed.get(), 42);
     }
-
-
-
 
     #[test]
     fn test_closure_get() {
@@ -65,9 +60,6 @@ mod test_stateless_supplier_trait {
         assert_eq!(closure.get(), 200);
         assert_eq!(closure.get(), 200);
     }
-
-
-
 }
 
 // ======================================================================
@@ -239,11 +231,6 @@ mod test_box_stateless_supplier {
             let supplier = BoxSupplier::new(|| 42);
             assert_eq!(supplier.get(), 42);
         }
-
-
-
-
-
 
         // Note: test_into_arc is not included here because
         // BoxSupplier cannot be converted to
@@ -491,13 +478,6 @@ mod test_arc_stateless_supplier {
             let supplier = ArcSupplier::new(|| 42);
             assert_eq!(supplier.get(), 42);
         }
-
-
-
-
-
-
-
     }
 }
 
@@ -685,11 +665,6 @@ mod test_rc_stateless_supplier {
             assert_eq!(supplier.get(), 42);
         }
 
-
-
-
-
-
         // Note: test_into_arc is not included here because
         // RcSupplier cannot be converted to
         // ArcSupplier (Rc is not Send + Sync). This is
@@ -779,7 +754,6 @@ mod test_integration {
 
         assert_eq!(pipeline.get(), Some(String::from("20")));
     }
-
 }
 
 // ======================================================================
@@ -1234,21 +1208,6 @@ mod test_custom_stateless_supplier_default_impl {
         assert_eq!(supplier.get(), 42);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     // Implement Clone for CounterSupplier to enable to_* methods
     impl Clone for CounterSupplier {
         fn clone(&self) -> Self {
@@ -1264,31 +1223,17 @@ mod test_custom_stateless_supplier_default_impl {
 #[cfg(test)]
 mod test_to_methods {
 
-
     // ============================================================
     // Tests for ArcSupplier to_* methods
     // ============================================================
 
-    mod test_arc_stateless_supplier_to_methods {
-
-
-
-
-
-
-
-    }
+    mod test_arc_stateless_supplier_to_methods {}
 
     // ============================================================
     // Tests for RcSupplier to_* methods
     // ============================================================
 
     mod test_rc_stateless_supplier_to_methods {
-
-
-
-
-
 
         // Note: to_arc is not implemented for RcSupplier
         // because Rc is not Send + Sync. If you try to call it,
@@ -1299,15 +1244,7 @@ mod test_to_methods {
     // Tests for Closure to_* methods
     // ============================================================
 
-    mod test_closure_to_methods {
-
-
-
-
-
-
-
-    }
+    mod test_closure_to_methods {}
 }
 
 // ======================================================================
@@ -1460,10 +1397,4 @@ mod test_supplier_debug_display {
 // ============================================================================
 
 #[cfg(test)]
-mod test_supplier_trait_default_methods {
-
-
-
-
-
-}
+mod test_supplier_trait_default_methods {}

@@ -9,8 +9,14 @@
 //! Defines the `RcTransformer` public type.
 
 use super::{
-    Predicate, Rc, RcConditionalTransformer, Transformer, impl_shared_transformer_methods,
-    impl_transformer_clone, impl_transformer_common_methods, impl_transformer_constant_method,
+    Predicate,
+    Rc,
+    RcConditionalTransformer,
+    Transformer,
+    impl_shared_transformer_methods,
+    impl_transformer_clone,
+    impl_transformer_common_methods,
+    impl_transformer_constant_method,
     impl_transformer_debug_display,
 };
 

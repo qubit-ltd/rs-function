@@ -9,9 +9,16 @@
 //! Defines the `ArcStatefulBiConsumer` public type.
 
 use super::{
-    Arc, ArcConditionalStatefulBiConsumer, BiPredicate, Mutex, StatefulBiConsumer,
-    impl_closure_trait, impl_consumer_clone, impl_consumer_common_methods,
-    impl_consumer_debug_display, impl_shared_consumer_methods,
+    Arc,
+    ArcConditionalStatefulBiConsumer,
+    BiPredicate,
+    Mutex,
+    StatefulBiConsumer,
+    impl_closure_trait,
+    impl_consumer_clone,
+    impl_consumer_common_methods,
+    impl_consumer_debug_display,
+    impl_shared_consumer_methods,
 };
 
 type ArcStatefulBiConsumerFn<T, U> = Arc<Mutex<dyn FnMut(&T, &U) + Send>>;

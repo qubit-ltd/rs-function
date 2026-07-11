@@ -122,8 +122,11 @@ use std::sync::Arc;
 
 use crate::predicates::predicate::Predicate;
 use crate::suppliers::macros::{
-    impl_box_supplier_methods, impl_shared_supplier_methods, impl_supplier_clone,
-    impl_supplier_common_methods, impl_supplier_debug_display,
+    impl_box_supplier_methods,
+    impl_shared_supplier_methods,
+    impl_supplier_clone,
+    impl_supplier_common_methods,
+    impl_supplier_debug_display,
 };
 use crate::transformers::transformer::Transformer;
 

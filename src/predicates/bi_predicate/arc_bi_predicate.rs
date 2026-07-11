@@ -11,8 +11,14 @@
 use std::ops::Not;
 
 use super::{
-    ALWAYS_FALSE_NAME, ALWAYS_TRUE_NAME, Arc, BiPredicate, SendSyncBiPredicateFn,
-    impl_predicate_clone, impl_predicate_common_methods, impl_predicate_debug_display,
+    ALWAYS_FALSE_NAME,
+    ALWAYS_TRUE_NAME,
+    Arc,
+    BiPredicate,
+    SendSyncBiPredicateFn,
+    impl_predicate_clone,
+    impl_predicate_common_methods,
+    impl_predicate_debug_display,
     impl_shared_predicate_methods,
 };
 
@@ -72,7 +78,9 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function;
-        ArcBiPredicate::new(move |first: &T, second: &U| !function(first, second))
+        ArcBiPredicate::new(move |first: &T, second: &U| {
+            !function(first, second)
+        })
     }
 }
 
@@ -85,7 +93,9 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function.clone();
-        ArcBiPredicate::new(move |first: &T, second: &U| !function(first, second))
+        ArcBiPredicate::new(move |first: &T, second: &U| {
+            !function(first, second)
+        })
     }
 }
 

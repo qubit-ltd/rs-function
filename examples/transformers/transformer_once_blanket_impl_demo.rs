@@ -8,7 +8,10 @@
 
 //! Demonstrates FnOnce -> TransformerOnce blanket implementations
 
-use qubit_function::{BoxTransformerOnce, TransformerOnce};
+use qubit_function::{
+    BoxTransformerOnce,
+    TransformerOnce,
+};
 
 fn main() {
     println!("=== Testing FnOnce -> TransformerOnce ===");

@@ -9,9 +9,16 @@
 //! Defines the `ArcTransformer` public type.
 
 use super::{
-    Arc, ArcConditionalTransformer, Predicate, Transformer, impl_closure_trait,
-    impl_shared_transformer_methods, impl_transformer_clone, impl_transformer_common_methods,
-    impl_transformer_constant_method, impl_transformer_debug_display,
+    Arc,
+    ArcConditionalTransformer,
+    Predicate,
+    Transformer,
+    impl_closure_trait,
+    impl_shared_transformer_methods,
+    impl_transformer_clone,
+    impl_transformer_common_methods,
+    impl_transformer_constant_method,
+    impl_transformer_debug_display,
 };
 
 // ============================================================================
