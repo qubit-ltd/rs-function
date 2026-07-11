@@ -36,8 +36,7 @@ pub use rc_tester::RcTester;
 /// - **Uses `&self`**: Matches `Fn() -> bool` and does not require mutable
 ///   access to its own state
 /// - **Repeatable calls**: The same Tester can call `test()` multiple times
-/// - **Stateless closure shape**: For `FnMut() -> bool`, use
-///   [`StatefulTester`](super::stateful_tester::StatefulTester)
+/// - **Stateless closure shape**: For `FnMut() -> bool`, use `StatefulTester`
 ///
 /// # Use Cases
 ///

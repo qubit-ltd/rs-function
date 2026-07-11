@@ -28,7 +28,7 @@
 //!      one-time use scenarios
 //!    - [`ArcComparator<T>`]: Arc-based thread-safe shared ownership
 //!      implementation for multi-threaded scenarios
-//!    - [`RcComparator<T>`]: Rc-based single-threaded shared ownership
+//!    - `RcComparator<T>`: Rc-based single-threaded shared ownership
 //!      implementation for single-threaded reuse
 //!
 //! 3. **Specialized Composition Methods**: Each struct implements its own
@@ -54,7 +54,7 @@
 //! |:-----|:----------|:---------|:------------|:----|:---------|
 //! | [`BoxComparator`] | Single | ❌ | ❌ | consumes `self` | One-time |
 //! | [`ArcComparator`] | Shared | ✅ | ✅ | borrows `&self` | Multi-thread |
-//! | [`RcComparator`] | Shared | ✅ | ❌ | borrows `&self` | Single-thread |
+//! | `RcComparator` | Shared | ✅ | ❌ | borrows `&self` | Single-thread |
 //!
 //! ## Key Design Advantages
 //!

@@ -19,7 +19,7 @@
 //! for the `Arc` implementation.
 //!
 //! For generators that need mutable internal state, such as counters
-//! or sequences, use [`StatefulSupplier`](crate::StatefulSupplier).
+//! or sequences, use `StatefulSupplier`.
 //!
 //! # Key Differences from StatefulSupplier
 //!

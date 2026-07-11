@@ -43,7 +43,7 @@ pub use arc_runnable::ArcRunnable;
 ///
 /// Each call borrows `self` mutably and returns [`Result::Ok`] with unit or
 /// [`Result::Err`] with `E`. Semantically, this is a specialization of
-/// [`SupplierOnce`](crate::suppliers::SupplierOnce)`<Result<(), E>>` for
+/// `SupplierOnce``<Result<(), E>>` for
 /// executable actions and deferred side effects.
 ///
 /// The trait does not require [`Send`]. Concurrent executors should require
