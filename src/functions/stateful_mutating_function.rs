@@ -271,6 +271,15 @@ pub trait StatefulMutatingFunction<T, R> {
     fn apply(&mut self, t: &mut T) -> R;
 }
 
+impl<T, R, F> StatefulMutatingFunction<T, R> for F
+where
+    F: FnMut(&mut T) -> R,
+{
+    fn apply(&mut self, t: &mut T) -> R {
+        self(t)
+    }
+}
+
 // =======================================================================
 // 2. Type Aliases
 // =======================================================================

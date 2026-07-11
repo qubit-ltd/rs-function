@@ -99,6 +99,17 @@
 /// * `name()` - Gets the name of the supplier
 /// * `set_name()` - Sets the name of the supplier
 /// * `constant()` - Creates a supplier that returns a constant value
+macro_rules! impl_supplier_new_methods {
+    (BoxSupplier<$t:ident>, |$f:ident| $wrapper:expr) => { $crate::suppliers::macros::impl_supplier_new_methods!(@shared Supplier, $t, ('static), |$f| $wrapper); };
+    (RcSupplier<$t:ident>, |$f:ident| $wrapper:expr) => { $crate::suppliers::macros::impl_supplier_new_methods!(@shared Supplier, $t, ('static), |$f| $wrapper); };
+    (BoxStatefulSupplier<$t:ident>, |$f:ident| $wrapper:expr) => { $crate::suppliers::macros::impl_supplier_new_methods!(@stateful StatefulSupplier, $t, ('static), |$f| $wrapper); };
+    (RcStatefulSupplier<$t:ident>, |$f:ident| $wrapper:expr) => { $crate::suppliers::macros::impl_supplier_new_methods!(@stateful StatefulSupplier, $t, ('static), |$f| $wrapper); };
+    (BoxSupplierOnce<$t:ident>, |$f:ident| $wrapper:expr) => { $crate::suppliers::macros::impl_supplier_new_methods!(@once SupplierOnce, $t, ('static), |$f| $wrapper); };
+    (@shared $trait:ident, $t:ident, ($($bounds:tt)+), |$f:ident| $wrapper:expr) => { crate::macros::impl_common_new_methods!(semantic ($trait<$t> + $($bounds)+), |source| move || source.get(), |$f| $wrapper, "supplier"); };
+    (@stateful $trait:ident, $t:ident, ($($bounds:tt)+), |$f:ident| $wrapper:expr) => { crate::macros::impl_common_new_methods!(semantic_mut ($trait<$t> + $($bounds)+), |source| move || source.get(), |$f| $wrapper, "supplier"); };
+    (@once $trait:ident, $t:ident, ($($bounds:tt)+), |$f:ident| $wrapper:expr) => { crate::macros::impl_common_new_methods!(semantic ($trait<$t> + $($bounds)+), |source| move || source.get(), |$f| $wrapper, "supplier"); };
+}
+
 macro_rules! impl_supplier_common_methods {
     // Single generic parameter - Supplier types
     (
@@ -106,11 +117,7 @@ macro_rules! impl_supplier_common_methods {
         ($($fn_trait_with_bounds:tt)+),
         |$f:ident| $wrapper_expr:expr
     ) => {
-        crate::macros::impl_common_new_methods!(
-            ($($fn_trait_with_bounds)+),
-            |$f| $wrapper_expr,
-            "supplier"
-        );
+        $crate::suppliers::macros::impl_supplier_new_methods!($struct_name<$t>, |$f| $wrapper_expr);
 
         crate::macros::impl_common_name_methods!("supplier");
 
@@ -137,3 +144,4 @@ macro_rules! impl_supplier_common_methods {
 }
 
 pub(crate) use impl_supplier_common_methods;
+pub(crate) use impl_supplier_new_methods;

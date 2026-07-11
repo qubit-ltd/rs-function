@@ -90,7 +90,8 @@ impl<T> ArcStatefulSupplier<T> {
     // Generates: new(), new_with_name(), name(), set_name()
     // Note: constant() is NOT generated here, implemented separately below
     crate::macros::impl_common_new_methods!(
-        (FnMut() -> T + Send + 'static),
+        semantic_mut (StatefulSupplier<T> + Send + 'static),
+        |source| move || source.get(),
         |f| Arc::new(Mutex::new(f)),
         "supplier"
     );

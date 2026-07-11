@@ -88,7 +88,7 @@ pub trait FnMutatorOnceOps<T>: FnOnce(&mut T) + Sized {
         C: MutatorOnce<T> + 'static,
         T: 'static,
     {
-        BoxMutatorOnce::new(move |t| {
+        BoxMutatorOnce::new(move |t: &mut T| {
             self(t);
             next.apply(t);
         })

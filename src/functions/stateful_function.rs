@@ -80,3 +80,12 @@ pub trait StatefulFunction<T, R> {
     /// The transformed output value
     fn apply(&mut self, t: &T) -> R;
 }
+
+impl<T, R, F> StatefulFunction<T, R> for F
+where
+    F: FnMut(&T) -> R,
+{
+    fn apply(&mut self, t: &T) -> R {
+        self(t)
+    }
+}

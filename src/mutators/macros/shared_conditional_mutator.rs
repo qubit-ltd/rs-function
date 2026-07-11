@@ -177,7 +177,7 @@ macro_rules! impl_shared_conditional_mutator {
                 let first_predicate = self.predicate.clone();
                 impl_shared_conditional_mutator!(@let_mutator $mutator_trait, first_mutator, self.mutator.clone());
                 impl_shared_conditional_mutator!(@let_mutator $mutator_trait, next, next);
-                $mutator_type::new(move |t| {
+                $mutator_type::new(move |t: &mut $t| {
                     if first_predicate.test(t) {
                         first_mutator.apply(t);
                     }
@@ -205,7 +205,7 @@ macro_rules! impl_shared_conditional_mutator {
                 let predicate = self.predicate.clone();
                 impl_shared_conditional_mutator!(@let_mutator $mutator_trait, then_mutator, self.mutator.clone());
                 impl_shared_conditional_mutator!(@let_mutator $mutator_trait, else_mutator, else_mutator);
-                $mutator_type::new(move |t| {
+                $mutator_type::new(move |t: &mut $t| {
                     if predicate.test(t) {
                         then_mutator.apply(t);
                     } else {
