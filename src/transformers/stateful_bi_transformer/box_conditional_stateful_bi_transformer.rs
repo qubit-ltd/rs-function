@@ -9,8 +9,12 @@
 //! Defines the `BoxConditionalStatefulBiTransformer` public type.
 
 use super::{
-    BiPredicate, BoxBiPredicate, BoxStatefulBiTransformer, StatefulBiTransformer,
-    impl_box_conditional_transformer, impl_conditional_transformer_debug_display,
+    BiPredicate,
+    BoxBiPredicate,
+    BoxStatefulBiTransformer,
+    StatefulBiTransformer,
+    impl_box_conditional_transformer,
+    impl_conditional_transformer_debug_display,
 };
 
 // ============================================================================

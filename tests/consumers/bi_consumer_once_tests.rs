@@ -19,7 +19,6 @@ use std::sync::{
     Mutex,
 };
 
-
 #[cfg(test)]
 mod box_bi_consumer_once_tests {
     use super::{
@@ -139,8 +138,6 @@ mod box_bi_consumer_once_tests {
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
     }
 
-
-
     #[test]
     fn test_name() {
         let mut consumer = BoxBiConsumerOnce::<i32, i32>::noop();
@@ -178,10 +175,6 @@ mod box_bi_consumer_once_tests {
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
     }
 
-
-
-
-
     #[test]
     fn test_conditional_and_then() {
         let log = Arc::new(Mutex::new(Vec::new()));
@@ -204,8 +197,6 @@ mod box_bi_consumer_once_tests {
             vec![8, 15]
         );
     }
-
-
 }
 
 #[cfg(test)]
@@ -252,11 +243,6 @@ mod closure_tests {
             vec![8, 15]
         );
     }
-
-
-
-
-
 }
 
 #[cfg(test)]
@@ -314,8 +300,6 @@ mod type_conversion_tests {
         BiConsumerOnce,
         BoxBiConsumerOnce,
     };
-
-
 
     #[test]
     fn test_when_or_else_conversion() {
@@ -380,12 +364,4 @@ mod default_implementation_tests {
             }
         }
     }
-
-
-
-
-
-
-
-
 }

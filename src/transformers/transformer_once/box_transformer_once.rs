@@ -9,8 +9,13 @@
 //! Defines the `BoxTransformerOnce` public type.
 
 use super::{
-    BoxConditionalTransformerOnce, Predicate, TransformerOnce, impl_box_transformer_methods,
-    impl_closure_once_trait, impl_transformer_common_methods, impl_transformer_constant_method,
+    BoxConditionalTransformerOnce,
+    Predicate,
+    TransformerOnce,
+    impl_box_transformer_methods,
+    impl_closure_once_trait,
+    impl_transformer_common_methods,
+    impl_transformer_constant_method,
     impl_transformer_debug_display,
 };
 

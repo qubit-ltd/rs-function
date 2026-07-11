@@ -9,8 +9,12 @@
 //! Defines the `BoxStatefulMutator` public type.
 
 use super::{
-    BoxConditionalStatefulMutator, Predicate, StatefulMutator, impl_box_mutator_methods,
-    impl_mutator_common_methods, impl_mutator_debug_display,
+    BoxConditionalStatefulMutator,
+    Predicate,
+    StatefulMutator,
+    impl_box_mutator_methods,
+    impl_mutator_common_methods,
+    impl_mutator_debug_display,
 };
 
 // ============================================================================
@@ -63,9 +67,11 @@ pub struct BoxStatefulMutator<T> {
 }
 
 impl<T> BoxStatefulMutator<T> {
-    impl_mutator_common_methods!(BoxStatefulMutator<T>, (FnMut(&mut T) + 'static), |f| {
-        Box::new(f)
-    });
+    impl_mutator_common_methods!(
+        BoxStatefulMutator<T>,
+        (FnMut(&mut T) + 'static),
+        |f| { Box::new(f) }
+    );
 
     // Generate box mutator methods (when, and_then, or_else, etc.)
     impl_box_mutator_methods!(

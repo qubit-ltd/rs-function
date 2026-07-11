@@ -9,8 +9,12 @@
 //! Defines the `RcConditionalBiMutatingFunction` public type.
 
 use super::{
-    BiMutatingFunction, BiPredicate, RcBiMutatingFunction, RcBiPredicate,
-    impl_conditional_function_clone, impl_conditional_function_debug_display,
+    BiMutatingFunction,
+    BiPredicate,
+    RcBiMutatingFunction,
+    RcBiPredicate,
+    impl_conditional_function_clone,
+    impl_conditional_function_debug_display,
     impl_shared_conditional_function,
 };
 

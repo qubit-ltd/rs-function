@@ -21,15 +21,24 @@
 use std::rc::Rc;
 use std::sync::Arc;
 
-use crate::predicates::bi_predicate::{ArcBiPredicate, BiPredicate, BoxBiPredicate};
 #[cfg(feature = "rc")]
 use crate::predicates::bi_predicate::RcBiPredicate;
+use crate::predicates::bi_predicate::{
+    ArcBiPredicate,
+    BiPredicate,
+    BoxBiPredicate,
+};
 use crate::transformers::{
     macros::{
-        impl_box_conditional_transformer, impl_box_transformer_methods,
-        impl_conditional_transformer_clone, impl_conditional_transformer_debug_display,
-        impl_shared_conditional_transformer, impl_shared_transformer_methods,
-        impl_transformer_clone, impl_transformer_common_methods, impl_transformer_constant_method,
+        impl_box_conditional_transformer,
+        impl_box_transformer_methods,
+        impl_conditional_transformer_clone,
+        impl_conditional_transformer_debug_display,
+        impl_shared_conditional_transformer,
+        impl_shared_transformer_methods,
+        impl_transformer_clone,
+        impl_transformer_common_methods,
+        impl_transformer_constant_method,
         impl_transformer_debug_display,
     },
     transformer::Transformer,

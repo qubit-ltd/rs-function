@@ -11,7 +11,10 @@
 use std::ops::Not;
 
 use super::{
-    ALWAYS_FALSE_NAME, ALWAYS_TRUE_NAME, StatefulBiPredicate, impl_predicate_common_methods,
+    ALWAYS_FALSE_NAME,
+    ALWAYS_TRUE_NAME,
+    StatefulBiPredicate,
+    impl_predicate_common_methods,
     impl_predicate_debug_display,
 };
 
@@ -163,7 +166,9 @@ where
     type Output = BoxStatefulBiPredicate<T, U>;
 
     fn not(mut self) -> Self::Output {
-        BoxStatefulBiPredicate::new(move |first: &T, second: &U| !self.test(first, second))
+        BoxStatefulBiPredicate::new(move |first: &T, second: &U| {
+            !self.test(first, second)
+        })
     }
 }
 

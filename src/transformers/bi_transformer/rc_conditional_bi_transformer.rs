@@ -9,8 +9,13 @@
 //! Defines the `RcConditionalBiTransformer` public type.
 
 use super::{
-    BiPredicate, BiTransformer, RcBiPredicate, RcBiTransformer, impl_conditional_transformer_clone,
-    impl_conditional_transformer_debug_display, impl_shared_conditional_transformer,
+    BiPredicate,
+    BiTransformer,
+    RcBiPredicate,
+    RcBiTransformer,
+    impl_conditional_transformer_clone,
+    impl_conditional_transformer_debug_display,
+    impl_shared_conditional_transformer,
 };
 
 // ============================================================================

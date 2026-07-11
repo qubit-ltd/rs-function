@@ -31,7 +31,6 @@ use qubit_function::{
 // StatefulFunction Trait Tests - Core Functionality
 // ============================================================================
 
-
 #[test]
 fn test_stateful_function_trait_apply() {
     // Test that StatefulFunction trait's apply method works correctly
@@ -47,16 +46,6 @@ fn test_stateful_function_trait_apply() {
     assert_eq!(func.clone().apply(&10), 11);
     assert_eq!(func.apply(&10), 12);
 }
-
-
-
-
-
-
-
-
-
-
 
 // ============================================================================
 // BoxStatefulFunction Tests - Constructor and Basic Operations
@@ -178,9 +167,6 @@ fn test_box_stateful_function_when_with_predicate() {
 // ============================================================================
 // BoxStatefulFunction Tests - Type Conversions
 // ============================================================================
-
-
-
 
 // ============================================================================
 // ArcStatefulFunction Tests - Constructor and Basic Operations
@@ -324,14 +310,6 @@ fn test_arc_stateful_function_when_with_predicate() {
 // ============================================================================
 // ArcStatefulFunction Tests - Type Conversions
 // ============================================================================
-
-
-
-
-
-
-
-
 
 // ============================================================================
 // ArcStatefulFunction Tests - Thread Safety
@@ -492,12 +470,6 @@ fn test_rc_stateful_function_when_with_predicate() {
 // ============================================================================
 // RcStatefulFunction Tests - Type Conversions
 // ============================================================================
-
-
-
-
-
-
 
 // ============================================================================
 // Edge Cases and Boundary Tests
@@ -695,14 +667,6 @@ impl StatefulFunction<i32, i32> for CustomStatefulFunction {
         input * self.multiplier
     }
 }
-
-
-
-
-
-
-
-
 
 // ============================================================================
 // ArcConditionalStatefulFunction Clone Tests
@@ -1104,10 +1068,4 @@ fn test_arc_conditional_stateful_function_debug_display() {
 // ============================================================================
 
 #[cfg(test)]
-mod test_stateful_function_trait_default_methods {
-
-
-
-
-
-}
+mod test_stateful_function_trait_default_methods {}

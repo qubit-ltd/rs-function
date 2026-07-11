@@ -9,8 +9,13 @@
 //! Defines the `ArcConditionalMutator` public type.
 
 use super::{
-    ArcMutator, ArcPredicate, Mutator, Predicate, impl_conditional_mutator_clone,
-    impl_conditional_mutator_debug_display, impl_shared_conditional_mutator,
+    ArcMutator,
+    ArcPredicate,
+    Mutator,
+    Predicate,
+    impl_conditional_mutator_clone,
+    impl_conditional_mutator_debug_display,
+    impl_shared_conditional_mutator,
 };
 
 // ============================================================================

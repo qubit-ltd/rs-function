@@ -9,7 +9,10 @@
 //! Defines the `FnStatefulFunctionOps` public type.
 
 use super::{
-    BoxConditionalStatefulFunction, BoxStatefulFunction, Predicate, StatefulFunction,
+    BoxConditionalStatefulFunction,
+    BoxStatefulFunction,
+    Predicate,
+    StatefulFunction,
     impl_fn_ops_trait,
 };
 

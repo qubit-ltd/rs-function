@@ -9,8 +9,12 @@
 //! Defines the `ArcConditionalStatefulBiConsumer` public type.
 
 use super::{
-    ArcBiPredicate, ArcStatefulBiConsumer, BiPredicate, StatefulBiConsumer,
-    impl_conditional_consumer_clone, impl_conditional_consumer_debug_display,
+    ArcBiPredicate,
+    ArcStatefulBiConsumer,
+    BiPredicate,
+    StatefulBiConsumer,
+    impl_conditional_consumer_clone,
+    impl_conditional_consumer_debug_display,
     impl_shared_conditional_consumer,
 };
 

@@ -12,15 +12,22 @@ use std::sync::Arc;
 
 use parking_lot::Mutex;
 
-use crate::{
-    functions::macros::impl_function_debug_display,
-    macros::{impl_common_name_methods, impl_common_new_methods},
-    tasks::callable_with::{BoxCallableWith, CallableWith},
-};
 #[cfg(feature = "rc")]
 use crate::tasks::callable_with::RcCallableWith;
+use crate::{
+    functions::macros::impl_function_debug_display,
+    macros::{
+        impl_common_name_methods,
+        impl_common_new_methods,
+    },
+    tasks::callable_with::{
+        BoxCallableWith,
+        CallableWith,
+    },
+};
 
-type ArcCallableWithFn<T, R, E> = Arc<Mutex<dyn FnMut(&mut T) -> Result<R, E> + Send>>;
+type ArcCallableWithFn<T, R, E> =
+    Arc<Mutex<dyn FnMut(&mut T) -> Result<R, E> + Send>>;
 
 /// Thread-safe shared callable with mutable input.
 ///
@@ -28,10 +35,10 @@ type ArcCallableWithFn<T, R, E> = Arc<Mutex<dyn FnMut(&mut T) -> Result<R, E> + 
 /// `Arc<Mutex<dyn FnMut(&mut T) -> Result<R, E> + Send>>`.
 /// # Locking and reentrancy
 ///
-/// Each call acquires a `parking_lot::Mutex` and holds it while the user callback
-/// runs. Synchronous re-entry through the same shared wrapper deadlocks. The mutex
-/// is not poisoned after a panic, and mutations completed before a panic are not
-/// rolled back.
+/// Each call acquires a `parking_lot::Mutex` and holds it while the user
+/// callback runs. Synchronous re-entry through the same shared wrapper
+/// deadlocks. The mutex is not poisoned after a panic, and mutations completed
+/// before a panic are not rolled back.
 pub struct ArcCallableWith<T, R, E> {
     /// The stateful closure executed by this callable.
     pub(super) function: ArcCallableWithFn<T, R, E>,
@@ -51,7 +58,7 @@ impl<T, R, E> Clone for ArcCallableWith<T, R, E> {
 
 impl<T, R, E> ArcCallableWith<T, R, E> {
     impl_common_new_methods!(
-        semantic_mut (CallableWith<T, R, E> + Send + 'static),
+        semantic_mut(CallableWith<T, R, E> + Send + 'static),
         |source| move |input: &mut T| source.call_with(input),
         |function| Arc::new(Mutex::new(function)),
         "callable-with"

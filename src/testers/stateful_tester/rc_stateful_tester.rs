@@ -7,9 +7,15 @@
 // =============================================================================
 //! Defines the `RcStatefulTester` public type.
 
-use std::{cell::RefCell, ops::Not};
+use std::{
+    cell::RefCell,
+    ops::Not,
+};
 
-use super::{Rc, StatefulTester};
+use super::{
+    Rc,
+    StatefulTester,
+};
 
 type RcStatefulTesterFn = Rc<RefCell<dyn FnMut() -> bool>>;
 

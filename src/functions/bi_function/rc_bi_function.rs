@@ -9,8 +9,15 @@
 //! Defines the `RcBiFunction` public type.
 
 use super::{
-    BiFunction, BiPredicate, Function, Rc, RcConditionalBiFunction, impl_function_clone,
-    impl_function_common_methods, impl_function_constant_method, impl_function_debug_display,
+    BiFunction,
+    BiPredicate,
+    Function,
+    Rc,
+    RcConditionalBiFunction,
+    impl_function_clone,
+    impl_function_common_methods,
+    impl_function_constant_method,
+    impl_function_debug_display,
     impl_shared_function_methods,
 };
 

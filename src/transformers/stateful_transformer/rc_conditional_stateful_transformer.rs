@@ -9,8 +9,12 @@
 //! Defines the `RcConditionalStatefulTransformer` public type.
 
 use super::{
-    Predicate, RcPredicate, RcStatefulTransformer, StatefulTransformer,
-    impl_conditional_transformer_clone, impl_conditional_transformer_debug_display,
+    Predicate,
+    RcPredicate,
+    RcStatefulTransformer,
+    StatefulTransformer,
+    impl_conditional_transformer_clone,
+    impl_conditional_transformer_debug_display,
     impl_shared_conditional_transformer,
 };
 

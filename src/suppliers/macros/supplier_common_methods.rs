@@ -117,7 +117,10 @@ macro_rules! impl_supplier_common_methods {
         ($($fn_trait_with_bounds:tt)+),
         |$f:ident| $wrapper_expr:expr
     ) => {
-        $crate::suppliers::macros::impl_supplier_new_methods!($struct_name<$t>, |$f| $wrapper_expr);
+        $crate::suppliers::macros::impl_supplier_new_methods!(
+            $struct_name<$t>,
+            |$f| $wrapper_expr
+        );
 
         crate::macros::impl_common_name_methods!("supplier");
 

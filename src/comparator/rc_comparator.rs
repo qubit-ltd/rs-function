@@ -8,7 +8,11 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcComparator` public type.
 
-use super::{Comparator, Ordering, Rc};
+use super::{
+    Comparator,
+    Ordering,
+    Rc,
+};
 
 type RcComparatorFn<T> = Rc<dyn Fn(&T, &T) -> Ordering>;
 
@@ -62,7 +66,9 @@ impl<T> RcComparator<T> {
         F: Comparator<T> + 'static,
     {
         Self {
-            function: Rc::new(move |left: &T, right: &T| source.compare(left, right)),
+            function: Rc::new(move |left: &T, right: &T| {
+                source.compare(left, right)
+            }),
         }
     }
 

@@ -22,11 +22,15 @@ use std::sync::Arc;
 
 use parking_lot::Mutex;
 
-use crate::macros::{ impl_closure_trait,
-};
+use crate::macros::impl_closure_trait;
 use crate::predicates::macros::{
-    constants::{ALWAYS_FALSE_NAME, ALWAYS_TRUE_NAME},
-    impl_predicate_clone, impl_predicate_common_methods, impl_predicate_debug_display,
+    constants::{
+        ALWAYS_FALSE_NAME,
+        ALWAYS_TRUE_NAME,
+    },
+    impl_predicate_clone,
+    impl_predicate_common_methods,
+    impl_predicate_debug_display,
 };
 
 mod arc_stateful_bi_predicate;

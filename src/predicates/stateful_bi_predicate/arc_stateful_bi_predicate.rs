@@ -11,11 +11,19 @@
 use std::ops::Not;
 
 use super::{
-    ALWAYS_FALSE_NAME, ALWAYS_TRUE_NAME, Arc, Mutex, StatefulBiPredicate, impl_closure_trait,
-    impl_predicate_clone, impl_predicate_common_methods, impl_predicate_debug_display,
+    ALWAYS_FALSE_NAME,
+    ALWAYS_TRUE_NAME,
+    Arc,
+    Mutex,
+    StatefulBiPredicate,
+    impl_closure_trait,
+    impl_predicate_clone,
+    impl_predicate_common_methods,
+    impl_predicate_debug_display,
 };
 
-type ArcStatefulBiPredicateFn<T, U> = Arc<Mutex<dyn FnMut(&T, &U) -> bool + Send + 'static>>;
+type ArcStatefulBiPredicateFn<T, U> =
+    Arc<Mutex<dyn FnMut(&T, &U) -> bool + Send + 'static>>;
 
 /// An Arc-based stateful bi-predicate with thread-safe shared ownership.
 ///
@@ -173,7 +181,9 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function;
-        ArcStatefulBiPredicate::new(move |first: &T, second: &U| !((function.lock())(first, second)))
+        ArcStatefulBiPredicate::new(move |first: &T, second: &U| {
+            !((function.lock())(first, second))
+        })
     }
 }
 
@@ -186,7 +196,9 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function.clone();
-        ArcStatefulBiPredicate::new(move |first: &T, second: &U| !((function.lock())(first, second)))
+        ArcStatefulBiPredicate::new(move |first: &T, second: &U| {
+            !((function.lock())(first, second))
+        })
     }
 }
 

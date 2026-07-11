@@ -9,8 +9,12 @@
 //! Defines the `BoxConditionalStatefulMutatingFunction` public type.
 
 use super::{
-    BoxPredicate, BoxStatefulMutatingFunction, Predicate, StatefulMutatingFunction,
-    impl_box_conditional_function, impl_conditional_function_debug_display,
+    BoxPredicate,
+    BoxStatefulMutatingFunction,
+    Predicate,
+    StatefulMutatingFunction,
+    impl_box_conditional_function,
+    impl_conditional_function_debug_display,
 };
 
 // ============================================================================

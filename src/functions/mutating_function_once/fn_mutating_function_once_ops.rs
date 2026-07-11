@@ -9,7 +9,10 @@
 //! Defines the `FnMutatingFunctionOnceOps` public type.
 
 use super::{
-    BoxConditionalMutatingFunctionOnce, BoxMutatingFunctionOnce, FunctionOnce, Predicate,
+    BoxConditionalMutatingFunctionOnce,
+    BoxMutatingFunctionOnce,
+    FunctionOnce,
+    Predicate,
     impl_fn_ops_trait,
 };
 

@@ -21,7 +21,6 @@ use qubit_function::{
 mod trait_tests {
     use super::BiTransformerOnce;
 
-
     #[test]
     fn test_blanket_impl_with_closure() {
         let add = |x: i32, y: i32| x + y;
@@ -43,14 +42,6 @@ mod trait_tests {
         let concat = |x: String, y: String| format!("{} {}", x, y);
         assert_eq!(concat.apply(owned_x, owned_y), "hello world");
     }
-
-
-
-
-
-
-
-
 }
 
 // ============================================================================
@@ -73,8 +64,6 @@ mod trait_default_impl_tests {
         }
     }
 
-
-
     #[derive(Clone)]
     struct CustomConcatTransformer {
         separator: String,
@@ -86,8 +75,6 @@ mod trait_default_impl_tests {
         }
     }
 
-
-
     #[derive(Clone)]
     struct CustomMultiplyTransformer {
         multiplier: f64,
@@ -98,8 +85,6 @@ mod trait_default_impl_tests {
             (first + second) * self.multiplier
         }
     }
-
-
 }
 
 // ============================================================================
@@ -153,8 +138,6 @@ mod box_bi_transformer_once_tests {
         assert_eq!(result, "hello-world");
         // s1 and s2 are moved and cannot be used here
     }
-
-
 
     #[test]
     fn test_and_then_with_closure() {

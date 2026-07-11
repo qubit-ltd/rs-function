@@ -9,8 +9,13 @@
 //! Defines the `BoxBiConsumer` public type.
 
 use super::{
-    BiConsumer, BiConsumerFn, BiPredicate, BoxConditionalBiConsumer, impl_box_consumer_methods,
-    impl_consumer_common_methods, impl_consumer_debug_display,
+    BiConsumer,
+    BiConsumerFn,
+    BiPredicate,
+    BoxConditionalBiConsumer,
+    impl_box_consumer_methods,
+    impl_consumer_common_methods,
+    impl_consumer_debug_display,
 };
 
 // =======================================================================

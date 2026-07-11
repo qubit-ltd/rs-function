@@ -9,8 +9,12 @@
 //! Defines the `BoxConditionalStatefulBiConsumer` public type.
 
 use super::{
-    BiPredicate, BoxBiPredicate, BoxStatefulBiConsumer, StatefulBiConsumer,
-    impl_box_conditional_consumer, impl_conditional_consumer_debug_display,
+    BiPredicate,
+    BoxBiPredicate,
+    BoxStatefulBiConsumer,
+    StatefulBiConsumer,
+    impl_box_conditional_consumer,
+    impl_conditional_consumer_debug_display,
 };
 
 // =======================================================================

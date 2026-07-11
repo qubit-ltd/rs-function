@@ -9,7 +9,10 @@
 //! Defines the `BoxCallable` public type.
 
 use crate::{
-    macros::{impl_common_name_methods, impl_common_new_methods},
+    macros::{
+        impl_common_name_methods,
+        impl_common_new_methods,
+    },
     suppliers::supplier::Supplier,
     tasks::callable::Callable,
 };
@@ -46,7 +49,7 @@ pub struct BoxCallable<R, E> {
 
 impl<R, E> BoxCallable<R, E> {
     impl_common_new_methods!(
-        semantic_mut (Callable<R, E> + 'static),
+        semantic_mut(Callable<R, E> + 'static),
         |source| move || source.call(),
         |function| Box::new(function),
         "callable"
@@ -92,7 +95,10 @@ impl<R, E> BoxCallable<R, E> {
     {
         let name = self.name;
         let mut function = self.function;
-        BoxCallable::new_with_optional_name(move || function().map(&mut mapper), name)
+        BoxCallable::new_with_optional_name(
+            move || function().map(&mut mapper),
+            name,
+        )
     }
 
     /// Maps the error value of this callable.
@@ -113,7 +119,10 @@ impl<R, E> BoxCallable<R, E> {
     {
         let name = self.name;
         let mut function = self.function;
-        BoxCallable::new_with_optional_name(move || function().map_err(&mut mapper), name)
+        BoxCallable::new_with_optional_name(
+            move || function().map_err(&mut mapper),
+            name,
+        )
     }
 
     /// Chains another fallible computation after this callable succeeds.

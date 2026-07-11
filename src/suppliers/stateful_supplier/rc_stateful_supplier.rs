@@ -9,8 +9,15 @@
 //! Defines the `RcStatefulSupplier` public type.
 
 use super::{
-    Predicate, Rc, RefCell, StatefulSupplier, Transformer, impl_shared_supplier_methods,
-    impl_supplier_clone, impl_supplier_common_methods, impl_supplier_debug_display,
+    Predicate,
+    Rc,
+    RefCell,
+    StatefulSupplier,
+    Transformer,
+    impl_shared_supplier_methods,
+    impl_supplier_clone,
+    impl_supplier_common_methods,
+    impl_supplier_debug_display,
 };
 
 // ==========================================================================

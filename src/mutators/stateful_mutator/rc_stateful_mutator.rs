@@ -9,8 +9,15 @@
 //! Defines the `RcStatefulMutator` public type.
 
 use super::{
-    Predicate, Rc, RcConditionalStatefulMutator, RcMutMutatorFn, RefCell, StatefulMutator,
-    impl_mutator_clone, impl_mutator_common_methods, impl_mutator_debug_display,
+    Predicate,
+    Rc,
+    RcConditionalStatefulMutator,
+    RcMutMutatorFn,
+    RefCell,
+    StatefulMutator,
+    impl_mutator_clone,
+    impl_mutator_common_methods,
+    impl_mutator_debug_display,
     impl_shared_mutator_methods,
 };
 

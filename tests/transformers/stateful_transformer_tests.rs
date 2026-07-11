@@ -20,7 +20,6 @@ use qubit_function::{
     StatefulTransformer,
 };
 
-
 // ============================================================================
 // BoxStatefulTransformer Tests
 // ============================================================================
@@ -107,9 +106,6 @@ fn test_box_mapper_when_or_else() {
     assert_eq!(mapper.apply(20), "High[2]: 40");
     assert_eq!(mapper.apply(3), "Low[2]: 4");
 }
-
-
-
 
 // ============================================================================
 // ArcStatefulTransformer Tests
@@ -214,17 +210,6 @@ fn test_arc_mapper_when_or_else() {
     assert_eq!(mapper.apply(3), "Low[2]: 4");
 }
 
-
-
-
-
-
-
-
-
-
-
-
 // ============================================================================
 // RcStatefulTransformer Tests
 // ============================================================================
@@ -328,10 +313,6 @@ fn test_rc_mapper_when_or_else() {
     assert_eq!(mapper.apply(3), "Low[2]: 4");
 }
 
-
-
-
-
 // ============================================================================
 // Closure StatefulTransformer Tests
 // ============================================================================
@@ -346,9 +327,6 @@ fn test_closure_as_mapper() {
 
     assert_eq!(mapper.apply(10), 11);
 }
-
-
-
 
 // ============================================================================
 // FnStatefulTransformerOps Tests
@@ -625,13 +603,6 @@ impl StatefulTransformer<i32, i32> for CustomSendStatefulTransformer {
 unsafe impl Send for CustomSendStatefulTransformer {}
 unsafe impl Sync for CustomSendStatefulTransformer {}
 
-
-
-
-
-
-
-
 /// Test custom StatefulTransformer with string types
 #[derive(Clone)]
 struct StringLengthStatefulTransformer {
@@ -644,8 +615,6 @@ impl StatefulTransformer<String, String> for StringLengthStatefulTransformer {
         format!("[{}] {}", self.total_length, input)
     }
 }
-
-
 
 /// Test custom StatefulTransformer with complex state
 struct StatefulStatefulTransformer {
@@ -665,44 +634,13 @@ impl StatefulTransformer<i32, (i32, i32, usize)>
     }
 }
 
-
-
 // ============================================================================
 // into_fn Tests
 // ============================================================================
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // ============================================================================
 // Closure to_xxx Non-Consuming Conversion Tests
 // ============================================================================
-
-
-
-
-
-
-
-
-
-
-
 
 // ============================================================================
 // TransformerOnce Implementation Tests
@@ -929,10 +867,4 @@ fn test_arc_stateful_transformer_display_without_name() {
 // ============================================================================
 
 #[cfg(test)]
-mod test_stateful_transformer_trait_default_methods {
-
-
-
-
-
-}
+mod test_stateful_transformer_trait_default_methods {}

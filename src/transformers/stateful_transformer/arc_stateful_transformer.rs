@@ -9,9 +9,16 @@
 //! Defines the `ArcStatefulTransformer` public type.
 
 use super::{
-    Arc, ArcConditionalStatefulTransformer, Mutex, Predicate, StatefulTransformer,
-    impl_closure_trait, impl_shared_transformer_methods, impl_transformer_clone,
-    impl_transformer_common_methods, impl_transformer_constant_method,
+    Arc,
+    ArcConditionalStatefulTransformer,
+    Mutex,
+    Predicate,
+    StatefulTransformer,
+    impl_closure_trait,
+    impl_shared_transformer_methods,
+    impl_transformer_clone,
+    impl_transformer_common_methods,
+    impl_transformer_constant_method,
     impl_transformer_debug_display,
 };
 

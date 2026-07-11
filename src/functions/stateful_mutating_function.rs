@@ -122,20 +122,30 @@ use std::sync::Arc;
 
 use parking_lot::Mutex;
 
+#[cfg(feature = "combinators")]
+use crate::functions::macros::impl_fn_ops_trait;
 use crate::functions::{
     function::Function,
     macros::{
-        impl_box_conditional_function, impl_box_function_methods, impl_conditional_function_clone,
-        impl_conditional_function_debug_display, impl_function_clone,
-        impl_function_common_methods, impl_function_debug_display, impl_function_identity_method,
-        impl_shared_conditional_function, impl_shared_function_methods,
+        impl_box_conditional_function,
+        impl_box_function_methods,
+        impl_conditional_function_clone,
+        impl_conditional_function_debug_display,
+        impl_function_clone,
+        impl_function_common_methods,
+        impl_function_debug_display,
+        impl_function_identity_method,
+        impl_shared_conditional_function,
+        impl_shared_function_methods,
     },
 };
-#[cfg(feature = "combinators")]
-use crate::functions::macros::impl_fn_ops_trait;
-use crate::predicates::predicate::{ArcPredicate, BoxPredicate, Predicate};
 #[cfg(feature = "rc")]
 use crate::predicates::predicate::RcPredicate;
+use crate::predicates::predicate::{
+    ArcPredicate,
+    BoxPredicate,
+    Predicate,
+};
 
 mod box_stateful_mutating_function;
 pub use box_stateful_mutating_function::BoxStatefulMutatingFunction;
@@ -301,7 +311,8 @@ where
 // =======================================================================
 
 /// Type alias for Arc-wrapped stateful mutating function
-type ArcStatefulMutatingFunctionFn<T, R> = Arc<Mutex<dyn FnMut(&mut T) -> R + Send + 'static>>;
+type ArcStatefulMutatingFunctionFn<T, R> =
+    Arc<Mutex<dyn FnMut(&mut T) -> R + Send + 'static>>;
 
 /// Type alias for Rc-wrapped stateful mutating function
 #[cfg(feature = "rc")]

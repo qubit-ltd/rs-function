@@ -9,8 +9,15 @@
 //! Defines the `ArcStatefulSupplier` public type.
 
 use super::{
-    Arc, Mutex, Predicate, StatefulSupplier, Transformer, impl_closure_trait,
-    impl_shared_supplier_methods, impl_supplier_clone, impl_supplier_debug_display,
+    Arc,
+    Mutex,
+    Predicate,
+    StatefulSupplier,
+    Transformer,
+    impl_closure_trait,
+    impl_shared_supplier_methods,
+    impl_supplier_clone,
+    impl_supplier_debug_display,
 };
 
 // ==========================================================================
@@ -90,7 +97,7 @@ impl<T> ArcStatefulSupplier<T> {
     // Generates: new(), new_with_name(), name(), set_name()
     // Note: constant() is NOT generated here, implemented separately below
     crate::macros::impl_common_new_methods!(
-        semantic_mut (StatefulSupplier<T> + Send + 'static),
+        semantic_mut(StatefulSupplier<T> + Send + 'static),
         |source| move || source.get(),
         |f| Arc::new(Mutex::new(f)),
         "supplier"
@@ -99,7 +106,11 @@ impl<T> ArcStatefulSupplier<T> {
     crate::macros::impl_common_name_methods!("supplier");
 
     // Generates: map(), filter(), zip()
-    impl_shared_supplier_methods!(ArcStatefulSupplier<T>, StatefulSupplier, (arc));
+    impl_shared_supplier_methods!(
+        ArcStatefulSupplier<T>,
+        StatefulSupplier,
+        (arc)
+    );
 }
 
 // Separate impl block for constant() and memoize() with stricter T: Send bound

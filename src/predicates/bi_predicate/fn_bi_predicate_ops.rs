@@ -8,7 +8,10 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnBiPredicateOps` public type.
 
-use super::{BiPredicate, BoxBiPredicate};
+use super::{
+    BiPredicate,
+    BoxBiPredicate,
+};
 
 /// Extension trait providing logical composition methods for closures.
 ///

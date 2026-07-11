@@ -9,7 +9,11 @@
 //! Defines the `BoxSupplier` public type.
 
 use super::{
-    Predicate, Supplier, Transformer, impl_box_supplier_methods, impl_supplier_common_methods,
+    Predicate,
+    Supplier,
+    Transformer,
+    impl_box_supplier_methods,
+    impl_supplier_common_methods,
     impl_supplier_debug_display,
 };
 
@@ -67,7 +71,9 @@ pub struct BoxSupplier<T> {
 
 impl<T> BoxSupplier<T> {
     // Generates: new(), new_with_name(), name(), set_name(), constant()
-    impl_supplier_common_methods!(BoxSupplier<T>, (Fn() -> T + 'static), |f| { Box::new(f) });
+    impl_supplier_common_methods!(BoxSupplier<T>, (Fn() -> T + 'static), |f| {
+        Box::new(f)
+    });
 
     // Generates: map(), filter(), zip()
     impl_box_supplier_methods!(BoxSupplier<T>, Supplier);

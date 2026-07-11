@@ -11,8 +11,14 @@
 use std::ops::Not;
 
 use super::{
-    ALWAYS_FALSE_NAME, ALWAYS_TRUE_NAME, Rc, RefCell, StatefulPredicate, impl_predicate_clone,
-    impl_predicate_common_methods, impl_predicate_debug_display,
+    ALWAYS_FALSE_NAME,
+    ALWAYS_TRUE_NAME,
+    Rc,
+    RefCell,
+    StatefulPredicate,
+    impl_predicate_clone,
+    impl_predicate_common_methods,
+    impl_predicate_debug_display,
 };
 
 type RcStatefulPredicateFn<T> = Rc<RefCell<dyn FnMut(&T) -> bool>>;
@@ -34,9 +40,11 @@ pub struct RcStatefulPredicate<T> {
 impl<T> RcStatefulPredicate<T> {
     // Generates: new(), new_with_name(), name(), set_name(), always_true(),
     // always_false()
-    impl_predicate_common_methods!(RcStatefulPredicate<T>, (FnMut(&T) -> bool + 'static), |f| {
-        Rc::new(RefCell::new(f))
-    });
+    impl_predicate_common_methods!(
+        RcStatefulPredicate<T>,
+        (FnMut(&T) -> bool + 'static),
+        |f| { Rc::new(RefCell::new(f)) }
+    );
 
     /// Returns a predicate representing logical AND with another predicate.
     ///
@@ -170,7 +178,9 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function;
-        RcStatefulPredicate::new(move |value: &T| !((function.borrow_mut())(value)))
+        RcStatefulPredicate::new(move |value: &T| {
+            !((function.borrow_mut())(value))
+        })
     }
 }
 
@@ -182,7 +192,9 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function.clone();
-        RcStatefulPredicate::new(move |value: &T| !((function.borrow_mut())(value)))
+        RcStatefulPredicate::new(move |value: &T| {
+            !((function.borrow_mut())(value))
+        })
     }
 }
 

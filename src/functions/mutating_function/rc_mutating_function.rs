@@ -9,8 +9,15 @@
 //! Defines the `RcMutatingFunction` public type.
 
 use super::{
-    Function, MutatingFunction, Predicate, Rc, RcConditionalMutatingFunction, impl_function_clone,
-    impl_function_common_methods, impl_function_debug_display, impl_function_identity_method,
+    Function,
+    MutatingFunction,
+    Predicate,
+    Rc,
+    RcConditionalMutatingFunction,
+    impl_function_clone,
+    impl_function_common_methods,
+    impl_function_debug_display,
+    impl_function_identity_method,
     impl_shared_function_methods,
 };
 

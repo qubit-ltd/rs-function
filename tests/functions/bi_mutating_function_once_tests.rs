@@ -49,7 +49,6 @@ fn modify_structs_once(a: &mut TestStruct, b: &mut TestStruct) -> i32 {
 // BiMutatingFunctionOnce Trait Tests - Core Functionality
 // ============================================================================
 
-
 #[test]
 fn test_bi_mutating_function_once_trait_apply() {
     // Test that BiMutatingFunctionOnce trait's apply method works correctly
@@ -77,10 +76,6 @@ fn test_bi_mutating_function_once_trait_apply_with_complex_types() {
     assert_eq!(s1.value, 15);
     assert_eq!(s2.value, 10);
 }
-
-
-
-
 
 // ============================================================================
 // BoxBiMutatingFunctionOnce Tests

@@ -8,7 +8,12 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnStatefulSupplierOps` public type.
 
-use super::{BoxStatefulSupplier, Predicate, StatefulSupplier, Transformer};
+use super::{
+    BoxStatefulSupplier,
+    Predicate,
+    StatefulSupplier,
+    Transformer,
+};
 
 // ==========================================================================
 // Extension Trait for Closure Operations

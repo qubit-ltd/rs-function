@@ -9,8 +9,12 @@
 //! Defines the `BoxStatefulBiConsumer` public type.
 
 use super::{
-    BiPredicate, BoxConditionalStatefulBiConsumer, StatefulBiConsumer, impl_box_consumer_methods,
-    impl_consumer_common_methods, impl_consumer_debug_display,
+    BiPredicate,
+    BoxConditionalStatefulBiConsumer,
+    StatefulBiConsumer,
+    impl_box_consumer_methods,
+    impl_consumer_common_methods,
+    impl_consumer_debug_display,
 };
 
 type BoxStatefulBiConsumerFn<T, U> = Box<dyn FnMut(&T, &U)>;

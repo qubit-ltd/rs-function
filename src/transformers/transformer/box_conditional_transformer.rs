@@ -9,7 +9,11 @@
 //! Defines the `BoxConditionalTransformer` public type.
 
 use super::{
-    BoxPredicate, BoxTransformer, Predicate, Transformer, impl_box_conditional_transformer,
+    BoxPredicate,
+    BoxTransformer,
+    Predicate,
+    Transformer,
+    impl_box_conditional_transformer,
     impl_conditional_transformer_debug_display,
 };
 

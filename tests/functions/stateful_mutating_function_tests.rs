@@ -25,7 +25,6 @@ use std::rc::Rc;
 // StatefulMutatingFunction Default Implementation Tests
 // ============================================================================
 
-
 /// Test struct that implements StatefulMutatingFunction to test default methods
 struct TestStatefulMutatingFunction {
     multiplier: i32,
@@ -54,17 +53,7 @@ impl Clone for TestStatefulMutatingFunction {
 }
 
 #[cfg(test)]
-mod test_stateful_mutating_function_default_impl {
-
-
-
-
-
-
-
-
-
-}
+mod test_stateful_mutating_function_default_impl {}
 
 // ============================================================================
 // BoxStatefulMutatingFunction Tests
@@ -139,9 +128,6 @@ mod test_box_stateful_mutating_function {
         assert_eq!(mapped.apply(&mut value), "Call #1");
         assert_eq!(value, 10);
     }
-
-
-
 }
 
 // ============================================================================
@@ -219,12 +205,6 @@ mod test_rc_stateful_mutating_function {
         assert_eq!(mapped.apply(&mut value), "Call #1");
         assert_eq!(value, 10);
     }
-
-
-
-
-
-
 }
 
 // ============================================================================
@@ -324,14 +304,6 @@ mod test_arc_stateful_mutating_function {
         assert_eq!(mapped.apply(&mut value), "Call #1");
         assert_eq!(value, 10);
     }
-
-
-
-
-
-
-
-
 }
 
 // ============================================================================
@@ -432,16 +404,6 @@ mod test_closure {
         assert_eq!(mapped.apply(&mut value), "Call #1");
         assert_eq!(value, 10);
     }
-
-
-
-
-
-
-
-
-
-
 }
 
 // ============================================================================
@@ -856,10 +818,4 @@ fn test_arc_conditional_stateful_mutating_function_debug_display() {
 // ============================================================================
 
 #[cfg(test)]
-mod test_stateful_mutating_function_trait_default_methods {
-
-
-
-
-
-}
+mod test_stateful_mutating_function_trait_default_methods {}

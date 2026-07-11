@@ -9,8 +9,13 @@
 //! Defines the `RcConditionalConsumer` public type.
 
 use super::{
-    Consumer, Predicate, RcConsumer, RcPredicate, impl_conditional_consumer_clone,
-    impl_conditional_consumer_debug_display, impl_shared_conditional_consumer,
+    Consumer,
+    Predicate,
+    RcConsumer,
+    RcPredicate,
+    impl_conditional_consumer_clone,
+    impl_conditional_consumer_debug_display,
+    impl_shared_conditional_consumer,
 };
 
 // ============================================================================

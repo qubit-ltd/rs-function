@@ -20,7 +20,6 @@ use std::sync::{
     Mutex,
 };
 
-
 // ============================================================================
 // BoxConsumerOnce Tests
 // ============================================================================
@@ -200,9 +199,6 @@ mod box_consumer_once_tests {
             vec![-6]
         );
     }
-
-
-
 }
 
 // ============================================================================
@@ -253,8 +249,6 @@ mod closure_tests {
             vec![10, 15]
         );
     }
-
-
 
     #[test]
     fn test_closure_multi_step_chaining() {
@@ -323,8 +317,6 @@ mod debug_display_tests {
         consumer.set_name("test");
         assert_eq!(consumer.name(), Some("test"));
     }
-
-
 
     #[test]
     fn test_conditional_and_then() {
@@ -395,9 +387,6 @@ mod custom_consumer_once_tests {
         );
     }
 
-
-
-
     #[test]
     fn test_custom_consumer_with_generic_function() {
         let log = Arc::new(Mutex::new(Vec::new()));
@@ -416,8 +405,6 @@ mod custom_consumer_once_tests {
             vec![30]
         );
     }
-
-
 
     /// Custom consumer with String type
     struct StringLogger {
@@ -446,8 +433,6 @@ mod custom_consumer_once_tests {
         }
     }
 
-
-
     /// Custom consumer that counts how many times it was supposed to be called
     struct CountingConsumer {
         counter: Arc<Mutex<usize>>,
@@ -472,8 +457,6 @@ mod custom_consumer_once_tests {
                 .push(*value);
         }
     }
-
-
 }
 
 // ============================================================================
@@ -536,19 +519,9 @@ mod box_conditional_consumer_once_tests {
 
     // Tests for into_box() method
 
-
-
-
     // Tests for into_fn() method
 
-
-
-
     // Additional tests for into_box() and into_fn() with complex predicates
-
-
-
-
 
     // Additional comprehensive branch coverage tests for accept() method
 
@@ -763,13 +736,7 @@ mod custom_consumer_to_methods_tests {
 
     // Tests for to_box() method
 
-
-
-
     // Tests for to_fn() method
-
-
-
 }
 
 // ============================================================================
@@ -784,10 +751,6 @@ mod closure_to_xxx_methods_tests {
         FnConsumerOnceOps,
         Mutex,
     };
-
-    /// Test that closures implementing FnOnce can use into_box()
-
-    /// Test that closures implementing FnOnce can use into_fn()
 
     /// Test closure with and_then() through FnConsumerOnceOps
     #[test]
@@ -849,12 +812,6 @@ mod closure_to_xxx_methods_tests {
         );
     }
 
-    /// Test closure with conditional when() method
-
-    /// Test closure with conditional when() returning false
-
-    /// Test closure with or_else() branch
-
     /// Test chain of closures with and_then() followed by conditional
     #[test]
     fn test_closure_chain_then_conditional() {
@@ -881,7 +838,6 @@ mod closure_to_xxx_methods_tests {
             vec![10, 15]
         ); // Both execute because condition is true (5 < 15)
     }
-
 }
 
 // ============================================================================
@@ -915,10 +871,4 @@ mod advanced_to_methods_tests {
                 .push(*value);
         }
     }
-
-
-
-
-
-
 }

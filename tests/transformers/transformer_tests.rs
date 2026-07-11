@@ -8,7 +8,6 @@
 
 // qubit-style: allow explicit-imports
 
-
 // ============================================================================
 // BoxTransformer Tests - Immutable, single ownership
 // ============================================================================
@@ -281,7 +280,6 @@ mod box_conditional_tests {
         Transformer,
     };
 
-
     #[test]
     fn test_when_or_else_with_closure() {
         let double_fn = |x: i32| x * 2;
@@ -379,20 +377,7 @@ mod rc_conditional_tests {
 // ============================================================================
 
 #[cfg(test)]
-mod conversion_tests {
-
-
-
-
-
-
-
-
-
-
-
-
-}
+mod conversion_tests {}
 
 // ============================================================================
 // Non-consuming Conversion Tests (to_xxx methods)
@@ -402,24 +387,15 @@ mod conversion_tests {
 mod to_conversion_tests {
     use qubit_function::ArcTransformer;
 
-
     // ArcTransformer to_xxx tests
-
-
-
 
     // RcTransformer to_xxx tests
 
-
-
     // Test to_xxx with composition
-
 
     // Test multiple conversions
 
-
     // Test with different types
-
 
     // Test thread safety with Arc - clone first to get owned values
 
@@ -428,9 +404,6 @@ mod to_conversion_tests {
     // ========================================================================
     // Closure / function-pointer Transformer to_xxx Tests
     // ========================================================================
-
-
-
 
     #[test]
     fn test_display_with_name() {
@@ -618,7 +591,6 @@ mod edge_cases_tests {
 mod default_implementation_tests {
     use qubit_function::Transformer;
 
-
     // A custom transformer that only implements the core `transform`
     // method, relying on default implementations for all `into_xxx`
     // methods.
@@ -631,13 +603,6 @@ mod default_implementation_tests {
             input * self.multiplier
         }
     }
-
-
-
-
-
-
-
 }
 
 // ============================================================================
@@ -645,26 +610,7 @@ mod default_implementation_tests {
 // ============================================================================
 
 #[cfg(test)]
-mod specialized_into_fn_tests {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}
+mod specialized_into_fn_tests {}
 
 // ============================================================================
 // Type Conversion Tests
@@ -677,16 +623,6 @@ mod type_conversion_tests {
         RcTransformer,
         Transformer,
     };
-
-
-
-
-
-
-
-
-
-
 
     #[test]
     fn test_arc_constant_with_clone() {
@@ -712,78 +648,45 @@ mod type_conversion_tests {
 #[cfg(test)]
 mod transformer_default_to_methods_tests {
 
-
-
     // ========================================================================
     // ArcTransformer::to_box() Tests
     // ========================================================================
-
-
-
-
 
     // ========================================================================
     // ArcTransformer::to_rc() Tests
     // ========================================================================
 
-
-
-
     // ========================================================================
     // ArcTransformer::to_arc() Tests
     // ========================================================================
-
-
-
 
     // ========================================================================
     // ArcTransformer::to_fn() Tests
     // ========================================================================
 
-
-
-
     // ========================================================================
     // RcTransformer::to_box() Tests
     // ========================================================================
-
-
-
 
     // ========================================================================
     // RcTransformer::to_rc() Tests
     // ========================================================================
 
-
-
-
     // ========================================================================
     // RcTransformer::to_fn() Tests
     // ========================================================================
-
-
-
 
     // ========================================================================
     // Cross-type conversion tests
     // ========================================================================
 
-
-
-
     // ========================================================================
     // Complex type tests
     // ========================================================================
 
-
-
-
     // ========================================================================
     // Identity and constant tests
     // ========================================================================
-
-
-
 }
 
 // ============================================================================
@@ -793,7 +696,6 @@ mod transformer_default_to_methods_tests {
 #[cfg(test)]
 mod custom_transformer_to_methods_tests {
     use qubit_function::Transformer;
-
 
     /// Custom Transformer implementation for testing default to_xxx methods
     /// This is a simple multiplication transformer
@@ -828,41 +730,21 @@ mod custom_transformer_to_methods_tests {
     // Custom Type to_box() Tests
     // ========================================================================
 
-
-
-
     // ========================================================================
     // Custom Type to_rc() Tests
     // ========================================================================
-
-
-
-
 
     // ========================================================================
     // Custom Type to_arc() Tests (Thread-Safe)
     // ========================================================================
 
-
-
-
-
-
     // ========================================================================
     // Custom Type to_fn() Tests
     // ========================================================================
 
-
-
-
-
     // ========================================================================
     // Cross-type conversion tests
     // ========================================================================
-
-
-
-
 
     // ========================================================================
     // Different type transformation tests
@@ -879,9 +761,6 @@ mod custom_transformer_to_methods_tests {
             format!("{}{}", self.prefix, input)
         }
     }
-
-
-
 
     // ========================================================================
     // Complex state tests
@@ -900,10 +779,6 @@ mod custom_transformer_to_methods_tests {
             (input + self.base) * self.multiplier + self.offset
         }
     }
-
-
-
-
 }
 
 // ============================================================================
@@ -935,8 +810,6 @@ mod transformer_once_tests {
             let result = double.apply(21);
             assert_eq!(result, 42);
         }
-
-
 
         #[test]
         fn test_box_transformer_string_transformation() {
@@ -984,8 +857,6 @@ mod transformer_once_tests {
             assert_eq!(result, 42);
         }
 
-
-
         #[test]
         fn test_rc_transformer_string_transformation() {
             let uppercase = RcTransformer::new(|s: String| s.to_uppercase());
@@ -1028,12 +899,6 @@ mod transformer_once_tests {
             // Original is still usable
             assert_eq!(double.apply(5), 10);
         }
-
-
-
-
-
-
     }
 
     // ArcTransformer TransformerOnce Tests
@@ -1052,16 +917,6 @@ mod transformer_once_tests {
             let result = double.apply(21);
             assert_eq!(result, 42);
         }
-
-
-
-
-
-
-
-
-
-
 
         #[test]
         fn test_arc_transformer_string_transformation() {
@@ -1122,7 +977,6 @@ mod transformer_once_tests {
             let result = handle.join().expect("thread should not panic");
             assert_eq!(result, 42);
         }
-
     }
 
     // Cross-type TransformerOnce Tests
@@ -1145,8 +999,6 @@ mod transformer_once_tests {
             assert_eq!(rc_double.apply(21), 42);
             assert_eq!(arc_double.apply(21), 42);
         }
-
-
 
         #[test]
         fn test_mixed_regular_and_once_usage() {
@@ -1180,9 +1032,4 @@ mod transformer_once_tests {
 // ============================================================================
 
 #[cfg(test)]
-mod test_transformer_trait_default_methods {
-
-
-
-
-}
+mod test_transformer_trait_default_methods {}

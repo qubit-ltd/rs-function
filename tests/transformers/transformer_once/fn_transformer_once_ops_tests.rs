@@ -103,8 +103,6 @@ mod tests {
         assert_eq!(conditional.apply(5), 5);
     }
 
-
-
     #[test]
     fn test_function_pointer() {
         fn parse(s: String) -> i32 {

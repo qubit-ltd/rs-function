@@ -9,8 +9,12 @@
 //! Defines the `BoxStatefulSupplier` public type.
 
 use super::{
-    Predicate, StatefulSupplier, Transformer, impl_box_supplier_methods,
-    impl_supplier_common_methods, impl_supplier_debug_display,
+    Predicate,
+    StatefulSupplier,
+    Transformer,
+    impl_box_supplier_methods,
+    impl_supplier_common_methods,
+    impl_supplier_debug_display,
 };
 
 // ==========================================================================
@@ -72,9 +76,11 @@ pub struct BoxStatefulSupplier<T> {
 
 impl<T> BoxStatefulSupplier<T> {
     // Generates: new(), new_with_name(), name(), set_name(), constant()
-    impl_supplier_common_methods!(BoxStatefulSupplier<T>, (FnMut() -> T + 'static), |f| {
-        Box::new(f)
-    });
+    impl_supplier_common_methods!(
+        BoxStatefulSupplier<T>,
+        (FnMut() -> T + 'static),
+        |f| { Box::new(f) }
+    );
 
     // Generates: map(), filter(), zip()
     impl_box_supplier_methods!(BoxStatefulSupplier<T>, StatefulSupplier);

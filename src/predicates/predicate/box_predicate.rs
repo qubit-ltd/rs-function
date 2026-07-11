@@ -11,8 +11,12 @@
 use std::ops::Not;
 
 use super::{
-    ALWAYS_FALSE_NAME, ALWAYS_TRUE_NAME, Predicate, impl_box_predicate_methods,
-    impl_predicate_common_methods, impl_predicate_debug_display,
+    ALWAYS_FALSE_NAME,
+    ALWAYS_TRUE_NAME,
+    Predicate,
+    impl_box_predicate_methods,
+    impl_predicate_common_methods,
+    impl_predicate_debug_display,
 };
 
 /// A Box-based predicate with single ownership.

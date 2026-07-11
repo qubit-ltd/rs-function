@@ -27,7 +27,6 @@ use qubit_function::predicates::{
     StatefulPredicate,
 };
 
-
 #[test]
 fn test_closure_implements_stateful_predicate() {
     let mut calls = 0;
@@ -141,8 +140,6 @@ fn test_box_stateful_predicate_debug_and_display() {
     assert_eq!(format!("{named}"), "BoxStatefulPredicate(positive)");
 }
 
-
-
 #[test]
 fn test_rc_stateful_predicate_clone_shares_state() {
     let calls = Rc::new(RefCell::new(0));
@@ -202,7 +199,6 @@ fn test_rc_stateful_predicate_self_composition_releases_borrow_between_calls() {
     assert!(combined.test(&1));
     assert_eq!(*calls.borrow(), 2);
 }
-
 
 #[test]
 fn test_arc_stateful_predicate_clone_shares_state() {

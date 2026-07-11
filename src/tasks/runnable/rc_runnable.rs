@@ -13,8 +13,14 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::{
-    macros::{impl_common_name_methods, impl_common_new_methods},
-    suppliers::{macros::impl_supplier_debug_display, supplier::Supplier},
+    macros::{
+        impl_common_name_methods,
+        impl_common_new_methods,
+    },
+    suppliers::{
+        macros::impl_supplier_debug_display,
+        supplier::Supplier,
+    },
     tasks::runnable::Runnable,
 };
 
@@ -54,7 +60,7 @@ impl<E> Clone for RcRunnable<E> {
 
 impl<E> RcRunnable<E> {
     impl_common_new_methods!(
-        semantic_mut (Runnable<E> + 'static),
+        semantic_mut(Runnable<E> + 'static),
         |source| move || source.run(),
         |function| Rc::new(RefCell::new(function)),
         "runnable"

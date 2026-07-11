@@ -9,11 +9,18 @@
 //! Defines the `BoxRunnable` public type.
 
 use crate::{
-    macros::{impl_common_name_methods, impl_common_new_methods},
-    suppliers::{
-        macros::impl_supplier_debug_display, supplier::Supplier,
+    macros::{
+        impl_common_name_methods,
+        impl_common_new_methods,
     },
-    tasks::{callable::BoxCallable, runnable::Runnable},
+    suppliers::{
+        macros::impl_supplier_debug_display,
+        supplier::Supplier,
+    },
+    tasks::{
+        callable::BoxCallable,
+        runnable::Runnable,
+    },
 };
 
 // ============================================================================
@@ -47,7 +54,7 @@ pub struct BoxRunnable<E> {
 
 impl<E> BoxRunnable<E> {
     impl_common_new_methods!(
-        semantic_mut (Runnable<E> + 'static),
+        semantic_mut(Runnable<E> + 'static),
         |source| move || source.run(),
         |function| Box::new(function),
         "runnable"
@@ -144,7 +151,9 @@ impl<E> Runnable<E> for BoxRunnable<E> {
 }
 
 #[cfg(feature = "once")]
-impl<E> crate::suppliers::supplier_once::SupplierOnce<Result<(), E>> for BoxRunnable<E> {
+impl<E> crate::suppliers::supplier_once::SupplierOnce<Result<(), E>>
+    for BoxRunnable<E>
+{
     /// Executes the boxed runnable as a one-time supplier of `Result<(), E>`.
     #[inline]
     fn get(mut self) -> Result<(), E> {

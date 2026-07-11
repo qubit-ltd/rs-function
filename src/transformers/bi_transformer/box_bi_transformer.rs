@@ -9,9 +9,14 @@
 //! Defines the `BoxBiTransformer` public type.
 
 use super::{
-    BiPredicate, BiTransformer, BoxConditionalBiTransformer, Transformer,
-    impl_box_transformer_methods, impl_transformer_common_methods,
-    impl_transformer_constant_method, impl_transformer_debug_display,
+    BiPredicate,
+    BiTransformer,
+    BoxConditionalBiTransformer,
+    Transformer,
+    impl_box_transformer_methods,
+    impl_transformer_common_methods,
+    impl_transformer_constant_method,
+    impl_transformer_debug_display,
 };
 
 // ============================================================================

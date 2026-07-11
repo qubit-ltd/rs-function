@@ -52,11 +52,6 @@ fn test_callable_once_closure_call_returns_error() {
     assert_eq!(error.to_string(), "failed");
 }
 
-
-
-
-
-
 #[test]
 fn test_box_callable_once_new_and_call() {
     let task = BoxCallableOnce::new(|| Ok::<i32, io::Error>(21));
@@ -99,8 +94,6 @@ fn test_box_callable_once_with_name() {
     assert_eq!(task.name(), None);
     assert_eq!(task.to_string(), "BoxCallableOnce");
 }
-
-
 
 #[test]
 fn test_box_callable_once_from_supplier() {
@@ -166,8 +159,6 @@ fn test_box_callable_once_and_then_skips_next_on_error() {
     );
 }
 
-
-
 #[derive(Clone)]
 struct TextCallableOnce {
     value: String,
@@ -178,8 +169,6 @@ impl CallableOnce<String, &'static str> for TextCallableOnce {
         Ok(self.value)
     }
 }
-
-
 
 #[test]
 fn test_box_callable_once_combinators_with_text_error_type() {

@@ -8,7 +8,11 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcComparator` public type.
 
-use super::{Arc, Comparator, Ordering};
+use super::{
+    Arc,
+    Comparator,
+    Ordering,
+};
 
 type ArcComparatorFn<T> = Arc<dyn Fn(&T, &T) -> Ordering + Send + Sync>;
 
@@ -62,7 +66,9 @@ impl<T> ArcComparator<T> {
         F: Comparator<T> + Send + Sync + 'static,
     {
         Self {
-            function: Arc::new(move |left: &T, right: &T| source.compare(left, right)),
+            function: Arc::new(move |left: &T, right: &T| {
+                source.compare(left, right)
+            }),
         }
     }
 

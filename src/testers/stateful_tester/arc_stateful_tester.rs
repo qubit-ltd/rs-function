@@ -11,7 +11,10 @@ use std::ops::Not;
 
 use parking_lot::Mutex;
 
-use super::{Arc, StatefulTester};
+use super::{
+    Arc,
+    StatefulTester,
+};
 
 type ArcStatefulTesterFn = Arc<Mutex<dyn FnMut() -> bool + Send + 'static>>;
 
@@ -21,10 +24,10 @@ type ArcStatefulTesterFn = Arc<Mutex<dyn FnMut() -> bool + Send + 'static>>;
 /// can be moved across threads.
 /// # Locking and reentrancy
 ///
-/// Each call acquires a `parking_lot::Mutex` and holds it while the user callback
-/// runs. Synchronous re-entry through the same shared wrapper deadlocks. The mutex
-/// is not poisoned after a panic, and mutations completed before a panic are not
-/// rolled back.
+/// Each call acquires a `parking_lot::Mutex` and holds it while the user
+/// callback runs. Synchronous re-entry through the same shared wrapper
+/// deadlocks. The mutex is not poisoned after a panic, and mutations completed
+/// before a panic are not rolled back.
 pub struct ArcStatefulTester {
     pub(super) function: ArcStatefulTesterFn,
 }

@@ -86,11 +86,6 @@ fn test_callable_closure_call_returns_error() {
     assert_eq!(error.to_string(), "failed");
 }
 
-
-
-
-
-
 #[test]
 fn test_box_callable_new_and_call() {
     let mut task = BoxCallable::new(|| Ok::<i32, io::Error>(21));
@@ -114,9 +109,6 @@ fn test_box_callable_name_management() {
     assert_eq!(task.name(), None);
     assert_eq!(task.to_string(), "BoxCallable");
 }
-
-
-
 
 #[test]
 fn test_box_callable_from_supplier() {
@@ -187,16 +179,6 @@ fn test_box_callable_and_then_skips_next_on_error() {
     );
 }
 
-
-
-
-
-
-
-
-
-
-
 #[test]
 fn test_rc_callable_from_supplier() {
     let count = Rc::new(Cell::new(0));
@@ -235,7 +217,6 @@ impl Callable<String, &'static str> for TextCallable {
         Ok(self.value.clone())
     }
 }
-
 
 #[test]
 fn test_box_callable_combinators_with_text_error_type() {

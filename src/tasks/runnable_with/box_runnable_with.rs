@@ -9,8 +9,14 @@
 //! Defines the `BoxRunnableWith` public type.
 
 use crate::{
-    macros::{impl_common_name_methods, impl_common_new_methods},
-    tasks::{callable_with::BoxCallableWith, runnable_with::RunnableWith},
+    macros::{
+        impl_common_name_methods,
+        impl_common_new_methods,
+    },
+    tasks::{
+        callable_with::BoxCallableWith,
+        runnable_with::RunnableWith,
+    },
 };
 
 type BoxRunnableWithFn<T, E> = Box<dyn FnMut(&mut T) -> Result<(), E>>;
@@ -28,7 +34,7 @@ pub struct BoxRunnableWith<T, E> {
 
 impl<T, E> BoxRunnableWith<T, E> {
     impl_common_new_methods!(
-        semantic_mut (RunnableWith<T, E> + 'static),
+        semantic_mut(RunnableWith<T, E> + 'static),
         |source| move |input: &mut T| source.run_with(input),
         |function| Box::new(function),
         "runnable-with"
@@ -76,7 +82,10 @@ impl<T, E> BoxRunnableWith<T, E> {
     ///
     /// A callable producing the second computation's result.
     #[inline]
-    pub fn then_callable_with<R, C>(self, callable: C) -> BoxCallableWith<T, R, E>
+    pub fn then_callable_with<R, C>(
+        self,
+        callable: C,
+    ) -> BoxCallableWith<T, R, E>
     where
         C: crate::tasks::callable_with::CallableWith<T, R, E> + 'static,
         T: 'static,

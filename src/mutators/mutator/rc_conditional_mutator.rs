@@ -9,8 +9,13 @@
 //! Defines the `RcConditionalMutator` public type.
 
 use super::{
-    Mutator, Predicate, RcMutator, RcPredicate, impl_conditional_mutator_clone,
-    impl_conditional_mutator_debug_display, impl_shared_conditional_mutator,
+    Mutator,
+    Predicate,
+    RcMutator,
+    RcPredicate,
+    impl_conditional_mutator_clone,
+    impl_conditional_mutator_debug_display,
+    impl_shared_conditional_mutator,
 };
 
 // ============================================================================

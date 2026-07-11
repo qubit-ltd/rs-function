@@ -9,7 +9,12 @@
 //! Defines the `ArcSupplier` public type.
 
 use super::{
-    Arc, Predicate, Supplier, Transformer, impl_shared_supplier_methods, impl_supplier_clone,
+    Arc,
+    Predicate,
+    Supplier,
+    Transformer,
+    impl_shared_supplier_methods,
+    impl_supplier_clone,
     impl_supplier_debug_display,
 };
 
@@ -87,7 +92,7 @@ impl<T> ArcSupplier<T> {
     // Generates: new(), new_with_name(), name(), set_name()
     // Note: constant() is NOT generated here, implemented separately below
     crate::macros::impl_common_new_methods!(
-        semantic (Supplier<T> + Send + Sync + 'static),
+        semantic(Supplier<T> + Send + Sync + 'static),
         |source| move || source.get(),
         |f| Arc::new(f),
         "supplier"

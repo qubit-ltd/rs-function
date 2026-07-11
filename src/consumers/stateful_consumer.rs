@@ -36,15 +36,24 @@ use std::sync::Arc;
 use parking_lot::Mutex;
 
 use crate::consumers::macros::{
-    impl_box_conditional_consumer, impl_box_consumer_methods, impl_conditional_consumer_clone, impl_conditional_consumer_debug_display,
-    impl_consumer_clone, impl_consumer_common_methods, impl_consumer_debug_display,
-    impl_shared_conditional_consumer, impl_shared_consumer_methods,
+    impl_box_conditional_consumer,
+    impl_box_consumer_methods,
+    impl_conditional_consumer_clone,
+    impl_conditional_consumer_debug_display,
+    impl_consumer_clone,
+    impl_consumer_common_methods,
+    impl_consumer_debug_display,
+    impl_shared_conditional_consumer,
+    impl_shared_consumer_methods,
 };
-use crate::macros::{ impl_closure_trait,
-};
-use crate::predicates::predicate::{ArcPredicate, BoxPredicate, Predicate};
+use crate::macros::impl_closure_trait;
 #[cfg(feature = "rc")]
 use crate::predicates::predicate::RcPredicate;
+use crate::predicates::predicate::{
+    ArcPredicate,
+    BoxPredicate,
+    Predicate,
+};
 
 mod box_stateful_consumer;
 pub use box_stateful_consumer::BoxStatefulConsumer;

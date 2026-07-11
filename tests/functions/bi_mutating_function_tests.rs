@@ -54,7 +54,6 @@ fn modify_structs(a: &mut TestStruct, b: &mut TestStruct) -> i32 {
 // BiMutatingFunction Trait Tests - Core Functionality
 // ============================================================================
 
-
 #[test]
 fn test_bi_mutating_function_trait_apply() {
     // Test that BiMutatingFunction trait's apply method works correctly
@@ -82,16 +81,6 @@ fn test_bi_mutating_function_trait_apply_with_complex_types() {
     assert_eq!(s1.value, 15);
     assert_eq!(s2.value, 10);
 }
-
-
-
-
-
-
-
-
-
-
 
 // ============================================================================
 // BoxBiMutatingFunction Tests
@@ -859,7 +848,6 @@ fn test_bi_mutating_function_chained_modifications() {
 // ============================================================================
 // Type Conversion Tests
 // ============================================================================
-
 
 // ============================================================================
 // Error and Panic Tests

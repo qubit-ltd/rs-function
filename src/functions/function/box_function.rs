@@ -9,8 +9,13 @@
 //! Defines the `BoxFunction` public type.
 
 use super::{
-    BoxConditionalFunction, Function, Predicate, impl_box_function_methods,
-    impl_function_common_methods, impl_function_constant_method, impl_function_debug_display,
+    BoxConditionalFunction,
+    Function,
+    Predicate,
+    impl_box_function_methods,
+    impl_function_common_methods,
+    impl_function_constant_method,
+    impl_function_debug_display,
     impl_function_identity_method,
 };
 

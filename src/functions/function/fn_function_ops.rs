@@ -8,7 +8,13 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnFunctionOps` public type.
 
-use super::{BoxConditionalFunction, BoxFunction, Function, Predicate, impl_fn_ops_trait};
+use super::{
+    BoxConditionalFunction,
+    BoxFunction,
+    Function,
+    Predicate,
+    impl_fn_ops_trait,
+};
 
 // ============================================================================
 // FnFunctionOps - Extension trait for closure functions

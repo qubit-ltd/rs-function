@@ -9,9 +9,16 @@
 //! Defines the `RcFunction` public type.
 
 use super::{
-    Function, Predicate, Rc, RcConditionalFunction, impl_function_clone,
-    impl_function_common_methods, impl_function_constant_method, impl_function_debug_display,
-    impl_function_identity_method, impl_shared_function_methods,
+    Function,
+    Predicate,
+    Rc,
+    RcConditionalFunction,
+    impl_function_clone,
+    impl_function_common_methods,
+    impl_function_constant_method,
+    impl_function_debug_display,
+    impl_function_identity_method,
+    impl_shared_function_methods,
 };
 
 // ============================================================================

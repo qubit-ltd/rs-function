@@ -18,13 +18,9 @@ use qubit_function::{
 // SupplierOnce Trait Tests (for closures)
 // ==========================================================================
 
-
 #[cfg(test)]
 mod test_supplier_once_trait {
     use super::SupplierOnce;
-
-
-
 
     #[test]
     fn test_closure_get_direct() {
@@ -44,10 +40,6 @@ mod test_supplier_once_trait {
         let closure = || vec![1, 2, 3];
         assert_eq!(closure.get(), vec![1, 2, 3]);
     }
-
-
-
-
 }
 
 // ==========================================================================
@@ -125,18 +117,9 @@ mod test_box_supplier_once {
         }
     }
 
-    mod test_into_box {
+    mod test_into_box {}
 
-
-    }
-
-    mod test_into_fn {
-
-
-
-
-
-    }
+    mod test_into_fn {}
 
     mod test_use_cases {
         use super::{
@@ -188,12 +171,7 @@ mod test_box_supplier_once {
         }
     }
 
-    mod test_into_box_conversion {
-
-
-
-
-    }
+    mod test_into_box_conversion {}
 
     mod test_edge_cases {
         use super::{
@@ -278,15 +256,6 @@ mod test_custom_supplier_once_default_implementation {
         let custom = CustomSupplierOnce::new(42);
         assert_eq!(custom.get(), 42);
     }
-
-
-
-
-
-
-
-
-
 }
 
 // ==========================================================================
@@ -317,11 +286,6 @@ mod test_to_box_and_to_fn {
                 .expect("CloneableSupplier already consumed")
         }
     }
-
-
-
-
-
 }
 
 // ======================================================================

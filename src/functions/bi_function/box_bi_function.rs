@@ -9,8 +9,14 @@
 //! Defines the `BoxBiFunction` public type.
 
 use super::{
-    BiFunction, BiPredicate, BoxConditionalBiFunction, Function, impl_box_function_methods,
-    impl_function_common_methods, impl_function_constant_method, impl_function_debug_display,
+    BiFunction,
+    BiPredicate,
+    BoxConditionalBiFunction,
+    Function,
+    impl_box_function_methods,
+    impl_function_common_methods,
+    impl_function_constant_method,
+    impl_function_debug_display,
 };
 
 type BoxBiFunctionFn<T, U, R> = Box<dyn Fn(&T, &U) -> R>;

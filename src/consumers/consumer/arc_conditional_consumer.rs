@@ -9,8 +9,13 @@
 //! Defines the `ArcConditionalConsumer` public type.
 
 use super::{
-    ArcConsumer, ArcPredicate, Consumer, Predicate, impl_conditional_consumer_clone,
-    impl_conditional_consumer_debug_display, impl_shared_conditional_consumer,
+    ArcConsumer,
+    ArcPredicate,
+    Consumer,
+    Predicate,
+    impl_conditional_consumer_clone,
+    impl_conditional_consumer_debug_display,
+    impl_shared_conditional_consumer,
 };
 
 // ============================================================================

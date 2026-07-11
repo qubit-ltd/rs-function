@@ -89,11 +89,6 @@ fn test_runnable_once_closure_run_returns_error() {
     assert_eq!(error.to_string(), "failed");
 }
 
-
-
-
-
-
 #[test]
 fn test_box_runnable_once_new_and_run() {
     let flag = Arc::new(AtomicBool::new(false));
@@ -141,8 +136,6 @@ fn test_box_runnable_once_name_management() {
     assert_eq!(task.name(), None);
     assert_eq!(task.to_string(), "BoxRunnableOnce");
 }
-
-
 
 #[test]
 fn test_box_runnable_once_implements_supplier_once() {
@@ -282,8 +275,6 @@ fn test_box_runnable_once_then_callable_skips_callable_on_error() {
     assert!(!callable_ran.load(Ordering::SeqCst));
 }
 
-
-
 #[derive(Clone)]
 struct TextRunnableOnce {
     events: Rc<Cell<u32>>,
@@ -295,8 +286,6 @@ impl RunnableOnce<&'static str> for TextRunnableOnce {
         Ok(())
     }
 }
-
-
 
 #[test]
 fn test_box_runnable_once_from_supplier_with_text_error_type() {

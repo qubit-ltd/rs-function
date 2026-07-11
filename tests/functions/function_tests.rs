@@ -33,15 +33,6 @@ fn test_function_trait_apply() {
     assert_eq!(double.apply(&-10), -20);
 }
 
-
-
-
-
-
-
-
-
-
 #[test]
 fn test_box_function_new_allows_non_static_t() {
     fn run<'a>(value: &'a str) -> usize {
@@ -206,9 +197,6 @@ fn test_box_function_when_with_predicate() {
 // BoxFunction Tests - Type Conversions (Function trait)
 // ============================================================================
 
-
-
-
 // ============================================================================
 // BoxFunction Tests - FunctionOnce Implementation
 // ============================================================================
@@ -325,14 +313,6 @@ fn test_arc_function_when_with_predicate() {
 // ============================================================================
 // ArcFunction Tests - Type Conversions
 // ============================================================================
-
-
-
-
-
-
-
-
 
 // ============================================================================
 // ArcFunction Tests - FunctionOnce Implementation
@@ -460,12 +440,6 @@ fn test_rc_function_when_with_predicate() {
 // RcFunction Tests - Type Conversions
 // ============================================================================
 
-
-
-
-
-
-
 // ============================================================================
 // RcFunction Tests - FunctionOnce Implementation
 // ============================================================================
@@ -575,8 +549,6 @@ fn test_fn_function_ops_when() {
     assert_eq!(conditional.apply(&-5), 5);
 }
 
-
-
 // ============================================================================
 // Function Trait Default Implementation Tests
 // ============================================================================
@@ -612,18 +584,6 @@ mod function_default_impl_tests {
         // Does not override any into_xxx() or to_xxx() methods, testing default
         // implementations
     }
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
 // ============================================================================
@@ -836,13 +796,6 @@ fn test_rc_conditional_function_clone_multiple() {
 // ============================================================================
 // Name Preservation Tests for into_xxx and to_xxx Methods
 // ============================================================================
-
-
-
-
-
-
-
 
 #[test]
 fn test_box_function_clear_name() {

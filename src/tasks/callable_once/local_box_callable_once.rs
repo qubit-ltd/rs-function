@@ -10,7 +10,10 @@
 
 use crate::{
     functions::macros::impl_function_debug_display,
-    macros::{impl_common_name_methods, impl_common_new_methods},
+    macros::{
+        impl_common_name_methods,
+        impl_common_new_methods,
+    },
     suppliers::supplier_once::SupplierOnce,
     tasks::callable_once::CallableOnce,
 };
@@ -39,7 +42,7 @@ pub struct LocalBoxCallableOnce<R, E> {
 
 impl<R, E> LocalBoxCallableOnce<R, E> {
     impl_common_new_methods!(
-        semantic (CallableOnce<R, E> + 'static),
+        semantic(CallableOnce<R, E> + 'static),
         |source| move || source.call(),
         |function| Box::new(function),
         "local callable"
@@ -85,7 +88,10 @@ impl<R, E> LocalBoxCallableOnce<R, E> {
     {
         let name = self.name;
         let function = self.function;
-        LocalBoxCallableOnce::new_with_optional_name(move || function().map(mapper), name)
+        LocalBoxCallableOnce::new_with_optional_name(
+            move || function().map(mapper),
+            name,
+        )
     }
 
     /// Maps the error value of this callable.
@@ -106,7 +112,10 @@ impl<R, E> LocalBoxCallableOnce<R, E> {
     {
         let name = self.name;
         let function = self.function;
-        LocalBoxCallableOnce::new_with_optional_name(move || function().map_err(mapper), name)
+        LocalBoxCallableOnce::new_with_optional_name(
+            move || function().map_err(mapper),
+            name,
+        )
     }
 
     /// Chains another fallible computation after this callable succeeds.
@@ -128,7 +137,10 @@ impl<R, E> LocalBoxCallableOnce<R, E> {
     {
         let name = self.name;
         let function = self.function;
-        LocalBoxCallableOnce::new_with_optional_name(move || function().and_then(next), name)
+        LocalBoxCallableOnce::new_with_optional_name(
+            move || function().and_then(next),
+            name,
+        )
     }
 }
 

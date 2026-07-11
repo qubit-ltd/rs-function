@@ -9,7 +9,11 @@
 //! Defines the `BoxConditionalConsumerOnce` public type.
 
 use super::{
-    BoxConsumerOnce, BoxPredicate, ConsumerOnce, Predicate, impl_box_conditional_consumer,
+    BoxConsumerOnce,
+    BoxPredicate,
+    ConsumerOnce,
+    Predicate,
+    impl_box_conditional_consumer,
     impl_conditional_consumer_debug_display,
 };
 
@@ -79,7 +83,11 @@ pub struct BoxConditionalConsumerOnce<T> {
 }
 
 // Generate and_then and or_else methods using macro
-impl_box_conditional_consumer!(BoxConditionalConsumerOnce<T>, BoxConsumerOnce, ConsumerOnce);
+impl_box_conditional_consumer!(
+    BoxConditionalConsumerOnce<T>,
+    BoxConsumerOnce,
+    ConsumerOnce
+);
 
 impl<T> ConsumerOnce<T> for BoxConditionalConsumerOnce<T> {
     fn accept(self, value: &T) {

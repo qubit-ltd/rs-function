@@ -22,7 +22,6 @@ use qubit_function::{
 // BoxStatefulMutator Tests
 // ============================================================================
 
-
 #[cfg(test)]
 mod test_box_mutator {
     use super::{
@@ -162,8 +161,6 @@ mod test_box_mutator {
         assert_eq!(negative, 10);
     }
 
-
-
     #[test]
     fn test_new_with_name() {
         let mut mutator = BoxStatefulMutator::new_with_name(
@@ -298,9 +295,6 @@ mod test_arc_mutator {
         assert_eq!(handle.join().expect("thread should not panic"), 10);
     }
 
-
-
-
     #[test]
     fn test_noop() {
         let noop = ArcStatefulMutator::<i32>::noop();
@@ -339,15 +333,6 @@ mod test_arc_mutator {
         c.apply(&mut value);
         assert_eq!(value, 10);
     }
-
-
-
-
-
-
-
-
-
 
     #[test]
     fn test_new_with_name() {
@@ -458,8 +443,6 @@ mod test_rc_mutator {
         assert_eq!(value2, 6);
     }
 
-
-
     #[test]
     fn test_noop() {
         let noop = RcStatefulMutator::<i32>::noop();
@@ -501,12 +484,6 @@ mod test_rc_mutator {
 
     // Note: RcStatefulMutator cannot be converted to ArcStatefulMutator because
     // Rc is not Send. This test has been removed.
-
-
-
-
-
-
 
     #[test]
     fn test_new_with_name() {
@@ -590,18 +567,6 @@ mod test_fn_mutator_ops {
         chained.apply(&mut value);
         assert_eq!(value, 20); // (5 * 2) + 10
     }
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
 // ============================================================================
@@ -952,15 +917,6 @@ mod test_custom_mutator_default_impl {
         assert_eq!(value, 15);
     }
 
-
-
-
-
-
-
-
-
-
     /// Custom mutator with state to test stateful operations
     struct CountingStatefulMutator {
         count: i32,
@@ -996,8 +952,6 @@ mod test_custom_mutator_default_impl {
         assert_eq!(value3, 13); // 10 + 3
     }
 
-
-
     /// Custom mutator with complex type
     #[derive(Debug, Clone, PartialEq)]
     struct Point {
@@ -1032,9 +986,6 @@ mod test_custom_mutator_default_impl {
         assert_eq!(point, Point { x: 15, y: 35 });
     }
 
-
-
-
     /// Generic custom mutator
     struct GenericStatefulMutator<F>
     where
@@ -1068,8 +1019,6 @@ mod test_custom_mutator_default_impl {
         mutator.apply(&mut value);
         assert_eq!(value, 15);
     }
-
-
 }
 
 // ============================================================================
@@ -1077,27 +1026,7 @@ mod test_custom_mutator_default_impl {
 // ============================================================================
 
 #[cfg(test)]
-mod test_into_fn {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}
+mod test_into_fn {}
 
 // ============================================================================
 // Conditional Execution Tests (when/or_else with various parameter types)
@@ -1738,42 +1667,17 @@ mod test_conditional_execution {
     // Type conversion tests for ConditionalStatefulMutator
     // ========================================================================
 
-
-
-
-
-
-
-
     // ========================================================================
     // into_fn tests for ConditionalStatefulMutator
     // ========================================================================
-
-
-
 
     // ========================================================================
     // to_xxx tests for RcConditionalStatefulMutator
     // ========================================================================
 
-
-
-
-
-
-
     // ========================================================================
     // to_xxx tests for ArcConditionalStatefulMutator
     // ========================================================================
-
-
-
-
-
-
-
-
-
 
     // ========================================================================
     // Complex conditional composition tests

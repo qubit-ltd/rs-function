@@ -208,7 +208,8 @@ fn main() {
         x * counter
     });
     let mut rc_clone = rc_mapper.clone();
-    let once_mapper = BoxTransformerOnce::new(move |value| rc_clone.apply(value));
+    let once_mapper =
+        BoxTransformerOnce::new(move |value| rc_clone.apply(value));
     println!(
         "  RcStatefulTransformer->BoxTransformerOnce: {}",
         once_mapper.apply(5)

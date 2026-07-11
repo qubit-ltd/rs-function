@@ -32,18 +32,9 @@ fn test_bi_function_trait_apply() {
     assert_eq!(add.apply(&-10, &5), -5);
 }
 
-
-
-
-
-
-
 // ============================================================================
 // Custom BiFunction Implementation Tests - Test Trait Default Methods
 // ============================================================================
-
-
-
 
 // ============================================================================
 // BoxBiFunction Tests
@@ -260,7 +251,6 @@ fn test_arc_bi_function_debug_display() {
 // Conversion Tests
 // ============================================================================
 
-
 // ============================================================================
 // BiFunction Composition Tests
 // ============================================================================
@@ -373,8 +363,6 @@ fn test_box_bi_function_name_and_set_name() {
     assert_eq!(func.name(), Some("updated_name"));
 }
 
-
-
 // ============================================================================
 // RcBiFunction Extended Tests
 // ============================================================================
@@ -411,17 +399,9 @@ fn test_rc_bi_function_name_and_set_name() {
     assert_eq!(func.name(), Some("test_func"));
 }
 
-
-
 // RcBiFunction cannot be converted to ArcBiFunction (not Send + Sync)
 
-
-
-
-
 // RcBiFunction cannot be converted to ArcBiFunction (not Send + Sync)
-
-
 
 // ============================================================================
 // ArcBiFunction Extended Tests
@@ -458,16 +438,6 @@ fn test_arc_bi_function_name_and_set_name() {
     func.set_name("test_func");
     assert_eq!(func.name(), Some("test_func"));
 }
-
-
-
-
-
-
-
-
-
-
 
 // ============================================================================
 // Conditional BiFunction Tests

@@ -13,8 +13,14 @@ use std::sync::Arc;
 use parking_lot::Mutex;
 
 use crate::{
-    macros::{impl_common_name_methods, impl_common_new_methods},
-    suppliers::{macros::impl_supplier_debug_display, supplier::Supplier},
+    macros::{
+        impl_common_name_methods,
+        impl_common_new_methods,
+    },
+    suppliers::{
+        macros::impl_supplier_debug_display,
+        supplier::Supplier,
+    },
     tasks::runnable::Runnable,
 };
 
@@ -32,10 +38,10 @@ use crate::{
 /// * `E` - The error value returned when the action fails.
 /// # Locking and reentrancy
 ///
-/// Each call acquires a `parking_lot::Mutex` and holds it while the user callback
-/// runs. Synchronous re-entry through the same shared wrapper deadlocks. The mutex
-/// is not poisoned after a panic, and mutations completed before a panic are not
-/// rolled back.
+/// Each call acquires a `parking_lot::Mutex` and holds it while the user
+/// callback runs. Synchronous re-entry through the same shared wrapper
+/// deadlocks. The mutex is not poisoned after a panic, and mutations completed
+/// before a panic are not rolled back.
 pub struct ArcRunnable<E> {
     /// The stateful closure executed by this runnable.
     pub(super) function: Arc<Mutex<dyn FnMut() -> Result<(), E> + Send>>,
@@ -55,7 +61,7 @@ impl<E> Clone for ArcRunnable<E> {
 
 impl<E> ArcRunnable<E> {
     impl_common_new_methods!(
-        semantic_mut (Runnable<E> + Send + 'static),
+        semantic_mut(Runnable<E> + Send + 'static),
         |source| move || source.run(),
         |function| Arc::new(Mutex::new(function)),
         "runnable"

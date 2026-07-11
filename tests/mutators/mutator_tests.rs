@@ -22,7 +22,6 @@ use qubit_function::{
 // Mutator Default Implementation Tests
 // ============================================================================
 
-
 /// Test struct that implements Mutator to test default methods
 struct TestMutator {
     multiplier: i32,
@@ -49,17 +48,7 @@ impl Clone for TestMutator {
 }
 
 #[cfg(test)]
-mod test_mutator_default_impl {
-
-
-
-
-
-
-
-
-
-}
+mod test_mutator_default_impl {}
 
 // ============================================================================
 // BoxMutator Tests
@@ -218,12 +207,6 @@ mod test_box_mutator {
         assert_eq!(negative, -5); // -10 + 5 (condition not met, only second mutator runs)
     }
 
-
-
-
-
-
-
     #[test]
     fn test_new_with_name() {
         let mutator =
@@ -367,9 +350,6 @@ mod test_arc_mutator {
         assert_eq!(handle.join().expect("thread should not panic"), 10);
     }
 
-
-
-
     #[test]
     fn test_noop() {
         let noop = ArcMutator::<i32>::noop();
@@ -405,15 +385,6 @@ mod test_arc_mutator {
         assert_eq!(value, 10);
     }
 
-
-
-
-
-
-
-
-
-
     #[test]
     fn test_when() {
         let mutator = ArcMutator::new(|x: &mut i32| *x *= 2);
@@ -427,15 +398,6 @@ mod test_arc_mutator {
         conditional.apply(&mut negative);
         assert_eq!(negative, -5); // unchanged
     }
-
-
-
-
-
-
-
-
-
 
     #[test]
     fn test_conditional_or_else() {
@@ -569,8 +531,6 @@ mod test_rc_mutator {
         assert_eq!(value2, 6);
     }
 
-
-
     #[test]
     fn test_noop() {
         let noop = RcMutator::<i32>::noop();
@@ -622,19 +582,6 @@ mod test_rc_mutator {
         conditional.apply(&mut negative);
         assert_eq!(negative, -5); // unchanged
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     #[test]
     fn test_conditional_or_else() {
@@ -743,19 +690,6 @@ mod test_fn_mutator_ops {
         chained.apply(&mut value);
         assert_eq!(value, 20); // (5 * 2) + 10
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
 // ============================================================================

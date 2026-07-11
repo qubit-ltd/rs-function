@@ -9,9 +9,17 @@
 //! Defines the `ArcMutatingFunction` public type.
 
 use super::{
-    Arc, ArcConditionalMutatingFunction, Function, MutatingFunction, Predicate, impl_closure_trait,
-    impl_function_clone, impl_function_common_methods, impl_function_debug_display,
-    impl_function_identity_method, impl_shared_function_methods,
+    Arc,
+    ArcConditionalMutatingFunction,
+    Function,
+    MutatingFunction,
+    Predicate,
+    impl_closure_trait,
+    impl_function_clone,
+    impl_function_common_methods,
+    impl_function_debug_display,
+    impl_function_identity_method,
+    impl_shared_function_methods,
 };
 
 // =======================================================================

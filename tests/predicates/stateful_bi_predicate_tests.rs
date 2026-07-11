@@ -31,7 +31,6 @@ fn box_stateful_bi_predicate_returning(
     BoxStatefulBiPredicate::new(move |_: &i32, _: &i32| value)
 }
 
-
 #[test]
 fn test_box_stateful_bi_predicate_tracks_state_and_short_circuits() {
     let mut calls = 0;
@@ -151,7 +150,6 @@ fn test_fn_stateful_bi_predicate_ops_compose_mutable_closures() {
     assert_eq!(calls.get(), 2);
 }
 
-
 #[test]
 fn test_box_stateful_bi_predicate_logical_methods() {
     let mut nand = BoxStatefulBiPredicate::new(|_: &i32, _: &i32| true)
@@ -230,8 +228,6 @@ fn test_box_stateful_bi_predicate_logical_truth_tables() {
     let mut negated = !box_stateful_bi_predicate_returning(false);
     assert!(negated.test(&1, &2));
 }
-
-
 
 #[test]
 fn test_fn_stateful_bi_predicate_ops_cover_all_logical_methods() {
