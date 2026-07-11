@@ -87,7 +87,8 @@ impl<T> ArcSupplier<T> {
     // Generates: new(), new_with_name(), name(), set_name()
     // Note: constant() is NOT generated here, implemented separately below
     crate::macros::impl_common_new_methods!(
-        (Fn() -> T + Send + Sync + 'static),
+        semantic (Supplier<T> + Send + Sync + 'static),
+        |source| move || source.get(),
         |f| Arc::new(f),
         "supplier"
     );
