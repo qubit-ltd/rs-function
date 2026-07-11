@@ -71,35 +71,7 @@ fn test_local_box_runnable_once_and_then_supports_local_next_task() {
     assert_eq!(events.get(), 2);
 }
 
-#[test]
-fn test_local_box_runnable_once_into_local_box_returns_self() {
-    let flag = Rc::new(Cell::new(false));
-    let captured = Rc::clone(&flag);
-    let task = LocalBoxRunnableOnce::new(move || {
-        captured.set(true);
-        Ok::<(), io::Error>(())
-    });
 
-    let local = RunnableOnce::into_local_box(task);
-
-    local.run().expect("local runnable should run");
-    assert!(flag.get());
-}
-
-#[test]
-fn test_local_box_runnable_once_into_fn_extracts_function() {
-    let flag = Rc::new(Cell::new(false));
-    let captured = Rc::clone(&flag);
-    let task = LocalBoxRunnableOnce::new(move || {
-        captured.set(true);
-        Ok::<(), io::Error>(())
-    });
-
-    let function = RunnableOnce::into_fn(task);
-
-    function().expect("local runnable function should run");
-    assert!(flag.get());
-}
 
 #[test]
 fn test_local_box_runnable_once_then_callable_supports_local_callable() {
@@ -116,16 +88,4 @@ fn test_local_box_runnable_once_then_callable_supports_local_callable() {
             .expect("local callable should run after runnable"),
         "value"
     );
-}
-
-#[test]
-fn test_local_box_runnable_once_into_local_callable_preserves_name() {
-    let task =
-        LocalBoxRunnableOnce::<io::Error>::new_with_name("cleanup", || Ok(()));
-    let callable = RunnableOnce::into_local_callable(task);
-
-    assert_eq!(callable.name(), Some("cleanup"));
-    callable
-        .call()
-        .expect("local callable converted from runnable should run");
 }

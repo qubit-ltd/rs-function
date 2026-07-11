@@ -30,7 +30,7 @@ use super::{
 /// assert!(pred.test(&5, &3));
 ///
 /// // Chaining consumes the bi-predicate
-/// let combined = pred.and(BoxBiPredicate::new(|x, y| x > y));
+/// let combined = pred.and(BoxBiPredicate::new(|x: &i32, y: &i32| x > y));
 /// assert!(combined.test(&10, &5));
 /// ```
 pub struct BoxBiPredicate<T, U> {

@@ -51,9 +51,14 @@ type BiConsumerOnceFn<T, U> = dyn FnOnce(&T, &U);
 
 mod box_bi_consumer_once;
 pub use box_bi_consumer_once::BoxBiConsumerOnce;
+#[cfg(feature = "combinators")]
 mod fn_bi_consumer_once_ops;
+#[cfg(feature = "combinators")]
 pub use fn_bi_consumer_once_ops::FnBiConsumerOnceOps;
 mod box_conditional_bi_consumer_once;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use box_conditional_bi_consumer_once::BoxConditionalBiConsumerOnce;
+#[cfg(feature = "combinators")]
 pub use box_conditional_bi_consumer_once::BoxConditionalBiConsumerOnce;
 
 // =======================================================================

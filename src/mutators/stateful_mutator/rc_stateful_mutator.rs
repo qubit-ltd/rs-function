@@ -53,6 +53,11 @@ use super::{
 /// m.apply(&mut value);
 /// assert_eq!(value, 10);
 /// ```
+/// # Borrowing and reentrancy
+///
+/// Each call holds a mutable `RefCell` borrow while the user callback runs.
+/// Synchronous re-entry through the same shared wrapper panics with a borrow
+/// error. Mutations completed before a panic are not rolled back.
 pub struct RcStatefulMutator<T> {
     pub(super) function: RcMutMutatorFn<T>,
     pub(super) name: Option<String>,

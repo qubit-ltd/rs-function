@@ -66,7 +66,7 @@ impl<T, U, R> BiMutatingFunction<T, U, R> for RcBiMutatingFunction<T, U, R> {
 }
 
 // Implement constant method for RcBiMutatingFunction
-impl_function_constant_method!(RcBiMutatingFunction<T, U, R>);
+impl_function_constant_method!(RcBiMutatingFunction<T, U, R>, mut 'static);
 
 // Implement Debug and Display for RcBiMutatingFunction
 impl_function_debug_display!(RcBiMutatingFunction<T, U, R>);

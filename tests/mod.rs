@@ -5,6 +5,12 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
+#![cfg(feature = "full")]
+#![allow(
+    dead_code,
+    unused_imports,
+    reason = "test support types are shared with feature-gated test modules"
+)]
 
 mod comparator;
 mod consumers;

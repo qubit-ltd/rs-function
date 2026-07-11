@@ -30,7 +30,7 @@ use super::{
 /// assert!(pred.test(&5));
 ///
 /// // Original predicate remains usable after composition
-/// let combined = pred.and(ArcPredicate::new(|x| x % 2 == 0));
+/// let combined = pred.and(ArcPredicate::new(|x: &i32| x % 2 == 0));
 /// assert!(pred.test(&5));  // Still works
 ///
 /// // Can be cloned and sent across threads

@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "checks": [
+    {
+      "name": "baseline",
+      "commands": ["check"],
+      "defaultFeatures": false,
+      "features": []
+    },
+    {
+      "name": "rc",
+      "commands": ["check"],
+      "defaultFeatures": false,
+      "features": ["rc"]
+    },
+    {
+      "name": "once",
+      "commands": ["check"],
+      "defaultFeatures": false,
+      "features": ["once"]
+    },
+    {
+      "name": "stateful",
+      "commands": ["check"],
+      "defaultFeatures": false,
+      "features": ["stateful"]
+    },
+    {
+      "name": "combinators",
+      "commands": ["check"],
+      "defaultFeatures": false,
+      "features": ["combinators"]
+    },
+    {
+      "name": "rc-stateful",
+      "commands": ["check"],
+      "defaultFeatures": false,
+      "features": ["rc", "stateful"]
+    },
+    {
+      "name": "once-combinators",
+      "commands": ["check"],
+      "defaultFeatures": false,
+      "features": ["once", "combinators"]
+    },
+    {
+      "name": "full",
+      "commands": ["test", "doc", "clippy"],
+      "defaultFeatures": false,
+      "features": ["full"]
+    }
+  ]
+}

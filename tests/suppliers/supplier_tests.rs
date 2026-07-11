@@ -25,47 +25,6 @@ use std::thread;
 // Supplier Trait Tests (for closures)
 // ======================================================================
 
-#[test]
-fn test_supplier_default_conversions_allow_relaxed_generic_types() {
-    #[derive(Debug)]
-    struct BorrowedRc<'a> {
-        value: &'a str,
-    }
-
-    #[derive(Clone, Debug)]
-    struct BorrowedRcSupplier;
-
-    impl<'a> Supplier<BorrowedRc<'a>> for BorrowedRcSupplier {
-        fn get(&self) -> BorrowedRc<'a> {
-            BorrowedRc { value: "left" }
-        }
-    }
-
-    fn assert_left(value: BorrowedRc<'_>) {
-        assert_eq!(value.value, "left");
-    }
-
-    fn exercise(_marker: &str) {
-        let supplier = BorrowedRcSupplier;
-
-        assert_left(supplier.clone().into_box().get());
-        assert_left(supplier.clone().into_rc().get());
-        assert_left(supplier.clone().into_arc().get());
-        assert_left(qubit_function::SupplierOnce::get(
-            supplier.clone().into_once(),
-        ));
-        assert_left(supplier.clone().into_fn()());
-
-        assert_left(supplier.to_box().get());
-        assert_left(supplier.to_rc().get());
-        assert_left(supplier.to_arc().get());
-        assert_left(qubit_function::SupplierOnce::get(supplier.to_once()));
-        assert_left(supplier.to_fn()());
-    }
-
-    let marker = String::from("marker");
-    exercise(marker.as_str());
-}
 
 #[cfg(test)]
 mod test_stateless_supplier_trait {
@@ -74,14 +33,6 @@ mod test_stateless_supplier_trait {
         Supplier,
     };
 
-    #[test]
-    fn test_closure_implements_stateless_supplier() {
-        // Test that closure implements Supplier trait
-        let closure = || 42;
-        let boxed = closure.into_box();
-        assert_eq!(boxed.get(), 42);
-        assert_eq!(boxed.get(), 42);
-    }
 
     #[test]
     fn test_closure_stateless() {
@@ -92,29 +43,8 @@ mod test_stateless_supplier_trait {
         assert_eq!(boxed.get(), 42);
     }
 
-    #[test]
-    fn test_into_box() {
-        // Test conversion to BoxSupplier
-        let closure = || 42;
-        let boxed = closure.into_box();
-        assert_eq!(boxed.get(), 42);
-    }
 
-    #[test]
-    fn test_into_rc() {
-        // Test conversion to RcSupplier
-        let closure = || 42;
-        let rc = closure.into_rc();
-        assert_eq!(rc.get(), 42);
-    }
 
-    #[test]
-    fn test_into_arc() {
-        // Test conversion to ArcSupplier
-        let closure = || 42;
-        let arc = closure.into_arc();
-        assert_eq!(arc.get(), 42);
-    }
 
     #[test]
     fn test_closure_get() {
@@ -136,36 +66,8 @@ mod test_stateless_supplier_trait {
         assert_eq!(closure.get(), 200);
     }
 
-    #[test]
-    fn test_into_fn() {
-        // Test conversion to FnMut closure
-        let closure = || 42;
-        let fn_mut = closure.into_fn();
-        assert_eq!(fn_mut(), 42);
-        assert_eq!(fn_mut(), 42);
-    }
 
-    #[test]
-    fn test_into_fn_with_captured_value() {
-        // Test into_fn with captured value
-        let value = 100;
-        let closure = move || value * 2;
-        let fn_mut = closure.into_fn();
-        assert_eq!(fn_mut(), 200);
-        assert_eq!(fn_mut(), 200);
-    }
 
-    #[test]
-    fn test_into_fn_returns_different_types() {
-        // Test into_fn with different return types
-        let closure_i32 = || 42i32;
-        let fn_mut_i32 = closure_i32.into_fn();
-        assert_eq!(fn_mut_i32(), 42i32);
-
-        let closure_str = || "hello";
-        let fn_mut_str = closure_str.into_fn();
-        assert_eq!(fn_mut_str(), "hello");
-    }
 }
 
 // ======================================================================
@@ -338,49 +240,10 @@ mod test_box_stateless_supplier {
             assert_eq!(supplier.get(), 42);
         }
 
-        #[test]
-        fn test_into_box() {
-            // Test into_box (should return self)
-            let supplier = BoxSupplier::new(|| 42);
-            let boxed = supplier.into_box();
-            assert_eq!(boxed.get(), 42);
-        }
 
-        #[test]
-        fn test_into_rc() {
-            // Test conversion to RcSupplier
-            let supplier = BoxSupplier::new(|| 42);
-            let rc = supplier.into_rc();
-            assert_eq!(rc.get(), 42);
-        }
 
-        #[test]
-        fn test_into_fn() {
-            // Test conversion to FnMut closure
-            let supplier = BoxSupplier::new(|| 42);
-            let fn_mut = supplier.into_fn();
-            assert_eq!(fn_mut(), 42);
-            assert_eq!(fn_mut(), 42);
-        }
 
-        #[test]
-        fn test_into_fn_with_captured_value() {
-            // Test into_fn with captured value
-            let value = 100;
-            let supplier = BoxSupplier::new(move || value * 2);
-            let fn_mut = supplier.into_fn();
-            assert_eq!(fn_mut(), 200);
-            assert_eq!(fn_mut(), 200);
-        }
 
-        #[test]
-        fn test_into_fn_with_string() {
-            // Test into_fn with String type
-            let supplier = BoxSupplier::new(|| String::from("hello"));
-            let fn_mut = supplier.into_fn();
-            assert_eq!(fn_mut(), "hello");
-            assert_eq!(fn_mut(), "hello");
-        }
 
         // Note: test_into_arc is not included here because
         // BoxSupplier cannot be converted to
@@ -620,7 +483,6 @@ mod test_arc_stateless_supplier {
         use super::{
             ArcSupplier,
             Supplier,
-            thread,
         };
 
         #[test]
@@ -630,66 +492,12 @@ mod test_arc_stateless_supplier {
             assert_eq!(supplier.get(), 42);
         }
 
-        #[test]
-        fn test_into_box() {
-            // Test conversion to BoxSupplier
-            let supplier = ArcSupplier::new(|| 42);
-            let boxed = supplier.into_box();
-            assert_eq!(boxed.get(), 42);
-        }
 
-        #[test]
-        fn test_into_rc() {
-            // Test conversion to RcSupplier
-            let supplier = ArcSupplier::new(|| 42);
-            let rc = supplier.into_rc();
-            assert_eq!(rc.get(), 42);
-        }
 
-        #[test]
-        fn test_into_arc() {
-            // Test into_arc (should return self)
-            let supplier = ArcSupplier::new(|| 42);
-            let arc = supplier.into_arc();
-            assert_eq!(arc.get(), 42);
-        }
 
-        #[test]
-        fn test_into_fn() {
-            // Test conversion to FnMut closure
-            let supplier = ArcSupplier::new(|| 42);
-            let fn_mut = supplier.into_fn();
-            assert_eq!(fn_mut(), 42);
-            assert_eq!(fn_mut(), 42);
-        }
 
-        #[test]
-        fn test_into_fn_with_captured_value() {
-            // Test into_fn with captured value
-            let value = 100;
-            let supplier = ArcSupplier::new(move || value * 2);
-            let fn_mut = supplier.into_fn();
-            assert_eq!(fn_mut(), 200);
-            assert_eq!(fn_mut(), 200);
-        }
 
-        #[test]
-        fn test_into_fn_with_string() {
-            // Test into_fn with String type
-            let supplier = ArcSupplier::new(|| String::from("hello"));
-            let fn_mut = supplier.into_fn();
-            assert_eq!(fn_mut(), "hello");
-            assert_eq!(fn_mut(), "hello");
-        }
 
-        #[test]
-        fn test_into_fn_thread_safe() {
-            // Test that into_fn result can be sent to another thread
-            let supplier = ArcSupplier::new(|| 42);
-            let func = supplier.into_fn();
-            let handle = thread::spawn(func);
-            assert_eq!(handle.join().expect("thread should not panic"), 42);
-        }
     }
 }
 
@@ -877,49 +685,10 @@ mod test_rc_stateless_supplier {
             assert_eq!(supplier.get(), 42);
         }
 
-        #[test]
-        fn test_into_box() {
-            // Test conversion to BoxSupplier
-            let supplier = RcSupplier::new(|| 42);
-            let boxed = supplier.into_box();
-            assert_eq!(boxed.get(), 42);
-        }
 
-        #[test]
-        fn test_into_rc() {
-            // Test into_rc (should return self)
-            let supplier = RcSupplier::new(|| 42);
-            let rc = supplier.into_rc();
-            assert_eq!(rc.get(), 42);
-        }
 
-        #[test]
-        fn test_into_fn() {
-            // Test conversion to FnMut closure
-            let supplier = RcSupplier::new(|| 42);
-            let fn_mut = supplier.into_fn();
-            assert_eq!(fn_mut(), 42);
-            assert_eq!(fn_mut(), 42);
-        }
 
-        #[test]
-        fn test_into_fn_with_captured_value() {
-            // Test into_fn with captured value
-            let value = 100;
-            let supplier = RcSupplier::new(move || value * 2);
-            let fn_mut = supplier.into_fn();
-            assert_eq!(fn_mut(), 200);
-            assert_eq!(fn_mut(), 200);
-        }
 
-        #[test]
-        fn test_into_fn_with_string() {
-            // Test into_fn with String type
-            let supplier = RcSupplier::new(|| String::from("hello"));
-            let fn_mut = supplier.into_fn();
-            assert_eq!(fn_mut(), "hello");
-            assert_eq!(fn_mut(), "hello");
-        }
 
         // Note: test_into_arc is not included here because
         // RcSupplier cannot be converted to
@@ -1011,14 +780,6 @@ mod test_integration {
         assert_eq!(pipeline.get(), Some(String::from("20")));
     }
 
-    #[test]
-    fn test_conversion_chain() {
-        // Test converting between different supplier types
-        let closure = || 42;
-        let boxed = closure.into_box();
-        let rc = boxed.into_rc();
-        assert_eq!(rc.get(), 42);
-    }
 }
 
 // ======================================================================
@@ -1439,10 +1200,7 @@ mod test_map_transformer_integration {
 
 #[cfg(test)]
 mod test_custom_stateless_supplier_default_impl {
-    use super::{
-        Supplier,
-        thread,
-    };
+    use super::Supplier;
 
     /// A simple custom type that implements Supplier with
     /// only the core `get` method, relying on default
@@ -1476,209 +1234,20 @@ mod test_custom_stateless_supplier_default_impl {
         assert_eq!(supplier.get(), 42);
     }
 
-    #[test]
-    fn test_custom_supplier_into_box_default() {
-        // Test that the default implementation of into_box works
-        // correctly for custom types
-        let supplier = CounterSupplier::new(100);
-        let boxed = supplier.into_box();
 
-        assert_eq!(boxed.get(), 100);
-        assert_eq!(boxed.get(), 100);
-    }
 
-    #[test]
-    fn test_custom_supplier_into_rc_default() {
-        // Test that the default implementation of into_rc works
-        // correctly for custom types
-        let supplier = CounterSupplier::new(200);
-        let rc = supplier.into_rc();
 
-        assert_eq!(rc.get(), 200);
-        assert_eq!(rc.get(), 200);
 
-        // Verify that Rc can be cloned
-        let rc_clone = rc.clone();
-        assert_eq!(rc_clone.get(), 200);
-    }
 
-    #[test]
-    fn test_custom_supplier_into_arc_default() {
-        // Test that the default implementation of into_arc works
-        // correctly for custom types
-        let supplier = CounterSupplier::new(300);
-        let arc = supplier.into_arc();
 
-        assert_eq!(arc.get(), 300);
-        assert_eq!(arc.get(), 300);
 
-        // Verify that Arc can be cloned
-        let arc_clone = arc.clone();
-        assert_eq!(arc_clone.get(), 300);
-    }
 
-    #[test]
-    fn test_custom_supplier_arc_thread_safety() {
-        // Test that the Arc variant created from custom supplier
-        // using default implementation is thread-safe
-        let supplier = CounterSupplier::new(999);
-        let arc = supplier.into_arc();
 
-        let handles: Vec<_> = (0..5)
-            .map(|_| {
-                let a = arc.clone();
-                thread::spawn(move || a.get())
-            })
-            .collect();
 
-        for h in handles {
-            assert_eq!(h.join().expect("thread should not panic"), 999);
-        }
-    }
 
-    #[test]
-    fn test_custom_supplier_conversion_chain() {
-        // Test chaining conversions using default implementations
-        let supplier = CounterSupplier::new(50);
-        let boxed = supplier.into_box();
-        let rc = boxed.into_rc();
 
-        assert_eq!(rc.get(), 50);
-    }
 
-    #[test]
-    fn test_custom_supplier_with_transformations() {
-        // Test that converted suppliers work with map operations
-        let supplier = CounterSupplier::new(10);
-        let arc = supplier.into_arc();
-        let mapped = arc.map(|x| x * 3);
 
-        assert_eq!(mapped.get(), 30);
-    }
-
-    #[test]
-    fn test_custom_supplier_multiple_conversions() {
-        // Test that we can create different wrapper types from the
-        // same custom supplier instance
-        let supplier1 = CounterSupplier::new(77);
-        let supplier2 = CounterSupplier::new(77);
-        let supplier3 = CounterSupplier::new(77);
-
-        let boxed = supplier1.into_box();
-        let rc = supplier2.into_rc();
-        let arc = supplier3.into_arc();
-
-        assert_eq!(boxed.get(), 77);
-        assert_eq!(rc.get(), 77);
-        assert_eq!(arc.get(), 77);
-    }
-
-    #[test]
-    fn test_custom_supplier_into_fn_default() {
-        // Test that the default implementation of into_fn works
-        // correctly for custom types
-        let supplier = CounterSupplier::new(42);
-        let fn_mut = supplier.into_fn();
-
-        assert_eq!(fn_mut(), 42);
-        assert_eq!(fn_mut(), 42);
-        assert_eq!(fn_mut(), 42);
-    }
-
-    #[test]
-    fn test_custom_supplier_into_fn_with_different_values() {
-        // Test into_fn with different values
-        let supplier1 = CounterSupplier::new(100);
-        let fn_mut1 = supplier1.into_fn();
-        assert_eq!(fn_mut1(), 100);
-
-        let supplier2 = CounterSupplier::new(200);
-        let fn_mut2 = supplier2.into_fn();
-        assert_eq!(fn_mut2(), 200);
-    }
-
-    #[test]
-    fn test_custom_supplier_into_fn_multiple_calls() {
-        // Test that into_fn result can be called multiple times
-        let supplier = CounterSupplier::new(999);
-        let fn_mut = supplier.into_fn();
-
-        for _ in 0..10 {
-            assert_eq!(fn_mut(), 999);
-        }
-    }
-
-    #[test]
-    fn test_custom_supplier_to_box_default() {
-        // Test that the default implementation of to_box works
-        // correctly for custom Clone types
-        let supplier = CounterSupplier::new(100);
-        let boxed = supplier.to_box();
-
-        assert_eq!(boxed.get(), 100);
-        assert_eq!(boxed.get(), 100);
-    }
-
-    #[test]
-    fn test_custom_supplier_to_rc_default() {
-        // Test that the default implementation of to_rc works
-        // correctly for custom Clone types
-        let supplier = CounterSupplier::new(200);
-        let rc = supplier.to_rc();
-
-        assert_eq!(rc.get(), 200);
-        assert_eq!(rc.get(), 200);
-
-        // Verify that Rc can be cloned
-        let rc_clone = rc.clone();
-        assert_eq!(rc_clone.get(), 200);
-    }
-
-    #[test]
-    fn test_custom_supplier_to_arc_default() {
-        // Test that the default implementation of to_arc works
-        // correctly for custom Clone types
-        let supplier = CounterSupplier::new(300);
-        let arc = supplier.to_arc();
-
-        assert_eq!(arc.get(), 300);
-        assert_eq!(arc.get(), 300);
-
-        // Verify that Arc can be cloned
-        let arc_clone = arc.clone();
-        assert_eq!(arc_clone.get(), 300);
-    }
-
-    #[test]
-    fn test_custom_supplier_to_fn_default() {
-        // Test that the default implementation of to_fn works
-        // correctly for custom Clone types
-        let supplier = CounterSupplier::new(42);
-        let fn_mut = supplier.to_fn();
-
-        assert_eq!(fn_mut(), 42);
-        assert_eq!(fn_mut(), 42);
-        assert_eq!(fn_mut(), 42);
-    }
-
-    #[test]
-    fn test_custom_supplier_to_arc_thread_safety() {
-        // Test that the Arc variant created from custom supplier
-        // using to_arc is thread-safe
-        let supplier = CounterSupplier::new(999);
-        let arc = supplier.to_arc();
-
-        let handles: Vec<_> = (0..5)
-            .map(|_| {
-                let a = arc.clone();
-                thread::spawn(move || a.get())
-            })
-            .collect();
-
-        for h in handles {
-            assert_eq!(h.join().expect("thread should not panic"), 999);
-        }
-    }
 
     // Implement Clone for CounterSupplier to enable to_* methods
     impl Clone for CounterSupplier {
@@ -1694,115 +1263,20 @@ mod test_custom_stateless_supplier_default_impl {
 
 #[cfg(test)]
 mod test_to_methods {
-    use super::{
-        ArcSupplier,
-        RcSupplier,
-        Supplier,
-        thread,
-    };
+
 
     // ============================================================
     // Tests for ArcSupplier to_* methods
     // ============================================================
 
     mod test_arc_stateless_supplier_to_methods {
-        use super::{
-            ArcSupplier,
-            Supplier,
-            thread,
-        };
 
-        #[test]
-        fn test_arc_to_box() {
-            // Test ArcSupplier::to_box
-            let arc = ArcSupplier::new(|| 42);
-            let boxed = arc.to_box();
 
-            assert_eq!(boxed.get(), 42);
-            assert_eq!(boxed.get(), 42);
 
-            // Original arc is still usable
-            assert_eq!(arc.get(), 42);
-        }
 
-        #[test]
-        fn test_arc_to_rc() {
-            // Test ArcSupplier::to_rc
-            let arc = ArcSupplier::new(|| 100);
-            let rc = arc.to_rc();
 
-            assert_eq!(rc.get(), 100);
-            assert_eq!(rc.get(), 100);
 
-            // Original arc is still usable
-            assert_eq!(arc.get(), 100);
-        }
 
-        #[test]
-        fn test_arc_to_arc() {
-            // Test ArcSupplier::to_arc (optimized clone)
-            let arc1 = ArcSupplier::new(|| 200);
-            let arc2 = arc1.to_arc();
-
-            assert_eq!(arc1.get(), 200);
-            assert_eq!(arc2.get(), 200);
-
-            // Both are still usable
-            assert_eq!(arc1.get(), 200);
-            assert_eq!(arc2.get(), 200);
-        }
-
-        #[test]
-        fn test_arc_to_fn() {
-            // Test ArcSupplier::to_fn
-            let arc = ArcSupplier::new(|| 42);
-            let fn_mut = arc.to_fn();
-
-            assert_eq!(fn_mut(), 42);
-            assert_eq!(fn_mut(), 42);
-
-            // Original arc is still usable
-            assert_eq!(arc.get(), 42);
-        }
-
-        #[test]
-        fn test_arc_to_methods_with_string() {
-            // Test to_* methods with String type
-            let arc = ArcSupplier::new(|| String::from("Hello"));
-
-            let boxed = arc.to_box();
-            assert_eq!(boxed.get(), "Hello");
-
-            let rc = arc.to_rc();
-            assert_eq!(rc.get(), "Hello");
-
-            let arc2 = arc.to_arc();
-            assert_eq!(arc2.get(), "Hello");
-
-            let fn_mut = arc.to_fn();
-            assert_eq!(fn_mut(), "Hello");
-
-            // Original arc is still usable
-            assert_eq!(arc.get(), "Hello");
-        }
-
-        #[test]
-        fn test_arc_to_arc_thread_safety() {
-            // Test that to_arc result is thread-safe
-            let arc1 = ArcSupplier::new(|| 999);
-            let arc2 = arc1.to_arc();
-
-            let handles: Vec<_> = (0..5)
-                .map(|_| {
-                    let a = arc2.clone();
-                    thread::spawn(move || a.get())
-                })
-                .collect();
-
-            for h in handles {
-                assert_eq!(h.join().expect("thread should not panic"), 999);
-            }
-        }
     }
 
     // ============================================================
@@ -1810,68 +1284,11 @@ mod test_to_methods {
     // ============================================================
 
     mod test_rc_stateless_supplier_to_methods {
-        use super::{
-            RcSupplier,
-            Supplier,
-        };
 
-        #[test]
-        fn test_rc_to_box() {
-            // Test RcSupplier::to_box
-            let rc = RcSupplier::new(|| 42);
-            let boxed = rc.to_box();
 
-            assert_eq!(boxed.get(), 42);
-            assert_eq!(boxed.get(), 42);
 
-            // Original rc is still usable
-            assert_eq!(rc.get(), 42);
-        }
 
-        #[test]
-        fn test_rc_to_rc() {
-            // Test RcSupplier::to_rc (optimized clone)
-            let rc1 = RcSupplier::new(|| 100);
-            let rc2 = rc1.to_rc();
 
-            assert_eq!(rc1.get(), 100);
-            assert_eq!(rc2.get(), 100);
-
-            // Both are still usable
-            assert_eq!(rc1.get(), 100);
-            assert_eq!(rc2.get(), 100);
-        }
-
-        #[test]
-        fn test_rc_to_fn() {
-            // Test RcSupplier::to_fn
-            let rc = RcSupplier::new(|| 42);
-            let fn_mut = rc.to_fn();
-
-            assert_eq!(fn_mut(), 42);
-            assert_eq!(fn_mut(), 42);
-
-            // Original rc is still usable
-            assert_eq!(rc.get(), 42);
-        }
-
-        #[test]
-        fn test_rc_to_methods_with_string() {
-            // Test to_* methods with String type
-            let rc = RcSupplier::new(|| String::from("Hello"));
-
-            let boxed = rc.to_box();
-            assert_eq!(boxed.get(), "Hello");
-
-            let rc2 = rc.to_rc();
-            assert_eq!(rc2.get(), "Hello");
-
-            let fn_mut = rc.to_fn();
-            assert_eq!(fn_mut(), "Hello");
-
-            // Original rc is still usable
-            assert_eq!(rc.get(), "Hello");
-        }
 
         // Note: to_arc is not implemented for RcSupplier
         // because Rc is not Send + Sync. If you try to call it,
@@ -1883,102 +1300,13 @@ mod test_to_methods {
     // ============================================================
 
     mod test_closure_to_methods {
-        use super::{
-            Supplier,
-            thread,
-        };
 
-        #[test]
-        fn test_closure_to_box() {
-            // Test closure to_box
-            let closure = || 42;
-            let boxed = closure.to_box();
 
-            assert_eq!(boxed.get(), 42);
-            assert_eq!(boxed.get(), 42);
 
-            // Original closure is still usable
-            assert_eq!(closure.get(), 42);
-        }
 
-        #[test]
-        fn test_closure_to_rc() {
-            // Test closure to_rc
-            let closure = || 100;
-            let rc = closure.to_rc();
 
-            assert_eq!(rc.get(), 100);
-            assert_eq!(rc.get(), 100);
 
-            // Original closure is still usable
-            assert_eq!(closure.get(), 100);
-        }
 
-        #[test]
-        fn test_closure_to_arc() {
-            // Test closure to_arc
-            let closure = || 200;
-            let arc = closure.to_arc();
-
-            assert_eq!(arc.get(), 200);
-            assert_eq!(arc.get(), 200);
-
-            // Original closure is still usable
-            assert_eq!(closure.get(), 200);
-        }
-
-        #[test]
-        fn test_closure_to_fn() {
-            // Test closure to_fn
-            let closure = || 42;
-            let fn_mut = closure.to_fn();
-
-            assert_eq!(fn_mut(), 42);
-            assert_eq!(fn_mut(), 42);
-
-            // Original closure is still usable
-            assert_eq!(closure.get(), 42);
-        }
-
-        #[test]
-        fn test_closure_to_methods_with_captured_value() {
-            // Test to_* methods with captured value
-            let value = 100;
-            let closure = move || value * 2;
-
-            let boxed = closure.to_box();
-            assert_eq!(boxed.get(), 200);
-
-            let rc = closure.to_rc();
-            assert_eq!(rc.get(), 200);
-
-            let arc = closure.to_arc();
-            assert_eq!(arc.get(), 200);
-
-            let fn_mut = closure.to_fn();
-            assert_eq!(fn_mut(), 200);
-
-            // Original closure is still usable
-            assert_eq!(closure.get(), 200);
-        }
-
-        #[test]
-        fn test_closure_to_arc_thread_safety() {
-            // Test that to_arc result is thread-safe
-            let closure = || 999;
-            let arc = closure.to_arc();
-
-            let handles: Vec<_> = (0..5)
-                .map(|_| {
-                    let a = arc.clone();
-                    thread::spawn(move || a.get())
-                })
-                .collect();
-
-            for h in handles {
-                assert_eq!(h.join().expect("thread should not panic"), 999);
-            }
-        }
     }
 }
 
@@ -2133,71 +1461,9 @@ mod test_supplier_debug_display {
 
 #[cfg(test)]
 mod test_supplier_trait_default_methods {
-    use super::{
-        Arc,
-        Supplier,
-    };
-    use qubit_function::SupplierOnce;
-    use std::sync::atomic::{
-        AtomicUsize,
-        Ordering,
-    };
 
-    #[test]
-    fn test_custom_supplier_into_once() {
-        let counter = Arc::new(AtomicUsize::new(0));
 
-        struct MySupplier {
-            counter: Arc<AtomicUsize>,
-        }
 
-        impl Supplier<i32> for MySupplier {
-            fn get(&self) -> i32 {
-                self.counter.fetch_add(1, Ordering::SeqCst);
-                42
-            }
-        }
 
-        let my_supplier = MySupplier {
-            counter: counter.clone(),
-        };
 
-        // Test into_once() - should consume the supplier
-        let once_supplier = my_supplier.into_once();
-        let result = once_supplier.get();
-        assert_eq!(result, 42);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
-    }
-
-    #[test]
-    fn test_custom_supplier_to_once() {
-        let counter = Arc::new(AtomicUsize::new(0));
-
-        #[derive(Clone)]
-        struct MySupplier {
-            counter: Arc<AtomicUsize>,
-        }
-
-        impl Supplier<i32> for MySupplier {
-            fn get(&self) -> i32 {
-                self.counter.fetch_add(1, Ordering::SeqCst);
-                42
-            }
-        }
-
-        let my_supplier = MySupplier {
-            counter: counter.clone(),
-        };
-
-        // Test to_once() - should not consume the original
-        let once_supplier = my_supplier.to_once();
-        let result = once_supplier.get();
-        assert_eq!(result, 42);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
-
-        // Original supplier should still be usable
-        let result2 = my_supplier.get();
-        assert_eq!(result2, 42);
-        assert_eq!(counter.load(Ordering::SeqCst), 2);
-    }
 }

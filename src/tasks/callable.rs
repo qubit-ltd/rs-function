@@ -19,9 +19,15 @@
 
 mod box_callable;
 pub use box_callable::BoxCallable;
+#[cfg(feature = "rc")]
+#[cfg(feature = "rc")]
 mod rc_callable;
+#[cfg(feature = "rc")]
+#[cfg(feature = "rc")]
 pub use rc_callable::RcCallable;
+#[cfg(feature = "stateful")]
 mod arc_callable;
+#[cfg(feature = "stateful")]
 pub use arc_callable::ArcCallable;
 
 // ============================================================================
@@ -62,4 +68,13 @@ pub trait Callable<R, E> {
     /// Returns `Ok(R)` when the computation succeeds, or `Err(E)` when it
     /// fails. The exact error meaning is defined by the concrete callable.
     fn call(&mut self) -> Result<R, E>;
+}
+
+impl<R, E, F> Callable<R, E> for F
+where
+    F: FnMut() -> Result<R, E>,
+{
+    fn call(&mut self) -> Result<R, E> {
+        self()
+    }
 }

@@ -166,7 +166,7 @@ fn main() {
         let closure = move |x: &i32| {
             l.lock().expect("mutex should not be poisoned").push(*x);
         };
-        let box_consumer = closure.into_box();
+        let box_consumer = BoxConsumerOnce::new(closure);
         box_consumer.accept(&1);
         println!(
             "  BoxConsumerOnce: {:?}",

@@ -21,6 +21,7 @@
 //! - [`ArcBiMutatingFunction`]: Thread-safe shared ownership, cloneable
 //! - [`RcBiMutatingFunction`]: Single-threaded shared ownership, cloneable
 
+#[cfg(feature = "rc")]
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -35,27 +36,46 @@ use crate::functions::{
 };
 use crate::macros::{ impl_closure_trait,
 };
-use crate::predicates::bi_predicate::{ArcBiPredicate, BiPredicate, BoxBiPredicate, RcBiPredicate};
+use crate::predicates::bi_predicate::{ArcBiPredicate, BiPredicate, BoxBiPredicate};
+#[cfg(feature = "rc")]
+use crate::predicates::bi_predicate::RcBiPredicate;
 
 mod box_bi_mutating_function;
 pub use box_bi_mutating_function::BoxBiMutatingFunction;
+#[cfg(feature = "rc")]
 mod rc_bi_mutating_function;
+#[cfg(feature = "rc")]
 pub use rc_bi_mutating_function::RcBiMutatingFunction;
 mod arc_bi_mutating_function;
 pub use arc_bi_mutating_function::ArcBiMutatingFunction;
+#[cfg(feature = "combinators")]
 mod fn_bi_mutating_function_ops;
+#[cfg(feature = "combinators")]
 pub use fn_bi_mutating_function_ops::FnBiMutatingFunctionOps;
 mod box_binary_mutating_function;
 pub use box_binary_mutating_function::BoxBinaryMutatingFunction;
 mod arc_binary_mutating_function;
 pub use arc_binary_mutating_function::ArcBinaryMutatingFunction;
+#[cfg(feature = "rc")]
 mod rc_binary_mutating_function;
+#[cfg(feature = "rc")]
 pub use rc_binary_mutating_function::RcBinaryMutatingFunction;
 mod box_conditional_bi_mutating_function;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use box_conditional_bi_mutating_function::BoxConditionalBiMutatingFunction;
+#[cfg(feature = "combinators")]
 pub use box_conditional_bi_mutating_function::BoxConditionalBiMutatingFunction;
+#[cfg(feature = "rc")]
 mod rc_conditional_bi_mutating_function;
+#[cfg(feature = "rc")]
+#[cfg(not(feature = "combinators"))]
+pub(crate) use rc_conditional_bi_mutating_function::RcConditionalBiMutatingFunction;
+#[cfg(all(feature = "rc", feature = "combinators"))]
 pub use rc_conditional_bi_mutating_function::RcConditionalBiMutatingFunction;
 mod arc_conditional_bi_mutating_function;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use arc_conditional_bi_mutating_function::ArcConditionalBiMutatingFunction;
+#[cfg(feature = "combinators")]
 pub use arc_conditional_bi_mutating_function::ArcConditionalBiMutatingFunction;
 
 // ============================================================================

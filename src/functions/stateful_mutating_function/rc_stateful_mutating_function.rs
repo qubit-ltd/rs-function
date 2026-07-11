@@ -61,6 +61,11 @@ use super::{
 /// let mut value = 5;
 /// assert_eq!(clone.apply(&mut value), 1);
 /// ```
+/// # Borrowing and reentrancy
+///
+/// Each call holds a mutable `RefCell` borrow while the user callback runs.
+/// Synchronous re-entry through the same shared wrapper panics with a borrow
+/// error. Mutations completed before a panic are not rolled back.
 pub struct RcStatefulMutatingFunction<T, R> {
     pub(super) function: RcStatefulMutatingFunctionFn<T, R>,
     pub(super) name: Option<String>,

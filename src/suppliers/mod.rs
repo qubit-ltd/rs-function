@@ -11,13 +11,15 @@
 //! for producing values without input parameters.
 
 pub(crate) mod macros;
+#[cfg(feature = "stateful")]
 pub mod stateful_supplier;
 pub mod supplier;
+#[cfg(feature = "once")]
 pub mod supplier_once;
 
-pub use stateful_supplier::{
-    ArcStatefulSupplier, BoxStatefulSupplier, FnStatefulSupplierOps, RcStatefulSupplier,
-    StatefulSupplier,
-};
-pub use supplier::{ArcSupplier, BoxSupplier, RcSupplier, Supplier};
-pub use supplier_once::{BoxSupplierOnce, SupplierOnce};
+#[cfg(feature = "stateful")]
+#[cfg(feature = "stateful")]
+pub use stateful_supplier::*;
+pub use supplier::*;
+#[cfg(feature = "once")]
+pub use supplier_once::*;

@@ -33,116 +33,14 @@ fn test_function_trait_apply() {
     assert_eq!(double.apply(&-10), -20);
 }
 
-#[test]
-fn test_function_trait_into_box() {
-    // Test conversion from closure to BoxFunction
-    let double = |x: &i32| x * 2;
-    let boxed = Function::into_box(double);
-    assert_eq!(boxed.apply(&21), 42);
-}
 
-#[test]
-fn test_function_trait_into_rc() {
-    // Test conversion from closure to RcFunction
-    let double = |x: &i32| x * 2;
-    let rc = double.into_rc();
-    assert_eq!(rc.apply(&21), 42);
-}
 
-#[test]
-fn test_function_trait_into_arc() {
-    // Test conversion from closure to ArcFunction
-    let double = |x: &i32| x * 2;
-    let arc = double.into_arc();
-    assert_eq!(arc.apply(&21), 42);
-}
 
-#[test]
-fn test_function_trait_into_fn() {
-    // Test conversion to closure
-    let double = |x: &i32| x * 2;
-    let func = Function::into_fn(double);
-    assert_eq!(func(&21), 42);
-}
 
-#[test]
-fn test_function_trait_to_box() {
-    // Test non-consuming conversion to BoxFunction
-    let double = |x: &i32| x * 2;
-    let boxed = Function::to_box(&double);
-    assert_eq!(boxed.apply(&21), 42);
-    // Original closure still usable
-    assert_eq!(double.apply(&10), 20);
-}
 
-#[test]
-fn test_function_trait_to_rc() {
-    // Test non-consuming conversion to RcFunction
-    let double = |x: &i32| x * 2;
-    let rc = double.to_rc();
-    assert_eq!(rc.apply(&21), 42);
-    // Original closure still usable
-    assert_eq!(double.apply(&10), 20);
-}
 
-#[test]
-fn test_function_trait_to_arc() {
-    // Test non-consuming conversion to ArcFunction
-    let double = |x: &i32| x * 2;
-    let arc = double.to_arc();
-    assert_eq!(arc.apply(&21), 42);
-    // Original closure still usable
-    assert_eq!(double.apply(&10), 20);
-}
 
-#[test]
-fn test_function_trait_to_fn() {
-    // Test non-consuming conversion to closure
-    let double = |x: &i32| x * 2;
-    let func = Function::to_fn(&double);
-    assert_eq!(func(&21), 42);
-    // Original closure still usable
-    assert_eq!(double.apply(&10), 20);
-}
 
-#[test]
-fn test_function_default_conversions_allow_relaxed_generic_types() {
-    #[derive(Clone, Debug, Eq, PartialEq)]
-    struct BorrowedRc<'a> {
-        value: &'a str,
-    }
-
-    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-    struct BorrowedRcIdentity;
-
-    impl<'a> Function<BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcIdentity {
-        fn apply(&self, value: &BorrowedRc<'a>) -> BorrowedRc<'a> {
-            value.clone()
-        }
-    }
-
-    fn assert_left(value: BorrowedRc<'_>) {
-        assert_eq!(value.value, "left");
-    }
-
-    let text = String::from("left");
-    let value = BorrowedRc {
-        value: text.as_str(),
-    };
-    let identity = BorrowedRcIdentity;
-
-    assert_left(identity.into_box().apply(&value));
-    assert_left(identity.into_rc().apply(&value));
-    assert_left(identity.into_arc().apply(&value));
-    assert_left(identity.into_once().apply(&value));
-    assert_left(identity.into_fn()(&value));
-
-    assert_left(identity.to_box().apply(&value));
-    assert_left(identity.to_rc().apply(&value));
-    assert_left(identity.to_arc().apply(&value));
-    assert_left(identity.to_once().apply(&value));
-    assert_left(identity.to_fn()(&value));
-}
 
 #[test]
 fn test_box_function_new_allows_non_static_t() {
@@ -308,29 +206,8 @@ fn test_box_function_when_with_predicate() {
 // BoxFunction Tests - Type Conversions (Function trait)
 // ============================================================================
 
-#[test]
-fn test_box_function_once_impl_into_box() {
-    // Test BoxFunction::into_box (should return itself)
-    let double = BoxFunction::new(|x: &i32| x * 2);
-    let boxed = double.into_box();
-    assert_eq!(boxed.apply(&21), 42);
-}
 
-#[test]
-fn test_box_function_into_rc() {
-    // Test BoxFunction::into_rc conversion
-    let double = BoxFunction::new(|x: &i32| x * 2);
-    let rc = double.into_rc();
-    assert_eq!(rc.apply(&21), 42);
-}
 
-#[test]
-fn test_box_function_once_impl_into_fn() {
-    // Test BoxFunction::into_fn conversion
-    let double = BoxFunction::new(|x: &i32| x * 2);
-    let func = double.into_fn();
-    assert_eq!(func(&21), 42);
-}
 
 // ============================================================================
 // BoxFunction Tests - FunctionOnce Implementation
@@ -449,73 +326,13 @@ fn test_arc_function_when_with_predicate() {
 // ArcFunction Tests - Type Conversions
 // ============================================================================
 
-#[test]
-fn test_arc_function_once_impl_into_box() {
-    // Test ArcFunction::into_box conversion
-    let double = ArcFunction::new(|x: &i32| x * 2);
-    let boxed = double.into_box();
-    assert_eq!(boxed.apply(&21), 42);
-}
 
-#[test]
-fn test_arc_function_into_rc() {
-    // Test ArcFunction::into_rc conversion
-    let double = ArcFunction::new(|x: &i32| x * 2);
-    let rc = double.into_rc();
-    assert_eq!(rc.apply(&21), 42);
-}
 
-#[test]
-fn test_arc_function_into_arc() {
-    // Test ArcFunction::into_arc (should return itself)
-    let double = ArcFunction::new(|x: &i32| x * 2);
-    let arc = double.into_arc();
-    assert_eq!(arc.apply(&21), 42);
-}
 
-#[test]
-fn test_arc_function_once_impl_into_fn() {
-    // Test ArcFunction::into_fn conversion
-    let double = ArcFunction::new(|x: &i32| x * 2);
-    let func = double.into_fn();
-    assert_eq!(func(&21), 42);
-}
 
-#[test]
-fn test_arc_function_once_impl_to_box() {
-    // Test non-consuming conversion to BoxFunction
-    let double = ArcFunction::new(|x: &i32| x * 2);
-    let boxed = double.to_box();
-    assert_eq!(boxed.apply(&21), 42);
-    assert_eq!(double.apply(&21), 42);
-}
 
-#[test]
-fn test_arc_function_to_rc() {
-    // Test non-consuming conversion to RcFunction
-    let double = ArcFunction::new(|x: &i32| x * 2);
-    let rc = double.to_rc();
-    assert_eq!(rc.apply(&21), 42);
-    assert_eq!(double.apply(&21), 42);
-}
 
-#[test]
-fn test_arc_function_to_arc() {
-    // Test non-consuming conversion to ArcFunction (clone)
-    let double = ArcFunction::new(|x: &i32| x * 2);
-    let arc = double.to_arc();
-    assert_eq!(arc.apply(&21), 42);
-    assert_eq!(double.apply(&21), 42);
-}
 
-#[test]
-fn test_arc_function_once_impl_to_fn() {
-    // Test non-consuming conversion to closure
-    let double = ArcFunction::new(|x: &i32| x * 2);
-    let func = double.to_fn();
-    assert_eq!(func(&21), 42);
-    assert_eq!(double.apply(&21), 42);
-}
 
 // ============================================================================
 // ArcFunction Tests - FunctionOnce Implementation
@@ -643,56 +460,11 @@ fn test_rc_function_when_with_predicate() {
 // RcFunction Tests - Type Conversions
 // ============================================================================
 
-#[test]
-fn test_rc_function_once_impl_into_box() {
-    // Test RcFunction::into_box conversion
-    let double = RcFunction::new(|x: &i32| x * 2);
-    let boxed = double.into_box();
-    assert_eq!(boxed.apply(&21), 42);
-}
 
-#[test]
-fn test_rc_function_into_rc() {
-    // Test RcFunction::into_rc (should return itself)
-    let double = RcFunction::new(|x: &i32| x * 2);
-    let rc = double.into_rc();
-    assert_eq!(rc.apply(&21), 42);
-}
 
-#[test]
-fn test_rc_function_once_impl_into_fn() {
-    // Test RcFunction::into_fn conversion
-    let double = RcFunction::new(|x: &i32| x * 2);
-    let func = double.into_fn();
-    assert_eq!(func(&21), 42);
-}
 
-#[test]
-fn test_rc_function_once_impl_to_box() {
-    // Test non-consuming conversion to BoxFunction
-    let double = RcFunction::new(|x: &i32| x * 2);
-    let boxed = double.to_box();
-    assert_eq!(boxed.apply(&21), 42);
-    assert_eq!(double.apply(&21), 42);
-}
 
-#[test]
-fn test_rc_function_to_rc() {
-    // Test non-consuming conversion to RcFunction (clone)
-    let double = RcFunction::new(|x: &i32| x * 2);
-    let rc = double.to_rc();
-    assert_eq!(rc.apply(&21), 42);
-    assert_eq!(double.apply(&21), 42);
-}
 
-#[test]
-fn test_rc_function_once_impl_to_fn() {
-    // Test non-consuming conversion to closure
-    let double = RcFunction::new(|x: &i32| x * 2);
-    let func = double.to_fn();
-    assert_eq!(func(&21), 42);
-    assert_eq!(double.apply(&21), 42);
-}
 
 // ============================================================================
 // RcFunction Tests - FunctionOnce Implementation
@@ -803,27 +575,7 @@ fn test_fn_function_ops_when() {
     assert_eq!(conditional.apply(&-5), 5);
 }
 
-#[test]
-fn test_closure_function_into_once() {
-    // Test closure's into_once method (from blanket impl)
-    let multiply = |x: &i32| x * 3;
 
-    let once_func = multiply.into_once();
-    assert_eq!(once_func.apply(&4), 12); // 4 * 3 = 12
-}
-
-#[test]
-fn test_closure_function_to_once() {
-    // Test closure's to_once method (from blanket impl)
-    let add_five = |x: &i32| x + 5;
-
-    let once_func = add_five.to_once();
-    assert_eq!(once_func.apply(&7), 12); // 7 + 5 = 12
-
-    // Original closure should still be usable
-    let another_once_func = add_five.to_once();
-    assert_eq!(another_once_func.apply(&3), 8); // 3 + 5 = 8
-}
 
 // ============================================================================
 // Function Trait Default Implementation Tests
@@ -831,12 +583,7 @@ fn test_closure_function_to_once() {
 
 #[cfg(test)]
 mod function_default_impl_tests {
-    use qubit_function::{
-        ArcFunction,
-        BoxFunction,
-        Function,
-        FunctionOnce,
-    };
+    use qubit_function::Function;
 
     /// Custom struct that only implements the core apply method of Function
     /// trait All into_xxx() and to_xxx() methods use default implementation
@@ -866,163 +613,17 @@ mod function_default_impl_tests {
         // implementations
     }
 
-    #[test]
-    fn test_custom_into_box() {
-        let custom = CustomFunction { multiplier: 3 };
-        let boxed = custom.into_box();
 
-        assert_eq!(boxed.apply(&7), 21);
-        assert_eq!(boxed.apply(&10), 30);
-    }
 
-    #[test]
-    fn test_custom_into_rc() {
-        let custom = CustomFunction { multiplier: 5 };
-        let rc = custom.into_rc();
 
-        assert_eq!(rc.apply(&4), 20);
-        assert_eq!(rc.apply(&6), 30);
 
-        // Test cloning
-        let rc_clone = rc.clone();
-        assert_eq!(rc_clone.apply(&2), 10);
-    }
 
-    #[test]
-    fn test_custom_into_arc() {
-        let custom = CustomFunction { multiplier: 7 };
-        let arc = custom.into_arc();
 
-        assert_eq!(arc.apply(&3), 21);
-        assert_eq!(arc.apply(&5), 35);
 
-        // Test cloning
-        let arc_clone = arc.clone();
-        assert_eq!(arc_clone.apply(&2), 14);
-    }
 
-    #[test]
-    fn test_custom_into_fn() {
-        let custom = CustomFunction { multiplier: 4 };
-        let func = custom.into_fn();
 
-        assert_eq!(func(&5), 20);
-        assert_eq!(func(&10), 40);
-    }
 
-    #[test]
-    fn test_cloneable_to_box() {
-        let custom = CloneableCustomFunction { multiplier: 3 };
-        let boxed = custom.to_box();
 
-        assert_eq!(boxed.apply(&7), 21);
-
-        // Original function is still usable
-        assert_eq!(custom.apply(&10), 30);
-    }
-
-    #[test]
-    fn test_cloneable_to_rc() {
-        let custom = CloneableCustomFunction { multiplier: 5 };
-        let rc = custom.to_rc();
-
-        assert_eq!(rc.apply(&4), 20);
-
-        // Original function is still usable
-        assert_eq!(custom.apply(&6), 30);
-    }
-
-    #[test]
-    fn test_cloneable_to_arc() {
-        let custom = CloneableCustomFunction { multiplier: 7 };
-        let arc = custom.to_arc();
-
-        assert_eq!(arc.apply(&3), 21);
-
-        // Original function is still usable
-        assert_eq!(custom.apply(&5), 35);
-    }
-
-    #[test]
-    fn test_cloneable_to_fn() {
-        let custom = CloneableCustomFunction { multiplier: 4 };
-        let func = custom.to_fn();
-
-        assert_eq!(func(&5), 20);
-
-        // Original function is still usable
-        assert_eq!(custom.apply(&10), 40);
-    }
-
-    #[test]
-    fn test_custom_chained_conversions() {
-        let custom1 = CustomFunction { multiplier: 2 };
-        let custom2 = CustomFunction { multiplier: 3 };
-
-        // Test into_box -> into_rc chained conversion
-        let boxed: BoxFunction<i32, i32> = custom1.into_box();
-        let rc = boxed.into_rc();
-        assert_eq!(rc.apply(&21), 42);
-
-        // Test into_arc direct conversion
-        let arc: ArcFunction<i32, i32> = custom2.into_arc();
-        assert_eq!(arc.apply(&14), 42);
-    }
-
-    #[test]
-    fn test_custom_composition() {
-        let custom1 = CloneableCustomFunction { multiplier: 2 };
-        let custom2 = CloneableCustomFunction { multiplier: 3 };
-
-        let composed = custom1.to_box().and_then(custom2.to_box());
-        assert_eq!(composed.apply(&7), 42); // 7 * 2 = 14, 14 * 3 = 42
-    }
-
-    #[test]
-    fn test_custom_function_into_once() {
-        // Test Function trait default into_once method on custom implementation
-        struct CustomFunction {
-            multiplier: i32,
-        }
-
-        impl Function<i32, i32> for CustomFunction {
-            fn apply(&self, input: &i32) -> i32 {
-                input * self.multiplier
-            }
-        }
-
-        let custom_func = CustomFunction { multiplier: 3 };
-
-        // Test default into_once method
-        let once_func = custom_func.into_once();
-        assert_eq!(once_func.apply(&5), 15); // 5 * 3 = 15
-    }
-
-    #[test]
-    fn test_cloneable_custom_function_to_once() {
-        // Test Function trait default to_once method on cloneable custom
-        // implementation
-        #[derive(Clone)]
-        struct CloneableCustomFunction {
-            multiplier: i32,
-        }
-
-        impl Function<i32, i32> for CloneableCustomFunction {
-            fn apply(&self, input: &i32) -> i32 {
-                input * self.multiplier
-            }
-        }
-
-        let custom_func = CloneableCustomFunction { multiplier: 4 };
-
-        // Test default to_once method (requires Clone)
-        let once_func = custom_func.to_once();
-        assert_eq!(once_func.apply(&6), 24); // 6 * 4 = 24
-
-        // Original function should still be usable since it's Clone
-        let another_once_func = custom_func.to_once();
-        assert_eq!(another_once_func.apply(&2), 8); // 2 * 4 = 8
-    }
 }
 
 // ============================================================================
@@ -1236,91 +837,12 @@ fn test_rc_conditional_function_clone_multiple() {
 // Name Preservation Tests for into_xxx and to_xxx Methods
 // ============================================================================
 
-#[test]
-fn test_rc_function_into_box_preserves_name() {
-    // Test that RcFunction::into_box preserves the name
-    let original = RcFunction::new_with_name("test_rc_func", |x: &i32| x * 2);
-    assert_eq!(original.name(), Some("test_rc_func"));
 
-    let boxed = original.into_box();
-    assert_eq!(boxed.name(), Some("test_rc_func"));
-    assert_eq!(boxed.apply(&21), 42);
-}
 
-#[test]
-fn test_arc_function_into_box_preserves_name() {
-    // Test that ArcFunction::into_box preserves the name
-    let original = ArcFunction::new_with_name("test_arc_func", |x: &i32| x * 2);
-    assert_eq!(original.name(), Some("test_arc_func"));
 
-    let boxed = original.into_box();
-    assert_eq!(boxed.name(), Some("test_arc_func"));
-    assert_eq!(boxed.apply(&21), 42);
-}
 
-#[test]
-fn test_arc_function_into_rc_preserves_name() {
-    // Test that ArcFunction::into_rc preserves the name
-    let original = ArcFunction::new_with_name("test_arc_func", |x: &i32| x * 2);
-    assert_eq!(original.name(), Some("test_arc_func"));
 
-    let rc = original.into_rc();
-    assert_eq!(rc.name(), Some("test_arc_func"));
-    assert_eq!(rc.apply(&21), 42);
-}
 
-#[test]
-fn test_rc_function_to_box_preserves_name() {
-    // Test that RcFunction::to_box preserves the name
-    let original = RcFunction::new_with_name("test_rc_func", |x: &i32| x * 2);
-    assert_eq!(original.name(), Some("test_rc_func"));
-
-    let boxed = original.to_box();
-    assert_eq!(boxed.name(), Some("test_rc_func"));
-    assert_eq!(boxed.apply(&21), 42);
-
-    // Original should still be usable
-    assert_eq!(original.apply(&21), 42);
-}
-
-#[test]
-fn test_arc_function_to_box_preserves_name() {
-    // Test that ArcFunction::to_box preserves the name
-    let original = ArcFunction::new_with_name("test_arc_func", |x: &i32| x * 2);
-    assert_eq!(original.name(), Some("test_arc_func"));
-
-    let boxed = original.to_box();
-    assert_eq!(boxed.name(), Some("test_arc_func"));
-    assert_eq!(boxed.apply(&21), 42);
-
-    // Original should still be usable
-    assert_eq!(original.apply(&21), 42);
-}
-
-#[test]
-fn test_arc_function_to_rc_preserves_name() {
-    // Test that ArcFunction::to_rc preserves the name
-    let original = ArcFunction::new_with_name("test_arc_func", |x: &i32| x * 2);
-    assert_eq!(original.name(), Some("test_arc_func"));
-
-    let rc = original.to_rc();
-    assert_eq!(rc.name(), Some("test_arc_func"));
-    assert_eq!(rc.apply(&21), 42);
-
-    // Original should still be usable
-    assert_eq!(original.apply(&21), 42);
-}
-
-#[test]
-fn test_function_conversions_without_name() {
-    // Test that conversions work correctly even when there's no name
-    let original = RcFunction::new(|x: &i32| x * 2);
-    assert_eq!(original.name(), None);
-
-    let boxed = original.into_box();
-    assert_eq!(boxed.name(), None);
-    assert_eq!(boxed.apply(&21), 42);
-}
 
 #[test]
 fn test_box_function_clear_name() {
@@ -1349,24 +871,4 @@ fn test_box_function_set_name_same_value_keeps_storage() {
 
     assert_eq!(function.name(), Some("stable_name"));
     assert_eq!(ptr_before, ptr_after);
-}
-
-#[test]
-fn test_multiple_conversions_preserve_name() {
-    // Test that multiple conversions preserve the name correctly
-    let original = ArcFunction::new_with_name("original_func", |x: &i32| x * 2);
-    assert_eq!(original.name(), Some("original_func"));
-
-    // Arc -> Rc
-    let rc = original.to_rc();
-    assert_eq!(rc.name(), Some("original_func"));
-    assert_eq!(rc.apply(&21), 42);
-
-    // Rc -> Box
-    let boxed = rc.to_box();
-    assert_eq!(boxed.name(), Some("original_func"));
-    assert_eq!(boxed.apply(&21), 42);
-
-    // Original Arc should still work
-    assert_eq!(original.apply(&21), 42);
 }

@@ -49,49 +49,6 @@ fn modify_structs_once(a: &mut TestStruct, b: &mut TestStruct) -> i32 {
 // BiMutatingFunctionOnce Trait Tests - Core Functionality
 // ============================================================================
 
-#[test]
-fn test_bi_mutating_function_once_default_conversions_allow_relaxed_generic_types()
- {
-    #[derive(Clone, Debug, Eq, PartialEq)]
-    struct BorrowedRc<'a> {
-        value: &'a str,
-    }
-
-    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-    struct BorrowedRcSelectorOnce;
-
-    impl<'a>
-        BiMutatingFunctionOnce<BorrowedRc<'a>, BorrowedRc<'a>, BorrowedRc<'a>>
-        for BorrowedRcSelectorOnce
-    {
-        fn apply(
-            self,
-            first: &mut BorrowedRc<'a>,
-            _second: &mut BorrowedRc<'a>,
-        ) -> BorrowedRc<'a> {
-            first.clone()
-        }
-    }
-
-    fn assert_left(value: BorrowedRc<'_>) {
-        assert_eq!(value.value, "left");
-    }
-
-    let left_text = String::from("left");
-    let right_text = String::from("right");
-    let mut left = BorrowedRc {
-        value: left_text.as_str(),
-    };
-    let mut right = BorrowedRc {
-        value: right_text.as_str(),
-    };
-    let selector = BorrowedRcSelectorOnce;
-
-    assert_left(selector.into_box().apply(&mut left, &mut right));
-    assert_left(selector.into_fn()(&mut left, &mut right));
-    assert_left(selector.to_box().apply(&mut left, &mut right));
-    assert_left(selector.to_fn()(&mut left, &mut right));
-}
 
 #[test]
 fn test_bi_mutating_function_once_trait_apply() {
@@ -121,79 +78,9 @@ fn test_bi_mutating_function_once_trait_apply_with_complex_types() {
     assert_eq!(s2.value, 10);
 }
 
-#[test]
-fn test_bi_mutating_function_once_trait_into_box() {
-    // Test conversion from closure to BoxBiMutatingFunctionOnce
-    let swap_sum = |x: &mut i32, y: &mut i32| {
-        std::mem::swap(&mut *x, &mut *y);
-        *x + *y
-    };
-    let boxed = BiMutatingFunctionOnce::into_box(swap_sum);
 
-    let mut a = 20;
-    let mut b = 22;
-    assert_eq!(boxed.apply(&mut a, &mut b), 42);
-    assert_eq!(a, 22);
-    assert_eq!(b, 20);
-}
 
-#[test]
-fn test_bi_mutating_function_once_trait_into_fn() {
-    // Test conversion to closure
-    let swap_sum = |x: &mut i32, y: &mut i32| {
-        std::mem::swap(&mut *x, &mut *y);
-        *x + *y
-    };
-    let func = BiMutatingFunctionOnce::into_fn(swap_sum);
 
-    let mut a = 20;
-    let mut b = 22;
-    assert_eq!(func(&mut a, &mut b), 42);
-    assert_eq!(a, 22);
-    assert_eq!(b, 20);
-}
-
-#[test]
-fn test_bi_mutating_function_once_trait_to_box() {
-    // Test non-consuming conversion to BoxBiMutatingFunctionOnce
-    let swap_sum = |x: &mut i32, y: &mut i32| {
-        std::mem::swap(&mut *x, &mut *y);
-        *x + *y
-    };
-    let boxed = swap_sum.to_box();
-
-    let mut a = 20;
-    let mut b = 22;
-    assert_eq!(boxed.apply(&mut a, &mut b), 42);
-    assert_eq!(a, 22);
-    assert_eq!(b, 20);
-
-    // Original closure should still be usable (it's Clone)
-    let mut c = 30;
-    let mut d = 32;
-    assert_eq!(swap_sum.apply(&mut c, &mut d), 62);
-}
-
-#[test]
-fn test_bi_mutating_function_once_trait_to_fn() {
-    // Test non-consuming conversion to closure
-    let swap_sum = |x: &mut i32, y: &mut i32| {
-        std::mem::swap(&mut *x, &mut *y);
-        *x + *y
-    };
-    let func = swap_sum.to_fn();
-
-    let mut a = 20;
-    let mut b = 22;
-    assert_eq!(func(&mut a, &mut b), 42);
-    assert_eq!(a, 22);
-    assert_eq!(b, 20);
-
-    // Original closure should still be usable
-    let mut c = 30;
-    let mut d = 32;
-    assert_eq!(swap_sum.apply(&mut c, &mut d), 62);
-}
 
 // ============================================================================
 // BoxBiMutatingFunctionOnce Tests
@@ -879,72 +766,3 @@ fn test_mixed_function_types() {
 // Custom BiMutatingFunctionOnce Implementation Tests - Test Trait Default
 // Methods
 // ============================================================================
-
-#[test]
-fn test_custom_bi_mutating_function_once_default_methods() {
-    // Test BiMutatingFunctionOnce trait default methods on custom
-    // implementation
-    #[derive(Debug)]
-    struct CustomBiMutatingFunctionOnce {
-        multiplier: i32,
-    }
-
-    impl BiMutatingFunctionOnce<i32, i32, i32> for CustomBiMutatingFunctionOnce {
-        fn apply(self, first: &mut i32, second: &mut i32) -> i32 {
-            *first *= self.multiplier;
-            *second += self.multiplier;
-            *first + *second
-        }
-    }
-
-    let custom_func = CustomBiMutatingFunctionOnce { multiplier: 3 };
-
-    let mut a = 2;
-    let mut b = 4;
-
-    // Test default into_box method
-    let boxed = custom_func.into_box();
-    let result = boxed.apply(&mut a, &mut b);
-    assert_eq!(result, 13); // (2*3) + (4+3) = 6 + 7 = 13
-    assert_eq!(a, 6);
-    assert_eq!(b, 7);
-}
-
-#[test]
-fn test_cloneable_bi_mutating_function_once_default_methods() {
-    // Test BiMutatingFunctionOnce trait default methods on cloneable
-    // implementation
-    #[derive(Clone, Debug)]
-    struct CloneableBiMutatingFunctionOnce {
-        multiplier: i32,
-    }
-
-    impl BiMutatingFunctionOnce<i32, i32, i32> for CloneableBiMutatingFunctionOnce {
-        fn apply(self, first: &mut i32, second: &mut i32) -> i32 {
-            *first *= self.multiplier;
-            *second += self.multiplier;
-            *first + *second
-        }
-    }
-
-    let custom_func = CloneableBiMutatingFunctionOnce { multiplier: 2 };
-
-    let mut a = 3;
-    let mut b = 5;
-
-    // Test default to_box method (requires Clone)
-    let boxed = custom_func.to_box();
-    let result = boxed.apply(&mut a, &mut b);
-    assert_eq!(result, 13); // (3*2) + (5+2) = 6 + 7 = 13
-    assert_eq!(a, 6);
-    assert_eq!(b, 7);
-
-    // Test default to_fn method (requires Clone)
-    let func = custom_func.to_fn();
-    let mut c = 1;
-    let mut d = 2;
-    let result2 = func(&mut c, &mut d);
-    assert_eq!(result2, 6); // (1*2) + (2+2) = 2 + 4 = 6
-    assert_eq!(c, 2);
-    assert_eq!(d, 4);
-}

@@ -9,7 +9,7 @@
 //! Defines the `RcSupplier` public type.
 
 use super::{
-    Predicate, Rc, Supplier, Transformer, impl_closure_trait, impl_shared_supplier_methods,
+    Predicate, Rc, Supplier, Transformer, impl_shared_supplier_methods,
     impl_supplier_clone, impl_supplier_common_methods, impl_supplier_debug_display,
 };
 
@@ -93,18 +93,6 @@ impl<T> Supplier<T> for RcSupplier<T> {
         (self.function)()
     }
 }
-
-// ======================================================================
-// Implement Supplier for Closures
-// ======================================================================
-
-// Implement Supplier<T> for any type that implements Fn() -> T
-impl_closure_trait!(
-    Supplier<T>,
-    get,
-    BoxSupplierOnce,
-    Fn() -> T
-);
 
 // ======================================================================
 // Note on Extension Traits for Closures

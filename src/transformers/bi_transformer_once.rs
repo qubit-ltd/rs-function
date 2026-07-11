@@ -28,13 +28,18 @@ use crate::transformers::{
 
 mod box_bi_transformer_once;
 pub use box_bi_transformer_once::BoxBiTransformerOnce;
+#[cfg(feature = "combinators")]
 mod fn_bi_transformer_once_ops;
+#[cfg(feature = "combinators")]
 pub use fn_bi_transformer_once_ops::FnBiTransformerOnceOps;
 mod binary_operator_once;
 pub use binary_operator_once::BinaryOperatorOnce;
 mod box_binary_operator_once;
 pub use box_binary_operator_once::BoxBinaryOperatorOnce;
 mod box_conditional_bi_transformer_once;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use box_conditional_bi_transformer_once::BoxConditionalBiTransformerOnce;
+#[cfg(feature = "combinators")]
 pub use box_conditional_bi_transformer_once::BoxConditionalBiTransformerOnce;
 
 // ============================================================================

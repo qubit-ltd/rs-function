@@ -31,7 +31,7 @@ use super::{
 /// assert!(pred.test(&5, &3));
 ///
 /// // Original bi-predicate remains usable after composition
-/// let combined = pred.and(RcBiPredicate::new(|x, y| x > y));
+/// let combined = pred.and(RcBiPredicate::new(|x: &i32, y: &i32| x > y));
 /// assert!(pred.test(&5, &3));  // Still works
 /// ```
 pub struct RcBiPredicate<T, U> {

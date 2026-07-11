@@ -17,7 +17,6 @@ use qubit_function::{
     BoxCallableOnce,
     CallableOnce,
     LocalBoxCallableOnce,
-    RunnableOnce,
     SupplierOnce,
 };
 
@@ -53,58 +52,10 @@ fn test_callable_once_closure_call_returns_error() {
     assert_eq!(error.to_string(), "failed");
 }
 
-#[test]
-fn test_callable_once_closure_into_box_executes_once() {
-    let data = String::from("payload");
-    let task = move || Ok::<String, io::Error>(data);
 
-    let boxed = CallableOnce::into_box(task);
 
-    assert_eq!(
-        boxed.call().expect("boxed callable should succeed"),
-        "payload"
-    );
-}
 
-#[test]
-fn test_callable_once_closure_into_fn_returns_fn_once() {
-    let task = || Ok::<i32, io::Error>(7);
 
-    let function = CallableOnce::into_fn(task);
-
-    assert_eq!(function().expect("callable function should succeed"), 7);
-}
-
-#[test]
-fn test_callable_once_to_box_clones_callable() {
-    let task = ClonedCallableOnce { value: 11 };
-
-    let boxed = task.to_box();
-    assert_eq!(boxed.call().expect("boxed clone should succeed"), 11);
-
-    let boxed = task.to_box();
-    assert_eq!(
-        boxed.call().expect("cloned callable should remain usable"),
-        11
-    );
-}
-
-#[test]
-fn test_callable_once_to_fn_clones_callable() {
-    let task = ClonedCallableOnce { value: 13 };
-
-    let function = task.to_fn();
-    assert_eq!(function().expect("cloned callable should succeed"), 13);
-}
-
-#[test]
-fn test_callable_once_default_into_runnable_discards_success_value() {
-    let task = ClonedCallableOnce { value: 17 };
-
-    let runnable = CallableOnce::into_runnable(task);
-
-    runnable.run().expect("default runnable should succeed");
-}
 
 #[test]
 fn test_box_callable_once_new_and_call() {
@@ -149,24 +100,7 @@ fn test_box_callable_once_with_name() {
     assert_eq!(task.to_string(), "BoxCallableOnce");
 }
 
-#[test]
-fn test_box_callable_once_into_box_returns_self() {
-    let task = BoxCallableOnce::new(|| Ok::<i32, io::Error>(5));
-    let boxed = CallableOnce::into_box(task);
-    assert_eq!(
-        boxed
-            .call()
-            .expect("box callable-once conversion should succeed"),
-        5
-    );
-}
 
-#[test]
-fn test_box_callable_once_into_fn_extracts_function() {
-    let task = BoxCallableOnce::new(|| Ok::<i32, io::Error>(8));
-    let function = CallableOnce::into_fn(task);
-    assert_eq!(function().expect("function should succeed"), 8);
-}
 
 #[test]
 fn test_box_callable_once_from_supplier() {
@@ -232,34 +166,7 @@ fn test_box_callable_once_and_then_skips_next_on_error() {
     );
 }
 
-#[test]
-fn test_box_callable_once_into_runnable_preserves_name_on_success() {
-    let task =
-        BoxCallableOnce::new_with_name("prepare", || Ok::<i32, io::Error>(42));
 
-    let runnable = CallableOnce::into_runnable(task);
-
-    assert_eq!(runnable.name(), Some("prepare"));
-    runnable.run().expect("converted runnable should succeed");
-}
-
-#[test]
-fn test_box_callable_once_into_runnable_preserves_error() {
-    let task = BoxCallableOnce::new_with_name("prepare", || {
-        Err::<i32, _>(io::Error::other("boom"))
-    });
-
-    let runnable = CallableOnce::into_runnable(task);
-
-    assert_eq!(runnable.name(), Some("prepare"));
-    assert_eq!(
-        runnable
-            .run()
-            .expect_err("converted runnable should preserve error")
-            .to_string(),
-        "boom",
-    );
-}
 
 #[derive(Clone)]
 struct TextCallableOnce {
@@ -272,70 +179,7 @@ impl CallableOnce<String, &'static str> for TextCallableOnce {
     }
 }
 
-#[test]
-fn test_callable_once_default_conversions_with_text_error_type() {
-    let task = TextCallableOnce {
-        value: "once".to_string(),
-    };
 
-    let boxed = CallableOnce::into_box(task.clone());
-    assert_eq!(boxed.call().expect("into_box should succeed"), "once");
-
-    let function = CallableOnce::into_fn(task.clone());
-    assert_eq!(function().expect("into_fn should succeed"), "once");
-
-    let boxed_from_ref = task.to_box();
-    assert_eq!(
-        boxed_from_ref.call().expect("to_box should succeed"),
-        "once"
-    );
-
-    let local_boxed = CallableOnce::into_local_box(task.clone());
-    assert_eq!(
-        local_boxed.call().expect("into_local_box should succeed"),
-        "once"
-    );
-
-    let local_boxed_from_ref = task.to_local_box();
-    assert_eq!(
-        local_boxed_from_ref
-            .call()
-            .expect("to_local_box should succeed"),
-        "once"
-    );
-
-    let function_from_ref = task.to_fn();
-    assert_eq!(function_from_ref().expect("to_fn should succeed"), "once");
-
-    let local_runnable = CallableOnce::into_local_runnable(task.clone());
-    local_runnable
-        .run()
-        .expect("into_local_runnable should succeed");
-
-    let runnable = CallableOnce::into_runnable(task);
-    runnable.run().expect("into_runnable should succeed");
-}
-
-#[test]
-fn test_box_callable_once_local_conversions_preserve_name() {
-    let task =
-        BoxCallableOnce::new_with_name("compute", || Ok::<i32, io::Error>(9));
-
-    let local = CallableOnce::into_local_box(task);
-
-    assert_eq!(local.name(), Some("compute"));
-    assert_eq!(local.call().expect("local callable should succeed"), 9);
-
-    let task =
-        BoxCallableOnce::new_with_name("compute", || Ok::<i32, io::Error>(9));
-
-    let runnable = CallableOnce::into_local_runnable(task);
-
-    assert_eq!(runnable.name(), Some("compute"));
-    runnable
-        .run()
-        .expect("local runnable conversion should succeed");
-}
 
 #[test]
 fn test_box_callable_once_combinators_with_text_error_type() {

@@ -63,7 +63,7 @@ impl<T, U, R> BiMutatingFunctionOnce<T, U, R> for BoxBiMutatingFunctionOnce<T, U
 }
 
 // Implement constant method for BoxBiMutatingFunctionOnce
-impl_function_constant_method!(BoxBiMutatingFunctionOnce<T, U, R>);
+impl_function_constant_method!(BoxBiMutatingFunctionOnce<T, U, R>, mut 'static);
 
 // Use macro to generate Debug and Display implementations
 impl_function_debug_display!(BoxBiMutatingFunctionOnce<T, U, R>);

@@ -15,6 +15,7 @@ mod box_conditional_transformer;
 mod box_transformer_methods;
 mod conditional_transformer_clone;
 mod conditional_transformer_debug_display;
+#[cfg(feature = "combinators")]
 mod fn_ops_trait;
 mod shared_conditional_transformer;
 mod shared_transformer_methods;
@@ -28,6 +29,7 @@ pub(crate) use box_conditional_transformer::impl_box_conditional_transformer;
 pub(crate) use box_transformer_methods::impl_box_transformer_methods;
 pub(crate) use conditional_transformer_clone::impl_conditional_transformer_clone;
 pub(crate) use conditional_transformer_debug_display::impl_conditional_transformer_debug_display;
+#[cfg(feature = "combinators")]
 pub(crate) use fn_ops_trait::impl_transformer_fn_ops_trait;
 pub(crate) use shared_conditional_transformer::impl_shared_conditional_transformer;
 pub(crate) use shared_transformer_methods::impl_shared_transformer_methods;

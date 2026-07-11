@@ -19,40 +19,6 @@ use qubit_function::{
 use std::rc::Rc;
 use std::sync::Arc;
 
-#[test]
-fn test_consumer_default_conversions_allow_relaxed_generic_types() {
-    #[derive(Debug)]
-    struct BorrowedRc<'a> {
-        value: &'a str,
-    }
-
-    #[derive(Clone, Debug)]
-    struct BorrowedRcConsumer;
-
-    impl<'a> Consumer<BorrowedRc<'a>> for BorrowedRcConsumer {
-        fn accept(&self, value: &BorrowedRc<'a>) {
-            assert_eq!(value.value, "left");
-        }
-    }
-
-    let text = String::from("left");
-    let value = BorrowedRc {
-        value: text.as_str(),
-    };
-    let consumer = BorrowedRcConsumer;
-
-    consumer.clone().into_box().accept(&value);
-    consumer.clone().into_rc().accept(&value);
-    consumer.clone().into_arc().accept(&value);
-    qubit_function::ConsumerOnce::accept(consumer.clone().into_once(), &value);
-    consumer.clone().into_fn()(&value);
-
-    consumer.to_box().accept(&value);
-    consumer.to_rc().accept(&value);
-    consumer.to_arc().accept(&value);
-    qubit_function::ConsumerOnce::accept(consumer.to_once(), &value);
-    consumer.to_fn()(&value);
-}
 
 #[cfg(test)]
 mod box_non_mutating_consumer_tests {
@@ -141,42 +107,9 @@ mod box_non_mutating_consumer_tests {
         // Should not panic
     }
 
-    #[test]
-    fn test_into_box() {
-        let closure = |x: &i32| {
-            std::hint::black_box(x);
-        };
-        let box_consumer = closure.into_box();
-        box_consumer.accept(&5);
-    }
 
-    #[test]
-    fn test_into_rc() {
-        let consumer = BoxConsumer::new(|x: &i32| {
-            std::hint::black_box(x);
-        });
-        let rc_consumer = consumer.into_rc();
-        rc_consumer.accept(&5);
-    }
 
-    #[test]
-    fn test_into_fn() {
-        let consumer = BoxConsumer::new(|x: &i32| {
-            std::hint::black_box(x);
-        });
-        let func = consumer.into_fn();
-        func(&5);
-    }
 
-    #[test]
-    fn test_box_consumer_into_box() {
-        // Test BoxConsumer's own into_box() method
-        let consumer = BoxConsumer::new(|x: &i32| {
-            std::hint::black_box(x);
-        });
-        let box_consumer = consumer.into_box();
-        box_consumer.accept(&5);
-    }
 
     #[test]
     fn test_name() {
@@ -273,53 +206,10 @@ mod arc_non_mutating_consumer_tests {
         assert_eq!(counter.load(std::sync::atomic::Ordering::SeqCst), 4);
     }
 
-    #[test]
-    fn test_into_box() {
-        let consumer = ArcConsumer::new(|x: &i32| {
-            std::hint::black_box(x);
-        });
-        let box_consumer = consumer.into_box();
-        box_consumer.accept(&5);
-    }
 
-    #[test]
-    fn test_into_rc() {
-        let consumer = ArcConsumer::new(|x: &i32| {
-            std::hint::black_box(x);
-        });
-        let rc_consumer = consumer.into_rc();
-        rc_consumer.accept(&5);
-    }
 
-    #[test]
-    fn test_into_arc() {
-        let consumer = ArcConsumer::new(|x: &i32| {
-            std::hint::black_box(x);
-        });
-        let arc_consumer = consumer.into_arc();
-        arc_consumer.accept(&5);
-    }
 
-    #[test]
-    fn test_into_fn() {
-        let consumer = ArcConsumer::new(|x: &i32| {
-            std::hint::black_box(x);
-        });
-        let func = consumer.into_fn();
-        func(&5);
-    }
 
-    #[test]
-    fn test_to_fn() {
-        let consumer = ArcConsumer::new(|x: &i32| {
-            std::hint::black_box(x);
-        });
-        let func = consumer.to_fn();
-        func(&5);
-
-        // Original consumer remains usable
-        consumer.accept(&10);
-    }
 
     #[test]
     fn test_name() {
@@ -434,44 +324,9 @@ mod rc_non_mutating_consumer_tests {
         assert_eq!(*counter.borrow(), 4);
     }
 
-    #[test]
-    fn test_into_box() {
-        let consumer = RcConsumer::new(|x: &i32| {
-            std::hint::black_box(x);
-        });
-        let box_consumer = consumer.into_box();
-        box_consumer.accept(&5);
-    }
 
-    #[test]
-    fn test_into_rc() {
-        let consumer = RcConsumer::new(|x: &i32| {
-            std::hint::black_box(x);
-        });
-        let rc_consumer = consumer.into_rc();
-        rc_consumer.accept(&5);
-    }
 
-    #[test]
-    fn test_into_fn() {
-        let consumer = RcConsumer::new(|x: &i32| {
-            std::hint::black_box(x);
-        });
-        let func = consumer.into_fn();
-        func(&5);
-    }
 
-    #[test]
-    fn test_to_fn() {
-        let consumer = RcConsumer::new(|x: &i32| {
-            std::hint::black_box(x);
-        });
-        let func = consumer.to_fn();
-        func(&5);
-
-        // Original consumer remains usable
-        consumer.accept(&10);
-    }
 
     #[test]
     fn test_name() {
@@ -515,41 +370,9 @@ mod closure_tests {
         closure.accept(&5);
     }
 
-    #[test]
-    fn test_closure_into_box() {
-        let closure = |x: &i32| {
-            std::hint::black_box(x);
-        };
-        let box_consumer = closure.into_box();
-        box_consumer.accept(&5);
-    }
 
-    #[test]
-    fn test_closure_into_rc() {
-        let closure = |x: &i32| {
-            std::hint::black_box(x);
-        };
-        let rc_consumer = closure.into_rc();
-        rc_consumer.accept(&5);
-    }
 
-    #[test]
-    fn test_closure_into_arc() {
-        let closure = |x: &i32| {
-            std::hint::black_box(x);
-        };
-        let arc_consumer = closure.into_arc();
-        arc_consumer.accept(&5);
-    }
 
-    #[test]
-    fn test_closure_into_fn() {
-        let closure = |x: &i32| {
-            std::hint::black_box(x);
-        };
-        let func = closure.into_fn();
-        func(&5);
-    }
 
     #[test]
     fn test_closure_and_then() {
@@ -592,48 +415,11 @@ mod closure_tests {
 
 #[cfg(test)]
 mod conversion_tests {
-    use super::{
-        ArcConsumer,
-        BoxConsumer,
-        Consumer,
-        RcConsumer,
-    };
 
-    #[test]
-    fn test_box_to_rc() {
-        let box_consumer = BoxConsumer::new(|x: &i32| {
-            std::hint::black_box(x);
-        });
-        let rc_consumer = box_consumer.into_rc();
-        rc_consumer.accept(&5);
-    }
 
-    #[test]
-    fn test_arc_to_box() {
-        let arc_consumer = ArcConsumer::new(|x: &i32| {
-            std::hint::black_box(x);
-        });
-        let box_consumer = arc_consumer.into_box();
-        box_consumer.accept(&5);
-    }
 
-    #[test]
-    fn test_arc_to_rc() {
-        let arc_consumer = ArcConsumer::new(|x: &i32| {
-            std::hint::black_box(x);
-        });
-        let rc_consumer = arc_consumer.into_rc();
-        rc_consumer.accept(&5);
-    }
 
-    #[test]
-    fn test_rc_to_box() {
-        let rc_consumer = RcConsumer::new(|x: &i32| {
-            std::hint::black_box(x);
-        });
-        let box_consumer = rc_consumer.into_box();
-        box_consumer.accept(&5);
-    }
+
 
     // Note: Box and Rc cannot be converted to Arc because they don't implement
     // Send+Sync These conversions are prevented at compile time, not
@@ -759,75 +545,12 @@ mod name_tests {
         assert_eq!(consumer.name(), Some("test_consumer"));
     }
 
-    #[test]
-    fn test_box_consumer_into_rc_preserves_name() {
-        let mut consumer = BoxConsumer::new(|_x: &i32| {});
-        consumer.set_name("original_consumer");
-        assert_eq!(consumer.name(), Some("original_consumer"));
 
-        let converted = consumer.into_rc();
-        assert_eq!(converted.name(), Some("original_consumer"));
-    }
 
-    #[test]
-    fn test_rc_consumer_into_box_preserves_name() {
-        let mut consumer = RcConsumer::new(|_x: &i32| {});
-        consumer.set_name("original_consumer");
-        assert_eq!(consumer.name(), Some("original_consumer"));
 
-        let converted = consumer.into_box();
-        assert_eq!(converted.name(), Some("original_consumer"));
-    }
 
-    #[test]
-    fn test_arc_consumer_into_box_preserves_name() {
-        let mut consumer = ArcConsumer::new(|_x: &i32| {});
-        consumer.set_name("original_consumer");
-        assert_eq!(consumer.name(), Some("original_consumer"));
 
-        let converted = consumer.into_box();
-        assert_eq!(converted.name(), Some("original_consumer"));
-    }
 
-    #[test]
-    fn test_arc_consumer_into_rc_preserves_name() {
-        let mut consumer = ArcConsumer::new(|_x: &i32| {});
-        consumer.set_name("original_consumer");
-        assert_eq!(consumer.name(), Some("original_consumer"));
-
-        let converted = consumer.into_rc();
-        assert_eq!(converted.name(), Some("original_consumer"));
-    }
-
-    #[test]
-    fn test_rc_consumer_to_box_preserves_name() {
-        let mut consumer = RcConsumer::new(|_x: &i32| {});
-        consumer.set_name("original_consumer");
-        assert_eq!(consumer.name(), Some("original_consumer"));
-
-        let converted = consumer.to_box();
-        assert_eq!(converted.name(), Some("original_consumer"));
-    }
-
-    #[test]
-    fn test_arc_consumer_to_box_preserves_name() {
-        let mut consumer = ArcConsumer::new(|_x: &i32| {});
-        consumer.set_name("original_consumer");
-        assert_eq!(consumer.name(), Some("original_consumer"));
-
-        let converted = consumer.to_box();
-        assert_eq!(converted.name(), Some("original_consumer"));
-    }
-
-    #[test]
-    fn test_arc_consumer_to_rc_preserves_name() {
-        let mut consumer = ArcConsumer::new(|_x: &i32| {});
-        consumer.set_name("original_consumer");
-        assert_eq!(consumer.name(), Some("original_consumer"));
-
-        let converted = consumer.to_rc();
-        assert_eq!(converted.name(), Some("original_consumer"));
-    }
 }
 
 // ============================================================================
@@ -940,34 +663,6 @@ mod custom_struct_tests {
         }
     }
 
-    #[test]
-    fn test_into_variants_from_custom_struct() {
-        let counter = Arc::new(AtomicUsize::new(0));
-
-        // into_box()
-        let my = MyConsumer::new(counter.clone());
-        let box_cons = my.into_box();
-        box_cons.accept(&1);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
-
-        // into_rc()
-        let my2 = MyConsumer::new(counter.clone());
-        let rc_cons = my2.into_rc();
-        rc_cons.accept(&1);
-        assert_eq!(counter.load(Ordering::SeqCst), 2);
-
-        // into_arc()
-        let my3 = MyConsumer::new(counter.clone());
-        let arc_cons = my3.into_arc();
-        arc_cons.accept(&1);
-        assert_eq!(counter.load(Ordering::SeqCst), 3);
-
-        // into_fn()
-        let my4 = MyConsumer::new(counter.clone());
-        let func = my4.into_fn();
-        func(&1);
-        assert_eq!(counter.load(Ordering::SeqCst), 4);
-    }
 
     impl Clone for MyConsumer {
         fn clone(&self) -> Self {
@@ -977,36 +672,6 @@ mod custom_struct_tests {
         }
     }
 
-    #[test]
-    fn test_to_variants_from_custom_struct() {
-        let counter = Arc::new(AtomicUsize::new(0));
-
-        let my = MyConsumer::new(counter.clone());
-
-        // to_box() - Does not consume the original object
-        let box_cons = my.to_box();
-        box_cons.accept(&1);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
-
-        // to_rc() - Does not consume the original object
-        let rc_cons = my.to_rc();
-        rc_cons.accept(&1);
-        assert_eq!(counter.load(Ordering::SeqCst), 2);
-
-        // to_arc() - Does not consume the original object
-        let arc_cons = my.to_arc();
-        arc_cons.accept(&1);
-        assert_eq!(counter.load(Ordering::SeqCst), 3);
-
-        // to_fn() - Does not consume the original object
-        let func = my.to_fn();
-        func(&1);
-        assert_eq!(counter.load(Ordering::SeqCst), 4);
-
-        // Original object remains usable
-        my.accept(&1);
-        assert_eq!(counter.load(Ordering::SeqCst), 5);
-    }
 }
 
 // ============================================================================
@@ -1015,326 +680,26 @@ mod custom_struct_tests {
 
 #[cfg(test)]
 mod to_xxx_methods_tests {
-    use super::{
-        Arc,
-        ArcConsumer,
-        Consumer,
-        Rc,
-        RcConsumer,
-    };
-    use std::sync::atomic::{
-        AtomicUsize,
-        Ordering,
-    };
+
+
 
     // BoxConsumer cannot implement Clone because it uses Box<dyn Fn>
     // So it cannot have to_box, to_rc, to_fn methods
     // It can only have into_xxx methods
 
-    #[test]
-    fn test_arc_to_box() {
-        let counter = Arc::new(AtomicUsize::new(0));
-        let c = counter.clone();
-        let consumer = ArcConsumer::new(move |_x: &i32| {
-            c.fetch_add(1, Ordering::SeqCst);
-        });
 
-        // to_box() does not consume the original object
-        let box_consumer = consumer.to_box();
-        box_consumer.accept(&1);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
 
-        // Original object remains usable
-        consumer.accept(&2);
-        assert_eq!(counter.load(Ordering::SeqCst), 2);
-    }
 
-    #[test]
-    fn test_arc_to_rc() {
-        let counter = Arc::new(AtomicUsize::new(0));
-        let c = counter.clone();
-        let consumer = ArcConsumer::new(move |_x: &i32| {
-            c.fetch_add(1, Ordering::SeqCst);
-        });
 
-        // to_rc() does not consume the original object
-        let rc_consumer = consumer.to_rc();
-        rc_consumer.accept(&1);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
 
-        // Original object remains usable
-        consumer.accept(&2);
-        assert_eq!(counter.load(Ordering::SeqCst), 2);
-    }
 
-    #[test]
-    fn test_arc_to_arc() {
-        let counter = Arc::new(AtomicUsize::new(0));
-        let c = counter.clone();
-        let consumer = ArcConsumer::new(move |_x: &i32| {
-            c.fetch_add(1, Ordering::SeqCst);
-        });
 
-        // to_arc() does not consume the original object
-        let arc_consumer = consumer.to_arc();
-        arc_consumer.accept(&1);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
 
-        // Original object remains usable
-        consumer.accept(&2);
-        assert_eq!(counter.load(Ordering::SeqCst), 2);
-    }
 
-    #[test]
-    fn test_arc_to_fn() {
-        let counter = Arc::new(AtomicUsize::new(0));
-        let c = counter.clone();
-        let consumer = ArcConsumer::new(move |_x: &i32| {
-            c.fetch_add(1, Ordering::SeqCst);
-        });
 
-        // to_fn() does not consume the original object
-        let func = consumer.to_fn();
-        func(&1);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
 
-        // Original object remains usable
-        consumer.accept(&2);
-        assert_eq!(counter.load(Ordering::SeqCst), 2);
-    }
 
-    #[test]
-    fn test_rc_to_box() {
-        let counter = Rc::new(std::cell::RefCell::new(0));
-        let c = counter.clone();
-        let consumer = RcConsumer::new(move |_x: &i32| {
-            *c.borrow_mut() += 1;
-        });
 
-        // to_box() does not consume the original object
-        let box_consumer = consumer.to_box();
-        box_consumer.accept(&1);
-        assert_eq!(*counter.borrow(), 1);
-
-        // Original object remains usable
-        consumer.accept(&2);
-        assert_eq!(*counter.borrow(), 2);
-    }
-
-    #[test]
-    fn test_rc_to_rc() {
-        let counter = Rc::new(std::cell::RefCell::new(0));
-        let c = counter.clone();
-        let consumer = RcConsumer::new(move |_x: &i32| {
-            *c.borrow_mut() += 1;
-        });
-
-        // to_rc() does not consume the original object
-        let rc_consumer = consumer.to_rc();
-        rc_consumer.accept(&1);
-        assert_eq!(*counter.borrow(), 1);
-
-        // Original object remains usable
-        consumer.accept(&2);
-        assert_eq!(*counter.borrow(), 2);
-    }
-
-    #[test]
-    fn test_rc_to_fn() {
-        let counter = Rc::new(std::cell::RefCell::new(0));
-        let c = counter.clone();
-        let consumer = RcConsumer::new(move |_x: &i32| {
-            *c.borrow_mut() += 1;
-        });
-
-        // to_fn() does not consume the original object
-        let func = consumer.to_fn();
-        func(&1);
-        assert_eq!(*counter.borrow(), 1);
-
-        // Original object remains usable
-        consumer.accept(&2);
-        assert_eq!(*counter.borrow(), 2);
-    }
-
-    #[test]
-    fn test_closure_to_box() {
-        let counter = Arc::new(AtomicUsize::new(0));
-        let c1 = counter.clone();
-        let c2 = counter.clone();
-
-        let closure = move |_x: &i32| {
-            c1.fetch_add(1, Ordering::SeqCst);
-        };
-
-        // to_box() does not consume the original closure
-        let box_consumer = closure.to_box();
-        box_consumer.accept(&1);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
-
-        // Original closure remains usable
-        closure.accept(&2);
-        assert_eq!(counter.load(Ordering::SeqCst), 2);
-
-        // Verify that the consumer created by to_box uses an independent
-        // closure copy
-        let another_closure = move |_x: &i32| {
-            c2.fetch_add(1, Ordering::SeqCst);
-        };
-        let box_consumer2 = another_closure.to_box();
-        box_consumer2.accept(&3);
-        assert_eq!(counter.load(Ordering::SeqCst), 3);
-
-        another_closure.accept(&4);
-        assert_eq!(counter.load(Ordering::SeqCst), 4);
-    }
-
-    #[test]
-    fn test_closure_to_rc() {
-        let counter = Rc::new(std::cell::RefCell::new(0));
-        let c = counter.clone();
-
-        let closure = move |_x: &i32| {
-            *c.borrow_mut() += 1;
-        };
-
-        // to_rc() does not consume the original closure
-        let rc_consumer = closure.to_rc();
-        rc_consumer.accept(&1);
-        assert_eq!(*counter.borrow(), 1);
-
-        // Original closure remains usable
-        closure.accept(&2);
-        assert_eq!(*counter.borrow(), 2);
-    }
-
-    #[test]
-    fn test_closure_to_arc() {
-        let counter = Arc::new(AtomicUsize::new(0));
-        let c = counter.clone();
-
-        let closure = move |_x: &i32| {
-            c.fetch_add(1, Ordering::SeqCst);
-        };
-
-        // to_arc() does not consume the original closure
-        let arc_consumer = closure.to_arc();
-        arc_consumer.accept(&1);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
-
-        // Original closure remains usable
-        closure.accept(&2);
-        assert_eq!(counter.load(Ordering::SeqCst), 2);
-    }
-
-    #[test]
-    fn test_closure_to_fn() {
-        let counter = Arc::new(AtomicUsize::new(0));
-        let c = counter.clone();
-
-        let closure = move |_x: &i32| {
-            c.fetch_add(1, Ordering::SeqCst);
-        };
-
-        // to_fn() does not consume the original closure
-        let func = closure.to_fn();
-        func(&1);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
-
-        // Original closure remains usable
-        closure.accept(&2);
-        assert_eq!(counter.load(Ordering::SeqCst), 2);
-    }
-
-    #[test]
-    fn test_arc_to_xxx_all_methods() {
-        let counter = Arc::new(AtomicUsize::new(0));
-        let c = counter.clone();
-        let consumer = ArcConsumer::new(move |_x: &i32| {
-            c.fetch_add(1, Ordering::SeqCst);
-        });
-
-        // Call all to_xxx methods in sequence to verify the original object is
-        // not consumed
-        let box_consumer = consumer.to_box();
-        box_consumer.accept(&1);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
-
-        let rc_consumer = consumer.to_rc();
-        rc_consumer.accept(&2);
-        assert_eq!(counter.load(Ordering::SeqCst), 2);
-
-        let arc_consumer = consumer.to_arc();
-        arc_consumer.accept(&3);
-        assert_eq!(counter.load(Ordering::SeqCst), 3);
-
-        let func = consumer.to_fn();
-        func(&4);
-        assert_eq!(counter.load(Ordering::SeqCst), 4);
-
-        // Finally verify the original object remains usable
-        consumer.accept(&5);
-        assert_eq!(counter.load(Ordering::SeqCst), 5);
-    }
-
-    #[test]
-    fn test_rc_to_xxx_all_methods() {
-        let counter = Rc::new(std::cell::RefCell::new(0));
-        let c = counter.clone();
-        let consumer = RcConsumer::new(move |_x: &i32| {
-            *c.borrow_mut() += 1;
-        });
-
-        // Call all to_xxx methods in sequence to verify the original object is
-        // not consumed
-        let box_consumer = consumer.to_box();
-        box_consumer.accept(&1);
-        assert_eq!(*counter.borrow(), 1);
-
-        let rc_consumer = consumer.to_rc();
-        rc_consumer.accept(&2);
-        assert_eq!(*counter.borrow(), 2);
-
-        let func = consumer.to_fn();
-        func(&3);
-        assert_eq!(*counter.borrow(), 3);
-
-        // Finally verify the original object remains usable
-        consumer.accept(&4);
-        assert_eq!(*counter.borrow(), 4);
-    }
-
-    #[test]
-    fn test_closure_to_xxx_all_methods() {
-        let counter = Arc::new(AtomicUsize::new(0));
-        let c = counter.clone();
-
-        let closure = move |_x: &i32| {
-            c.fetch_add(1, Ordering::SeqCst);
-        };
-
-        // Call all to_xxx methods in sequence to verify the original closure is
-        // not consumed
-        let box_consumer = closure.to_box();
-        box_consumer.accept(&1);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
-
-        let rc_consumer = closure.to_rc();
-        rc_consumer.accept(&2);
-        assert_eq!(counter.load(Ordering::SeqCst), 2);
-
-        let arc_consumer = closure.to_arc();
-        arc_consumer.accept(&3);
-        assert_eq!(counter.load(Ordering::SeqCst), 3);
-
-        let func = closure.to_fn();
-        func(&4);
-        assert_eq!(counter.load(Ordering::SeqCst), 4);
-
-        // Finally verify the original closure remains usable
-        closure.accept(&5);
-        assert_eq!(counter.load(Ordering::SeqCst), 5);
-    }
 }
 
 // ============================================================================
@@ -1343,77 +708,13 @@ mod to_xxx_methods_tests {
 
 #[cfg(test)]
 mod to_once_tests {
-    use super::{
-        Arc,
-        Consumer,
-    };
-    use qubit_function::ConsumerOnce;
-    use std::sync::atomic::{
-        AtomicUsize,
-        Ordering,
-    };
 
-    #[test]
-    fn test_custom_consumer_to_once() {
-        let counter = Arc::new(AtomicUsize::new(0));
-        let my_consumer =
-            super::custom_struct_tests::MyConsumer::new(counter.clone());
 
-        // Test to_once() - should not consume the original
-        let once_consumer = my_consumer.to_once();
-        once_consumer.accept(&1);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
 
-        // Original consumer should still be usable
-        my_consumer.accept(&2);
-        assert_eq!(counter.load(Ordering::SeqCst), 2);
-    }
 
-    #[test]
-    fn test_custom_consumer_into_once() {
-        let counter = Arc::new(AtomicUsize::new(0));
-        let my_consumer =
-            super::custom_struct_tests::MyConsumer::new(counter.clone());
 
-        // Test into_once() - should consume the original
-        let once_consumer = my_consumer.into_once();
-        once_consumer.accept(&1);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
-    }
 
-    #[test]
-    fn test_closure_into_once() {
-        let counter = Arc::new(AtomicUsize::new(0));
-        let c = counter.clone();
 
-        let closure = move |x: &i32| {
-            c.fetch_add(*x as usize, Ordering::SeqCst);
-        };
-
-        // Test into_once() - should consume the closure
-        let once_consumer = closure.into_once();
-        once_consumer.accept(&5);
-        assert_eq!(counter.load(Ordering::SeqCst), 5);
-    }
-
-    #[test]
-    fn test_closure_to_once() {
-        let counter = Arc::new(AtomicUsize::new(0));
-        let c = counter.clone();
-
-        let closure = move |x: &i32| {
-            c.fetch_add(*x as usize, Ordering::SeqCst);
-        };
-
-        // Test to_once() - should not consume the original closure
-        let once_consumer = closure.to_once();
-        once_consumer.accept(&3);
-        assert_eq!(counter.load(Ordering::SeqCst), 3);
-
-        // Original closure should still be usable
-        closure.accept(&2);
-        assert_eq!(counter.load(Ordering::SeqCst), 5);
-    }
 }
 
 // ============================================================================
@@ -1504,62 +805,8 @@ mod box_conditional_consumer_tests {
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
     }
 
-    #[test]
-    fn test_box_conditional_into_box() {
-        let log = Arc::new(Mutex::new(Vec::new()));
-        let l = log.clone();
 
-        let consumer = BoxConsumer::new(move |x: &i32| {
-            l.lock().expect("mutex should not be poisoned").push(*x);
-        });
 
-        let conditional = consumer.when(|x: &i32| *x > 0);
-        let boxed = conditional.into_box();
-
-        boxed.accept(&5);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
-
-        boxed.accept(&-5);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
-    }
-
-    #[test]
-    fn test_box_conditional_into_rc() {
-        let log = Arc::new(Mutex::new(Vec::new()));
-        let l = log.clone();
-
-        let consumer = BoxConsumer::new(move |x: &i32| {
-            l.lock().expect("mutex should not be poisoned").push(*x);
-        });
-
-        let conditional = consumer.when(|x: &i32| *x > 0);
-        let rc = conditional.into_rc();
-
-        rc.accept(&5);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
-
-        rc.accept(&-5);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
-    }
-
-    #[test]
-    fn test_box_conditional_into_fn() {
-        let log = Arc::new(Mutex::new(Vec::new()));
-        let l = log.clone();
-
-        let consumer = BoxConsumer::new(move |x: &i32| {
-            l.lock().expect("mutex should not be poisoned").push(*x);
-        });
-
-        let conditional = consumer.when(|x: &i32| *x > 0);
-        let func = conditional.into_fn();
-
-        func(&5);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
-
-        func(&-5);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
-    }
 }
 
 #[cfg(test)]
@@ -1636,161 +883,13 @@ mod arc_conditional_consumer_tests {
         assert_eq!(counter.load(Ordering::SeqCst), 1);
     }
 
-    #[test]
-    fn test_arc_conditional_into_box() {
-        let counter = Arc::new(AtomicUsize::new(0));
-        let c = counter.clone();
 
-        let consumer = ArcConsumer::new(move |_x: &i32| {
-            c.fetch_add(1, Ordering::SeqCst);
-        });
 
-        let conditional = consumer.when(|x: &i32| *x > 0);
-        let boxed = conditional.into_box();
 
-        boxed.accept(&5);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
 
-        boxed.accept(&-5);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
-    }
 
-    #[test]
-    fn test_arc_conditional_into_rc() {
-        let counter = Arc::new(AtomicUsize::new(0));
-        let c = counter.clone();
 
-        let consumer = ArcConsumer::new(move |_x: &i32| {
-            c.fetch_add(1, Ordering::SeqCst);
-        });
 
-        let conditional = consumer.when(|x: &i32| *x > 0);
-        let rc = conditional.into_rc();
-
-        rc.accept(&5);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
-
-        rc.accept(&-5);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
-    }
-
-    #[test]
-    fn test_arc_conditional_into_arc() {
-        let counter = Arc::new(AtomicUsize::new(0));
-        let c = counter.clone();
-
-        let consumer = ArcConsumer::new(move |_x: &i32| {
-            c.fetch_add(1, Ordering::SeqCst);
-        });
-
-        let conditional = consumer.when(|x: &i32| *x > 0);
-        let arc = conditional.into_arc();
-
-        arc.accept(&5);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
-
-        arc.accept(&-5);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
-    }
-
-    #[test]
-    fn test_arc_conditional_into_fn() {
-        let counter = Arc::new(AtomicUsize::new(0));
-        let c = counter.clone();
-
-        let consumer = ArcConsumer::new(move |_x: &i32| {
-            c.fetch_add(1, Ordering::SeqCst);
-        });
-
-        let conditional = consumer.when(|x: &i32| *x > 0);
-        let func = conditional.into_fn();
-
-        func(&5);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
-
-        func(&-5);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
-    }
-
-    #[test]
-    fn test_arc_conditional_to_box() {
-        let counter = Arc::new(AtomicUsize::new(0));
-        let c = counter.clone();
-
-        let consumer = ArcConsumer::new(move |_x: &i32| {
-            c.fetch_add(1, Ordering::SeqCst);
-        });
-
-        let conditional = consumer.when(|x: &i32| *x > 0);
-        let boxed = conditional.to_box();
-
-        boxed.accept(&5);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
-
-        // Original conditional still usable
-        conditional.accept(&10);
-        assert_eq!(counter.load(Ordering::SeqCst), 2);
-    }
-
-    #[test]
-    fn test_arc_conditional_to_rc() {
-        let counter = Arc::new(AtomicUsize::new(0));
-        let c = counter.clone();
-
-        let consumer = ArcConsumer::new(move |_x: &i32| {
-            c.fetch_add(1, Ordering::SeqCst);
-        });
-
-        let conditional = consumer.when(|x: &i32| *x > 0);
-        let rc = conditional.to_rc();
-
-        rc.accept(&5);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
-
-        // Original conditional still usable
-        conditional.accept(&10);
-        assert_eq!(counter.load(Ordering::SeqCst), 2);
-    }
-
-    #[test]
-    fn test_arc_conditional_to_arc() {
-        let counter = Arc::new(AtomicUsize::new(0));
-        let c = counter.clone();
-
-        let consumer = ArcConsumer::new(move |_x: &i32| {
-            c.fetch_add(1, Ordering::SeqCst);
-        });
-
-        let conditional = consumer.when(|x: &i32| *x > 0);
-        let arc = conditional.to_arc();
-
-        arc.accept(&5);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
-
-        // Original conditional still usable
-        conditional.accept(&10);
-        assert_eq!(counter.load(Ordering::SeqCst), 2);
-    }
-
-    #[test]
-    fn test_arc_conditional_to_fn() {
-        let counter = Arc::new(AtomicUsize::new(0));
-        let c = counter.clone();
-
-        let consumer = ArcConsumer::new(move |_x: &i32| {
-            c.fetch_add(1, Ordering::SeqCst);
-        });
-
-        let conditional = consumer.when(|x: &i32| *x > 0);
-        let func = conditional.to_fn();
-
-        func(&5);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
-
-        // Original conditional still usable
-        conditional.accept(&10);
-        assert_eq!(counter.load(Ordering::SeqCst), 2);
-    }
 }
 
 #[cfg(test)]
@@ -1864,120 +963,9 @@ mod rc_conditional_consumer_tests {
         assert_eq!(*log.borrow(), vec![5]);
     }
 
-    #[test]
-    fn test_rc_conditional_into_box() {
-        let log = Rc::new(RefCell::new(Vec::new()));
-        let l = log.clone();
 
-        let consumer = RcConsumer::new(move |x: &i32| {
-            l.borrow_mut().push(*x);
-        });
 
-        let conditional = consumer.when(|x: &i32| *x > 0);
-        let boxed = conditional.into_box();
 
-        boxed.accept(&5);
-        assert_eq!(*log.borrow(), vec![5]);
 
-        boxed.accept(&-5);
-        assert_eq!(*log.borrow(), vec![5]);
-    }
 
-    #[test]
-    fn test_rc_conditional_into_rc() {
-        let log = Rc::new(RefCell::new(Vec::new()));
-        let l = log.clone();
-
-        let consumer = RcConsumer::new(move |x: &i32| {
-            l.borrow_mut().push(*x);
-        });
-
-        let conditional = consumer.when(|x: &i32| *x > 0);
-        let rc = conditional.into_rc();
-
-        rc.accept(&5);
-        assert_eq!(*log.borrow(), vec![5]);
-
-        rc.accept(&-5);
-        assert_eq!(*log.borrow(), vec![5]);
-    }
-
-    #[test]
-    fn test_rc_conditional_into_fn() {
-        let log = Rc::new(RefCell::new(Vec::new()));
-        let l = log.clone();
-
-        let consumer = RcConsumer::new(move |x: &i32| {
-            l.borrow_mut().push(*x);
-        });
-
-        let conditional = consumer.when(|x: &i32| *x > 0);
-        let func = conditional.into_fn();
-
-        func(&5);
-        assert_eq!(*log.borrow(), vec![5]);
-
-        func(&-5);
-        assert_eq!(*log.borrow(), vec![5]);
-    }
-
-    #[test]
-    fn test_rc_conditional_to_box() {
-        let log = Rc::new(RefCell::new(Vec::new()));
-        let l = log.clone();
-
-        let consumer = RcConsumer::new(move |x: &i32| {
-            l.borrow_mut().push(*x);
-        });
-
-        let conditional = consumer.when(|x: &i32| *x > 0);
-        let boxed = conditional.to_box();
-
-        boxed.accept(&5);
-        assert_eq!(*log.borrow(), vec![5]);
-
-        // Original conditional still usable
-        conditional.accept(&10);
-        assert_eq!(*log.borrow(), vec![5, 10]);
-    }
-
-    #[test]
-    fn test_rc_conditional_to_rc() {
-        let log = Rc::new(RefCell::new(Vec::new()));
-        let l = log.clone();
-
-        let consumer = RcConsumer::new(move |x: &i32| {
-            l.borrow_mut().push(*x);
-        });
-
-        let conditional = consumer.when(|x: &i32| *x > 0);
-        let rc = conditional.to_rc();
-
-        rc.accept(&5);
-        assert_eq!(*log.borrow(), vec![5]);
-
-        // Original conditional still usable
-        conditional.accept(&10);
-        assert_eq!(*log.borrow(), vec![5, 10]);
-    }
-
-    #[test]
-    fn test_rc_conditional_to_fn() {
-        let log = Rc::new(RefCell::new(Vec::new()));
-        let l = log.clone();
-
-        let consumer = RcConsumer::new(move |x: &i32| {
-            l.borrow_mut().push(*x);
-        });
-
-        let conditional = consumer.when(|x: &i32| *x > 0);
-        let func = conditional.to_fn();
-
-        func(&5);
-        assert_eq!(*log.borrow(), vec![5]);
-
-        // Original conditional still usable
-        conditional.accept(&10);
-        assert_eq!(*log.borrow(), vec![5, 10]);
-    }
 }

@@ -12,34 +12,24 @@
 //! variants.
 
 pub mod bi_consumer;
+#[cfg(feature = "once")]
 pub mod bi_consumer_once;
 pub mod consumer;
+#[cfg(feature = "once")]
 pub mod consumer_once;
 pub(crate) mod macros;
+#[cfg(feature = "stateful")]
 pub mod stateful_bi_consumer;
+#[cfg(feature = "stateful")]
 pub mod stateful_consumer;
 
-pub use bi_consumer::{
-    ArcBiConsumer, ArcConditionalBiConsumer, BiConsumer, BoxBiConsumer, BoxConditionalBiConsumer,
-    FnBiConsumerOps, RcBiConsumer, RcConditionalBiConsumer,
-};
-pub use bi_consumer_once::{
-    BiConsumerOnce, BoxBiConsumerOnce, BoxConditionalBiConsumerOnce, FnBiConsumerOnceOps,
-};
-pub use consumer::{
-    ArcConditionalConsumer, ArcConsumer, BoxConditionalConsumer, BoxConsumer, Consumer,
-    FnConsumerOps, RcConditionalConsumer, RcConsumer,
-};
-pub use consumer_once::{
-    BoxConditionalConsumerOnce, BoxConsumerOnce, ConsumerOnce, FnConsumerOnceOps,
-};
-pub use stateful_bi_consumer::{
-    ArcConditionalStatefulBiConsumer, ArcStatefulBiConsumer, BoxConditionalStatefulBiConsumer,
-    BoxStatefulBiConsumer, FnStatefulBiConsumerOps, RcConditionalStatefulBiConsumer,
-    RcStatefulBiConsumer, StatefulBiConsumer,
-};
-pub use stateful_consumer::{
-    ArcConditionalStatefulConsumer, ArcStatefulConsumer, BoxConditionalStatefulConsumer,
-    BoxStatefulConsumer, FnStatefulConsumerOps, RcConditionalStatefulConsumer, RcStatefulConsumer,
-    StatefulConsumer,
-};
+pub use bi_consumer::*;
+#[cfg(feature = "once")]
+pub use bi_consumer_once::*;
+pub use consumer::*;
+#[cfg(feature = "once")]
+pub use consumer_once::*;
+#[cfg(feature = "stateful")]
+pub use stateful_bi_consumer::*;
+#[cfg(feature = "stateful")]
+pub use stateful_consumer::*;

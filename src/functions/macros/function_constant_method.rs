@@ -117,7 +117,7 @@ macro_rules! impl_function_constant_method {
             where
                 $r: Clone + $($extra_bounds)+,
             {
-                $struct_name::new(move |_| value.clone())
+                $struct_name::new(move |_: &$t| value.clone())
             }
         }
     };
@@ -135,7 +135,20 @@ macro_rules! impl_function_constant_method {
             where
                 $r: Clone + 'static,
             {
-                $struct_name::new(move |_, _| value.clone())
+                $struct_name::new(move |_: &$t, _: &$u| value.clone())
+            }
+        }
+    };
+
+    // Three generic parameters - mutating BiFunction
+    ($struct_name:ident < $t:ident, $u:ident, $r:ident >, mut $($extra_bounds:tt)+) => {
+        impl<$t, $u, $r> $struct_name<$t, $u, $r> {
+            #[inline]
+            pub fn constant(value: $r) -> $struct_name<$t, $u, $r>
+            where
+                $r: Clone + $($extra_bounds)+,
+            {
+                $struct_name::new(move |_: &mut $t, _: &mut $u| value.clone())
             }
         }
     };
@@ -153,7 +166,7 @@ macro_rules! impl_function_constant_method {
             where
                 $r: Clone + $($extra_bounds)+,
             {
-                $struct_name::new(move |_, _| value.clone())
+                $struct_name::new(move |_: &$t, _: &$u| value.clone())
             }
         }
     };

@@ -33,7 +33,9 @@ fn main() {
     });
 
     // Convert consumer to closure and pass to for_each
-    [1, 2, 3, 4, 5].iter().for_each(consumer.into_fn());
+    [1, 2, 3, 4, 5]
+        .iter()
+        .for_each(move |value| consumer.accept(value));
     println!(
         "   Result: {:?}\n",
         *log.lock().expect("mutex should not be poisoned")
@@ -50,13 +52,13 @@ fn main() {
     });
 
     // to_fn doesn't consume consumer, can be called multiple times
-    [1, 2, 3].iter().for_each(consumer2.to_fn());
+    [1, 2, 3].iter().for_each(|value| consumer2.accept(value));
     println!(
         "   First time: {:?}",
         *log2.lock().expect("mutex should not be poisoned")
     );
 
-    [4, 5].iter().for_each(consumer2.to_fn());
+    [4, 5].iter().for_each(|value| consumer2.accept(value));
     println!(
         "   Second time: {:?}\n",
         *log2.lock().expect("mutex should not be poisoned")
@@ -70,7 +72,9 @@ fn main() {
         l3.borrow_mut().push(*x * 3);
     });
 
-    [1, 2, 3, 4].iter().for_each(consumer3.to_fn());
+    [1, 2, 3, 4]
+        .iter()
+        .for_each(|value| consumer3.accept(value));
     println!("   Result: {:?}\n", *log3.borrow());
 
     // Example 4: Using in custom functions
@@ -91,7 +95,7 @@ fn main() {
     });
 
     // Use into_fn to convert Consumer to closure and pass to function
-    process_items(vec![1, 2, 3], consumer4.into_fn());
+    process_items(vec![1, 2, 3], move |value| consumer4.accept(value));
     println!(
         "   Result: {:?}\n",
         *log4.lock().expect("mutex should not be poisoned")
@@ -114,7 +118,9 @@ fn main() {
             .push(format!("B: {}", x));
     });
 
-    [1, 2].iter().for_each(chained.into_fn());
+    [1, 2]
+        .iter()
+        .for_each(move |value| chained.accept(value));
     println!(
         "   Result: {:?}\n",
         *log5.lock().expect("mutex should not be poisoned")

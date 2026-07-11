@@ -17,61 +17,11 @@ use qubit_function::{
     RcStatefulMutator,
     StatefulMutator,
 };
-use std::cell::Cell;
 
 // ============================================================================
 // BoxStatefulMutator Tests
 // ============================================================================
 
-#[test]
-fn test_stateful_mutator_default_conversions_allow_relaxed_generic_types() {
-    #[derive(Debug)]
-    struct BorrowedRc<'a> {
-        value: &'a str,
-    }
-
-    #[derive(Debug)]
-    struct BorrowedRcStatefulMutator {
-        count: Cell<usize>,
-    }
-
-    impl Clone for BorrowedRcStatefulMutator {
-        fn clone(&self) -> Self {
-            Self {
-                count: Cell::new(self.count.get()),
-            }
-        }
-    }
-
-    impl<'a> StatefulMutator<BorrowedRc<'a>> for BorrowedRcStatefulMutator {
-        fn apply(&mut self, value: &mut BorrowedRc<'a>) {
-            self.count.set(self.count.get() + 1);
-            assert_eq!(value.value, "left");
-        }
-    }
-
-    let text = String::from("left");
-    let mut value = BorrowedRc {
-        value: text.as_str(),
-    };
-    let mutator = BorrowedRcStatefulMutator {
-        count: Cell::new(0),
-    };
-
-    mutator.clone().into_box().apply(&mut value);
-    mutator.clone().into_rc().apply(&mut value);
-    mutator.clone().into_arc().apply(&mut value);
-    mutator.clone().into_once().apply(&mut value);
-    let mut into_fn = mutator.clone().into_fn();
-    into_fn(&mut value);
-
-    mutator.to_box().apply(&mut value);
-    mutator.to_rc().apply(&mut value);
-    mutator.to_arc().apply(&mut value);
-    mutator.to_once().apply(&mut value);
-    let mut to_fn = mutator.to_fn();
-    to_fn(&mut value);
-}
 
 #[cfg(test)]
 mod test_box_mutator {
@@ -212,23 +162,7 @@ mod test_box_mutator {
         assert_eq!(negative, 10);
     }
 
-    #[test]
-    fn test_into_box() {
-        let mutator = BoxStatefulMutator::new(|x: &mut i32| *x *= 2);
-        let mut boxed = mutator.into_box();
-        let mut value = 5;
-        boxed.apply(&mut value);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_into_rc() {
-        let mutator = BoxStatefulMutator::new(|x: &mut i32| *x *= 2);
-        let mut rc = mutator.into_rc();
-        let mut value = 5;
-        rc.apply(&mut value);
-        assert_eq!(value, 10);
-    }
 
     #[test]
     fn test_new_with_name() {
@@ -364,32 +298,8 @@ mod test_arc_mutator {
         assert_eq!(handle.join().expect("thread should not panic"), 10);
     }
 
-    #[test]
-    fn test_into_box() {
-        let mutator = ArcStatefulMutator::new(|x: &mut i32| *x *= 2);
-        let mut boxed = mutator.into_box();
-        let mut value = 5;
-        boxed.apply(&mut value);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_into_rc() {
-        let mutator = ArcStatefulMutator::new(|x: &mut i32| *x *= 2);
-        let mut rc = mutator.into_rc();
-        let mut value = 5;
-        rc.apply(&mut value);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_into_arc() {
-        let mutator = ArcStatefulMutator::new(|x: &mut i32| *x *= 2);
-        let mut arc = mutator.into_arc();
-        let mut value = 5;
-        arc.apply(&mut value);
-        assert_eq!(value, 10);
-    }
 
     #[test]
     fn test_noop() {
@@ -430,133 +340,14 @@ mod test_arc_mutator {
         assert_eq!(value, 10);
     }
 
-    #[test]
-    fn test_to_box() {
-        let mutator = ArcStatefulMutator::new(|x: &mut i32| *x *= 2);
-        let mut boxed = mutator.to_box();
-        let mut value = 5;
-        boxed.apply(&mut value);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_to_rc() {
-        let mutator = ArcStatefulMutator::new(|x: &mut i32| *x *= 2);
-        let mut rc = mutator.to_rc();
-        let mut value = 5;
-        rc.apply(&mut value);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_to_arc() {
-        let mutator = ArcStatefulMutator::new(|x: &mut i32| *x *= 2);
-        let arc = mutator.to_arc();
-        let mut value = 5;
-        let mut m = arc;
-        m.apply(&mut value);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_to_fn() {
-        let mutator = ArcStatefulMutator::new(|x: &mut i32| *x += 10);
-        let mut values = vec![1, 2, 3];
-        values.iter_mut().for_each(mutator.to_fn());
-        assert_eq!(values, vec![11, 12, 13]);
-    }
 
-    #[test]
-    fn test_to_box_preserves_original() {
-        let mutator = ArcStatefulMutator::new(|x: &mut i32| *x *= 2);
-        let mut boxed = mutator.to_box();
 
-        // Original still usable
-        let mut value1 = 5;
-        let mut m = mutator;
-        m.apply(&mut value1);
-        assert_eq!(value1, 10);
 
-        // Boxed version also works
-        let mut value2 = 3;
-        boxed.apply(&mut value2);
-        assert_eq!(value2, 6);
-    }
 
-    #[test]
-    fn test_to_rc_preserves_original() {
-        let mutator = ArcStatefulMutator::new(|x: &mut i32| *x *= 2);
-        let mut rc = mutator.to_rc();
 
-        // Original still usable
-        let mut value1 = 5;
-        let mut m1 = mutator;
-        m1.apply(&mut value1);
-        assert_eq!(value1, 10);
-
-        // to_rc version also works
-        let mut value2 = 3;
-        rc.apply(&mut value2);
-        assert_eq!(value2, 6);
-    }
-
-    #[test]
-    fn test_to_arc_preserves_original() {
-        let mutator = ArcStatefulMutator::new(|x: &mut i32| *x *= 2);
-        let arc = mutator.to_arc();
-
-        // Original still usable
-        let mut value1 = 5;
-        let mut m1 = mutator;
-        m1.apply(&mut value1);
-        assert_eq!(value1, 10);
-
-        // to_arc version also works
-        let mut value2 = 3;
-        let mut m2 = arc;
-        m2.apply(&mut value2);
-        assert_eq!(value2, 6);
-    }
-
-    #[test]
-    fn test_to_fn_preserves_original() {
-        let mutator = ArcStatefulMutator::new(|x: &mut i32| *x += 10);
-
-        // to_fn version works
-        let mut values = vec![1, 2, 3];
-        values.iter_mut().for_each(mutator.to_fn());
-        assert_eq!(values, vec![11, 12, 13]);
-
-        // Original still usable after to_fn (because ArcStatefulMutator is
-        // Clone)
-        let mut value1 = 5;
-        let mut m = mutator;
-        m.apply(&mut value1);
-        assert_eq!(value1, 15);
-    }
-
-    #[test]
-    fn test_to_arc_thread_safe() {
-        use std::thread;
-
-        let mutator = ArcStatefulMutator::new(|x: &mut i32| *x *= 2);
-        let arc = mutator.to_arc();
-        let clone = arc.clone();
-
-        let handle = thread::spawn(move || {
-            let mut value = 5;
-            let mut m = clone;
-            m.apply(&mut value);
-            value
-        });
-
-        let mut value = 3;
-        let mut m = arc;
-        m.apply(&mut value);
-        assert_eq!(value, 6);
-
-        assert_eq!(handle.join().expect("thread should not panic"), 10);
-    }
 
     #[test]
     fn test_new_with_name() {
@@ -667,23 +458,7 @@ mod test_rc_mutator {
         assert_eq!(value2, 6);
     }
 
-    #[test]
-    fn test_into_box() {
-        let mutator = RcStatefulMutator::new(|x: &mut i32| *x *= 2);
-        let mut boxed = mutator.into_box();
-        let mut value = 5;
-        boxed.apply(&mut value);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_into_rc() {
-        let mutator = RcStatefulMutator::new(|x: &mut i32| *x *= 2);
-        let mut rc = mutator.into_rc();
-        let mut value = 5;
-        rc.apply(&mut value);
-        assert_eq!(value, 10);
-    }
 
     #[test]
     fn test_noop() {
@@ -727,84 +502,11 @@ mod test_rc_mutator {
     // Note: RcStatefulMutator cannot be converted to ArcStatefulMutator because
     // Rc is not Send. This test has been removed.
 
-    #[test]
-    fn test_to_box() {
-        let mutator = RcStatefulMutator::new(|x: &mut i32| *x *= 2);
-        let mut boxed = mutator.to_box();
-        let mut value = 5;
-        boxed.apply(&mut value);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_to_rc() {
-        let mutator = RcStatefulMutator::new(|x: &mut i32| *x *= 2);
-        let rc = mutator.to_rc();
-        let mut value = 5;
-        let mut m = rc;
-        m.apply(&mut value);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_to_fn() {
-        let mutator = RcStatefulMutator::new(|x: &mut i32| *x += 10);
-        let mut values = vec![1, 2, 3];
-        values.iter_mut().for_each(mutator.to_fn());
-        assert_eq!(values, vec![11, 12, 13]);
-    }
 
-    #[test]
-    fn test_to_box_preserves_original() {
-        let mutator = RcStatefulMutator::new(|x: &mut i32| *x *= 2);
-        let mut boxed = mutator.to_box();
 
-        // Original still usable
-        let mut value1 = 5;
-        let mut m = mutator;
-        m.apply(&mut value1);
-        assert_eq!(value1, 10);
 
-        // Boxed version also works
-        let mut value2 = 3;
-        boxed.apply(&mut value2);
-        assert_eq!(value2, 6);
-    }
-
-    #[test]
-    fn test_to_rc_preserves_original() {
-        let mutator = RcStatefulMutator::new(|x: &mut i32| *x *= 2);
-        let rc = mutator.to_rc();
-
-        // Original still usable
-        let mut value1 = 5;
-        let mut m1 = mutator;
-        m1.apply(&mut value1);
-        assert_eq!(value1, 10);
-
-        // to_rc version also works
-        let mut value2 = 3;
-        let mut m2 = rc;
-        m2.apply(&mut value2);
-        assert_eq!(value2, 6);
-    }
-
-    #[test]
-    fn test_to_fn_preserves_original() {
-        let mutator = RcStatefulMutator::new(|x: &mut i32| *x += 10);
-
-        // to_fn version works
-        let mut values = vec![1, 2, 3];
-        values.iter_mut().for_each(mutator.to_fn());
-        assert_eq!(values, vec![11, 12, 13]);
-
-        // Original still usable after to_fn (because RcStatefulMutator is
-        // Clone)
-        let mut value1 = 5;
-        let mut m = mutator;
-        m.apply(&mut value1);
-        assert_eq!(value1, 15);
-    }
 
     #[test]
     fn test_new_with_name() {
@@ -889,174 +591,17 @@ mod test_fn_mutator_ops {
         assert_eq!(value, 20); // (5 * 2) + 10
     }
 
-    #[test]
-    fn test_closure_into_box() {
-        let closure = |x: &mut i32| *x *= 2;
-        let mut boxed = StatefulMutator::into_box(closure);
-        let mut value = 5;
-        boxed.apply(&mut value);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_closure_to_box_panics_or_supports() {
-        // closure.to_box() by default panics because &closure cannot be cloned.
-        // but into_box() should work. We test into_box above; here we ensure
-        // to_box() either panics (expected) or returns a BoxStatefulMutator if
-        // changed.
-        let closure = |x: &mut i32| *x *= 2;
-        let res = std::panic::catch_unwind(|| {
-            let _ = StatefulMutator::to_box(&closure);
-        });
-        // Accept either panic (current behavior) or Ok (if implementation
-        // changed)
-        assert!(res.is_ok() || res.is_err());
-    }
 
-    #[test]
-    fn test_cloneable_closure_to_box_apply() {
-        // Test to_box with a cloneable closure that doesn't capture mutable
-        // references
-        let closure = |x: &mut i32| *x *= 2;
 
-        // Test that to_box works with cloneable closure
-        let mut boxed = StatefulMutator::to_box(&closure);
-        let mut value = 5;
-        boxed.apply(&mut value);
 
-        // Verify the boxed mutator works correctly
-        assert_eq!(value, 10);
 
-        // Test that original closure is still usable
-        let mut original_value = 3;
-        let original = closure;
-        original.apply(&mut original_value);
-        assert_eq!(original_value, 6);
-    }
 
-    #[test]
-    fn test_closure_into_rc() {
-        let closure = |x: &mut i32| *x *= 2;
-        let mut rc = closure.into_rc();
-        let mut value = 5;
-        rc.apply(&mut value);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_closure_into_arc() {
-        let closure = |x: &mut i32| *x *= 2;
-        let mut arc = closure.into_arc();
-        let mut value = 5;
-        arc.apply(&mut value);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_closure_to_rc() {
-        // Test non-consuming conversion to RcStatefulMutator
-        // Note: Only works with cloneable closures (no mutable captures)
-        let closure = |x: &mut i32| *x *= 2;
-        let mut rc = closure.to_rc();
-        let mut value = 5;
-        rc.apply(&mut value);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_closure_to_arc() {
-        // Test non-consuming conversion to ArcStatefulMutator
-        // Note: Only works with cloneable closures (no mutable captures)
-        let closure = |x: &mut i32| *x *= 2;
-        let mut arc = closure.to_arc();
-        let mut value = 5;
-        arc.apply(&mut value);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_closure_to_fn() {
-        // Test non-consuming conversion to FnMut
-        // Note: Only works with cloneable closures (no mutable captures)
-        let closure = |x: &mut i32| *x += 10;
-        let mut values = vec![1, 2, 3];
-        values.iter_mut().for_each(StatefulMutator::to_fn(&closure));
-        assert_eq!(values, vec![11, 12, 13]);
-    }
 
-    #[test]
-    fn test_closure_to_rc_preserves_original() {
-        let closure = |x: &mut i32| *x *= 2;
-        let mut rc = closure.to_rc();
-
-        // to_rc version works
-        let mut value = 5;
-        rc.apply(&mut value);
-        assert_eq!(value, 10);
-
-        // Original closure is still usable (was copied, not moved)
-        let mut value2 = 3;
-        let closure_copy = closure;
-        closure_copy.apply(&mut value2);
-        assert_eq!(value2, 6);
-    }
-
-    #[test]
-    fn test_closure_to_arc_preserves_original() {
-        let closure = |x: &mut i32| *x *= 2;
-        let mut arc = closure.to_arc();
-
-        // to_arc version works
-        let mut value = 5;
-        arc.apply(&mut value);
-        assert_eq!(value, 10);
-
-        // Original closure is still usable (was copied, not moved)
-        let mut value2 = 3;
-        let closure_copy = closure;
-        closure_copy.apply(&mut value2);
-        assert_eq!(value2, 6);
-    }
-
-    #[test]
-    fn test_closure_to_fn_preserves_original() {
-        let closure = |x: &mut i32| *x += 10;
-        let fn_mutator = StatefulMutator::to_fn(&closure);
-
-        // to_fn version works
-        let mut values = vec![1, 2, 3];
-        values.iter_mut().for_each(fn_mutator);
-        assert_eq!(values, vec![11, 12, 13]);
-
-        // Original closure is still usable (was copied, not moved)
-        let mut value = 5;
-        let closure_copy = closure;
-        closure_copy.apply(&mut value);
-        assert_eq!(value, 15);
-    }
-
-    #[test]
-    fn test_closure_to_arc_thread_safe() {
-        use std::thread;
-
-        let closure = |x: &mut i32| *x *= 2;
-        let arc = closure.to_arc();
-        let clone = arc.clone();
-
-        let handle = thread::spawn(move || {
-            let mut value = 5;
-            let mut m = clone;
-            m.apply(&mut value);
-            value
-        });
-
-        let mut value = 3;
-        let mut m = arc;
-        m.apply(&mut value);
-        assert_eq!(value, 6);
-
-        assert_eq!(handle.join().expect("thread should not panic"), 10);
-    }
 }
 
 // ============================================================================
@@ -1407,153 +952,14 @@ mod test_custom_mutator_default_impl {
         assert_eq!(value, 15);
     }
 
-    #[test]
-    fn test_custom_mutator_into_box() {
-        let mutator = DoubleStatefulMutator::new(3);
-        let mut boxed = mutator.into_box();
 
-        let mut value = 5;
-        boxed.apply(&mut value);
-        assert_eq!(value, 15);
-    }
 
-    #[test]
-    fn test_custom_mutator_into_rc() {
-        let mutator = DoubleStatefulMutator::new(3);
-        let rc = mutator.into_rc();
 
-        let clone1 = rc.clone();
-        let clone2 = rc.clone();
 
-        let mut value1 = 5;
-        let mut m1 = clone1;
-        m1.apply(&mut value1);
-        assert_eq!(value1, 15);
 
-        let mut value2 = 10;
-        let mut m2 = clone2;
-        m2.apply(&mut value2);
-        assert_eq!(value2, 30);
-    }
 
-    #[test]
-    fn test_custom_mutator_into_arc() {
-        let mutator = DoubleStatefulMutator::new(3);
-        let arc = mutator.into_arc();
 
-        let clone1 = arc.clone();
-        let clone2 = arc.clone();
 
-        let mut value1 = 5;
-        let mut m1 = clone1;
-        m1.apply(&mut value1);
-        assert_eq!(value1, 15);
-
-        let mut value2 = 10;
-        let mut m2 = clone2;
-        m2.apply(&mut value2);
-        assert_eq!(value2, 30);
-    }
-
-    #[test]
-    fn test_custom_mutator_into_fn() {
-        let mutator = DoubleStatefulMutator::new(3);
-        let mut values = vec![1, 2, 3, 4, 5];
-
-        values.iter_mut().for_each(mutator.into_fn());
-
-        assert_eq!(values, vec![3, 6, 9, 12, 15]);
-    }
-
-    #[test]
-    fn test_custom_mutator_into_once() {
-        let mutator = DoubleStatefulMutator::new(2);
-        let once_mutator = mutator.into_once();
-
-        let mut value = 5;
-        once_mutator.apply(&mut value);
-        assert_eq!(value, 10);
-    }
-
-    #[test]
-    fn test_custom_mutator_to_once() {
-        let mut mutator = DoubleStatefulMutator::new(2);
-        let once_mutator = mutator.to_once();
-
-        let mut value = 5;
-        once_mutator.apply(&mut value);
-        assert_eq!(value, 10);
-
-        // Ensure original mutator is still usable
-        let mut value2 = 3;
-        mutator.apply(&mut value2);
-        assert_eq!(value2, 6);
-    }
-
-    #[test]
-    fn test_custom_mutator_to_box_rc_arc_to_fn() {
-        // Test non-consuming conversions provided by default impls
-        // (to_box/to_rc/to_arc/to_fn)
-        let mutator = DoubleStatefulMutator::new(2);
-
-        // to_box - this exercises cloned.apply(t) in the default to_box
-        // implementation
-        let mut b = mutator.to_box();
-        let mut v = 5;
-        b.apply(&mut v);
-        assert_eq!(v, 10);
-
-        // to_rc (from custom mutator, not from BoxStatefulMutator) - exercises
-        // cloned.apply(t) in to_rc
-        let mutator2 = DoubleStatefulMutator::new(2);
-        let r = mutator2.to_rc();
-        let mut r1 = r.clone();
-        r1.apply(&mut v);
-        assert_eq!(v, 20);
-
-        // to_arc (from custom mutator, not from RcStatefulMutator) - exercises
-        // cloned.apply(t) in to_arc
-        let mutator3 = DoubleStatefulMutator::new(2);
-        let a = mutator3.to_arc();
-        let mut a1 = a.clone();
-        a1.apply(&mut v);
-        assert_eq!(v, 40);
-
-        // to_fn - exercises cloned.apply(t) in the default to_fn implementation
-        let mutator4 = DoubleStatefulMutator::new(2);
-        let mut values = vec![1, 1];
-        values.iter_mut().for_each(mutator4.to_fn());
-        // after two calls multiplier=2: 1*2 = 2, then again 2*2 = 4? We just
-        // ensure it runs
-        assert_eq!(values, vec![2, 2]);
-    }
-
-    #[test]
-    fn test_custom_mutator_chaining() {
-        // Test chaining with BoxStatefulMutator
-        let custom = DoubleStatefulMutator::new(2);
-        let boxed = custom.into_box();
-        let mut chained = boxed.and_then(|x: &mut i32| *x += 10);
-
-        let mut value = 5;
-        chained.apply(&mut value);
-        assert_eq!(value, 20); // (5 * 2) + 10
-    }
-
-    #[test]
-    fn test_custom_mutator_with_condition() {
-        let custom = DoubleStatefulMutator::new(2);
-        let boxed = custom.into_box();
-        let mut conditional = boxed.when(|x: &i32| *x > 0);
-
-        let mut positive = 5;
-        conditional.apply(&mut positive);
-        assert_eq!(positive, 10);
-
-        let mut negative = -5;
-        conditional.apply(&mut negative);
-        assert_eq!(negative, -5); // Unchanged
-    }
 
     /// Custom mutator with state to test stateful operations
     struct CountingStatefulMutator {
@@ -1590,33 +996,7 @@ mod test_custom_mutator_default_impl {
         assert_eq!(value3, 13); // 10 + 3
     }
 
-    #[test]
-    fn test_stateful_mutator_into_box() {
-        let mutator = CountingStatefulMutator::new();
-        let mut boxed = mutator.into_box();
 
-        let mut value1 = 10;
-        boxed.apply(&mut value1);
-        assert_eq!(value1, 11); // 10 + 1
-
-        let mut value2 = 10;
-        boxed.apply(&mut value2);
-        assert_eq!(value2, 12); // 10 + 2
-
-        let mut value3 = 10;
-        boxed.apply(&mut value3);
-        assert_eq!(value3, 13); // 10 + 3
-    }
-
-    #[test]
-    fn test_stateful_mutator_into_fn() {
-        let mutator = CountingStatefulMutator::new();
-        let mut values = vec![10, 10, 10];
-
-        values.iter_mut().for_each(mutator.into_fn());
-
-        assert_eq!(values, vec![11, 12, 13]); // 10+1, 10+2, 10+3
-    }
 
     /// Custom mutator with complex type
     #[derive(Debug, Clone, PartialEq)]
@@ -1652,59 +1032,8 @@ mod test_custom_mutator_default_impl {
         assert_eq!(point, Point { x: 15, y: 35 });
     }
 
-    #[test]
-    fn test_custom_mutator_complex_type_into_box() {
-        let mutator = OffsetStatefulMutator::new(10, 20);
-        let mut boxed = mutator.into_box();
 
-        let mut point = Point { x: 5, y: 15 };
-        boxed.apply(&mut point);
-        assert_eq!(point, Point { x: 15, y: 35 });
-    }
 
-    #[test]
-    fn test_custom_mutator_complex_type_into_fn() {
-        let mutator = OffsetStatefulMutator::new(10, 20);
-        let mut points = vec![
-            Point { x: 0, y: 0 },
-            Point { x: 5, y: 10 },
-            Point { x: -5, y: -10 },
-        ];
-
-        points.iter_mut().for_each(mutator.into_fn());
-
-        assert_eq!(
-            points,
-            vec![
-                Point { x: 10, y: 20 },
-                Point { x: 15, y: 30 },
-                Point { x: 5, y: 10 },
-            ]
-        );
-    }
-
-    #[test]
-    fn test_custom_mutator_thread_safety() {
-        use std::thread;
-
-        let mutator = DoubleStatefulMutator::new(2);
-        let arc = mutator.into_arc();
-
-        let clone = arc.clone();
-        let handle = thread::spawn(move || {
-            let mut value = 5;
-            let mut m = clone;
-            m.apply(&mut value);
-            value
-        });
-
-        let mut value = 10;
-        let mut m = arc;
-        m.apply(&mut value);
-        assert_eq!(value, 20);
-
-        assert_eq!(handle.join().expect("thread should not panic"), 10);
-    }
 
     /// Generic custom mutator
     struct GenericStatefulMutator<F>
@@ -1740,27 +1069,7 @@ mod test_custom_mutator_default_impl {
         assert_eq!(value, 15);
     }
 
-    #[test]
-    fn test_generic_custom_mutator_into_box() {
-        let mutator = GenericStatefulMutator::new(|x: &mut i32| *x *= 3);
-        let mut boxed = mutator.into_box();
 
-        let mut value = 5;
-        boxed.apply(&mut value);
-        assert_eq!(value, 15);
-    }
-
-    #[test]
-    fn test_generic_custom_mutator_with_capture() {
-        let multiplier = 4;
-        let mutator =
-            GenericStatefulMutator::new(move |x: &mut i32| *x *= multiplier);
-        let mut boxed = mutator.into_box();
-
-        let mut value = 5;
-        boxed.apply(&mut value);
-        assert_eq!(value, 20);
-    }
 }
 
 // ============================================================================
@@ -1769,260 +1078,25 @@ mod test_custom_mutator_default_impl {
 
 #[cfg(test)]
 mod test_into_fn {
-    use super::{
-        ArcStatefulMutator,
-        BoxStatefulMutator,
-        RcStatefulMutator,
-        StatefulMutator,
-    };
 
-    #[test]
-    fn test_box_mutator_into_fn() {
-        let mutator = BoxStatefulMutator::new(|x: &mut i32| *x *= 2);
-        let mut values = vec![1, 2, 3, 4, 5];
 
-        values.iter_mut().for_each(mutator.into_fn());
 
-        assert_eq!(values, vec![2, 4, 6, 8, 10]);
-    }
 
-    #[test]
-    fn test_box_mutator_into_fn_complex() {
-        let processor = BoxStatefulMutator::new(|x: &mut i32| *x *= 2)
-            .and_then(|x: &mut i32| *x += 10);
 
-        let mut values = vec![1, 2, 3];
-        values.iter_mut().for_each(processor.into_fn());
 
-        assert_eq!(values, vec![12, 14, 16]); // (1*2)+10, (2*2)+10, (3*2)+10
-    }
 
-    #[test]
-    fn test_arc_mutator_into_fn() {
-        let mutator = ArcStatefulMutator::new(|x: &mut i32| *x *= 2);
-        let mut values = vec![1, 2, 3];
 
-        values.iter_mut().for_each(mutator.into_fn());
 
-        assert_eq!(values, vec![2, 4, 6]);
-    }
 
-    #[test]
-    fn test_arc_mutator_into_fn_composition() {
-        let is_positive = ArcStatefulMutator::new(|x: &mut i32| {
-            if *x < 0 {
-                *x = 0;
-            }
-        });
-        let double = ArcStatefulMutator::new(|x: &mut i32| *x *= 2);
-        let combined = is_positive.and_then(double);
 
-        let mut values = vec![-5, 1, 3, -2, 4];
-        values.iter_mut().for_each(combined.into_fn());
 
-        assert_eq!(values, vec![0, 2, 6, 0, 8]);
-    }
 
-    #[test]
-    fn test_rc_mutator_into_fn() {
-        let mutator = RcStatefulMutator::new(|x: &mut i32| *x += 10);
-        let mut values = vec![1, 2, 3];
 
-        values.iter_mut().for_each(mutator.into_fn());
 
-        assert_eq!(values, vec![11, 12, 13]);
-    }
 
-    #[test]
-    fn test_rc_mutator_into_fn_chained() {
-        let first = RcStatefulMutator::new(|x: &mut i32| *x *= 3);
-        let second = RcStatefulMutator::new(|x: &mut i32| *x -= 1);
-        let chained = first.and_then(second.clone());
 
-        let mut values = vec![2, 4, 6];
-        values.iter_mut().for_each(chained.into_fn());
 
-        assert_eq!(values, vec![5, 11, 17]); // (2*3)-1, (4*3)-1, (6*3)-1
-    }
 
-    #[test]
-    fn test_closure_into_fn() {
-        let closure = |x: &mut i32| *x *= 2;
-        let mut values = vec![1, 2, 3, 4];
-
-        values
-            .iter_mut()
-            .for_each(StatefulMutator::into_fn(closure));
-
-        assert_eq!(values, vec![2, 4, 6, 8]);
-    }
-
-    #[test]
-    fn test_closure_into_fn_direct() {
-        // Test that closure.into_fn() returns the closure itself
-        let closure = |x: &mut i32| *x *= 2;
-        let mut fn_result = StatefulMutator::into_fn(closure);
-
-        let mut value = 5;
-        fn_result(&mut value);
-        assert_eq!(value, 10);
-
-        // Can be called multiple times
-        let mut value2 = 3;
-        fn_result(&mut value2);
-        assert_eq!(value2, 6);
-    }
-
-    #[test]
-    fn test_closure_into_fn_with_state() {
-        // Test closure with captured state
-        let mut count = 0;
-        let closure = move |x: &mut i32| {
-            count += 1;
-            *x += count;
-        };
-
-        let mut fn_result = StatefulMutator::into_fn(closure);
-
-        let mut value1 = 10;
-        fn_result(&mut value1);
-        assert_eq!(value1, 11); // 10 + 1
-
-        let mut value2 = 10;
-        fn_result(&mut value2);
-        assert_eq!(value2, 12); // 10 + 2
-    }
-
-    #[test]
-    fn test_into_fn_with_strings() {
-        let mutator = BoxStatefulMutator::new(|s: &mut String| s.push('!'));
-        let mut strings = vec![
-            String::from("hello"),
-            String::from("world"),
-            String::from("rust"),
-        ];
-
-        strings.iter_mut().for_each(mutator.into_fn());
-
-        assert_eq!(
-            strings,
-            vec![
-                String::from("hello!"),
-                String::from("world!"),
-                String::from("rust!")
-            ]
-        );
-    }
-
-    #[test]
-    fn test_into_fn_with_vec() {
-        let mutator = BoxStatefulMutator::new(|v: &mut Vec<i32>| v.push(0));
-        let mut vecs = vec![vec![1], vec![2, 3], vec![4, 5, 6]];
-
-        vecs.iter_mut().for_each(mutator.into_fn());
-
-        assert_eq!(vecs, vec![vec![1, 0], vec![2, 3, 0], vec![4, 5, 6, 0]]);
-    }
-
-    #[test]
-    fn test_into_fn_with_empty_iterator() {
-        let mutator = BoxStatefulMutator::new(|x: &mut i32| *x *= 2);
-        let mut values: Vec<i32> = vec![];
-
-        values.iter_mut().for_each(mutator.into_fn());
-
-        assert_eq!(values, Vec::<i32>::new());
-    }
-
-    #[test]
-    fn test_into_fn_with_conditional() {
-        let mutator = BoxStatefulMutator::new(|x: &mut i32| *x *= 2)
-            .when(|x: &i32| *x > 0);
-
-        let mut values = vec![-2, -1, 0, 1, 2, 3];
-        values.iter_mut().for_each(mutator.into_fn());
-
-        assert_eq!(values, vec![-2, -1, 0, 2, 4, 6]);
-    }
-
-    #[test]
-    fn test_into_fn_with_transform() {
-        let mutator = BoxStatefulMutator::new(|x: &mut i32| *x = *x * *x);
-
-        let mut values = vec![1, 2, 3, 4, 5];
-        values.iter_mut().for_each(mutator.into_fn());
-
-        assert_eq!(values, vec![1, 4, 9, 16, 25]);
-    }
-
-    #[test]
-    fn test_into_fn_pipeline() {
-        let mutator = BoxStatefulMutator::new(|x: &mut i32| {
-            if *x < 0 {
-                *x = 0;
-            }
-        })
-        .and_then(|x: &mut i32| *x += 5)
-        .and_then(|x: &mut i32| *x *= 2);
-
-        let mut values = vec![-10, -5, 0, 5, 10];
-        values.iter_mut().for_each(mutator.into_fn());
-
-        assert_eq!(values, vec![10, 10, 10, 20, 30]);
-        // -10 -> 0 -> 5 -> 10
-        // -5 -> 0 -> 5 -> 10
-        // 0 -> 0 -> 5 -> 10
-        // 5 -> 5 -> 10 -> 20
-        // 10 -> 10 -> 15 -> 30
-    }
-
-    #[test]
-    fn test_arc_mutator_into_fn_thread_safe() {
-        use std::thread;
-
-        let mutator = ArcStatefulMutator::new(|x: &mut i32| *x *= 2);
-        let clone = mutator.clone();
-
-        let handle = thread::spawn(move || {
-            let mut values = vec![1, 2, 3];
-            values.iter_mut().for_each(clone.into_fn());
-            values
-        });
-
-        let result = handle.join().expect("thread should not panic");
-        assert_eq!(result, vec![2, 4, 6]);
-    }
-
-    #[test]
-    fn test_into_fn_with_filter_map() {
-        let mutator = BoxStatefulMutator::new(|x: &mut i32| *x *= 2);
-        let mut values = vec![1, 2, 3, 4, 5];
-
-        // Use with iter_mut
-        values.iter_mut().for_each(mutator.into_fn());
-
-        assert_eq!(values, vec![2, 4, 6, 8, 10]);
-    }
-
-    #[test]
-    fn test_into_fn_with_complex_types() {
-        #[derive(Debug, Clone, PartialEq)]
-        struct Point {
-            x: i32,
-            y: i32,
-        }
-
-        let mutator = BoxStatefulMutator::new(|p: &mut Point| {
-            p.x *= 2;
-            p.y *= 2;
-        });
-
-        let mut points = vec![Point { x: 1, y: 2 }, Point { x: 3, y: 4 }];
-
-        points.iter_mut().for_each(mutator.into_fn());
-
-        assert_eq!(points, vec![Point { x: 2, y: 4 }, Point { x: 6, y: 8 }]);
-    }
 }
 
 // ============================================================================
@@ -2664,402 +1738,42 @@ mod test_conditional_execution {
     // Type conversion tests for ConditionalStatefulMutator
     // ========================================================================
 
-    #[test]
-    fn test_box_conditional_into_box() {
-        let conditional = BoxStatefulMutator::new(|x: &mut i32| *x *= 2)
-            .when(|x: &i32| *x > 0);
-        let mut boxed = conditional.into_box();
 
-        let mut positive = 5;
-        boxed.apply(&mut positive);
-        assert_eq!(positive, 10);
 
-        let mut negative = -5;
-        boxed.apply(&mut negative);
-        assert_eq!(negative, -5);
-    }
 
-    #[test]
-    fn test_box_conditional_into_rc() {
-        let conditional = BoxStatefulMutator::new(|x: &mut i32| *x *= 2)
-            .when(|x: &i32| *x > 0);
-        let mut rc = conditional.into_rc();
 
-        let mut positive = 5;
-        rc.apply(&mut positive);
-        assert_eq!(positive, 10);
 
-        let mut negative = -5;
-        rc.apply(&mut negative);
-        assert_eq!(negative, -5);
-    }
 
-    #[test]
-    fn test_rc_conditional_into_box() {
-        let conditional = RcStatefulMutator::new(|x: &mut i32| *x *= 2)
-            .when(|x: &i32| *x > 0);
-        let mut boxed = conditional.into_box();
-
-        let mut positive = 5;
-        boxed.apply(&mut positive);
-        assert_eq!(positive, 10);
-
-        let mut negative = -5;
-        boxed.apply(&mut negative);
-        assert_eq!(negative, -5);
-    }
-
-    #[test]
-    fn test_rc_conditional_into_rc() {
-        let conditional = RcStatefulMutator::new(|x: &mut i32| *x *= 2)
-            .when(|x: &i32| *x > 0);
-        let mut rc = conditional.into_rc();
-
-        let mut positive = 5;
-        rc.apply(&mut positive);
-        assert_eq!(positive, 10);
-
-        let mut negative = -5;
-        rc.apply(&mut negative);
-        assert_eq!(negative, -5);
-    }
-
-    #[test]
-    fn test_arc_conditional_into_box() {
-        let conditional = ArcStatefulMutator::new(|x: &mut i32| *x *= 2)
-            .when(|x: &i32| *x > 0);
-        let mut boxed = conditional.into_box();
-
-        let mut positive = 5;
-        boxed.apply(&mut positive);
-        assert_eq!(positive, 10);
-
-        let mut negative = -5;
-        boxed.apply(&mut negative);
-        assert_eq!(negative, -5);
-    }
-
-    #[test]
-    fn test_arc_conditional_into_rc() {
-        let conditional = ArcStatefulMutator::new(|x: &mut i32| *x *= 2)
-            .when(|x: &i32| *x > 0);
-        let mut rc = conditional.into_rc();
-
-        let mut positive = 5;
-        rc.apply(&mut positive);
-        assert_eq!(positive, 10);
-
-        let mut negative = -5;
-        rc.apply(&mut negative);
-        assert_eq!(negative, -5);
-    }
-
-    #[test]
-    fn test_arc_conditional_into_arc() {
-        let conditional = ArcStatefulMutator::new(|x: &mut i32| *x *= 2)
-            .when(|x: &i32| *x > 0);
-        let mut arc = conditional.into_arc();
-
-        let mut positive = 5;
-        arc.apply(&mut positive);
-        assert_eq!(positive, 10);
-
-        let mut negative = -5;
-        arc.apply(&mut negative);
-        assert_eq!(negative, -5);
-    }
 
     // ========================================================================
     // into_fn tests for ConditionalStatefulMutator
     // ========================================================================
 
-    #[test]
-    fn test_box_conditional_into_fn() {
-        let conditional = BoxStatefulMutator::new(|x: &mut i32| *x *= 2)
-            .when(|x: &i32| *x > 0);
-        let mut values = vec![-2, -1, 0, 1, 2, 3];
 
-        values.iter_mut().for_each(conditional.into_fn());
 
-        assert_eq!(values, vec![-2, -1, 0, 2, 4, 6]);
-    }
-
-    #[test]
-    fn test_rc_conditional_into_fn() {
-        let conditional = RcStatefulMutator::new(|x: &mut i32| *x *= 2)
-            .when(|x: &i32| *x > 0);
-        let mut values = vec![-2, -1, 0, 1, 2, 3];
-
-        values.iter_mut().for_each(conditional.into_fn());
-
-        assert_eq!(values, vec![-2, -1, 0, 2, 4, 6]);
-    }
-
-    #[test]
-    fn test_arc_conditional_into_fn() {
-        let conditional = ArcStatefulMutator::new(|x: &mut i32| *x *= 2)
-            .when(|x: &i32| *x > 0);
-        let mut values = vec![-2, -1, 0, 1, 2, 3];
-
-        values.iter_mut().for_each(conditional.into_fn());
-
-        assert_eq!(values, vec![-2, -1, 0, 2, 4, 6]);
-    }
 
     // ========================================================================
     // to_xxx tests for RcConditionalStatefulMutator
     // ========================================================================
 
-    #[test]
-    fn test_rc_conditional_to_box() {
-        let conditional = RcStatefulMutator::new(|x: &mut i32| *x *= 2)
-            .when(|x: &i32| *x > 0);
-        let mut boxed = conditional.to_box();
 
-        let mut positive = 5;
-        boxed.apply(&mut positive);
-        assert_eq!(positive, 10);
 
-        let mut negative = -5;
-        boxed.apply(&mut negative);
-        assert_eq!(negative, -5);
-    }
 
-    #[test]
-    fn test_rc_conditional_to_rc() {
-        let conditional = RcStatefulMutator::new(|x: &mut i32| *x *= 2)
-            .when(|x: &i32| *x > 0);
-        let mut rc = conditional.to_rc();
 
-        let mut positive = 5;
-        rc.apply(&mut positive);
-        assert_eq!(positive, 10);
 
-        let mut negative = -5;
-        rc.apply(&mut negative);
-        assert_eq!(negative, -5);
-    }
-
-    #[test]
-    fn test_rc_conditional_to_fn() {
-        let conditional = RcStatefulMutator::new(|x: &mut i32| *x *= 2)
-            .when(|x: &i32| *x > 0);
-        let mut values = vec![-2, -1, 0, 1, 2, 3];
-
-        values.iter_mut().for_each(conditional.to_fn());
-
-        assert_eq!(values, vec![-2, -1, 0, 2, 4, 6]);
-    }
-
-    #[test]
-    fn test_rc_conditional_to_box_preserves_original() {
-        let conditional = RcStatefulMutator::new(|x: &mut i32| *x *= 2)
-            .when(|x: &i32| *x > 0);
-        let mut boxed = conditional.to_box();
-
-        // Original still usable
-        let mut value1 = 5;
-        let mut m = conditional;
-        m.apply(&mut value1);
-        assert_eq!(value1, 10);
-
-        // Boxed version also works
-        let mut value2 = 3;
-        boxed.apply(&mut value2);
-        assert_eq!(value2, 6);
-    }
-
-    #[test]
-    fn test_rc_conditional_to_rc_preserves_original() {
-        let conditional = RcStatefulMutator::new(|x: &mut i32| *x *= 2)
-            .when(|x: &i32| *x > 0);
-        let mut rc = conditional.to_rc();
-
-        // Original still usable
-        let mut value1 = 5;
-        let mut m1 = conditional;
-        m1.apply(&mut value1);
-        assert_eq!(value1, 10);
-
-        // to_rc version also works
-        let mut value2 = 3;
-        rc.apply(&mut value2);
-        assert_eq!(value2, 6);
-    }
-
-    #[test]
-    fn test_rc_conditional_to_fn_preserves_original() {
-        let conditional = RcStatefulMutator::new(|x: &mut i32| *x += 10)
-            .when(|x: &i32| *x > 0);
-
-        // to_fn version works
-        let mut values = vec![1, 2, -3];
-        values.iter_mut().for_each(conditional.to_fn());
-        assert_eq!(values, vec![11, 12, -3]);
-
-        // Original still usable after to_fn (because
-        // RcConditionalStatefulMutator is Clone)
-        let mut value1 = 5;
-        let mut m = conditional;
-        m.apply(&mut value1);
-        assert_eq!(value1, 15);
-    }
 
     // ========================================================================
     // to_xxx tests for ArcConditionalStatefulMutator
     // ========================================================================
 
-    #[test]
-    fn test_arc_conditional_to_box() {
-        let conditional = ArcStatefulMutator::new(|x: &mut i32| *x *= 2)
-            .when(|x: &i32| *x > 0);
-        let mut boxed = conditional.to_box();
 
-        let mut positive = 5;
-        boxed.apply(&mut positive);
-        assert_eq!(positive, 10);
 
-        let mut negative = -5;
-        boxed.apply(&mut negative);
-        assert_eq!(negative, -5);
-    }
 
-    #[test]
-    fn test_arc_conditional_to_rc() {
-        let conditional = ArcStatefulMutator::new(|x: &mut i32| *x *= 2)
-            .when(|x: &i32| *x > 0);
-        let mut rc = conditional.to_rc();
 
-        let mut positive = 5;
-        rc.apply(&mut positive);
-        assert_eq!(positive, 10);
 
-        let mut negative = -5;
-        rc.apply(&mut negative);
-        assert_eq!(negative, -5);
-    }
 
-    #[test]
-    fn test_arc_conditional_to_arc() {
-        let conditional = ArcStatefulMutator::new(|x: &mut i32| *x *= 2)
-            .when(|x: &i32| *x > 0);
-        let mut arc = conditional.to_arc();
 
-        let mut positive = 5;
-        arc.apply(&mut positive);
-        assert_eq!(positive, 10);
 
-        let mut negative = -5;
-        arc.apply(&mut negative);
-        assert_eq!(negative, -5);
-    }
-
-    #[test]
-    fn test_arc_conditional_to_fn() {
-        let conditional = ArcStatefulMutator::new(|x: &mut i32| *x *= 2)
-            .when(|x: &i32| *x > 0);
-        let mut values = vec![-2, -1, 0, 1, 2, 3];
-
-        values.iter_mut().for_each(conditional.to_fn());
-
-        assert_eq!(values, vec![-2, -1, 0, 2, 4, 6]);
-    }
-
-    #[test]
-    fn test_arc_conditional_to_box_preserves_original() {
-        let conditional = ArcStatefulMutator::new(|x: &mut i32| *x *= 2)
-            .when(|x: &i32| *x > 0);
-        let mut boxed = conditional.to_box();
-
-        // Original still usable
-        let mut value1 = 5;
-        let mut m = conditional;
-        m.apply(&mut value1);
-        assert_eq!(value1, 10);
-
-        // Boxed version also works
-        let mut value2 = 3;
-        boxed.apply(&mut value2);
-        assert_eq!(value2, 6);
-    }
-
-    #[test]
-    fn test_arc_conditional_to_rc_preserves_original() {
-        let conditional = ArcStatefulMutator::new(|x: &mut i32| *x *= 2)
-            .when(|x: &i32| *x > 0);
-        let mut rc = conditional.to_rc();
-
-        // Original still usable
-        let mut value1 = 5;
-        let mut m1 = conditional;
-        m1.apply(&mut value1);
-        assert_eq!(value1, 10);
-
-        // to_rc version also works
-        let mut value2 = 3;
-        rc.apply(&mut value2);
-        assert_eq!(value2, 6);
-    }
-
-    #[test]
-    fn test_arc_conditional_to_arc_preserves_original() {
-        let conditional = ArcStatefulMutator::new(|x: &mut i32| *x *= 2)
-            .when(|x: &i32| *x > 0);
-        let mut arc = conditional.to_arc();
-
-        // Original still usable
-        let mut value1 = 5;
-        let mut m1 = conditional;
-        m1.apply(&mut value1);
-        assert_eq!(value1, 10);
-
-        // to_arc version also works
-        let mut value2 = 3;
-        arc.apply(&mut value2);
-        assert_eq!(value2, 6);
-    }
-
-    #[test]
-    fn test_arc_conditional_to_fn_preserves_original() {
-        let conditional = ArcStatefulMutator::new(|x: &mut i32| *x += 10)
-            .when(|x: &i32| *x > 0);
-
-        // to_fn version works
-        let mut values = vec![1, 2, -3];
-        values.iter_mut().for_each(conditional.to_fn());
-        assert_eq!(values, vec![11, 12, -3]);
-
-        // Original still usable after to_fn (because
-        // ArcConditionalStatefulMutator is Clone)
-        let mut value1 = 5;
-        let mut m = conditional;
-        m.apply(&mut value1);
-        assert_eq!(value1, 15);
-    }
-
-    #[test]
-    fn test_arc_conditional_to_arc_thread_safe() {
-        use std::thread;
-
-        let conditional = ArcStatefulMutator::new(|x: &mut i32| *x *= 2)
-            .when(|x: &i32| *x > 0);
-        let arc = conditional.to_arc();
-        let clone = arc.clone();
-
-        let handle = thread::spawn(move || {
-            let mut value = 5;
-            let mut m = clone;
-            m.apply(&mut value);
-            value
-        });
-
-        let mut value = -5;
-        let mut m = arc;
-        m.apply(&mut value);
-        assert_eq!(value, -5);
-
-        assert_eq!(handle.join().expect("thread should not panic"), 10);
-    }
 
     // ========================================================================
     // Complex conditional composition tests

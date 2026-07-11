@@ -116,11 +116,10 @@
 //! faster** than `ArcStatefulSupplier` in high-concurrency stateless
 //! scenarios.
 
+#[cfg(feature = "rc")]
 use std::rc::Rc;
 use std::sync::Arc;
 
-use crate::macros::{ impl_closure_trait,
-};
 use crate::predicates::predicate::Predicate;
 use crate::suppliers::macros::{
     impl_box_supplier_methods, impl_shared_supplier_methods, impl_supplier_clone,
@@ -132,7 +131,9 @@ mod box_supplier;
 pub use box_supplier::BoxSupplier;
 mod arc_supplier;
 pub use arc_supplier::ArcSupplier;
+#[cfg(feature = "rc")]
 mod rc_supplier;
+#[cfg(feature = "rc")]
 pub use rc_supplier::RcSupplier;
 
 // ======================================================================
@@ -222,4 +223,13 @@ pub trait Supplier<T> {
     /// assert_eq!(supplier.get(), 42);
     /// ```
     fn get(&self) -> T;
+}
+
+impl<T, F> Supplier<T> for F
+where
+    F: Fn() -> T,
+{
+    fn get(&self) -> T {
+        self()
+    }
 }

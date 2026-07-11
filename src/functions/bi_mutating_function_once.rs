@@ -30,9 +30,14 @@ use crate::predicates::bi_predicate::{BiPredicate, BoxBiPredicate};
 
 mod box_bi_mutating_function_once;
 pub use box_bi_mutating_function_once::BoxBiMutatingFunctionOnce;
+#[cfg(feature = "combinators")]
 mod fn_bi_mutating_function_once_ops;
+#[cfg(feature = "combinators")]
 pub use fn_bi_mutating_function_once_ops::FnBiMutatingFunctionOnceOps;
 mod box_conditional_bi_mutating_function_once;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use box_conditional_bi_mutating_function_once::BoxConditionalBiMutatingFunctionOnce;
+#[cfg(feature = "combinators")]
 pub use box_conditional_bi_mutating_function_once::BoxConditionalBiMutatingFunctionOnce;
 
 // ============================================================================

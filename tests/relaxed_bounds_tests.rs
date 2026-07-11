@@ -5,6 +5,7 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
+#![cfg(feature = "full")]
 use std::cell::RefCell;
 use std::marker::PhantomData;
 use std::rc::Rc;

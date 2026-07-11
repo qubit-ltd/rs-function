@@ -14,9 +14,11 @@
 use qubit_function::{
     ArcStatefulTransformer,
     BoxStatefulTransformer,
+    BoxTransformerOnce,
     FnStatefulTransformerOps,
     RcStatefulTransformer,
     StatefulTransformer,
+    TransformerOnce,
 };
 
 fn main() {
@@ -192,7 +194,8 @@ fn main() {
         counter += 1;
         x * counter
     });
-    let mut once_mapper = mapper.into_box();
+    let mut mapper = mapper;
+    let once_mapper = BoxTransformerOnce::new(move |value| mapper.apply(value));
     println!(
         "  BoxStatefulTransformer->BoxTransformerOnce: {}",
         once_mapper.apply(5)
@@ -204,7 +207,8 @@ fn main() {
         counter += 1;
         x * counter
     });
-    let mut once_mapper = rc_mapper.to_box();
+    let mut rc_clone = rc_mapper.clone();
+    let once_mapper = BoxTransformerOnce::new(move |value| rc_clone.apply(value));
     println!(
         "  RcStatefulTransformer->BoxTransformerOnce: {}",
         once_mapper.apply(5)

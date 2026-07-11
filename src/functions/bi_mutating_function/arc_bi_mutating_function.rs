@@ -67,7 +67,7 @@ impl<T, U, R> BiMutatingFunction<T, U, R> for ArcBiMutatingFunction<T, U, R> {
 }
 
 // Implement constant method for ArcBiMutatingFunction
-impl_function_constant_method!(ArcBiMutatingFunction<T, U, R>, Send + Sync + 'static);
+impl_function_constant_method!(ArcBiMutatingFunction<T, U, R>, mut Send + Sync + 'static);
 
 // Implement Debug and Display for ArcBiMutatingFunction
 impl_function_debug_display!(ArcBiMutatingFunction<T, U, R>);

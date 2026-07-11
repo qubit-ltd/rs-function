@@ -12,83 +12,19 @@
 
 use qubit_function::{
     ArcStatefulMutatingFunction,
-    BoxMutatingFunctionOnce,
     BoxStatefulMutatingFunction,
     FnStatefulMutatingFunctionOps,
     MutatingFunctionOnce,
     RcStatefulMutatingFunction,
     StatefulMutatingFunction,
 };
-use std::cell::{
-    Cell,
-    RefCell,
-};
+use std::cell::RefCell;
 use std::rc::Rc;
 
 // ============================================================================
 // StatefulMutatingFunction Default Implementation Tests
 // ============================================================================
 
-#[test]
-fn test_stateful_mutating_function_default_conversions_allow_relaxed_generic_types()
- {
-    #[derive(Clone, Debug, Eq, PartialEq)]
-    struct BorrowedRc<'a> {
-        value: &'a str,
-    }
-
-    #[derive(Debug)]
-    struct BorrowedRcStatefulMutatingFunction {
-        count: Cell<usize>,
-    }
-
-    impl Clone for BorrowedRcStatefulMutatingFunction {
-        fn clone(&self) -> Self {
-            Self {
-                count: Cell::new(self.count.get()),
-            }
-        }
-    }
-
-    impl<'a> StatefulMutatingFunction<BorrowedRc<'a>, BorrowedRc<'a>>
-        for BorrowedRcStatefulMutatingFunction
-    {
-        fn apply(&mut self, value: &mut BorrowedRc<'a>) -> BorrowedRc<'a> {
-            self.count.set(self.count.get() + 1);
-            value.clone()
-        }
-    }
-
-    fn assert_left(value: BorrowedRc<'_>) {
-        assert_eq!(value.value, "left");
-    }
-
-    let text = String::from("left");
-    let mut value = BorrowedRc {
-        value: text.as_str(),
-    };
-    let function = BorrowedRcStatefulMutatingFunction {
-        count: Cell::new(0),
-    };
-
-    assert_left(function.clone().into_box().apply(&mut value));
-    assert_left(function.clone().into_rc().apply(&mut value));
-    assert_left(function.clone().into_arc().apply(&mut value));
-    assert_left(function.clone().into_once().apply(&mut value));
-    let mut into_fn = function.clone().into_fn();
-    assert_left(into_fn(&mut value));
-    let mut into_mut_fn = function.clone().into_mut_fn();
-    assert_left(into_mut_fn(&mut value));
-
-    assert_left(function.to_box().apply(&mut value));
-    assert_left(function.to_rc().apply(&mut value));
-    assert_left(function.to_arc().apply(&mut value));
-    assert_left(function.to_once().apply(&mut value));
-    let mut to_fn = function.to_fn();
-    assert_left(to_fn(&mut value));
-    let mut to_mut_fn = function.to_mut_fn();
-    assert_left(to_mut_fn(&mut value));
-}
 
 /// Test struct that implements StatefulMutatingFunction to test default methods
 struct TestStatefulMutatingFunction {
@@ -119,113 +55,15 @@ impl Clone for TestStatefulMutatingFunction {
 
 #[cfg(test)]
 mod test_stateful_mutating_function_default_impl {
-    use super::{
-        StatefulMutatingFunction,
-        TestStatefulMutatingFunction,
-    };
 
-    #[test]
-    fn test_into_box() {
-        let func = TestStatefulMutatingFunction::new(2);
-        let mut boxed = func.into_box();
 
-        let mut value = 5;
-        assert_eq!(boxed.apply(&mut value), 5);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_into_rc() {
-        let func = TestStatefulMutatingFunction::new(3);
-        let mut rc = func.into_rc();
 
-        let mut value = 4;
-        assert_eq!(rc.apply(&mut value), 4);
-        assert_eq!(value, 12);
-    }
 
-    #[test]
-    fn test_into_arc() {
-        let func = TestStatefulMutatingFunction::new(4);
-        let mut arc = func.into_arc();
 
-        let mut value = 3;
-        assert_eq!(arc.apply(&mut value), 3);
-        assert_eq!(value, 12);
-    }
 
-    #[test]
-    fn test_into_fn() {
-        let func = TestStatefulMutatingFunction::new(5);
-        let mut closure = func.into_fn();
 
-        let mut value = 2;
-        assert_eq!(closure(&mut value), 2);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_to_box() {
-        let mut func = TestStatefulMutatingFunction::new(2);
-        let mut boxed = func.to_box();
-
-        let mut value = 5;
-        assert_eq!(boxed.apply(&mut value), 5);
-        assert_eq!(value, 10);
-
-        // Original should still be usable since it was cloned
-        let mut value2 = 3;
-        assert_eq!(func.apply(&mut value2), 3);
-        assert_eq!(value2, 6);
-    }
-
-    #[test]
-    fn test_to_rc() {
-        let mut func = TestStatefulMutatingFunction::new(3);
-        let mut rc = func.to_rc();
-
-        let mut value = 4;
-        assert_eq!(rc.apply(&mut value), 4);
-        assert_eq!(value, 12);
-
-        // Original should still be usable since it was cloned
-        let mut value2 = 2;
-        assert_eq!(func.apply(&mut value2), 2);
-        assert_eq!(value2, 6);
-    }
-
-    #[test]
-    fn test_to_arc() {
-        let mut func = TestStatefulMutatingFunction::new(4);
-        let mut arc = func.to_arc();
-
-        let mut value = 3;
-        assert_eq!(arc.apply(&mut value), 3);
-        assert_eq!(value, 12);
-
-        // Original should still be usable since it was cloned
-        let mut value2 = 2;
-        assert_eq!(func.apply(&mut value2), 2);
-        assert_eq!(value2, 8);
-    }
-
-    #[test]
-    fn test_to_fn() {
-        let func = TestStatefulMutatingFunction::new(5);
-
-        // Test to_fn conversion
-        let mut closure = func.to_fn();
-        let mut value = 2;
-        assert_eq!(closure(&mut value), 2);
-        assert_eq!(value, 10);
-
-        // Test that original is still usable (need to create a new instance for
-        // comparison)
-        let mut func2 = TestStatefulMutatingFunction::new(5);
-        let mut value2 = 1;
-        assert_eq!(func2.apply(&mut value2), 1);
-        assert_eq!(value2, 5);
-    }
 }
 
 // ============================================================================
@@ -302,56 +140,8 @@ mod test_box_stateful_mutating_function {
         assert_eq!(value, 10);
     }
 
-    #[test]
-    fn test_into_box() {
-        let func = {
-            let mut count = 0;
-            BoxStatefulMutatingFunction::new(move |x: &mut i32| {
-                count += 1;
-                *x *= 2;
-                count
-            })
-        };
-        let mut boxed = func.into_box();
 
-        let mut value = 5;
-        assert_eq!(boxed.apply(&mut value), 1);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_into_rc() {
-        let func = {
-            let mut count = 0;
-            BoxStatefulMutatingFunction::new(move |x: &mut i32| {
-                count += 1;
-                *x *= 2;
-                count
-            })
-        };
-        let mut rc = func.into_rc();
-
-        let mut value = 5;
-        assert_eq!(rc.apply(&mut value), 1);
-        assert_eq!(value, 10);
-    }
-
-    #[test]
-    fn test_into_fn() {
-        let func = {
-            let mut count = 0;
-            BoxStatefulMutatingFunction::new(move |x: &mut i32| {
-                count += 1;
-                *x *= 2;
-                count
-            })
-        };
-        let mut closure = func.into_fn();
-
-        let mut value = 5;
-        assert_eq!(closure(&mut value), 1);
-        assert_eq!(value, 10);
-    }
 }
 
 // ============================================================================
@@ -430,125 +220,11 @@ mod test_rc_stateful_mutating_function {
         assert_eq!(value, 10);
     }
 
-    #[test]
-    fn test_into_box() {
-        let func = {
-            let mut count = 0;
-            RcStatefulMutatingFunction::new(move |x: &mut i32| {
-                count += 1;
-                *x *= 2;
-                count
-            })
-        };
-        let mut boxed = func.into_box();
 
-        let mut value = 5;
-        assert_eq!(boxed.apply(&mut value), 1);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_into_rc() {
-        let func = {
-            let mut count = 0;
-            RcStatefulMutatingFunction::new(move |x: &mut i32| {
-                count += 1;
-                *x *= 2;
-                count
-            })
-        };
-        let mut rc = func.into_rc();
 
-        let mut value = 5;
-        assert_eq!(rc.apply(&mut value), 1);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_into_fn() {
-        let func = {
-            let mut count = 0;
-            RcStatefulMutatingFunction::new(move |x: &mut i32| {
-                count += 1;
-                *x *= 2;
-                count
-            })
-        };
-        let mut closure = func.into_fn();
 
-        let mut value = 5;
-        assert_eq!(closure(&mut value), 1);
-        assert_eq!(value, 10);
-    }
-
-    #[test]
-    fn test_to_box() {
-        let func = {
-            let mut count = 0;
-            RcStatefulMutatingFunction::new(move |x: &mut i32| {
-                count += 1;
-                *x *= 2;
-                count
-            })
-        };
-        let mut boxed = func.to_box();
-
-        let mut value = 5;
-        assert_eq!(boxed.apply(&mut value), 1);
-        assert_eq!(value, 10);
-
-        // Original should still be usable since it was cloned
-        let mut func_clone = func.clone();
-        let mut value2 = 3;
-        assert_eq!(func_clone.apply(&mut value2), 2);
-        assert_eq!(value2, 6);
-    }
-
-    #[test]
-    fn test_to_rc() {
-        let func = {
-            let mut count = 0;
-            RcStatefulMutatingFunction::new(move |x: &mut i32| {
-                count += 1;
-                *x *= 2;
-                count
-            })
-        };
-        let mut rc = func.to_rc();
-
-        let mut value = 5;
-        assert_eq!(rc.apply(&mut value), 1);
-        assert_eq!(value, 10);
-
-        // Original should still be usable since it was cloned
-        let mut func_clone = func.clone();
-        let mut value2 = 3;
-        assert_eq!(func_clone.apply(&mut value2), 2);
-        assert_eq!(value2, 6);
-    }
-
-    #[test]
-    fn test_to_fn() {
-        let func = {
-            let mut count = 0;
-            RcStatefulMutatingFunction::new(move |x: &mut i32| {
-                count += 1;
-                *x *= 2;
-                count
-            })
-        };
-        let mut closure = func.to_fn();
-
-        let mut value = 5;
-        assert_eq!(closure(&mut value), 1);
-        assert_eq!(value, 10);
-
-        // Original should still be usable since it was cloned
-        let mut func_clone = func.clone();
-        let mut value2 = 3;
-        assert_eq!(func_clone.apply(&mut value2), 2);
-        assert_eq!(value2, 6);
-    }
 }
 
 // ============================================================================
@@ -649,165 +325,13 @@ mod test_arc_stateful_mutating_function {
         assert_eq!(value, 10);
     }
 
-    #[test]
-    fn test_into_box() {
-        let func = {
-            let mut count = 0;
-            ArcStatefulMutatingFunction::new(move |x: &mut i32| {
-                count += 1;
-                *x *= 2;
-                count
-            })
-        };
-        let mut boxed = func.into_box();
 
-        let mut value = 5;
-        assert_eq!(boxed.apply(&mut value), 1);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_into_rc() {
-        let func = {
-            let mut count = 0;
-            ArcStatefulMutatingFunction::new(move |x: &mut i32| {
-                count += 1;
-                *x *= 2;
-                count
-            })
-        };
-        let mut rc = func.into_rc();
 
-        let mut value = 5;
-        assert_eq!(rc.apply(&mut value), 1);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_into_arc() {
-        let func = {
-            let mut count = 0;
-            ArcStatefulMutatingFunction::new(move |x: &mut i32| {
-                count += 1;
-                *x *= 2;
-                count
-            })
-        };
-        let mut arc = func.into_arc();
 
-        let mut value = 5;
-        assert_eq!(arc.apply(&mut value), 1);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_into_fn() {
-        let func = {
-            let mut count = 0;
-            ArcStatefulMutatingFunction::new(move |x: &mut i32| {
-                count += 1;
-                *x *= 2;
-                count
-            })
-        };
-        let mut closure = func.into_fn();
 
-        let mut value = 5;
-        assert_eq!(closure(&mut value), 1);
-        assert_eq!(value, 10);
-    }
-
-    #[test]
-    fn test_to_box() {
-        let func = {
-            let mut count = 0;
-            ArcStatefulMutatingFunction::new(move |x: &mut i32| {
-                count += 1;
-                *x *= 2;
-                count
-            })
-        };
-        let mut boxed = func.to_box();
-
-        let mut value = 5;
-        assert_eq!(boxed.apply(&mut value), 1);
-        assert_eq!(value, 10);
-
-        // Original should still be usable since it was cloned
-        let mut func_clone = func.clone();
-        let mut value2 = 3;
-        assert_eq!(func_clone.apply(&mut value2), 2);
-        assert_eq!(value2, 6);
-    }
-
-    #[test]
-    fn test_to_rc() {
-        let func = {
-            let mut count = 0;
-            ArcStatefulMutatingFunction::new(move |x: &mut i32| {
-                count += 1;
-                *x *= 2;
-                count
-            })
-        };
-        let mut rc = func.to_rc();
-
-        let mut value = 5;
-        assert_eq!(rc.apply(&mut value), 1);
-        assert_eq!(value, 10);
-
-        // Original should still be usable since it was cloned
-        let mut func_clone = func.clone();
-        let mut value2 = 3;
-        assert_eq!(func_clone.apply(&mut value2), 2);
-        assert_eq!(value2, 6);
-    }
-
-    #[test]
-    fn test_to_arc() {
-        let func = {
-            let mut count = 0;
-            ArcStatefulMutatingFunction::new(move |x: &mut i32| {
-                count += 1;
-                *x *= 2;
-                count
-            })
-        };
-        let mut arc = func.to_arc();
-
-        let mut value = 5;
-        assert_eq!(arc.apply(&mut value), 1);
-        assert_eq!(value, 10);
-
-        // Original should still be usable since it was cloned
-        let mut func_clone = func.clone();
-        let mut value2 = 3;
-        assert_eq!(func_clone.apply(&mut value2), 2);
-        assert_eq!(value2, 6);
-    }
-
-    #[test]
-    fn test_to_fn() {
-        let func = {
-            let mut count = 0;
-            ArcStatefulMutatingFunction::new(move |x: &mut i32| {
-                count += 1;
-                *x *= 2;
-                count
-            })
-        };
-        let mut closure = func.to_fn();
-
-        let mut value = 5;
-        assert_eq!(closure(&mut value), 1);
-        assert_eq!(value, 10);
-
-        // Original should still be usable since it was cloned
-        let mut func_clone = func.clone();
-        let mut value2 = 3;
-        assert_eq!(func_clone.apply(&mut value2), 2);
-        assert_eq!(value2, 6);
-    }
 }
 
 // ============================================================================
@@ -817,7 +341,6 @@ mod test_arc_stateful_mutating_function {
 #[cfg(test)]
 mod test_closure {
     use super::{
-        BoxMutatingFunctionOnce,
         FnStatefulMutatingFunctionOps,
         MutatingFunctionOnce,
         Rc,
@@ -910,165 +433,15 @@ mod test_closure {
         assert_eq!(value, 10);
     }
 
-    #[test]
-    fn test_closure_into_box() {
-        let mut count = 0;
-        let closure = move |x: &mut i32| {
-            count += 1;
-            *x *= 2;
-            count
-        };
-        let mut boxed = StatefulMutatingFunction::into_box(closure);
 
-        let mut value = 5;
-        assert_eq!(boxed.apply(&mut value), 1);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_closure_into_once() {
-        let mut count = 0;
-        let closure = move |x: &mut i32| {
-            count += 1;
-            *x *= 2;
-            count
-        };
-        let once_func: BoxMutatingFunctionOnce<i32, i32> = closure.into_once();
 
-        let mut value = 5;
-        assert_eq!(once_func.apply(&mut value), 1);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_closure_to_once() {
-        // Use Rc<RefCell<>> to properly test shared state with to_once
-        let count = Rc::new(RefCell::new(0));
-        let count_clone = Rc::clone(&count);
-        let closure = move |x: &mut i32| {
-            let mut current = count_clone.borrow_mut();
-            *current += 1;
-            *x *= 2;
-            *current
-        };
 
-        let once_func: BoxMutatingFunctionOnce<i32, i32> =
-            StatefulMutatingFunction::to_once(&closure);
 
-        let mut value = 5;
-        assert_eq!(once_func.apply(&mut value), 1);
-        assert_eq!(value, 10);
 
-        // Original closure should still be usable and have independent state
-        let mut value2 = 3;
-        assert_eq!(closure(&mut value2), 2);
-        assert_eq!(value2, 6);
-    }
 
-    #[test]
-    fn test_closure_into_rc() {
-        let mut count = 0;
-        let closure = move |x: &mut i32| {
-            count += 1;
-            *x *= 2;
-            count
-        };
-        let mut rc = closure.into_rc();
 
-        let mut value = 5;
-        assert_eq!(rc.apply(&mut value), 1);
-        assert_eq!(value, 10);
-    }
-
-    #[test]
-    fn test_closure_into_arc() {
-        let mut count = 0;
-        let closure = move |x: &mut i32| {
-            count += 1;
-            *x *= 2;
-            count
-        };
-        let mut arc = closure.into_arc();
-
-        let mut value = 5;
-        assert_eq!(arc.apply(&mut value), 1);
-        assert_eq!(value, 10);
-    }
-
-    #[test]
-    fn test_closure_to_box() {
-        let mut count = 0;
-        let closure = move |x: &mut i32| {
-            count += 1;
-            *x *= 2;
-            count
-        };
-        let mut boxed = StatefulMutatingFunction::to_box(&closure);
-
-        let mut value = 5;
-        assert_eq!(boxed.apply(&mut value), 1);
-        assert_eq!(value, 10);
-    }
-
-    #[test]
-    fn test_closure_to_rc() {
-        let mut count = 0;
-        let closure = move |x: &mut i32| {
-            count += 1;
-            *x *= 2;
-            count
-        };
-        let mut rc = closure.to_rc();
-
-        let mut value = 5;
-        assert_eq!(rc.apply(&mut value), 1);
-        assert_eq!(value, 10);
-    }
-
-    #[test]
-    fn test_closure_to_arc() {
-        let mut count = 0;
-        let closure = move |x: &mut i32| {
-            count += 1;
-            *x *= 2;
-            count
-        };
-        let mut arc = closure.to_arc();
-
-        let mut value = 5;
-        assert_eq!(arc.apply(&mut value), 1);
-        assert_eq!(value, 10);
-    }
-
-    #[test]
-    fn test_closure_to_fn() {
-        let mut count = 0;
-        let closure = move |x: &mut i32| {
-            count += 1;
-            *x *= 2;
-            count
-        };
-        let mut fn_closure = StatefulMutatingFunction::to_fn(&closure);
-
-        let mut value = 5;
-        assert_eq!(fn_closure(&mut value), 1);
-        assert_eq!(value, 10);
-    }
-
-    #[test]
-    fn test_closure_into_fn() {
-        let mut count = 0;
-        let closure = move |x: &mut i32| {
-            count += 1;
-            *x *= 2;
-            count
-        };
-        let mut fn_closure = StatefulMutatingFunction::into_fn(closure);
-
-        let mut value = 5;
-        assert_eq!(fn_closure(&mut value), 1);
-        assert_eq!(value, 10);
-    }
 }
 
 // ============================================================================
@@ -1484,79 +857,9 @@ fn test_arc_conditional_stateful_mutating_function_debug_display() {
 
 #[cfg(test)]
 mod test_stateful_mutating_function_trait_default_methods {
-    use super::StatefulMutatingFunction;
-    use qubit_function::MutatingFunctionOnce;
-    use std::sync::{
-        Arc,
-        atomic::{
-            AtomicUsize,
-            Ordering,
-        },
-    };
 
-    #[test]
-    fn test_custom_stateful_mutating_function_into_once() {
-        let counter = Arc::new(AtomicUsize::new(0));
 
-        struct MyStatefulMutatingFunction {
-            counter: Arc<AtomicUsize>,
-        }
 
-        impl StatefulMutatingFunction<i32, i32> for MyStatefulMutatingFunction {
-            fn apply(&mut self, value: &mut i32) -> i32 {
-                self.counter.fetch_add(1, Ordering::SeqCst);
-                *value += 1;
-                *value
-            }
-        }
 
-        let my_func = MyStatefulMutatingFunction {
-            counter: counter.clone(),
-        };
 
-        // Test into_once() - should consume the function
-        let once_func = my_func.into_once();
-        let mut value = 5;
-        let result = once_func.apply(&mut value);
-        assert_eq!(result, 6);
-        assert_eq!(value, 6);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
-    }
-
-    #[test]
-    fn test_custom_stateful_mutating_function_to_once() {
-        let counter = Arc::new(AtomicUsize::new(0));
-
-        #[derive(Clone)]
-        struct MyStatefulMutatingFunction {
-            counter: Arc<AtomicUsize>,
-        }
-
-        impl StatefulMutatingFunction<i32, i32> for MyStatefulMutatingFunction {
-            fn apply(&mut self, value: &mut i32) -> i32 {
-                self.counter.fetch_add(1, Ordering::SeqCst);
-                *value += 1;
-                *value
-            }
-        }
-
-        let mut my_func = MyStatefulMutatingFunction {
-            counter: counter.clone(),
-        };
-
-        // Test to_once() - should not consume the original
-        let once_func = my_func.to_once();
-        let mut value = 5;
-        let result = once_func.apply(&mut value);
-        assert_eq!(result, 6);
-        assert_eq!(value, 6);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
-
-        // Original function should still be usable
-        let mut value2 = 10;
-        let result2 = my_func.apply(&mut value2);
-        assert_eq!(result2, 11);
-        assert_eq!(value2, 11);
-        assert_eq!(counter.load(Ordering::SeqCst), 2);
-    }
 }

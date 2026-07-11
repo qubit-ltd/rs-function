@@ -21,7 +21,7 @@ use super::RcBiFunction;
 /// ```rust
 /// use qubit_function::{RcBinaryFunction, BiFunction};
 ///
-/// let max: RcBinaryFunction<i32, i32> = RcBinaryFunction::new(|x, y| if x > y { *x } else { *y });
+/// let max: RcBinaryFunction<i32, i32> = RcBinaryFunction::new(|x: &i32, y: &i32| if x > y { *x } else { *y });
 /// let max_clone = max.clone();
 /// assert_eq!(max.apply(&30, &42), 42);
 /// assert_eq!(max_clone.apply(&30, &42), 42);

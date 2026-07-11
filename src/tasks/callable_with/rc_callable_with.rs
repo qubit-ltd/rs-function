@@ -9,6 +9,7 @@
 //! Defines the `RcCallableWith` public type.
 
 use std::cell::RefCell;
+#[cfg(feature = "rc")]
 use std::rc::Rc;
 
 use crate::{
@@ -22,6 +23,11 @@ type RcCallableWithFn<T, R, E> = Rc<RefCell<dyn FnMut(&mut T) -> Result<R, E>>>;
 ///
 /// `RcCallableWith<T, R, E>` stores a
 /// `Rc<RefCell<dyn FnMut(&mut T) -> Result<R, E>>>`.
+/// # Borrowing and reentrancy
+///
+/// Each call holds a mutable `RefCell` borrow while the user callback runs.
+/// Synchronous re-entry through the same shared wrapper panics with a borrow
+/// error. Mutations completed before a panic are not rolled back.
 pub struct RcCallableWith<T, R, E> {
     /// The stateful closure executed by this callable.
     pub(super) function: RcCallableWithFn<T, R, E>,

@@ -13,18 +13,14 @@
 pub mod bi_predicate;
 pub(crate) mod macros;
 pub mod predicate;
+#[cfg(feature = "stateful")]
 pub mod stateful_bi_predicate;
+#[cfg(feature = "stateful")]
 pub mod stateful_predicate;
 
-pub use bi_predicate::{
-    ArcBiPredicate, BiPredicate, BoxBiPredicate, FnBiPredicateOps, RcBiPredicate,
-};
-pub use predicate::{ArcPredicate, BoxPredicate, FnPredicateOps, Predicate, RcPredicate};
-pub use stateful_bi_predicate::{
-    ArcStatefulBiPredicate, BoxStatefulBiPredicate, FnStatefulBiPredicateOps,
-    RcStatefulBiPredicate, StatefulBiPredicate,
-};
-pub use stateful_predicate::{
-    ArcStatefulPredicate, BoxStatefulPredicate, FnStatefulPredicateOps, RcStatefulPredicate,
-    StatefulPredicate,
-};
+pub use bi_predicate::*;
+pub use predicate::*;
+#[cfg(feature = "stateful")]
+pub use stateful_bi_predicate::*;
+#[cfg(feature = "stateful")]
+pub use stateful_predicate::*;

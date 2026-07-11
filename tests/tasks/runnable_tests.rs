@@ -24,7 +24,6 @@ use std::{
 use qubit_function::{
     ArcRunnable,
     BoxRunnable,
-    BoxRunnableOnce,
     Callable,
     RcRunnable,
     Runnable,
@@ -65,94 +64,11 @@ fn test_runnable_closure_run_returns_error() {
     assert_eq!(error.to_string(), "failed");
 }
 
-#[test]
-fn test_runnable_closure_into_box_executes_once() {
-    let flag = Rc::new(Cell::new(false));
-    let captured = Rc::clone(&flag);
-    let task = move || {
-        captured.set(true);
-        Ok::<(), io::Error>(())
-    };
 
-    let mut boxed = Runnable::into_box(task);
 
-    boxed.run().expect("boxed runnable should succeed");
-    assert!(flag.get());
-}
 
-#[test]
-fn test_runnable_closure_into_fn_returns_fn_once() {
-    let task = || Ok::<(), io::Error>(());
 
-    let mut function = Runnable::into_fn(task);
 
-    function().expect("runnable function should succeed");
-}
-
-#[test]
-fn test_runnable_closure_into_once_returns_box_runnable_once() {
-    let count = Arc::new(AtomicUsize::new(0));
-    let captured = Arc::clone(&count);
-    let task = move || {
-        captured.fetch_add(1, Ordering::SeqCst);
-        Ok::<(), io::Error>(())
-    };
-
-    let once: BoxRunnableOnce<io::Error> = Runnable::into_once(task);
-
-    <BoxRunnableOnce<io::Error> as qubit_function::RunnableOnce<io::Error>>::run(once)
-        .expect("runnable-once conversion should succeed");
-    assert_eq!(count.load(Ordering::SeqCst), 1);
-}
-
-#[test]
-fn test_runnable_closure_into_once_preserves_error() {
-    let task = || Err::<(), _>(io::Error::other("failed"));
-
-    let once: BoxRunnableOnce<io::Error> = Runnable::into_once(task);
-    let error = <BoxRunnableOnce<io::Error> as qubit_function::RunnableOnce<
-        io::Error,
-    >>::run(once)
-    .expect_err("runnable-once conversion should preserve errors");
-
-    assert_eq!(error.kind(), io::ErrorKind::Other);
-    assert_eq!(error.to_string(), "failed");
-}
-
-#[test]
-fn test_runnable_to_box_clones_runnable() {
-    let flag = Rc::new(Cell::new(false));
-    let mut task = ClonedRunnable {
-        flag: Rc::clone(&flag),
-    };
-
-    let mut boxed = task.to_box();
-
-    boxed.run().expect("boxed clone should succeed");
-    assert!(flag.get());
-
-    flag.set(false);
-    task.run().expect("original runnable should remain usable");
-    assert!(flag.get());
-}
-
-#[test]
-fn test_runnable_to_fn_clones_runnable() {
-    let flag = Rc::new(Cell::new(false));
-    let mut task = ClonedRunnable {
-        flag: Rc::clone(&flag),
-    };
-
-    let mut function = task.to_fn();
-
-    function().expect("cloned runnable should succeed");
-    assert!(flag.get());
-
-    flag.set(false);
-    drop(function);
-    task.run().expect("original runnable should remain usable");
-    assert!(flag.get());
-}
 
 #[derive(Clone)]
 struct SharedCounterRunnable {
@@ -178,99 +94,10 @@ impl Runnable<io::Error> for SharedAtomicRunnable {
     }
 }
 
-#[test]
-fn test_runnable_default_into_callable_returns_unit() {
-    let flag = Rc::new(Cell::new(false));
-    let task = ClonedRunnable {
-        flag: Rc::clone(&flag),
-    };
 
-    let mut callable = Runnable::into_callable(task);
 
-    callable.call().expect("default callable should succeed");
-    assert!(flag.get());
-}
 
-#[test]
-fn test_runnable_into_rc_runnable_preserves_name_and_state() {
-    let count = Rc::new(Cell::new(0));
-    let captured = Rc::clone(&count);
-    let task = BoxRunnable::new_with_name("shared", move || {
-        captured.set(captured.get() + 1);
-        Ok::<(), io::Error>(())
-    });
 
-    let mut shared = Runnable::into_rc(task);
-    let mut clone = shared.clone();
-
-    assert_eq!(shared.name(), Some("shared"));
-    shared.run().expect("shared runnable should succeed");
-    clone.run().expect("shared clone should succeed");
-    assert_eq!(count.get(), 2);
-}
-
-#[test]
-fn test_runnable_to_rc_clones_source_after_boxed_runnable() {
-    let count = Rc::new(Cell::new(0));
-    let mut source = SharedCounterRunnable {
-        count: Rc::clone(&count),
-    };
-    let mut shared = source.to_rc();
-    let mut shared_clone = shared.clone();
-
-    shared
-        .run()
-        .expect("to_rc should build shared runnable from cloneable source");
-    shared_clone
-        .run()
-        .expect("shared clone should also execute");
-    source
-        .run()
-        .expect("original cloneable runnable should remain usable");
-
-    assert_eq!(count.get(), 3);
-}
-
-#[test]
-fn test_runnable_into_arc_runnable_preserves_name_and_state() {
-    let count = Arc::new(AtomicUsize::new(0));
-    let captured = Arc::clone(&count);
-    let task = move || {
-        captured.fetch_add(1, Ordering::SeqCst);
-        Ok::<(), io::Error>(())
-    };
-
-    let mut shared = Runnable::into_arc(task);
-    assert_eq!(count.load(Ordering::SeqCst), 0);
-
-    shared.run().expect("shared runnable should succeed");
-    shared
-        .run()
-        .expect("shared runnable should execute repeatedly");
-    assert_eq!(count.load(Ordering::SeqCst), 2);
-}
-
-#[test]
-fn test_runnable_to_arc_clones_source_after_boxed_runnable() {
-    let count = Arc::new(AtomicUsize::new(0));
-    let mut source = SharedAtomicRunnable {
-        count: Arc::clone(&count),
-    };
-    let mut shared = source.to_arc();
-    let mut shared_clone = shared.clone();
-
-    shared
-        .run()
-        .expect("to_arc should build shared runnable from cloneable source");
-    shared_clone
-        .run()
-        .expect("shared arc clone should also execute");
-    source
-        .run()
-        .expect("original cloneable runnable should remain usable");
-
-    assert_eq!(count.load(Ordering::SeqCst), 3);
-}
 
 #[test]
 fn test_rc_runnable_from_supplier() {
@@ -352,23 +179,7 @@ fn test_box_runnable_set_name_handles_empty_and_same_name() {
     assert_eq!(task.name(), Some("cleanup"));
 }
 
-#[test]
-fn test_box_runnable_into_box_returns_self() {
-    let task = BoxRunnable::new(|| Ok::<(), io::Error>(()));
 
-    let mut boxed = Runnable::into_box(task);
-
-    boxed.run().expect("boxed runnable should succeed");
-}
-
-#[test]
-fn test_box_runnable_into_fn_extracts_function() {
-    let task = BoxRunnable::new(|| Ok::<(), io::Error>(()));
-
-    let mut function = Runnable::into_fn(task);
-
-    function().expect("runnable function should succeed");
-}
 
 #[test]
 fn test_box_runnable_from_supplier() {
@@ -461,30 +272,4 @@ fn test_box_runnable_then_callable_skips_callable_on_error() {
 
     assert_eq!(error.to_string(), "prepare failed");
     assert!(!callable_ran.get());
-}
-
-#[test]
-fn test_runnable_into_callable_returns_unit_callable() {
-    let task =
-        BoxRunnable::new_with_name("cleanup", || Ok::<(), io::Error>(()));
-
-    let mut callable = task.into_callable();
-
-    assert_eq!(callable.name(), Some("cleanup"));
-    callable.call().expect("unit callable should succeed");
-}
-
-#[test]
-fn test_runnable_into_callable_preserves_error() {
-    let task = BoxRunnable::<io::Error>::new_with_name("cleanup", || {
-        Err(io::Error::other("cleanup failed"))
-    });
-
-    let mut callable = task.into_callable();
-    let error = callable
-        .call()
-        .expect_err("unit callable should preserve runnable error");
-
-    assert_eq!(callable.name(), Some("cleanup"));
-    assert_eq!(error.to_string(), "cleanup failed");
 }

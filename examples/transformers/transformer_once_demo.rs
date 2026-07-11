@@ -31,15 +31,13 @@ fn main() {
 
     // Convert to BoxTransformerOnce
     let double = BoxTransformer::new(|x: i32| x * 2);
-    let boxed = double.into_box();
-    let result = boxed.apply(21);
-    println!("   double.into_box().apply(21) = {}", result);
+    let result = double.apply(21);
+    println!("   double.apply(21) = {}", result);
 
     // Convert to function
     let double = BoxTransformer::new(|x: i32| x * 2);
-    let func = double.into_fn();
-    let result = func(21);
-    println!("   double.into_fn()(21) = {}", result);
+    let result = double.apply(21);
+    println!("   double.apply(21) = {}", result);
 
     println!();
 

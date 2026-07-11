@@ -148,17 +148,17 @@
 //! ## Type Conversions
 //!
 //! ```rust
-//! use qubit_function::Mutator;
+//! use qubit_function::{ArcMutator, BoxMutator, RcMutator};
 //!
 //! // Convert closure to concrete type
 //! let closure = |x: &mut i32| *x *= 2;
-//! let mut box_mutator = closure.into_box();
+//! let box_mutator = BoxMutator::new(closure);
 //!
 //! let closure = |x: &mut i32| *x *= 2;
-//! let mut rc_mutator = closure.into_rc();
+//! let rc_mutator = RcMutator::new(closure);
 //!
 //! let closure = |x: &mut i32| *x *= 2;
-//! let mut arc_mutator = closure.into_arc();
+//! let arc_mutator = ArcMutator::new(closure);
 //! ```
 //!
 //! ## Conditional Execution
@@ -195,6 +195,7 @@
 //! branched.apply(&mut negative);
 //! assert_eq!(negative, -6); // or_else branch
 //! ```
+#[cfg(feature = "rc")]
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -205,7 +206,9 @@ use crate::mutators::macros::{
         impl_mutator_clone, impl_mutator_common_methods, impl_mutator_debug_display,
         impl_shared_conditional_mutator, impl_shared_mutator_methods,
     };
-use crate::predicates::predicate::{ArcPredicate, BoxPredicate, Predicate, RcPredicate};
+use crate::predicates::predicate::{ArcPredicate, BoxPredicate, Predicate};
+#[cfg(feature = "rc")]
+use crate::predicates::predicate::RcPredicate;
 
 // ============================================================================
 // 1. Type Aliases
@@ -215,21 +218,37 @@ use crate::predicates::predicate::{ArcPredicate, BoxPredicate, Predicate, RcPred
 type ArcMutatorFn<T> = Arc<dyn Fn(&mut T) + Send + Sync>;
 
 /// Type alias for Rc-wrapped stateless mutator function
+#[cfg(feature = "rc")]
 type RcMutatorFn<T> = Rc<dyn Fn(&mut T)>;
 
 mod box_mutator;
 pub use box_mutator::BoxMutator;
+#[cfg(feature = "rc")]
 mod rc_mutator;
+#[cfg(feature = "rc")]
 pub use rc_mutator::RcMutator;
 mod arc_mutator;
 pub use arc_mutator::ArcMutator;
+#[cfg(feature = "combinators")]
 mod fn_mutator_ops;
+#[cfg(feature = "combinators")]
 pub use fn_mutator_ops::FnMutatorOps;
 mod box_conditional_mutator;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use box_conditional_mutator::BoxConditionalMutator;
+#[cfg(feature = "combinators")]
 pub use box_conditional_mutator::BoxConditionalMutator;
+#[cfg(feature = "rc")]
 mod rc_conditional_mutator;
+#[cfg(feature = "rc")]
+#[cfg(not(feature = "combinators"))]
+pub(crate) use rc_conditional_mutator::RcConditionalMutator;
+#[cfg(all(feature = "rc", feature = "combinators"))]
 pub use rc_conditional_mutator::RcConditionalMutator;
 mod arc_conditional_mutator;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use arc_conditional_mutator::ArcConditionalMutator;
+#[cfg(feature = "combinators")]
 pub use arc_conditional_mutator::ArcConditionalMutator;
 
 // ============================================================================
@@ -292,14 +311,12 @@ pub use arc_conditional_mutator::ArcConditionalMutator;
 /// ## Type Conversion
 ///
 /// ```rust
-/// use qubit_function::Mutator;
+/// use qubit_function::BoxMutator;
 ///
 /// let closure = |x: &mut i32| *x *= 2;
 ///
 /// // Convert to different ownership models
-/// let box_mutator = closure.into_box();
-/// // let rc_mutator = closure.into_rc();  // closure moved
-/// // let arc_mutator = closure.into_arc(); // closure moved
+/// let box_mutator = BoxMutator::new(closure);
 /// ```
 pub trait Mutator<T> {
     /// Performs the stateless mutation operation

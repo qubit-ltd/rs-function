@@ -16,7 +16,6 @@ use std::{
 use qubit_function::{
     CallableOnce,
     LocalBoxCallableOnce,
-    RunnableOnce,
     SupplierOnce,
 };
 
@@ -86,41 +85,4 @@ fn test_local_box_callable_once_map_err_transforms_local_error() {
             .expect_err("local map_err should transform error"),
         "local: raw"
     );
-}
-
-#[test]
-fn test_local_box_callable_once_into_local_box_returns_self() {
-    let task = LocalBoxCallableOnce::new(|| Ok::<i32, io::Error>(7));
-    let boxed = CallableOnce::into_local_box(task);
-
-    assert_eq!(boxed.call().expect("local boxed callable should run"), 7);
-}
-
-#[test]
-fn test_local_box_callable_once_into_fn_extracts_function() {
-    let text = Rc::new(String::from("local"));
-    let captured = Rc::clone(&text);
-    let task = LocalBoxCallableOnce::new(move || {
-        Ok::<String, io::Error>(captured.to_string())
-    });
-
-    let function = CallableOnce::into_fn(task);
-
-    assert_eq!(
-        function().expect("local callable function should run"),
-        "local"
-    );
-}
-
-#[test]
-fn test_local_box_callable_once_into_local_runnable_preserves_name() {
-    let task = LocalBoxCallableOnce::new_with_name("compute", || {
-        Ok::<i32, io::Error>(1)
-    });
-    let runnable = CallableOnce::into_local_runnable(task);
-
-    assert_eq!(runnable.name(), Some("compute"));
-    runnable
-        .run()
-        .expect("local runnable converted from callable should run");
 }

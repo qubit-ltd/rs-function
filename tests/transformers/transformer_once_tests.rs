@@ -12,39 +12,6 @@ use qubit_function::{
     TransformerOnce,
 };
 
-#[test]
-fn test_transformer_once_default_conversions_allow_relaxed_generic_types() {
-    #[derive(Clone, Debug, Eq, PartialEq)]
-    struct BorrowedRc<'a> {
-        value: &'a str,
-    }
-
-    #[derive(Clone, Debug)]
-    struct BorrowedRcTransformerOnce;
-
-    impl<'a> TransformerOnce<BorrowedRc<'a>, BorrowedRc<'a>>
-        for BorrowedRcTransformerOnce
-    {
-        fn apply(self, value: BorrowedRc<'a>) -> BorrowedRc<'a> {
-            value
-        }
-    }
-
-    fn assert_left(value: BorrowedRc<'_>) {
-        assert_eq!(value.value, "left");
-    }
-
-    let text = String::from("left");
-    let value = || BorrowedRc {
-        value: text.as_str(),
-    };
-    let transformer = BorrowedRcTransformerOnce;
-
-    assert_left(transformer.clone().into_box().apply(value()));
-    assert_left(transformer.clone().into_fn()(value()));
-    assert_left(transformer.to_box().apply(value()));
-    assert_left(transformer.to_fn()(value()));
-}
 
 // ============================================================================
 // BoxTransformerOnce Tests - Consuming, single ownership
@@ -184,32 +151,10 @@ mod conditional_tests {
 
 #[cfg(test)]
 mod conversion_tests {
-    use super::{
-        BoxTransformerOnce,
-        TransformerOnce,
-    };
 
-    #[test]
-    fn test_closure_to_box() {
-        let double = |x: i32| x * 2;
-        let boxed = double.into_box();
-        assert_eq!(boxed.apply(21), 42);
-    }
 
-    #[test]
-    fn test_box_to_fn() {
-        let double = BoxTransformerOnce::new(|x: i32| x * 2);
-        let func = double.into_fn();
-        assert_eq!(func(21), 42);
-    }
 
-    #[test]
-    fn test_closure_into_fn() {
-        // Test into_fn in impl<F, T, R> TransformerOnce<T, R> for F
-        let double = |x: i32| x * 2;
-        let func = double.into_fn();
-        assert_eq!(func(21), 42);
-    }
+
 }
 
 // ============================================================================
@@ -389,82 +334,15 @@ mod trait_usage_tests {
 
 #[cfg(test)]
 mod type_conversion_tests {
-    use super::{
-        BoxTransformerOnce,
-        TransformerOnce,
-    };
 
-    #[test]
-    fn test_box_into_box() {
-        let add = BoxTransformerOnce::new(|x: i32| x + 10);
-        let boxed = add.into_box();
-        assert_eq!(boxed.apply(20), 30);
-    }
 
-    #[test]
-    fn test_box_into_fn() {
-        let add = BoxTransformerOnce::new(|x: i32| x + 10);
-        let func = add.into_fn();
-        assert_eq!(func(20), 30);
-    }
 
-    #[test]
-    fn test_closure_into_box() {
-        let double = |x: i32| x * 2;
-        let boxed = double.into_box();
-        assert_eq!(boxed.apply(21), 42);
-    }
 
-    #[test]
-    fn test_closure_into_fn() {
-        let double = |x: i32| x * 2;
-        let func = double.into_fn();
-        assert_eq!(func(21), 42);
-    }
 
-    #[test]
-    fn test_closure_to_box_and_preserve_original() {
-        // to_box borrows &self and requires Clone; non-capturing closures are
-        // Clone
-        let double = |x: i32| x * 2;
-        let boxed = double.to_box();
-        assert_eq!(boxed.apply(21), 42);
 
-        // Original closure is still available (to_box does not consume the
-        // original object)
-        assert_eq!(double.apply(10), 20);
-    }
 
-    #[test]
-    fn test_closure_to_fn_and_preserve_original() {
-        // to_fn borrows &self and requires Clone; non-capturing closures are
-        // Clone
-        let double = |x: i32| x * 2;
-        let func = double.to_fn();
-        assert_eq!(func(14), 28);
 
-        // Original closure is still available (to_fn does not consume the
-        // original object)
-        assert_eq!(double.apply(7), 14);
-    }
 
-    #[test]
-    fn test_function_pointer_into_box() {
-        fn triple(x: i32) -> i32 {
-            x * 3
-        }
-        let boxed = triple.into_box();
-        assert_eq!(boxed.apply(14), 42);
-    }
-
-    #[test]
-    fn test_function_pointer_into_fn() {
-        fn triple(x: i32) -> i32 {
-            x * 3
-        }
-        let func = triple.into_fn();
-        assert_eq!(func(14), 42);
-    }
 }
 
 // ============================================================================
@@ -487,27 +365,8 @@ mod default_implementation_tests {
         // Use default into_box and into_fn implementations
     }
 
-    #[test]
-    fn test_custom_transformer_into_box() {
-        let transformer = CustomTransformer { factor: 2 };
-        let boxed = transformer.into_box();
-        assert_eq!(boxed.apply(21), 42);
-    }
 
-    #[test]
-    fn test_custom_transformer_into_fn() {
-        let transformer = CustomTransformer { factor: 2 };
-        let func = transformer.into_fn();
-        assert_eq!(func(21), 42);
-    }
 
-    #[test]
-    fn test_custom_transformer_chain() {
-        let transformer1 = CustomTransformer { factor: 2 };
-        let transformer2 = CustomTransformer { factor: 3 };
-        let composed = transformer1.into_box().and_then(transformer2);
-        assert_eq!(composed.apply(7), 42); // 7 * 2 * 3
-    }
 }
 
 // ============================================================================
@@ -516,55 +375,12 @@ mod default_implementation_tests {
 
 #[cfg(test)]
 mod zero_cost_specialization_tests {
-    use super::{
-        BoxTransformerOnce,
-        TransformerOnce,
-    };
 
-    #[test]
-    fn test_box_into_box_is_zero_cost() {
-        // BoxTransformerOnce::into_box() should directly return itself, zero
-        // cost
-        let add = BoxTransformerOnce::new(|x: i32| x + 10);
-        let boxed = add.into_box();
-        assert_eq!(boxed.apply(20), 30);
-    }
 
-    #[test]
-    fn test_box_into_fn_is_zero_cost() {
-        // BoxTransformerOnce::into_fn() should directly return the inner
-        // function, zero cost
-        let add = BoxTransformerOnce::new(|x: i32| x + 10);
-        let func = add.into_fn();
-        assert_eq!(func(20), 30);
-    }
 
-    #[test]
-    fn test_closure_into_fn_is_zero_cost() {
-        // Closure's into_fn() should directly return itself, zero cost
-        let double = |x: i32| x * 2;
-        let func = double.into_fn();
-        assert_eq!(func(21), 42);
-    }
 
-    #[test]
-    fn test_chained_conversions() {
-        // Test chained conversions
-        let double = |x: i32| x * 2;
-        let boxed = double.into_box(); // closure -> Box
-        let func = boxed.into_fn(); // Box -> Fn (zero cost, directly return inner function)
-        assert_eq!(func(21), 42);
-    }
 
-    #[test]
-    fn test_complex_type_conversion() {
-        // Test complex type conversions
-        let parse = |s: String| s.parse::<i32>().unwrap_or(0);
-        let boxed = parse.into_box();
-        let composed = boxed.and_then(|x| x * 2);
-        let func = composed.into_fn();
-        assert_eq!(func("21".to_string()), 42);
-    }
+
 }
 
 // ============================================================================
@@ -590,95 +406,12 @@ mod custom_type_default_impl_tests {
         }
     }
 
-    #[test]
-    fn test_custom_into_box() {
-        // Test into_box default implementation (consumes self)
-        let transformer = CustomTransformer { multiplier: 3 };
-        let boxed = transformer.into_box();
-        assert_eq!(boxed.apply(14), 42);
-        // transformer has been consumed and cannot be used again
-    }
 
-    #[test]
-    fn test_custom_into_fn() {
-        // Test into_fn default implementation (consumes self)
-        let transformer = CustomTransformer { multiplier: 3 };
-        let func = transformer.into_fn();
-        assert_eq!(func(14), 42);
-        // transformer has been consumed and cannot be used again
-    }
 
-    #[test]
-    fn test_custom_to_box() {
-        // Test to_box default implementation (borrows &self, requires Clone)
-        let transformer = CustomTransformer { multiplier: 3 };
-        let boxed = transformer.to_box();
 
-        // Use the converted boxed first
-        assert_eq!(boxed.apply(14), 42);
 
-        // Original transformer is still available (because to_box just borrows)
-        assert_eq!(transformer.apply(10), 30);
-    }
 
-    #[test]
-    fn test_custom_to_fn() {
-        // Test to_fn default implementation (borrows &self, requires Clone)
-        let transformer = CustomTransformer { multiplier: 3 };
-        let func = transformer.to_fn();
 
-        // Use the converted function first
-        assert_eq!(func(14), 42);
-
-        // Original transformer is still available (because to_fn just borrows)
-        assert_eq!(transformer.apply(10), 30);
-    }
-
-    #[test]
-    fn test_custom_multiple_conversions() {
-        // Test multiple conversions
-        let transformer = CustomTransformer { multiplier: 2 };
-
-        // Use to_box multiple times (does not consume original object)
-        let boxed1 = transformer.to_box();
-        let boxed2 = transformer.to_box();
-        let func = transformer.to_fn();
-
-        assert_eq!(boxed1.apply(5), 10);
-        assert_eq!(boxed2.apply(10), 20);
-        assert_eq!(func(15), 30);
-
-        // Original transformer is still available
-        assert_eq!(transformer.apply(21), 42);
-    }
-
-    #[test]
-    fn test_custom_composition_with_to_box() {
-        // Test composition using to_box
-        let double = CustomTransformer { multiplier: 2 };
-        let boxed = double.to_box();
-
-        // Compose with other transformers
-        let composed = boxed.and_then(|x| x + 2);
-        assert_eq!(composed.apply(20), 42); // 20 * 2 + 2 = 42
-
-        // Original transformer is still available
-        assert_eq!(double.apply(10), 20);
-    }
-
-    #[test]
-    fn test_custom_composition_with_to_fn() {
-        // Test composition using to_fn
-        let triple = CustomTransformer { multiplier: 3 };
-        let func = triple.to_fn();
-
-        // Use function for transformation
-        let result = func(14);
-        assert_eq!(result, 42);
-
-        // Original transformer is still available (because to_fn just borrows)
-        assert_eq!(triple.apply(7), 21);
-    }
 
     /// Custom transformer with complex state
     #[derive(Clone)]
@@ -693,55 +426,8 @@ mod custom_type_default_impl_tests {
         }
     }
 
-    #[test]
-    fn test_complex_custom_to_box() {
-        // Test to_box for complex types
-        let transformer = ComplexTransformer {
-            prefix: "Number: ".to_string(),
-            suffix: "!".to_string(),
-        };
 
-        let boxed = transformer.to_box();
-        assert_eq!(boxed.apply(42), "Number: 42!");
 
-        // Original transformer is still available (because to_box just borrows)
-        assert_eq!(transformer.apply(100), "Number: 100!");
-    }
-
-    #[test]
-    fn test_complex_custom_to_fn() {
-        // Test to_fn for complex types
-        let transformer = ComplexTransformer {
-            prefix: "Value: ".to_string(),
-            suffix: " units".to_string(),
-        };
-
-        let func = transformer.to_fn();
-        assert_eq!(func(42), "Value: 42 units");
-
-        // Original transformer is still available (because to_fn just borrows)
-        assert_eq!(transformer.apply(100), "Value: 100 units");
-    }
-
-    #[test]
-    fn test_complex_custom_chain_conversions() {
-        // Test complex chained conversions
-        let transformer = ComplexTransformer {
-            prefix: "[".to_string(),
-            suffix: "]".to_string(),
-        };
-
-        // First use to_box to create a BoxTransformerOnce
-        let boxed = transformer.to_box();
-
-        // Then convert BoxTransformerOnce to function
-        let func = boxed.into_fn();
-        assert_eq!(func(42), "[42]");
-
-        // Original transformer is still available (because to_box was used, not
-        // into_box)
-        assert_eq!(transformer.apply(100), "[100]");
-    }
 }
 
 // ============================================================================
@@ -762,19 +448,7 @@ mod box_transformer_transformer_once_tests {
         assert_eq!(result, 42);
     }
 
-    #[test]
-    fn test_box_transformer_into_box() {
-        let double = BoxTransformer::new(|x: i32| x * 2);
-        let boxed = double.into_box();
-        assert_eq!(boxed.apply(21), 42);
-    }
 
-    #[test]
-    fn test_box_transformer_into_fn() {
-        let double = BoxTransformer::new(|x: i32| x * 2);
-        let func = double.into_fn();
-        assert_eq!(func(21), 42);
-    }
 
     #[test]
     fn test_box_transformer_string_transformation() {
@@ -810,19 +484,7 @@ mod rc_transformer_transformer_once_tests {
         assert_eq!(result, 42);
     }
 
-    #[test]
-    fn test_rc_transformer_into_box() {
-        let double = RcTransformer::new(|x: i32| x * 2);
-        let boxed = double.into_box();
-        assert_eq!(boxed.apply(21), 42);
-    }
 
-    #[test]
-    fn test_rc_transformer_into_fn() {
-        let double = RcTransformer::new(|x: i32| x * 2);
-        let func = double.into_fn();
-        assert_eq!(func(21), 42);
-    }
 
     #[test]
     fn test_rc_transformer_string_transformation() {
@@ -870,19 +532,7 @@ mod arc_transformer_transformer_once_tests {
         assert_eq!(result, 42);
     }
 
-    #[test]
-    fn test_arc_transformer_into_box() {
-        let double = ArcTransformer::new(|x: i32| x * 2);
-        let boxed = double.into_box();
-        assert_eq!(boxed.apply(21), 42);
-    }
 
-    #[test]
-    fn test_arc_transformer_into_fn() {
-        let double = ArcTransformer::new(|x: i32| x * 2);
-        let func = double.into_fn();
-        assert_eq!(func(21), 42);
-    }
 
     #[test]
     fn test_arc_transformer_string_transformation() {
@@ -925,19 +575,4 @@ mod arc_transformer_transformer_once_tests {
         assert_eq!(result, 42);
     }
 
-    #[test]
-    fn test_arc_transformer_into_box_thread_safety() {
-        let double = ArcTransformer::new(|x: i32| x * 2);
-        let _double_arc = Arc::new(double);
-
-        let handle = thread::spawn(move || {
-            // We can't move out of Arc, so we need to create a new transformer
-            let new_double = ArcTransformer::new(|x: i32| x * 2);
-            let boxed = new_double.into_box();
-            boxed.apply(21)
-        });
-
-        let result = handle.join().expect("thread should not panic");
-        assert_eq!(result, 42);
-    }
 }

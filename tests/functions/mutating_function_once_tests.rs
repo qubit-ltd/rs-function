@@ -41,84 +41,12 @@ impl MutatingFunctionOnce<i32, i32> for TestMutatingFunctionOnce {
 
 #[cfg(test)]
 mod test_mutating_function_once_default_impl {
-    use super::{
-        MutatingFunctionOnce,
-        TestMutatingFunctionOnce,
-    };
 
-    #[test]
-    fn test_into_box() {
-        let func = TestMutatingFunctionOnce::new(2);
-        let boxed = func.into_box();
 
-        let mut value = 5;
-        assert_eq!(boxed.apply(&mut value), 5);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_into_fn() {
-        let func = TestMutatingFunctionOnce::new(3);
-        let closure = func.into_fn();
 
-        let mut value = 4;
-        assert_eq!(closure(&mut value), 4);
-        assert_eq!(value, 12);
-    }
 
-    #[test]
-    fn test_to_box() {
-        let func = TestMutatingFunctionOnce::new(2);
-        let boxed = func.to_box();
 
-        let mut value = 5;
-        assert_eq!(boxed.apply(&mut value), 5);
-        assert_eq!(value, 10);
-    }
-
-    #[test]
-    fn test_to_fn() {
-        let func = TestMutatingFunctionOnce::new(3);
-        let closure = func.to_fn();
-
-        let mut value = 4;
-        assert_eq!(closure(&mut value), 4);
-        assert_eq!(value, 12);
-    }
-
-    #[test]
-    fn test_default_conversions_allow_relaxed_generic_types() {
-        #[derive(Clone, Debug, Eq, PartialEq)]
-        struct BorrowedRc<'a> {
-            value: &'a str,
-        }
-
-        #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-        struct BorrowedRcMutatorOnce;
-
-        impl<'a> MutatingFunctionOnce<BorrowedRc<'a>, BorrowedRc<'a>>
-            for BorrowedRcMutatorOnce
-        {
-            fn apply(self, value: &mut BorrowedRc<'a>) -> BorrowedRc<'a> {
-                value.clone()
-            }
-        }
-
-        fn assert_left(value: BorrowedRc<'_>) {
-            assert_eq!(value.value, "left");
-        }
-
-        let text = String::from("left");
-        let mut value = BorrowedRc {
-            value: text.as_str(),
-        };
-        let mutator = BorrowedRcMutatorOnce;
-
-        assert_left(mutator.into_box().apply(&mut value));
-        assert_left(mutator.into_fn()(&mut value));
-        assert_left(mutator.to_box().apply(&mut value));
-        assert_left(mutator.to_fn()(&mut value));
-    }
 }
 
 // ============================================================================
@@ -304,7 +232,6 @@ mod test_box_mutating_function_once {
 #[cfg(test)]
 mod test_closure {
     use super::{
-        BoxMutatingFunctionOnce,
         FnMutatingFunctionOnceOps,
         MutatingFunctionOnce,
     };
@@ -362,69 +289,9 @@ mod test_closure {
         assert_eq!(target, vec![0, 1, 2, 3]);
     }
 
-    #[test]
-    fn test_closure_into_box() {
-        let data = vec![1, 2, 3];
-        let closure = move |x: &mut Vec<i32>| {
-            let old_len = x.len();
-            x.extend(data);
-            old_len
-        };
-        let box_func = closure.into_box();
 
-        let mut target = vec![0];
-        let old_len = box_func.apply(&mut target);
-        assert_eq!(old_len, 1);
-        assert_eq!(target, vec![0, 1, 2, 3]);
-    }
 
-    #[test]
-    fn test_closure_into_fn() {
-        let data = vec![1, 2, 3];
-        let closure = move |x: &mut Vec<i32>| {
-            let old_len = x.len();
-            x.extend(data);
-            old_len
-        };
-        let fn_closure = closure.into_fn();
 
-        let mut target = vec![0];
-        let old_len = fn_closure(&mut target);
-        assert_eq!(old_len, 1);
-        assert_eq!(target, vec![0, 1, 2, 3]);
-    }
-
-    #[test]
-    fn test_closure_to_box() {
-        let data = vec![1, 2, 3];
-        let closure = move |x: &mut Vec<i32>| {
-            let old_len = x.len();
-            x.extend(data);
-            old_len
-        };
-        let box_func = closure.to_box();
-
-        let mut target = vec![0];
-        let old_len = box_func.apply(&mut target);
-        assert_eq!(old_len, 1);
-        assert_eq!(target, vec![0, 1, 2, 3]);
-    }
-
-    #[test]
-    fn test_closure_to_fn() {
-        let data = vec![1, 2, 3];
-        let closure = move |x: &mut Vec<i32>| {
-            let old_len = x.len();
-            x.extend(data);
-            old_len
-        };
-        let fn_closure = closure.to_fn();
-
-        let mut target = vec![0];
-        let old_len = fn_closure(&mut target);
-        assert_eq!(old_len, 1);
-        assert_eq!(target, vec![0, 1, 2, 3]);
-    }
 
     #[test]
     fn test_move_semantics() {
@@ -442,39 +309,7 @@ mod test_closure {
         assert_eq!(target, vec![0, 1, 2, 3]);
     }
 
-    #[test]
-    fn test_into_box() {
-        let data = vec![1, 2, 3];
-        let func = BoxMutatingFunctionOnce::new(move |x: &mut Vec<i32>| {
-            let old_len = x.len();
-            x.extend(data);
-            old_len
-        });
 
-        let box_func = func.into_box();
-
-        let mut target = vec![0];
-        let old_len = box_func.apply(&mut target);
-        assert_eq!(old_len, 1);
-        assert_eq!(target, vec![0, 1, 2, 3]);
-    }
-
-    #[test]
-    fn test_into_fn() {
-        let data = vec![1, 2, 3];
-        let func = BoxMutatingFunctionOnce::new(move |x: &mut Vec<i32>| {
-            let old_len = x.len();
-            x.extend(data);
-            old_len
-        });
-
-        let closure = func.into_fn();
-
-        let mut target = vec![0];
-        let old_len = closure(&mut target);
-        assert_eq!(old_len, 1);
-        assert_eq!(target, vec![0, 1, 2, 3]);
-    }
 }
 
 // ============================================================================
@@ -584,59 +419,4 @@ fn test_box_conditional_mutating_function_once_debug_display() {
     );
     assert!(named_display_str.contains("BoxPredicate"));
     assert!(named_display_str.ends_with(")"));
-}
-
-#[test]
-fn test_custom_cloneable_mutating_function_once_to_box() {
-    // Test to_box method on a custom struct that implements both
-    // MutatingFunctionOnce and Clone
-    #[derive(Clone, Debug)]
-    struct MyCloneableMutatingFunction {
-        multiplier: i32,
-        offset: i32,
-    }
-
-    impl MyCloneableMutatingFunction {
-        fn new(multiplier: i32, offset: i32) -> Self {
-            Self { multiplier, offset }
-        }
-    }
-
-    impl MutatingFunctionOnce<i32, i32> for MyCloneableMutatingFunction {
-        fn apply(self, input: &mut i32) -> i32 {
-            *input = *input * self.multiplier + self.offset;
-            *input
-        }
-    }
-
-    // Test that to_box method is available and works correctly
-    let func = MyCloneableMutatingFunction::new(2, 5);
-
-    // Use to_box method (should be available because struct implements Clone)
-    let mut input1 = 3;
-    let boxed = func.to_box();
-    let result1 = boxed.apply(&mut input1);
-    assert_eq!(result1, 11); // (3 * 2) + 5 = 11
-    assert_eq!(input1, 11);
-
-    // Original function should still be usable (because to_box borrows &self)
-    let mut input2 = 4;
-    let another_boxed = func.to_box();
-    let result2 = another_boxed.apply(&mut input2);
-    assert_eq!(result2, 13); // (4 * 2) + 5 = 13
-    assert_eq!(input2, 13);
-
-    // Test to_fn method as well
-    let func_closure = func.to_fn();
-    let mut input3 = 2;
-    let result3 = func_closure(&mut input3);
-    assert_eq!(result3, 9); // (2 * 2) + 5 = 9
-    assert_eq!(input3, 9);
-
-    // Original function should still be usable after to_fn
-    let mut input4 = 1;
-    let final_boxed = func.to_box();
-    let result4 = final_boxed.apply(&mut input4);
-    assert_eq!(result4, 7); // (1 * 2) + 5 = 7
-    assert_eq!(input4, 7);
 }

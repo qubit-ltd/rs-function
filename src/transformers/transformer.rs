@@ -18,12 +18,15 @@
 //! - [`BoxTransformer`]: Single ownership, not cloneable
 //! - [`ArcTransformer`]: Thread-safe shared ownership, cloneable
 //! - [`RcTransformer`]: Single-threaded shared ownership, cloneable
+#[cfg(feature = "rc")]
 use std::rc::Rc;
 use std::sync::Arc;
 
 use crate::macros::{ impl_closure_trait,
 };
-use crate::predicates::predicate::{ArcPredicate, BoxPredicate, Predicate, RcPredicate};
+use crate::predicates::predicate::{ArcPredicate, BoxPredicate, Predicate};
+#[cfg(feature = "rc")]
+use crate::predicates::predicate::RcPredicate;
 use crate::transformers::macros::{
         impl_box_conditional_transformer, impl_box_transformer_methods,
         impl_conditional_transformer_clone, impl_conditional_transformer_debug_display,
@@ -34,11 +37,15 @@ use crate::transformers::macros::{
 
 mod box_transformer;
 pub use box_transformer::BoxTransformer;
+#[cfg(feature = "rc")]
 mod rc_transformer;
+#[cfg(feature = "rc")]
 pub use rc_transformer::RcTransformer;
 mod arc_transformer;
 pub use arc_transformer::ArcTransformer;
+#[cfg(feature = "combinators")]
 mod fn_transformer_ops;
+#[cfg(feature = "combinators")]
 pub use fn_transformer_ops::FnTransformerOps;
 mod unary_operator;
 pub use unary_operator::UnaryOperator;
@@ -46,13 +53,26 @@ mod box_unary_operator;
 pub use box_unary_operator::BoxUnaryOperator;
 mod arc_unary_operator;
 pub use arc_unary_operator::ArcUnaryOperator;
+#[cfg(feature = "rc")]
 mod rc_unary_operator;
+#[cfg(feature = "rc")]
 pub use rc_unary_operator::RcUnaryOperator;
 mod box_conditional_transformer;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use box_conditional_transformer::BoxConditionalTransformer;
+#[cfg(feature = "combinators")]
 pub use box_conditional_transformer::BoxConditionalTransformer;
+#[cfg(feature = "rc")]
 mod rc_conditional_transformer;
+#[cfg(feature = "rc")]
+#[cfg(not(feature = "combinators"))]
+pub(crate) use rc_conditional_transformer::RcConditionalTransformer;
+#[cfg(all(feature = "rc", feature = "combinators"))]
 pub use rc_conditional_transformer::RcConditionalTransformer;
 mod arc_conditional_transformer;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use arc_conditional_transformer::ArcConditionalTransformer;
+#[cfg(feature = "combinators")]
 pub use arc_conditional_transformer::ArcConditionalTransformer;
 
 // ============================================================================

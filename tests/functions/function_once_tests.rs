@@ -34,75 +34,10 @@ fn test_function_once_trait_apply_with_move() {
     assert_eq!(append.apply(&String::from("world")), "world hello");
 }
 
-#[test]
-fn test_function_once_trait_into_box() {
-    // Test conversion from closure to BoxFunctionOnce
-    let double = |x: &i32| x * 2;
-    let boxed = double.into_box();
-    assert_eq!(boxed.apply(&21), 42);
-}
 
-#[test]
-fn test_function_once_trait_into_fn() {
-    // Test conversion to FnOnce closure
-    let double = |x: &i32| x * 2;
-    let func = double.into_fn();
-    assert_eq!(func(&21), 42);
-}
 
-#[test]
-fn test_function_once_trait_to_box() {
-    // Test non-consuming conversion to BoxFunctionOnce
-    let double = |x: &i32| x * 2;
-    let boxed = double.to_box();
-    assert_eq!(boxed.apply(&21), 42);
-    // Original closure still usable
-    assert_eq!(double.apply(&10), 20);
-}
 
-#[test]
-fn test_function_once_trait_to_fn() {
-    // Test non-consuming conversion to FnOnce closure
-    let double = |x: &i32| x * 2;
-    let func = double.to_fn();
-    assert_eq!(func(&21), 42);
-    // Original closure still usable
-    assert_eq!(double.apply(&10), 20);
-}
 
-#[test]
-fn test_function_once_default_conversions_allow_relaxed_generic_types() {
-    #[derive(Clone, Debug, Eq, PartialEq)]
-    struct BorrowedRc<'a> {
-        value: &'a str,
-    }
-
-    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-    struct BorrowedRcIdentityOnce;
-
-    impl<'a> FunctionOnce<BorrowedRc<'a>, BorrowedRc<'a>>
-        for BorrowedRcIdentityOnce
-    {
-        fn apply(self, value: &BorrowedRc<'a>) -> BorrowedRc<'a> {
-            value.clone()
-        }
-    }
-
-    fn assert_left(value: BorrowedRc<'_>) {
-        assert_eq!(value.value, "left");
-    }
-
-    let text = String::from("left");
-    let value = BorrowedRc {
-        value: text.as_str(),
-    };
-    let identity = BorrowedRcIdentityOnce;
-
-    assert_left(identity.into_box().apply(&value));
-    assert_left(identity.into_fn()(&value));
-    assert_left(identity.to_box().apply(&value));
-    assert_left(identity.to_fn()(&value));
-}
 
 // ============================================================================
 // BoxFunctionOnce Tests - Constructor and Basic Operations
@@ -266,29 +201,8 @@ fn test_box_function_once_when_with_move() {
 // BoxFunctionOnce Tests - Type Conversions
 // ============================================================================
 
-#[test]
-fn test_box_function_once_into_box() {
-    // Test BoxFunctionOnce::into_box (should return itself)
-    let double = BoxFunctionOnce::new(|x: &i32| x * 2);
-    let boxed = double.into_box();
-    assert_eq!(boxed.apply(&21), 42);
-}
 
-#[test]
-fn test_box_function_once_into_fn() {
-    // Test BoxFunctionOnce::into_fn conversion
-    let double = BoxFunctionOnce::new(|x: &i32| x * 2);
-    let func = double.into_fn();
-    assert_eq!(func(&21), 42);
-}
 
-#[test]
-fn test_box_function_once_into_box_consumes_self() {
-    let func = BoxFunctionOnce::new(|x: &i32| x * 2);
-
-    let boxed = func.into_box();
-    assert_eq!(boxed.apply(&21), 42);
-}
 
 // ============================================================================
 // Edge Cases and Boundary Tests
@@ -533,60 +447,11 @@ mod function_once_default_impl_tests {
         // implementations
     }
 
-    #[test]
-    fn test_custom_into_box() {
-        let custom = CustomFunctionOnce { multiplier: 3 };
-        let boxed = custom.into_box();
 
-        assert_eq!(boxed.apply(&14), 42);
-    }
 
-    #[test]
-    fn test_custom_into_fn() {
-        let custom = CustomFunctionOnce { multiplier: 6 };
-        let func = custom.into_fn();
 
-        assert_eq!(func(&7), 42);
-    }
 
-    #[test]
-    fn test_cloneable_to_box() {
-        let custom = CloneableCustomFunctionOnce { multiplier: 3 };
-        let boxed = custom.to_box();
 
-        assert_eq!(boxed.apply(&14), 42);
-
-        // Original function is still usable (because to_box only borrows)
-        assert_eq!(custom.apply(&10), 30);
-    }
-
-    #[test]
-    fn test_cloneable_to_fn() {
-        let custom = CloneableCustomFunctionOnce { multiplier: 6 };
-        let func = custom.to_fn();
-
-        assert_eq!(func(&7), 42);
-
-        // Original function is still usable (because to_fn only borrows)
-        assert_eq!(custom.apply(&5), 30);
-    }
-
-    #[test]
-    fn test_custom_chained_conversions() {
-        let custom = CustomFunctionOnce { multiplier: 2 };
-        let boxed: BoxFunctionOnce<i32, i32> = custom.into_box();
-
-        assert_eq!(boxed.apply(&21), 42);
-    }
-
-    #[test]
-    fn test_custom_composition() {
-        let custom1 = CloneableCustomFunctionOnce { multiplier: 2 };
-        let custom2 = CloneableCustomFunctionOnce { multiplier: 3 };
-
-        let composed = custom1.to_box().and_then(custom2.to_box());
-        assert_eq!(composed.apply(&7), 42); // 7 * 2 = 14, 14 * 3 = 42
-    }
 
     #[test]
     fn test_custom_with_captured_value() {
@@ -602,47 +467,6 @@ mod function_once_default_impl_tests {
     }
 }
 
-#[test]
-fn test_custom_cloneable_function_once_to_box() {
-    // Test to_box method on a custom struct that implements both FunctionOnce
-    // and Clone
-    #[derive(Clone, Debug)]
-    struct MyCloneableFunction {
-        multiplier: i32,
-        offset: i32,
-    }
-
-    impl MyCloneableFunction {
-        fn new(multiplier: i32, offset: i32) -> Self {
-            Self { multiplier, offset }
-        }
-    }
-
-    impl FunctionOnce<i32, i32> for MyCloneableFunction {
-        fn apply(self, input: &i32) -> i32 {
-            input * self.multiplier + self.offset
-        }
-    }
-
-    // Test that to_box method is available and works correctly
-    let func = MyCloneableFunction::new(3, 10);
-
-    // Use to_box method (should be available because struct implements Clone)
-    let boxed = func.to_box();
-    assert_eq!(boxed.apply(&5), 25); // 5 * 3 + 10 = 25
-
-    // Original function should still be usable (because to_box borrows &self)
-    let another_boxed = func.to_box();
-    assert_eq!(another_boxed.apply(&2), 16); // 2 * 3 + 10 = 16
-
-    // Test to_fn method as well
-    let func_closure = func.to_fn();
-    assert_eq!(func_closure(&4), 22); // 4 * 3 + 10 = 22
-
-    // Original function should still be usable after to_fn
-    let final_boxed = func.to_box();
-    assert_eq!(final_boxed.apply(&1), 13); // 1 * 3 + 10 = 13
-}
 
 // ============================================================================
 // FunctionOnce Debug and Display Tests

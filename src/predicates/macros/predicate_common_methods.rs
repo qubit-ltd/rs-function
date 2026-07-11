@@ -97,6 +97,7 @@
 /// * `set_name()` - Sets the name of the predicate
 /// * `always_true()` - Creates a predicate that always returns true
 /// * `always_false()` - Creates a predicate that always returns false
+#[cfg(feature = "stateful")]
 macro_rules! impl_stateful_predicate_new_methods {
     (BoxStatefulPredicate<$t:ident>, |$f:ident| $w:expr) => { $crate::predicates::macros::impl_stateful_predicate_new_methods!(@one $t, ('static), |$f| $w); };
     (RcStatefulPredicate<$t:ident>, |$f:ident| $w:expr) => { $crate::predicates::macros::impl_stateful_predicate_new_methods!(@one $t, ('static), |$f| $w); };
@@ -243,4 +244,5 @@ macro_rules! impl_predicate_common_methods {
 }
 
 pub(crate) use impl_predicate_common_methods;
+#[cfg(feature = "stateful")]
 pub(crate) use impl_stateful_predicate_new_methods;

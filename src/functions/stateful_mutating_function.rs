@@ -116,6 +116,7 @@
 //! assert_eq!(value2, 6);
 //! ```
 use std::cell::RefCell;
+#[cfg(feature = "rc")]
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -125,26 +126,45 @@ use crate::functions::{
     function::Function,
     macros::{
         impl_box_conditional_function, impl_box_function_methods, impl_conditional_function_clone,
-        impl_conditional_function_debug_display, impl_fn_ops_trait, impl_function_clone,
+        impl_conditional_function_debug_display, impl_function_clone,
         impl_function_common_methods, impl_function_debug_display, impl_function_identity_method,
         impl_shared_conditional_function, impl_shared_function_methods,
     },
 };
-use crate::predicates::predicate::{ArcPredicate, BoxPredicate, Predicate, RcPredicate};
+#[cfg(feature = "combinators")]
+use crate::functions::macros::impl_fn_ops_trait;
+use crate::predicates::predicate::{ArcPredicate, BoxPredicate, Predicate};
+#[cfg(feature = "rc")]
+use crate::predicates::predicate::RcPredicate;
 
 mod box_stateful_mutating_function;
 pub use box_stateful_mutating_function::BoxStatefulMutatingFunction;
+#[cfg(feature = "rc")]
 mod rc_stateful_mutating_function;
+#[cfg(feature = "rc")]
 pub use rc_stateful_mutating_function::RcStatefulMutatingFunction;
 mod arc_stateful_mutating_function;
 pub use arc_stateful_mutating_function::ArcStatefulMutatingFunction;
 mod box_conditional_stateful_mutating_function;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use box_conditional_stateful_mutating_function::BoxConditionalStatefulMutatingFunction;
+#[cfg(feature = "combinators")]
 pub use box_conditional_stateful_mutating_function::BoxConditionalStatefulMutatingFunction;
+#[cfg(feature = "rc")]
 mod rc_conditional_stateful_mutating_function;
+#[cfg(feature = "rc")]
+#[cfg(not(feature = "combinators"))]
+pub(crate) use rc_conditional_stateful_mutating_function::RcConditionalStatefulMutatingFunction;
+#[cfg(all(feature = "rc", feature = "combinators"))]
 pub use rc_conditional_stateful_mutating_function::RcConditionalStatefulMutatingFunction;
 mod arc_conditional_stateful_mutating_function;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use arc_conditional_stateful_mutating_function::ArcConditionalStatefulMutatingFunction;
+#[cfg(feature = "combinators")]
 pub use arc_conditional_stateful_mutating_function::ArcConditionalStatefulMutatingFunction;
+#[cfg(feature = "combinators")]
 mod fn_stateful_mutating_function_ops;
+#[cfg(feature = "combinators")]
 pub use fn_stateful_mutating_function_ops::FnStatefulMutatingFunctionOps;
 
 // =======================================================================
@@ -215,7 +235,7 @@ pub use fn_stateful_mutating_function_ops::FnStatefulMutatingFunctionOps;
 /// ## Type Conversion
 ///
 /// ```rust
-/// use qubit_function::StatefulMutatingFunction;
+/// use qubit_function::{BoxStatefulMutatingFunction, StatefulMutatingFunction};
 ///
 /// let mut count = 0;
 /// let closure = move |x: &mut i32| {
@@ -225,9 +245,7 @@ pub use fn_stateful_mutating_function_ops::FnStatefulMutatingFunctionOps;
 /// };
 ///
 /// // Convert to different ownership models
-/// let mut box_func = closure.into_box();
-/// // let mut rc_func = closure.into_rc();  // closure moved
-/// // let mut arc_func = closure.into_arc(); // closure moved
+/// let mut box_func = BoxStatefulMutatingFunction::new(closure);
 /// ```
 pub trait StatefulMutatingFunction<T, R> {
     /// Applies the function to the mutable reference and returns a result
@@ -286,4 +304,5 @@ where
 type ArcStatefulMutatingFunctionFn<T, R> = Arc<Mutex<dyn FnMut(&mut T) -> R + Send + 'static>>;
 
 /// Type alias for Rc-wrapped stateful mutating function
+#[cfg(feature = "rc")]
 type RcStatefulMutatingFunctionFn<T, R> = Rc<RefCell<dyn FnMut(&mut T) -> R>>;

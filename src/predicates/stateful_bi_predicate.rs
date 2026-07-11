@@ -16,6 +16,7 @@
 //! predicate needs native `FnMut` semantics, such as counters, rolling
 //! windows, sampling, or stateful filters over pairs of values.
 use std::cell::RefCell;
+#[cfg(feature = "rc")]
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -32,9 +33,13 @@ mod arc_stateful_bi_predicate;
 pub use arc_stateful_bi_predicate::ArcStatefulBiPredicate;
 mod box_stateful_bi_predicate;
 pub use box_stateful_bi_predicate::BoxStatefulBiPredicate;
+#[cfg(feature = "combinators")]
 mod fn_stateful_bi_predicate_ops;
+#[cfg(feature = "combinators")]
 pub use fn_stateful_bi_predicate_ops::FnStatefulBiPredicateOps;
+#[cfg(feature = "rc")]
 mod rc_stateful_bi_predicate;
+#[cfg(feature = "rc")]
 pub use rc_stateful_bi_predicate::RcStatefulBiPredicate;
 
 /// A stateful bi-predicate trait for testing pairs with mutable internal state.

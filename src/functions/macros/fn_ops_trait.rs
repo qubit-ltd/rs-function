@@ -284,7 +284,7 @@ macro_rules! impl_fn_ops_trait {
             {
                 impl_fn_ops_trait!(@let_self $box_type, this, self);
                 impl_fn_ops_trait!(@let_after $chained_function_trait, after, after);
-                $box_type::new(move |x| {
+                $crate::functions::macros::impl_function_new_callback!($chained_function_trait, $box_type, T, |x| {
                   impl_fn_ops_trait!(@apply_after $chained_function_trait, after, this(x))
                 })
             }

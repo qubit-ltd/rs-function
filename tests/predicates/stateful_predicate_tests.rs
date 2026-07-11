@@ -9,10 +9,7 @@
 // qubit-style: allow explicit-imports
 //! Unit tests for the stateful predicate module.
 
-use std::cell::{
-    Cell,
-    RefCell,
-};
+use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::{
     Arc,
@@ -30,51 +27,6 @@ use qubit_function::predicates::{
     StatefulPredicate,
 };
 
-#[test]
-fn test_stateful_predicate_default_conversions_allow_relaxed_generic_types() {
-    #[derive(Clone, Debug)]
-    struct BorrowedRc<'a> {
-        value: &'a str,
-    }
-
-    #[derive(Debug)]
-    struct BorrowedRcStatefulPredicate {
-        count: Cell<usize>,
-    }
-
-    impl Clone for BorrowedRcStatefulPredicate {
-        fn clone(&self) -> Self {
-            Self {
-                count: Cell::new(self.count.get()),
-            }
-        }
-    }
-
-    impl<'a> StatefulPredicate<BorrowedRc<'a>> for BorrowedRcStatefulPredicate {
-        fn test(&mut self, value: &BorrowedRc<'a>) -> bool {
-            self.count.set(self.count.get() + 1);
-            value.value == "left"
-        }
-    }
-
-    let text = String::from("left");
-    let value = BorrowedRc {
-        value: text.as_str(),
-    };
-    let predicate = BorrowedRcStatefulPredicate {
-        count: Cell::new(0),
-    };
-
-    assert!(predicate.clone().into_box().test(&value));
-    assert!(predicate.clone().into_rc().test(&value));
-    assert!(predicate.clone().into_arc().test(&value));
-    assert!(predicate.clone().into_fn()(&value));
-
-    assert!(predicate.to_box().test(&value));
-    assert!(predicate.to_rc().test(&value));
-    assert!(predicate.to_arc().test(&value));
-    assert!(predicate.to_fn()(&value));
-}
 
 #[test]
 fn test_closure_implements_stateful_predicate() {
@@ -189,63 +141,7 @@ fn test_box_stateful_predicate_debug_and_display() {
     assert_eq!(format!("{named}"), "BoxStatefulPredicate(positive)");
 }
 
-#[test]
-fn test_box_stateful_predicate_into_conversions() {
-    let calls = Rc::new(RefCell::new(0));
-    let counter = Rc::clone(&calls);
-    let predicate = BoxStatefulPredicate::new(move |value: &i32| {
-        *counter.borrow_mut() += 1;
-        *value > 0
-    });
 
-    let mut rc = predicate.into_rc();
-    assert!(rc.test(&5));
-    assert_eq!(*calls.borrow(), 1);
-
-    let mut boxed = rc.into_box();
-    assert!(!boxed.test(&-5));
-    assert_eq!(*calls.borrow(), 2);
-
-    let mut function = boxed.into_fn();
-    assert!(function(&5));
-    assert_eq!(*calls.borrow(), 3);
-}
-
-#[test]
-fn test_rc_stateful_predicate_common_methods_and_conversions() {
-    let mut always_true = RcStatefulPredicate::<i32>::always_true();
-    let mut always_false = RcStatefulPredicate::<i32>::always_false();
-    assert_eq!(always_true.name(), Some("always_true"));
-    assert_eq!(always_false.name(), Some("always_false"));
-    assert!(always_true.test(&0));
-    assert!(!always_false.test(&0));
-
-    let mut predicate =
-        RcStatefulPredicate::new_with_name("positive", |value: &i32| {
-            *value > 0
-        });
-    assert_eq!(predicate.name(), Some("positive"));
-    predicate.set_name("renamed");
-    assert_eq!(predicate.name(), Some("renamed"));
-    assert!(format!("{predicate:?}").contains("renamed"));
-    assert_eq!(format!("{predicate}"), "RcStatefulPredicate(renamed)");
-
-    let mut boxed = predicate.to_box();
-    let mut rc_clone = predicate.to_rc();
-    assert!(boxed.test(&1));
-    assert!(rc_clone.test(&1));
-    {
-        let mut function = predicate.to_fn();
-        assert!(function(&1));
-    }
-
-    let mut boxed_from_owned = predicate.clone().into_box();
-    let mut rc_from_owned = predicate.clone().into_rc();
-    let mut fn_from_owned = predicate.into_fn();
-    assert!(boxed_from_owned.test(&1));
-    assert!(rc_from_owned.test(&1));
-    assert!(fn_from_owned(&1));
-}
 
 #[test]
 fn test_rc_stateful_predicate_clone_shares_state() {
@@ -307,45 +203,6 @@ fn test_rc_stateful_predicate_self_composition_releases_borrow_between_calls() {
     assert_eq!(*calls.borrow(), 2);
 }
 
-#[test]
-fn test_arc_stateful_predicate_common_methods_and_conversions() {
-    let mut always_true = ArcStatefulPredicate::<i32>::always_true();
-    let mut always_false = ArcStatefulPredicate::<i32>::always_false();
-    assert_eq!(always_true.name(), Some("always_true"));
-    assert_eq!(always_false.name(), Some("always_false"));
-    assert!(always_true.test(&0));
-    assert!(!always_false.test(&0));
-
-    let mut predicate =
-        ArcStatefulPredicate::new_with_name("positive", |value: &i32| {
-            *value > 0
-        });
-    assert_eq!(predicate.name(), Some("positive"));
-    predicate.set_name("renamed");
-    assert_eq!(predicate.name(), Some("renamed"));
-    assert!(format!("{predicate:?}").contains("renamed"));
-    assert_eq!(format!("{predicate}"), "ArcStatefulPredicate(renamed)");
-
-    let mut boxed = predicate.to_box();
-    let mut rc = predicate.to_rc();
-    let mut arc_clone = predicate.to_arc();
-    assert!(boxed.test(&1));
-    assert!(rc.test(&1));
-    assert!(arc_clone.test(&1));
-    {
-        let mut function = predicate.to_fn();
-        assert!(function(&1));
-    }
-
-    let mut boxed_from_owned = predicate.clone().into_box();
-    let mut rc_from_owned = predicate.clone().into_rc();
-    let mut arc_from_owned = predicate.clone().into_arc();
-    let mut fn_from_owned = predicate.into_fn();
-    assert!(boxed_from_owned.test(&1));
-    assert!(rc_from_owned.test(&1));
-    assert!(arc_from_owned.test(&1));
-    assert!(fn_from_owned(&1));
-}
 
 #[test]
 fn test_arc_stateful_predicate_clone_shares_state() {

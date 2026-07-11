@@ -5,6 +5,7 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
+#![cfg(feature = "full")]
 
 //! Tests for public re-exports from the crate root and module roots.
 

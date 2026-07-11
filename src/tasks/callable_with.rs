@@ -19,9 +19,15 @@
 
 mod box_callable_with;
 pub use box_callable_with::BoxCallableWith;
+#[cfg(feature = "rc")]
+#[cfg(feature = "rc")]
 mod rc_callable_with;
+#[cfg(feature = "rc")]
+#[cfg(feature = "rc")]
 pub use rc_callable_with::RcCallableWith;
+#[cfg(feature = "stateful")]
 mod arc_callable_with;
+#[cfg(feature = "stateful")]
 pub use arc_callable_with::ArcCallableWith;
 
 /// A fallible, reusable computation that receives mutable input.
@@ -47,4 +53,13 @@ pub trait CallableWith<T, R, E> {
     /// Returns `Ok(R)` when the computation succeeds, or `Err(E)` when it
     /// fails. The exact error meaning is defined by the concrete callable.
     fn call_with(&mut self, input: &mut T) -> Result<R, E>;
+}
+
+impl<T, R, E, F> CallableWith<T, R, E> for F
+where
+    F: FnMut(&mut T) -> Result<R, E>,
+{
+    fn call_with(&mut self, input: &mut T) -> Result<R, E> {
+        self(input)
+    }
 }

@@ -309,17 +309,3 @@ impl Clone for RcTester {
         }
     }
 }
-
-// ============================================================================
-// Tester Implementation for Closures
-// ============================================================================
-
-impl<F> Tester for F
-where
-    F: Fn() -> bool,
-{
-    #[inline]
-    fn test(&self) -> bool {
-        self()
-    }
-}

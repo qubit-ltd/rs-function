@@ -50,7 +50,7 @@ fn demo_closure_supplier() {
 
     // Simple closure (Fn)
     let closure = || 42;
-    let boxed = Supplier::into_box(closure);
+    let boxed = BoxSupplier::new(closure);
     println!("Closure: {}", boxed.get());
 
     // Stateful closure (FnMut) - use StatefulSupplier
@@ -59,7 +59,7 @@ fn demo_closure_supplier() {
         counter += 1;
         counter
     };
-    let mut boxed_stateful = StatefulSupplier::into_box(stateful);
+    let mut boxed_stateful = BoxStatefulSupplier::new(stateful);
     println!("Counter: {}", boxed_stateful.get());
     println!("Counter: {}", boxed_stateful.get());
     println!("Counter: {}", boxed_stateful.get());
@@ -284,32 +284,32 @@ fn demo_type_conversions() {
 
     // Closure to Box (Fn)
     let closure = || 42;
-    let boxed = Supplier::into_box(closure);
+    let boxed = BoxSupplier::new(closure);
     println!("Closure -> Box: {}", boxed.get());
 
     // Closure to Rc (Fn)
     let closure = || 100;
-    let rc = Supplier::into_rc(closure);
+    let rc = RcSupplier::new(closure);
     println!("Closure -> Rc: {}", rc.get());
 
     // Closure to Arc (Fn)
     let closure = || 200;
-    let arc = Supplier::into_arc(closure);
+    let arc = ArcSupplier::new(closure);
     println!("Closure -> Arc: {}", arc.get());
 
     // Box to Rc (Fn)
     let boxed = BoxSupplier::new(|| 42);
-    let rc = boxed.into_rc();
+    let rc = RcSupplier::new(boxed);
     println!("Box -> Rc: {}", rc.get());
 
     // Arc to Box (Fn)
     let arc = ArcSupplier::new(|| 42);
-    let boxed = arc.into_box();
+    let boxed = BoxSupplier::new(arc);
     println!("Arc -> Box: {}", boxed.get());
 
     // Rc to Box (Fn)
     let rc = RcSupplier::new(|| 42);
-    let boxed = rc.into_box();
+    let boxed = BoxSupplier::new(rc);
     println!("Rc -> Box: {}", boxed.get());
 
     println!();

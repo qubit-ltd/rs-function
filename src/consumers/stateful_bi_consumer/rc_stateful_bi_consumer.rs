@@ -81,6 +81,11 @@ type RcStatefulBiConsumerFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U)>>;
 /// consumer.accept(&5, &3);
 /// assert_eq!(*log.borrow(), vec![8]);
 /// ```
+/// # Borrowing and reentrancy
+///
+/// Each call holds a mutable `RefCell` borrow while the user callback runs.
+/// Synchronous re-entry through the same shared wrapper panics with a borrow
+/// error. Mutations completed before a panic are not rolled back.
 pub struct RcStatefulBiConsumer<T, U> {
     pub(super) function: RcStatefulBiConsumerFn<T, U>,
     pub(super) name: Option<String>,
