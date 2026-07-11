@@ -142,22 +142,10 @@
 use std::rc::Rc;
 use std::sync::Arc;
 
-use crate::macros::{
-    impl_arc_conversions,
-    impl_box_conversions,
-    impl_closure_trait,
-    impl_rc_conversions,
-};
 use crate::predicates::macros::{
-    constants::{
-        ALWAYS_FALSE_NAME,
-        ALWAYS_TRUE_NAME,
-    },
-    impl_box_predicate_methods,
-    impl_predicate_clone,
-    impl_predicate_common_methods,
-    impl_predicate_debug_display,
-    impl_shared_predicate_methods,
+    constants::{ALWAYS_FALSE_NAME, ALWAYS_TRUE_NAME},
+    impl_box_predicate_methods, impl_predicate_clone, impl_predicate_common_methods,
+    impl_predicate_debug_display, impl_shared_predicate_methods,
 };
 
 /// Type alias for bi-predicate function to simplify complex types.
@@ -243,7 +231,7 @@ pub use fn_bi_predicate_ops::FnBiPredicateOps;
 ///     BoxBiPredicate};
 ///
 /// let closure = |x: &i32, y: &i32| x + y > 0;
-/// let boxed: BoxBiPredicate<i32, i32> = closure.into_box();
+/// let boxed = BoxBiPredicate::new(closure);
 /// assert!(boxed.test(&5, &3));
 /// ```
 ///
@@ -277,134 +265,14 @@ pub trait BiPredicate<T, U> {
     /// `true` if the values satisfy this bi-predicate, `false`
     /// otherwise.
     fn test(&self, first: &T, second: &U) -> bool;
+}
 
-    /// Converts this bi-predicate into a `BoxBiPredicate`.
-    ///
-    /// # Returns
-    ///
-    /// A `BoxBiPredicate` wrapping this bi-predicate.
-    ///
-    /// # Default Implementation
-    ///
-    /// The default implementation wraps the bi-predicate in a
-    /// closure that calls `test`, providing automatic conversion
-    /// for custom types that only implement the core `test`
-    /// method.
-    fn into_box(self) -> BoxBiPredicate<T, U>
-    where
-        Self: Sized + 'static,
-    {
-        BoxBiPredicate::new(move |first, second| self.test(first, second))
-    }
-
-    /// Converts this bi-predicate into an `RcBiPredicate`.
-    ///
-    /// # Returns
-    ///
-    /// An `RcBiPredicate` wrapping this bi-predicate.
-    ///
-    /// # Default Implementation
-    ///
-    /// The default implementation wraps the bi-predicate in a
-    /// closure that calls `test`, providing automatic conversion
-    /// for custom types that only implement the core `test`
-    /// method.
-    fn into_rc(self) -> RcBiPredicate<T, U>
-    where
-        Self: Sized + 'static,
-    {
-        RcBiPredicate::new(move |first, second| self.test(first, second))
-    }
-
-    /// Converts this bi-predicate into an `ArcBiPredicate`.
-    ///
-    /// # Returns
-    ///
-    /// An `ArcBiPredicate` wrapping this bi-predicate.
-    ///
-    /// # Default Implementation
-    ///
-    /// The default implementation wraps the bi-predicate in a
-    /// closure that calls `test`, providing automatic conversion
-    /// for custom types that only implement the core `test`
-    /// method. Note that this requires `Send + Sync` bounds for
-    /// thread-safe sharing.
-    fn into_arc(self) -> ArcBiPredicate<T, U>
-    where
-        Self: Sized + Send + Sync + 'static,
-    {
-        ArcBiPredicate::new(move |first, second| self.test(first, second))
-    }
-
-    /// Converts this bi-predicate into a closure that can be used
-    /// directly with standard library methods.
-    ///
-    /// This method consumes the bi-predicate and returns a closure
-    /// with signature `Fn(&T, &U) -> bool`. Since `Fn` is a subtrait
-    /// of `FnMut`, the returned closure can be used in any context
-    /// that requires either `Fn(&T, &U) -> bool` or
-    /// `FnMut(&T, &U) -> bool`.
-    ///
-    /// # Returns
-    ///
-    /// A closure implementing `Fn(&T, &U) -> bool` (also usable as
-    /// `FnMut(&T, &U) -> bool`).
-    ///
-    /// # Default Implementation
-    ///
-    /// The default implementation returns a closure that calls the
-    /// `test` method, providing automatic conversion for custom
-    /// types.
-    ///
-    /// # Examples
-    ///
-    /// ## Using with Iterator Methods
-    ///
-    /// ```rust
-    /// use qubit_function::{BiPredicate,
-    ///     BoxBiPredicate};
-    ///
-    /// let pred = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-    ///
-    /// let pairs = vec![(1, 2), (-1, 3), (5, -6)];
-    /// let mut closure = pred.into_fn();
-    /// let positives: Vec<_> = pairs.iter()
-    ///     .filter(|(x, y)| closure(x, y))
-    ///     .collect();
-    /// assert_eq!(positives, vec![&(1, 2), &(-1, 3)]);
-    /// ```
-    fn into_fn(self) -> impl Fn(&T, &U) -> bool
-    where
-        Self: Sized + 'static,
-    {
-        move |first, second| self.test(first, second)
-    }
-
-    fn to_box(&self) -> BoxBiPredicate<T, U>
-    where
-        Self: Sized + Clone + 'static,
-    {
-        self.clone().into_box()
-    }
-
-    fn to_rc(&self) -> RcBiPredicate<T, U>
-    where
-        Self: Sized + Clone + 'static,
-    {
-        self.clone().into_rc()
-    }
-
-    fn to_arc(&self) -> ArcBiPredicate<T, U>
-    where
-        Self: Sized + Clone + Send + Sync + 'static,
-    {
-        self.clone().into_arc()
-    }
-
-    fn to_fn(&self) -> impl Fn(&T, &U) -> bool
-    where
-        Self: Sized + Clone + 'static,
-    {
-        self.clone().into_fn()
+impl<T, U, F> BiPredicate<T, U> for F
+where
+    F: Fn(&T, &U) -> bool,
+{
+    #[inline]
+    fn test(&self, first: &T, second: &U) -> bool {
+        self(first, second)
     }
 }

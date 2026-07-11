@@ -11,15 +11,8 @@
 use std::ops::Not;
 
 use super::{
-    ALWAYS_FALSE_NAME,
-    ALWAYS_TRUE_NAME,
-    BiPredicate,
-    BiPredicateFn,
-    RcBiPredicate,
-    impl_box_conversions,
-    impl_box_predicate_methods,
-    impl_predicate_common_methods,
-    impl_predicate_debug_display,
+    ALWAYS_FALSE_NAME, ALWAYS_TRUE_NAME, BiPredicate, BiPredicateFn, impl_box_predicate_methods,
+    impl_predicate_common_methods, impl_predicate_debug_display,
 };
 
 /// A Box-based bi-predicate with single ownership.
@@ -50,7 +43,8 @@ impl<T, U> BoxBiPredicate<T, U> {
     // always_false()
     impl_predicate_common_methods!(
         BoxBiPredicate<T, U>,
-        (Fn(&T, &U) -> bool + 'static),
+        semantic (BiPredicate<T, U> + 'static),
+        |predicate| move |first: &T, second: &U| predicate.test(first, second),
         |f| Box::new(f)
     );
 
@@ -66,9 +60,7 @@ where
     type Output = BoxBiPredicate<T, U>;
 
     fn not(self) -> Self::Output {
-        BoxBiPredicate::new(move |first, second| {
-            !(self.function)(first, second)
-        })
+        BoxBiPredicate::new(move |first: &T, second: &U| !(self.function)(first, second))
     }
 }
 
@@ -80,11 +72,4 @@ impl<T, U> BiPredicate<T, U> for BoxBiPredicate<T, U> {
     fn test(&self, first: &T, second: &U) -> bool {
         (self.function)(first, second)
     }
-
-    // Generates: into_box(), into_rc(), into_fn()
-    impl_box_conversions!(
-        BoxBiPredicate<T, U>,
-        RcBiPredicate,
-        Fn(&T, &U) -> bool
-    );
 }

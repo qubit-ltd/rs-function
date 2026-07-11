@@ -9,19 +9,9 @@
 //! Defines the `RcStatefulBiTransformer` public type.
 
 use super::{
-    BiPredicate,
-    BoxBiTransformerOnce,
-    BoxStatefulBiTransformer,
-    Rc,
-    RcConditionalStatefulBiTransformer,
-    RefCell,
-    StatefulBiTransformer,
-    StatefulTransformer,
-    impl_rc_conversions,
-    impl_shared_transformer_methods,
-    impl_transformer_clone,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
+    BiPredicate, Rc, RcConditionalStatefulBiTransformer, RefCell, StatefulBiTransformer,
+    StatefulTransformer, impl_shared_transformer_methods, impl_transformer_clone,
+    impl_transformer_common_methods, impl_transformer_constant_method,
     impl_transformer_debug_display,
 };
 
@@ -57,7 +47,7 @@ impl<T, U, R> RcStatefulBiTransformer<T, U, R> {
     impl_shared_transformer_methods!(
         RcStatefulBiTransformer<T, U, R>,
         RcConditionalStatefulBiTransformer,
-        into_rc,
+        RcBiPredicate,
         StatefulTransformer,
         'static
     );
@@ -73,19 +63,9 @@ impl_transformer_debug_display!(RcStatefulBiTransformer<T, U, R>);
 impl_transformer_clone!(RcStatefulBiTransformer<T, U, R>);
 
 // Implement StatefulBiTransformer trait for RcStatefulBiTransformer
-impl<T, U, R> StatefulBiTransformer<T, U, R>
-    for RcStatefulBiTransformer<T, U, R>
-{
+impl<T, U, R> StatefulBiTransformer<T, U, R> for RcStatefulBiTransformer<T, U, R> {
     fn apply(&mut self, first: T, second: U) -> R {
         let mut self_fn = self.function.borrow_mut();
         self_fn(first, second)
     }
-
-    // Generate all conversion methods using the unified macro
-    impl_rc_conversions!(
-        RcStatefulBiTransformer<T, U, R>,
-        BoxStatefulBiTransformer,
-        BoxBiTransformerOnce,
-        FnMut(first: T, second: U) -> R
-    );
 }

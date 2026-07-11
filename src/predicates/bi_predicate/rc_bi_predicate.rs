@@ -11,17 +11,8 @@
 use std::ops::Not;
 
 use super::{
-    ALWAYS_FALSE_NAME,
-    ALWAYS_TRUE_NAME,
-    BiPredicate,
-    BiPredicateFn,
-    BoxBiPredicate,
-    Rc,
-    impl_predicate_clone,
-    impl_predicate_common_methods,
-    impl_predicate_debug_display,
-    impl_rc_conversions,
-    impl_shared_predicate_methods,
+    ALWAYS_FALSE_NAME, ALWAYS_TRUE_NAME, BiPredicate, BiPredicateFn, Rc, impl_predicate_clone,
+    impl_predicate_common_methods, impl_predicate_debug_display, impl_shared_predicate_methods,
 };
 
 /// An Rc-based bi-predicate with single-threaded shared ownership.
@@ -53,7 +44,8 @@ impl<T, U> RcBiPredicate<T, U> {
     // always_false()
     impl_predicate_common_methods!(
         RcBiPredicate<T, U>,
-        (Fn(&T, &U) -> bool + 'static),
+        semantic (BiPredicate<T, U> + 'static),
+        |predicate| move |first: &T, second: &U| predicate.test(first, second),
         |f| Rc::new(f)
     );
 
@@ -70,7 +62,7 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function;
-        RcBiPredicate::new(move |first, second| !function(first, second))
+        RcBiPredicate::new(move |first: &T, second: &U| !function(first, second))
     }
 }
 
@@ -83,7 +75,7 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function.clone();
-        RcBiPredicate::new(move |first, second| !function(first, second))
+        RcBiPredicate::new(move |first: &T, second: &U| !function(first, second))
     }
 }
 
@@ -99,11 +91,4 @@ impl<T, U> BiPredicate<T, U> for RcBiPredicate<T, U> {
     fn test(&self, first: &T, second: &U) -> bool {
         (self.function)(first, second)
     }
-
-    // Generates: into_box(), into_rc(), into_fn(), to_box(), to_rc(), to_fn()
-    impl_rc_conversions!(
-        RcBiPredicate<T, U>,
-        BoxBiPredicate,
-        Fn(first: &T, second: &U) -> bool
-    );
 }

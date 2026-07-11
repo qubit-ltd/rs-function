@@ -15,23 +15,12 @@
 //!
 //! - [`BoxFunctionOnce`]: Single ownership, one-time use
 use crate::functions::macros::{
-    impl_box_conditional_function,
-    impl_box_function_methods,
-    impl_conditional_function_debug_display,
-    impl_fn_ops_trait,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
-    impl_function_identity_method,
+    impl_box_conditional_function, impl_box_function_methods,
+    impl_conditional_function_debug_display, impl_fn_ops_trait, impl_function_common_methods,
+    impl_function_constant_method, impl_function_debug_display, impl_function_identity_method,
 };
-use crate::macros::{
-    impl_box_once_conversions,
-    impl_closure_once_trait,
-};
-use crate::predicates::predicate::{
-    BoxPredicate,
-    Predicate,
-};
+use crate::macros::{impl_box_once_conversions, impl_closure_once_trait};
+use crate::predicates::predicate::{BoxPredicate, Predicate};
 
 mod box_function_once;
 pub use box_function_once::BoxFunctionOnce;
@@ -65,116 +54,4 @@ pub trait FunctionOnce<T, R> {
     ///
     /// The computed output value
     fn apply(self, t: &T) -> R;
-
-    /// Converts to BoxFunctionOnce
-    ///
-    /// **⚠️ Consumes `self`**: The original function becomes unavailable
-    /// after calling this method.
-    ///
-    /// # Returns
-    ///
-    /// Returns `BoxFunctionOnce<T, R>`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::FunctionOnce;
-    ///
-    /// let double = |x: &i32| x * 2;
-    /// let boxed = double.into_box();
-    /// assert_eq!(boxed.apply(&21), 42);
-    /// ```
-    fn into_box(self) -> BoxFunctionOnce<T, R>
-    where
-        Self: Sized + 'static,
-    {
-        BoxFunctionOnce::new(move |input: &T| self.apply(input))
-    }
-
-    /// Converts function to a closure
-    ///
-    /// **⚠️ Consumes `self`**: The original function becomes unavailable
-    /// after calling this method.
-    ///
-    /// # Returns
-    ///
-    /// Returns a closure that implements `FnOnce(&T) -> R`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::FunctionOnce;
-    ///
-    /// let double = |x: &i32| x * 2;
-    /// let func = double.into_fn();
-    /// assert_eq!(func(&21), 42);
-    /// ```
-    fn into_fn(self) -> impl FnOnce(&T) -> R
-    where
-        Self: Sized + 'static,
-    {
-        move |input: &T| self.apply(input)
-    }
-
-    /// Converts to BoxFunctionOnce without consuming self
-    ///
-    /// **📌 Borrows `&self`**: The original function remains usable
-    /// after calling this method.
-    ///
-    /// # Default Implementation
-    ///
-    /// The default implementation creates a new `BoxFunctionOnce` that
-    /// captures a clone. Types implementing `Clone` can override this method
-    /// to provide more efficient conversions.
-    ///
-    /// # Returns
-    ///
-    /// Returns `BoxFunctionOnce<T, R>`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::FunctionOnce;
-    ///
-    /// let double = |x: &i32| x * 2;
-    /// let boxed = double.to_box();
-    /// assert_eq!(boxed.apply(&21), 42);
-    /// ```
-    fn to_box(&self) -> BoxFunctionOnce<T, R>
-    where
-        Self: Clone + 'static,
-    {
-        self.clone().into_box()
-    }
-
-    /// Converts function to a closure without consuming self
-    ///
-    /// **📌 Borrows `&self`**: The original function remains usable
-    /// after calling this method.
-    ///
-    /// # Default Implementation
-    ///
-    /// The default implementation creates a closure that captures a
-    /// clone of `self` and calls its `apply` method. Types can
-    /// override this method to provide more efficient conversions.
-    ///
-    /// # Returns
-    ///
-    /// Returns a closure that implements `FnOnce(&T) -> R`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::FunctionOnce;
-    ///
-    /// let double = |x: &i32| x * 2;
-    /// let func = double.to_fn();
-    /// assert_eq!(func(&21), 42);
-    /// ```
-    fn to_fn(&self) -> impl FnOnce(&T) -> R
-    where
-        Self: Clone + 'static,
-    {
-        self.clone().into_fn()
-    }
 }

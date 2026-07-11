@@ -9,12 +9,8 @@
 //! Defines the `ArcConditionalBiTransformer` public type.
 
 use super::{
-    ArcBiPredicate,
-    ArcBiTransformer,
-    BiPredicate,
-    BiTransformer,
-    impl_conditional_transformer_clone,
-    impl_conditional_transformer_debug_display,
+    ArcBiPredicate, ArcBiTransformer, BiPredicate, BiTransformer,
+    impl_conditional_transformer_clone, impl_conditional_transformer_debug_display,
     impl_shared_conditional_transformer,
 };
 

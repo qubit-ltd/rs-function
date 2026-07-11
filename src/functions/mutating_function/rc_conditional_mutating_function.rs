@@ -9,13 +9,8 @@
 //! Defines the `RcConditionalMutatingFunction` public type.
 
 use super::{
-    MutatingFunction,
-    Predicate,
-    RcMutatingFunction,
-    RcPredicate,
-    impl_conditional_function_clone,
-    impl_conditional_function_debug_display,
-    impl_shared_conditional_function,
+    MutatingFunction, Predicate, RcMutatingFunction, RcPredicate, impl_conditional_function_clone,
+    impl_conditional_function_debug_display, impl_shared_conditional_function,
 };
 
 // ============================================================================

@@ -9,19 +9,8 @@
 //! Defines the `RcSupplier` public type.
 
 use super::{
-    ArcSupplier,
-    BoxSupplier,
-    BoxSupplierOnce,
-    Predicate,
-    Rc,
-    Supplier,
-    Transformer,
-    impl_closure_trait,
-    impl_rc_conversions,
-    impl_shared_supplier_methods,
-    impl_supplier_clone,
-    impl_supplier_common_methods,
-    impl_supplier_debug_display,
+    Predicate, Rc, Supplier, Transformer, impl_closure_trait, impl_shared_supplier_methods,
+    impl_supplier_clone, impl_supplier_common_methods, impl_supplier_debug_display,
 };
 
 // ======================================================================
@@ -83,9 +72,7 @@ pub struct RcSupplier<T> {
 
 impl<T> RcSupplier<T> {
     // Generates: new(), new_with_name(), name(), set_name(), constant()
-    impl_supplier_common_methods!(RcSupplier<T>, (Fn() -> T + 'static), |f| {
-        Rc::new(f)
-    });
+    impl_supplier_common_methods!(RcSupplier<T>, (Fn() -> T + 'static), |f| { Rc::new(f) });
 
     // Generates: map(), filter(), zip()
     impl_shared_supplier_methods!(
@@ -105,14 +92,6 @@ impl<T> Supplier<T> for RcSupplier<T> {
     fn get(&self) -> T {
         (self.function)()
     }
-
-    // Generate all conversion methods using the unified macro
-    impl_rc_conversions!(
-        RcSupplier<T>,
-        BoxSupplier,
-        BoxSupplierOnce,
-        Fn() -> T
-    );
 }
 
 // ======================================================================

@@ -11,16 +11,8 @@
 use std::ops::Not;
 
 use super::{
-    ALWAYS_FALSE_NAME,
-    ALWAYS_TRUE_NAME,
-    BoxStatefulBiPredicate,
-    Rc,
-    RefCell,
-    StatefulBiPredicate,
-    impl_predicate_clone,
-    impl_predicate_common_methods,
-    impl_predicate_debug_display,
-    impl_rc_conversions,
+    ALWAYS_FALSE_NAME, ALWAYS_TRUE_NAME, Rc, RefCell, StatefulBiPredicate, impl_predicate_clone,
+    impl_predicate_common_methods, impl_predicate_debug_display,
 };
 
 type RcStatefulBiPredicateFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U) -> bool>>;
@@ -181,9 +173,7 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function;
-        RcStatefulBiPredicate::new(move |first, second| {
-            !((function.borrow_mut())(first, second))
-        })
+        RcStatefulBiPredicate::new(move |first, second| !((function.borrow_mut())(first, second)))
     }
 }
 
@@ -196,9 +186,7 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function.clone();
-        RcStatefulBiPredicate::new(move |first, second| {
-            !((function.borrow_mut())(first, second))
-        })
+        RcStatefulBiPredicate::new(move |first, second| !((function.borrow_mut())(first, second)))
     }
 }
 
@@ -213,11 +201,4 @@ impl<T, U> StatefulBiPredicate<T, U> for RcStatefulBiPredicate<T, U> {
     fn test(&mut self, first: &T, second: &U) -> bool {
         (self.function.borrow_mut())(first, second)
     }
-
-    // Generates: into_box(), into_rc(), into_fn(), to_box(), to_rc(), to_fn()
-    impl_rc_conversions!(
-        RcStatefulBiPredicate<T, U>,
-        BoxStatefulBiPredicate,
-        FnMut(first: &T, second: &U) -> bool
-    );
 }

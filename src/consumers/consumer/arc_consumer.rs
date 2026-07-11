@@ -9,19 +9,8 @@
 //! Defines the `ArcConsumer` public type.
 
 use super::{
-    Arc,
-    ArcConditionalConsumer,
-    BoxConsumer,
-    BoxConsumerOnce,
-    Consumer,
-    Predicate,
-    RcConsumer,
-    impl_arc_conversions,
-    impl_closure_trait,
-    impl_consumer_clone,
-    impl_consumer_common_methods,
-    impl_consumer_debug_display,
-    impl_shared_consumer_methods,
+    Arc, ArcConditionalConsumer, Consumer, Predicate, impl_closure_trait, impl_consumer_clone,
+    impl_consumer_common_methods, impl_consumer_debug_display, impl_shared_consumer_methods,
 };
 
 // ============================================================================
@@ -74,18 +63,16 @@ pub struct ArcConsumer<T> {
 
 impl<T> ArcConsumer<T> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
-    impl_consumer_common_methods!(
-        ArcConsumer<T>,
-        (Fn(&T) + Send + Sync + 'static),
-        |f| { Arc::new(f) }
-    );
+    impl_consumer_common_methods!(ArcConsumer<T>, (Fn(&T) + Send + Sync + 'static), |f| {
+        Arc::new(f)
+    });
 
     // Generates: when() and and_then() methods that borrow &self (Arc can
     // clone)
     impl_shared_consumer_methods!(
         ArcConsumer<T>,
         ArcConditionalConsumer,
-        into_arc,
+        ArcPredicate,
         Consumer,
         Send + Sync + 'static
     );
@@ -95,15 +82,6 @@ impl<T> Consumer<T> for ArcConsumer<T> {
     fn accept(&self, value: &T) {
         (self.function)(value)
     }
-
-    // Use macro to implement conversion methods
-    impl_arc_conversions!(
-        ArcConsumer<T>,
-        BoxConsumer,
-        RcConsumer,
-        BoxConsumerOnce,
-        Fn(t: &T)
-    );
 }
 
 // Use macro to generate Clone implementation

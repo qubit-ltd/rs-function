@@ -9,11 +9,7 @@
 //! Defines the `BoxConditionalBiConsumerOnce` public type.
 
 use super::{
-    BiConsumerOnce,
-    BiPredicate,
-    BoxBiConsumerOnce,
-    BoxBiPredicate,
-    impl_box_conditional_consumer,
+    BiConsumerOnce, BiPredicate, BoxBiConsumerOnce, BoxBiPredicate, impl_box_conditional_consumer,
     impl_conditional_consumer_debug_display,
 };
 
@@ -92,16 +88,6 @@ impl<T, U> BiConsumerOnce<T, U> for BoxConditionalBiConsumerOnce<T, U> {
     fn accept(self, first: &T, second: &U) {
         if self.predicate.test(first, second) {
             self.consumer.accept(first, second);
-        }
-    }
-
-    fn into_fn(self) -> impl FnOnce(&T, &U) {
-        let pred = self.predicate;
-        let consumer = self.consumer;
-        move |t: &T, u: &U| {
-            if pred.test(t, u) {
-                consumer.accept(t, u);
-            }
         }
     }
 }

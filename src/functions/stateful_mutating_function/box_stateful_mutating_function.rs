@@ -9,16 +9,8 @@
 //! Defines the `BoxStatefulMutatingFunction` public type.
 
 use super::{
-    BoxConditionalStatefulMutatingFunction,
-    BoxMutatingFunctionOnce,
-    Function,
-    Predicate,
-    RcStatefulMutatingFunction,
-    StatefulMutatingFunction,
-    impl_box_conversions,
-    impl_box_function_methods,
-    impl_function_common_methods,
-    impl_function_debug_display,
+    BoxConditionalStatefulMutatingFunction, Function, Predicate, StatefulMutatingFunction,
+    impl_box_function_methods, impl_function_common_methods, impl_function_debug_display,
     impl_function_identity_method,
 };
 
@@ -107,18 +99,8 @@ impl_function_identity_method!(BoxStatefulMutatingFunction<T, T>, mutating);
 
 // Implement StatefulMutatingFunction trait for BoxStatefulMutatingFunction<T,
 // R>
-impl<T, R> StatefulMutatingFunction<T, R>
-    for BoxStatefulMutatingFunction<T, R>
-{
+impl<T, R> StatefulMutatingFunction<T, R> for BoxStatefulMutatingFunction<T, R> {
     fn apply(&mut self, t: &mut T) -> R {
         (self.function)(t)
     }
-
-    // Generates: into_box(), into_rc(), into_fn(), into_once()
-    impl_box_conversions!(
-        BoxStatefulMutatingFunction<T, R>,
-        RcStatefulMutatingFunction,
-        FnMut(&mut T) -> R,
-        BoxMutatingFunctionOnce
-    );
 }

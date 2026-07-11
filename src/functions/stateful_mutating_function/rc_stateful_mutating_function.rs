@@ -9,21 +9,9 @@
 //! Defines the `RcStatefulMutatingFunction` public type.
 
 use super::{
-    BoxMutatingFunctionOnce,
-    BoxStatefulMutatingFunction,
-    Function,
-    Predicate,
-    Rc,
-    RcConditionalStatefulMutatingFunction,
-    RcStatefulMutatingFunctionFn,
-    RefCell,
-    StatefulMutatingFunction,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_debug_display,
-    impl_function_identity_method,
-    impl_rc_conversions,
-    impl_shared_function_methods,
+    Function, Predicate, Rc, RcConditionalStatefulMutatingFunction, RcStatefulMutatingFunctionFn,
+    RefCell, StatefulMutatingFunction, impl_function_clone, impl_function_common_methods,
+    impl_function_debug_display, impl_function_identity_method, impl_shared_function_methods,
 };
 
 // =======================================================================
@@ -91,7 +79,7 @@ impl<T, R> RcStatefulMutatingFunction<T, R> {
     impl_shared_function_methods!(
         RcStatefulMutatingFunction<T, R>,
         RcConditionalStatefulMutatingFunction,
-        into_rc,
+        RcPredicate,
         Function,  // chains a non-mutating function after this mutating function
         'static
     );
@@ -112,12 +100,4 @@ impl<T, R> StatefulMutatingFunction<T, R> for RcStatefulMutatingFunction<T, R> {
     fn apply(&mut self, t: &mut T) -> R {
         (self.function.borrow_mut())(t)
     }
-
-    // Use macro to implement conversion methods
-    impl_rc_conversions!(
-        RcStatefulMutatingFunction<T, R>,
-        BoxStatefulMutatingFunction,
-        BoxMutatingFunctionOnce,
-        FnMut(input: &mut T) -> R
-    );
 }

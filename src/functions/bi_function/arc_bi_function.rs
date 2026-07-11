@@ -9,21 +9,9 @@
 //! Defines the `ArcBiFunction` public type.
 
 use super::{
-    Arc,
-    ArcConditionalBiFunction,
-    BiFunction,
-    BiPredicate,
-    BoxBiFunction,
-    BoxBiFunctionOnce,
-    Function,
-    RcBiFunction,
-    impl_arc_conversions,
-    impl_closure_trait,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
-    impl_shared_function_methods,
+    Arc, ArcConditionalBiFunction, BiFunction, BiPredicate, Function, impl_closure_trait,
+    impl_function_clone, impl_function_common_methods, impl_function_constant_method,
+    impl_function_debug_display, impl_shared_function_methods,
 };
 
 type ArcBiFunctionFn<T, U, R> = Arc<dyn Fn(&T, &U) -> R + Send + Sync>;
@@ -58,7 +46,7 @@ impl<T, U, R> ArcBiFunction<T, U, R> {
     impl_shared_function_methods!(
         ArcBiFunction<T, U, R>,
         ArcConditionalBiFunction,
-        into_arc,
+        ArcBiPredicate,
         Function,
         Send + Sync + 'static
     );
@@ -78,15 +66,6 @@ impl<T, U, R> BiFunction<T, U, R> for ArcBiFunction<T, U, R> {
     fn apply(&self, first: &T, second: &U) -> R {
         (self.function)(first, second)
     }
-
-    // Use macro to implement conversion methods
-    impl_arc_conversions!(
-        ArcBiFunction<T, U, R>,
-        BoxBiFunction,
-        RcBiFunction,
-        BoxBiFunctionOnce,
-        Fn(t: &T, u: &U) -> R
-    );
 }
 
 // ============================================================================

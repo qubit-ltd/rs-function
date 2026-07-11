@@ -11,21 +11,11 @@
 use std::ops::Not;
 
 use super::{
-    ALWAYS_FALSE_NAME,
-    ALWAYS_TRUE_NAME,
-    Arc,
-    BoxStatefulPredicate,
-    Mutex,
-    RcStatefulPredicate,
-    StatefulPredicate,
-    impl_arc_conversions,
-    impl_predicate_clone,
-    impl_predicate_common_methods,
-    impl_predicate_debug_display,
+    ALWAYS_FALSE_NAME, ALWAYS_TRUE_NAME, Arc, Mutex, StatefulPredicate, impl_predicate_clone,
+    impl_predicate_common_methods, impl_predicate_debug_display,
 };
 
-type ArcStatefulPredicateFn<T> =
-    Arc<Mutex<dyn FnMut(&T) -> bool + Send + 'static>>;
+type ArcStatefulPredicateFn<T> = Arc<Mutex<dyn FnMut(&T) -> bool + Send + 'static>>;
 
 /// An Arc-based stateful predicate with thread-safe shared ownership.
 ///
@@ -205,15 +195,6 @@ impl<T> StatefulPredicate<T> for ArcStatefulPredicate<T> {
     fn test(&mut self, value: &T) -> bool {
         (self.function.lock())(value)
     }
-
-    // Generates: into_box, into_rc, into_arc, into_fn, to_box, to_rc, to_arc,
-    // to_fn
-    impl_arc_conversions!(
-        ArcStatefulPredicate<T>,
-        BoxStatefulPredicate,
-        RcStatefulPredicate,
-        FnMut(t: &T) -> bool
-    );
 }
 
 /// Implements `StatefulPredicate<T>` for `FnMut(&T) -> bool` closures.

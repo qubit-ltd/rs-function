@@ -65,324 +65,60 @@
 /// // );
 /// ```
 macro_rules! impl_closure_trait {
-  // ==================== Helper macro: generate into_once methods ====================
-
-  // Fn trait: into_once method
-  (@into_once_fn_method $once_type:ident, ($($generics:ident),*)) => {
-      #[inline]
-      fn into_once(self) -> $once_type<$($generics),*>
-      where
-          Self: Sized + 'static,
-      {
-          $once_type::new(self)
-      }
-  };
-
-  // FnMut trait: into_once method
-  (@into_once_fnmut_method $once_type:ident, ($($generics:ident),*), ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?) => {
-      #[inline]
-      fn into_once(mut self) -> $once_type<$($generics),*>
-      where
-          Self: Sized + 'static,
-      {
-          $once_type::new(move |$($arg: $arg_ty),*| self($($arg),*))
-      }
-  };
-
-  // ==================== Helper macro: generate to_once methods ====================
-
-  // Fn trait: to_once method
-  (@to_once_fn_method $once_type:ident, ($($generics:ident),*)) => {
-      #[inline]
-      fn to_once(&self) -> $once_type<$($generics),*>
-      where
-          Self: Clone + Sized + 'static,
-      {
-          $once_type::new(self.clone())
-      }
-  };
-
-  // FnMut trait: to_once method
-  (@to_once_fnmut_method $once_type:ident, ($($generics:ident),*), ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?) => {
-      #[inline]
-      fn to_once(&self) -> $once_type<$($generics),*>
-      where
-          Self: Clone + Sized + 'static,
-      {
-          let mut cloned = self.clone();
-          $once_type::new(move |$($arg: $arg_ty),*| cloned($($arg),*))
-      }
-  };
-
-  // ==================== Internal implementation: common Fn trait methods ====================
-
-  (
-      @impl_common_fn
-      $trait_name:ident < $($generics:ident),* >,
-      $method_name:ident,
-      $closure_trait:path,
-      ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
-  ) => {
-      // Core method: call the closure directly.
-      #[inline]
-      fn $method_name(&self, $($arg: $arg_ty),*) $(-> $ret)? {
-          self($($arg),*)
-      }
-
-      // ===== Conversion methods: derive wrapper type names with paste. =====
-
-      #[inline]
-      fn into_box(self) -> paste::paste! { [<Box $trait_name>] < $($generics),* > }
-      where
-          Self: Sized + 'static,
-      {
-          paste::paste! { [<Box $trait_name>]::new(self) }
-      }
-
-      #[inline]
-      fn into_rc(self) -> paste::paste! { [<Rc $trait_name>] < $($generics),* > }
-      where
-          Self: Sized + 'static,
-      {
-          paste::paste! { [<Rc $trait_name>]::new(self) }
-      }
-
-      #[inline]
-      fn into_fn(self) -> impl $closure_trait
-      where
-          Self: Sized + 'static,
-      {
-          self
-      }
-
-      // into_arc: Fn wrappers require Send + Sync.
-      #[inline]
-      fn into_arc(self) -> paste::paste! { [<Arc $trait_name>] < $($generics),* > }
-      where
-          Self: Sized + Send + Sync + 'static,
-      {
-          paste::paste! { [<Arc $trait_name>]::new(self) }
-      }
-
-      // ===== to_* methods: clone-based conversions. =====
-
-      #[inline]
-      fn to_box(&self) -> paste::paste! { [<Box $trait_name>] < $($generics),* > }
-      where
-          Self: Clone + Sized + 'static,
-      {
-          paste::paste! { [<Box $trait_name>]::new(self.clone()) }
-      }
-
-      #[inline]
-      fn to_rc(&self) -> paste::paste! { [<Rc $trait_name>] < $($generics),* > }
-      where
-          Self: Clone + Sized + 'static,
-      {
-          paste::paste! { [<Rc $trait_name>]::new(self.clone()) }
-      }
-
-      #[inline]
-      fn to_fn(&self) -> impl $closure_trait
-      where
-          Self: Clone + Sized + 'static,
-      {
-          self.clone()
-      }
-
-      // to_arc: Fn wrappers require Send + Sync.
-      #[inline]
-      fn to_arc(&self) -> paste::paste! { [<Arc $trait_name>] < $($generics),* > }
-      where
-          Self: Clone + Sized + Send + Sync + 'static,
-      {
-          paste::paste! { [<Arc $trait_name>]::new(self.clone()) }
-      }
-  };
-
-  // ==================== Internal implementation: common FnMut trait methods ====================
-
-  (
-      @impl_common_fnmut
-      $trait_name:ident < $($generics:ident),* >,
-      $method_name:ident,
-      $closure_trait:path,
-      ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
-  ) => {
-      // Core method: call the closure directly.
-      #[inline]
-      fn $method_name(&mut self, $($arg: $arg_ty),*) $(-> $ret)? {
-          self($($arg),*)
-      }
-
-      // ===== Conversion methods: derive wrapper type names with paste. =====
-
-      #[inline]
-      fn into_box(self) -> paste::paste! { [<Box $trait_name>] < $($generics),* > }
-      where
-          Self: Sized + 'static,
-      {
-          paste::paste! { [<Box $trait_name>]::new(self) }
-      }
-
-      #[inline]
-      fn into_rc(self) -> paste::paste! { [<Rc $trait_name>] < $($generics),* > }
-      where
-          Self: Sized + 'static,
-      {
-          paste::paste! { [<Rc $trait_name>]::new(self) }
-      }
-
-      #[inline]
-      fn into_fn(self) -> impl $closure_trait
-      where
-          Self: Sized + 'static,
-      {
-          self
-      }
-
-      // into_arc: FnMut wrappers only require Send.
-      #[inline]
-      fn into_arc(self) -> paste::paste! { [<Arc $trait_name>] < $($generics),* > }
-      where
-          Self: Sized + Send + 'static,
-      {
-          paste::paste! { [<Arc $trait_name>]::new(self) }
-      }
-
-      // ===== to_* methods: clone-based conversions. =====
-
-      #[inline]
-      fn to_box(&self) -> paste::paste! { [<Box $trait_name>] < $($generics),* > }
-      where
-          Self: Clone + Sized + 'static,
-      {
-          paste::paste! { [<Box $trait_name>]::new(self.clone()) }
-      }
-
-      #[inline]
-      fn to_rc(&self) -> paste::paste! { [<Rc $trait_name>] < $($generics),* > }
-      where
-          Self: Clone + Sized + 'static,
-      {
-          paste::paste! { [<Rc $trait_name>]::new(self.clone()) }
-      }
-
-      #[inline]
-      fn to_fn(&self) -> impl $closure_trait
-      where
-          Self: Clone + Sized + 'static,
-      {
-          self.clone()
-      }
-
-      // to_arc: FnMut wrappers only require Send.
-      #[inline]
-      fn to_arc(&self) -> paste::paste! { [<Arc $trait_name>] < $($generics),* > }
-      where
-          Self: Clone + Sized + Send + 'static,
-      {
-          let cloned = self.clone();
-          paste::paste! { [<Arc $trait_name>]::new(cloned) }
-      }
-  };
-
-
-  // ==================== Public interface: matches the impl_rc_conversions pattern ====================
-
-  // Regular trait (Fn) - with once conversion
-  (
-      $trait_name:ident < $($generics:ident),* >,
-      $method_name:ident,
-      $once_type:ident,
-      Fn($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
-  ) => {
-      impl<$($generics,)* F> $trait_name<$($generics),*> for F
-      where
-          F: Fn($($arg_ty),*) $(-> $ret)?,
-      {
-          // Generate common methods.
-          impl_closure_trait!(
-              @impl_common_fn
-              $trait_name<$($generics),*>,
-              $method_name,
-              Fn($($arg_ty),*) $(-> $ret)?,
-              ($($arg : $arg_ty),*) $(-> $ret)?
-          );
-
-          // Generate into_once and to_once methods.
-          impl_closure_trait!(@into_once_fn_method $once_type, ($($generics),*));
-          impl_closure_trait!(@to_once_fn_method $once_type, ($($generics),*));
-      }
-  };
-
-  // Regular trait (Fn) - without once version
-  (
-      $trait_name:ident < $($generics:ident),* >,
-      $method_name:ident,
-      Fn($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
-  ) => {
-      impl<$($generics,)* F> $trait_name<$($generics),*> for F
-      where
-          F: Fn($($arg_ty),*) $(-> $ret)?,
-      {
-          // Generate common methods without into_once/to_once.
-          impl_closure_trait!(
-              @impl_common_fn
-              $trait_name<$($generics),*>,
-              $method_name,
-              Fn($($arg_ty),*) $(-> $ret)?,
-              ($($arg : $arg_ty),*) $(-> $ret)?
-          );
-      }
-  };
-
-  // Stateful trait (FnMut) - with once conversion
-  (
-      $trait_name:ident < $($generics:ident),* >,
-      $method_name:ident,
-      $once_type:ident,
-      FnMut($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
-  ) => {
-      impl<$($generics,)* F> $trait_name<$($generics),*> for F
-      where
-          F: FnMut($($arg_ty),*) $(-> $ret)?,
-      {
-          // Generate common methods.
-          impl_closure_trait!(
-              @impl_common_fnmut
-              $trait_name<$($generics),*>,
-              $method_name,
-              FnMut($($arg_ty),*) $(-> $ret)?,
-              ($($arg : $arg_ty),*) $(-> $ret)?
-          );
-
-          // Generate into_once and to_once methods.
-          impl_closure_trait!(@into_once_fnmut_method $once_type, ($($generics),*), ($($arg : $arg_ty),*) $(-> $ret)?);
-          impl_closure_trait!(@to_once_fnmut_method $once_type, ($($generics),*), ($($arg : $arg_ty),*) $(-> $ret)?);
-      }
-  };
-
-  // Stateful trait (FnMut) - without once version
-  (
-      $trait_name:ident < $($generics:ident),* >,
-      $method_name:ident,
-      FnMut($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
-  ) => {
-      impl<$($generics,)* F> $trait_name<$($generics),*> for F
-      where
-          F: FnMut($($arg_ty),*) $(-> $ret)?,
-      {
-          // Generate common methods without into_once/to_once.
-          impl_closure_trait!(
-              @impl_common_fnmut
-              $trait_name<$($generics),*>,
-              $method_name,
-              FnMut($($arg_ty),*) $(-> $ret)?,
-              ($($arg : $arg_ty),*) $(-> $ret)?
-          );
-      }
-  };
+    (
+        $trait_name:ident < $($generics:ident),* >,
+        $method_name:ident,
+        $once_type:ident,
+        Fn($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
+    ) => {
+        impl_closure_trait!(
+            $trait_name<$($generics),*>,
+            $method_name,
+            Fn($($arg : $arg_ty),*) $(-> $ret)?
+        );
+    };
+    (
+        $trait_name:ident < $($generics:ident),* >,
+        $method_name:ident,
+        Fn($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
+    ) => {
+        impl<$($generics,)* F> $trait_name<$($generics),*> for F
+        where
+            F: Fn($($arg_ty),*) $(-> $ret)?,
+        {
+            #[inline]
+            fn $method_name(&self, $($arg: $arg_ty),*) $(-> $ret)? {
+                self($($arg),*)
+            }
+        }
+    };
+    (
+        $trait_name:ident < $($generics:ident),* >,
+        $method_name:ident,
+        $once_type:ident,
+        FnMut($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
+    ) => {
+        impl_closure_trait!(
+            $trait_name<$($generics),*>,
+            $method_name,
+            FnMut($($arg : $arg_ty),*) $(-> $ret)?
+        );
+    };
+    (
+        $trait_name:ident < $($generics:ident),* >,
+        $method_name:ident,
+        FnMut($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
+    ) => {
+        impl<$($generics,)* F> $trait_name<$($generics),*> for F
+        where
+            F: FnMut($($arg_ty),*) $(-> $ret)?,
+        {
+            #[inline]
+            fn $method_name(&mut self, $($arg: $arg_ty),*) $(-> $ret)? {
+                self($($arg),*)
+            }
+        }
+    };
 }
 
 pub(crate) use impl_closure_trait;

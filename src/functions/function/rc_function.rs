@@ -9,19 +9,9 @@
 //! Defines the `RcFunction` public type.
 
 use super::{
-    BoxFunction,
-    BoxFunctionOnce,
-    Function,
-    Predicate,
-    Rc,
-    RcConditionalFunction,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
-    impl_function_identity_method,
-    impl_rc_conversions,
-    impl_shared_function_methods,
+    Function, Predicate, Rc, RcConditionalFunction, impl_function_clone,
+    impl_function_common_methods, impl_function_constant_method, impl_function_debug_display,
+    impl_function_identity_method, impl_shared_function_methods,
 };
 
 // ============================================================================
@@ -59,7 +49,7 @@ impl<T, R> RcFunction<T, R> {
     impl_shared_function_methods!(
         RcFunction<T, R>,
         RcConditionalFunction,
-        into_rc,
+        RcPredicate,
         Function,
         'static
     );
@@ -82,12 +72,4 @@ impl<T, R> Function<T, R> for RcFunction<T, R> {
     fn apply(&self, t: &T) -> R {
         (self.function)(t)
     }
-
-    // Use macro to implement conversion methods
-    impl_rc_conversions!(
-        RcFunction<T, R>,
-        BoxFunction,
-        BoxFunctionOnce,
-        Fn(t: &T) -> R
-    );
 }

@@ -22,6 +22,23 @@ use std::sync::{
     Mutex,
 };
 
+struct PositivePredicate;
+
+impl Predicate<i32> for PositivePredicate {
+    fn test(&self, value: &i32) -> bool {
+        *value > 0
+    }
+}
+
+#[test]
+fn test_new_accepts_custom_predicate() {
+    let boxed = BoxPredicate::new(PositivePredicate);
+    let shared = ArcPredicate::new(PositivePredicate);
+
+    assert!(boxed.test(&1));
+    assert!(!shared.test(&-1));
+}
+
 #[test]
 fn test_predicate_default_conversions_allow_relaxed_generic_types() {
     #[derive(Debug)]

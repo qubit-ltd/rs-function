@@ -9,13 +9,8 @@
 //! Defines the `RcConditionalFunction` public type.
 
 use super::{
-    Function,
-    Predicate,
-    RcFunction,
-    RcPredicate,
-    impl_conditional_function_clone,
-    impl_conditional_function_debug_display,
-    impl_shared_conditional_function,
+    Function, Predicate, RcFunction, RcPredicate, impl_conditional_function_clone,
+    impl_conditional_function_debug_display, impl_shared_conditional_function,
 };
 
 // ============================================================================

@@ -168,7 +168,7 @@ macro_rules! impl_box_transformer_methods {
         {
             $conditional_type {
                 transformer: self,
-                predicate: predicate.into_box(),
+                predicate: $crate::BoxPredicate::new(predicate),
             }
         }
 
@@ -262,7 +262,7 @@ macro_rules! impl_box_transformer_methods {
         {
             $conditional_type {
                 transformer: self,
-                predicate: predicate.into_box(),
+                predicate: $crate::BoxBiPredicate::new(predicate),
             }
         }
 

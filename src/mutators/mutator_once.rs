@@ -135,21 +135,12 @@
 //! init.run(&mut result);
 //! assert_eq!(result, vec![42, 1, 2, 3]);
 //! ```
-use crate::macros::{
-    impl_box_once_conversions,
-    impl_closure_once_trait,
-};
+use crate::macros::{impl_box_once_conversions, impl_closure_once_trait};
 use crate::mutators::macros::{
-    impl_box_conditional_mutator,
-    impl_box_mutator_methods,
-    impl_conditional_mutator_debug_display,
-    impl_mutator_common_methods,
-    impl_mutator_debug_display,
+    impl_box_conditional_mutator, impl_box_mutator_methods, impl_conditional_mutator_debug_display,
+    impl_mutator_common_methods, impl_mutator_debug_display,
 };
-use crate::predicates::predicate::{
-    BoxPredicate,
-    Predicate,
-};
+use crate::predicates::predicate::{BoxPredicate, Predicate};
 
 mod box_mutator_once;
 pub use box_mutator_once::BoxMutatorOnce;
@@ -247,64 +238,4 @@ pub trait MutatorOnce<T> {
     /// assert_eq!(target, vec![0, 1, 2, 3]);
     /// ```
     fn apply(self, value: &mut T);
-
-    /// Converts to `BoxMutatorOnce` (consuming)
-    ///
-    /// Consumes `self` and returns an owned `BoxMutatorOnce<T>`. The default
-    /// implementation simply wraps the consuming `apply(self, &mut T)` call
-    /// in a `Box<dyn FnOnce(&mut T)>`. Types that can provide a cheaper or
-    /// identity conversion (for example `BoxMutatorOnce` itself) should
-    /// override this method.
-    ///
-    /// # Note
-    ///
-    /// - This method consumes the source value.
-    /// - Implementors may return `self` directly when `Self` is already a
-    ///   `BoxMutatorOnce<T>` to avoid the extra wrapper allocation.
-    fn into_box(self) -> BoxMutatorOnce<T>
-    where
-        Self: Sized + 'static,
-    {
-        BoxMutatorOnce::new(move |t| self.apply(t))
-    }
-
-    /// Converts to a consuming closure `FnOnce(&mut T)`
-    ///
-    /// Consumes `self` and returns a closure that, when invoked, calls
-    /// `apply(self, &mut T)`. This is the default, straightforward
-    /// implementation; types that can produce a more direct function pointer
-    /// or avoid additional captures may override it.
-    fn into_fn(self) -> impl FnOnce(&mut T)
-    where
-        Self: Sized + 'static,
-    {
-        move |t| self.apply(t)
-    }
-
-    /// Non-consuming adapter to `BoxMutatorOnce`
-    ///
-    /// Creates a `BoxMutatorOnce<T>` that does not consume `self`. The default
-    /// implementation requires `Self: Clone` and clones the receiver for the
-    /// stored closure; the clone is consumed when the boxed mutator is invoked.
-    /// Types that can provide a zero-cost adapter (for example clonable
-    /// closures) should override this method to avoid unnecessary allocations.
-    fn to_box(&self) -> BoxMutatorOnce<T>
-    where
-        Self: Sized + Clone + 'static,
-    {
-        self.clone().into_box()
-    }
-
-    /// Non-consuming adapter to a callable `FnOnce(&mut T)`
-    ///
-    /// Returns a closure that does not consume `self`. The default requires
-    /// `Self: Clone` and clones `self` for the captured closure; the clone is
-    /// consumed when the returned closure is invoked. Implementors may provide
-    /// more efficient adapters for specific types.
-    fn to_fn(&self) -> impl FnOnce(&mut T)
-    where
-        Self: Sized + Clone + 'static,
-    {
-        self.clone().into_fn()
-    }
 }

@@ -10,13 +10,7 @@
 
 use std::ops::Not;
 
-use super::{
-    Arc,
-    Rc,
-    Tester,
-    box_tester::BoxTester,
-    rc_tester::RcTester,
-};
+use super::{Arc, Tester};
 
 // ============================================================================
 // ArcTester: Thread-Safe Shared Ownership Implementation
@@ -454,59 +448,6 @@ impl Tester for ArcTester {
     #[inline]
     fn test(&self) -> bool {
         (self.function)()
-    }
-
-    #[inline]
-    fn into_box(self) -> BoxTester {
-        let func = self.function;
-        BoxTester {
-            function: Box::new(move || func()),
-        }
-    }
-
-    #[inline]
-    fn into_rc(self) -> RcTester {
-        let func = self.function;
-        RcTester {
-            function: Rc::new(move || func()),
-        }
-    }
-
-    #[inline]
-    fn into_arc(self) -> ArcTester {
-        self
-    }
-
-    #[inline]
-    fn into_fn(self) -> impl Fn() -> bool {
-        move || (self.function)()
-    }
-
-    #[inline]
-    fn to_box(&self) -> BoxTester {
-        let self_fn = self.function.clone();
-        BoxTester {
-            function: Box::new(move || self_fn()),
-        }
-    }
-
-    #[inline]
-    fn to_rc(&self) -> RcTester {
-        let self_fn = self.function.clone();
-        RcTester {
-            function: Rc::new(move || self_fn()),
-        }
-    }
-
-    #[inline]
-    fn to_arc(&self) -> ArcTester {
-        self.clone()
-    }
-
-    #[inline]
-    fn to_fn(&self) -> impl Fn() -> bool {
-        let self_fn = self.function.clone();
-        move || self_fn()
     }
 }
 

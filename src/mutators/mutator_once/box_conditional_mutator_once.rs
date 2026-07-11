@@ -9,11 +9,7 @@
 //! Defines the `BoxConditionalMutatorOnce` public type.
 
 use super::{
-    BoxMutatorOnce,
-    BoxPredicate,
-    MutatorOnce,
-    Predicate,
-    impl_box_conditional_mutator,
+    BoxMutatorOnce, BoxPredicate, MutatorOnce, Predicate, impl_box_conditional_mutator,
     impl_conditional_mutator_debug_display,
 };
 
@@ -104,26 +100,12 @@ pub struct BoxConditionalMutatorOnce<T> {
 }
 
 // Generate and_then and or_else methods using macro
-impl_box_conditional_mutator!(
-    BoxConditionalMutatorOnce<T>,
-    BoxMutatorOnce,
-    MutatorOnce
-);
+impl_box_conditional_mutator!(BoxConditionalMutatorOnce<T>, BoxMutatorOnce, MutatorOnce);
 
 impl<T> MutatorOnce<T> for BoxConditionalMutatorOnce<T> {
     fn apply(self, value: &mut T) {
         if self.predicate.test(value) {
             self.mutator.apply(value);
-        }
-    }
-
-    fn into_fn(self) -> impl FnOnce(&mut T) {
-        let pred = self.predicate;
-        let mutator = self.mutator;
-        move |t: &mut T| {
-            if pred.test(t) {
-                mutator.apply(t);
-            }
         }
     }
 }

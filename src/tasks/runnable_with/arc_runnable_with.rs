@@ -14,21 +14,11 @@ use parking_lot::Mutex;
 
 use crate::{
     functions::macros::impl_function_debug_display,
-    macros::{
-        impl_arc_conversions,
-        impl_closure_trait,
-        impl_common_name_methods,
-        impl_common_new_methods,
-    },
-    tasks::runnable_with::{
-        BoxRunnableWith,
-        RcRunnableWith,
-        RunnableWith,
-    },
+    macros::{impl_closure_trait, impl_common_name_methods, impl_common_new_methods},
+    tasks::runnable_with::{BoxRunnableWith, RcRunnableWith, RunnableWith},
 };
 
-type ArcRunnableWithFn<T, E> =
-    Arc<Mutex<dyn FnMut(&mut T) -> Result<(), E> + Send>>;
+type ArcRunnableWithFn<T, E> = Arc<Mutex<dyn FnMut(&mut T) -> Result<(), E> + Send>>;
 
 /// Thread-safe shared runnable with mutable input.
 ///
@@ -67,13 +57,6 @@ impl<T, E> RunnableWith<T, E> for ArcRunnableWith<T, E> {
     fn run_with(&mut self, input: &mut T) -> Result<(), E> {
         (self.function.lock())(input)
     }
-
-    impl_arc_conversions!(
-        ArcRunnableWith<T, E>,
-        BoxRunnableWith,
-        RcRunnableWith,
-        FnMut(input: &mut T) -> Result<(), E>
-    );
 }
 
 impl_closure_trait!(

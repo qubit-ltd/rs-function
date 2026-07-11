@@ -9,16 +9,7 @@
 //! Defines the `ArcSupplier` public type.
 
 use super::{
-    Arc,
-    BoxSupplier,
-    BoxSupplierOnce,
-    Predicate,
-    RcSupplier,
-    Supplier,
-    Transformer,
-    impl_arc_conversions,
-    impl_shared_supplier_methods,
-    impl_supplier_clone,
+    Arc, Predicate, Supplier, Transformer, impl_shared_supplier_methods, impl_supplier_clone,
     impl_supplier_debug_display,
 };
 
@@ -152,13 +143,4 @@ impl<T> Supplier<T> for ArcSupplier<T> {
     fn get(&self) -> T {
         (self.function)()
     }
-
-    // Use macro to implement conversion methods
-    impl_arc_conversions!(
-        ArcSupplier<T>,
-        BoxSupplier,
-        RcSupplier,
-        BoxSupplierOnce,
-        Fn() -> T
-    );
 }

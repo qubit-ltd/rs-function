@@ -9,11 +9,7 @@
 //! Defines the `BoxConditionalConsumerOnce` public type.
 
 use super::{
-    BoxConsumerOnce,
-    BoxPredicate,
-    ConsumerOnce,
-    Predicate,
-    impl_box_conditional_consumer,
+    BoxConsumerOnce, BoxPredicate, ConsumerOnce, Predicate, impl_box_conditional_consumer,
     impl_conditional_consumer_debug_display,
 };
 
@@ -83,11 +79,7 @@ pub struct BoxConditionalConsumerOnce<T> {
 }
 
 // Generate and_then and or_else methods using macro
-impl_box_conditional_consumer!(
-    BoxConditionalConsumerOnce<T>,
-    BoxConsumerOnce,
-    ConsumerOnce
-);
+impl_box_conditional_consumer!(BoxConditionalConsumerOnce<T>, BoxConsumerOnce, ConsumerOnce);
 
 impl<T> ConsumerOnce<T> for BoxConditionalConsumerOnce<T> {
     fn accept(self, value: &T) {
@@ -95,20 +87,6 @@ impl<T> ConsumerOnce<T> for BoxConditionalConsumerOnce<T> {
             self.consumer.accept(value);
         }
     }
-
-    fn into_fn(self) -> impl FnOnce(&T) {
-        let pred = self.predicate;
-        let consumer = self.consumer;
-        move |t: &T| {
-            if pred.test(t) {
-                consumer.accept(t);
-            }
-        }
-    }
-
-    // do NOT override ConsumerOnce::to_xxxx() because
-    // BoxConditionalConsumerOnce is not Clone and calling
-    // BoxConditionalConsumerOnce::to_xxxx() will cause a compile error
 }
 
 // Use macro to generate Debug and Display implementations

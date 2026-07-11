@@ -9,15 +9,8 @@
 //! Defines the `BoxConsumer` public type.
 
 use super::{
-    BoxConditionalConsumer,
-    BoxConsumerOnce,
-    Consumer,
-    Predicate,
-    RcConsumer,
-    impl_box_consumer_methods,
-    impl_box_conversions,
-    impl_consumer_common_methods,
-    impl_consumer_debug_display,
+    BoxConditionalConsumer, Consumer, Predicate, impl_box_consumer_methods,
+    impl_consumer_common_methods, impl_consumer_debug_display,
 };
 
 // ============================================================================
@@ -62,25 +55,16 @@ pub struct BoxConsumer<T> {
 
 impl<T> BoxConsumer<T> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
-    impl_consumer_common_methods!(BoxConsumer<T>, (Fn(&T) + 'static), |f| {
-        Box::new(f)
-    });
+    impl_consumer_common_methods!(BoxConsumer<T>, (Fn(&T) + 'static), |f| { Box::new(f) });
 
     // Generates: when() and and_then() methods that consume self
-    impl_box_consumer_methods!(
-        BoxConsumer<T>,
-        BoxConditionalConsumer,
-        Consumer
-    );
+    impl_box_consumer_methods!(BoxConsumer<T>, BoxConditionalConsumer, Consumer);
 }
 
 impl<T> Consumer<T> for BoxConsumer<T> {
     fn accept(&self, value: &T) {
         (self.function)(value)
     }
-
-    // Generates: into_box(), into_rc(), into_fn(), into_once()
-    impl_box_conversions!(BoxConsumer<T>, RcConsumer, Fn(&T), BoxConsumerOnce);
 }
 
 // Use macro to generate Debug and Display implementations

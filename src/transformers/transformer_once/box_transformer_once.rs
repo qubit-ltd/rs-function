@@ -9,14 +9,8 @@
 //! Defines the `BoxTransformerOnce` public type.
 
 use super::{
-    BoxConditionalTransformerOnce,
-    Predicate,
-    TransformerOnce,
-    impl_box_once_conversions,
-    impl_box_transformer_methods,
-    impl_closure_once_trait,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
+    BoxConditionalTransformerOnce, Predicate, TransformerOnce, impl_box_transformer_methods,
+    impl_closure_once_trait, impl_transformer_common_methods, impl_transformer_constant_method,
     impl_transformer_debug_display,
 };
 
@@ -61,12 +55,6 @@ impl<T, R> TransformerOnce<T, R> for BoxTransformerOnce<T, R> {
     fn apply(self, input: T) -> R {
         (self.function)(input)
     }
-
-    impl_box_once_conversions!(
-        BoxTransformerOnce<T, R>,
-        TransformerOnce,
-        FnOnce(T) -> R
-    );
 }
 
 // Implement constant method for BoxTransformerOnce

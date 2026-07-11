@@ -131,23 +131,13 @@
 use crate::functions::{
     function_once::FunctionOnce,
     macros::{
-        impl_box_conditional_function,
-        impl_box_function_methods,
-        impl_conditional_function_debug_display,
-        impl_fn_ops_trait,
-        impl_function_common_methods,
-        impl_function_debug_display,
-        impl_function_identity_method,
+        impl_box_conditional_function, impl_box_function_methods,
+        impl_conditional_function_debug_display, impl_fn_ops_trait, impl_function_common_methods,
+        impl_function_debug_display, impl_function_identity_method,
     },
 };
-use crate::macros::{
-    impl_box_once_conversions,
-    impl_closure_once_trait,
-};
-use crate::predicates::predicate::{
-    BoxPredicate,
-    Predicate,
-};
+use crate::macros::{impl_box_once_conversions, impl_closure_once_trait};
+use crate::predicates::predicate::{BoxPredicate, Predicate};
 
 mod box_mutating_function_once;
 pub use box_mutating_function_once::BoxMutatingFunctionOnce;
@@ -263,65 +253,4 @@ pub trait MutatingFunctionOnce<T, R> {
     /// assert_eq!(target, vec![0, 1, 2, 3]);
     /// ```
     fn apply(self, t: &mut T) -> R;
-
-    /// Converts to `BoxMutatingFunctionOnce` (consuming)
-    ///
-    /// Consumes `self` and returns an owned `BoxMutatingFunctionOnce<T, R>`.
-    /// The default implementation simply wraps the consuming
-    /// `apply(self, &mut T)` call in a `Box<dyn FnOnce(&mut T) -> R>`.
-    /// Types that can provide a cheaper or identity conversion (for example
-    /// `BoxMutatingFunctionOnce` itself) should override this method.
-    ///
-    /// # Note
-    ///
-    /// - This method consumes the source value.
-    /// - Implementors may return `self` directly when `Self` is already a
-    ///   `BoxMutatingFunctionOnce<T, R>` to avoid the extra wrapper allocation.
-    fn into_box(self) -> BoxMutatingFunctionOnce<T, R>
-    where
-        Self: Sized + 'static,
-    {
-        BoxMutatingFunctionOnce::new(move |t| self.apply(t))
-    }
-
-    /// Converts to a consuming closure `FnOnce(&mut T) -> R`
-    ///
-    /// Consumes `self` and returns a closure that, when invoked, calls
-    /// `apply(self, &mut T)`. This is the default, straightforward
-    /// implementation; types that can produce a more direct function pointer
-    /// or avoid additional captures may override it.
-    fn into_fn(self) -> impl FnOnce(&mut T) -> R
-    where
-        Self: Sized + 'static,
-    {
-        move |t| self.apply(t)
-    }
-
-    /// Non-consuming adapter to `BoxMutatingFunctionOnce`
-    ///
-    /// Creates a `BoxMutatingFunctionOnce<T, R>` that does not consume
-    /// `self`. The default implementation requires `Self: Clone` and clones
-    /// the receiver for the stored closure; the clone is consumed when the
-    /// boxed function is invoked. Types that can provide a zero-cost adapter
-    /// (for example clonable closures) should override this method to avoid
-    /// unnecessary allocations.
-    fn to_box(&self) -> BoxMutatingFunctionOnce<T, R>
-    where
-        Self: Sized + Clone + 'static,
-    {
-        self.clone().into_box()
-    }
-
-    /// Non-consuming adapter to a callable `FnOnce(&mut T) -> R`
-    ///
-    /// Returns a closure that does not consume `self`. The default requires
-    /// `Self: Clone` and clones `self` for the captured closure; the clone is
-    /// consumed when the returned closure is invoked. Implementors may
-    /// provide more efficient adapters for specific types.
-    fn to_fn(&self) -> impl FnOnce(&mut T) -> R
-    where
-        Self: Sized + Clone + 'static,
-    {
-        self.clone().into_fn()
-    }
 }

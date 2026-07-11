@@ -9,15 +9,8 @@
 //! Defines the `BoxStatefulBiConsumer` public type.
 
 use super::{
-    BiPredicate,
-    BoxBiConsumerOnce,
-    BoxConditionalStatefulBiConsumer,
-    RcStatefulBiConsumer,
-    StatefulBiConsumer,
-    impl_box_consumer_methods,
-    impl_box_conversions,
-    impl_consumer_common_methods,
-    impl_consumer_debug_display,
+    BiPredicate, BoxConditionalStatefulBiConsumer, StatefulBiConsumer, impl_box_consumer_methods,
+    impl_consumer_common_methods, impl_consumer_debug_display,
 };
 
 type BoxStatefulBiConsumerFn<T, U> = Box<dyn FnMut(&T, &U)>;
@@ -95,14 +88,6 @@ impl<T, U> StatefulBiConsumer<T, U> for BoxStatefulBiConsumer<T, U> {
     fn accept(&mut self, first: &T, second: &U) {
         (self.function)(first, second)
     }
-
-    // Generates: into_box(), into_rc(), into_fn(), into_once()
-    impl_box_conversions!(
-        BoxStatefulBiConsumer<T, U>,
-        RcStatefulBiConsumer,
-        FnMut(&T, &U),
-        BoxBiConsumerOnce
-    );
 }
 
 // Use macro to generate Debug and Display implementations

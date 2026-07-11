@@ -11,12 +11,7 @@
 use std::ops::Not;
 
 use super::{
-    ALWAYS_FALSE_NAME,
-    ALWAYS_TRUE_NAME,
-    RcStatefulPredicate,
-    StatefulPredicate,
-    impl_box_conversions,
-    impl_predicate_common_methods,
+    ALWAYS_FALSE_NAME, ALWAYS_TRUE_NAME, StatefulPredicate, impl_predicate_common_methods,
     impl_predicate_debug_display,
 };
 
@@ -57,9 +52,7 @@ impl<T> BoxStatefulPredicate<T> {
         P: StatefulPredicate<T> + 'static,
         T: 'static,
     {
-        BoxStatefulPredicate::new(move |value| {
-            self.test(value) && other.test(value)
-        })
+        BoxStatefulPredicate::new(move |value| self.test(value) && other.test(value))
     }
 
     /// Returns a predicate representing logical OR with another predicate.
@@ -80,9 +73,7 @@ impl<T> BoxStatefulPredicate<T> {
         P: StatefulPredicate<T> + 'static,
         T: 'static,
     {
-        BoxStatefulPredicate::new(move |value| {
-            self.test(value) || other.test(value)
-        })
+        BoxStatefulPredicate::new(move |value| self.test(value) || other.test(value))
     }
 
     /// Returns a predicate representing logical NAND with another predicate.
@@ -102,9 +93,7 @@ impl<T> BoxStatefulPredicate<T> {
         P: StatefulPredicate<T> + 'static,
         T: 'static,
     {
-        BoxStatefulPredicate::new(move |value| {
-            !(self.test(value) && other.test(value))
-        })
+        BoxStatefulPredicate::new(move |value| !(self.test(value) && other.test(value)))
     }
 
     /// Returns a predicate representing logical XOR with another predicate.
@@ -125,9 +114,7 @@ impl<T> BoxStatefulPredicate<T> {
         P: StatefulPredicate<T> + 'static,
         T: 'static,
     {
-        BoxStatefulPredicate::new(move |value| {
-            self.test(value) ^ other.test(value)
-        })
+        BoxStatefulPredicate::new(move |value| self.test(value) ^ other.test(value))
     }
 
     /// Returns a predicate representing logical NOR with another predicate.
@@ -147,9 +134,7 @@ impl<T> BoxStatefulPredicate<T> {
         P: StatefulPredicate<T> + 'static,
         T: 'static,
     {
-        BoxStatefulPredicate::new(move |value| {
-            !(self.test(value) || other.test(value))
-        })
+        BoxStatefulPredicate::new(move |value| !(self.test(value) || other.test(value)))
     }
 }
 
@@ -173,11 +158,4 @@ impl<T> StatefulPredicate<T> for BoxStatefulPredicate<T> {
     fn test(&mut self, value: &T) -> bool {
         (self.function)(value)
     }
-
-    // Generates: into_box(), into_rc(), into_fn()
-    impl_box_conversions!(
-        BoxStatefulPredicate<T>,
-        RcStatefulPredicate,
-        FnMut(&T) -> bool
-    );
 }

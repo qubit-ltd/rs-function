@@ -9,16 +9,9 @@
 //! Defines the `BoxMutatingFunctionOnce` public type.
 
 use super::{
-    BoxConditionalMutatingFunctionOnce,
-    FunctionOnce,
-    MutatingFunctionOnce,
-    Predicate,
-    impl_box_function_methods,
-    impl_box_once_conversions,
-    impl_closure_once_trait,
-    impl_function_common_methods,
-    impl_function_debug_display,
-    impl_function_identity_method,
+    BoxConditionalMutatingFunctionOnce, FunctionOnce, MutatingFunctionOnce, Predicate,
+    impl_box_function_methods, impl_closure_once_trait, impl_function_common_methods,
+    impl_function_debug_display, impl_function_identity_method,
 };
 
 // =======================================================================
@@ -129,12 +122,6 @@ impl<T, R> MutatingFunctionOnce<T, R> for BoxMutatingFunctionOnce<T, R> {
     fn apply(self, input: &mut T) -> R {
         (self.function)(input)
     }
-
-    impl_box_once_conversions!(
-        BoxMutatingFunctionOnce<T, R>,
-        MutatingFunctionOnce,
-        FnOnce(&mut T) -> R
-    );
 }
 
 // Generates: identity() method for BoxMutatingFunctionOnce<T, T>

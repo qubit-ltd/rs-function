@@ -10,15 +10,9 @@
 
 use crate::{
     functions::macros::impl_function_debug_display,
-    macros::{
-        impl_common_name_methods,
-        impl_common_new_methods,
-    },
+    macros::{impl_common_name_methods, impl_common_new_methods},
     suppliers::supplier_once::SupplierOnce,
-    tasks::{
-        callable_once::CallableOnce,
-        runnable_once::LocalBoxRunnableOnce,
-    },
+    tasks::callable_once::CallableOnce,
 };
 
 // ============================================================================
@@ -90,10 +84,7 @@ impl<R, E> LocalBoxCallableOnce<R, E> {
     {
         let name = self.name;
         let function = self.function;
-        LocalBoxCallableOnce::new_with_optional_name(
-            move || function().map(mapper),
-            name,
-        )
+        LocalBoxCallableOnce::new_with_optional_name(move || function().map(mapper), name)
     }
 
     /// Maps the error value of this callable.
@@ -114,10 +105,7 @@ impl<R, E> LocalBoxCallableOnce<R, E> {
     {
         let name = self.name;
         let function = self.function;
-        LocalBoxCallableOnce::new_with_optional_name(
-            move || function().map_err(mapper),
-            name,
-        )
+        LocalBoxCallableOnce::new_with_optional_name(move || function().map_err(mapper), name)
     }
 
     /// Chains another fallible computation after this callable succeeds.
@@ -139,10 +127,7 @@ impl<R, E> LocalBoxCallableOnce<R, E> {
     {
         let name = self.name;
         let function = self.function;
-        LocalBoxCallableOnce::new_with_optional_name(
-            move || function().and_then(next),
-            name,
-        )
+        LocalBoxCallableOnce::new_with_optional_name(move || function().and_then(next), name)
     }
 }
 
@@ -151,39 +136,6 @@ impl<R, E> CallableOnce<R, E> for LocalBoxCallableOnce<R, E> {
     #[inline]
     fn call(self) -> Result<R, E> {
         (self.function)()
-    }
-
-    /// Converts this local boxed callable into itself.
-    #[inline]
-    fn into_local_box(self) -> LocalBoxCallableOnce<R, E>
-    where
-        Self: Sized + 'static,
-    {
-        self
-    }
-
-    /// Extracts the underlying local one-time closure.
-    #[inline]
-    fn into_fn(self) -> impl FnOnce() -> Result<R, E>
-    where
-        Self: Sized + 'static,
-    {
-        self.function
-    }
-
-    /// Converts this local boxed callable into a local boxed runnable while
-    /// preserving its name.
-    #[inline]
-    fn into_local_runnable(self) -> LocalBoxRunnableOnce<E>
-    where
-        Self: Sized + 'static,
-    {
-        let name = self.name;
-        let function = self.function;
-        LocalBoxRunnableOnce::new_with_optional_name(
-            move || function().map(|_| ()),
-            name,
-        )
     }
 }
 

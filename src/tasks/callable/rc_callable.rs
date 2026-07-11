@@ -12,20 +12,9 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::{
-    macros::{
-        impl_common_name_methods,
-        impl_common_new_methods,
-        impl_rc_conversions,
-    },
+    macros::{impl_common_name_methods, impl_common_new_methods},
     suppliers::supplier::Supplier,
-    tasks::{
-        callable::{
-            BoxCallable,
-            Callable,
-        },
-        callable_once::LocalBoxCallableOnce,
-        runnable::BoxRunnable,
-    },
+    tasks::callable::Callable,
 };
 
 // ============================================================================
@@ -90,51 +79,5 @@ impl<R, E> Callable<R, E> for RcCallable<R, E> {
     #[inline]
     fn call(&mut self) -> Result<R, E> {
         (self.function.borrow_mut())()
-    }
-
-    impl_rc_conversions!(
-        RcCallable<R, E>,
-        BoxCallable,
-        FnMut() -> Result<R, E>
-    );
-
-    /// Converts this shared callable into a local boxed one-time callable while
-    /// preserving its name.
-    #[inline]
-    fn into_local_once(self) -> LocalBoxCallableOnce<R, E>
-    where
-        Self: Sized + 'static,
-    {
-        let name = self.name;
-        let function = self.function;
-        LocalBoxCallableOnce::new_with_optional_name(
-            move || (function.borrow_mut())(),
-            name,
-        )
-    }
-
-    /// Converts this shared callable into a local boxed one-time callable
-    /// without consuming `self`.
-    #[inline]
-    fn to_local_once(&self) -> LocalBoxCallableOnce<R, E>
-    where
-        Self: Clone + Sized + 'static,
-    {
-        self.clone().into_local_once()
-    }
-
-    /// Converts this shared callable into a boxed runnable while preserving its
-    /// name.
-    #[inline]
-    fn into_runnable(self) -> BoxRunnable<E>
-    where
-        Self: Sized + 'static,
-    {
-        let name = self.name;
-        let function = self.function;
-        BoxRunnable::new_with_optional_name(
-            move || (function.borrow_mut())().map(|_| ()),
-            name,
-        )
     }
 }

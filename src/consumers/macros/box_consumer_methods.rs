@@ -200,7 +200,7 @@ macro_rules! impl_box_consumer_methods {
         {
             $conditional_type {
                 consumer: self,
-                predicate: predicate.into_box(),
+                predicate: $crate::BoxPredicate::new(predicate),
             }
         }
 
@@ -303,7 +303,7 @@ macro_rules! impl_box_consumer_methods {
         {
             $conditional_type {
                 consumer: self,
-                predicate: predicate.into_box(),
+                predicate: $crate::BoxBiPredicate::new(predicate),
             }
         }
 

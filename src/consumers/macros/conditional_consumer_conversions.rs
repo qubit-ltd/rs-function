@@ -128,7 +128,7 @@ macro_rules! impl_conditional_consumer_conversions {
         where
             Self: 'static,
         {
-            let pred = self.predicate.into_rc();
+            let pred = $crate::RcPredicate::new(self.predicate);
             impl_conditional_consumer_conversions!(@let_consumer $fn_trait, consumer, self.consumer.into_rc());
             $rc_type::new(move |t| {
                 if pred.test(t) {
@@ -171,7 +171,7 @@ macro_rules! impl_conditional_consumer_conversions {
         where
             Self: 'static,
         {
-            let pred = self.predicate.into_rc();
+            let pred = $crate::RcBiPredicate::new(self.predicate);
             impl_conditional_consumer_conversions!(@let_consumer $fn_trait, consumer, self.consumer.into_rc());
             $rc_type::new_with_optional_name(
                 move |t, u| {

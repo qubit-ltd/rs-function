@@ -9,14 +9,8 @@
 //! Defines the `BoxBiConsumerOnce` public type.
 
 use super::{
-    BiConsumerOnce,
-    BiConsumerOnceFn,
-    BiPredicate,
-    BoxConditionalBiConsumerOnce,
-    impl_box_consumer_methods,
-    impl_box_once_conversions,
-    impl_closure_once_trait,
-    impl_consumer_common_methods,
+    BiConsumerOnce, BiConsumerOnceFn, BiPredicate, BoxConditionalBiConsumerOnce,
+    impl_box_consumer_methods, impl_closure_once_trait, impl_consumer_common_methods,
     impl_consumer_debug_display,
 };
 
@@ -90,12 +84,6 @@ impl<T, U> BiConsumerOnce<T, U> for BoxBiConsumerOnce<T, U> {
     fn accept(self, first: &T, second: &U) {
         (self.function)(first, second)
     }
-
-    impl_box_once_conversions!(
-        BoxBiConsumerOnce<T, U>,
-        BiConsumerOnce,
-        FnOnce(&T, &U)
-    );
 }
 
 // Use macro to generate Debug and Display implementations

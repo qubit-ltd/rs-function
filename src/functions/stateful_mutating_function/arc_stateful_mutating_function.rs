@@ -9,22 +9,9 @@
 //! Defines the `ArcStatefulMutatingFunction` public type.
 
 use super::{
-    Arc,
-    ArcConditionalStatefulMutatingFunction,
-    ArcStatefulMutatingFunctionFn,
-    BoxMutatingFunctionOnce,
-    BoxStatefulMutatingFunction,
-    Function,
-    Mutex,
-    Predicate,
-    RcStatefulMutatingFunction,
-    StatefulMutatingFunction,
-    impl_arc_conversions,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_debug_display,
-    impl_function_identity_method,
-    impl_shared_function_methods,
+    Arc, ArcConditionalStatefulMutatingFunction, ArcStatefulMutatingFunctionFn, Function, Mutex,
+    Predicate, StatefulMutatingFunction, impl_function_clone, impl_function_common_methods,
+    impl_function_debug_display, impl_function_identity_method, impl_shared_function_methods,
 };
 
 // =======================================================================
@@ -90,7 +77,7 @@ impl<T, R> ArcStatefulMutatingFunction<T, R> {
     impl_shared_function_methods!(
         ArcStatefulMutatingFunction<T, R>,
         ArcConditionalStatefulMutatingFunction,
-        into_arc,
+        ArcPredicate,
         Function,  // chains a non-mutating function after this mutating function
         Send + Sync + 'static
     );
@@ -108,105 +95,8 @@ impl_function_identity_method!(ArcStatefulMutatingFunction<T, T>, mutating);
 
 // Implement StatefulMutatingFunction trait for ArcStatefulMutatingFunction<T,
 // R>
-impl<T, R> StatefulMutatingFunction<T, R>
-    for ArcStatefulMutatingFunction<T, R>
-{
+impl<T, R> StatefulMutatingFunction<T, R> for ArcStatefulMutatingFunction<T, R> {
     fn apply(&mut self, t: &mut T) -> R {
         (self.function.lock())(t)
-    }
-
-    // Use macro to implement conversion methods
-    impl_arc_conversions!(
-        ArcStatefulMutatingFunction<T, R>,
-        BoxStatefulMutatingFunction,
-        RcStatefulMutatingFunction,
-        BoxMutatingFunctionOnce,
-        FnMut(input: &mut T) -> R
-    );
-}
-
-// =======================================================================
-// 6. Implement StatefulMutatingFunction trait for closures
-// =======================================================================
-
-impl<T, R, F> StatefulMutatingFunction<T, R> for F
-where
-    F: FnMut(&mut T) -> R,
-{
-    fn apply(&mut self, input: &mut T) -> R {
-        self(input)
-    }
-
-    fn into_box(self) -> BoxStatefulMutatingFunction<T, R>
-    where
-        Self: Sized + 'static,
-    {
-        BoxStatefulMutatingFunction::new(self)
-    }
-
-    fn into_rc(self) -> RcStatefulMutatingFunction<T, R>
-    where
-        Self: Sized + 'static,
-    {
-        RcStatefulMutatingFunction::new(self)
-    }
-
-    fn into_arc(self) -> ArcStatefulMutatingFunction<T, R>
-    where
-        Self: Sized + Send + 'static,
-    {
-        ArcStatefulMutatingFunction::new(self)
-    }
-
-    fn into_fn(self) -> impl FnMut(&mut T) -> R
-    where
-        Self: Sized + 'static,
-    {
-        self
-    }
-
-    fn to_box(&self) -> BoxStatefulMutatingFunction<T, R>
-    where
-        Self: Sized + Clone + 'static,
-    {
-        let cloned = self.clone();
-        BoxStatefulMutatingFunction::new(cloned)
-    }
-
-    fn to_rc(&self) -> RcStatefulMutatingFunction<T, R>
-    where
-        Self: Sized + Clone + 'static,
-    {
-        let cloned = self.clone();
-        RcStatefulMutatingFunction::new(cloned)
-    }
-
-    fn to_arc(&self) -> ArcStatefulMutatingFunction<T, R>
-    where
-        Self: Sized + Clone + Send + 'static,
-    {
-        let cloned = self.clone();
-        ArcStatefulMutatingFunction::new(cloned)
-    }
-
-    fn to_fn(&self) -> impl FnMut(&mut T) -> R
-    where
-        Self: Sized + Clone + 'static,
-    {
-        self.clone()
-    }
-
-    fn into_once(self) -> BoxMutatingFunctionOnce<T, R>
-    where
-        Self: Sized + 'static,
-    {
-        BoxMutatingFunctionOnce::new(self)
-    }
-
-    fn to_once(&self) -> BoxMutatingFunctionOnce<T, R>
-    where
-        Self: Sized + Clone + 'static,
-    {
-        BoxMutatingFunctionOnce::new(self.clone())
     }
 }

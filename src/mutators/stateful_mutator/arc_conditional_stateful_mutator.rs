@@ -9,16 +9,8 @@
 //! Defines the `ArcConditionalStatefulMutator` public type.
 
 use super::{
-    ArcPredicate,
-    ArcStatefulMutator,
-    BoxStatefulMutator,
-    Predicate,
-    RcStatefulMutator,
-    StatefulMutator,
-    impl_conditional_mutator_clone,
-    impl_conditional_mutator_conversions,
-    impl_conditional_mutator_debug_display,
-    impl_shared_conditional_mutator,
+    ArcPredicate, ArcStatefulMutator, Predicate, StatefulMutator, impl_conditional_mutator_clone,
+    impl_conditional_mutator_debug_display, impl_shared_conditional_mutator,
 };
 
 // ============================================================================
@@ -76,13 +68,6 @@ impl<T> StatefulMutator<T> for ArcConditionalStatefulMutator<T> {
             self.mutator.apply(value);
         }
     }
-
-    // Generates: into_box(), into_rc(), into_fn()
-    impl_conditional_mutator_conversions!(
-        BoxStatefulMutator<T>,
-        RcStatefulMutator,
-        FnMut
-    );
 }
 
 // Generate Clone trait implementation for conditional mutator

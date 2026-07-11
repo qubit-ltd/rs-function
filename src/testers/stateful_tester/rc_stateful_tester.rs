@@ -7,16 +7,9 @@
 // =============================================================================
 //! Defines the `RcStatefulTester` public type.
 
-use std::{
-    cell::RefCell,
-    ops::Not,
-};
+use std::{cell::RefCell, ops::Not};
 
-use super::{
-    Rc,
-    StatefulTester,
-    box_stateful_tester::BoxStatefulTester,
-};
+use super::{Rc, StatefulTester};
 
 type RcStatefulTesterFn = Rc<RefCell<dyn FnMut() -> bool>>;
 
@@ -138,16 +131,5 @@ impl StatefulTester for RcStatefulTester {
     #[inline]
     fn test(&mut self) -> bool {
         (self.function.borrow_mut())()
-    }
-
-    #[inline]
-    fn into_box(self) -> BoxStatefulTester {
-        let function = self.function;
-        BoxStatefulTester::new(move || (function.borrow_mut())())
-    }
-
-    #[inline]
-    fn into_rc(self) -> RcStatefulTester {
-        self
     }
 }

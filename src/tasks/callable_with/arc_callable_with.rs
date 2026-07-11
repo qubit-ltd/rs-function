@@ -14,24 +14,11 @@ use parking_lot::Mutex;
 
 use crate::{
     functions::macros::impl_function_debug_display,
-    macros::{
-        impl_arc_conversions,
-        impl_closure_trait,
-        impl_common_name_methods,
-        impl_common_new_methods,
-    },
-    tasks::{
-        callable_with::{
-            BoxCallableWith,
-            CallableWith,
-            RcCallableWith,
-        },
-        runnable_with::BoxRunnableWith,
-    },
+    macros::{impl_closure_trait, impl_common_name_methods, impl_common_new_methods},
+    tasks::callable_with::{BoxCallableWith, CallableWith, RcCallableWith},
 };
 
-type ArcCallableWithFn<T, R, E> =
-    Arc<Mutex<dyn FnMut(&mut T) -> Result<R, E> + Send>>;
+type ArcCallableWithFn<T, R, E> = Arc<Mutex<dyn FnMut(&mut T) -> Result<R, E> + Send>>;
 
 /// Thread-safe shared callable with mutable input.
 ///
@@ -69,28 +56,6 @@ impl<T, R, E> CallableWith<T, R, E> for ArcCallableWith<T, R, E> {
     #[inline]
     fn call_with(&mut self, input: &mut T) -> Result<R, E> {
         (self.function.lock())(input)
-    }
-
-    impl_arc_conversions!(
-        ArcCallableWith<T, R, E>,
-        BoxCallableWith,
-        RcCallableWith,
-        FnMut(input: &mut T) -> Result<R, E>
-    );
-
-    /// Converts this shared callable into a boxed runnable while preserving its
-    /// name.
-    #[inline]
-    fn into_runnable_with(self) -> BoxRunnableWith<T, E>
-    where
-        Self: Sized + 'static,
-    {
-        let name = self.name;
-        let function = self.function;
-        BoxRunnableWith::new_with_optional_name(
-            move |input| (function.lock())(input).map(|_| ()),
-            name,
-        )
     }
 }
 

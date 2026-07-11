@@ -20,54 +20,26 @@ pub mod stateful_bi_consumer;
 pub mod stateful_consumer;
 
 pub use bi_consumer::{
-    ArcBiConsumer,
-    ArcConditionalBiConsumer,
-    BiConsumer,
-    BoxBiConsumer,
-    BoxConditionalBiConsumer,
-    FnBiConsumerOps,
-    RcBiConsumer,
-    RcConditionalBiConsumer,
+    ArcBiConsumer, ArcConditionalBiConsumer, BiConsumer, BoxBiConsumer, BoxConditionalBiConsumer,
+    FnBiConsumerOps, RcBiConsumer, RcConditionalBiConsumer,
 };
 pub use bi_consumer_once::{
-    BiConsumerOnce,
-    BoxBiConsumerOnce,
-    BoxConditionalBiConsumerOnce,
-    FnBiConsumerOnceOps,
+    BiConsumerOnce, BoxBiConsumerOnce, BoxConditionalBiConsumerOnce, FnBiConsumerOnceOps,
 };
 pub use consumer::{
-    ArcConditionalConsumer,
-    ArcConsumer,
-    BoxConditionalConsumer,
-    BoxConsumer,
-    Consumer,
-    FnConsumerOps,
-    RcConditionalConsumer,
-    RcConsumer,
+    ArcConditionalConsumer, ArcConsumer, BoxConditionalConsumer, BoxConsumer, Consumer,
+    FnConsumerOps, RcConditionalConsumer, RcConsumer,
 };
 pub use consumer_once::{
-    BoxConditionalConsumerOnce,
-    BoxConsumerOnce,
-    ConsumerOnce,
-    FnConsumerOnceOps,
+    BoxConditionalConsumerOnce, BoxConsumerOnce, ConsumerOnce, FnConsumerOnceOps,
 };
 pub use stateful_bi_consumer::{
-    ArcConditionalStatefulBiConsumer,
-    ArcStatefulBiConsumer,
-    BoxConditionalStatefulBiConsumer,
-    BoxStatefulBiConsumer,
-    FnStatefulBiConsumerOps,
-    RcConditionalStatefulBiConsumer,
-    RcStatefulBiConsumer,
-    StatefulBiConsumer,
+    ArcConditionalStatefulBiConsumer, ArcStatefulBiConsumer, BoxConditionalStatefulBiConsumer,
+    BoxStatefulBiConsumer, FnStatefulBiConsumerOps, RcConditionalStatefulBiConsumer,
+    RcStatefulBiConsumer, StatefulBiConsumer,
 };
 pub use stateful_consumer::{
-    ArcConditionalStatefulConsumer,
-    ArcStatefulConsumer,
-    BoxConditionalStatefulConsumer,
-    BoxStatefulConsumer,
-    FnStatefulConsumerOps,
-    RcConditionalStatefulConsumer,
-    RcStatefulConsumer,
+    ArcConditionalStatefulConsumer, ArcStatefulConsumer, BoxConditionalStatefulConsumer,
+    BoxStatefulConsumer, FnStatefulConsumerOps, RcConditionalStatefulConsumer, RcStatefulConsumer,
     StatefulConsumer,
 };

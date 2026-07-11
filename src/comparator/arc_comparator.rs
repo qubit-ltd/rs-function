@@ -8,11 +8,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcComparator` public type.
 
-use super::{
-    Arc,
-    Comparator,
-    Ordering,
-};
+use super::{Arc, Comparator, Ordering};
 
 type ArcComparatorFn<T> = Arc<dyn Fn(&T, &T) -> Ordering + Send + Sync>;
 

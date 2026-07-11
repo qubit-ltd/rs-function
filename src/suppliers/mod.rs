@@ -16,19 +16,8 @@ pub mod supplier;
 pub mod supplier_once;
 
 pub use stateful_supplier::{
-    ArcStatefulSupplier,
-    BoxStatefulSupplier,
-    FnStatefulSupplierOps,
-    RcStatefulSupplier,
+    ArcStatefulSupplier, BoxStatefulSupplier, FnStatefulSupplierOps, RcStatefulSupplier,
     StatefulSupplier,
 };
-pub use supplier::{
-    ArcSupplier,
-    BoxSupplier,
-    RcSupplier,
-    Supplier,
-};
-pub use supplier_once::{
-    BoxSupplierOnce,
-    SupplierOnce,
-};
+pub use supplier::{ArcSupplier, BoxSupplier, RcSupplier, Supplier};
+pub use supplier_once::{BoxSupplierOnce, SupplierOnce};

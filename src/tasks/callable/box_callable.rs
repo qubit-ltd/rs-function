@@ -9,20 +9,9 @@
 //! Defines the `BoxCallable` public type.
 
 use crate::{
-    macros::{
-        impl_box_conversions,
-        impl_common_name_methods,
-        impl_common_new_methods,
-    },
+    macros::{impl_common_name_methods, impl_common_new_methods},
     suppliers::supplier::Supplier,
-    tasks::{
-        callable::{
-            Callable,
-            RcCallable,
-        },
-        callable_once::LocalBoxCallableOnce,
-        runnable::BoxRunnable,
-    },
+    tasks::callable::Callable,
 };
 
 // ============================================================================
@@ -102,10 +91,7 @@ impl<R, E> BoxCallable<R, E> {
     {
         let name = self.name;
         let mut function = self.function;
-        BoxCallable::new_with_optional_name(
-            move || function().map(&mut mapper),
-            name,
-        )
+        BoxCallable::new_with_optional_name(move || function().map(&mut mapper), name)
     }
 
     /// Maps the error value of this callable.
@@ -126,10 +112,7 @@ impl<R, E> BoxCallable<R, E> {
     {
         let name = self.name;
         let mut function = self.function;
-        BoxCallable::new_with_optional_name(
-            move || function().map_err(&mut mapper),
-            name,
-        )
+        BoxCallable::new_with_optional_name(move || function().map_err(&mut mapper), name)
     }
 
     /// Chains another fallible computation after this callable succeeds.
@@ -167,38 +150,5 @@ impl<R, E> Callable<R, E> for BoxCallable<R, E> {
     #[inline]
     fn call(&mut self) -> Result<R, E> {
         (self.function)()
-    }
-
-    impl_box_conversions!(
-        BoxCallable<R, E>,
-        RcCallable,
-        FnMut() -> Result<R, E>
-    );
-
-    /// Converts this boxed callable into a local boxed one-time callable while
-    /// preserving its name.
-    #[inline]
-    fn into_local_once(self) -> LocalBoxCallableOnce<R, E>
-    where
-        Self: Sized + 'static,
-    {
-        let name = self.name;
-        let function = self.function;
-        LocalBoxCallableOnce::new_with_optional_name(function, name)
-    }
-
-    /// Converts this boxed callable into a boxed runnable while preserving its
-    /// name.
-    #[inline]
-    fn into_runnable(self) -> BoxRunnable<E>
-    where
-        Self: Sized + 'static,
-    {
-        let name = self.name;
-        let mut function = self.function;
-        BoxRunnable::new_with_optional_name(
-            move || function().map(|_| ()),
-            name,
-        )
     }
 }

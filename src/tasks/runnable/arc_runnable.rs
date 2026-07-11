@@ -13,20 +13,9 @@ use std::sync::Arc;
 use parking_lot::Mutex;
 
 use crate::{
-    macros::{
-        impl_arc_conversions,
-        impl_common_name_methods,
-        impl_common_new_methods,
-    },
-    suppliers::{
-        macros::impl_supplier_debug_display,
-        supplier::Supplier,
-    },
-    tasks::runnable::{
-        BoxRunnable,
-        RcRunnable,
-        Runnable,
-    },
+    macros::{impl_common_name_methods, impl_common_new_methods},
+    suppliers::{macros::impl_supplier_debug_display, supplier::Supplier},
+    tasks::runnable::Runnable,
 };
 
 // ============================================================================
@@ -91,13 +80,6 @@ impl<E> Runnable<E> for ArcRunnable<E> {
     fn run(&mut self) -> Result<(), E> {
         (self.function.lock())()
     }
-
-    impl_arc_conversions!(
-        ArcRunnable<E>,
-        BoxRunnable,
-        RcRunnable,
-        FnMut() -> Result<(), E>
-    );
 }
 
 impl_supplier_debug_display!(ArcRunnable<E>);

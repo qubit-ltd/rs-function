@@ -9,16 +9,9 @@
 //! Defines the `BoxBiTransformerOnce` public type.
 
 use super::{
-    BiPredicate,
-    BiTransformerOnce,
-    BoxConditionalBiTransformerOnce,
-    TransformerOnce,
-    impl_box_once_conversions,
-    impl_box_transformer_methods,
-    impl_closure_once_trait,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
-    impl_transformer_debug_display,
+    BiPredicate, BiTransformerOnce, BoxConditionalBiTransformerOnce, TransformerOnce,
+    impl_box_transformer_methods, impl_closure_once_trait, impl_transformer_common_methods,
+    impl_transformer_constant_method, impl_transformer_debug_display,
 };
 
 // ============================================================================
@@ -62,12 +55,6 @@ impl<T, U, R> BiTransformerOnce<T, U, R> for BoxBiTransformerOnce<T, U, R> {
     fn apply(self, first: T, second: U) -> R {
         (self.function)(first, second)
     }
-
-    impl_box_once_conversions!(
-        BoxBiTransformerOnce<T, U, R>,
-        BiTransformerOnce,
-        FnOnce(T, U) -> R
-    );
 }
 
 // Implement constant method for BoxBiTransformerOnce

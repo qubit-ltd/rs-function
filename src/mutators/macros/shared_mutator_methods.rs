@@ -135,7 +135,7 @@ macro_rules! impl_shared_mutator_methods {
     }};
 
     // Single generic parameter
-    ($struct_name:ident < $t:ident >, $return_type:ident, $predicate_conversion:ident, $mutator_trait:ident, $($extra_bounds:tt)+) => {
+    ($struct_name:ident < $t:ident >, $return_type:ident, $predicate_type:ident, $mutator_trait:ident, $($extra_bounds:tt)+) => {
         /// Creates a conditional mutator that executes based on predicate
         /// result.
         ///
@@ -178,7 +178,7 @@ macro_rules! impl_shared_mutator_methods {
         {
             $return_type {
                 mutator: self.clone(),
-                predicate: predicate.$predicate_conversion(),
+                predicate: $crate::$predicate_type::new(predicate),
             }
         }
 

@@ -9,10 +9,7 @@
 
 use std::ops::Not;
 
-use super::{
-    StatefulTester,
-    rc_stateful_tester::RcStatefulTester,
-};
+use super::StatefulTester;
 
 /// A single-ownership stateful tester backed by `Box<dyn FnMut() -> bool>`.
 ///
@@ -100,16 +97,5 @@ impl StatefulTester for BoxStatefulTester {
     #[inline]
     fn test(&mut self) -> bool {
         (self.function)()
-    }
-
-    #[inline]
-    fn into_box(self) -> BoxStatefulTester {
-        self
-    }
-
-    #[inline]
-    fn into_rc(self) -> RcStatefulTester {
-        let function = self.function;
-        RcStatefulTester::new(function)
     }
 }

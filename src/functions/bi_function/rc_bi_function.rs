@@ -9,18 +9,8 @@
 //! Defines the `RcBiFunction` public type.
 
 use super::{
-    BiFunction,
-    BiPredicate,
-    BoxBiFunction,
-    BoxBiFunctionOnce,
-    Function,
-    Rc,
-    RcConditionalBiFunction,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
-    impl_rc_conversions,
+    BiFunction, BiPredicate, Function, Rc, RcConditionalBiFunction, impl_function_clone,
+    impl_function_common_methods, impl_function_constant_method, impl_function_debug_display,
     impl_shared_function_methods,
 };
 
@@ -56,7 +46,7 @@ impl<T, U, R> RcBiFunction<T, U, R> {
     impl_shared_function_methods!(
         RcBiFunction<T, U, R>,
         RcConditionalBiFunction,
-        into_rc,
+        RcBiPredicate,
         Function,
         'static
     );
@@ -67,15 +57,6 @@ impl<T, U, R> BiFunction<T, U, R> for RcBiFunction<T, U, R> {
     fn apply(&self, first: &T, second: &U) -> R {
         (self.function)(first, second)
     }
-
-    // Generate into_box(), into_rc(), into_fn(), into_once(), to_box(),
-    // to_rc(), to_fn(), to_once()
-    impl_rc_conversions!(
-        RcBiFunction<T, U, R>,
-        BoxBiFunction,
-        BoxBiFunctionOnce,
-        Fn(first: &T, second: &U) -> R
-    );
 }
 
 // Implement constant method for RcBiFunction

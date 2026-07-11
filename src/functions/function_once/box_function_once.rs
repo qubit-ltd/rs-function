@@ -9,16 +9,9 @@
 //! Defines the `BoxFunctionOnce` public type.
 
 use super::{
-    BoxConditionalFunctionOnce,
-    FunctionOnce,
-    Predicate,
-    impl_box_function_methods,
-    impl_box_once_conversions,
-    impl_closure_once_trait,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
-    impl_function_identity_method,
+    BoxConditionalFunctionOnce, FunctionOnce, Predicate, impl_box_function_methods,
+    impl_closure_once_trait, impl_function_common_methods, impl_function_constant_method,
+    impl_function_debug_display, impl_function_identity_method,
 };
 
 // ============================================================================
@@ -63,12 +56,6 @@ impl<T, R> FunctionOnce<T, R> for BoxFunctionOnce<T, R> {
     fn apply(self, input: &T) -> R {
         (self.function)(input)
     }
-
-    impl_box_once_conversions!(
-        BoxFunctionOnce<T, R>,
-        FunctionOnce,
-        FnOnce(&T) -> R
-    );
 }
 
 // Generates: constant() method for BoxFunctionOnce<T, R>

@@ -9,11 +9,7 @@
 //! Defines the `FnMutatingFunctionOps` public type.
 
 use super::{
-    BoxConditionalMutatingFunction,
-    BoxMutatingFunction,
-    Function,
-    Predicate,
-    impl_fn_ops_trait,
+    BoxConditionalMutatingFunction, BoxMutatingFunction, Function, Predicate, impl_fn_ops_trait,
 };
 
 // =======================================================================

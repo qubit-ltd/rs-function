@@ -9,13 +9,7 @@
 //! Defines the `BoxConditionalStatefulConsumer` public type.
 
 use super::{
-    BoxPredicate,
-    BoxStatefulConsumer,
-    Predicate,
-    RcStatefulConsumer,
-    StatefulConsumer,
-    impl_box_conditional_consumer,
-    impl_conditional_consumer_conversions,
+    BoxPredicate, BoxStatefulConsumer, Predicate, StatefulConsumer, impl_box_conditional_consumer,
     impl_conditional_consumer_debug_display,
 };
 
@@ -103,13 +97,6 @@ impl<T> StatefulConsumer<T> for BoxConditionalStatefulConsumer<T> {
             self.consumer.accept(value);
         }
     }
-
-    // Generates: into_box(), into_rc(), into_fn()
-    impl_conditional_consumer_conversions!(
-        BoxStatefulConsumer<T>,
-        RcStatefulConsumer,
-        FnMut
-    );
 }
 
 // Use macro to generate Debug and Display implementations

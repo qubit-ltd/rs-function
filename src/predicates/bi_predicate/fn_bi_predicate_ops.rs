@@ -8,10 +8,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnBiPredicateOps` public type.
 
-use super::{
-    BiPredicate,
-    BoxBiPredicate,
-};
+use super::{BiPredicate, BoxBiPredicate};
 
 /// Extension trait providing logical composition methods for closures.
 ///
@@ -59,7 +56,7 @@ pub trait FnBiPredicateOps<T, U>: Fn(&T, &U) -> bool + Sized {
         T: 'static,
         U: 'static,
     {
-        BoxBiPredicate::new(move |first, second| {
+        BoxBiPredicate::new(move |first: &T, second: &U| {
             self(first, second) && other.test(first, second)
         })
     }
@@ -90,7 +87,7 @@ pub trait FnBiPredicateOps<T, U>: Fn(&T, &U) -> bool + Sized {
         T: 'static,
         U: 'static,
     {
-        BoxBiPredicate::new(move |first, second| {
+        BoxBiPredicate::new(move |first: &T, second: &U| {
             self(first, second) || other.test(first, second)
         })
     }
@@ -107,7 +104,7 @@ pub trait FnBiPredicateOps<T, U>: Fn(&T, &U) -> bool + Sized {
         T: 'static,
         U: 'static,
     {
-        BoxBiPredicate::new(move |first, second| !self(first, second))
+        BoxBiPredicate::new(move |first: &T, second: &U| !self(first, second))
     }
 
     /// Returns a bi-predicate that represents the logical NAND (NOT
@@ -139,7 +136,7 @@ pub trait FnBiPredicateOps<T, U>: Fn(&T, &U) -> bool + Sized {
         T: 'static,
         U: 'static,
     {
-        BoxBiPredicate::new(move |first, second| {
+        BoxBiPredicate::new(move |first: &T, second: &U| {
             !(self(first, second) && other.test(first, second))
         })
     }
@@ -173,7 +170,7 @@ pub trait FnBiPredicateOps<T, U>: Fn(&T, &U) -> bool + Sized {
         T: 'static,
         U: 'static,
     {
-        BoxBiPredicate::new(move |first, second| {
+        BoxBiPredicate::new(move |first: &T, second: &U| {
             self(first, second) ^ other.test(first, second)
         })
     }
@@ -207,7 +204,7 @@ pub trait FnBiPredicateOps<T, U>: Fn(&T, &U) -> bool + Sized {
         T: 'static,
         U: 'static,
     {
-        BoxBiPredicate::new(move |first, second| {
+        BoxBiPredicate::new(move |first: &T, second: &U| {
             !(self(first, second) || other.test(first, second))
         })
     }

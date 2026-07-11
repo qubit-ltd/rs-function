@@ -230,7 +230,7 @@ macro_rules! impl_shared_conditional_consumer {
                 let first_predicate = self.predicate.clone();
                 impl_shared_conditional_consumer!(@let_consumer $consumer_trait, first_consumer, self.consumer.clone());
                 impl_shared_conditional_consumer!(@let_consumer $consumer_trait, next, next);
-                $consumer_type::new(move |t| {
+                $consumer_type::new(move |t: &$t| {
                     if first_predicate.test(t) {
                         first_consumer.accept(t);
                     }
@@ -258,7 +258,7 @@ macro_rules! impl_shared_conditional_consumer {
                 let predicate = self.predicate.clone();
                 impl_shared_conditional_consumer!(@let_consumer $consumer_trait, then_consumer, self.consumer.clone());
                 impl_shared_conditional_consumer!(@let_consumer $consumer_trait, else_consumer, else_consumer);
-                $consumer_type::new(move |t| {
+                $consumer_type::new(move |t: &$t| {
                     if predicate.test(t) {
                         then_consumer.accept(t);
                     } else {
@@ -338,7 +338,7 @@ macro_rules! impl_shared_conditional_consumer {
                 let first_predicate = self.predicate.clone();
                 impl_shared_conditional_consumer!(@let_consumer $consumer_trait, first_consumer, self.consumer.clone());
                 impl_shared_conditional_consumer!(@let_consumer $consumer_trait, next, next);
-                $consumer_type::new(move |t, u| {
+                $consumer_type::new(move |t: &$t, u: &$u| {
                     if first_predicate.test(t, u) {
                         first_consumer.accept(t, u);
                     }
@@ -367,7 +367,7 @@ macro_rules! impl_shared_conditional_consumer {
                 let predicate = self.predicate.clone();
                 impl_shared_conditional_consumer!(@let_consumer $consumer_trait, then_consumer, self.consumer.clone());
                 impl_shared_conditional_consumer!(@let_consumer $consumer_trait, else_consumer, else_consumer);
-                $consumer_type::new(move |t, u| {
+                $consumer_type::new(move |t: &$t, u: &$u| {
                     if predicate.test(t, u) {
                         then_consumer.accept(t, u);
                     } else {

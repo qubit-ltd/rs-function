@@ -9,17 +9,9 @@
 //! Defines the `BoxBiTransformer` public type.
 
 use super::{
-    BiPredicate,
-    BiTransformer,
-    BoxBiTransformerOnce,
-    BoxConditionalBiTransformer,
-    RcBiTransformer,
-    Transformer,
-    impl_box_conversions,
-    impl_box_transformer_methods,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
-    impl_transformer_debug_display,
+    BiPredicate, BiTransformer, BoxConditionalBiTransformer, Transformer,
+    impl_box_transformer_methods, impl_transformer_common_methods,
+    impl_transformer_constant_method, impl_transformer_debug_display,
 };
 
 // ============================================================================
@@ -70,12 +62,4 @@ impl<T, U, R> BiTransformer<T, U, R> for BoxBiTransformer<T, U, R> {
     fn apply(&self, first: T, second: U) -> R {
         (self.function)(first, second)
     }
-
-    // Generates: into_box(), into_rc(), into_fn(), into_once()
-    impl_box_conversions!(
-        BoxBiTransformer<T, U, R>,
-        RcBiTransformer,
-        Fn(T, U) -> R,
-        BoxBiTransformerOnce
-    );
 }

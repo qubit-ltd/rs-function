@@ -7,16 +7,7 @@
 // =============================================================================
 //! Defines the `StatefulTester` public trait.
 
-use super::{
-    Arc,
-    Rc,
-};
-
-use self::{
-    arc_stateful_tester::ArcStatefulTester,
-    box_stateful_tester::BoxStatefulTester,
-    rc_stateful_tester::RcStatefulTester,
-};
+use super::{Arc, Rc};
 
 pub mod arc_stateful_tester;
 pub mod box_stateful_tester;
@@ -55,107 +46,6 @@ pub trait StatefulTester {
     ///
     /// Returns `true` if the condition holds, otherwise returns `false`.
     fn test(&mut self) -> bool;
-
-    /// Converts this tester to `BoxStatefulTester`.
-    #[inline]
-    fn into_box(mut self) -> BoxStatefulTester
-    where
-        Self: Sized + 'static,
-    {
-        BoxStatefulTester::new(move || self.test())
-    }
-
-    /// Converts this tester to `RcStatefulTester`.
-    #[inline]
-    fn into_rc(mut self) -> RcStatefulTester
-    where
-        Self: Sized + 'static,
-    {
-        RcStatefulTester::new(move || self.test())
-    }
-
-    /// Converts this tester to `ArcStatefulTester`.
-    #[inline]
-    fn into_arc(mut self) -> ArcStatefulTester
-    where
-        Self: Sized + Send + 'static,
-    {
-        ArcStatefulTester::new(move || self.test())
-    }
-
-    /// Converts this tester to a mutable closure.
-    ///
-    /// # Return Value
-    ///
-    /// A closure implementing `FnMut() -> bool` that owns this tester and
-    /// delegates each call to [`StatefulTester::test`].
-    fn into_fn(mut self) -> impl FnMut() -> bool
-    where
-        Self: Sized + 'static,
-    {
-        move || self.test()
-    }
-
-    /// Converts this tester to a mutable closure with an explicit method name.
-    ///
-    /// This is a naming alias of [`StatefulTester::into_fn`] for call sites
-    /// that want the returned `FnMut` shape to be obvious.
-    fn into_mut_fn(self) -> impl FnMut() -> bool
-    where
-        Self: Sized + 'static,
-    {
-        self.into_fn()
-    }
-
-    /// Converts a clone of this tester to `BoxStatefulTester`.
-    #[inline]
-    fn to_box(&self) -> BoxStatefulTester
-    where
-        Self: Clone + Sized + 'static,
-    {
-        self.clone().into_box()
-    }
-
-    /// Converts a clone of this tester to `RcStatefulTester`.
-    #[inline]
-    fn to_rc(&self) -> RcStatefulTester
-    where
-        Self: Clone + Sized + 'static,
-    {
-        self.clone().into_rc()
-    }
-
-    /// Converts a clone of this tester to `ArcStatefulTester`.
-    #[inline]
-    fn to_arc(&self) -> ArcStatefulTester
-    where
-        Self: Clone + Sized + Send + 'static,
-    {
-        self.clone().into_arc()
-    }
-
-    /// Creates a mutable closure from a cloned tester.
-    ///
-    /// The original tester remains available. The returned closure owns a clone
-    /// and mutates that clone on each call.
-    fn to_fn(&self) -> impl FnMut() -> bool
-    where
-        Self: Clone + Sized + 'static,
-    {
-        self.clone().into_fn()
-    }
-
-    /// Creates a mutable closure from a cloned tester with an explicit method
-    /// name.
-    ///
-    /// This is a naming alias of [`StatefulTester::to_fn`] and preserves the
-    /// same clone-based behavior.
-    fn to_mut_fn(&self) -> impl FnMut() -> bool
-    where
-        Self: Clone + Sized + 'static,
-    {
-        self.to_fn()
-    }
 }
 
 impl<F> StatefulTester for F

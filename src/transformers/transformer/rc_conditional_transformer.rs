@@ -9,13 +9,8 @@
 //! Defines the `RcConditionalTransformer` public type.
 
 use super::{
-    Predicate,
-    RcPredicate,
-    RcTransformer,
-    Transformer,
-    impl_conditional_transformer_clone,
-    impl_conditional_transformer_debug_display,
-    impl_shared_conditional_transformer,
+    Predicate, RcPredicate, RcTransformer, Transformer, impl_conditional_transformer_clone,
+    impl_conditional_transformer_debug_display, impl_shared_conditional_transformer,
 };
 
 // ============================================================================

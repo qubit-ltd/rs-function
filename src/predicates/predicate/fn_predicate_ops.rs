@@ -8,10 +8,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnPredicateOps` public type.
 
-use super::{
-    BoxPredicate,
-    Predicate,
-};
+use super::{BoxPredicate, Predicate};
 
 /// Extension trait providing logical composition methods for closures.
 ///
@@ -68,9 +65,7 @@ pub trait FnPredicateOps<T>: Fn(&T) -> bool + Sized {
         P: Predicate<T> + 'static,
         T: 'static,
     {
-        BoxPredicate::new(move |value: &T| {
-            self.test(value) && other.test(value)
-        })
+        BoxPredicate::new(move |value: &T| self.test(value) && other.test(value))
     }
 
     /// Returns a predicate that represents the logical OR of this predicate
@@ -110,9 +105,7 @@ pub trait FnPredicateOps<T>: Fn(&T) -> bool + Sized {
         P: Predicate<T> + 'static,
         T: 'static,
     {
-        BoxPredicate::new(move |value: &T| {
-            self.test(value) || other.test(value)
-        })
+        BoxPredicate::new(move |value: &T| self.test(value) || other.test(value))
     }
 
     /// Returns a predicate that represents the logical negation of this
@@ -165,9 +158,7 @@ pub trait FnPredicateOps<T>: Fn(&T) -> bool + Sized {
         P: Predicate<T> + 'static,
         T: 'static,
     {
-        BoxPredicate::new(move |value: &T| {
-            !(self.test(value) && other.test(value))
-        })
+        BoxPredicate::new(move |value: &T| !(self.test(value) && other.test(value)))
     }
 
     /// Returns a predicate that represents the logical XOR (exclusive OR) of
@@ -246,9 +237,7 @@ pub trait FnPredicateOps<T>: Fn(&T) -> bool + Sized {
         P: Predicate<T> + 'static,
         T: 'static,
     {
-        BoxPredicate::new(move |value: &T| {
-            !(self.test(value) || other.test(value))
-        })
+        BoxPredicate::new(move |value: &T| !(self.test(value) || other.test(value)))
     }
 }
 

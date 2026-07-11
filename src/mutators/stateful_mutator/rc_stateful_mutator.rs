@@ -9,18 +9,8 @@
 //! Defines the `RcStatefulMutator` public type.
 
 use super::{
-    BoxMutatorOnce,
-    BoxStatefulMutator,
-    Predicate,
-    Rc,
-    RcConditionalStatefulMutator,
-    RcMutMutatorFn,
-    RefCell,
-    StatefulMutator,
-    impl_mutator_clone,
-    impl_mutator_common_methods,
-    impl_mutator_debug_display,
-    impl_rc_conversions,
+    Predicate, Rc, RcConditionalStatefulMutator, RcMutMutatorFn, RefCell, StatefulMutator,
+    impl_mutator_clone, impl_mutator_common_methods, impl_mutator_debug_display,
     impl_shared_mutator_methods,
 };
 
@@ -79,7 +69,7 @@ impl<T> RcStatefulMutator<T> {
     impl_shared_mutator_methods!(
         RcStatefulMutator<T>,
         RcConditionalStatefulMutator,
-        into_rc,
+        RcPredicate,
         StatefulMutator,
         'static
     );
@@ -89,14 +79,6 @@ impl<T> StatefulMutator<T> for RcStatefulMutator<T> {
     fn apply(&mut self, value: &mut T) {
         (self.function.borrow_mut())(value)
     }
-
-    // Generate all conversion methods using the unified macro
-    impl_rc_conversions!(
-        RcStatefulMutator<T>,
-        BoxStatefulMutator,
-        BoxMutatorOnce,
-        FnMut(t: &mut T)
-    );
 }
 
 // Use macro to generate Clone implementation

@@ -9,20 +9,9 @@
 //! Defines the `ArcStatefulTransformer` public type.
 
 use super::{
-    Arc,
-    ArcConditionalStatefulTransformer,
-    BoxStatefulTransformer,
-    BoxTransformerOnce,
-    Mutex,
-    Predicate,
-    RcStatefulTransformer,
-    StatefulTransformer,
-    impl_arc_conversions,
-    impl_closure_trait,
-    impl_shared_transformer_methods,
-    impl_transformer_clone,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
+    Arc, ArcConditionalStatefulTransformer, Mutex, Predicate, StatefulTransformer,
+    impl_closure_trait, impl_shared_transformer_methods, impl_transformer_clone,
+    impl_transformer_common_methods, impl_transformer_constant_method,
     impl_transformer_debug_display,
 };
 
@@ -60,7 +49,7 @@ impl<T, R> ArcStatefulTransformer<T, R> {
     impl_shared_transformer_methods!(
         ArcStatefulTransformer<T, R>,
         ArcConditionalStatefulTransformer,
-        into_arc,
+        ArcPredicate,
         StatefulTransformer,
         Send + Sync + 'static
     );
@@ -80,15 +69,6 @@ impl<T, R> StatefulTransformer<T, R> for ArcStatefulTransformer<T, R> {
         let mut func = self.function.lock();
         func(input)
     }
-
-    // Use macro to implement conversion methods
-    impl_arc_conversions!(
-        ArcStatefulTransformer<T, R>,
-        BoxStatefulTransformer,
-        RcStatefulTransformer,
-        BoxTransformerOnce,
-        FnMut(t: T) -> R
-    );
 }
 
 // ============================================================================

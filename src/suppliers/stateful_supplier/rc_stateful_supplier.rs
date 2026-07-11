@@ -9,18 +9,8 @@
 //! Defines the `RcStatefulSupplier` public type.
 
 use super::{
-    BoxStatefulSupplier,
-    BoxSupplierOnce,
-    Predicate,
-    Rc,
-    RefCell,
-    StatefulSupplier,
-    Transformer,
-    impl_rc_conversions,
-    impl_shared_supplier_methods,
-    impl_supplier_clone,
-    impl_supplier_common_methods,
-    impl_supplier_debug_display,
+    Predicate, Rc, RefCell, StatefulSupplier, Transformer, impl_shared_supplier_methods,
+    impl_supplier_clone, impl_supplier_common_methods, impl_supplier_debug_display,
 };
 
 // ==========================================================================
@@ -164,12 +154,4 @@ impl<T> StatefulSupplier<T> for RcStatefulSupplier<T> {
     fn get(&mut self) -> T {
         (self.function.borrow_mut())()
     }
-
-    // Generate all conversion methods using the unified macro
-    impl_rc_conversions!(
-        RcStatefulSupplier<T>,
-        BoxStatefulSupplier,
-        BoxSupplierOnce,
-        FnMut() -> T
-    );
 }

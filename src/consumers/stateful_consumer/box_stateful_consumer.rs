@@ -9,15 +9,8 @@
 //! Defines the `BoxStatefulConsumer` public type.
 
 use super::{
-    BoxConditionalStatefulConsumer,
-    BoxConsumerOnce,
-    Predicate,
-    RcStatefulConsumer,
-    StatefulConsumer,
-    impl_box_consumer_methods,
-    impl_box_conversions,
-    impl_consumer_common_methods,
-    impl_consumer_debug_display,
+    BoxConditionalStatefulConsumer, Predicate, StatefulConsumer, impl_box_consumer_methods,
+    impl_consumer_common_methods, impl_consumer_debug_display,
 };
 
 // ============================================================================
@@ -75,11 +68,9 @@ pub struct BoxStatefulConsumer<T> {
 
 impl<T> BoxStatefulConsumer<T> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
-    impl_consumer_common_methods!(
-        BoxStatefulConsumer<T>,
-        (FnMut(&T) + 'static),
-        |f| Box::new(f)
-    );
+    impl_consumer_common_methods!(BoxStatefulConsumer<T>, (FnMut(&T) + 'static), |f| Box::new(
+        f
+    ));
 
     // Generates: when() and and_then() methods that consume self
     impl_box_consumer_methods!(
@@ -93,14 +84,6 @@ impl<T> StatefulConsumer<T> for BoxStatefulConsumer<T> {
     fn accept(&mut self, value: &T) {
         (self.function)(value)
     }
-
-    // Generates: into_box(), into_rc(), into_fn(), into_once()
-    impl_box_conversions!(
-        BoxStatefulConsumer<T>,
-        RcStatefulConsumer,
-        FnMut(&T),
-        BoxConsumerOnce
-    );
 }
 
 // Use macro to generate Debug and Display implementations

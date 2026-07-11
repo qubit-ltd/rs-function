@@ -8,10 +8,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnBiConsumerOnceOps` public type.
 
-use super::{
-    BiConsumerOnce,
-    BoxBiConsumerOnce,
-};
+use super::{BiConsumerOnce, BoxBiConsumerOnce};
 
 // =======================================================================
 // 4. Provide extension methods for closures
@@ -103,7 +100,7 @@ pub trait FnBiConsumerOnceOps<T, U>: FnOnce(&T, &U) + Sized {
     {
         let first = self;
         let second = next;
-        BoxBiConsumerOnce::new(move |t, u| {
+        BoxBiConsumerOnce::new(move |t: &T, u: &U| {
             first(t, u);
             second.accept(t, u);
         })

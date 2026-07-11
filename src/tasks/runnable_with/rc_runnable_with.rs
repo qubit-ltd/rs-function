@@ -12,15 +12,8 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::{
-    macros::{
-        impl_common_name_methods,
-        impl_common_new_methods,
-        impl_rc_conversions,
-    },
-    tasks::runnable_with::{
-        BoxRunnableWith,
-        RunnableWith,
-    },
+    macros::{impl_common_name_methods, impl_common_new_methods},
+    tasks::runnable_with::RunnableWith,
 };
 
 type RcRunnableWithFn<T, E> = Rc<RefCell<dyn FnMut(&mut T) -> Result<(), E>>>;
@@ -62,10 +55,4 @@ impl<T, E> RunnableWith<T, E> for RcRunnableWith<T, E> {
     fn run_with(&mut self, input: &mut T) -> Result<(), E> {
         (self.function.borrow_mut())(input)
     }
-
-    impl_rc_conversions!(
-        RcRunnableWith<T, E>,
-        BoxRunnableWith,
-        FnMut(input: &mut T) -> Result<(), E>
-    );
 }

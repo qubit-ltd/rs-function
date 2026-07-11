@@ -8,19 +8,14 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnStatefulBiPredicateOps` public type.
 
-use super::{
-    BoxStatefulBiPredicate,
-    StatefulBiPredicate,
-};
+use super::{BoxStatefulBiPredicate, StatefulBiPredicate};
 
 /// Extension trait providing logical composition methods for stateful closures.
 ///
 /// This trait is implemented for closures and function objects matching
 /// `FnMut(&T, &U) -> bool`, allowing direct composition into
 /// `BoxStatefulBiPredicate`.
-pub trait FnStatefulBiPredicateOps<T, U>:
-    FnMut(&T, &U) -> bool + Sized
-{
+pub trait FnStatefulBiPredicateOps<T, U>: FnMut(&T, &U) -> bool + Sized {
     /// Returns a bi-predicate representing logical AND with another predicate.
     ///
     /// This method consumes `self` and evaluates `other` only when this
@@ -86,9 +81,7 @@ pub trait FnStatefulBiPredicateOps<T, U>:
         T: 'static,
         U: 'static,
     {
-        BoxStatefulBiPredicate::new(move |first: &T, second: &U| {
-            !self(first, second)
-        })
+        BoxStatefulBiPredicate::new(move |first: &T, second: &U| !self(first, second))
     }
 
     /// Returns a bi-predicate representing logical NAND with another predicate.
@@ -165,5 +158,4 @@ pub trait FnStatefulBiPredicateOps<T, U>:
     }
 }
 
-impl<T, U, F> FnStatefulBiPredicateOps<T, U> for F where F: FnMut(&T, &U) -> bool
-{}
+impl<T, U, F> FnStatefulBiPredicateOps<T, U> for F where F: FnMut(&T, &U) -> bool {}

@@ -204,7 +204,7 @@ macro_rules! impl_box_function_methods {
         {
             $conditional_type {
                 function: self,
-                predicate: predicate.into_box(),
+                predicate: $crate::BoxPredicate::new(predicate),
             }
         }
 
@@ -293,7 +293,7 @@ macro_rules! impl_box_function_methods {
         {
             $conditional_type {
                 function: self,
-                predicate: predicate.into_box(),
+                predicate: $crate::BoxBiPredicate::new(predicate),
             }
         }
 

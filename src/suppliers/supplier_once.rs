@@ -57,15 +57,10 @@
 //! let value = once.get();
 //! assert_eq!(value, "data");
 //! ```
-use crate::macros::{
-    impl_box_once_conversions,
-    impl_closure_once_trait,
-};
+use crate::macros::{impl_box_once_conversions, impl_closure_once_trait};
 use crate::predicates::predicate::Predicate;
 use crate::suppliers::macros::{
-    impl_box_supplier_methods,
-    impl_supplier_common_methods,
-    impl_supplier_debug_display,
+    impl_box_supplier_methods, impl_supplier_common_methods, impl_supplier_debug_display,
 };
 use crate::transformers::transformer::Transformer;
 
@@ -145,97 +140,4 @@ pub trait SupplierOnce<T> {
     /// // once is consumed here
     /// ```
     fn get(self) -> T;
-
-    /// Converts to `BoxSupplierOnce`.
-    ///
-    /// # Returns
-    ///
-    /// A new `BoxSupplierOnce<T>` instance
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::SupplierOnce;
-    ///
-    /// let closure = || 42;
-    /// let boxed = closure.into_box();
-    /// assert_eq!(boxed.get(), 42);
-    /// ```
-    fn into_box(self) -> BoxSupplierOnce<T>
-    where
-        Self: Sized + 'static,
-    {
-        BoxSupplierOnce::new(move || self.get())
-    }
-
-    /// Converts the supplier to a `Box<dyn FnOnce() -> T>`.
-    ///
-    /// This method consumes the current supplier and wraps it in a `Box` as a
-    /// trait object, allowing it to be used where a dynamically dispatched
-    /// `FnOnce` is needed.
-    ///
-    /// # Returns
-    ///
-    /// A `Box<dyn FnOnce() -> T>` that executes the supplier when called.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::SupplierOnce;
-    ///
-    /// let closure = || 42;
-    /// let fn_once = closure.into_fn();
-    /// assert_eq!(fn_once(), 42);
-    /// ```
-    fn into_fn(self) -> impl FnOnce() -> T
-    where
-        Self: Sized + 'static,
-    {
-        move || self.get()
-    }
-
-    /// Converts the supplier to a `BoxSupplierOnce`.
-    ///
-    /// This is a convenience method that clones the current supplier and
-    /// wraps it in a `BoxSupplierOnce`. This is useful for type erasure and
-    /// creating homogenous collections of suppliers.
-    ///
-    /// # Returns
-    ///
-    /// A new `BoxSupplierOnce<T>` instance.
-    ///
-    /// # Note
-    ///
-    /// This requires the `SupplierOnce` to be `Clone` because it only
-    /// borrows `&self` but must create a new owned `BoxSupplierOnce`. The
-    /// clone provides the owned value needed for the new instance.
-    fn to_box(&self) -> BoxSupplierOnce<T>
-    where
-        Self: Clone + Sized + 'static,
-    {
-        self.clone().into_box()
-    }
-
-    /// Converts the supplier to a `Box<dyn FnOnce() -> T>`.
-    ///
-    /// This method clones the current supplier and wraps it in a `Box` as a
-    /// trait object, allowing it to be used where a dynamically dispatched
-    /// `FnOnce` is needed.
-    ///
-    /// # Returns
-    ///
-    /// A `Box<dyn FnOnce() -> T>` that executes the supplier when called.
-    ///
-    /// # Note
-    ///
-    /// This requires the `SupplierOnce` to be `Clone` since `to_fn` only
-    /// borrows `&self` but needs to produce a `FnOnce` which will be
-    /// consumed. The underlying supplier is cloned to provide an owned value
-    /// that the returned closure can consume.
-    fn to_fn(&self) -> impl FnOnce() -> T
-    where
-        Self: Clone + Sized + 'static,
-    {
-        self.clone().into_fn()
-    }
 }

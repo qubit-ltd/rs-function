@@ -9,15 +9,8 @@
 //! Defines the `RcConditionalStatefulConsumer` public type.
 
 use super::{
-    BoxStatefulConsumer,
-    Predicate,
-    RcPredicate,
-    RcStatefulConsumer,
-    StatefulConsumer,
-    impl_conditional_consumer_clone,
-    impl_conditional_consumer_conversions,
-    impl_conditional_consumer_debug_display,
-    impl_shared_conditional_consumer,
+    Predicate, RcPredicate, RcStatefulConsumer, StatefulConsumer, impl_conditional_consumer_clone,
+    impl_conditional_consumer_debug_display, impl_shared_conditional_consumer,
 };
 
 // ============================================================================
@@ -82,13 +75,6 @@ impl<T> StatefulConsumer<T> for RcConditionalStatefulConsumer<T> {
             self.consumer.accept(value);
         }
     }
-
-    // Generates: into_box(), into_rc(), into_fn()
-    impl_conditional_consumer_conversions!(
-        BoxStatefulConsumer<T>,
-        RcStatefulConsumer,
-        FnMut
-    );
 }
 
 // Use macro to generate Clone implementation

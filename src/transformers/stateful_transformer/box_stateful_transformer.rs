@@ -9,16 +9,9 @@
 //! Defines the `BoxStatefulTransformer` public type.
 
 use super::{
-    BoxConditionalStatefulTransformer,
-    BoxTransformerOnce,
-    Predicate,
-    RcStatefulTransformer,
-    StatefulTransformer,
-    impl_box_conversions,
-    impl_box_transformer_methods,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
-    impl_transformer_debug_display,
+    BoxConditionalStatefulTransformer, Predicate, StatefulTransformer,
+    impl_box_transformer_methods, impl_transformer_common_methods,
+    impl_transformer_constant_method, impl_transformer_debug_display,
 };
 
 // ============================================================================
@@ -69,16 +62,4 @@ impl<T, R> StatefulTransformer<T, R> for BoxStatefulTransformer<T, R> {
     fn apply(&mut self, input: T) -> R {
         (self.function)(input)
     }
-
-    // Generates: into_box(), into_rc(), into_fn(), into_once()
-    impl_box_conversions!(
-        BoxStatefulTransformer<T, R>,
-        RcStatefulTransformer,
-        FnMut(T) -> R,
-        BoxTransformerOnce
-    );
-
-    // do NOT override StatefulTransformer::to_xxx() because
-    // BoxStatefulTransformer is not Clone and calling
-    // BoxStatefulTransformer::to_xxx() will cause a compile error
 }

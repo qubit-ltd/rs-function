@@ -9,21 +9,9 @@
 //! Defines the `ArcMutatingFunction` public type.
 
 use super::{
-    Arc,
-    ArcConditionalMutatingFunction,
-    BoxMutatingFunction,
-    BoxMutatingFunctionOnce,
-    Function,
-    MutatingFunction,
-    Predicate,
-    RcMutatingFunction,
-    impl_arc_conversions,
-    impl_closure_trait,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_debug_display,
-    impl_function_identity_method,
-    impl_shared_function_methods,
+    Arc, ArcConditionalMutatingFunction, Function, MutatingFunction, Predicate, impl_closure_trait,
+    impl_function_clone, impl_function_common_methods, impl_function_debug_display,
+    impl_function_identity_method, impl_shared_function_methods,
 };
 
 // =======================================================================
@@ -84,7 +72,7 @@ impl<T, R> ArcMutatingFunction<T, R> {
     impl_shared_function_methods!(
         ArcMutatingFunction<T, R>,
         ArcConditionalMutatingFunction,
-        into_arc,
+        ArcPredicate,
         Function,  // chains a non-mutating function after this mutating function
         Send + Sync + 'static
     );
@@ -103,15 +91,6 @@ impl<T, R> MutatingFunction<T, R> for ArcMutatingFunction<T, R> {
     fn apply(&self, input: &mut T) -> R {
         (self.function)(input)
     }
-
-    // Use macro to implement conversion methods
-    impl_arc_conversions!(
-        ArcMutatingFunction<T, R>,
-        BoxMutatingFunction,
-        RcMutatingFunction,
-        BoxMutatingFunctionOnce,
-        Fn(input: &mut T) -> R
-    );
 }
 
 // =======================================================================

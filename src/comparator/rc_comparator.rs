@@ -8,11 +8,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcComparator` public type.
 
-use super::{
-    Comparator,
-    Ordering,
-    Rc,
-};
+use super::{Comparator, Ordering, Rc};
 
 type RcComparatorFn<T> = Rc<dyn Fn(&T, &T) -> Ordering>;
 

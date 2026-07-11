@@ -9,12 +9,8 @@
 //! Defines the `ArcConditionalBiMutatingFunction` public type.
 
 use super::{
-    ArcBiMutatingFunction,
-    ArcBiPredicate,
-    BiMutatingFunction,
-    BiPredicate,
-    impl_conditional_function_clone,
-    impl_conditional_function_debug_display,
+    ArcBiMutatingFunction, ArcBiPredicate, BiMutatingFunction, BiPredicate,
+    impl_conditional_function_clone, impl_conditional_function_debug_display,
     impl_shared_conditional_function,
 };
 

@@ -9,16 +9,8 @@
 //! Defines the `ArcConditionalConsumer` public type.
 
 use super::{
-    ArcConsumer,
-    ArcPredicate,
-    BoxConsumer,
-    Consumer,
-    Predicate,
-    RcConsumer,
-    impl_conditional_consumer_clone,
-    impl_conditional_consumer_conversions,
-    impl_conditional_consumer_debug_display,
-    impl_shared_conditional_consumer,
+    ArcConsumer, ArcPredicate, Consumer, Predicate, impl_conditional_consumer_clone,
+    impl_conditional_consumer_debug_display, impl_shared_conditional_consumer,
 };
 
 // ============================================================================
@@ -96,9 +88,6 @@ impl<T> Consumer<T> for ArcConditionalConsumer<T> {
             self.consumer.accept(value);
         }
     }
-
-    // Generates: into_box(), into_rc(), into_fn()
-    impl_conditional_consumer_conversions!(BoxConsumer<T>, RcConsumer, Fn);
 }
 
 // Use macro to generate Clone implementation

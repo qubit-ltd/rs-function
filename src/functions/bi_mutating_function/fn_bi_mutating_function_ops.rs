@@ -8,11 +8,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnBiMutatingFunctionOps` public type.
 
-use super::{
-    BiPredicate,
-    BoxBiMutatingFunction,
-    BoxConditionalBiMutatingFunction,
-};
+use super::{BiPredicate, BoxBiMutatingFunction, BoxConditionalBiMutatingFunction};
 
 // ============================================================================
 // FnBiMutatingFunctionOps - Extension trait for Fn(&mut T, &mut U) -> R
@@ -82,9 +78,7 @@ use super::{
 /// let mut b = 3;
 /// assert_eq!(conditional.apply(&mut a, &mut b), -15); // multiply: (-5 * 3)
 /// ```
-pub trait FnBiMutatingFunctionOps<T, U, R>:
-    Fn(&mut T, &mut U) -> R + Sized
-{
+pub trait FnBiMutatingFunctionOps<T, U, R>: Fn(&mut T, &mut U) -> R + Sized {
     /// Chain composition - applies self first, then after
     ///
     /// Creates a new bi-mutating-function that applies this
@@ -169,9 +163,7 @@ pub trait FnBiMutatingFunctionOps<T, U, R>:
         U: 'static,
         R: 'static,
     {
-        BoxBiMutatingFunction::new(move |t: &mut T, u: &mut U| {
-            after.apply(&self(t, u))
-        })
+        BoxBiMutatingFunction::new(move |t: &mut T, u: &mut U| after.apply(&self(t, u)))
     }
 
     /// Creates a conditional bi-mutating-function
@@ -267,7 +259,4 @@ pub trait FnBiMutatingFunctionOps<T, U, R>:
 ///
 /// Automatically implements `FnBiMutatingFunctionOps<T, U, R>` for any type
 /// that implements `Fn(&mut T, &mut U) -> R`.
-impl<T, U, R, F> FnBiMutatingFunctionOps<T, U, R> for F where
-    F: Fn(&mut T, &mut U) -> R
-{
-}
+impl<T, U, R, F> FnBiMutatingFunctionOps<T, U, R> for F where F: Fn(&mut T, &mut U) -> R {}

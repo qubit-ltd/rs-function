@@ -9,19 +9,9 @@
 //! Defines the `RcStatefulTransformer` public type.
 
 use super::{
-    BoxStatefulTransformer,
-    BoxTransformerOnce,
-    Predicate,
-    Rc,
-    RcConditionalStatefulTransformer,
-    RefCell,
-    StatefulTransformer,
-    impl_rc_conversions,
-    impl_shared_transformer_methods,
-    impl_transformer_clone,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
-    impl_transformer_debug_display,
+    Predicate, Rc, RcConditionalStatefulTransformer, RefCell, StatefulTransformer,
+    impl_shared_transformer_methods, impl_transformer_clone, impl_transformer_common_methods,
+    impl_transformer_constant_method, impl_transformer_debug_display,
 };
 
 // ============================================================================
@@ -58,7 +48,7 @@ impl<T, R> RcStatefulTransformer<T, R> {
     impl_shared_transformer_methods!(
         RcStatefulTransformer<T, R>,
         RcConditionalStatefulTransformer,
-        into_rc,
+        RcPredicate,
         StatefulTransformer,
         'static
     );
@@ -79,12 +69,4 @@ impl<T, R> StatefulTransformer<T, R> for RcStatefulTransformer<T, R> {
         let mut self_fn = self.function.borrow_mut();
         self_fn(input)
     }
-
-    // Generate all conversion methods using the unified macro
-    impl_rc_conversions!(
-        RcStatefulTransformer<T, R>,
-        BoxStatefulTransformer,
-        BoxTransformerOnce,
-        FnMut(input: T) -> R
-    );
 }

@@ -9,18 +9,8 @@
 //! Defines the `RcMutator` public type.
 
 use super::{
-    BoxMutator,
-    BoxMutatorOnce,
-    Mutator,
-    Predicate,
-    Rc,
-    RcConditionalMutator,
-    RcMutatorFn,
-    impl_mutator_clone,
-    impl_mutator_common_methods,
-    impl_mutator_debug_display,
-    impl_rc_conversions,
-    impl_shared_mutator_methods,
+    Mutator, Predicate, Rc, RcConditionalMutator, RcMutatorFn, impl_mutator_clone,
+    impl_mutator_common_methods, impl_mutator_debug_display, impl_shared_mutator_methods,
 };
 
 // ============================================================================
@@ -69,15 +59,13 @@ pub struct RcMutator<T> {
 impl<T> RcMutator<T> {
     // Generate common mutator methods (new, new_with_name, name, set_name,
     // noop)
-    impl_mutator_common_methods!(RcMutator<T>, (Fn(&mut T) + 'static), |f| {
-        Rc::new(f)
-    });
+    impl_mutator_common_methods!(RcMutator<T>, (Fn(&mut T) + 'static), |f| { Rc::new(f) });
 
     // Generate shared mutator methods (when, and_then, or_else, conversions)
     impl_shared_mutator_methods!(
         RcMutator<T>,
         RcConditionalMutator,
-        into_rc,
+        RcPredicate,
         Mutator,
         'static
     );
@@ -87,14 +75,6 @@ impl<T> Mutator<T> for RcMutator<T> {
     fn apply(&self, value: &mut T) {
         (self.function)(value)
     }
-
-    // Generate all conversion methods using the unified macro
-    impl_rc_conversions!(
-        RcMutator<T>,
-        BoxMutator,
-        BoxMutatorOnce,
-        Fn(t: &mut T)
-    );
 }
 
 // Generate Clone trait implementation for mutator

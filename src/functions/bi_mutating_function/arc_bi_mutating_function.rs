@@ -9,25 +9,12 @@
 //! Defines the `ArcBiMutatingFunction` public type.
 
 use super::{
-    Arc,
-    ArcConditionalBiMutatingFunction,
-    BiMutatingFunction,
-    BiPredicate,
-    BoxBiMutatingFunction,
-    BoxBiMutatingFunctionOnce,
-    MutatingFunction,
-    RcBiMutatingFunction,
-    impl_arc_conversions,
-    impl_closure_trait,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
-    impl_shared_function_methods,
+    Arc, ArcConditionalBiMutatingFunction, BiMutatingFunction, BiPredicate, MutatingFunction,
+    impl_closure_trait, impl_function_clone, impl_function_common_methods,
+    impl_function_constant_method, impl_function_debug_display, impl_shared_function_methods,
 };
 
-type ArcBiMutatingFunctionFn<T, U, R> =
-    Arc<dyn Fn(&mut T, &mut U) -> R + Send + Sync>;
+type ArcBiMutatingFunctionFn<T, U, R> = Arc<dyn Fn(&mut T, &mut U) -> R + Send + Sync>;
 
 // ============================================================================
 // ArcBiMutatingFunction - Arc<dyn Fn(&mut T, &mut U) -> R + Send + Sync>
@@ -66,7 +53,7 @@ impl<T, U, R> ArcBiMutatingFunction<T, U, R> {
     impl_shared_function_methods!(
         ArcBiMutatingFunction<T, U, R>,
         ArcConditionalBiMutatingFunction,
-        into_arc,
+        ArcBiPredicate,
         MutatingFunction,
         Send + Sync + 'static
     );
@@ -77,16 +64,6 @@ impl<T, U, R> BiMutatingFunction<T, U, R> for ArcBiMutatingFunction<T, U, R> {
     fn apply(&self, first: &mut T, second: &mut U) -> R {
         (self.function)(first, second)
     }
-
-    // Generate into_box(), into_rc(), into_fn(), into_once(), to_box(),
-    // to_rc(), to_fn(), to_once()
-    impl_arc_conversions!(
-        ArcBiMutatingFunction<T, U, R>,
-        BoxBiMutatingFunction,
-        RcBiMutatingFunction,
-        BoxBiMutatingFunctionOnce,
-        Fn(first: &mut T, second: &mut U) -> R
-    );
 }
 
 // Implement constant method for ArcBiMutatingFunction
