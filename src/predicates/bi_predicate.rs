@@ -194,8 +194,6 @@ pub use fn_bi_predicate_ops::FnBiPredicateOps;
 ///
 /// This is a **minimal trait** that only defines:
 /// - The core `test` method using `&self` (immutable borrow)
-/// - Type conversion methods (`into_box`, `into_rc`, `into_arc`)
-/// - Closure conversion method (`into_fn`)
 ///
 /// Logical composition methods (`and`, `or`, `not`, `xor`, `nand`,
 /// `nor`) are intentionally **not** part of the trait. Instead, they

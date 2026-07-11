@@ -8,31 +8,28 @@
 //! # Closure Once Trait Implementation Macro
 //!
 //! This module provides the `impl_closure_once_trait!` macro for implementing
-//! common conversion methods for closure-based once traits.
+//! closure-based once traits.
 //!
 //! ## Overview
 //!
-//! The macro generates standard conversion methods (`into_box`, `into_fn`) for
-//! traits that are implemented by closures with once semantics. It
-//! automatically infers all necessary information from the function signature
-//! and trait name.
+//! The macro generates the semantic trait implementation for closures with
+//! once semantics. It automatically infers the implementation from the
+//! function signature and trait name.
 //!
-//! ## Generated Methods
+//! ## Generated Method
 //!
-//! - `into_box()`: Converts the closure into a boxed wrapper type
-//! - `into_fn()`: Returns the closure as a generic `FnOnce` implementation
-//! - Core method: Direct delegation to the underlying closure
+//! - Core semantic method: Direct delegation to the underlying closure
 //!
 //! ## Usage
 //!
-//! The macro is typically used in trait definitions to provide consistent
-//! conversion methods across different once trait implementations.
+//! The macro is typically used beside trait definitions to provide consistent
+//! closure implementations across different once traits.
 
-/// Implement common conversion methods for closure once traits
+/// Implements a semantic once trait for closures.
 ///
-/// This macro generates standard conversion methods for all once traits
-/// that are implemented by closures. It automatically infers everything from
-/// the function signature and trait name.
+/// This macro generates the core semantic method for once traits implemented
+/// by closures. It automatically infers everything from the function signature
+/// and trait name.
 ///
 /// # Parameters
 ///
@@ -52,8 +49,6 @@
 ///     F: FnOnce(&i32),
 /// {
 ///     fn accept(self, value: &i32);
-///     fn into_box(self) -> BoxConsumerOnce<i32>;
-///     fn into_fn(self) -> impl FnOnce(&i32);
 /// }
 /// ```
 ///

@@ -57,8 +57,7 @@ impl<T, U, R> ArcBiMutatingFunction<T, U, R> {
         |f| Arc::new(f)
     );
 
-    // Generate into_box(), into_rc(), into_fn(), into_once(), to_box(),
-    // to_rc(), to_fn(), to_once()
+    // Generate shared-wrapper composition methods.
     impl_shared_function_methods!(
         ArcBiMutatingFunction<T, U, R>,
         ArcConditionalBiMutatingFunction,

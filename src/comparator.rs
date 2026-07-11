@@ -20,8 +20,8 @@
 //! ### Core Components
 //!
 //! 1. **`Comparator<T>` trait**: A minimalist unified interface that only
-//!    defines the core `compare` method and type conversion methods (`into_*`).
-//!    It does NOT include chaining methods like `then_comparing`, etc.
+//!    defines the core `compare` method. It does NOT include chaining methods
+//!    like `then_comparing`, etc.
 //!
 //! 2. **Three Concrete Struct Implementations**:
 //!    - [`BoxComparator<T>`]: Box-based single ownership implementation for
@@ -186,8 +186,8 @@ pub use fn_comparator_ops::FnComparatorOps;
 
 /// A trait for comparison operations.
 ///
-/// This trait defines the core comparison operation and conversion methods.
-/// It does NOT include composition methods like `reversed` or
+/// This trait defines only the core comparison operation. It does NOT include
+/// composition methods like `reversed` or
 /// `then_comparing` to maintain a clean separation between the trait
 /// interface and specialized implementations.
 ///
