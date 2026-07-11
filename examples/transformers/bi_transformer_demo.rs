@@ -91,7 +91,7 @@ fn main() {
     // 7. Conversion between types
     println!("7. Conversion between types");
     let box_add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
-    let rc_add = box_add.into_rc();
+    let rc_add = RcBiTransformer::new(box_add);
     println!("   Converted BoxBiTransformer to RcBiTransformer");
     println!("   rc_add.apply(7, 8) = {}", rc_add.apply(7, 8));
     println!();

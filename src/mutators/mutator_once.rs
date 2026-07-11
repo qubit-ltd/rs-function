@@ -144,9 +144,14 @@ use crate::predicates::predicate::{BoxPredicate, Predicate};
 
 mod box_mutator_once;
 pub use box_mutator_once::BoxMutatorOnce;
+#[cfg(feature = "combinators")]
 mod fn_mutator_once_ops;
+#[cfg(feature = "combinators")]
 pub use fn_mutator_once_ops::FnMutatorOnceOps;
 mod box_conditional_mutator_once;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use box_conditional_mutator_once::BoxConditionalMutatorOnce;
+#[cfg(feature = "combinators")]
 pub use box_conditional_mutator_once::BoxConditionalMutatorOnce;
 
 // ============================================================================
@@ -206,11 +211,11 @@ pub use box_conditional_mutator_once::BoxConditionalMutatorOnce;
 /// ## Type Conversion
 ///
 /// ```rust
-/// use qubit_function::MutatorOnce;
+/// use qubit_function::BoxMutatorOnce;
 ///
 /// let data = vec![1, 2, 3];
 /// let closure = move |x: &mut Vec<i32>| x.extend(data);
-/// let box_mutator = closure.into_box();
+/// let box_mutator = BoxMutatorOnce::new(closure);
 /// ```
 pub trait MutatorOnce<T> {
     /// Performs the one-time mutation operation

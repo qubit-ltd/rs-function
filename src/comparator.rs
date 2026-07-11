@@ -163,6 +163,7 @@
 //! assert_eq!(cmp.compare(&p1, &p2), Ordering::Greater);
 //! ```
 use std::cmp::Ordering;
+#[cfg(feature = "rc")]
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -170,9 +171,13 @@ mod box_comparator;
 pub use box_comparator::BoxComparator;
 mod arc_comparator;
 pub use arc_comparator::ArcComparator;
+#[cfg(feature = "rc")]
 mod rc_comparator;
+#[cfg(feature = "rc")]
 pub use rc_comparator::RcComparator;
+#[cfg(feature = "combinators")]
 mod fn_comparator_ops;
+#[cfg(feature = "combinators")]
 pub use fn_comparator_ops::FnComparatorOps;
 
 // ==========================================================================

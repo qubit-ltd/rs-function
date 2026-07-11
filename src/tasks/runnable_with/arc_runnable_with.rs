@@ -14,9 +14,11 @@ use parking_lot::Mutex;
 
 use crate::{
     functions::macros::impl_function_debug_display,
-    macros::{impl_closure_trait, impl_common_name_methods, impl_common_new_methods},
-    tasks::runnable_with::{BoxRunnableWith, RcRunnableWith, RunnableWith},
+    macros::{impl_common_name_methods, impl_common_new_methods},
+    tasks::runnable_with::{BoxRunnableWith, RunnableWith},
 };
+#[cfg(feature = "rc")]
+use crate::tasks::runnable_with::RcRunnableWith;
 
 type ArcRunnableWithFn<T, E> = Arc<Mutex<dyn FnMut(&mut T) -> Result<(), E> + Send>>;
 
@@ -24,6 +26,12 @@ type ArcRunnableWithFn<T, E> = Arc<Mutex<dyn FnMut(&mut T) -> Result<(), E> + Se
 ///
 /// `ArcRunnableWith<T, E>` stores an
 /// `Arc<Mutex<dyn FnMut(&mut T) -> Result<(), E> + Send>>`.
+/// # Locking and reentrancy
+///
+/// Each call acquires a `parking_lot::Mutex` and holds it while the user callback
+/// runs. Synchronous re-entry through the same shared wrapper deadlocks. The mutex
+/// is not poisoned after a panic, and mutations completed before a panic are not
+/// rolled back.
 pub struct ArcRunnableWith<T, E> {
     /// The stateful closure executed by this runnable.
     pub(super) function: ArcRunnableWithFn<T, E>,
@@ -60,12 +68,7 @@ impl<T, E> RunnableWith<T, E> for ArcRunnableWith<T, E> {
     }
 }
 
-impl_closure_trait!(
-    RunnableWith<T, E>,
-    run_with,
-    FnMut(input: &mut T) -> Result<(), E>
-);
-
 impl_function_debug_display!(BoxRunnableWith<T, E>);
+#[cfg(feature = "rc")]
 impl_function_debug_display!(RcRunnableWith<T, E>);
 impl_function_debug_display!(ArcRunnableWith<T, E>);

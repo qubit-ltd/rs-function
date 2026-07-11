@@ -370,7 +370,7 @@ fn main() {
 
     // Closure -> BoxConsumer
     let closure = |x: &i32| print!("Processing: {} ", x * 2);
-    let box_con = Consumer::into_box(closure);
+    let box_con = BoxConsumer::new(closure);
     let value = 5;
     print!("Closure -> BoxConsumer: ");
     box_con.accept(&value);
@@ -378,7 +378,7 @@ fn main() {
 
     // Closure -> RcConsumer
     let closure = |x: &i32| print!("Processing: {} ", x * 2);
-    let rc_con = Consumer::into_rc(closure);
+    let rc_con = RcConsumer::new(closure);
     let value = 5;
     print!("Closure -> RcConsumer: ");
     rc_con.accept(&value);
@@ -386,7 +386,7 @@ fn main() {
 
     // Closure -> ArcConsumer
     let closure = |x: &i32| print!("Processing: {} ", x * 2);
-    let arc_con = Consumer::into_arc(closure);
+    let arc_con = ArcConsumer::new(closure);
     let value = 5;
     print!("Closure -> ArcConsumer: ");
     arc_con.accept(&value);
@@ -394,7 +394,7 @@ fn main() {
 
     // BoxConsumer -> RcConsumer
     let box_con = BoxConsumer::new(|x: &i32| print!("Processing: {} ", x * 2));
-    let rc_con = box_con.into_rc();
+    let rc_con = RcConsumer::new(box_con);
     let value = 5;
     print!("BoxConsumer -> RcConsumer: ");
     rc_con.accept(&value);
@@ -402,7 +402,7 @@ fn main() {
 
     // RcConsumer -> BoxConsumer
     let rc_con = RcConsumer::new(|x: &i32| print!("Processing: {} ", x * 2));
-    let box_con = rc_con.into_box();
+    let box_con = BoxConsumer::new(rc_con);
     let value = 5;
     print!("RcConsumer -> BoxConsumer: ");
     box_con.accept(&value);

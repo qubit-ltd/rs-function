@@ -8,7 +8,7 @@
 
 //! Demonstrates blanket implementations for Fn -> Transformer
 
-use qubit_function::Transformer;
+use qubit_function::{ArcTransformer, BoxTransformer, RcTransformer, Transformer};
 
 fn main() {
     println!("=== Testing Fn -> Transformer ===");
@@ -30,19 +30,19 @@ fn test_transformer() {
 
     // Test conversion to BoxTransformer
     let quad = |x: i32| x * 4;
-    let boxed = Transformer::into_box(quad);
+    let boxed = BoxTransformer::new(quad);
     assert_eq!(boxed.apply(10), 40);
     println!("✓ into_box() test passed");
 
     // Test conversion to RcTransformer
     let times_five = |x: i32| x * 5;
-    let rc = Transformer::into_rc(times_five);
+    let rc = RcTransformer::new(times_five);
     assert_eq!(rc.apply(8), 40);
     println!("✓ into_rc() test passed");
 
     // Test conversion to ArcTransformer
     let times_six = |x: i32| x * 6;
-    let arc = Transformer::into_arc(times_six);
+    let arc = ArcTransformer::new(times_six);
     assert_eq!(arc.apply(7), 42);
     println!("✓ into_arc() test passed");
 }

@@ -31,6 +31,7 @@
 //! interior mutability (`Mutex`/`RefCell`), making it more efficient and easier
 //! to share.
 
+#[cfg(feature = "rc")]
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -41,21 +42,38 @@ use crate::consumers::macros::{
 };
 use crate::macros::{ impl_closure_trait,
 };
-use crate::predicates::predicate::{ArcPredicate, BoxPredicate, Predicate, RcPredicate};
+use crate::predicates::predicate::{ArcPredicate, BoxPredicate, Predicate};
+#[cfg(feature = "rc")]
+use crate::predicates::predicate::RcPredicate;
 
 mod box_consumer;
 pub use box_consumer::BoxConsumer;
+#[cfg(feature = "rc")]
 mod rc_consumer;
+#[cfg(feature = "rc")]
 pub use rc_consumer::RcConsumer;
 mod arc_consumer;
 pub use arc_consumer::ArcConsumer;
+#[cfg(feature = "combinators")]
 mod fn_consumer_ops;
+#[cfg(feature = "combinators")]
 pub use fn_consumer_ops::FnConsumerOps;
 mod box_conditional_consumer;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use box_conditional_consumer::BoxConditionalConsumer;
+#[cfg(feature = "combinators")]
 pub use box_conditional_consumer::BoxConditionalConsumer;
+#[cfg(feature = "rc")]
 mod rc_conditional_consumer;
+#[cfg(feature = "rc")]
+#[cfg(not(feature = "combinators"))]
+pub(crate) use rc_conditional_consumer::RcConditionalConsumer;
+#[cfg(all(feature = "rc", feature = "combinators"))]
 pub use rc_conditional_consumer::RcConditionalConsumer;
 mod arc_conditional_consumer;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use arc_conditional_consumer::ArcConditionalConsumer;
+#[cfg(feature = "combinators")]
 pub use arc_conditional_consumer::ArcConditionalConsumer;
 
 // ============================================================================

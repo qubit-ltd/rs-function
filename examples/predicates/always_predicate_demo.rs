@@ -137,8 +137,11 @@ fn main() {
     // Scenario 1: Default pass-all filter
     let numbers = vec![1, 2, 3, 4, 5];
     let pass_all = BoxPredicate::<i32>::always_true();
-    let filtered: Vec<_> =
-        numbers.iter().copied().filter(pass_all.into_fn()).collect();
+    let filtered: Vec<_> = numbers
+        .iter()
+        .copied()
+        .filter(|value| pass_all.test(value))
+        .collect();
     println!("Default pass all elements: {:?} -> {:?}", numbers, filtered);
 
     // Scenario 2: Default reject-all filter
@@ -147,7 +150,7 @@ fn main() {
     let filtered: Vec<_> = numbers
         .iter()
         .copied()
-        .filter(reject_all.into_fn())
+        .filter(|value| reject_all.test(value))
         .collect();
     println!(
         "Default reject all elements: {:?} -> {:?}",
@@ -169,7 +172,7 @@ fn main() {
     let filtered: Vec<_> = numbers
         .iter()
         .copied()
-        .filter(filter_enabled.into_fn())
+        .filter(|value| filter_enabled.test(value))
         .collect();
     println!("\nFilter enabled: {:?} -> {:?}", numbers, filtered);
 
@@ -177,7 +180,7 @@ fn main() {
     let filtered: Vec<_> = numbers
         .iter()
         .copied()
-        .filter(filter_disabled.into_fn())
+        .filter(|value| filter_disabled.test(value))
         .collect();
     println!("Filter disabled: {:?} -> {:?}", numbers, filtered);
 }

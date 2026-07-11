@@ -23,48 +23,6 @@ mod tests {
     // implementations
     // ========================================================================
 
-    #[test]
-    fn test_bi_predicate_default_conversions_allow_relaxed_generic_types() {
-        #[derive(Debug)]
-        struct BorrowedRc<'a> {
-            value: &'a str,
-        }
-
-        #[derive(Clone, Debug)]
-        struct BorrowedRcBiPredicate;
-
-        impl<'a> BiPredicate<BorrowedRc<'a>, BorrowedRc<'a>> for BorrowedRcBiPredicate {
-            fn test(
-                &self,
-                first: &BorrowedRc<'a>,
-                second: &BorrowedRc<'a>,
-            ) -> bool {
-                assert_eq!(first.value, "left");
-                assert_eq!(second.value, "right");
-                true
-            }
-        }
-
-        let left = String::from("left");
-        let right = String::from("right");
-        let first = BorrowedRc {
-            value: left.as_str(),
-        };
-        let second = BorrowedRc {
-            value: right.as_str(),
-        };
-        let predicate = BorrowedRcBiPredicate;
-
-        assert!(predicate.clone().into_box().test(&first, &second));
-        assert!(predicate.clone().into_rc().test(&first, &second));
-        assert!(predicate.clone().into_arc().test(&first, &second));
-        assert!(predicate.clone().into_fn()(&first, &second));
-
-        assert!(predicate.to_box().test(&first, &second));
-        assert!(predicate.to_rc().test(&first, &second));
-        assert!(predicate.to_arc().test(&first, &second));
-        assert!(predicate.to_fn()(&first, &second));
-    }
 
     #[test]
     fn test_bi_predicate_not_operator() {
@@ -697,24 +655,7 @@ mod tests {
             assert_eq!(pred.name(), Some("updated_name"));
         }
 
-        #[test]
-        fn test_to_box() {
-            let arc_pred = ArcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-            let box_pred = arc_pred.to_box();
-            assert!(box_pred.test(&5, &3));
-            assert!(!box_pred.test(&-5, &-3));
-        }
 
-        #[test]
-        fn test_to_box_preserves_name() {
-            let arc_pred =
-                ArcBiPredicate::new_with_name("test", |x: &i32, y: &i32| {
-                    x + y > 0
-                });
-            let box_pred = arc_pred.to_box();
-            assert_eq!(box_pred.name(), Some("test"));
-            assert!(box_pred.test(&5, &3));
-        }
 
         #[test]
         fn test_thread_safety() {
@@ -975,79 +916,11 @@ mod tests {
             assert_eq!(pred.name(), Some("updated_name"));
         }
 
-        #[test]
-        fn test_to_box() {
-            let rc_pred = RcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-            let box_pred = rc_pred.to_box();
-            assert!(box_pred.test(&5, &3));
-            assert!(!box_pred.test(&-5, &-3));
-        }
 
-        #[test]
-        fn test_to_box_preserves_name() {
-            let rc_pred =
-                RcBiPredicate::new_with_name("test", |x: &i32, y: &i32| {
-                    x + y > 0
-                });
-            let box_pred = rc_pred.to_box();
-            assert_eq!(box_pred.name(), Some("test"));
-            assert!(box_pred.test(&5, &3));
-        }
 
-        #[test]
-        fn test_to_box_original_still_usable() {
-            let rc_pred = RcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-            let _box_pred = rc_pred.to_box();
 
-            // Original rc_pred should still be usable because to_box() doesn't
-            // consume it
-            assert!(rc_pred.test(&5, &3));
-            assert!(!rc_pred.test(&-5, &-3));
-        }
 
-        #[test]
-        fn test_to_box_multiple_calls() {
-            let rc_pred =
-                RcBiPredicate::new(|x: &i32, y: &i32| x % 2 == 0 && y % 2 == 0);
 
-            // Can call to_box() multiple times
-            let box_pred1 = rc_pred.to_box();
-            let box_pred2 = rc_pred.to_box();
-
-            assert!(box_pred1.test(&2, &4));
-            assert!(box_pred2.test(&4, &6));
-            assert!(!box_pred1.test(&3, &4));
-            assert!(!box_pred2.test(&2, &5));
-
-            // Original still usable
-            assert!(rc_pred.test(&2, &4));
-        }
-
-        #[test]
-        fn test_to_box_with_different_types() {
-            let rc_pred =
-                RcBiPredicate::new(|s: &String, len: &usize| s.len() > *len);
-            let box_pred = rc_pred.to_box();
-
-            assert!(box_pred.test(&String::from("hello"), &3));
-            assert!(!box_pred.test(&String::from("hi"), &5));
-
-            // Original still usable
-            assert!(rc_pred.test(&String::from("world"), &3));
-        }
-
-        #[test]
-        fn test_to_box_and_composition() {
-            let rc_pred = RcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-            let box_pred = rc_pred.to_box();
-
-            // Compose with another predicate
-            let both_positive = |x: &i32, y: &i32| *x > 0 && *y > 0;
-            let combined = box_pred.and(both_positive);
-
-            assert!(combined.test(&5, &3));
-            assert!(!combined.test(&-5, &10));
-        }
     }
 
     // ========================================================================
@@ -1059,195 +932,27 @@ mod tests {
             ArcBiPredicate,
             BiPredicate,
             BoxBiPredicate,
-            RcBiPredicate,
-            thread,
         };
 
-        #[test]
-        fn test_closure_into_box() {
-            let closure = |x: &i32, y: &i32| x + y > 0;
-            let box_pred: BoxBiPredicate<i32, i32> = closure.into_box();
-            assert!(box_pred.test(&5, &3));
-        }
 
-        #[test]
-        fn test_closure_into_rc() {
-            let closure = |x: &i32, y: &i32| x + y > 0;
-            let rc_pred: RcBiPredicate<i32, i32> = closure.into_rc();
-            assert!(rc_pred.test(&5, &3));
-        }
 
-        #[test]
-        fn test_closure_into_arc() {
-            let closure = |x: &i32, y: &i32| x + y > 0;
-            let arc_pred: ArcBiPredicate<i32, i32> = closure.into_arc();
-            assert!(arc_pred.test(&5, &3));
-        }
 
-        #[test]
-        fn test_box_to_box_zero_cost() {
-            let pred = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-            let same_pred = pred.into_box();
-            assert!(same_pred.test(&5, &3));
-        }
 
-        #[test]
-        fn test_box_to_rc() {
-            let box_pred = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-            let rc_pred = box_pred.into_rc();
-            assert!(rc_pred.test(&5, &3));
-        }
 
-        #[test]
-        fn test_box_to_rc_preserves_name() {
-            let box_pred =
-                BoxBiPredicate::new_with_name("test", |x: &i32, y: &i32| {
-                    x + y > 0
-                });
-            let rc_pred = box_pred.into_rc();
-            assert_eq!(rc_pred.name(), Some("test"));
-        }
 
-        #[test]
-        fn test_arc_to_arc_zero_cost() {
-            let pred = ArcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-            let same_pred = pred.into_arc();
-            assert!(same_pred.test(&5, &3));
-        }
 
-        #[test]
-        fn test_arc_to_box() {
-            let arc_pred = ArcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-            let box_pred = arc_pred.into_box();
-            assert!(box_pred.test(&5, &3));
-        }
 
-        #[test]
-        fn test_arc_to_box_preserves_name() {
-            let arc_pred =
-                ArcBiPredicate::new_with_name("test", |x: &i32, y: &i32| {
-                    x + y > 0
-                });
-            let box_pred = arc_pred.into_box();
-            assert_eq!(box_pred.name(), Some("test"));
-        }
 
-        #[test]
-        fn test_arc_to_rc() {
-            let arc_pred = ArcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-            let rc_pred = arc_pred.into_rc();
-            assert!(rc_pred.test(&5, &3));
-        }
 
-        #[test]
-        fn test_arc_to_rc_preserves_name() {
-            let arc_pred =
-                ArcBiPredicate::new_with_name("test", |x: &i32, y: &i32| {
-                    x + y > 0
-                });
-            let rc_pred = arc_pred.into_rc();
-            assert_eq!(rc_pred.name(), Some("test"));
-        }
 
-        #[test]
-        fn test_arc_to_rc_non_consuming() {
-            let arc_pred = ArcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-            let rc_pred = arc_pred.to_rc();
-            assert!(rc_pred.test(&5, &3));
-            // Ensure original ArcBiPredicate is still usable
-            assert!(arc_pred.test(&5, &3));
-        }
 
-        #[test]
-        fn test_arc_to_rc_non_consuming_preserves_name() {
-            let arc_pred =
-                ArcBiPredicate::new_with_name("test", |x: &i32, y: &i32| {
-                    x + y > 0
-                });
-            let rc_pred = arc_pred.to_rc();
-            assert_eq!(rc_pred.name(), Some("test"));
-            assert_eq!(arc_pred.name(), Some("test"));
-        }
 
-        #[test]
-        fn test_rc_to_rc_zero_cost() {
-            let pred = RcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-            let same_pred = pred.into_rc();
-            assert!(same_pred.test(&5, &3));
-        }
 
-        #[test]
-        fn test_rc_to_box() {
-            let rc_pred = RcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-            let box_pred = rc_pred.into_box();
-            assert!(box_pred.test(&5, &3));
-        }
 
-        #[test]
-        fn test_rc_to_box_preserves_name() {
-            let rc_pred =
-                RcBiPredicate::new_with_name("test", |x: &i32, y: &i32| {
-                    x + y > 0
-                });
-            let box_pred = rc_pred.into_box();
-            assert_eq!(box_pred.name(), Some("test"));
-        }
 
-        #[test]
-        fn test_conversion_preserves_behavior() {
-            let closure = |x: &i32, y: &i32| x + y > 10;
 
-            let box_pred = closure.into_box();
-            assert!(box_pred.test(&5, &6));
-            assert!(!box_pred.test(&3, &4));
 
-            let closure2 = |x: &i32, y: &i32| x + y > 10;
-            let rc_pred = closure2.into_rc();
-            assert!(rc_pred.test(&5, &6));
-            assert!(!rc_pred.test(&3, &4));
-        }
 
-        #[test]
-        fn test_conversion_chain() {
-            let arc_pred = ArcBiPredicate::new_with_name(
-                "original",
-                |x: &i32, y: &i32| x + y > 0,
-            );
-
-            // Arc -> Rc
-            let rc_pred = arc_pred.clone().into_rc();
-            assert_eq!(rc_pred.name(), Some("original"));
-            assert!(rc_pred.test(&5, &3));
-
-            // Rc -> Box
-            let box_pred = rc_pred.into_box();
-            assert_eq!(box_pred.name(), Some("original"));
-            assert!(box_pred.test(&5, &3));
-        }
-
-        #[test]
-        fn test_arc_bi_predicate_new_instead_of_box() {
-            // Demonstrate the correct way to create ArcBiPredicate
-            let closure = |x: &i32, y: &i32| x + y > 0;
-            let arc_pred = closure.into_arc();
-            assert!(arc_pred.test(&5, &3));
-
-            // Or directly
-            let arc_pred2 = ArcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-            assert!(arc_pred2.test(&5, &3));
-        }
-
-        #[test]
-        fn test_closure_to_arc_instead_of_box_to_arc() {
-            // Right approach: convert closure directly to Arc
-            let closure = |x: &i32, y: &i32| x + y > 0;
-            let arc_pred = closure.into_arc();
-
-            let arc_clone = arc_pred.clone();
-            let handle = thread::spawn(move || arc_clone.test(&5, &3));
-
-            assert!(handle.join().expect("thread should not panic"));
-        }
 
         #[test]
         fn test_struct_storing_arc_bi_predicate() {
@@ -1281,148 +986,16 @@ mod tests {
     // ========================================================================
 
     mod into_fn_tests {
-        use super::{
-            ArcBiPredicate,
-            BiPredicate,
-            BoxBiPredicate,
-            RcBiPredicate,
-        };
 
-        #[test]
-        fn test_closure_into_fn_with_filter() {
-            let pairs = [(1, 2), (-1, 3), (5, -6), (3, 4)];
-            let predicate = |x: &i32, y: &i32| x + y > 0;
 
-            let result: Vec<_> = pairs
-                .iter()
-                .filter(|(x, y)| predicate.into_fn()(x, y))
-                .copied()
-                .collect();
 
-            assert_eq!(result, vec![(1, 2), (-1, 3), (3, 4)]);
-        }
 
-        #[test]
-        fn test_box_bi_predicate_into_fn_with_filter() {
-            let pairs = [(1, 2), (-1, 3), (5, -6), (3, 4)];
-            let predicate = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
 
-            let pred_fn = predicate.into_fn();
-            let result: Vec<_> = pairs
-                .iter()
-                .filter(|(x, y)| pred_fn(x, y))
-                .copied()
-                .collect();
 
-            assert_eq!(result, vec![(1, 2), (-1, 3), (3, 4)]);
-        }
 
-        #[test]
-        fn test_arc_bi_predicate_into_fn_with_filter() {
-            let pairs = [(1, 2), (-1, 3), (5, -6), (3, 4)];
-            let predicate = ArcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
 
-            let pred_fn = predicate.into_fn();
-            let result: Vec<_> = pairs
-                .iter()
-                .filter(|(x, y)| pred_fn(x, y))
-                .copied()
-                .collect();
 
-            assert_eq!(result, vec![(1, 2), (-1, 3), (3, 4)]);
-        }
 
-        #[test]
-        fn test_rc_bi_predicate_into_fn_with_filter() {
-            let pairs = [(1, 2), (-1, 3), (5, -6), (3, 4)];
-            let predicate = RcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-
-            let pred_fn = predicate.into_fn();
-            let result: Vec<_> = pairs
-                .iter()
-                .filter(|(x, y)| pred_fn(x, y))
-                .copied()
-                .collect();
-
-            assert_eq!(result, vec![(1, 2), (-1, 3), (3, 4)]);
-        }
-
-        #[test]
-        fn test_into_fn_with_complex_composition() {
-            let x_positive = ArcBiPredicate::new(|x: &i32, _y: &i32| *x > 0);
-            let y_positive = ArcBiPredicate::new(|_x: &i32, y: &i32| *y > 0);
-            let predicate = x_positive.and(y_positive);
-
-            let pairs = [(1, 2), (-1, 3), (5, -6), (3, 4)];
-            let pred_fn = predicate.into_fn();
-            let result: Vec<_> = pairs
-                .iter()
-                .filter(|(x, y)| pred_fn(x, y))
-                .copied()
-                .collect();
-
-            assert_eq!(result, vec![(1, 2), (3, 4)]);
-        }
-
-        #[test]
-        fn test_into_fn_preserves_closure_semantics() {
-            let predicate = BoxBiPredicate::new(|x: &i32, y: &i32| *x > *y);
-            let pred_fn = predicate.into_fn();
-
-            assert!(pred_fn(&10, &5));
-            assert!(!pred_fn(&3, &8));
-            assert!(!pred_fn(&5, &5));
-        }
-
-        #[test]
-        fn test_into_fn_with_partition() {
-            let pairs = [(1, 2), (-1, 3), (5, -6), (3, 4)];
-            let predicate = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-
-            let pred_fn = predicate.into_fn();
-            let positive: Vec<_> =
-                pairs.iter().filter(|(x, y)| pred_fn(x, y)).collect();
-            let negative: Vec<_> =
-                pairs.iter().filter(|(x, y)| !pred_fn(x, y)).collect();
-
-            assert_eq!(positive, vec![&(1, 2), &(-1, 3), &(3, 4)]);
-            assert_eq!(negative, vec![&(5, -6)]);
-        }
-
-        #[test]
-        fn test_into_fn_with_string() {
-            let pairs = Vec::from([
-                (String::from("hello"), 3),
-                (String::from("hi"), 5),
-                (String::from("world"), 4),
-            ]);
-
-            let predicate =
-                BoxBiPredicate::new(|s: &String, len: &usize| s.len() > *len);
-            let pred_fn = predicate.into_fn();
-
-            let result: Vec<_> = pairs
-                .iter()
-                .filter(|(s, len)| pred_fn(s, len))
-                .map(|(s, _)| s.clone())
-                .collect();
-
-            assert_eq!(
-                result,
-                vec![String::from("hello"), String::from("world")]
-            );
-        }
-
-        #[test]
-        fn test_into_fn_with_references() {
-            let data = [(1, 2), (3, 4), (5, 6)];
-            let predicate = RcBiPredicate::new(|x: &i32, y: &i32| x + y > 5);
-
-            let pred_fn = predicate.into_fn();
-            let count = data.iter().filter(|(x, y)| pred_fn(x, y)).count();
-
-            assert_eq!(count, 2); // (3,4) and (5,6)
-        }
     }
 
     // ========================================================================
@@ -1659,10 +1232,7 @@ mod tests {
     // ========================================================================
 
     mod default_implementation_tests {
-        use super::{
-            BiPredicate,
-            thread,
-        };
+        use super::BiPredicate;
 
         // Custom bi-predicate type that only implements the core
         // test method and relies on default implementations for
@@ -1707,99 +1277,10 @@ mod tests {
             assert!(!pred.test(&3, &4));
         }
 
-        #[test]
-        fn test_custom_type_into_box() {
-            let pred = CustomBiPredicate::new(10);
-            // This uses the default implementation
-            let box_pred = pred.into_box();
 
-            assert!(box_pred.test(&6, &5));
-            assert!(box_pred.test(&10, &1));
-            assert!(!box_pred.test(&5, &5));
-            assert!(!box_pred.test(&3, &4));
-        }
 
-        #[test]
-        fn test_custom_type_into_rc() {
-            let pred = CustomBiPredicate::new(10);
-            // This uses the default implementation
-            let rc_pred = pred.into_rc();
 
-            assert!(rc_pred.test(&6, &5));
-            assert!(rc_pred.test(&10, &1));
-            assert!(!rc_pred.test(&5, &5));
-            assert!(!rc_pred.test(&3, &4));
 
-            // Verify it can be cloned (RcBiPredicate feature)
-            let cloned = rc_pred.clone();
-            assert!(cloned.test(&6, &5));
-            assert!(rc_pred.test(&6, &5));
-        }
-
-        #[test]
-        fn test_custom_type_into_arc() {
-            // Custom type for thread-safe testing
-            struct ThreadSafePredicate {
-                threshold: i32,
-            }
-
-            impl ThreadSafePredicate {
-                fn new(threshold: i32) -> Self {
-                    Self { threshold }
-                }
-            }
-
-            // Implement Send + Sync to allow conversion to Arc
-            unsafe impl Send for ThreadSafePredicate {}
-            unsafe impl Sync for ThreadSafePredicate {}
-
-            // Only implement test method
-            impl BiPredicate<i32, i32> for ThreadSafePredicate {
-                fn test(&self, first: &i32, second: &i32) -> bool {
-                    first + second > self.threshold
-                }
-            }
-
-            let pred = ThreadSafePredicate::new(10);
-            // This uses the default implementation
-            let arc_pred = pred.into_arc();
-
-            assert!(arc_pred.test(&6, &5));
-            assert!(arc_pred.test(&10, &1));
-            assert!(!arc_pred.test(&5, &5));
-            assert!(!arc_pred.test(&3, &4));
-
-            // Verify it can be sent across threads
-            let arc_clone = arc_pred.clone();
-            let handle = thread::spawn(move || arc_clone.test(&6, &5));
-
-            assert!(handle.join().expect("thread should not panic"));
-            assert!(arc_pred.test(&10, &1));
-        }
-
-        #[test]
-        fn test_custom_type_into_fn() {
-            let pred = CustomBiPredicate::new(10);
-            // This uses the default implementation
-            let func = pred.into_fn();
-
-            assert!(func(&6, &5));
-            assert!(func(&10, &1));
-            assert!(!func(&5, &5));
-            assert!(!func(&3, &4));
-        }
-
-        #[test]
-        fn test_custom_type_into_fn_with_filter() {
-            let pred = CustomBiPredicate::new(10);
-            let func = pred.into_fn();
-
-            let pairs = [(6, 5), (3, 4), (10, 1), (5, 5)];
-            let result: Vec<_> =
-                pairs.iter().filter(|(x, y)| func(x, y)).collect();
-
-            assert_eq!(result, vec![&(6, 5), &(10, 1)]);
-        }
 
         #[test]
         fn test_custom_type_can_be_used_in_generic_context() {
@@ -1815,187 +1296,20 @@ mod tests {
             assert!(!accepts_predicate(&pred, 3, 4));
         }
 
-        #[test]
-        fn test_custom_type_composition_via_conversion() {
-            let custom_pred = CustomBiPredicate::new(10);
-            let box_pred = custom_pred.into_box();
 
-            // Compose with another predicate
-            let both_positive = |x: &i32, y: &i32| *x > 0 && *y > 0;
-            let combined = box_pred.and(both_positive);
-
-            assert!(combined.test(&6, &5)); // Sum > 10, both positive
-            assert!(!combined.test(&-6, &20)); // Sum > 10, but not both
-            assert!(!combined.test(&3, &4)); // Both positive, but sum <= 10
-        }
-
-        #[test]
-        fn test_custom_type_all_conversions_preserve_behavior() {
-            let threshold = 10;
-
-            let custom_pred1 = CustomBiPredicate::new(threshold);
-            let box_pred = custom_pred1.into_box();
-
-            let custom_pred2 = CustomBiPredicate::new(threshold);
-            let rc_pred = custom_pred2.into_rc();
-
-            let test_values = [(6, 5), (3, 4), (10, 1), (5, 5)];
-
-            // All converted predicates should behave the same
-            for (x, y) in &test_values {
-                let expected = x + y > threshold;
-                assert_eq!(box_pred.test(x, y), expected);
-                assert_eq!(rc_pred.test(x, y), expected);
-            }
-        }
 
         // ========================================================================
         // Test default to_xxx implementations
         // ========================================================================
 
-        #[test]
-        fn test_custom_type_to_box() {
-            let pred = CustomBiPredicate::new(10);
-            // This uses the default implementation
-            let box_pred = pred.to_box();
 
-            assert!(box_pred.test(&6, &5));
-            assert!(box_pred.test(&10, &1));
-            assert!(!box_pred.test(&5, &5));
-            assert!(!box_pred.test(&3, &4));
-        }
 
-        #[test]
-        fn test_custom_type_to_rc() {
-            let pred = CustomBiPredicate::new(10);
-            // This uses the default implementation
-            let rc_pred = pred.to_rc();
 
-            assert!(rc_pred.test(&6, &5));
-            assert!(rc_pred.test(&10, &1));
-            assert!(!rc_pred.test(&5, &5));
-            assert!(!rc_pred.test(&3, &4));
 
-            // Verify it can be cloned (RcBiPredicate feature)
-            let cloned = rc_pred.clone();
-            assert!(cloned.test(&6, &5));
-            assert!(rc_pred.test(&6, &5));
-        }
 
-        #[test]
-        fn test_custom_type_to_arc() {
-            // Custom type for thread-safe testing
-            #[derive(Clone)]
-            struct ThreadSafePredicate {
-                threshold: i32,
-            }
 
-            impl ThreadSafePredicate {
-                fn new(threshold: i32) -> Self {
-                    Self { threshold }
-                }
-            }
 
-            // Implement Send + Sync to allow conversion to Arc
-            unsafe impl Send for ThreadSafePredicate {}
-            unsafe impl Sync for ThreadSafePredicate {}
 
-            // Only implement test method
-            impl BiPredicate<i32, i32> for ThreadSafePredicate {
-                fn test(&self, first: &i32, second: &i32) -> bool {
-                    first + second > self.threshold
-                }
-            }
-
-            let pred = ThreadSafePredicate::new(10);
-            // This uses the default implementation
-            let arc_pred = pred.to_arc();
-
-            assert!(arc_pred.test(&6, &5));
-            assert!(arc_pred.test(&10, &1));
-            assert!(!arc_pred.test(&5, &5));
-            assert!(!arc_pred.test(&3, &4));
-
-            // Verify it can be sent across threads
-            let arc_clone = arc_pred.clone();
-            let handle = thread::spawn(move || arc_clone.test(&6, &5));
-
-            assert!(handle.join().expect("thread should not panic"));
-            assert!(arc_pred.test(&10, &1));
-        }
-
-        #[test]
-        fn test_custom_type_to_fn() {
-            let pred = CustomBiPredicate::new(10);
-            // This uses the default implementation
-            let func = pred.to_fn();
-
-            assert!(func(&6, &5));
-            assert!(func(&10, &1));
-            assert!(!func(&5, &5));
-            assert!(!func(&3, &4));
-        }
-
-        #[test]
-        fn test_custom_type_to_fn_with_filter() {
-            let pred = CustomBiPredicate::new(10);
-            let func = pred.to_fn();
-
-            let pairs = [(6, 5), (3, 4), (10, 1), (5, 5)];
-            let result: Vec<_> =
-                pairs.iter().filter(|(x, y)| func(x, y)).collect();
-
-            assert_eq!(result, vec![&(6, 5), &(10, 1)]);
-        }
-
-        #[test]
-        fn test_custom_type_original_still_usable_after_to_box() {
-            let pred = CustomBiPredicate::new(10);
-            let _box_pred = pred.to_box();
-
-            // Original pred should still be usable because to_box() clones it
-            assert!(pred.test(&6, &5));
-            assert!(!pred.test(&3, &4));
-        }
-
-        #[test]
-        fn test_custom_type_original_still_usable_after_to_rc() {
-            let pred = CustomBiPredicate::new(10);
-            let _rc_pred = pred.to_rc();
-
-            // Original pred should still be usable because to_rc() clones it
-            assert!(pred.test(&6, &5));
-            assert!(!pred.test(&3, &4));
-        }
-
-        #[test]
-        fn test_custom_type_original_still_usable_after_to_fn() {
-            let pred = CustomBiPredicate::new(10);
-            let _func = pred.to_fn();
-
-            // Original pred should still be usable because to_fn() clones it
-            assert!(pred.test(&6, &5));
-            assert!(!pred.test(&3, &4));
-        }
-
-        #[test]
-        fn test_custom_type_all_to_conversions_preserve_behavior() {
-            let threshold = 10;
-            let pred = CustomBiPredicate::new(threshold);
-
-            let box_pred = pred.to_box();
-            let rc_pred = pred.to_rc();
-
-            let test_values = [(6, 5), (3, 4), (10, 1), (5, 5)];
-
-            // All converted predicates should behave the same
-            for (x, y) in &test_values {
-                let expected = x + y > threshold;
-                assert_eq!(pred.test(x, y), expected);
-                assert_eq!(box_pred.test(x, y), expected);
-                assert_eq!(rc_pred.test(x, y), expected);
-            }
-        }
     }
 
     // ========================================================================
@@ -2139,208 +1453,23 @@ mod tests {
 
 #[cfg(test)]
 mod to_fn_tests {
-    use qubit_function::predicates::{
-        ArcBiPredicate,
-        BiPredicate,
-        RcBiPredicate,
-    };
 
-    #[test]
-    fn test_rc_to_fn() {
-        let pred = RcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-        let func = pred.to_fn();
 
-        assert!(func(&5, &3));
-        assert!(!func(&-5, &-3));
-        assert!(!func(&0, &0));
-    }
 
-    #[test]
-    fn test_rc_to_fn_multiple_calls() {
-        let pred =
-            RcBiPredicate::new(|x: &i32, y: &i32| x % 2 == 0 && y % 2 == 0);
-        let func = pred.to_fn();
 
-        assert!(func(&2, &4));
-        assert!(func(&4, &6));
-        assert!(!func(&3, &4));
-        assert!(!func(&2, &5));
-    }
 
-    #[test]
-    fn test_arc_to_fn() {
-        let pred = ArcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-        let func = pred.to_fn();
 
-        assert!(func(&5, &3));
-        assert!(!func(&-5, &-3));
-        assert!(!func(&0, &0));
-    }
 
-    #[test]
-    fn test_arc_to_fn_multiple_calls() {
-        let pred =
-            ArcBiPredicate::new(|x: &i32, y: &i32| x % 2 == 0 && y % 2 == 0);
-        let func = pred.to_fn();
 
-        assert!(func(&2, &4));
-        assert!(func(&4, &6));
-        assert!(!func(&3, &4));
-        assert!(!func(&2, &5));
-    }
 
-    #[test]
-    fn test_rc_to_fn_with_composition() {
-        let is_sum_positive = RcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-        let is_both_even =
-            RcBiPredicate::new(|x: &i32, y: &i32| x % 2 == 0 && y % 2 == 0);
 
-        let combined = is_sum_positive.and(is_both_even);
-        let func = combined.to_fn();
 
-        assert!(func(&2, &4));
-        assert!(!func(&1, &3));
-        assert!(!func(&-2, &-4));
-    }
 
-    #[test]
-    fn test_arc_to_fn_with_composition() {
-        let is_sum_positive = ArcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-        let is_both_even =
-            ArcBiPredicate::new(|x: &i32, y: &i32| x % 2 == 0 && y % 2 == 0);
 
-        let combined = is_sum_positive.and(is_both_even);
-        let func = combined.to_fn();
 
-        assert!(func(&2, &4));
-        assert!(!func(&1, &3));
-        assert!(!func(&-2, &-4));
-    }
 
-    #[test]
-    fn test_rc_to_rc() {
-        let pred = RcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-        let rc_pred = pred.to_rc();
 
-        assert!(rc_pred.test(&5, &3));
-        assert!(!rc_pred.test(&-5, &-3));
-        assert!(pred.test(&5, &3));
-    }
 
-    #[test]
-    fn test_arc_to_arc() {
-        let pred = ArcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-        let arc_pred = pred.to_arc();
 
-        assert!(arc_pred.test(&5, &3));
-        assert!(!arc_pred.test(&-5, &-3));
-        assert!(pred.test(&5, &3));
-    }
 
-    #[test]
-    fn test_rc_to_rc_preserves_name() {
-        let pred =
-            RcBiPredicate::new_with_name("test_pred", |x: &i32, y: &i32| {
-                x + y > 0
-            });
-        let rc_pred = pred.to_rc();
-
-        assert_eq!(rc_pred.name(), Some("test_pred"));
-        assert!(rc_pred.test(&5, &3));
-    }
-
-    #[test]
-    fn test_arc_to_arc_preserves_name() {
-        let pred =
-            ArcBiPredicate::new_with_name("test_pred", |x: &i32, y: &i32| {
-                x + y > 0
-            });
-        let arc_pred = pred.to_arc();
-
-        assert_eq!(arc_pred.name(), Some("test_pred"));
-        assert!(arc_pred.test(&5, &3));
-    }
-
-    #[test]
-    fn test_closure_to_box() {
-        let closure = |x: &i32, y: &i32| x + y > 0;
-        let box_pred = closure.to_box();
-
-        assert!(box_pred.test(&5, &3));
-        assert!(!box_pred.test(&-5, &-3));
-    }
-
-    #[test]
-    fn test_closure_to_rc() {
-        let closure = |x: &i32, y: &i32| x + y > 0;
-        let rc_pred = closure.to_rc();
-
-        assert!(rc_pred.test(&5, &3));
-        assert!(!rc_pred.test(&-5, &-3));
-    }
-
-    #[test]
-    fn test_closure_to_arc() {
-        let closure = |x: &i32, y: &i32| x + y > 0;
-        let arc_pred = closure.to_arc();
-
-        assert!(arc_pred.test(&5, &3));
-        assert!(!arc_pred.test(&-5, &-3));
-    }
-
-    #[test]
-    fn test_closure_to_fn() {
-        let closure = |x: &i32, y: &i32| x + y > 0;
-        let func = closure.to_fn();
-
-        assert!(func(&5, &3));
-        assert!(!func(&-5, &-3));
-    }
-
-    #[test]
-    fn test_closure_to_box_multiple_calls() {
-        let closure = |x: &i32, y: &i32| x % 2 == 0 && y % 2 == 0;
-
-        let box_pred1 = closure.to_box();
-        let box_pred2 = closure.to_box();
-
-        assert!(box_pred1.test(&2, &4));
-        assert!(box_pred2.test(&4, &6));
-        assert!(!box_pred1.test(&3, &4));
-    }
-
-    #[test]
-    fn test_closure_to_rc_can_clone() {
-        let closure = |x: &i32, y: &i32| x + y > 0;
-        let rc_pred = closure.to_rc();
-        let cloned = rc_pred.clone();
-
-        assert!(rc_pred.test(&5, &3));
-        assert!(cloned.test(&5, &3));
-        assert!(!rc_pred.test(&-5, &-3));
-        assert!(!cloned.test(&-5, &-3));
-    }
-
-    #[test]
-    fn test_closure_to_arc_thread_safe() {
-        let closure = |x: &i32, y: &i32| x + y > 0;
-        let arc_pred = closure.to_arc();
-        let arc_clone = arc_pred.clone();
-
-        let handle = std::thread::spawn(move || arc_clone.test(&5, &3));
-
-        assert!(arc_pred.test(&10, &5));
-        assert!(handle.join().expect("thread should not panic"));
-    }
-
-    #[test]
-    fn test_closure_to_fn_with_filter() {
-        let closure = |x: &i32, y: &i32| x + y > 0;
-        let func = closure.to_fn();
-
-        let pairs = [(1, 2), (-1, 3), (5, -6), (3, 4)];
-        let result: Vec<_> = pairs.iter().filter(|(x, y)| func(x, y)).collect();
-
-        assert_eq!(result, vec![&(1, 2), &(-1, 3), &(3, 4)]);
-    }
 }

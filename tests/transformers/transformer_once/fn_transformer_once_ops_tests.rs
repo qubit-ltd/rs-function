@@ -103,39 +103,7 @@ mod tests {
         assert_eq!(conditional.apply(5), 5);
     }
 
-    #[test]
-    fn test_complex_composition() {
-        // Complex composition: parse string, then if > 5 multiply by 2,
-        // otherwise multiply by 3, finally convert to string
-        let parse = |s: String| s.parse::<i32>().unwrap_or(0);
-        let double = |x: i32| x * 2;
-        let triple = |x: i32| x * 3;
-        let to_string = |x: i32| x.to_string();
 
-        let conditional = FnTransformerOnceOps::when(double, |x: &i32| *x > 5)
-            .or_else(triple);
-        let conditional_boxed = conditional.into_box();
-        let temp = conditional_boxed.and_then(to_string);
-        let composed = FnTransformerOnceOps::and_then(parse, temp);
-
-        assert_eq!(composed.apply("10".to_string()), "20"); // 10 > 5, so 10 * 2 = 20
-    }
-
-    #[test]
-    fn test_complex_composition_else_branch() {
-        let parse = |s: String| s.parse::<i32>().unwrap_or(0);
-        let double = |x: i32| x * 2;
-        let triple = |x: i32| x * 3;
-        let to_string = |x: i32| x.to_string();
-
-        let conditional = FnTransformerOnceOps::when(double, |x: &i32| *x > 5)
-            .or_else(triple);
-        let conditional_boxed = conditional.into_box();
-        let temp = conditional_boxed.and_then(to_string);
-        let composed = FnTransformerOnceOps::and_then(parse, temp);
-
-        assert_eq!(composed.apply("3".to_string()), "9"); // 3 <= 5, so 3 * 3 = 9
-    }
 
     #[test]
     fn test_function_pointer() {

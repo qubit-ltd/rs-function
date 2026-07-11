@@ -31,8 +31,11 @@ fn demo_with_iterator_filter() {
 
     let pred = BoxPredicate::new(|x: &i32| *x > 0);
     let numbers = vec![-2, -1, 0, 1, 2, 3];
-    let positives: Vec<_> =
-        numbers.iter().copied().filter(pred.into_fn()).collect();
+    let positives: Vec<_> = numbers
+        .iter()
+        .copied()
+        .filter(|value| pred.test(value))
+        .collect();
     println!("   Original data: {:?}", numbers);
     println!("   Filtered result: {:?}", positives);
     assert_eq!(positives, vec![1, 2, 3]);
@@ -47,7 +50,7 @@ fn demo_with_vec_retain() {
     let pred = RcPredicate::new(|x: &i32| *x % 2 == 0);
     let mut numbers = vec![1, 2, 3, 4, 5, 6];
     println!("   Original data: {:?}", numbers);
-    numbers.retain(pred.to_fn());
+    numbers.retain(|value| pred.test(value));
     println!("   Retained even numbers: {:?}", numbers);
     assert_eq!(numbers, vec![2, 4, 6]);
 
@@ -69,12 +72,12 @@ fn demo_with_generic_function() {
     }
 
     let pred = RcPredicate::new(|x: &i32| *x > 10);
-    let count1 = count_matching(&[5, 15, 8, 20], pred.to_fn());
+    let count1 = count_matching(&[5, 15, 8, 20], |value| pred.test(value));
     println!("   First call: count = {}", count1);
     assert_eq!(count1, 2);
 
     // Original predicate can be reused
-    let count2 = count_matching(&[12, 3, 18], pred.to_fn());
+    let count2 = count_matching(&[12, 3, 18], |value| pred.test(value));
     println!("   Second call: count = {}", count2);
     assert_eq!(count2, 2);
 
@@ -93,7 +96,8 @@ fn demo_thread_safe() {
     let pred = ArcPredicate::new(|x: &i32| *x > 0);
     // clone and convert into a 'static closure so it can be moved to another
     // thread
-    let closure = pred.clone().into_fn();
+    let thread_pred = pred.clone();
+    let closure = move |value: &i32| thread_pred.test(value);
 
     // Closure can be passed between threads
     let handle = std::thread::spawn(move || {

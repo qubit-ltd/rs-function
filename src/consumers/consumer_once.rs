@@ -44,9 +44,14 @@ use crate::predicates::predicate::{BoxPredicate, Predicate};
 
 mod box_consumer_once;
 pub use box_consumer_once::BoxConsumerOnce;
+#[cfg(feature = "combinators")]
 mod fn_consumer_once_ops;
+#[cfg(feature = "combinators")]
 pub use fn_consumer_once_ops::FnConsumerOnceOps;
 mod box_conditional_consumer_once;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use box_conditional_consumer_once::BoxConditionalConsumerOnce;
+#[cfg(feature = "combinators")]
 pub use box_conditional_consumer_once::BoxConditionalConsumerOnce;
 
 // ============================================================================

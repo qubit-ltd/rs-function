@@ -18,65 +18,13 @@ use qubit_function::{
 // SupplierOnce Trait Tests (for closures)
 // ==========================================================================
 
-#[test]
-fn test_supplier_once_default_conversions_allow_relaxed_generic_types() {
-    #[derive(Debug)]
-    struct BorrowedRc<'a> {
-        value: &'a str,
-    }
-
-    #[derive(Clone, Debug)]
-    struct BorrowedRcSupplierOnce;
-
-    impl<'a> SupplierOnce<BorrowedRc<'a>> for BorrowedRcSupplierOnce {
-        fn get(self) -> BorrowedRc<'a> {
-            BorrowedRc { value: "left" }
-        }
-    }
-
-    fn assert_left(value: BorrowedRc<'_>) {
-        assert_eq!(value.value, "left");
-    }
-
-    fn exercise(_marker: &str) {
-        let supplier = BorrowedRcSupplierOnce;
-
-        assert_left(supplier.clone().into_box().get());
-        assert_left(supplier.clone().into_fn()());
-
-        assert_left(supplier.to_box().get());
-        assert_left(supplier.to_fn()());
-    }
-
-    let marker = String::from("marker");
-    exercise(marker.as_str());
-}
 
 #[cfg(test)]
 mod test_supplier_once_trait {
     use super::SupplierOnce;
 
-    #[test]
-    fn test_closure_implements_supplier_once() {
-        let closure = || 42;
-        let boxed = closure.into_box();
-        assert_eq!(boxed.get(), 42);
-    }
 
-    #[test]
-    fn test_closure_move_capture() {
-        let data = String::from("hello");
-        let closure = move || data;
-        let boxed = closure.into_box();
-        assert_eq!(boxed.get(), "hello");
-    }
 
-    #[test]
-    fn test_into_box() {
-        let closure = || 42;
-        let boxed = closure.into_box();
-        assert_eq!(boxed.get(), 42);
-    }
 
     #[test]
     fn test_closure_get_direct() {
@@ -97,38 +45,9 @@ mod test_supplier_once_trait {
         assert_eq!(closure.get(), vec![1, 2, 3]);
     }
 
-    #[test]
-    fn test_into_fn() {
-        let closure = || 42;
-        let fn_once = closure.into_fn();
-        assert_eq!(fn_once(), 42);
-    }
 
-    #[test]
-    fn test_into_fn_with_move() {
-        let data = String::from("hello");
-        let closure = move || data;
-        let fn_once = closure.into_fn();
-        assert_eq!(fn_once(), "hello");
-    }
 
-    #[test]
-    fn test_into_fn_with_vec() {
-        let closure = || vec![1, 2, 3];
-        let fn_once = closure.into_fn();
-        assert_eq!(fn_once(), vec![1, 2, 3]);
-    }
 
-    #[test]
-    fn test_into_fn_with_complex_computation() {
-        let closure = || {
-            let x = 10;
-            let y = 32;
-            x + y
-        };
-        let fn_once = closure.into_fn();
-        assert_eq!(fn_once(), 42);
-    }
 }
 
 // ==========================================================================
@@ -207,53 +126,16 @@ mod test_box_supplier_once {
     }
 
     mod test_into_box {
-        use super::{
-            BoxSupplierOnce,
-            SupplierOnce,
-        };
 
-        #[test]
-        fn test_returns_self() {
-            let once = BoxSupplierOnce::new(|| 42);
-            let boxed = once.into_box();
-            assert_eq!(boxed.get(), 42);
-        }
+
     }
 
     mod test_into_fn {
-        use super::{
-            BoxSupplierOnce,
-            SupplierOnce,
-        };
 
-        #[test]
-        fn test_basic_conversion() {
-            let once = BoxSupplierOnce::new(|| 42);
-            let fn_once = once.into_fn();
-            assert_eq!(fn_once(), 42);
-        }
 
-        #[test]
-        fn test_with_string() {
-            let once = BoxSupplierOnce::new(|| String::from("hello"));
-            let fn_once = once.into_fn();
-            assert_eq!(fn_once(), "hello");
-        }
 
-        #[test]
-        fn test_with_move_closure() {
-            let data = String::from("captured");
-            let once = BoxSupplierOnce::new(move || data);
-            let fn_once = once.into_fn();
-            assert_eq!(fn_once(), "captured");
-        }
 
-        #[test]
-        fn test_with_vec() {
-            let once = BoxSupplierOnce::new(|| vec![1, 2, 3]);
-            let fn_once = once.into_fn();
-            assert_eq!(fn_once(), vec![1, 2, 3]);
-        }
+
     }
 
     mod test_use_cases {
@@ -307,32 +189,10 @@ mod test_box_supplier_once {
     }
 
     mod test_into_box_conversion {
-        use super::{
-            BoxSupplierOnce,
-            SupplierOnce,
-        };
 
-        #[test]
-        fn test_returns_self() {
-            let once = BoxSupplierOnce::new(|| 42);
-            let boxed = once.into_box();
-            assert_eq!(boxed.get(), 42);
-        }
 
-        #[test]
-        fn test_closure_into_box() {
-            let closure = || 42;
-            let boxed = closure.into_box();
-            assert_eq!(boxed.get(), 42);
-        }
 
-        #[test]
-        fn test_closure_with_move() {
-            let data = String::from("hello");
-            let closure = move || data;
-            let boxed = closure.into_box();
-            assert_eq!(boxed.get(), "hello");
-        }
+
     }
 
     mod test_edge_cases {
@@ -419,79 +279,14 @@ mod test_custom_supplier_once_default_implementation {
         assert_eq!(custom.get(), 42);
     }
 
-    #[test]
-    fn test_custom_type_into_box_default_impl() {
-        let custom = CustomSupplierOnce::new(42);
-        let boxed = custom.into_box();
-        assert_eq!(boxed.get(), 42);
-    }
 
-    #[test]
-    fn test_custom_type_with_string() {
-        let custom = CustomSupplierOnce::new(String::from("hello"));
-        let boxed = custom.into_box();
-        assert_eq!(boxed.get(), "hello");
-    }
 
-    #[test]
-    fn test_custom_type_with_vec() {
-        let custom = CustomSupplierOnce::new(vec![1, 2, 3]);
-        let boxed = custom.into_box();
-        assert_eq!(boxed.get(), vec![1, 2, 3]);
-    }
 
-    #[test]
-    fn test_custom_type_with_complex_type() {
-        struct Data {
-            id: i32,
-            name: String,
-        }
 
-        let data = Data {
-            id: 1,
-            name: String::from("test"),
-        };
-        let custom = CustomSupplierOnce::new(data);
-        let boxed = custom.into_box();
-        let result = boxed.get();
-        assert_eq!(result.id, 1);
-        assert_eq!(result.name, "test");
-    }
 
-    #[test]
-    fn test_custom_type_with_option() {
-        let custom = CustomSupplierOnce::new(Some(42));
-        let boxed = custom.into_box();
-        assert_eq!(boxed.get(), Some(42));
-    }
 
-    #[test]
-    fn test_custom_type_with_result() {
-        let custom = CustomSupplierOnce::new(Ok::<i32, String>(42));
-        let boxed = custom.into_box();
-        assert_eq!(boxed.get(), Ok(42));
-    }
 
-    #[test]
-    fn test_custom_type_into_fn_default_impl() {
-        let custom = CustomSupplierOnce::new(42);
-        let fn_once = custom.into_fn();
-        assert_eq!(fn_once(), 42);
-    }
 
-    #[test]
-    fn test_custom_type_into_fn_with_string() {
-        let custom = CustomSupplierOnce::new(String::from("hello"));
-        let fn_once = custom.into_fn();
-        assert_eq!(fn_once(), "hello");
-    }
-
-    #[test]
-    fn test_custom_type_into_fn_with_vec() {
-        let custom = CustomSupplierOnce::new(vec![1, 2, 3]);
-        let fn_once = custom.into_fn();
-        assert_eq!(fn_once(), vec![1, 2, 3]);
-    }
 }
 
 // ==========================================================================
@@ -523,77 +318,10 @@ mod test_to_box_and_to_fn {
         }
     }
 
-    #[test]
-    fn test_default_to_fn_with_custom_cloneable_supplier() {
-        let supplier = CloneableSupplier {
-            value: Arc::new(Mutex::new(Some(42))),
-        };
-        let fn_once = supplier.to_fn();
-        // The original supplier is not consumed
-        assert!(
-            supplier
-                .value
-                .lock()
-                .expect("mutex should not be poisoned")
-                .is_some()
-        );
-        // The returned FnOnce can be called
-        assert_eq!(fn_once(), 42);
-    }
 
-    #[test]
-    fn test_default_to_box_with_custom_cloneable_supplier() {
-        let supplier = CloneableSupplier {
-            value: Arc::new(Mutex::new(Some(42))),
-        };
-        let boxed = supplier.to_box();
-        // The original supplier is not consumed
-        assert!(
-            supplier
-                .value
-                .lock()
-                .expect("mutex should not be poisoned")
-                .is_some()
-        );
-        // The returned BoxSupplierOnce can be consumed
-        assert_eq!(boxed.get(), 42);
-    }
 
-    #[test]
-    fn test_specialized_to_fn_for_cloneable_closure() {
-        let counter = Arc::new(Mutex::new(0));
-        let counter_clone = counter.clone();
-        let closure = move || {
-            *counter_clone.lock().expect("mutex should not be poisoned") += 1;
-            42
-        };
-        let fn_once = closure.to_fn();
-        fn_once();
-        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 1);
-    }
 
-    #[test]
-    fn test_specialized_to_box_for_cloneable_closure() {
-        let counter = Arc::new(Mutex::new(0));
-        let counter_clone = counter.clone();
-        let closure = move || {
-            *counter_clone.lock().expect("mutex should not be poisoned") += 1;
-            42
-        };
-        let boxed = closure.to_box();
-        boxed.get();
-        assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 1);
-    }
 
-    #[test]
-    fn test_non_cloneable_closure_into_box_consumes_self() {
-        struct NonCloneable(i32);
-        let data = NonCloneable(42);
-        let closure = move || data.0;
-
-        let boxed = closure.into_box();
-        assert_eq!(boxed.get(), 42);
-    }
 }
 
 // ======================================================================

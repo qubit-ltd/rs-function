@@ -30,6 +30,12 @@ use crate::{
 /// # Type Parameters
 ///
 /// * `E` - The error value returned when the action fails.
+/// # Locking and reentrancy
+///
+/// Each call acquires a `parking_lot::Mutex` and holds it while the user callback
+/// runs. Synchronous re-entry through the same shared wrapper deadlocks. The mutex
+/// is not poisoned after a panic, and mutations completed before a panic are not
+/// rolled back.
 pub struct ArcRunnable<E> {
     /// The stateful closure executed by this runnable.
     pub(super) function: Arc<Mutex<dyn FnMut() -> Result<(), E> + Send>>,

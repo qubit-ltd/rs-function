@@ -51,117 +51,11 @@ fn test_stateful_tester_closure_mutates_state() {
     assert!(StatefulTester::test(&mut tester));
 }
 
-#[test]
-fn test_stateful_tester_into_fn_returns_fn_mut() {
-    let tester = ThresholdTester {
-        count: 0,
-        threshold: 3,
-    };
-    let mut function = tester.into_fn();
 
-    assert!(!function());
-    assert!(!function());
-    assert!(function());
-}
 
-#[test]
-fn test_stateful_tester_into_mut_fn_returns_fn_mut() {
-    let tester = ThresholdTester {
-        count: 0,
-        threshold: 2,
-    };
-    let mut function = tester.into_mut_fn();
 
-    assert!(!function());
-    assert!(function());
-}
 
-#[test]
-fn test_stateful_tester_to_fn_uses_cloned_state() {
-    let tester = ThresholdTester {
-        count: 0,
-        threshold: 2,
-    };
-    let mut function = tester.to_fn();
 
-    assert!(!function());
-    assert!(function());
-
-    let mut original = tester.clone();
-    assert!(!original.test());
-}
-
-#[test]
-fn test_stateful_tester_to_mut_fn_uses_cloned_state() {
-    let tester = ThresholdTester {
-        count: 0,
-        threshold: 2,
-    };
-    let mut function = tester.to_mut_fn();
-
-    assert!(!function());
-    assert!(function());
-
-    let mut original = tester.clone();
-    assert!(!original.test());
-}
-
-#[test]
-fn test_stateful_tester_default_wrapper_conversions() {
-    let tester = ThresholdTester {
-        count: 0,
-        threshold: 2,
-    };
-
-    let mut boxed = tester.clone().into_box();
-    assert!(!boxed.test());
-    assert!(boxed.test());
-
-    let mut rc = tester.clone().into_rc();
-    assert!(!rc.test());
-    assert!(rc.test());
-
-    let mut arc = tester.clone().into_arc();
-    assert!(!arc.test());
-    assert!(arc.test());
-
-    let mut boxed_from_ref = tester.to_box();
-    assert!(!boxed_from_ref.test());
-    assert!(boxed_from_ref.test());
-
-    let mut rc_from_ref = tester.to_rc();
-    assert!(!rc_from_ref.test());
-    assert!(rc_from_ref.test());
-
-    let mut arc_from_ref = tester.to_arc();
-    assert!(!arc_from_ref.test());
-    assert!(arc_from_ref.test());
-}
-
-#[test]
-fn test_box_stateful_tester_conversions_and_negation() {
-    let mut tester = BoxStatefulTester::new({
-        let mut count = 0;
-        move || {
-            count += 1;
-            count >= 2
-        }
-    });
-    assert!(!tester.test());
-    assert!(tester.test());
-
-    let mut boxed = BoxStatefulTester::new(|| true).into_box();
-    assert!(boxed.test());
-
-    let mut rc = BoxStatefulTester::new(|| true).into_rc();
-    assert!(rc.test());
-
-    let mut function = BoxStatefulTester::new(|| true).into_fn();
-    assert!(function());
-
-    let mut negated = !BoxStatefulTester::new(|| true);
-    assert!(!negated.test());
-}
 
 #[test]
 fn test_box_stateful_tester_logical_operations_cover_branches() {
@@ -235,36 +129,6 @@ fn test_rc_stateful_tester_clone_shares_state() {
     assert_eq!(*calls.borrow(), 2);
 }
 
-#[test]
-fn test_rc_stateful_tester_conversions_and_negation() {
-    let tester = RcStatefulTester::new(|| true);
-
-    let mut boxed = tester.to_box();
-    assert!(boxed.test());
-
-    let mut rc_clone = tester.to_rc();
-    assert!(rc_clone.test());
-
-    {
-        let mut function = tester.to_fn();
-        assert!(function());
-    }
-
-    let mut boxed_from_owned = tester.clone().into_box();
-    assert!(boxed_from_owned.test());
-
-    let mut rc_from_owned = tester.clone().into_rc();
-    assert!(rc_from_owned.test());
-
-    let mut function_from_owned = tester.clone().into_fn();
-    assert!(function_from_owned());
-
-    let mut borrowed_negated = !&tester;
-    assert!(!borrowed_negated.test());
-
-    let mut owned_negated = !tester;
-    assert!(!owned_negated.test());
-}
 
 #[test]
 fn test_rc_stateful_tester_logical_operations_cover_branches() {
@@ -328,42 +192,6 @@ fn test_arc_stateful_tester_clone_shares_state_across_threads() {
     assert_eq!(calls.load(Ordering::SeqCst), 2);
 }
 
-#[test]
-fn test_arc_stateful_tester_conversions_and_negation() {
-    let tester = ArcStatefulTester::new(|| true);
-
-    let mut boxed = tester.to_box();
-    assert!(boxed.test());
-
-    let mut rc = tester.to_rc();
-    assert!(rc.test());
-
-    let mut arc_clone = tester.to_arc();
-    assert!(arc_clone.test());
-
-    {
-        let mut function = tester.to_fn();
-        assert!(function());
-    }
-
-    let mut boxed_from_owned = tester.clone().into_box();
-    assert!(boxed_from_owned.test());
-
-    let mut rc_from_owned = tester.clone().into_rc();
-    assert!(rc_from_owned.test());
-
-    let mut arc_from_owned = tester.clone().into_arc();
-    assert!(arc_from_owned.test());
-
-    let mut function_from_owned = tester.clone().into_fn();
-    assert!(function_from_owned());
-
-    let mut borrowed_negated = !&tester;
-    assert!(!borrowed_negated.test());
-
-    let mut owned_negated = !tester;
-    assert!(!owned_negated.test());
-}
 
 #[test]
 fn test_arc_stateful_tester_logical_operations_cover_branches() {

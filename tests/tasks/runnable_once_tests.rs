@@ -89,64 +89,10 @@ fn test_runnable_once_closure_run_returns_error() {
     assert_eq!(error.to_string(), "failed");
 }
 
-#[test]
-fn test_runnable_once_closure_into_box_executes_once() {
-    let task = || Ok::<(), io::Error>(());
 
-    let boxed = RunnableOnce::into_box(task);
-    boxed.run().expect("boxed runnable-once should succeed");
-}
 
-#[test]
-fn test_runnable_once_closure_into_fn_returns_fn_once() {
-    let task = || Ok::<(), io::Error>(());
-    let function = RunnableOnce::into_fn(task);
 
-    function().expect("runnable-once function should succeed");
-}
 
-#[test]
-fn test_runnable_once_to_box_clones_runnable() {
-    let flag = Rc::new(Cell::new(false));
-    let task = ClonedRunnableOnce {
-        flag: Rc::clone(&flag),
-    };
-
-    let first = task.to_local_box();
-    first.run().expect("boxed clone should succeed");
-    assert!(flag.get());
-
-    flag.set(false);
-    let second = task.to_local_box();
-    second
-        .run()
-        .expect("original runnable should remain reusable");
-    assert!(flag.get());
-}
-
-#[test]
-fn test_runnable_once_to_fn_clones_runnable() {
-    let flag = Rc::new(Cell::new(false));
-    let task = ClonedRunnableOnce {
-        flag: Rc::clone(&flag),
-    };
-
-    let function = task.to_fn();
-    function().expect("cloned runnable should succeed");
-    assert!(flag.get());
-}
-
-#[test]
-fn test_runnable_once_default_into_callable_returns_unit() {
-    let flag = Rc::new(Cell::new(false));
-    let task = ClonedRunnableOnce {
-        flag: Rc::clone(&flag),
-    };
-
-    let callable = RunnableOnce::into_local_callable(task);
-    callable.call().expect("unit callable should succeed");
-    assert!(flag.get());
-}
 
 #[test]
 fn test_box_runnable_once_new_and_run() {
@@ -196,22 +142,7 @@ fn test_box_runnable_once_name_management() {
     assert_eq!(task.to_string(), "BoxRunnableOnce");
 }
 
-#[test]
-fn test_box_runnable_once_into_box_returns_self() {
-    let task = BoxRunnableOnce::new(|| Ok::<(), io::Error>(()));
-    let boxed = RunnableOnce::into_box(task);
-    boxed
-        .run()
-        .expect("boxed runnable conversion should succeed");
-}
 
-#[test]
-fn test_box_runnable_once_into_fn_extracts_function() {
-    let task = BoxRunnableOnce::new(|| Ok::<(), io::Error>(()));
-    let function = RunnableOnce::into_fn(task);
-
-    function().expect("runnable-once function should succeed");
-}
 
 #[test]
 fn test_box_runnable_once_implements_supplier_once() {
@@ -351,36 +282,7 @@ fn test_box_runnable_once_then_callable_skips_callable_on_error() {
     assert!(!callable_ran.load(Ordering::SeqCst));
 }
 
-#[test]
-fn test_box_runnable_once_into_callable() {
-    let task =
-        BoxRunnableOnce::new_with_name("cleanup", || Ok::<(), io::Error>(()));
-    let callable = RunnableOnce::into_callable(task);
 
-    assert_eq!(callable.name(), Some("cleanup"));
-    callable.call().expect("unit callable should succeed");
-}
-
-#[test]
-fn test_box_runnable_once_local_conversions_preserve_name() {
-    let task =
-        BoxRunnableOnce::new_with_name("cleanup", || Ok::<(), io::Error>(()));
-
-    let local = RunnableOnce::into_local_box(task);
-
-    assert_eq!(local.name(), Some("cleanup"));
-    local.run().expect("local runnable should succeed");
-
-    let task =
-        BoxRunnableOnce::new_with_name("cleanup", || Ok::<(), io::Error>(()));
-
-    let callable = RunnableOnce::into_local_callable(task);
-
-    assert_eq!(callable.name(), Some("cleanup"));
-    callable
-        .call()
-        .expect("local callable conversion should succeed");
-}
 
 #[derive(Clone)]
 struct TextRunnableOnce {
@@ -394,46 +296,7 @@ impl RunnableOnce<&'static str> for TextRunnableOnce {
     }
 }
 
-#[test]
-fn test_runnable_once_default_conversions_with_text_error_type() {
-    let events = Rc::new(Cell::new(0));
-    let task = TextRunnableOnce {
-        events: Rc::clone(&events),
-    };
 
-    let boxed = RunnableOnce::into_local_box(task.clone());
-    boxed.run().expect("into_box should succeed");
-
-    let function = RunnableOnce::into_fn(task.clone());
-    function().expect("into_fn should succeed");
-
-    let boxed_from_ref = task.to_local_box();
-    boxed_from_ref.run().expect("to_box should succeed");
-
-    let function_from_ref = task.to_fn();
-    function_from_ref().expect("to_fn should succeed");
-
-    let callable = RunnableOnce::into_local_callable(task);
-    callable.call().expect("into_callable should succeed");
-
-    assert_eq!(events.get(), 5);
-}
-
-#[test]
-fn test_send_runnable_once_default_send_conversions_with_text_error_type() {
-    let events = Arc::new(AtomicUsize::new(0));
-    let task = SendClonedRunnableOnce {
-        events: Arc::clone(&events),
-    };
-
-    let boxed = task.to_box();
-    boxed.run().expect("to_box should succeed");
-
-    let callable = RunnableOnce::into_callable(task);
-    callable.call().expect("into_callable should succeed");
-
-    assert_eq!(events.load(Ordering::SeqCst), 2);
-}
 
 #[test]
 fn test_box_runnable_once_from_supplier_with_text_error_type() {

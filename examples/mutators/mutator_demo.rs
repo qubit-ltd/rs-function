@@ -324,35 +324,35 @@ fn main() {
 
     // Closure -> BoxMutator
     let closure = |x: &mut i32| *x *= 2;
-    let box_mut = closure.into_box();
+    let box_mut = BoxMutator::new(closure);
     let mut value = 5;
     box_mut.apply(&mut value);
     println!("Closure -> BoxMutator: 5 -> {}", value);
 
     // Closure -> RcMutator
     let closure = |x: &mut i32| *x *= 2;
-    let rc_mut = closure.into_rc();
+    let rc_mut = RcMutator::new(closure);
     let mut value = 5;
     rc_mut.apply(&mut value);
     println!("Closure -> RcMutator: 5 -> {}", value);
 
     // Closure -> ArcMutator
     let closure = |x: &mut i32| *x *= 2;
-    let arc_mut = closure.into_arc();
+    let arc_mut = ArcMutator::new(closure);
     let mut value = 5;
     arc_mut.apply(&mut value);
     println!("Closure -> ArcMutator: 5 -> {}", value);
 
     // BoxMutator -> RcMutator
     let box_mut = BoxMutator::new(|x: &mut i32| *x *= 2);
-    let rc_mut = box_mut.into_rc();
+    let rc_mut = RcMutator::new(box_mut);
     let mut value = 5;
     rc_mut.apply(&mut value);
     println!("BoxMutator -> RcMutator: 5 -> {}", value);
 
     // RcMutator -> BoxMutator
     let rc_mut = RcMutator::new(|x: &mut i32| *x *= 2);
-    let box_mut = rc_mut.into_box();
+    let box_mut = BoxMutator::new(rc_mut);
     let mut value = 5;
     box_mut.apply(&mut value);
     println!("RcMutator -> BoxMutator: 5 -> {}\n", value);

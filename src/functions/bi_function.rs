@@ -20,6 +20,7 @@
 //! - [`BoxBiFunction`]: Single ownership, not cloneable
 //! - [`ArcBiFunction`]: Thread-safe shared ownership, cloneable
 //! - [`RcBiFunction`]: Single-threaded shared ownership, cloneable
+#[cfg(feature = "rc")]
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -34,27 +35,46 @@ use crate::functions::{
 };
 use crate::macros::{ impl_closure_trait,
 };
-use crate::predicates::bi_predicate::{ArcBiPredicate, BiPredicate, BoxBiPredicate, RcBiPredicate};
+use crate::predicates::bi_predicate::{ArcBiPredicate, BiPredicate, BoxBiPredicate};
+#[cfg(feature = "rc")]
+use crate::predicates::bi_predicate::RcBiPredicate;
 
 mod box_bi_function;
 pub use box_bi_function::BoxBiFunction;
+#[cfg(feature = "rc")]
 mod rc_bi_function;
+#[cfg(feature = "rc")]
 pub use rc_bi_function::RcBiFunction;
 mod arc_bi_function;
 pub use arc_bi_function::ArcBiFunction;
+#[cfg(feature = "combinators")]
 mod fn_bi_function_ops;
+#[cfg(feature = "combinators")]
 pub use fn_bi_function_ops::FnBiFunctionOps;
 mod box_binary_function;
 pub use box_binary_function::BoxBinaryFunction;
 mod arc_binary_function;
 pub use arc_binary_function::ArcBinaryFunction;
+#[cfg(feature = "rc")]
 mod rc_binary_function;
+#[cfg(feature = "rc")]
 pub use rc_binary_function::RcBinaryFunction;
 mod box_conditional_bi_function;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use box_conditional_bi_function::BoxConditionalBiFunction;
+#[cfg(feature = "combinators")]
 pub use box_conditional_bi_function::BoxConditionalBiFunction;
+#[cfg(feature = "rc")]
 mod rc_conditional_bi_function;
+#[cfg(feature = "rc")]
+#[cfg(not(feature = "combinators"))]
+pub(crate) use rc_conditional_bi_function::RcConditionalBiFunction;
+#[cfg(all(feature = "rc", feature = "combinators"))]
 pub use rc_conditional_bi_function::RcConditionalBiFunction;
 mod arc_conditional_bi_function;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use arc_conditional_bi_function::ArcConditionalBiFunction;
+#[cfg(feature = "combinators")]
 pub use arc_conditional_bi_function::ArcConditionalBiFunction;
 
 // ============================================================================

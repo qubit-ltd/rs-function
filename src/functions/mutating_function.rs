@@ -117,6 +117,7 @@
 //! assert_eq!(old_value, Some(10));
 //! assert_eq!(cache.get("key"), Some(&42));
 //! ```
+#[cfg(feature = "rc")]
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -124,28 +125,47 @@ use crate::functions::{
     function::Function,
     macros::{
         impl_box_conditional_function, impl_box_function_methods, impl_conditional_function_clone,
-        impl_conditional_function_debug_display, impl_fn_ops_trait, impl_function_clone,
+        impl_conditional_function_debug_display, impl_function_clone,
         impl_function_common_methods, impl_function_debug_display, impl_function_identity_method,
         impl_shared_conditional_function, impl_shared_function_methods,
     },
 };
+#[cfg(feature = "combinators")]
+use crate::functions::macros::impl_fn_ops_trait;
 use crate::macros::{ impl_closure_trait,
 };
-use crate::predicates::predicate::{ArcPredicate, BoxPredicate, Predicate, RcPredicate};
+use crate::predicates::predicate::{ArcPredicate, BoxPredicate, Predicate};
+#[cfg(feature = "rc")]
+use crate::predicates::predicate::RcPredicate;
 
 mod box_mutating_function;
 pub use box_mutating_function::BoxMutatingFunction;
+#[cfg(feature = "rc")]
 mod rc_mutating_function;
+#[cfg(feature = "rc")]
 pub use rc_mutating_function::RcMutatingFunction;
 mod arc_mutating_function;
 pub use arc_mutating_function::ArcMutatingFunction;
 mod box_conditional_mutating_function;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use box_conditional_mutating_function::BoxConditionalMutatingFunction;
+#[cfg(feature = "combinators")]
 pub use box_conditional_mutating_function::BoxConditionalMutatingFunction;
+#[cfg(feature = "rc")]
 mod rc_conditional_mutating_function;
+#[cfg(feature = "rc")]
+#[cfg(not(feature = "combinators"))]
+pub(crate) use rc_conditional_mutating_function::RcConditionalMutatingFunction;
+#[cfg(all(feature = "rc", feature = "combinators"))]
 pub use rc_conditional_mutating_function::RcConditionalMutatingFunction;
 mod arc_conditional_mutating_function;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use arc_conditional_mutating_function::ArcConditionalMutatingFunction;
+#[cfg(feature = "combinators")]
 pub use arc_conditional_mutating_function::ArcConditionalMutatingFunction;
+#[cfg(feature = "combinators")]
 mod fn_mutating_function_ops;
+#[cfg(feature = "combinators")]
 pub use fn_mutating_function_ops::FnMutatingFunctionOps;
 
 // =======================================================================
@@ -210,7 +230,7 @@ pub use fn_mutating_function_ops::FnMutatingFunctionOps;
 /// ## Type Conversion
 ///
 /// ```rust
-/// use qubit_function::MutatingFunction;
+/// use qubit_function::BoxMutatingFunction;
 ///
 /// let closure = |x: &mut i32| {
 ///     *x *= 2;
@@ -218,9 +238,7 @@ pub use fn_mutating_function_ops::FnMutatingFunctionOps;
 /// };
 ///
 /// // Convert to different ownership models
-/// let box_func = closure.into_box();
-/// // let rc_func = closure.into_rc();  // closure moved
-/// // let arc_func = closure.into_arc(); // closure moved
+/// let box_func = BoxMutatingFunction::new(closure);
 /// ```
 pub trait MutatingFunction<T, R> {
     /// Applies the function to the mutable reference and returns a result

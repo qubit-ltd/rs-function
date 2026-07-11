@@ -26,13 +26,18 @@ use crate::transformers::macros::{
 
 mod box_transformer_once;
 pub use box_transformer_once::BoxTransformerOnce;
+#[cfg(feature = "combinators")]
 mod fn_transformer_once_ops;
+#[cfg(feature = "combinators")]
 pub use fn_transformer_once_ops::FnTransformerOnceOps;
 mod unary_operator_once;
 pub use unary_operator_once::UnaryOperatorOnce;
 mod box_unary_operator_once;
 pub use box_unary_operator_once::BoxUnaryOperatorOnce;
 mod box_conditional_transformer_once;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use box_conditional_transformer_once::BoxConditionalTransformerOnce;
+#[cfg(feature = "combinators")]
 pub use box_conditional_transformer_once::BoxConditionalTransformerOnce;
 
 // ============================================================================

@@ -264,7 +264,7 @@ macro_rules! impl_shared_function_methods {
         {
             impl_shared_function_methods!(@let_before $struct_name, before, self.clone());
             impl_shared_function_methods!(@let_after $chained_function_trait, after, after);
-            $struct_name::new(move |t| {
+            $crate::functions::macros::impl_function_new_callback!($chained_function_trait, $struct_name, $t, |t| {
                 impl_shared_function_methods!(@apply_after $chained_function_trait, after, before.apply(t))
             })
         }
@@ -352,7 +352,7 @@ macro_rules! impl_shared_function_methods {
         {
             impl_shared_function_methods!(@let_before $struct_name, before, self.clone());
             impl_shared_function_methods!(@let_after $chained_function_trait, after, after);
-            $struct_name::new(move |t, u| {
+            $crate::functions::macros::impl_function_new_callback!($chained_function_trait, $struct_name, $t, $u, |t, u| {
                 impl_shared_function_methods!(@apply_after $chained_function_trait, after, before.apply(t, u))
             })
         }

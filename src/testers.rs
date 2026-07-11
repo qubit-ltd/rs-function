@@ -153,8 +153,14 @@
 //!
 //! assert!(handle.join().expect("thread should not panic"));
 //! ```
+#[cfg(feature = "rc")]
 use std::rc::Rc;
 use std::sync::Arc;
 
+#[cfg(feature = "stateful")]
 pub mod stateful_tester;
 pub mod tester;
+
+#[cfg(feature = "stateful")]
+pub use stateful_tester::*;
+pub use tester::*;

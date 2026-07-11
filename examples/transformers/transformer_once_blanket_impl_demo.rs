@@ -8,7 +8,7 @@
 
 //! Demonstrates FnOnce -> TransformerOnce blanket implementations
 
-use qubit_function::TransformerOnce;
+use qubit_function::{BoxTransformerOnce, TransformerOnce};
 
 fn main() {
     println!("=== Testing FnOnce -> TransformerOnce ===");
@@ -31,13 +31,13 @@ fn test_transformer_once() {
 
     // Test conversion to BoxTransformerOnce
     let transform = |s: String| s.to_uppercase();
-    let boxed = transform.into_box();
+    let boxed = BoxTransformerOnce::new(transform);
     assert_eq!(boxed.apply("hello".to_string()), "HELLO");
     println!("✓ into_box() test passed");
 
     // Test into_fn
     let transform2 = |s: String| s.len();
-    let func = transform2.into_fn();
+    let func = transform2;
     assert_eq!(func("hello".to_string()), 5);
     println!("✓ into_fn() test passed");
 }

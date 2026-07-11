@@ -30,6 +30,7 @@
 //! Suitable for statistics, accumulation, and event processing scenarios
 //! involving two parameters.
 use std::cell::RefCell;
+#[cfg(feature = "rc")]
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -42,21 +43,38 @@ use crate::consumers::macros::{
     };
 use crate::macros::{ impl_closure_trait,
 };
-use crate::predicates::bi_predicate::{ArcBiPredicate, BiPredicate, BoxBiPredicate, RcBiPredicate};
+use crate::predicates::bi_predicate::{ArcBiPredicate, BiPredicate, BoxBiPredicate};
+#[cfg(feature = "rc")]
+use crate::predicates::bi_predicate::RcBiPredicate;
 
 mod box_stateful_bi_consumer;
 pub use box_stateful_bi_consumer::BoxStatefulBiConsumer;
+#[cfg(feature = "rc")]
 mod rc_stateful_bi_consumer;
+#[cfg(feature = "rc")]
 pub use rc_stateful_bi_consumer::RcStatefulBiConsumer;
 mod arc_stateful_bi_consumer;
 pub use arc_stateful_bi_consumer::ArcStatefulBiConsumer;
+#[cfg(feature = "combinators")]
 mod fn_stateful_bi_consumer_ops;
+#[cfg(feature = "combinators")]
 pub use fn_stateful_bi_consumer_ops::FnStatefulBiConsumerOps;
 mod box_conditional_stateful_bi_consumer;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use box_conditional_stateful_bi_consumer::BoxConditionalStatefulBiConsumer;
+#[cfg(feature = "combinators")]
 pub use box_conditional_stateful_bi_consumer::BoxConditionalStatefulBiConsumer;
 mod arc_conditional_stateful_bi_consumer;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use arc_conditional_stateful_bi_consumer::ArcConditionalStatefulBiConsumer;
+#[cfg(feature = "combinators")]
 pub use arc_conditional_stateful_bi_consumer::ArcConditionalStatefulBiConsumer;
+#[cfg(feature = "rc")]
 mod rc_conditional_stateful_bi_consumer;
+#[cfg(feature = "rc")]
+#[cfg(not(feature = "combinators"))]
+pub(crate) use rc_conditional_stateful_bi_consumer::RcConditionalStatefulBiConsumer;
+#[cfg(all(feature = "rc", feature = "combinators"))]
 pub use rc_conditional_stateful_bi_consumer::RcConditionalStatefulBiConsumer;
 
 // =======================================================================

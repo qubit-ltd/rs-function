@@ -32,6 +32,11 @@ use super::{
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync`)
 /// - **Clonable**: Cheap cloning via `Rc::clone`
 /// - **Statefulness**: Can modify internal state between calls
+/// # Borrowing and reentrancy
+///
+/// Each call holds a mutable `RefCell` borrow while the user callback runs.
+/// Synchronous re-entry through the same shared wrapper panics with a borrow
+/// error. Mutations completed before a panic are not rolled back.
 pub struct RcStatefulFunction<T, R> {
     pub(super) function: RcStatefulFn<T, R>,
     pub(super) name: Option<String>,

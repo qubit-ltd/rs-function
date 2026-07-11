@@ -16,6 +16,11 @@ type RcStatefulTesterFn = Rc<RefCell<dyn FnMut() -> bool>>;
 /// A single-threaded shared stateful tester backed by `Rc<RefCell<_>>`.
 ///
 /// Clones of an `RcStatefulTester` share the same mutable closure state.
+/// # Borrowing and reentrancy
+///
+/// Each call holds a mutable `RefCell` borrow while the user callback runs.
+/// Synchronous re-entry through the same shared wrapper panics with a borrow
+/// error. Mutations completed before a panic are not rolled back.
 pub struct RcStatefulTester {
     pub(super) function: RcStatefulTesterFn,
 }

@@ -22,46 +22,6 @@ use qubit_function::{
 // BoxMutatingFunction Tests
 // ============================================================================
 
-#[test]
-fn test_mutating_function_default_conversions_allow_relaxed_generic_types() {
-    #[derive(Clone, Debug, Eq, PartialEq)]
-    struct BorrowedRc<'a> {
-        value: &'a str,
-    }
-
-    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-    struct BorrowedRcMutator;
-
-    impl<'a> MutatingFunction<BorrowedRc<'a>, BorrowedRc<'a>>
-        for BorrowedRcMutator
-    {
-        fn apply(&self, value: &mut BorrowedRc<'a>) -> BorrowedRc<'a> {
-            value.clone()
-        }
-    }
-
-    fn assert_left(value: BorrowedRc<'_>) {
-        assert_eq!(value.value, "left");
-    }
-
-    let text = String::from("left");
-    let mut value = BorrowedRc {
-        value: text.as_str(),
-    };
-    let mutator = BorrowedRcMutator;
-
-    assert_left(mutator.into_box().apply(&mut value));
-    assert_left(mutator.into_rc().apply(&mut value));
-    assert_left(mutator.into_arc().apply(&mut value));
-    assert_left(mutator.into_once().apply(&mut value));
-    assert_left(mutator.into_fn()(&mut value));
-
-    assert_left(mutator.to_box().apply(&mut value));
-    assert_left(mutator.to_rc().apply(&mut value));
-    assert_left(mutator.to_arc().apply(&mut value));
-    assert_left(mutator.to_once().apply(&mut value));
-    assert_left(mutator.to_fn()(&mut value));
-}
 
 #[cfg(test)]
 mod test_box_mutating_function {
@@ -163,44 +123,8 @@ mod test_box_mutating_function {
         assert_eq!(value, 10);
     }
 
-    #[test]
-    fn test_into_fn() {
-        let func = BoxMutatingFunction::new(|x: &mut i32| {
-            *x *= 2;
-            *x
-        });
-        let closure = func.into_fn();
 
-        let mut value = 5;
-        assert_eq!(closure(&mut value), 10);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_into_box() {
-        let func = BoxMutatingFunction::new(|x: &mut i32| {
-            *x *= 2;
-            *x
-        });
-        let boxed = func.into_box();
-
-        let mut value = 5;
-        assert_eq!(boxed.apply(&mut value), 10);
-        assert_eq!(value, 10);
-    }
-
-    #[test]
-    fn test_into_rc() {
-        let func = BoxMutatingFunction::new(|x: &mut i32| {
-            *x *= 2;
-            *x
-        });
-        let rc = func.into_rc();
-
-        let mut value = 5;
-        assert_eq!(rc.apply(&mut value), 10);
-        assert_eq!(value, 10);
-    }
 }
 
 // ============================================================================
@@ -261,93 +185,11 @@ mod test_rc_mutating_function {
         assert_eq!(value, 10);
     }
 
-    #[test]
-    fn test_to_box() {
-        let func = RcMutatingFunction::new(|x: &mut i32| {
-            *x *= 2;
-            *x
-        });
-        let boxed = func.to_box();
 
-        let mut value = 5;
-        assert_eq!(boxed.apply(&mut value), 10);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_into_box() {
-        let func = RcMutatingFunction::new(|x: &mut i32| {
-            *x *= 2;
-            *x
-        });
-        let boxed = func.into_box();
 
-        let mut value = 5;
-        assert_eq!(boxed.apply(&mut value), 10);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_into_rc() {
-        let func = RcMutatingFunction::new(|x: &mut i32| {
-            *x *= 2;
-            *x
-        });
-        let rc = func.into_rc();
 
-        let mut value = 5;
-        assert_eq!(rc.apply(&mut value), 10);
-        assert_eq!(value, 10);
-    }
-
-    #[test]
-    fn test_into_fn() {
-        let func = RcMutatingFunction::new(|x: &mut i32| {
-            *x *= 2;
-            *x
-        });
-        let closure = func.into_fn();
-
-        let mut value = 5;
-        assert_eq!(closure(&mut value), 10);
-        assert_eq!(value, 10);
-    }
-
-    #[test]
-    fn test_to_rc() {
-        let func = RcMutatingFunction::new(|x: &mut i32| {
-            *x *= 2;
-            *x
-        });
-        let rc = func.to_rc();
-
-        let mut value = 5;
-        assert_eq!(rc.apply(&mut value), 10);
-        assert_eq!(value, 10);
-
-        // Original should still be usable since it was cloned
-        let mut value2 = 3;
-        assert_eq!(func.apply(&mut value2), 6);
-        assert_eq!(value2, 6);
-    }
-
-    #[test]
-    fn test_to_fn() {
-        let func = RcMutatingFunction::new(|x: &mut i32| {
-            *x *= 2;
-            *x
-        });
-        let closure = func.to_fn();
-
-        let mut value = 5;
-        assert_eq!(closure(&mut value), 10);
-        assert_eq!(value, 10);
-
-        // Original should still be usable since it was cloned
-        let mut value2 = 3;
-        assert_eq!(func.apply(&mut value2), 6);
-        assert_eq!(value2, 6);
-    }
 }
 
 // ============================================================================
@@ -426,119 +268,13 @@ mod test_arc_mutating_function {
         assert_eq!(value, 10);
     }
 
-    #[test]
-    fn test_to_box() {
-        let func = ArcMutatingFunction::new(|x: &mut i32| {
-            *x *= 2;
-            *x
-        });
-        let boxed = func.to_box();
 
-        let mut value = 5;
-        assert_eq!(boxed.apply(&mut value), 10);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_to_rc() {
-        let func = ArcMutatingFunction::new(|x: &mut i32| {
-            *x *= 2;
-            *x
-        });
-        let rc = func.to_rc();
 
-        let mut value = 5;
-        assert_eq!(rc.apply(&mut value), 10);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_into_box() {
-        let func = ArcMutatingFunction::new(|x: &mut i32| {
-            *x *= 2;
-            *x
-        });
-        let boxed = func.into_box();
 
-        let mut value = 5;
-        assert_eq!(boxed.apply(&mut value), 10);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_into_rc() {
-        let func = ArcMutatingFunction::new(|x: &mut i32| {
-            *x *= 2;
-            *x
-        });
-        let rc = func.into_rc();
 
-        let mut value = 5;
-        assert_eq!(rc.apply(&mut value), 10);
-        assert_eq!(value, 10);
-    }
-
-    #[test]
-    fn test_into_arc() {
-        let func = ArcMutatingFunction::new(|x: &mut i32| {
-            *x *= 2;
-            *x
-        });
-        let arc = func.into_arc();
-
-        let mut value = 5;
-        assert_eq!(arc.apply(&mut value), 10);
-        assert_eq!(value, 10);
-    }
-
-    #[test]
-    fn test_into_fn() {
-        let func = ArcMutatingFunction::new(|x: &mut i32| {
-            *x *= 2;
-            *x
-        });
-        let closure = func.into_fn();
-
-        let mut value = 5;
-        assert_eq!(closure(&mut value), 10);
-        assert_eq!(value, 10);
-    }
-
-    #[test]
-    fn test_to_arc() {
-        let func = ArcMutatingFunction::new(|x: &mut i32| {
-            *x *= 2;
-            *x
-        });
-        let arc = func.to_arc();
-
-        let mut value = 5;
-        assert_eq!(arc.apply(&mut value), 10);
-        assert_eq!(value, 10);
-
-        // Original should still be usable since it was cloned
-        let mut value2 = 3;
-        assert_eq!(func.apply(&mut value2), 6);
-        assert_eq!(value2, 6);
-    }
-
-    #[test]
-    fn test_to_fn() {
-        let func = ArcMutatingFunction::new(|x: &mut i32| {
-            *x *= 2;
-            *x
-        });
-        let closure = func.to_fn();
-
-        let mut value = 5;
-        assert_eq!(closure(&mut value), 10);
-        assert_eq!(value, 10);
-
-        // Original should still be usable since it was cloned
-        let mut value2 = 3;
-        assert_eq!(func.apply(&mut value2), 6);
-        assert_eq!(value2, 6);
-    }
 }
 
 // ============================================================================
@@ -591,135 +327,15 @@ mod test_closure {
         assert_eq!(value, 10);
     }
 
-    #[test]
-    fn test_closure_into_box() {
-        let closure = |x: &mut i32| {
-            *x *= 2;
-            *x
-        };
-        let boxed = MutatingFunction::into_box(closure);
 
-        let mut value = 5;
-        assert_eq!(boxed.apply(&mut value), 10);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_closure_into_rc() {
-        let closure = |x: &mut i32| {
-            *x *= 2;
-            *x
-        };
-        let rc = closure.into_rc();
 
-        let mut value = 5;
-        assert_eq!(rc.apply(&mut value), 10);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_closure_into_arc() {
-        let closure = |x: &mut i32| {
-            *x *= 2;
-            *x
-        };
-        let arc = closure.into_arc();
 
-        let mut value = 5;
-        assert_eq!(arc.apply(&mut value), 10);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_closure_to_box() {
-        let closure = |x: &mut i32| {
-            *x *= 2;
-            *x
-        };
-        let boxed = MutatingFunction::to_box(&closure);
 
-        let mut value = 5;
-        assert_eq!(boxed.apply(&mut value), 10);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_closure_to_rc() {
-        let closure = |x: &mut i32| {
-            *x *= 2;
-            *x
-        };
-        let rc = closure.to_rc();
 
-        let mut value = 5;
-        assert_eq!(rc.apply(&mut value), 10);
-        assert_eq!(value, 10);
-    }
-
-    #[test]
-    fn test_closure_to_arc() {
-        let closure = |x: &mut i32| {
-            *x *= 2;
-            *x
-        };
-        let arc = closure.to_arc();
-
-        let mut value = 5;
-        assert_eq!(arc.apply(&mut value), 10);
-        assert_eq!(value, 10);
-    }
-
-    #[test]
-    fn test_closure_to_fn() {
-        let closure = |x: &mut i32| {
-            *x *= 2;
-            *x
-        };
-        let fn_closure = MutatingFunction::to_fn(&closure);
-
-        let mut value = 5;
-        assert_eq!(fn_closure(&mut value), 10);
-        assert_eq!(value, 10);
-    }
-
-    #[test]
-    fn test_closure_into_fn() {
-        let closure = |x: &mut i32| {
-            *x *= 2;
-            *x
-        };
-        let fn_closure = MutatingFunction::into_fn(closure);
-
-        let mut value = 5;
-        assert_eq!(fn_closure(&mut value), 10);
-        assert_eq!(value, 10);
-    }
-
-    #[test]
-    fn test_closure_into_once() {
-        let closure = |x: &mut i32| {
-            *x *= 2;
-            *x
-        };
-        let once_func = closure.into_once();
-
-        let mut value = 5;
-        assert_eq!(once_func.apply(&mut value), 10);
-        assert_eq!(value, 10);
-    }
-
-    #[test]
-    fn test_closure_to_once() {
-        let closure = |x: &mut i32| {
-            *x *= 2;
-            *x
-        };
-        let once_func = closure.to_once();
-
-        let mut value = 5;
-        assert_eq!(once_func.apply(&mut value), 10);
-        assert_eq!(value, 10);
-    }
 }
 
 // ============================================================================
@@ -755,110 +371,15 @@ impl Clone for TestMutatingFunction {
 
 #[cfg(test)]
 mod test_mutating_function_default_impl {
-    use super::{
-        MutatingFunction,
-        TestMutatingFunction,
-    };
 
-    #[test]
-    fn test_into_box() {
-        let func = TestMutatingFunction::new(2);
-        let boxed = func.into_box();
 
-        let mut value = 5;
-        assert_eq!(boxed.apply(&mut value), 5);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_into_rc() {
-        let func = TestMutatingFunction::new(3);
-        let rc = func.into_rc();
 
-        let mut value = 4;
-        assert_eq!(rc.apply(&mut value), 4);
-        assert_eq!(value, 12);
-    }
 
-    #[test]
-    fn test_into_arc() {
-        let func = TestMutatingFunction::new(4);
-        let arc = func.into_arc();
 
-        let mut value = 3;
-        assert_eq!(arc.apply(&mut value), 3);
-        assert_eq!(value, 12);
-    }
 
-    #[test]
-    fn test_into_fn() {
-        let func = TestMutatingFunction::new(5);
-        let closure = func.into_fn();
 
-        let mut value = 2;
-        assert_eq!(closure(&mut value), 2);
-        assert_eq!(value, 10);
-    }
 
-    #[test]
-    fn test_to_box() {
-        let func = TestMutatingFunction::new(2);
-        let boxed = func.to_box();
-
-        let mut value = 5;
-        assert_eq!(boxed.apply(&mut value), 5);
-        assert_eq!(value, 10);
-
-        // Original should still be usable since it was cloned
-        let mut value2 = 3;
-        assert_eq!(func.apply(&mut value2), 3);
-        assert_eq!(value2, 6);
-    }
-
-    #[test]
-    fn test_to_rc() {
-        let func = TestMutatingFunction::new(3);
-        let rc = func.to_rc();
-
-        let mut value = 4;
-        assert_eq!(rc.apply(&mut value), 4);
-        assert_eq!(value, 12);
-
-        // Original should still be usable since it was cloned
-        let mut value2 = 2;
-        assert_eq!(func.apply(&mut value2), 2);
-        assert_eq!(value2, 6);
-    }
-
-    #[test]
-    fn test_to_arc() {
-        let func = TestMutatingFunction::new(4);
-        let arc = func.to_arc();
-
-        let mut value = 3;
-        assert_eq!(arc.apply(&mut value), 3);
-        assert_eq!(value, 12);
-
-        // Original should still be usable since it was cloned
-        let mut value2 = 2;
-        assert_eq!(func.apply(&mut value2), 2);
-        assert_eq!(value2, 8);
-    }
-
-    #[test]
-    fn test_to_fn() {
-        let func = TestMutatingFunction::new(5);
-        let closure = func.to_fn();
-
-        let mut value = 2;
-        assert_eq!(closure(&mut value), 2);
-        assert_eq!(value, 10);
-
-        // Original should still be usable since it was cloned
-        let mut value2 = 1;
-        assert_eq!(func.apply(&mut value2), 1);
-        assert_eq!(value2, 5);
-    }
 }
 
 // ============================================================================
@@ -1166,79 +687,9 @@ fn test_arc_conditional_mutating_function_debug_display() {
 
 #[cfg(test)]
 mod test_mutating_function_trait_default_methods {
-    use super::MutatingFunction;
-    use qubit_function::MutatingFunctionOnce;
-    use std::sync::{
-        Arc,
-        atomic::{
-            AtomicUsize,
-            Ordering,
-        },
-    };
 
-    #[test]
-    fn test_custom_mutating_function_into_once() {
-        let counter = Arc::new(AtomicUsize::new(0));
 
-        struct MyMutatingFunction {
-            counter: Arc<AtomicUsize>,
-        }
 
-        impl MutatingFunction<i32, i32> for MyMutatingFunction {
-            fn apply(&self, value: &mut i32) -> i32 {
-                self.counter.fetch_add(1, Ordering::SeqCst);
-                *value += 1;
-                *value
-            }
-        }
 
-        let my_func = MyMutatingFunction {
-            counter: counter.clone(),
-        };
 
-        // Test into_once() - should consume the function
-        let once_func = my_func.into_once();
-        let mut value = 5;
-        let result = once_func.apply(&mut value);
-        assert_eq!(result, 6);
-        assert_eq!(value, 6);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
-    }
-
-    #[test]
-    fn test_custom_mutating_function_to_once() {
-        let counter = Arc::new(AtomicUsize::new(0));
-
-        #[derive(Clone)]
-        struct MyMutatingFunction {
-            counter: Arc<AtomicUsize>,
-        }
-
-        impl MutatingFunction<i32, i32> for MyMutatingFunction {
-            fn apply(&self, value: &mut i32) -> i32 {
-                self.counter.fetch_add(1, Ordering::SeqCst);
-                *value += 1;
-                *value
-            }
-        }
-
-        let my_func = MyMutatingFunction {
-            counter: counter.clone(),
-        };
-
-        // Test to_once() - should not consume the original
-        let once_func = my_func.to_once();
-        let mut value = 5;
-        let result = once_func.apply(&mut value);
-        assert_eq!(result, 6);
-        assert_eq!(value, 6);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
-
-        // Original function should still be usable
-        let mut value2 = 10;
-        let result2 = my_func.apply(&mut value2);
-        assert_eq!(result2, 11);
-        assert_eq!(value2, 11);
-        assert_eq!(counter.load(Ordering::SeqCst), 2);
-    }
 }

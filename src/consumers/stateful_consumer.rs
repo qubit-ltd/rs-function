@@ -29,6 +29,7 @@
 //!
 //! Suitable for statistics, accumulation, event handling, and other scenarios.
 use std::cell::RefCell;
+#[cfg(feature = "rc")]
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -41,21 +42,38 @@ use crate::consumers::macros::{
 };
 use crate::macros::{ impl_closure_trait,
 };
-use crate::predicates::predicate::{ArcPredicate, BoxPredicate, Predicate, RcPredicate};
+use crate::predicates::predicate::{ArcPredicate, BoxPredicate, Predicate};
+#[cfg(feature = "rc")]
+use crate::predicates::predicate::RcPredicate;
 
 mod box_stateful_consumer;
 pub use box_stateful_consumer::BoxStatefulConsumer;
+#[cfg(feature = "rc")]
 mod rc_stateful_consumer;
+#[cfg(feature = "rc")]
 pub use rc_stateful_consumer::RcStatefulConsumer;
 mod arc_stateful_consumer;
 pub use arc_stateful_consumer::ArcStatefulConsumer;
+#[cfg(feature = "combinators")]
 mod fn_stateful_consumer_ops;
+#[cfg(feature = "combinators")]
 pub use fn_stateful_consumer_ops::FnStatefulConsumerOps;
 mod box_conditional_stateful_consumer;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use box_conditional_stateful_consumer::BoxConditionalStatefulConsumer;
+#[cfg(feature = "combinators")]
 pub use box_conditional_stateful_consumer::BoxConditionalStatefulConsumer;
 mod arc_conditional_stateful_consumer;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use arc_conditional_stateful_consumer::ArcConditionalStatefulConsumer;
+#[cfg(feature = "combinators")]
 pub use arc_conditional_stateful_consumer::ArcConditionalStatefulConsumer;
+#[cfg(feature = "rc")]
 mod rc_conditional_stateful_consumer;
+#[cfg(feature = "rc")]
+#[cfg(not(feature = "combinators"))]
+pub(crate) use rc_conditional_stateful_consumer::RcConditionalStatefulConsumer;
+#[cfg(all(feature = "rc", feature = "combinators"))]
 pub use rc_conditional_stateful_consumer::RcConditionalStatefulConsumer;
 
 // ============================================================================

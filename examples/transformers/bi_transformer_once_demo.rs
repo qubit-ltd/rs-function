@@ -103,14 +103,12 @@ fn main() {
     // Example 11: Converting to function
     println!("\n11. Converting to function:");
     let add4 = BoxBiTransformerOnce::new(|x: i32, y: i32| x + y);
-    let f = add4.into_fn();
-    println!("   f(10, 20) = {}", f(10, 20));
+    println!("   add4.apply(10, 20) = {}", add4.apply(10, 20));
 
     // Example 12: Converting to box (zero-cost)
     println!("\n12. Converting to box (zero-cost):");
     let add5 = BoxBiTransformerOnce::new(|x: i32, y: i32| x + y);
-    let boxed = add5.into_box();
-    println!("   boxed(15, 25) = {}", boxed.apply(15, 25));
+    println!("   add5.apply(15, 25) = {}", add5.apply(15, 25));
 
     println!("\n=== All examples completed successfully! ===");
 }

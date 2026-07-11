@@ -173,7 +173,7 @@ macro_rules! impl_box_conditional_function {
                 let predicate = self.predicate;
                 impl_box_conditional_function!(@let_function $else_function_trait, then_function, self.function);
                 impl_box_conditional_function!(@let_function $else_function_trait, else_function, else_function);
-                $box_function_type::new(move |t| {
+                $crate::functions::macros::impl_function_new_callback!($else_function_trait, $box_function_type, $t, |t| {
                     if predicate.test(t) {
                         then_function.apply(t)
                     } else {
@@ -231,7 +231,7 @@ macro_rules! impl_box_conditional_function {
                 let predicate = self.predicate;
                 impl_box_conditional_function!(@let_function $else_function_trait, then_function, self.function);
                 impl_box_conditional_function!(@let_function $else_function_trait, else_function, else_function);
-                $box_function_type::new(move |t, u| {
+                $crate::functions::macros::impl_function_new_callback!($else_function_trait, $box_function_type, $t, $u, |t, u| {
                     if predicate.test(t, u) {
                         then_function.apply(t, u)
                     } else {

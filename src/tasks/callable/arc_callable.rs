@@ -14,10 +14,12 @@ use parking_lot::Mutex;
 
 use crate::{
     functions::macros::impl_function_debug_display,
-    macros::{impl_closure_trait, impl_common_name_methods, impl_common_new_methods},
+    macros::{impl_common_name_methods, impl_common_new_methods},
     suppliers::supplier::Supplier,
-    tasks::callable::{BoxCallable, Callable, RcCallable},
+    tasks::callable::{BoxCallable, Callable},
 };
+#[cfg(feature = "rc")]
+use crate::tasks::callable::RcCallable;
 
 // ============================================================================
 // ArcCallable
@@ -32,6 +34,12 @@ use crate::{
 ///
 /// * `R` - The success value returned by the computation.
 /// * `E` - The error value returned when the computation fails.
+/// # Locking and reentrancy
+///
+/// Each call acquires a `parking_lot::Mutex` and holds it while the user callback
+/// runs. Synchronous re-entry through the same shared wrapper deadlocks. The mutex
+/// is not poisoned after a panic, and mutations completed before a panic are not
+/// rolled back.
 pub struct ArcCallable<R, E> {
     /// The stateful closure executed by this callable.
     pub(super) function: Arc<Mutex<dyn FnMut() -> Result<R, E> + Send>>,
@@ -85,12 +93,7 @@ impl<R, E> Callable<R, E> for ArcCallable<R, E> {
     }
 }
 
-impl_closure_trait!(
-    Callable<R, E>,
-    call,
-    FnMut() -> Result<R, E>
-);
-
 impl_function_debug_display!(BoxCallable<R, E>);
+#[cfg(feature = "rc")]
 impl_function_debug_display!(RcCallable<R, E>);
 impl_function_debug_display!(ArcCallable<R, E>);

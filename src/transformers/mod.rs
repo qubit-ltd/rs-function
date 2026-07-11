@@ -13,42 +13,24 @@
 //! variants.
 
 pub mod bi_transformer;
+#[cfg(feature = "once")]
 pub mod bi_transformer_once;
 pub(crate) mod macros;
+#[cfg(feature = "stateful")]
 pub mod stateful_bi_transformer;
+#[cfg(feature = "stateful")]
 pub mod stateful_transformer;
 pub mod transformer;
+#[cfg(feature = "once")]
 pub mod transformer_once;
 
-pub use bi_transformer::{
-    ArcBiTransformer, ArcBinaryOperator, ArcConditionalBiTransformer, BiTransformer,
-    BinaryOperator, BoxBiTransformer, BoxBinaryOperator, BoxConditionalBiTransformer,
-    FnBiTransformerOps, RcBiTransformer, RcBinaryOperator, RcConditionalBiTransformer,
-};
-pub use bi_transformer_once::{
-    BiTransformerOnce, BinaryOperatorOnce, BoxBiTransformerOnce, BoxBinaryOperatorOnce,
-    BoxConditionalBiTransformerOnce, FnBiTransformerOnceOps,
-};
-pub use stateful_bi_transformer::{
-    ArcConditionalStatefulBiTransformer, ArcStatefulBiTransformer,
-    BoxConditionalStatefulBiTransformer, BoxStatefulBiTransformer, FnStatefulBiTransformerOps,
-    RcConditionalStatefulBiTransformer, RcStatefulBiTransformer, StatefulBiTransformer,
-};
-pub use stateful_bi_transformer::{
-    ArcStatefulBinaryOperator, BoxStatefulBinaryOperator, RcStatefulBinaryOperator,
-    StatefulBinaryOperator,
-};
-pub use stateful_transformer::{
-    ArcConditionalStatefulTransformer, ArcStatefulTransformer, BoxConditionalStatefulTransformer,
-    BoxStatefulTransformer, FnStatefulTransformerOps, RcConditionalStatefulTransformer,
-    RcStatefulTransformer, StatefulTransformer,
-};
-pub use transformer::{
-    ArcConditionalTransformer, ArcTransformer, ArcUnaryOperator, BoxConditionalTransformer,
-    BoxTransformer, BoxUnaryOperator, FnTransformerOps, RcConditionalTransformer, RcTransformer,
-    RcUnaryOperator, Transformer, UnaryOperator,
-};
-pub use transformer_once::{
-    BoxConditionalTransformerOnce, BoxTransformerOnce, BoxUnaryOperatorOnce, FnTransformerOnceOps,
-    TransformerOnce, UnaryOperatorOnce,
-};
+pub use bi_transformer::*;
+#[cfg(feature = "once")]
+pub use bi_transformer_once::*;
+#[cfg(feature = "stateful")]
+pub use stateful_bi_transformer::*;
+#[cfg(feature = "stateful")]
+pub use stateful_transformer::*;
+pub use transformer::*;
+#[cfg(feature = "once")]
+pub use transformer_once::*;

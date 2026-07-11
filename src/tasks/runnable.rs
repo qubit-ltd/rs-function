@@ -20,9 +20,15 @@ use crate::macros::impl_closure_trait;
 
 mod box_runnable;
 pub use box_runnable::BoxRunnable;
+#[cfg(feature = "rc")]
+#[cfg(feature = "rc")]
 mod rc_runnable;
+#[cfg(feature = "rc")]
+#[cfg(feature = "rc")]
 pub use rc_runnable::RcRunnable;
+#[cfg(feature = "stateful")]
 mod arc_runnable;
+#[cfg(feature = "stateful")]
 pub use arc_runnable::ArcRunnable;
 
 // ============================================================================

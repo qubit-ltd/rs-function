@@ -64,7 +64,7 @@
 //! use qubit_function::{BiPredicate, BoxBiPredicate};
 //!
 //! let pred = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0)
-//!     .and(BoxBiPredicate::new(|x, y| x > y));
+//!     .and(BoxBiPredicate::new(|x: &i32, y: &i32| x > y));
 //! assert!(pred.test(&10, &5));
 //! ```
 //!
@@ -99,8 +99,8 @@
 //! use qubit_function::{BiPredicate, RcBiPredicate};
 //!
 //! let pred = RcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
-//! let combined1 = pred.and(RcBiPredicate::new(|x, y| x > y));
-//! let combined2 = pred.or(RcBiPredicate::new(|x, y| *x > 100));
+//! let combined1 = pred.and(RcBiPredicate::new(|x: &i32, y: &i32| x > y));
+//! let combined2 = pred.or(RcBiPredicate::new(|x: &i32, y: &i32| *x > 100));
 //!
 //! // Original predicate is still usable
 //! assert!(pred.test(&5, &3));
@@ -139,6 +139,7 @@
 //! assert!(pred.test(&5, &3));
 //! assert!(!pred.test(&-8, &-3));
 //! ```
+#[cfg(feature = "rc")]
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -163,11 +164,15 @@ type SendSyncBiPredicateFn<T, U> = dyn Fn(&T, &U) -> bool + Send + Sync;
 
 mod box_bi_predicate;
 pub use box_bi_predicate::BoxBiPredicate;
+#[cfg(feature = "rc")]
 mod rc_bi_predicate;
+#[cfg(feature = "rc")]
 pub use rc_bi_predicate::RcBiPredicate;
 mod arc_bi_predicate;
 pub use arc_bi_predicate::ArcBiPredicate;
+#[cfg(feature = "combinators")]
 mod fn_bi_predicate_ops;
+#[cfg(feature = "combinators")]
 pub use fn_bi_predicate_ops::FnBiPredicateOps;
 
 /// A bi-predicate trait for testing whether two values satisfy a

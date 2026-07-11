@@ -16,6 +16,7 @@
 //! `FnMut` semantics, such as counters, rolling windows, sampling, or
 //! stateful filters.
 use std::cell::RefCell;
+#[cfg(feature = "rc")]
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -30,9 +31,13 @@ mod arc_stateful_predicate;
 pub use arc_stateful_predicate::ArcStatefulPredicate;
 mod box_stateful_predicate;
 pub use box_stateful_predicate::BoxStatefulPredicate;
+#[cfg(feature = "combinators")]
 mod fn_stateful_predicate_ops;
+#[cfg(feature = "combinators")]
 pub use fn_stateful_predicate_ops::FnStatefulPredicateOps;
+#[cfg(feature = "rc")]
 mod rc_stateful_predicate;
+#[cfg(feature = "rc")]
 pub use rc_stateful_predicate::RcStatefulPredicate;
 
 /// A stateful predicate trait for testing values with mutable internal state.

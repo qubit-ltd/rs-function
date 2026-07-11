@@ -63,7 +63,7 @@ impl<T, U, R> BiMutatingFunction<T, U, R> for BoxBiMutatingFunction<T, U, R> {
 }
 
 // Implement constant method for BoxBiMutatingFunction
-impl_function_constant_method!(BoxBiMutatingFunction<T, U, R>);
+impl_function_constant_method!(BoxBiMutatingFunction<T, U, R>, mut 'static);
 
 // Implement Debug and Display for BoxBiMutatingFunction
 impl_function_debug_display!(BoxBiMutatingFunction<T, U, R>);

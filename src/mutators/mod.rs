@@ -12,16 +12,13 @@
 
 pub(crate) mod macros;
 pub mod mutator;
+#[cfg(feature = "once")]
 pub mod mutator_once;
+#[cfg(feature = "stateful")]
 pub mod stateful_mutator;
 
-pub use mutator::{
-    ArcConditionalMutator, ArcMutator, BoxConditionalMutator, BoxMutator, FnMutatorOps, Mutator,
-    RcConditionalMutator, RcMutator,
-};
-pub use mutator_once::{BoxConditionalMutatorOnce, BoxMutatorOnce, FnMutatorOnceOps, MutatorOnce};
-pub use stateful_mutator::{
-    ArcConditionalStatefulMutator, ArcStatefulMutator, BoxConditionalStatefulMutator,
-    BoxStatefulMutator, FnMutStatefulMutatorOps, RcConditionalStatefulMutator, RcStatefulMutator,
-    StatefulMutator,
-};
+pub use mutator::*;
+#[cfg(feature = "once")]
+pub use mutator_once::*;
+#[cfg(feature = "stateful")]
+pub use stateful_mutator::*;

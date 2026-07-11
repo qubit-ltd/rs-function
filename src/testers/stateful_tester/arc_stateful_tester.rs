@@ -19,6 +19,12 @@ type ArcStatefulTesterFn = Arc<Mutex<dyn FnMut() -> bool + Send + 'static>>;
 ///
 /// Clones of an `ArcStatefulTester` share the same mutable closure state and
 /// can be moved across threads.
+/// # Locking and reentrancy
+///
+/// Each call acquires a `parking_lot::Mutex` and holds it while the user callback
+/// runs. Synchronous re-entry through the same shared wrapper deadlocks. The mutex
+/// is not poisoned after a panic, and mutations completed before a panic are not
+/// rolled back.
 pub struct ArcStatefulTester {
     pub(super) function: ArcStatefulTesterFn,
 }

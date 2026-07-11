@@ -201,8 +201,7 @@ fn main() {
             .expect("mutex should not be poisoned")
             .push(*x + *y);
     });
-    let func = consumer.into_fn();
-    func(&7, &3);
+    consumer.accept(&7, &3);
     println!(
         "  Log: {:?}\n",
         *log.lock().expect("mutex should not be poisoned")

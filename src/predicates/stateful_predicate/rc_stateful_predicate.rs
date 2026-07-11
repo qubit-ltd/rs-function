@@ -21,6 +21,11 @@ type RcStatefulPredicateFn<T> = Rc<RefCell<dyn FnMut(&T) -> bool>>;
 ///
 /// This type stores the predicate closure inside `Rc<RefCell<_>>`, allowing
 /// cheap clones that share the same mutable predicate state on one thread.
+/// # Borrowing and reentrancy
+///
+/// Each call holds a mutable `RefCell` borrow while the user callback runs.
+/// Synchronous re-entry through the same shared wrapper panics with a borrow
+/// error. Mutations completed before a panic are not rolled back.
 pub struct RcStatefulPredicate<T> {
     pub(super) function: RcStatefulPredicateFn<T>,
     pub(super) name: Option<String>,

@@ -5,6 +5,7 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
+#![cfg(feature = "full")]
 // qubit-style: allow explicit-imports
 use qubit_function::comparator::{
     ArcComparator,
@@ -46,14 +47,14 @@ fn test_comparator_default_conversions_allow_relaxed_generic_types() {
     let comparator = BorrowedRcComparator;
 
     assert_eq!(
-        comparator.clone().into_box().compare(&left, &right),
+        qubit_function::comparator::BoxComparator::new(comparator.clone()).compare(&left, &right),
         Ordering::Less
     );
     assert_eq!(
-        comparator.clone().into_rc().compare(&left, &right),
+        qubit_function::comparator::RcComparator::new(comparator.clone()).compare(&left, &right),
         Ordering::Less
     );
-    assert_eq!(comparator.into_arc().compare(&left, &right), Ordering::Less);
+    assert_eq!(qubit_function::comparator::ArcComparator::new(comparator).compare(&left, &right), Ordering::Less);
 }
 
 #[cfg(test)]
@@ -66,7 +67,7 @@ mod box_comparator_tests {
 
     #[test]
     fn test_new_and_compare() {
-        let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let cmp = qubit_function::comparator::BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
         assert_eq!(cmp.compare(&5, &3), Ordering::Greater);
         assert_eq!(cmp.compare(&3, &5), Ordering::Less);
         assert_eq!(cmp.compare(&5, &5), Ordering::Equal);
@@ -74,7 +75,7 @@ mod box_comparator_tests {
 
     #[test]
     fn test_reversed() {
-        let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let cmp = qubit_function::comparator::BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
         let rev = cmp.reversed();
         assert_eq!(rev.compare(&5, &3), Ordering::Less);
         assert_eq!(rev.compare(&3, &5), Ordering::Greater);
@@ -83,8 +84,8 @@ mod box_comparator_tests {
 
     #[test]
     fn test_then_comparing() {
-        let cmp1 = BoxComparator::new(|a: &i32, b: &i32| (a % 2).cmp(&(b % 2)));
-        let cmp2 = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let cmp1 = qubit_function::comparator::BoxComparator::new(|a: &i32, b: &i32| (a % 2).cmp(&(b % 2)));
+        let cmp2 = qubit_function::comparator::BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
         let chained = cmp1.then_comparing(cmp2);
         assert_eq!(chained.compare(&4, &2), Ordering::Greater);
         assert_eq!(chained.compare(&3, &1), Ordering::Greater);
@@ -93,8 +94,8 @@ mod box_comparator_tests {
 
     #[test]
     fn test_then_comparing_with_equal() {
-        let cmp1 = BoxComparator::new(|a: &i32, b: &i32| (a % 2).cmp(&(b % 2)));
-        let cmp2 = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let cmp1 = qubit_function::comparator::BoxComparator::new(|a: &i32, b: &i32| (a % 2).cmp(&(b % 2)));
+        let cmp2 = qubit_function::comparator::BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
         let chained = cmp1.then_comparing(cmp2);
         // Both even, so second comparator decides
         assert_eq!(chained.compare(&4, &2), Ordering::Greater);
@@ -103,8 +104,8 @@ mod box_comparator_tests {
     #[test]
     fn test_then_comparing_with_non_equal_greater() {
         // Test the case where the first comparator returns Greater
-        let cmp1 = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
-        let cmp2 = BoxComparator::new(|_a: &i32, _b: &i32| {
+        let cmp1 = qubit_function::comparator::BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let cmp2 = qubit_function::comparator::BoxComparator::new(|_a: &i32, _b: &i32| {
             panic!("Second comparator should not be called")
         });
         let chained = cmp1.then_comparing(cmp2);
@@ -115,8 +116,8 @@ mod box_comparator_tests {
     #[test]
     fn test_then_comparing_with_non_equal_less() {
         // Test the case where the first comparator returns Less
-        let cmp1 = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
-        let cmp2 = BoxComparator::new(|_a: &i32, _b: &i32| {
+        let cmp1 = qubit_function::comparator::BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let cmp2 = qubit_function::comparator::BoxComparator::new(|_a: &i32, _b: &i32| {
             panic!("Second comparator should not be called")
         });
         let chained = cmp1.then_comparing(cmp2);
@@ -148,28 +149,28 @@ mod box_comparator_tests {
 
     #[test]
     fn test_into_fn() {
-        let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
-        let func = cmp.into_fn();
+        let cmp = qubit_function::comparator::BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let func = move |first: &i32, second: &i32| cmp.compare(first, second);
         assert_eq!(func(&5, &3), Ordering::Greater);
     }
 
     #[test]
     fn test_into_box() {
-        let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
-        let boxed = cmp.into_box();
+        let cmp = qubit_function::comparator::BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let boxed = qubit_function::comparator::BoxComparator::new(cmp);
         assert_eq!(boxed.compare(&5, &3), Ordering::Greater);
     }
 
     #[test]
     fn test_into_rc() {
-        let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
-        let rc = cmp.into_rc();
+        let cmp = qubit_function::comparator::BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let rc = qubit_function::comparator::RcComparator::new(cmp);
         assert_eq!(rc.compare(&5, &3), Ordering::Greater);
     }
 
     #[test]
     fn test_with_strings() {
-        let cmp = BoxComparator::new(|a: &String, b: &String| a.cmp(b));
+        let cmp = qubit_function::comparator::BoxComparator::new(|a: &String, b: &String| a.cmp(b));
         assert_eq!(
             cmp.compare(&"hello".to_string(), &"world".to_string()),
             Ordering::Less
@@ -187,7 +188,7 @@ mod arc_comparator_tests {
 
     #[test]
     fn test_new_and_compare() {
-        let cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let cmp = qubit_function::comparator::ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
         assert_eq!(cmp.compare(&5, &3), Ordering::Greater);
         assert_eq!(cmp.compare(&3, &5), Ordering::Less);
         assert_eq!(cmp.compare(&5, &5), Ordering::Equal);
@@ -195,7 +196,7 @@ mod arc_comparator_tests {
 
     #[test]
     fn test_clone() {
-        let cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let cmp = qubit_function::comparator::ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
         let cloned = cmp.clone();
         assert_eq!(cmp.compare(&5, &3), Ordering::Greater);
         assert_eq!(cloned.compare(&5, &3), Ordering::Greater);
@@ -203,7 +204,7 @@ mod arc_comparator_tests {
 
     #[test]
     fn test_reversed() {
-        let cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let cmp = qubit_function::comparator::ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
         let rev = cmp.reversed();
         assert_eq!(rev.compare(&5, &3), Ordering::Less);
         // Original still works
@@ -212,8 +213,8 @@ mod arc_comparator_tests {
 
     #[test]
     fn test_then_comparing() {
-        let cmp1 = ArcComparator::new(|a: &i32, b: &i32| (a % 2).cmp(&(b % 2)));
-        let cmp2 = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let cmp1 = qubit_function::comparator::ArcComparator::new(|a: &i32, b: &i32| (a % 2).cmp(&(b % 2)));
+        let cmp2 = qubit_function::comparator::ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
         let chained = cmp1.then_comparing(&cmp2);
         assert_eq!(chained.compare(&4, &2), Ordering::Greater);
         // Originals still work
@@ -224,8 +225,8 @@ mod arc_comparator_tests {
     #[test]
     fn test_then_comparing_with_non_equal_greater() {
         // Test the case where the first comparator returns Greater
-        let cmp1 = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
-        let cmp2 = ArcComparator::new(|_a: &i32, _b: &i32| {
+        let cmp1 = qubit_function::comparator::ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let cmp2 = qubit_function::comparator::ArcComparator::new(|_a: &i32, _b: &i32| {
             panic!("Second comparator should not be called")
         });
         let chained = cmp1.then_comparing(&cmp2);
@@ -236,8 +237,8 @@ mod arc_comparator_tests {
     #[test]
     fn test_then_comparing_with_non_equal_less() {
         // Test the case where the first comparator returns Less
-        let cmp1 = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
-        let cmp2 = ArcComparator::new(|_a: &i32, _b: &i32| {
+        let cmp1 = qubit_function::comparator::ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let cmp2 = qubit_function::comparator::ArcComparator::new(|_a: &i32, _b: &i32| {
             panic!("Second comparator should not be called")
         });
         let chained = cmp1.then_comparing(&cmp2);
@@ -269,35 +270,35 @@ mod arc_comparator_tests {
 
     #[test]
     fn test_into_fn() {
-        let cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
-        let func = cmp.into_fn();
+        let cmp = qubit_function::comparator::ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let func = move |first: &i32, second: &i32| cmp.compare(first, second);
         assert_eq!(func(&5, &3), Ordering::Greater);
     }
 
     #[test]
     fn test_into_box() {
-        let cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
-        let boxed = cmp.into_box();
+        let cmp = qubit_function::comparator::ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let boxed = qubit_function::comparator::BoxComparator::new(cmp);
         assert_eq!(boxed.compare(&5, &3), Ordering::Greater);
     }
 
     #[test]
     fn test_into_rc() {
-        let cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
-        let rc = cmp.into_rc();
+        let cmp = qubit_function::comparator::ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let rc = qubit_function::comparator::RcComparator::new(cmp);
         assert_eq!(rc.compare(&5, &3), Ordering::Greater);
     }
 
     #[test]
     fn test_into_arc() {
-        let cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
-        let arc = cmp.into_arc();
+        let cmp = qubit_function::comparator::ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let arc = qubit_function::comparator::ArcComparator::new(cmp);
         assert_eq!(arc.compare(&5, &3), Ordering::Greater);
     }
 
     #[test]
     fn test_thread_safety() {
-        let cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let cmp = qubit_function::comparator::ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
         let handles: Vec<_> = (0..10)
             .map(|i| {
                 let cmp_clone = cmp.clone();
@@ -326,7 +327,7 @@ mod rc_comparator_tests {
 
     #[test]
     fn test_new_and_compare() {
-        let cmp = RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let cmp = qubit_function::comparator::RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
         assert_eq!(cmp.compare(&5, &3), Ordering::Greater);
         assert_eq!(cmp.compare(&3, &5), Ordering::Less);
         assert_eq!(cmp.compare(&5, &5), Ordering::Equal);
@@ -334,7 +335,7 @@ mod rc_comparator_tests {
 
     #[test]
     fn test_clone() {
-        let cmp = RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let cmp = qubit_function::comparator::RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
         let cloned = cmp.clone();
         assert_eq!(cmp.compare(&5, &3), Ordering::Greater);
         assert_eq!(cloned.compare(&5, &3), Ordering::Greater);
@@ -342,7 +343,7 @@ mod rc_comparator_tests {
 
     #[test]
     fn test_reversed() {
-        let cmp = RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let cmp = qubit_function::comparator::RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
         let rev = cmp.reversed();
         assert_eq!(rev.compare(&5, &3), Ordering::Less);
         // Original still works
@@ -351,8 +352,8 @@ mod rc_comparator_tests {
 
     #[test]
     fn test_then_comparing() {
-        let cmp1 = RcComparator::new(|a: &i32, b: &i32| (a % 2).cmp(&(b % 2)));
-        let cmp2 = RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let cmp1 = qubit_function::comparator::RcComparator::new(|a: &i32, b: &i32| (a % 2).cmp(&(b % 2)));
+        let cmp2 = qubit_function::comparator::RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
         let chained = cmp1.then_comparing(&cmp2);
         assert_eq!(chained.compare(&4, &2), Ordering::Greater);
         // Originals still work
@@ -363,8 +364,8 @@ mod rc_comparator_tests {
     #[test]
     fn test_then_comparing_with_non_equal_greater() {
         // Test the case where the first comparator returns Greater
-        let cmp1 = RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
-        let cmp2 = RcComparator::new(|_a: &i32, _b: &i32| {
+        let cmp1 = qubit_function::comparator::RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let cmp2 = qubit_function::comparator::RcComparator::new(|_a: &i32, _b: &i32| {
             panic!("Second comparator should not be called")
         });
         let chained = cmp1.then_comparing(&cmp2);
@@ -375,8 +376,8 @@ mod rc_comparator_tests {
     #[test]
     fn test_then_comparing_with_non_equal_less() {
         // Test the case where the first comparator returns Less
-        let cmp1 = RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
-        let cmp2 = RcComparator::new(|_a: &i32, _b: &i32| {
+        let cmp1 = qubit_function::comparator::RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let cmp2 = qubit_function::comparator::RcComparator::new(|_a: &i32, _b: &i32| {
             panic!("Second comparator should not be called")
         });
         let chained = cmp1.then_comparing(&cmp2);
@@ -408,22 +409,22 @@ mod rc_comparator_tests {
 
     #[test]
     fn test_into_fn() {
-        let cmp = RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
-        let func = cmp.into_fn();
+        let cmp = qubit_function::comparator::RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let func = move |first: &i32, second: &i32| cmp.compare(first, second);
         assert_eq!(func(&5, &3), Ordering::Greater);
     }
 
     #[test]
     fn test_into_box() {
-        let cmp = RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
-        let boxed = cmp.into_box();
+        let cmp = qubit_function::comparator::RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let boxed = qubit_function::comparator::BoxComparator::new(cmp);
         assert_eq!(boxed.compare(&5, &3), Ordering::Greater);
     }
 
     #[test]
     fn test_into_rc() {
-        let cmp = RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
-        let rc = cmp.into_rc();
+        let cmp = qubit_function::comparator::RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let rc = qubit_function::comparator::RcComparator::new(cmp);
         assert_eq!(rc.compare(&5, &3), Ordering::Greater);
     }
 }
@@ -446,28 +447,28 @@ mod closure_tests {
     #[test]
     fn test_closure_into_box() {
         let cmp = |a: &i32, b: &i32| a.cmp(b);
-        let boxed = cmp.into_box();
+        let boxed = qubit_function::comparator::BoxComparator::new(cmp);
         assert_eq!(boxed.compare(&5, &3), Ordering::Greater);
     }
 
     #[test]
     fn test_closure_into_rc() {
         let cmp = |a: &i32, b: &i32| a.cmp(b);
-        let rc = cmp.into_rc();
+        let rc = qubit_function::comparator::RcComparator::new(cmp);
         assert_eq!(rc.compare(&5, &3), Ordering::Greater);
     }
 
     #[test]
     fn test_closure_into_arc() {
         let cmp = |a: &i32, b: &i32| a.cmp(b);
-        let arc = cmp.into_arc();
+        let arc = qubit_function::comparator::ArcComparator::new(cmp);
         assert_eq!(arc.compare(&5, &3), Ordering::Greater);
     }
 
     #[test]
     fn test_closure_into_fn() {
         let cmp = |a: &i32, b: &i32| a.cmp(b);
-        let func = cmp.into_fn();
+        let func = move |first: &i32, second: &i32| cmp.compare(first, second);
         assert_eq!(func(&5, &3), Ordering::Greater);
     }
 }
@@ -475,7 +476,6 @@ mod closure_tests {
 #[cfg(test)]
 mod fn_ops_tests {
     use super::{
-        BoxComparator,
         Comparator,
         FnComparatorOps,
         Ordering,
@@ -490,7 +490,7 @@ mod fn_ops_tests {
     #[test]
     fn test_then_comparing() {
         let cmp = (|a: &i32, b: &i32| (a % 2).cmp(&(b % 2)))
-            .then_comparing(BoxComparator::new(|a: &i32, b: &i32| a.cmp(b)));
+            .then_comparing(qubit_function::comparator::BoxComparator::new(|a: &i32, b: &i32| a.cmp(b)));
         assert_eq!(cmp.compare(&4, &2), Ordering::Greater);
     }
 
@@ -498,7 +498,7 @@ mod fn_ops_tests {
     fn test_chained_operations() {
         let cmp = (|a: &i32, b: &i32| a.cmp(b))
             .reversed()
-            .then_comparing(BoxComparator::new(|a: &i32, b: &i32| b.cmp(a)));
+            .then_comparing(qubit_function::comparator::BoxComparator::new(|a: &i32, b: &i32| b.cmp(a)));
         assert_eq!(cmp.compare(&5, &3), Ordering::Less);
     }
 }
@@ -506,50 +506,42 @@ mod fn_ops_tests {
 #[cfg(test)]
 mod conversion_tests {
     use super::{
-        ArcComparator,
-        BoxComparator,
         Comparator,
         Ordering,
-        RcComparator,
     };
 
     #[test]
     fn test_box_to_rc() {
-        let box_cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
-        let rc_cmp = box_cmp.into_rc();
+        let box_cmp = qubit_function::comparator::BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let rc_cmp = qubit_function::comparator::RcComparator::new(box_cmp);
         assert_eq!(rc_cmp.compare(&5, &3), Ordering::Greater);
     }
 
     #[test]
     fn test_arc_to_box() {
-        let arc_cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
-        let box_cmp = arc_cmp.into_box();
+        let arc_cmp = qubit_function::comparator::ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let box_cmp = qubit_function::comparator::BoxComparator::new(arc_cmp);
         assert_eq!(box_cmp.compare(&5, &3), Ordering::Greater);
     }
 
     #[test]
     fn test_arc_to_rc() {
-        let arc_cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
-        let rc_cmp = arc_cmp.into_rc();
+        let arc_cmp = qubit_function::comparator::ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let rc_cmp = qubit_function::comparator::RcComparator::new(arc_cmp);
         assert_eq!(rc_cmp.compare(&5, &3), Ordering::Greater);
     }
 
     #[test]
     fn test_rc_to_box() {
-        let rc_cmp = RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
-        let box_cmp = rc_cmp.into_box();
+        let rc_cmp = qubit_function::comparator::RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let box_cmp = qubit_function::comparator::BoxComparator::new(rc_cmp);
         assert_eq!(box_cmp.compare(&5, &3), Ordering::Greater);
     }
 }
 
 #[cfg(test)]
 mod generic_tests {
-    use super::{
-        ArcComparator,
-        BoxComparator,
-        Comparator,
-        RcComparator,
-    };
+    use super::Comparator;
 
     fn sort_with_comparator<C: Comparator<i32>>(
         cmp: &C,
@@ -561,21 +553,21 @@ mod generic_tests {
 
     #[test]
     fn test_with_box_comparator() {
-        let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let cmp = qubit_function::comparator::BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
         let sorted = sort_with_comparator(&cmp, vec![3, 1, 4, 1, 5]);
         assert_eq!(sorted, vec![1, 1, 3, 4, 5]);
     }
 
     #[test]
     fn test_with_arc_comparator() {
-        let cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let cmp = qubit_function::comparator::ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
         let sorted = sort_with_comparator(&cmp, vec![3, 1, 4, 1, 5]);
         assert_eq!(sorted, vec![1, 1, 3, 4, 5]);
     }
 
     #[test]
     fn test_with_rc_comparator() {
-        let cmp = RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let cmp = qubit_function::comparator::RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
         let sorted = sort_with_comparator(&cmp, vec![3, 1, 4, 1, 5]);
         assert_eq!(sorted, vec![1, 1, 3, 4, 5]);
     }
@@ -591,14 +583,13 @@ mod generic_tests {
 #[cfg(test)]
 mod edge_cases {
     use super::{
-        BoxComparator,
         Comparator,
         Ordering,
     };
 
     #[test]
     fn test_with_empty_values() {
-        let cmp = BoxComparator::new(|a: &String, b: &String| a.cmp(b));
+        let cmp = qubit_function::comparator::BoxComparator::new(|a: &String, b: &String| a.cmp(b));
         assert_eq!(
             cmp.compare(&String::new(), &"hello".to_string()),
             Ordering::Less
@@ -607,14 +598,14 @@ mod edge_cases {
 
     #[test]
     fn test_with_negative_numbers() {
-        let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let cmp = qubit_function::comparator::BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
         assert_eq!(cmp.compare(&-5, &-3), Ordering::Less);
         assert_eq!(cmp.compare(&-3, &-5), Ordering::Greater);
     }
 
     #[test]
     fn test_multiple_reversals() {
-        let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
+        let cmp = qubit_function::comparator::BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
         let rev1 = cmp.reversed();
         let rev2 = rev1.reversed();
         // Double reversal should be same as original
@@ -624,9 +615,9 @@ mod edge_cases {
     #[test]
     fn test_long_chain() {
         let cmp1 =
-            BoxComparator::new(|a: &i32, b: &i32| (a / 10).cmp(&(b / 10)));
+            qubit_function::comparator::BoxComparator::new(|a: &i32, b: &i32| (a / 10).cmp(&(b / 10)));
         let cmp2 =
-            BoxComparator::new(|a: &i32, b: &i32| (a % 10).cmp(&(b % 10)));
+            qubit_function::comparator::BoxComparator::new(|a: &i32, b: &i32| (a % 10).cmp(&(b % 10)));
         let chained = cmp1.then_comparing(cmp2);
         assert_eq!(chained.compare(&15, &12), Ordering::Greater);
         assert_eq!(chained.compare(&12, &15), Ordering::Less);

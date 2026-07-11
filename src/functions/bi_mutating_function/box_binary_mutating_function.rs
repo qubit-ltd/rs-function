@@ -26,7 +26,7 @@ use super::BoxBiMutatingFunction;
 /// ```rust
 /// use qubit_function::{BoxBinaryMutatingFunction, BiMutatingFunction};
 ///
-/// let swap_and_sum: BoxBinaryMutatingFunction<i32, i32> = BoxBinaryMutatingFunction::new(|x, y| {
+/// let swap_and_sum: BoxBinaryMutatingFunction<i32, i32> = BoxBinaryMutatingFunction::new(|x: &mut i32, y: &mut i32| {
 ///     let temp = *x;
 ///     *x = *y;
 ///     *y = temp;

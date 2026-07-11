@@ -19,9 +19,15 @@
 
 mod box_runnable_with;
 pub use box_runnable_with::BoxRunnableWith;
+#[cfg(feature = "rc")]
+#[cfg(feature = "rc")]
 mod rc_runnable_with;
+#[cfg(feature = "rc")]
+#[cfg(feature = "rc")]
 pub use rc_runnable_with::RcRunnableWith;
+#[cfg(feature = "stateful")]
 mod arc_runnable_with;
+#[cfg(feature = "stateful")]
 pub use arc_runnable_with::ArcRunnableWith;
 
 /// A fallible, reusable action that receives mutable input.
@@ -46,4 +52,13 @@ pub trait RunnableWith<T, E> {
     /// Returns `Ok(())` when the action succeeds, or `Err(E)` when it fails.
     /// The exact error meaning is defined by the concrete runnable.
     fn run_with(&mut self, input: &mut T) -> Result<(), E>;
+}
+
+impl<T, E, F> RunnableWith<T, E> for F
+where
+    F: FnMut(&mut T) -> Result<(), E>,
+{
+    fn run_with(&mut self, input: &mut T) -> Result<(), E> {
+        self(input)
+    }
 }

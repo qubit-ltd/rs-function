@@ -29,6 +29,7 @@
 //! parameters. Compared to `StatefulBiConsumer`, `BiConsumer` does not require
 //! wrapper-level interior mutability (`Mutex`/`RefCell`), making it more
 //! efficient and easier to share.
+#[cfg(feature = "rc")]
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -39,7 +40,9 @@ use crate::consumers::macros::{
     };
 use crate::macros::{ impl_closure_trait,
 };
-use crate::predicates::bi_predicate::{ArcBiPredicate, BiPredicate, BoxBiPredicate, RcBiPredicate};
+use crate::predicates::bi_predicate::{ArcBiPredicate, BiPredicate, BoxBiPredicate};
+#[cfg(feature = "rc")]
+use crate::predicates::bi_predicate::RcBiPredicate;
 
 // ==========================================================================
 // Type Aliases
@@ -53,17 +56,32 @@ type ThreadSafeBiConsumerFn<T, U> = dyn Fn(&T, &U) + Send + Sync;
 
 mod box_bi_consumer;
 pub use box_bi_consumer::BoxBiConsumer;
+#[cfg(feature = "rc")]
 mod rc_bi_consumer;
+#[cfg(feature = "rc")]
 pub use rc_bi_consumer::RcBiConsumer;
 mod arc_bi_consumer;
 pub use arc_bi_consumer::ArcBiConsumer;
+#[cfg(feature = "combinators")]
 mod fn_bi_consumer_ops;
+#[cfg(feature = "combinators")]
 pub use fn_bi_consumer_ops::FnBiConsumerOps;
 mod box_conditional_bi_consumer;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use box_conditional_bi_consumer::BoxConditionalBiConsumer;
+#[cfg(feature = "combinators")]
 pub use box_conditional_bi_consumer::BoxConditionalBiConsumer;
 mod arc_conditional_bi_consumer;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use arc_conditional_bi_consumer::ArcConditionalBiConsumer;
+#[cfg(feature = "combinators")]
 pub use arc_conditional_bi_consumer::ArcConditionalBiConsumer;
+#[cfg(feature = "rc")]
 mod rc_conditional_bi_consumer;
+#[cfg(feature = "rc")]
+#[cfg(not(feature = "combinators"))]
+pub(crate) use rc_conditional_bi_consumer::RcConditionalBiConsumer;
+#[cfg(all(feature = "rc", feature = "combinators"))]
 pub use rc_conditional_bi_consumer::RcConditionalBiConsumer;
 
 // =======================================================================

@@ -29,9 +29,14 @@ use crate::{
 
 mod box_bi_function_once;
 pub use box_bi_function_once::BoxBiFunctionOnce;
+#[cfg(feature = "combinators")]
 mod fn_bi_function_once_ops;
+#[cfg(feature = "combinators")]
 pub use fn_bi_function_once_ops::FnBiFunctionOnceOps;
 mod box_conditional_bi_function_once;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use box_conditional_bi_function_once::BoxConditionalBiFunctionOnce;
+#[cfg(feature = "combinators")]
 pub use box_conditional_bi_function_once::BoxConditionalBiFunctionOnce;
 
 // ============================================================================

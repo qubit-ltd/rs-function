@@ -32,177 +32,18 @@ fn test_bi_function_trait_apply() {
     assert_eq!(add.apply(&-10, &5), -5);
 }
 
-#[test]
-fn test_bi_function_trait_into_box() {
-    // Test conversion from closure to BoxBiFunction
-    let add = |x: &i32, y: &i32| *x + *y;
-    let boxed = BiFunction::into_box(add);
-    assert_eq!(boxed.apply(&20, &22), 42);
-}
 
-#[test]
-fn test_bi_function_trait_into_rc() {
-    // Test conversion from closure to RcBiFunction
-    let add = |x: &i32, y: &i32| *x + *y;
-    let rc = add.into_rc();
-    assert_eq!(rc.apply(&20, &22), 42);
-}
 
-#[test]
-fn test_bi_function_trait_into_arc() {
-    // Test conversion from closure to ArcBiFunction
-    let add = |x: &i32, y: &i32| *x + *y;
-    let arc = add.into_arc();
-    assert_eq!(arc.apply(&20, &22), 42);
-}
 
-#[test]
-fn test_bi_function_trait_into_fn() {
-    // Test conversion to closure
-    let add = |x: &i32, y: &i32| *x + *y;
-    let func = BiFunction::into_fn(add);
-    assert_eq!(func(&20, &22), 42);
-}
 
-#[test]
-fn test_bi_function_trait_into_once() {
-    // Test conversion to BiFunctionOnce
-    let add = |x: &i32, y: &i32| *x + *y;
-    let once = add.into_once();
-    assert_eq!(once.apply(&20, &22), 42);
-}
 
-#[test]
-fn test_bi_function_default_conversions_allow_relaxed_generic_types() {
-    #[derive(Clone, Debug, Eq, PartialEq)]
-    struct BorrowedRc<'a> {
-        value: &'a str,
-    }
-
-    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
-    struct BorrowedRcSelector;
-
-    impl<'a> BiFunction<BorrowedRc<'a>, BorrowedRc<'a>, BorrowedRc<'a>>
-        for BorrowedRcSelector
-    {
-        fn apply(
-            &self,
-            first: &BorrowedRc<'a>,
-            _second: &BorrowedRc<'a>,
-        ) -> BorrowedRc<'a> {
-            first.clone()
-        }
-    }
-
-    fn assert_left(value: BorrowedRc<'_>) {
-        assert_eq!(value.value, "left");
-    }
-
-    let left_text = String::from("left");
-    let right_text = String::from("right");
-    let left = BorrowedRc {
-        value: left_text.as_str(),
-    };
-    let right = BorrowedRc {
-        value: right_text.as_str(),
-    };
-    let selector = BorrowedRcSelector;
-
-    assert_left(selector.into_box().apply(&left, &right));
-    assert_left(selector.into_rc().apply(&left, &right));
-    assert_left(selector.into_arc().apply(&left, &right));
-    assert_left(selector.into_once().apply(&left, &right));
-    assert_left(selector.into_fn()(&left, &right));
-
-    assert_left(selector.to_box().apply(&left, &right));
-    assert_left(selector.to_rc().apply(&left, &right));
-    assert_left(selector.to_arc().apply(&left, &right));
-    assert_left(selector.to_once().apply(&left, &right));
-    assert_left(selector.to_fn()(&left, &right));
-}
 
 // ============================================================================
 // Custom BiFunction Implementation Tests - Test Trait Default Methods
 // ============================================================================
 
-#[test]
-fn test_custom_bi_function_default_methods() {
-    // Test BiFunction trait default methods on custom implementation
-    #[derive(Debug)]
-    struct CustomBiFunction {
-        multiplier: i32,
-    }
 
-    impl BiFunction<i32, i32, i32> for CustomBiFunction {
-        fn apply(&self, first: &i32, second: &i32) -> i32 {
-            first * second * self.multiplier
-        }
-    }
 
-    let custom_func = CustomBiFunction { multiplier: 3 };
-
-    // Test default into_box method
-    let boxed = custom_func.into_box();
-    assert_eq!(boxed.apply(&2, &4), 24); // 2 * 4 * 3 = 24
-}
-
-#[test]
-fn test_cloneable_bi_function_default_methods() {
-    // Test BiFunction trait default methods on cloneable implementation
-    #[derive(Clone, Debug)]
-    struct CloneableBiFunction {
-        multiplier: i32,
-    }
-
-    impl BiFunction<i32, i32, i32> for CloneableBiFunction {
-        fn apply(&self, first: &i32, second: &i32) -> i32 {
-            first * second * self.multiplier
-        }
-    }
-
-    let custom_func = CloneableBiFunction { multiplier: 2 };
-
-    // Test default to_box method (requires Clone)
-    let boxed = custom_func.to_box();
-    assert_eq!(boxed.apply(&3, &5), 30); // 3 * 5 * 2 = 30
-
-    // Test default to_rc method (requires Clone)
-    let rc_func = custom_func.to_rc();
-    assert_eq!(rc_func.apply(&3, &5), 30);
-
-    // Test default to_fn method (requires Clone)
-    let func = custom_func.to_fn();
-    assert_eq!(func(&3, &5), 30);
-
-    // Test default to_once method (requires Clone)
-    let once = custom_func.to_once();
-    assert_eq!(once.apply(&3, &5), 30);
-}
-
-#[test]
-fn test_thread_safe_bi_function_default_methods() {
-    // Test BiFunction trait default methods on thread-safe implementation
-    #[derive(Clone, Debug)]
-    struct ThreadSafeBiFunction {
-        multiplier: i32,
-    }
-
-    impl BiFunction<i32, i32, i32> for ThreadSafeBiFunction {
-        fn apply(&self, first: &i32, second: &i32) -> i32 {
-            first * second * self.multiplier
-        }
-    }
-
-    let custom_func = ThreadSafeBiFunction { multiplier: 4 };
-
-    // Test default to_arc method (requires Clone + Send + Sync)
-    let arc_func = custom_func.to_arc();
-    assert_eq!(arc_func.apply(&2, &3), 24); // 2 * 3 * 4 = 24
-
-    // Test default into_arc method
-    let arc_func2 = custom_func.into_arc();
-    assert_eq!(arc_func2.apply(&2, &3), 24);
-}
 
 // ============================================================================
 // BoxBiFunction Tests
@@ -419,30 +260,6 @@ fn test_arc_bi_function_debug_display() {
 // Conversion Tests
 // ============================================================================
 
-#[test]
-fn test_bi_function_conversions() {
-    let add = |x: &i32, y: &i32| *x + *y;
-
-    // Test to_box
-    let boxed = BiFunction::to_box(&add);
-    assert_eq!(boxed.apply(&10, &20), 30);
-
-    // Test to_rc
-    let rc = BiFunction::to_rc(&add);
-    assert_eq!(rc.apply(&10, &20), 30);
-
-    // Test to_arc
-    let arc = BiFunction::to_arc(&add);
-    assert_eq!(arc.apply(&10, &20), 30);
-
-    // Test to_fn
-    let func = BiFunction::to_fn(&add);
-    assert_eq!(func(&10, &20), 30);
-
-    // Test to_once
-    let once = add.to_once();
-    assert_eq!(once.apply(&10, &20), 30);
-}
 
 // ============================================================================
 // BiFunction Composition Tests
@@ -556,19 +373,7 @@ fn test_box_bi_function_name_and_set_name() {
     assert_eq!(func.name(), Some("updated_name"));
 }
 
-#[test]
-fn test_box_bi_function_into_box() {
-    let func = BoxBiFunction::new(|x: &i32, y: &i32| *x + *y);
-    let boxed = func.into_box();
-    assert_eq!(boxed.apply(&1, &2), 3);
-}
 
-#[test]
-fn test_box_bi_function_into_rc() {
-    let func = BoxBiFunction::new(|x: &i32, y: &i32| *x + *y);
-    let rc = func.into_rc();
-    assert_eq!(rc.apply(&1, &2), 3);
-}
 
 // ============================================================================
 // RcBiFunction Extended Tests
@@ -606,69 +411,17 @@ fn test_rc_bi_function_name_and_set_name() {
     assert_eq!(func.name(), Some("test_func"));
 }
 
-#[test]
-fn test_rc_bi_function_into_box() {
-    let func = RcBiFunction::new(|x: &i32, y: &i32| *x * *y);
-    let boxed = func.into_box();
-    assert_eq!(boxed.apply(&6, &7), 42);
-}
 
-#[test]
-fn test_rc_bi_function_into_rc() {
-    let func = RcBiFunction::new(|x: &i32, y: &i32| *x * *y);
-    let rc = func.into_rc();
-    assert_eq!(rc.apply(&6, &7), 42);
-}
 
 // RcBiFunction cannot be converted to ArcBiFunction (not Send + Sync)
 
-#[test]
-fn test_rc_bi_function_into_fn() {
-    let func = RcBiFunction::new(|x: &i32, y: &i32| *x * *y);
-    let closure = func.into_fn();
-    assert_eq!(closure(&6, &7), 42);
-}
 
-#[test]
-fn test_rc_bi_function_into_once() {
-    let func = RcBiFunction::new(|x: &i32, y: &i32| *x * *y);
-    let once = func.into_once();
-    assert_eq!(once.apply(&6, &7), 42);
-}
 
-#[test]
-fn test_rc_bi_function_to_box() {
-    let func = RcBiFunction::new(|x: &i32, y: &i32| *x * *y);
-    let boxed = func.to_box();
-    assert_eq!(boxed.apply(&6, &7), 42);
-    assert_eq!(func.apply(&6, &7), 42);
-}
 
-#[test]
-fn test_rc_bi_function_to_rc() {
-    let func = RcBiFunction::new(|x: &i32, y: &i32| *x * *y);
-    let rc = func.to_rc();
-    assert_eq!(rc.apply(&6, &7), 42);
-    assert_eq!(func.apply(&6, &7), 42);
-}
 
 // RcBiFunction cannot be converted to ArcBiFunction (not Send + Sync)
 
-#[test]
-fn test_rc_bi_function_to_fn() {
-    let func = RcBiFunction::new(|x: &i32, y: &i32| *x * *y);
-    let closure = func.to_fn();
-    assert_eq!(closure(&6, &7), 42);
-    assert_eq!(func.apply(&6, &7), 42);
-}
 
-#[test]
-fn test_rc_bi_function_to_once() {
-    let func = RcBiFunction::new(|x: &i32, y: &i32| *x * *y);
-    let once = func.to_once();
-    assert_eq!(once.apply(&6, &7), 42);
-    assert_eq!(func.apply(&6, &7), 42);
-}
 
 // ============================================================================
 // ArcBiFunction Extended Tests
@@ -706,80 +459,15 @@ fn test_arc_bi_function_name_and_set_name() {
     assert_eq!(func.name(), Some("test_func"));
 }
 
-#[test]
-fn test_arc_bi_function_into_box() {
-    let func = ArcBiFunction::new(|x: &i32, y: &i32| *x - *y);
-    let boxed = func.into_box();
-    assert_eq!(boxed.apply(&50, &8), 42);
-}
 
-#[test]
-fn test_arc_bi_function_into_rc() {
-    let func = ArcBiFunction::new(|x: &i32, y: &i32| *x - *y);
-    let rc = func.into_rc();
-    assert_eq!(rc.apply(&50, &8), 42);
-}
 
-#[test]
-fn test_arc_bi_function_into_arc() {
-    let func = ArcBiFunction::new(|x: &i32, y: &i32| *x - *y);
-    let arc = func.into_arc();
-    assert_eq!(arc.apply(&50, &8), 42);
-}
 
-#[test]
-fn test_arc_bi_function_into_fn() {
-    let func = ArcBiFunction::new(|x: &i32, y: &i32| *x - *y);
-    let closure = func.into_fn();
-    assert_eq!(closure(&50, &8), 42);
-}
 
-#[test]
-fn test_arc_bi_function_into_once() {
-    let func = ArcBiFunction::new(|x: &i32, y: &i32| *x - *y);
-    let once = func.into_once();
-    assert_eq!(once.apply(&50, &8), 42);
-}
 
-#[test]
-fn test_arc_bi_function_to_box() {
-    let func = ArcBiFunction::new(|x: &i32, y: &i32| *x - *y);
-    let boxed = func.to_box();
-    assert_eq!(boxed.apply(&50, &8), 42);
-    assert_eq!(func.apply(&50, &8), 42);
-}
 
-#[test]
-fn test_arc_bi_function_to_rc() {
-    let func = ArcBiFunction::new(|x: &i32, y: &i32| *x - *y);
-    let rc = func.to_rc();
-    assert_eq!(rc.apply(&50, &8), 42);
-    assert_eq!(func.apply(&50, &8), 42);
-}
 
-#[test]
-fn test_arc_bi_function_to_arc() {
-    let func = ArcBiFunction::new(|x: &i32, y: &i32| *x - *y);
-    let arc = func.to_arc();
-    assert_eq!(arc.apply(&50, &8), 42);
-    assert_eq!(func.apply(&50, &8), 42);
-}
 
-#[test]
-fn test_arc_bi_function_to_fn() {
-    let func = ArcBiFunction::new(|x: &i32, y: &i32| *x - *y);
-    let closure = func.to_fn();
-    assert_eq!(closure(&50, &8), 42);
-    assert_eq!(func.apply(&50, &8), 42);
-}
 
-#[test]
-fn test_arc_bi_function_to_once() {
-    let func = ArcBiFunction::new(|x: &i32, y: &i32| *x - *y);
-    let once = func.to_once();
-    assert_eq!(once.apply(&50, &8), 42);
-    assert_eq!(func.apply(&50, &8), 42);
-}
 
 // ============================================================================
 // Conditional BiFunction Tests

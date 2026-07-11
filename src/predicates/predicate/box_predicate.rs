@@ -30,7 +30,7 @@ use super::{
 /// assert!(pred.test(&5));
 ///
 /// // Chaining consumes the predicate
-/// let combined = pred.and(BoxPredicate::new(|x| x % 2 == 0));
+/// let combined = pred.and(BoxPredicate::new(|x: &i32| x % 2 == 0));
 /// assert!(combined.test(&4));
 /// ```
 pub struct BoxPredicate<T> {

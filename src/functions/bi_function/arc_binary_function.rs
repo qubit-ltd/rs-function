@@ -21,7 +21,7 @@ use super::ArcBiFunction;
 /// ```rust
 /// use qubit_function::{ArcBinaryFunction, BiFunction};
 ///
-/// let multiply: ArcBinaryFunction<i32, i32> = ArcBinaryFunction::new(|x, y| *x * *y);
+/// let multiply: ArcBinaryFunction<i32, i32> = ArcBinaryFunction::new(|x: &i32, y: &i32| *x * *y);
 /// let multiply_clone = multiply.clone();
 /// assert_eq!(multiply.apply(&6, &7), 42);
 /// assert_eq!(multiply_clone.apply(&6, &7), 42);

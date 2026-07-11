@@ -112,13 +112,13 @@
 //!
 //! // Start with a closure, compose with BoxPredicate
 //! let in_range = (|x: &i32| *x >= 0)
-//!     .and(BoxPredicate::new(|x| *x <= 100));
+//!     .and(BoxPredicate::new(|x: &i32| *x <= 100));
 //!
 //! // Use in filtering
 //! let numbers = vec![-10, 5, 50, 150, 75];
 //! let filtered: Vec<_> = numbers.iter()
 //!     .copied()
-//!     .filter(in_range.into_fn())
+//!     .filter(|value| in_range.test(value))
 //!     .collect();
 //! assert_eq!(filtered, vec![5, 50, 75]);
 //! ```
@@ -129,8 +129,8 @@
 //! use qubit_function::{Predicate, RcPredicate};
 //!
 //! let pred = RcPredicate::new(|x: &i32| *x > 0);
-//! let combined1 = pred.and(RcPredicate::new(|x| x % 2 == 0));
-//! let combined2 = pred.or(RcPredicate::new(|x| *x > 100));
+//! let combined1 = pred.and(RcPredicate::new(|x: &i32| x % 2 == 0));
+//! let combined2 = pred.or(RcPredicate::new(|x: &i32| *x > 100));
 //!
 //! // Original predicate is still usable
 //! assert!(pred.test(&5));
@@ -167,6 +167,7 @@
 //! assert!(pred.test(&5));
 //! assert!(!pred.test(&-3));
 //! ```
+#[cfg(feature = "rc")]
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -178,11 +179,15 @@ use crate::predicates::macros::{
 
 mod box_predicate;
 pub use box_predicate::BoxPredicate;
+#[cfg(feature = "rc")]
 mod rc_predicate;
+#[cfg(feature = "rc")]
 pub use rc_predicate::RcPredicate;
 mod arc_predicate;
 pub use arc_predicate::ArcPredicate;
+#[cfg(feature = "combinators")]
 mod fn_predicate_ops;
+#[cfg(feature = "combinators")]
 pub use fn_predicate_ops::FnPredicateOps;
 
 /// A predicate trait for testing whether a value satisfies a condition.

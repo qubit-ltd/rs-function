@@ -151,46 +151,9 @@ mod tests {
         assert!(!combined.test()); // count1=1, count2=2 (second condition fails)
     }
 
-    #[test]
-    fn test_box_tester_into_box() {
-        let closure = || true;
-        let boxed = closure.into_box();
-        let tester: BoxTester = boxed;
-        assert!(tester.test());
-    }
 
-    #[test]
-    fn test_box_tester_into_rc() {
-        let tester = BoxTester::new(|| true);
-        let rc = tester.into_rc();
-        let rc_copy = rc;
-        assert!(rc_copy.test());
-    }
 
-    #[test]
-    fn test_box_tester_into_fn() {
-        let tester = BoxTester::new(|| true);
-        let func = tester.into_fn();
-        assert!(func());
-    }
 
-    #[test]
-    fn test_box_tester_into_fn_with_state() {
-        let count = Arc::new(AtomicUsize::new(0));
-        let count_clone = Arc::clone(&count);
-
-        let tester =
-            BoxTester::new(move || count_clone.load(Ordering::Relaxed) <= 2);
-        let func = tester.into_fn();
-
-        assert!(func()); // 0
-        count.fetch_add(1, Ordering::Relaxed);
-        assert!(func()); // 1
-        count.fetch_add(1, Ordering::Relaxed);
-        assert!(func()); // 2
-        count.fetch_add(1, Ordering::Relaxed);
-        assert!(!func()); // 3
-    }
 
     // ========================================================================
     // ArcTester tests
@@ -282,99 +245,14 @@ mod tests {
         assert!(tester.test());
     }
 
-    #[test]
-    fn test_arc_tester_into_box() {
-        let tester = ArcTester::new(|| true);
-        let boxed = tester.into_box();
-        assert!(boxed.test());
-    }
 
-    #[test]
-    fn test_arc_tester_into_rc() {
-        let tester = ArcTester::new(|| true);
-        let rc = tester.into_rc();
-        assert!(rc.test());
-    }
 
-    #[test]
-    fn test_arc_tester_into_arc() {
-        let tester = ArcTester::new(|| true);
-        let arc = tester.into_arc();
-        assert!(arc.test());
-    }
 
-    #[test]
-    fn test_arc_tester_into_fn() {
-        let tester = ArcTester::new(|| true);
-        let func = tester.into_fn();
-        assert!(func());
-    }
 
-    #[test]
-    fn test_arc_tester_into_fn_with_state() {
-        let count = Arc::new(AtomicUsize::new(0));
-        let count_clone = Arc::clone(&count);
 
-        let tester =
-            ArcTester::new(move || count_clone.load(Ordering::Relaxed) <= 2);
-        let func = tester.into_fn();
 
-        assert!(func()); // 0
-        count.fetch_add(1, Ordering::Relaxed);
-        assert!(func()); // 1
-        count.fetch_add(1, Ordering::Relaxed);
-        assert!(func()); // 2
-        count.fetch_add(1, Ordering::Relaxed);
-        assert!(!func()); // 3
-    }
 
-    #[test]
-    fn test_arc_tester_to_box() {
-        let tester = ArcTester::new(|| true);
-        let boxed = tester.to_box();
-        assert!(boxed.test());
-        // Original tester is still available
-        assert!(tester.test());
-    }
 
-    #[test]
-    fn test_arc_tester_to_rc() {
-        let tester = ArcTester::new(|| false);
-        let rc = tester.to_rc();
-        assert!(!rc.test());
-        // Original tester is still available
-        assert!(!tester.test());
-    }
-
-    #[test]
-    fn test_arc_tester_to_arc() {
-        let tester = ArcTester::new(|| true);
-        let arc = tester.to_arc();
-        assert!(arc.test());
-        // Original tester is still available
-        assert!(tester.test());
-    }
-
-    #[test]
-    fn test_arc_tester_to_fn() {
-        let count = Arc::new(AtomicUsize::new(0));
-        let count_clone = Arc::clone(&count);
-
-        let tester =
-            ArcTester::new(move || count_clone.load(Ordering::Relaxed) <= 1);
-        let func = tester.to_fn();
-
-        assert!(func());
-        assert!(tester.test());
-
-        count.fetch_add(1, Ordering::Relaxed);
-        assert!(func());
-        assert!(tester.test());
-
-        count.fetch_add(1, Ordering::Relaxed);
-        assert!(!func());
-        assert!(!tester.test());
-    }
 
     // ========================================================================
     // RcTester tests
@@ -449,87 +327,12 @@ mod tests {
         assert!(original.test());
     }
 
-    #[test]
-    fn test_rc_tester_into_box() {
-        let tester = RcTester::new(|| true);
-        let boxed = tester.into_box();
-        assert!(boxed.test());
-    }
 
-    #[test]
-    fn test_rc_tester_into_rc() {
-        let tester = RcTester::new(|| true);
-        let rc = tester.into_rc();
-        assert!(rc.test());
-    }
 
-    #[test]
-    fn test_rc_tester_into_fn() {
-        let tester = RcTester::new(|| true);
-        let func = tester.into_fn();
-        assert!(func());
-    }
 
-    #[test]
-    fn test_rc_tester_into_fn_with_state() {
-        use std::cell::RefCell;
-        use std::rc::Rc;
 
-        let count = Rc::new(RefCell::new(0));
-        let count_clone = Rc::clone(&count);
 
-        let tester = RcTester::new(move || *count_clone.borrow() <= 2);
-        let func = tester.into_fn();
 
-        assert!(func()); // 0
-        *count.borrow_mut() += 1;
-        assert!(func()); // 1
-        *count.borrow_mut() += 1;
-        assert!(func()); // 2
-        *count.borrow_mut() += 1;
-        assert!(!func()); // 3
-    }
-
-    #[test]
-    fn test_rc_tester_to_box() {
-        let tester = RcTester::new(|| true);
-        let boxed = tester.to_box();
-        assert!(boxed.test());
-        // Original tester is still available
-        assert!(tester.test());
-    }
-
-    #[test]
-    fn test_rc_tester_to_rc() {
-        let tester = RcTester::new(|| false);
-        let rc = tester.to_rc();
-        assert!(!rc.test());
-        // Original tester is still available
-        assert!(!tester.test());
-    }
-
-    #[test]
-    fn test_rc_tester_to_fn() {
-        use std::cell::RefCell;
-        use std::rc::Rc;
-
-        let count = Rc::new(RefCell::new(0));
-        let count_clone = Rc::clone(&count);
-
-        let tester = RcTester::new(move || *count_clone.borrow() <= 1);
-        let func = tester.to_fn();
-
-        assert!(func());
-        assert!(tester.test());
-
-        *count.borrow_mut() += 1;
-        assert!(func());
-        assert!(tester.test());
-
-        *count.borrow_mut() += 1;
-        assert!(!func());
-        assert!(!tester.test());
-    }
 
     // ========================================================================
     // Tester Trait tests (closures)
@@ -557,86 +360,18 @@ mod tests {
         assert!(!closure.test());
     }
 
-    #[test]
-    fn test_closure_to_box() {
-        let always_true = || true;
-        let boxed = always_true.to_box();
-        assert!(boxed.test());
-        assert!(always_true.test());
-    }
 
-    #[test]
-    fn test_closure_to_rc() {
-        let always_false = || false;
-        let rc = always_false.to_rc();
-        assert!(!rc.test());
-        assert!(!always_false.test());
-    }
 
-    #[test]
-    fn test_closure_to_arc() {
-        let always_true = || true;
-        let arc = always_true.to_arc();
-        assert!(arc.test());
-        let arc_clone = arc.clone();
-        let handle = std::thread::spawn(move || arc_clone.test());
-        assert!(handle.join().expect("thread should not panic"));
-        assert!(always_true.test());
-    }
 
-    #[test]
-    fn test_closure_to_fn() {
-        let toggled = || true;
-        let func = toggled.to_fn();
-        assert!(func());
-        assert!(toggled.test());
-    }
 
-    #[test]
-    fn test_closure_into_fn() {
-        let closure = || true;
-        let func = closure.into_fn();
-        assert!(func());
-    }
 
-    #[test]
-    fn test_closure_into_fn_with_state() {
-        let count = Arc::new(AtomicUsize::new(0));
-        let count_clone = Arc::clone(&count);
-
-        let closure = move || count_clone.load(Ordering::Relaxed) <= 2;
-        let func = closure.into_fn();
-
-        assert!(func()); // 0
-        count.fetch_add(1, Ordering::Relaxed);
-        assert!(func()); // 1
-        count.fetch_add(1, Ordering::Relaxed);
-        assert!(func()); // 2
-        count.fetch_add(1, Ordering::Relaxed);
-        assert!(!func()); // 3
-    }
 
     // ========================================================================
     // FnTesterOps tests
     // ========================================================================
 
-    #[test]
-    fn test_fn_ops_into_box_tester() {
-        let tester = (|| true).into_box();
-        assert!(tester.test());
-    }
 
-    #[test]
-    fn test_fn_ops_into_rc_tester() {
-        let tester = (|| true).into_rc();
-        assert!(tester.test());
-    }
 
-    #[test]
-    fn test_fn_ops_into_arc_tester() {
-        let tester = (|| true).into_arc();
-        assert!(tester.test());
-    }
 
     // ========================================================================
     // Real-world application scenario tests
@@ -1099,12 +834,6 @@ mod tests {
     // into_box tests for BoxTester
     // ========================================================================
 
-    #[test]
-    fn test_box_tester_into_box_identity() {
-        let tester = BoxTester::new(|| true);
-        let boxed = tester.into_box();
-        assert!(boxed.test());
-    }
 
     // ========================================================================
     // Panic tests for invalid conversions
@@ -1149,91 +878,10 @@ mod tests {
         }
     }
 
-    #[test]
-    fn test_custom_tester_into_box_uses_default_impl() {
-        // Test that custom tester can be converted to BoxTester using
-        // the default implementation provided by the Tester trait
-        let custom = AlwaysTrueTester;
-        let boxed = custom.into_box();
-        assert!(boxed.test());
-    }
 
-    #[test]
-    fn test_custom_tester_into_rc_uses_default_impl() {
-        // Test that custom tester can be converted to RcTester using
-        // the default implementation provided by the Tester trait
-        let custom = AlwaysTrueTester;
-        let rc = custom.into_rc();
-        assert!(rc.test());
 
-        // Verify that RcTester can be cloned
-        let rc_clone = rc.clone();
-        assert!(rc_clone.test());
-    }
 
-    #[test]
-    fn test_custom_tester_into_arc_uses_default_impl() {
-        // Test that custom tester can be converted to ArcTester using
-        // the default implementation provided by the Tester trait
-        let custom = ThreadSafeTester::new(true);
-        let arc = custom.into_arc();
-        assert!(arc.test());
 
-        // Verify that ArcTester can be cloned and sent across threads
-        let arc_clone = arc.clone();
-        let handle = std::thread::spawn(move || arc_clone.test());
-        assert!(handle.join().expect("thread should not panic"));
-    }
-
-    #[test]
-    fn test_custom_tester_chaining_conversions() {
-        // Test that custom tester can be converted through different
-        // wrapper types using the default implementations
-        let custom1 = AlwaysTrueTester;
-        let boxed = custom1.into_box();
-        let rc = boxed.into_rc();
-        assert!(rc.test());
-
-        let custom2 = ThreadSafeTester::new(true);
-        let arc1 = custom2.into_arc();
-        let boxed2 = arc1.into_box();
-        assert!(boxed2.test());
-    }
-
-    #[test]
-    fn test_custom_tester_with_state() {
-        // Test custom tester with internal state to verify that state
-        // is properly captured in the default implementations
-        struct CounterTester {
-            counter: Arc<AtomicUsize>,
-            threshold: usize,
-        }
-
-        impl Tester for CounterTester {
-            fn test(&self) -> bool {
-                self.counter.load(Ordering::Relaxed) < self.threshold
-            }
-        }
-
-        let counter = Arc::new(AtomicUsize::new(0));
-        let tester = CounterTester {
-            counter: Arc::clone(&counter),
-            threshold: 3,
-        };
-
-        // Convert to BoxTester using default implementation
-        let boxed = tester.into_box();
-        assert!(boxed.test());
-
-        counter.fetch_add(1, Ordering::Relaxed);
-        assert!(boxed.test());
-
-        counter.fetch_add(1, Ordering::Relaxed);
-        assert!(boxed.test());
-
-        counter.fetch_add(1, Ordering::Relaxed);
-        assert!(!boxed.test());
-    }
 
     // ========================================================================
     // Custom Tester implementation tests for default into_xxx/to_xxx methods
@@ -1251,207 +899,15 @@ mod tests {
         }
     }
 
-    #[test]
-    fn test_custom_tester_into_box() {
-        let value = Arc::new(AtomicBool::new(true));
-        let tester = CustomTester {
-            value: Arc::clone(&value),
-        };
 
-        // Use default into_box implementation
-        let boxed = tester.into_box();
-        assert!(boxed.test());
 
-        value.store(false, Ordering::Relaxed);
-        assert!(!boxed.test());
-    }
 
-    #[test]
-    fn test_custom_tester_into_rc() {
-        let value = Arc::new(AtomicBool::new(false));
-        let tester = CustomTester {
-            value: Arc::clone(&value),
-        };
 
-        // Use default into_rc implementation
-        let rc = tester.into_rc();
-        assert!(!rc.test());
 
-        value.store(true, Ordering::Relaxed);
-        assert!(rc.test());
-    }
 
-    #[test]
-    fn test_custom_tester_into_arc() {
-        let value = Arc::new(AtomicBool::new(true));
-        let tester = CustomTester {
-            value: Arc::clone(&value),
-        };
 
-        // Use default into_arc implementation
-        let arc = tester.into_arc();
-        assert!(arc.test());
 
-        // Can clone and share across threads
-        let arc_clone = arc.clone();
-        let handle = std::thread::spawn(move || arc_clone.test());
 
-        assert!(handle.join().expect("thread should not panic"));
-    }
-
-    #[test]
-    fn test_custom_tester_into_fn() {
-        let value = Arc::new(AtomicBool::new(true));
-        let tester = CustomTester {
-            value: Arc::clone(&value),
-        };
-
-        // Use default into_fn implementation
-        let func = tester.into_fn();
-        assert!(func());
-
-        value.store(false, Ordering::Relaxed);
-        assert!(!func());
-    }
-
-    #[test]
-    fn test_custom_tester_to_box() {
-        let value = Arc::new(AtomicBool::new(true));
-        let tester = CustomTester {
-            value: Arc::clone(&value),
-        };
-
-        // Use default to_box implementation (requires Clone)
-        let boxed = tester.to_box();
-        assert!(boxed.test());
-
-        // Original tester is still available
-        assert!(tester.test());
-
-        value.store(false, Ordering::Relaxed);
-        assert!(!boxed.test());
-        assert!(!tester.test());
-    }
-
-    #[test]
-    fn test_custom_tester_to_rc() {
-        let value = Arc::new(AtomicBool::new(false));
-        let tester = CustomTester {
-            value: Arc::clone(&value),
-        };
-
-        // Use default to_rc implementation (requires Clone)
-        let rc = tester.to_rc();
-        assert!(!rc.test());
-
-        // Original tester is still available
-        assert!(!tester.test());
-
-        value.store(true, Ordering::Relaxed);
-        assert!(rc.test());
-        assert!(tester.test());
-    }
-
-    #[test]
-    fn test_custom_tester_to_arc() {
-        let value = Arc::new(AtomicBool::new(true));
-        let tester = CustomTester {
-            value: Arc::clone(&value),
-        };
-
-        // Use default to_arc implementation (requires Clone + Send + Sync)
-        let arc = tester.to_arc();
-        assert!(arc.test());
-
-        // Original tester is still available
-        assert!(tester.test());
-
-        // Can clone and share across threads
-        let arc_clone = arc.clone();
-        let tester_clone = tester.clone();
-        let handle =
-            std::thread::spawn(move || arc_clone.test() && tester_clone.test());
-
-        assert!(handle.join().expect("thread should not panic"));
-    }
-
-    #[test]
-    fn test_custom_tester_to_fn() {
-        let value = Arc::new(AtomicBool::new(true));
-        let tester = CustomTester {
-            value: Arc::clone(&value),
-        };
-
-        // Use default to_fn implementation (requires Clone)
-        let func = tester.to_fn();
-        assert!(func());
-
-        // Original tester is still available
-        assert!(tester.test());
-
-        value.store(false, Ordering::Relaxed);
-        assert!(!func());
-        assert!(!tester.test());
-    }
-
-    #[test]
-    fn test_custom_tester_conversions_chain() {
-        let value = Arc::new(AtomicBool::new(true));
-        let tester = CustomTester {
-            value: Arc::clone(&value),
-        };
-
-        // Chain multiple conversions
-        let arc = tester.clone().into_arc();
-        let boxed = tester.clone().into_box();
-        let rc = tester.clone().into_rc();
-        let func = tester.clone().into_fn();
-
-        assert!(arc.test());
-        assert!(boxed.test());
-        assert!(rc.test());
-        assert!(func());
-        assert!(tester.test());
-
-        value.store(false, Ordering::Relaxed);
-
-        assert!(!arc.test());
-        assert!(!boxed.test());
-        assert!(!rc.test());
-        assert!(!func());
-        assert!(!tester.test());
-    }
-
-    #[test]
-    fn test_custom_tester_to_methods_preserve_original() {
-        let value = Arc::new(AtomicBool::new(true));
-        let tester = CustomTester {
-            value: Arc::clone(&value),
-        };
-
-        // All to_xxx methods should preserve the original
-        let boxed = tester.to_box();
-        let rc = tester.to_rc();
-        let arc = tester.to_arc();
-        let func = tester.to_fn();
-
-        // All should be true initially
-        assert!(tester.test());
-        assert!(boxed.test());
-        assert!(rc.test());
-        assert!(arc.test());
-        assert!(func());
-
-        // Change state
-        value.store(false, Ordering::Relaxed);
-
-        // All should reflect the change
-        assert!(!tester.test());
-        assert!(!boxed.test());
-        assert!(!rc.test());
-        assert!(!arc.test());
-        assert!(!func());
-    }
 
     // Test with a non-Clone custom tester to ensure into_xxx works
     // but to_xxx would fail at compile time
@@ -1465,48 +921,6 @@ mod tests {
         }
     }
 
-    #[test]
-    fn test_non_clone_tester_into_methods() {
-        let value = Arc::new(AtomicBool::new(true));
-        let tester = NonCloneTester {
-            value: Arc::clone(&value),
-        };
 
-        // into_box should work without Clone
-        let boxed = tester.into_box();
-        assert!(boxed.test());
 
-        value.store(false, Ordering::Relaxed);
-        assert!(!boxed.test());
-    }
-
-    #[test]
-    fn test_non_clone_tester_into_rc() {
-        let value = Arc::new(AtomicBool::new(false));
-        let tester = NonCloneTester {
-            value: Arc::clone(&value),
-        };
-
-        // into_rc should work without Clone
-        let rc = tester.into_rc();
-        assert!(!rc.test());
-
-        value.store(true, Ordering::Relaxed);
-        assert!(rc.test());
-    }
-
-    #[test]
-    fn test_non_clone_tester_into_fn() {
-        let value = Arc::new(AtomicBool::new(true));
-        let tester = NonCloneTester {
-            value: Arc::clone(&value),
-        };
-
-        // into_fn should work without Clone
-        let func = tester.into_fn();
-        assert!(func());
-
-        value.store(false, Ordering::Relaxed);
-        assert!(!func());
-    }
 }

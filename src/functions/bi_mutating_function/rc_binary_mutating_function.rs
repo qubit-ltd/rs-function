@@ -22,7 +22,7 @@ use super::RcBiMutatingFunction;
 /// ```rust
 /// use qubit_function::{RcBinaryMutatingFunction, BiMutatingFunction};
 ///
-/// let swap_and_sum: RcBinaryMutatingFunction<i32, i32> = RcBinaryMutatingFunction::new(|x, y| {
+/// let swap_and_sum: RcBinaryMutatingFunction<i32, i32> = RcBinaryMutatingFunction::new(|x: &mut i32, y: &mut i32| {
 ///     let temp = *x;
 ///     *x = *y;
 ///     *y = temp;

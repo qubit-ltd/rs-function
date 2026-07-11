@@ -132,18 +132,25 @@ use crate::functions::{
     function_once::FunctionOnce,
     macros::{
         impl_box_conditional_function, impl_box_function_methods,
-        impl_conditional_function_debug_display, impl_fn_ops_trait, impl_function_common_methods,
+        impl_conditional_function_debug_display, impl_function_common_methods,
         impl_function_debug_display, impl_function_identity_method,
     },
 };
+#[cfg(feature = "combinators")]
+use crate::functions::macros::impl_fn_ops_trait;
 use crate::macros::{ impl_closure_once_trait};
 use crate::predicates::predicate::{BoxPredicate, Predicate};
 
 mod box_mutating_function_once;
 pub use box_mutating_function_once::BoxMutatingFunctionOnce;
 mod box_conditional_mutating_function_once;
+#[cfg(not(feature = "combinators"))]
+pub(crate) use box_conditional_mutating_function_once::BoxConditionalMutatingFunctionOnce;
+#[cfg(feature = "combinators")]
 pub use box_conditional_mutating_function_once::BoxConditionalMutatingFunctionOnce;
+#[cfg(feature = "combinators")]
 mod fn_mutating_function_once_ops;
+#[cfg(feature = "combinators")]
 pub use fn_mutating_function_once_ops::FnMutatingFunctionOnceOps;
 
 // =======================================================================
@@ -209,7 +216,7 @@ pub use fn_mutating_function_once_ops::FnMutatingFunctionOnceOps;
 /// ## Type Conversion
 ///
 /// ```rust
-/// use qubit_function::MutatingFunctionOnce;
+/// use qubit_function::BoxMutatingFunctionOnce;
 ///
 /// let data = vec![1, 2, 3];
 /// let closure = move |x: &mut Vec<i32>| {
@@ -217,7 +224,7 @@ pub use fn_mutating_function_once_ops::FnMutatingFunctionOnceOps;
 ///     x.extend(data);
 ///     old_len
 /// };
-/// let box_func = closure.into_box();
+/// let box_func = BoxMutatingFunctionOnce::new(closure);
 /// ```
 pub trait MutatingFunctionOnce<T, R> {
     /// Performs the one-time mutating function operation
