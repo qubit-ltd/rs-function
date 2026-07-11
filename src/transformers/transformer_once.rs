@@ -16,7 +16,7 @@
 //!
 //! - [`BoxTransformerOnce`]: Single ownership, one-time use
 
-use crate::macros::{impl_box_once_conversions, impl_closure_once_trait};
+use crate::macros::{ impl_closure_once_trait};
 use crate::predicates::predicate::{BoxPredicate, Predicate};
 use crate::transformers::macros::{
     impl_box_conditional_transformer, impl_box_transformer_methods,

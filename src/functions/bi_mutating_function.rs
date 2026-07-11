@@ -25,7 +25,6 @@ use std::rc::Rc;
 use std::sync::Arc;
 
 use crate::functions::{
-    bi_mutating_function_once::BoxBiMutatingFunctionOnce,
     macros::{
         impl_box_conditional_function, impl_box_function_methods, impl_conditional_function_clone,
         impl_conditional_function_debug_display, impl_function_clone, impl_function_common_methods,
@@ -34,8 +33,7 @@ use crate::functions::{
     },
     mutating_function::MutatingFunction,
 };
-use crate::macros::{
-    impl_arc_conversions, impl_box_conversions, impl_closure_trait, impl_rc_conversions,
+use crate::macros::{ impl_closure_trait,
 };
 use crate::predicates::bi_predicate::{ArcBiPredicate, BiPredicate, BoxBiPredicate, RcBiPredicate};
 

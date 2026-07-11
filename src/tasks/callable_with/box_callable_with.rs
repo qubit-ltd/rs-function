@@ -28,7 +28,8 @@ pub struct BoxCallableWith<T, R, E> {
 
 impl<T, R, E> BoxCallableWith<T, R, E> {
     impl_common_new_methods!(
-        (FnMut(&mut T) -> Result<R, E> + 'static),
+        semantic_mut (CallableWith<T, R, E> + 'static),
+        |source| move |input: &mut T| source.call_with(input),
         |function| Box::new(function),
         "callable-with"
     );
@@ -54,7 +55,7 @@ impl<T, R, E> BoxCallableWith<T, R, E> {
     {
         let name = self.name;
         let mut function = self.function;
-        BoxCallableWith::new_with_optional_name(move |input| function(input).map(&mut mapper), name)
+        BoxCallableWith::new_with_optional_name(move |input: &mut T| function(input).map(&mut mapper), name)
     }
 
     /// Maps the error value of this callable.
@@ -77,7 +78,7 @@ impl<T, R, E> BoxCallableWith<T, R, E> {
         let name = self.name;
         let mut function = self.function;
         BoxCallableWith::new_with_optional_name(
-            move |input| function(input).map_err(&mut mapper),
+            move |input: &mut T| function(input).map_err(&mut mapper),
             name,
         )
     }
@@ -103,8 +104,8 @@ impl<T, R, E> BoxCallableWith<T, R, E> {
         let mut function = self.function;
         let mut next = next;
         BoxCallableWith::new_with_optional_name(
-            move |input| {
-                let value = function(input)?;
+            move |input: &mut T| {
+                let value = function(&mut *input)?;
                 next(value, input)
             },
             name,

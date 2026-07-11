@@ -40,7 +40,8 @@ pub struct LocalBoxRunnableOnce<E> {
 
 impl<E> LocalBoxRunnableOnce<E> {
     impl_common_new_methods!(
-        (FnOnce() -> Result<(), E> + 'static),
+        semantic (RunnableOnce<E> + 'static),
+        |source| move || source.run(),
         |function| Box::new(function),
         "local runnable"
     );

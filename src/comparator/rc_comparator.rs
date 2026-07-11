@@ -57,12 +57,12 @@ impl<T> RcComparator<T> {
     /// let cmp = RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
     /// ```
     #[inline]
-    pub fn new<F>(f: F) -> Self
+    pub fn new<F>(source: F) -> Self
     where
-        F: Fn(&T, &T) -> Ordering + 'static,
+        F: Comparator<T> + 'static,
     {
         Self {
-            function: Rc::new(f),
+            function: Rc::new(move |left: &T, right: &T| source.compare(left, right)),
         }
     }
 
@@ -89,7 +89,7 @@ impl<T> RcComparator<T> {
         T: 'static,
     {
         let self_fn = self.function.clone();
-        RcComparator::new(move |a, b| self_fn(b, a))
+        RcComparator::new(move |a: &T, b: &T| self_fn(b, a))
     }
 
     /// Returns a comparator that uses this comparator first, then another
@@ -123,7 +123,7 @@ impl<T> RcComparator<T> {
     {
         let first = self.function.clone();
         let second = other.function.clone();
-        RcComparator::new(move |a, b| match first(a, b) {
+        RcComparator::new(move |a: &T, b: &T| match first(a, b) {
             Ordering::Equal => second(a, b),
             ord => ord,
         })
@@ -163,7 +163,7 @@ impl<T> RcComparator<T> {
         K: Ord,
         F: Fn(&T) -> &K + 'static,
     {
-        RcComparator::new(move |a, b| key_fn(a).cmp(key_fn(b)))
+        RcComparator::new(move |a: &T, b: &T| key_fn(a).cmp(key_fn(b)))
     }
 
     /// Converts this comparator into a closure.

@@ -49,7 +49,8 @@ impl<E> Clone for ArcRunnable<E> {
 
 impl<E> ArcRunnable<E> {
     impl_common_new_methods!(
-        (FnMut() -> Result<(), E> + Send + 'static),
+        semantic_mut (Runnable<E> + Send + 'static),
+        |source| move || source.run(),
         |function| Arc::new(Mutex::new(function)),
         "runnable"
     );

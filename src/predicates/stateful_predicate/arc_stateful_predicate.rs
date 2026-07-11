@@ -54,7 +54,7 @@ impl<T> ArcStatefulPredicate<T> {
         T: 'static,
     {
         let self_fn = self.function.clone();
-        ArcStatefulPredicate::new(move |value| {
+        ArcStatefulPredicate::new(move |value: &T| {
             let matched = (self_fn.lock())(value);
             matched && other.test(value)
         })
@@ -79,7 +79,7 @@ impl<T> ArcStatefulPredicate<T> {
         T: 'static,
     {
         let self_fn = self.function.clone();
-        ArcStatefulPredicate::new(move |value| {
+        ArcStatefulPredicate::new(move |value: &T| {
             let matched = (self_fn.lock())(value);
             matched || other.test(value)
         })
@@ -103,7 +103,7 @@ impl<T> ArcStatefulPredicate<T> {
         T: 'static,
     {
         let self_fn = self.function.clone();
-        ArcStatefulPredicate::new(move |value| {
+        ArcStatefulPredicate::new(move |value: &T| {
             let matched = (self_fn.lock())(value);
             !(matched && other.test(value))
         })
@@ -128,7 +128,7 @@ impl<T> ArcStatefulPredicate<T> {
         T: 'static,
     {
         let self_fn = self.function.clone();
-        ArcStatefulPredicate::new(move |value| {
+        ArcStatefulPredicate::new(move |value: &T| {
             let matched = (self_fn.lock())(value);
             matched ^ other.test(value)
         })
@@ -152,7 +152,7 @@ impl<T> ArcStatefulPredicate<T> {
         T: 'static,
     {
         let self_fn = self.function.clone();
-        ArcStatefulPredicate::new(move |value| {
+        ArcStatefulPredicate::new(move |value: &T| {
             let matched = (self_fn.lock())(value);
             !(matched || other.test(value))
         })
@@ -167,7 +167,7 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function;
-        ArcStatefulPredicate::new(move |value| !((function.lock())(value)))
+        ArcStatefulPredicate::new(move |value: &T| !((function.lock())(value)))
     }
 }
 
@@ -179,7 +179,7 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function.clone();
-        ArcStatefulPredicate::new(move |value| !((function.lock())(value)))
+        ArcStatefulPredicate::new(move |value: &T| !((function.lock())(value)))
     }
 }
 

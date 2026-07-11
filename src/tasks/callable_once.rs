@@ -60,3 +60,12 @@ pub trait CallableOnce<R, E> {
     /// fails. The exact error meaning is defined by the concrete callable.
     fn call(self) -> Result<R, E>;
 }
+
+impl<R, E, F> CallableOnce<R, E> for F
+where
+    F: FnOnce() -> Result<R, E>,
+{
+    fn call(self) -> Result<R, E> {
+        self()
+    }
+}

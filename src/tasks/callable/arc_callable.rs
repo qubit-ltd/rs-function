@@ -51,7 +51,8 @@ impl<R, E> Clone for ArcCallable<R, E> {
 
 impl<R, E> ArcCallable<R, E> {
     impl_common_new_methods!(
-        (FnMut() -> Result<R, E> + Send + 'static),
+        semantic_mut (Callable<R, E> + Send + 'static),
+        |source| move || source.call(),
         |function| Arc::new(Mutex::new(function)),
         "callable"
     );

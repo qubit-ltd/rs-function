@@ -26,12 +26,12 @@ pub struct ArcStatefulTester {
 impl ArcStatefulTester {
     /// Creates a new thread-safe shared stateful tester.
     #[inline]
-    pub fn new<F>(f: F) -> Self
+    pub fn new<F>(mut source: F) -> Self
     where
-        F: FnMut() -> bool + Send + 'static,
+        F: StatefulTester + Send + 'static,
     {
         ArcStatefulTester {
-            function: Arc::new(Mutex::new(f)),
+            function: Arc::new(Mutex::new(move || source.test())),
         }
     }
 

@@ -135,7 +135,7 @@
 //! init.run(&mut result);
 //! assert_eq!(result, vec![42, 1, 2, 3]);
 //! ```
-use crate::macros::{impl_box_once_conversions, impl_closure_once_trait};
+use crate::macros::{ impl_closure_once_trait};
 use crate::mutators::macros::{
     impl_box_conditional_mutator, impl_box_mutator_methods, impl_conditional_mutator_debug_display,
     impl_mutator_common_methods, impl_mutator_debug_display,

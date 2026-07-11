@@ -55,7 +55,7 @@ impl<T, U> ArcStatefulBiPredicate<T, U> {
         U: 'static,
     {
         let self_fn = self.function.clone();
-        ArcStatefulBiPredicate::new(move |first, second| {
+        ArcStatefulBiPredicate::new(move |first: &T, second: &U| {
             let matched = (self_fn.lock())(first, second);
             matched && other.test(first, second)
         })
@@ -81,7 +81,7 @@ impl<T, U> ArcStatefulBiPredicate<T, U> {
         U: 'static,
     {
         let self_fn = self.function.clone();
-        ArcStatefulBiPredicate::new(move |first, second| {
+        ArcStatefulBiPredicate::new(move |first: &T, second: &U| {
             let matched = (self_fn.lock())(first, second);
             matched || other.test(first, second)
         })
@@ -106,7 +106,7 @@ impl<T, U> ArcStatefulBiPredicate<T, U> {
         U: 'static,
     {
         let self_fn = self.function.clone();
-        ArcStatefulBiPredicate::new(move |first, second| {
+        ArcStatefulBiPredicate::new(move |first: &T, second: &U| {
             let matched = (self_fn.lock())(first, second);
             !(matched && other.test(first, second))
         })
@@ -132,7 +132,7 @@ impl<T, U> ArcStatefulBiPredicate<T, U> {
         U: 'static,
     {
         let self_fn = self.function.clone();
-        ArcStatefulBiPredicate::new(move |first, second| {
+        ArcStatefulBiPredicate::new(move |first: &T, second: &U| {
             let matched = (self_fn.lock())(first, second);
             matched ^ other.test(first, second)
         })
@@ -157,7 +157,7 @@ impl<T, U> ArcStatefulBiPredicate<T, U> {
         U: 'static,
     {
         let self_fn = self.function.clone();
-        ArcStatefulBiPredicate::new(move |first, second| {
+        ArcStatefulBiPredicate::new(move |first: &T, second: &U| {
             let matched = (self_fn.lock())(first, second);
             !(matched || other.test(first, second))
         })
@@ -173,7 +173,7 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function;
-        ArcStatefulBiPredicate::new(move |first, second| !((function.lock())(first, second)))
+        ArcStatefulBiPredicate::new(move |first: &T, second: &U| !((function.lock())(first, second)))
     }
 }
 
@@ -186,7 +186,7 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function.clone();
-        ArcStatefulBiPredicate::new(move |first, second| !((function.lock())(first, second)))
+        ArcStatefulBiPredicate::new(move |first: &T, second: &U| !((function.lock())(first, second)))
     }
 }
 

@@ -54,12 +54,12 @@ impl<T> BoxComparator<T> {
     /// let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
     /// ```
     #[inline]
-    pub fn new<F>(f: F) -> Self
+    pub fn new<F>(source: F) -> Self
     where
-        F: Fn(&T, &T) -> Ordering + 'static,
+        F: Comparator<T> + 'static,
     {
         Self {
-            function: Box::new(f),
+            function: Box::new(move |left: &T, right: &T| source.compare(left, right)),
         }
     }
 
@@ -84,7 +84,7 @@ impl<T> BoxComparator<T> {
     where
         T: 'static,
     {
-        BoxComparator::new(move |a, b| (self.function)(b, a))
+        BoxComparator::new(move |a: &T, b: &T| (self.function)(b, a))
     }
 
     /// Returns a comparator that uses this comparator first, then another
@@ -137,7 +137,7 @@ impl<T> BoxComparator<T> {
     where
         T: 'static,
     {
-        BoxComparator::new(move |a, b| match (self.function)(a, b) {
+        BoxComparator::new(move |a: &T, b: &T| match (self.function)(a, b) {
             Ordering::Equal => (other.function)(a, b),
             ord => ord,
         })

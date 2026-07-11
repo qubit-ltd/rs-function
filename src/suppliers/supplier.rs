@@ -119,9 +119,7 @@
 use std::rc::Rc;
 use std::sync::Arc;
 
-use crate::BoxSupplierOnce;
-use crate::macros::{
-    impl_arc_conversions, impl_box_conversions, impl_closure_trait, impl_rc_conversions,
+use crate::macros::{ impl_closure_trait,
 };
 use crate::predicates::predicate::Predicate;
 use crate::suppliers::macros::{

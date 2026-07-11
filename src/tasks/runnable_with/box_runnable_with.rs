@@ -28,7 +28,8 @@ pub struct BoxRunnableWith<T, E> {
 
 impl<T, E> BoxRunnableWith<T, E> {
     impl_common_new_methods!(
-        (FnMut(&mut T) -> Result<(), E> + 'static),
+        semantic_mut (RunnableWith<T, E> + 'static),
+        |source| move |input: &mut T| source.run_with(input),
         |function| Box::new(function),
         "runnable-with"
     );
@@ -55,8 +56,8 @@ impl<T, E> BoxRunnableWith<T, E> {
         let mut function = self.function;
         let mut next = next;
         BoxRunnableWith::new_with_optional_name(
-            move |input| {
-                function(input)?;
+            move |input: &mut T| {
+                function(&mut *input)?;
                 next.run_with(input)
             },
             name,
@@ -86,8 +87,8 @@ impl<T, E> BoxRunnableWith<T, E> {
         let mut function = self.function;
         let mut callable = callable;
         BoxCallableWith::new_with_optional_name(
-            move |input| {
-                function(input)?;
+            move |input: &mut T| {
+                function(&mut *input)?;
                 callable.call_with(input)
             },
             name,

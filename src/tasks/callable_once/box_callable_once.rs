@@ -48,7 +48,8 @@ pub struct BoxCallableOnce<R, E> {
 
 impl<R, E> BoxCallableOnce<R, E> {
     impl_common_new_methods!(
-        (FnOnce() -> Result<R, E> + Send + 'static),
+        semantic (CallableOnce<R, E> + Send + 'static),
+        |source| move || source.call(),
         |function| Box::new(function),
         "callable"
     );

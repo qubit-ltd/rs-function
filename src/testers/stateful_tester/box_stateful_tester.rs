@@ -23,12 +23,12 @@ pub struct BoxStatefulTester {
 impl BoxStatefulTester {
     /// Creates a new boxed stateful tester.
     #[inline]
-    pub fn new<F>(f: F) -> Self
+    pub fn new<F>(mut source: F) -> Self
     where
-        F: FnMut() -> bool + 'static,
+        F: StatefulTester + 'static,
     {
         BoxStatefulTester {
-            function: Box::new(f),
+            function: Box::new(move || source.test()),
         }
     }
 

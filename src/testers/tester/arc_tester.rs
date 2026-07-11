@@ -86,12 +86,12 @@ impl ArcTester {
     /// let tester = ArcTester::new(|| true);
     /// ```
     #[inline]
-    pub fn new<F>(f: F) -> Self
+    pub fn new<F>(source: F) -> Self
     where
-        F: Fn() -> bool + Send + Sync + 'static,
+        F: Tester + Send + Sync + 'static,
     {
         ArcTester {
-            function: Arc::new(f),
+            function: Arc::new(move || source.test()),
         }
     }
 

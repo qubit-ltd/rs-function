@@ -77,12 +77,12 @@ impl RcTester {
     /// let tester = RcTester::new(|| true);
     /// ```
     #[inline]
-    pub fn new<F>(f: F) -> Self
+    pub fn new<F>(source: F) -> Self
     where
-        F: Fn() -> bool + 'static,
+        F: Tester + 'static,
     {
         RcTester {
-            function: Rc::new(f),
+            function: Rc::new(move || source.test()),
         }
     }
 

@@ -112,6 +112,27 @@
 /// * `name()` - Gets the name of the transformer
 /// * `set_name()` - Sets the name of the transformer
 /// * `identity()` - Creates a transformer that returns the input unchanged
+macro_rules! impl_transformer_new_methods {
+    (BoxTransformer<$t:ident, $r:ident>, |$f:ident| $w:expr) => { $crate::transformers::macros::impl_transformer_new_methods!(@one Transformer, $t, $r, ('static), |$f| $w); };
+    (RcTransformer<$t:ident, $r:ident>, |$f:ident| $w:expr) => { $crate::transformers::macros::impl_transformer_new_methods!(@one Transformer, $t, $r, ('static), |$f| $w); };
+    (ArcTransformer<$t:ident, $r:ident>, |$f:ident| $w:expr) => { $crate::transformers::macros::impl_transformer_new_methods!(@one Transformer, $t, $r, (Send + Sync + 'static), |$f| $w); };
+    (BoxStatefulTransformer<$t:ident, $r:ident>, |$f:ident| $w:expr) => { $crate::transformers::macros::impl_transformer_new_methods!(@one_mut StatefulTransformer, $t, $r, ('static), |$f| $w); };
+    (RcStatefulTransformer<$t:ident, $r:ident>, |$f:ident| $w:expr) => { $crate::transformers::macros::impl_transformer_new_methods!(@one_mut StatefulTransformer, $t, $r, ('static), |$f| $w); };
+    (ArcStatefulTransformer<$t:ident, $r:ident>, |$f:ident| $w:expr) => { $crate::transformers::macros::impl_transformer_new_methods!(@one_mut StatefulTransformer, $t, $r, (Send + 'static), |$f| $w); };
+    (BoxTransformerOnce<$t:ident, $r:ident>, |$f:ident| $w:expr) => { $crate::transformers::macros::impl_transformer_new_methods!(@one TransformerOnce, $t, $r, ('static), |$f| $w); };
+    (BoxBiTransformer<$t:ident, $u:ident, $r:ident>, |$f:ident| $w:expr) => { $crate::transformers::macros::impl_transformer_new_methods!(@two BiTransformer, $t, $u, $r, ('static), |$f| $w); };
+    (RcBiTransformer<$t:ident, $u:ident, $r:ident>, |$f:ident| $w:expr) => { $crate::transformers::macros::impl_transformer_new_methods!(@two BiTransformer, $t, $u, $r, ('static), |$f| $w); };
+    (ArcBiTransformer<$t:ident, $u:ident, $r:ident>, |$f:ident| $w:expr) => { $crate::transformers::macros::impl_transformer_new_methods!(@two BiTransformer, $t, $u, $r, (Send + Sync + 'static), |$f| $w); };
+    (BoxStatefulBiTransformer<$t:ident, $u:ident, $r:ident>, |$f:ident| $w:expr) => { $crate::transformers::macros::impl_transformer_new_methods!(@two_mut StatefulBiTransformer, $t, $u, $r, ('static), |$f| $w); };
+    (RcStatefulBiTransformer<$t:ident, $u:ident, $r:ident>, |$f:ident| $w:expr) => { $crate::transformers::macros::impl_transformer_new_methods!(@two_mut StatefulBiTransformer, $t, $u, $r, ('static), |$f| $w); };
+    (ArcStatefulBiTransformer<$t:ident, $u:ident, $r:ident>, |$f:ident| $w:expr) => { $crate::transformers::macros::impl_transformer_new_methods!(@two_mut StatefulBiTransformer, $t, $u, $r, (Send + 'static), |$f| $w); };
+    (BoxBiTransformerOnce<$t:ident, $u:ident, $r:ident>, |$f:ident| $w:expr) => { $crate::transformers::macros::impl_transformer_new_methods!(@two BiTransformerOnce, $t, $u, $r, ('static), |$f| $w); };
+    (@one $tr:ident, $t:ident, $r:ident, ($($b:tt)+), |$f:ident| $w:expr) => { crate::macros::impl_common_new_methods!(semantic ($tr<$t, $r> + $($b)+), |source| move |input: $t| source.apply(input), |$f| $w, "transformer"); };
+    (@one_mut $tr:ident, $t:ident, $r:ident, ($($b:tt)+), |$f:ident| $w:expr) => { crate::macros::impl_common_new_methods!(semantic_mut ($tr<$t, $r> + $($b)+), |source| move |input: $t| source.apply(input), |$f| $w, "transformer"); };
+    (@two $tr:ident, $t:ident, $u:ident, $r:ident, ($($b:tt)+), |$f:ident| $w:expr) => { crate::macros::impl_common_new_methods!(semantic ($tr<$t, $u, $r> + $($b)+), |source| move |first: $t, second: $u| source.apply(first, second), |$f| $w, "bi-transformer"); };
+    (@two_mut $tr:ident, $t:ident, $u:ident, $r:ident, ($($b:tt)+), |$f:ident| $w:expr) => { crate::macros::impl_common_new_methods!(semantic_mut ($tr<$t, $u, $r> + $($b)+), |source| move |first: $t, second: $u| source.apply(first, second), |$f| $w, "bi-transformer"); };
+}
+
 macro_rules! impl_transformer_common_methods {
     // Single generic parameter - Transformer types
     (
@@ -119,11 +140,7 @@ macro_rules! impl_transformer_common_methods {
         ($($fn_trait_with_bounds:tt)+),
         |$f:ident| $wrapper_expr:expr
     ) => {
-        crate::macros::impl_common_new_methods!(
-            ($($fn_trait_with_bounds)+),
-            |$f| $wrapper_expr,
-            "transformer"
-        );
+        $crate::transformers::macros::impl_transformer_new_methods!($struct_name<$t, $u>, |$f| $wrapper_expr);
 
         crate::macros::impl_common_name_methods!("transformer");
 
@@ -137,7 +154,7 @@ macro_rules! impl_transformer_common_methods {
         /// Returns a new transformer instance that returns the input unchanged.
         #[inline]
         pub fn identity() -> $struct_name<$t, $t> {
-            $struct_name::<$t, $t>::new(|t| t)
+            $struct_name::<$t, $t>::new(|t: $t| t)
         }
     };
 
@@ -147,14 +164,11 @@ macro_rules! impl_transformer_common_methods {
         ($($fn_trait_with_bounds:tt)+),
         |$f:ident| $wrapper_expr:expr
     ) => {
-        crate::macros::impl_common_new_methods!(
-            ($($fn_trait_with_bounds)+),
-            |$f| $wrapper_expr,
-            "bi-transformer"
-        );
+        $crate::transformers::macros::impl_transformer_new_methods!($struct_name<$t, $u, $v>, |$f| $wrapper_expr);
 
         crate::macros::impl_common_name_methods!("bi-transformer");
     };
 }
 
 pub(crate) use impl_transformer_common_methods;
+pub(crate) use impl_transformer_new_methods;

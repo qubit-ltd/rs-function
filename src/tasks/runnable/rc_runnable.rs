@@ -48,7 +48,8 @@ impl<E> Clone for RcRunnable<E> {
 
 impl<E> RcRunnable<E> {
     impl_common_new_methods!(
-        (FnMut() -> Result<(), E> + 'static),
+        semantic_mut (Runnable<E> + 'static),
+        |source| move || source.run(),
         |function| Rc::new(RefCell::new(function)),
         "runnable"
     );

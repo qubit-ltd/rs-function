@@ -49,7 +49,8 @@ pub struct BoxRunnableOnce<E> {
 
 impl<E> BoxRunnableOnce<E> {
     impl_common_new_methods!(
-        (FnOnce() -> Result<(), E> + Send + 'static),
+        semantic (RunnableOnce<E> + Send + 'static),
+        |source| move || source.run(),
         |function| Box::new(function),
         "runnable"
     );

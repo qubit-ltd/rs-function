@@ -23,12 +23,12 @@ pub struct RcStatefulTester {
 impl RcStatefulTester {
     /// Creates a new single-threaded shared stateful tester.
     #[inline]
-    pub fn new<F>(f: F) -> Self
+    pub fn new<F>(mut source: F) -> Self
     where
-        F: FnMut() -> bool + 'static,
+        F: StatefulTester + 'static,
     {
         RcStatefulTester {
-            function: Rc::new(RefCell::new(f)),
+            function: Rc::new(RefCell::new(move || source.test())),
         }
     }
 

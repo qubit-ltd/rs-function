@@ -58,3 +58,12 @@ pub trait RunnableOnce<E> {
     /// The exact error meaning is defined by the concrete runnable.
     fn run(self) -> Result<(), E>;
 }
+
+impl<E, F> RunnableOnce<E> for F
+where
+    F: FnOnce() -> Result<(), E>,
+{
+    fn run(self) -> Result<(), E> {
+        self()
+    }
+}

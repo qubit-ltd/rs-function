@@ -22,18 +22,14 @@
 use std::rc::Rc;
 use std::sync::Arc;
 
-use crate::functions::{
-    function_once::BoxFunctionOnce,
-    macros::{
+use crate::functions::macros::{
         impl_box_conditional_function, impl_box_function_methods, impl_conditional_function_clone,
         impl_conditional_function_debug_display, impl_fn_ops_trait, impl_function_clone,
         impl_function_common_methods, impl_function_constant_method, impl_function_debug_display,
         impl_function_identity_method, impl_shared_conditional_function,
         impl_shared_function_methods,
-    },
-};
-use crate::macros::{
-    impl_arc_conversions, impl_box_conversions, impl_closure_trait, impl_rc_conversions,
+    };
+use crate::macros::{ impl_closure_trait,
 };
 use crate::predicates::predicate::{ArcPredicate, BoxPredicate, Predicate, RcPredicate};
 

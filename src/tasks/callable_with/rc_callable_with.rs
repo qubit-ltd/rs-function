@@ -41,7 +41,8 @@ impl<T, R, E> Clone for RcCallableWith<T, R, E> {
 
 impl<T, R, E> RcCallableWith<T, R, E> {
     impl_common_new_methods!(
-        (FnMut(&mut T) -> Result<R, E> + 'static),
+        semantic_mut (CallableWith<T, R, E> + 'static),
+        |source| move |input: &mut T| source.call_with(input),
         |function| Rc::new(RefCell::new(function)),
         "callable-with"
     );

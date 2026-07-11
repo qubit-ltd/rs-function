@@ -38,7 +38,7 @@ use crate::{
         impl_conditional_consumer_debug_display, impl_consumer_common_methods,
         impl_consumer_debug_display,
     },
-    macros::{impl_box_once_conversions, impl_closure_once_trait},
+    macros::{ impl_closure_once_trait},
     predicates::bi_predicate::{BiPredicate, BoxBiPredicate},
 };
 

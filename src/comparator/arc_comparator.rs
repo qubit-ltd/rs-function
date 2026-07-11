@@ -57,12 +57,12 @@ impl<T> ArcComparator<T> {
     /// let cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
     /// ```
     #[inline]
-    pub fn new<F>(f: F) -> Self
+    pub fn new<F>(source: F) -> Self
     where
-        F: Fn(&T, &T) -> Ordering + Send + Sync + 'static,
+        F: Comparator<T> + Send + Sync + 'static,
     {
         Self {
-            function: Arc::new(f),
+            function: Arc::new(move |left: &T, right: &T| source.compare(left, right)),
         }
     }
 
@@ -89,7 +89,7 @@ impl<T> ArcComparator<T> {
         T: 'static,
     {
         let self_fn = self.function.clone();
-        ArcComparator::new(move |a, b| self_fn(b, a))
+        ArcComparator::new(move |a: &T, b: &T| self_fn(b, a))
     }
 
     /// Returns a comparator that uses this comparator first, then another
@@ -123,7 +123,7 @@ impl<T> ArcComparator<T> {
     {
         let first = self.function.clone();
         let second = other.function.clone();
-        ArcComparator::new(move |a, b| match first(a, b) {
+        ArcComparator::new(move |a: &T, b: &T| match first(a, b) {
             Ordering::Equal => second(a, b),
             ord => ord,
         })
@@ -163,7 +163,7 @@ impl<T> ArcComparator<T> {
         K: Ord,
         F: Fn(&T) -> &K + Send + Sync + 'static,
     {
-        ArcComparator::new(move |a, b| key_fn(a).cmp(key_fn(b)))
+        ArcComparator::new(move |a: &T, b: &T| key_fn(a).cmp(key_fn(b)))
     }
 
     /// Converts this comparator into a closure.
