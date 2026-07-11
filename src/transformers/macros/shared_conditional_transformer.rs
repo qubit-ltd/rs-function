@@ -15,12 +15,7 @@
 //!
 //! Arc/Rc type characteristics:
 //! - `and_then` and `or_else` borrow &self (because Arc/Rc can Clone)
-//! - Uses trait default implementations for `into_arc()` and `to_arc()`
-//! - Arc types will work with `into_arc()` and `to_arc()` (satisfy Send + Sync
-//!   constraints)
-//! - Rc types will get compile errors if trying to use `into_arc()` or
-//!   `to_arc()` (don't satisfy Send + Sync)
-//! - Implement complete `to_xxx()` methods (because they can Clone)
+//! - Returned wrappers preserve the original ownership family
 //!
 //! # Parameters
 //!
@@ -81,12 +76,7 @@
 ///
 /// Arc/Rc type characteristics:
 /// - `and_then` and `or_else` borrow &self (because Arc/Rc can Clone)
-/// - Uses trait default implementations for `into_arc()` and `to_arc()`
-/// - Arc types will work with `into_arc()` and `to_arc()` (satisfy Send + Sync
-///   constraints)
-/// - Rc types will get compile errors if trying to use `into_arc()` or
-///   `to_arc()` (don't satisfy Send + Sync)
-/// - Implement complete `to_xxx()` methods (because they can Clone)
+/// - Returned wrappers preserve the original ownership family
 ///
 /// # Parameters
 ///

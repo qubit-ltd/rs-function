@@ -50,8 +50,6 @@
 ///
 /// Box type characteristics:
 /// - `or_else` consume self (because Box cannot Clone)
-/// - Does not implement `into_arc()` (because Box types are not Send + Sync)
-/// - Does not implement `to_xxx()` methods (because Box types cannot Clone)
 ///
 /// # Parameters
 ///

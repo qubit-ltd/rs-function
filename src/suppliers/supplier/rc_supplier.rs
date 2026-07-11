@@ -114,5 +114,5 @@ impl<T> Supplier<T> for RcSupplier<T> {
 // 2. Providing both would cause ambiguity errors due to overlapping trait impls
 // 3. Rust doesn't support negative trait bounds to exclude `FnMut`
 //
-// Users of `Fn` closures should use `FnSupplierOps` from `supplier` module,
-// or explicitly convert to `BoxSupplier` using `.into_box()` first.
+// Users of `Fn` closures should use `FnSupplierOps` from the `supplier` module
+// or construct the desired wrapper explicitly with `BoxSupplier::new`.

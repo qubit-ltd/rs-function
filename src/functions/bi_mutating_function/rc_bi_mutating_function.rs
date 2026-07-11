@@ -54,8 +54,7 @@ impl<T, U, R> RcBiMutatingFunction<T, U, R> {
         |f| Rc::new(f)
     );
 
-    // Generate into_box(), into_rc(), into_fn(), into_once(), to_box(),
-    // to_rc(), to_fn(), to_once()
+    // Generate shared-wrapper composition methods.
     impl_shared_function_methods!(
         RcBiMutatingFunction<T, U, R>,
         RcConditionalBiMutatingFunction,
