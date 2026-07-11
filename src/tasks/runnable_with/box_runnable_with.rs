@@ -9,18 +9,8 @@
 //! Defines the `BoxRunnableWith` public type.
 
 use crate::{
-    macros::{
-        impl_box_conversions,
-        impl_common_name_methods,
-        impl_common_new_methods,
-    },
-    tasks::{
-        callable_with::BoxCallableWith,
-        runnable_with::{
-            RcRunnableWith,
-            RunnableWith,
-        },
-    },
+    macros::{impl_common_name_methods, impl_common_new_methods},
+    tasks::{callable_with::BoxCallableWith, runnable_with::RunnableWith},
 };
 
 type BoxRunnableWithFn<T, E> = Box<dyn FnMut(&mut T) -> Result<(), E>>;
@@ -85,10 +75,7 @@ impl<T, E> BoxRunnableWith<T, E> {
     ///
     /// A callable producing the second computation's result.
     #[inline]
-    pub fn then_callable_with<R, C>(
-        self,
-        callable: C,
-    ) -> BoxCallableWith<T, R, E>
+    pub fn then_callable_with<R, C>(self, callable: C) -> BoxCallableWith<T, R, E>
     where
         C: crate::tasks::callable_with::CallableWith<T, R, E> + 'static,
         T: 'static,
@@ -113,29 +100,5 @@ impl<T, E> RunnableWith<T, E> for BoxRunnableWith<T, E> {
     #[inline]
     fn run_with(&mut self, input: &mut T) -> Result<(), E> {
         (self.function)(input)
-    }
-
-    impl_box_conversions!(
-        BoxRunnableWith<T, E>,
-        RcRunnableWith,
-        FnMut(&mut T) -> Result<(), E>
-    );
-
-    /// Converts this boxed runnable into a boxed callable while preserving its
-    /// name.
-    #[inline]
-    fn into_callable_with(self) -> BoxCallableWith<T, (), E>
-    where
-        Self: Sized + 'static,
-    {
-        let name = self.name;
-        let mut function = self.function;
-        BoxCallableWith::new_with_optional_name(
-            move |input| {
-                function(input)?;
-                Ok(())
-            },
-            name,
-        )
     }
 }

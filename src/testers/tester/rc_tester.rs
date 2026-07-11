@@ -10,12 +10,7 @@
 
 use std::ops::Not;
 
-use super::{
-    Rc,
-    Tester,
-    arc_tester::ArcTester,
-    box_tester::BoxTester,
-};
+use super::{Rc, Tester};
 
 // ============================================================================
 // RcTester: Single-Threaded Shared Ownership Implementation
@@ -299,52 +294,6 @@ impl Tester for RcTester {
     fn test(&self) -> bool {
         (self.function)()
     }
-
-    #[inline]
-    fn into_box(self) -> BoxTester {
-        BoxTester {
-            function: Box::new(move || (self.function)()),
-        }
-    }
-
-    #[inline]
-    fn into_rc(self) -> RcTester {
-        self
-    }
-
-    // Note: RcTester is not Send + Sync, so into_arc() cannot be
-    // implemented. Calling into_arc() on RcTester will result in a
-    // compile error due to the Send + Sync trait bounds not being
-    // satisfied. The default Tester trait implementation will be used.
-
-    #[inline]
-    fn into_fn(self) -> impl Fn() -> bool {
-        move || (self.function)()
-    }
-
-    #[inline]
-    fn to_box(&self) -> BoxTester {
-        let self_fn = self.function.clone();
-        BoxTester {
-            function: Box::new(move || self_fn()),
-        }
-    }
-
-    #[inline]
-    fn to_rc(&self) -> RcTester {
-        self.clone()
-    }
-
-    // Note: RcTester is not Send + Sync, so to_arc() cannot be
-    // implemented. Calling to_arc() on RcTester will result in a compile
-    // error due to the Send + Sync trait bounds not being satisfied. The
-    // default Tester trait implementation will be used.
-
-    #[inline]
-    fn to_fn(&self) -> impl Fn() -> bool {
-        let self_fn = self.function.clone();
-        move || self_fn()
-    }
 }
 
 impl Clone for RcTester {
@@ -372,69 +321,5 @@ where
     #[inline]
     fn test(&self) -> bool {
         self()
-    }
-
-    #[inline]
-    fn into_box(self) -> BoxTester
-    where
-        Self: Sized + 'static,
-    {
-        BoxTester::new(self)
-    }
-
-    #[inline]
-    fn into_rc(self) -> RcTester
-    where
-        Self: Sized + 'static,
-    {
-        RcTester::new(self)
-    }
-
-    #[inline]
-    fn into_arc(self) -> ArcTester
-    where
-        Self: Sized + Send + Sync + 'static,
-    {
-        ArcTester::new(self)
-    }
-
-    #[inline]
-    fn into_fn(self) -> impl Fn() -> bool
-    where
-        Self: Sized + 'static,
-    {
-        self
-    }
-
-    #[inline]
-    fn to_box(&self) -> BoxTester
-    where
-        Self: Clone + Sized + 'static,
-    {
-        self.clone().into_box()
-    }
-
-    #[inline]
-    fn to_rc(&self) -> RcTester
-    where
-        Self: Clone + Sized + 'static,
-    {
-        self.clone().into_rc()
-    }
-
-    #[inline]
-    fn to_arc(&self) -> ArcTester
-    where
-        Self: Clone + Sized + Send + Sync + 'static,
-    {
-        self.clone().into_arc()
-    }
-
-    #[inline]
-    fn to_fn(&self) -> impl Fn() -> bool
-    where
-        Self: Clone + Sized,
-    {
-        self.clone()
     }
 }

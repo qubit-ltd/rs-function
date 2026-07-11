@@ -9,16 +9,8 @@
 //! Defines the `BoxFunction` public type.
 
 use super::{
-    BoxConditionalFunction,
-    BoxFunctionOnce,
-    Function,
-    Predicate,
-    RcFunction,
-    impl_box_conversions,
-    impl_box_function_methods,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
+    BoxConditionalFunction, Function, Predicate, impl_box_function_methods,
+    impl_function_common_methods, impl_function_constant_method, impl_function_debug_display,
     impl_function_identity_method,
 };
 
@@ -75,12 +67,4 @@ impl<T, R> Function<T, R> for BoxFunction<T, R> {
     fn apply(&self, t: &T) -> R {
         (self.function)(t)
     }
-
-    // Generates: into_box(), into_rc(), into_fn(), into_once()
-    impl_box_conversions!(
-        BoxFunction<T, R>,
-        RcFunction,
-        Fn(&T) -> R,
-        BoxFunctionOnce
-    );
 }

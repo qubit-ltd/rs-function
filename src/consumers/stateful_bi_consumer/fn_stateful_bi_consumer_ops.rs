@@ -8,10 +8,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnStatefulBiConsumerOps` public type.
 
-use super::{
-    BoxStatefulBiConsumer,
-    StatefulBiConsumer,
-};
+use super::{BoxStatefulBiConsumer, StatefulBiConsumer};
 
 // =======================================================================
 // 6. Provide extension methods for closures
@@ -110,7 +107,7 @@ pub trait FnStatefulBiConsumerOps<T, U>: FnMut(&T, &U) + Sized {
     {
         let mut first = self;
         let mut second = next;
-        BoxStatefulBiConsumer::new(move |t, u| {
+        BoxStatefulBiConsumer::new(move |t: &T, u: &U| {
             first(t, u);
             second.accept(t, u);
         })

@@ -16,28 +16,12 @@ pub mod mutator_once;
 pub mod stateful_mutator;
 
 pub use mutator::{
-    ArcConditionalMutator,
-    ArcMutator,
-    BoxConditionalMutator,
-    BoxMutator,
-    FnMutatorOps,
-    Mutator,
-    RcConditionalMutator,
-    RcMutator,
+    ArcConditionalMutator, ArcMutator, BoxConditionalMutator, BoxMutator, FnMutatorOps, Mutator,
+    RcConditionalMutator, RcMutator,
 };
-pub use mutator_once::{
-    BoxConditionalMutatorOnce,
-    BoxMutatorOnce,
-    FnMutatorOnceOps,
-    MutatorOnce,
-};
+pub use mutator_once::{BoxConditionalMutatorOnce, BoxMutatorOnce, FnMutatorOnceOps, MutatorOnce};
 pub use stateful_mutator::{
-    ArcConditionalStatefulMutator,
-    ArcStatefulMutator,
-    BoxConditionalStatefulMutator,
-    BoxStatefulMutator,
-    FnMutStatefulMutatorOps,
-    RcConditionalStatefulMutator,
-    RcStatefulMutator,
+    ArcConditionalStatefulMutator, ArcStatefulMutator, BoxConditionalStatefulMutator,
+    BoxStatefulMutator, FnMutStatefulMutatorOps, RcConditionalStatefulMutator, RcStatefulMutator,
     StatefulMutator,
 };

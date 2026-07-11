@@ -9,21 +9,9 @@
 //! Defines the `ArcStatefulMutator` public type.
 
 use super::{
-    Arc,
-    ArcConditionalStatefulMutator,
-    ArcMutMutatorFn,
-    BoxMutatorOnce,
-    BoxStatefulMutator,
-    Mutex,
-    Predicate,
-    RcStatefulMutator,
-    StatefulMutator,
-    impl_arc_conversions,
-    impl_closure_trait,
-    impl_mutator_clone,
-    impl_mutator_common_methods,
-    impl_mutator_debug_display,
-    impl_shared_mutator_methods,
+    Arc, ArcConditionalStatefulMutator, ArcMutMutatorFn, Mutex, Predicate, StatefulMutator,
+    impl_closure_trait, impl_mutator_clone, impl_mutator_common_methods,
+    impl_mutator_debug_display, impl_shared_mutator_methods,
 };
 
 // ============================================================================
@@ -80,7 +68,7 @@ impl<T> ArcStatefulMutator<T> {
     impl_shared_mutator_methods!(
         ArcStatefulMutator<T>,
         ArcConditionalStatefulMutator,
-        into_arc,
+        ArcPredicate,
         StatefulMutator,
         Send + Sync + 'static
     );
@@ -90,15 +78,6 @@ impl<T> StatefulMutator<T> for ArcStatefulMutator<T> {
     fn apply(&mut self, value: &mut T) {
         (self.function.lock())(value)
     }
-
-    // Use macro to implement conversion methods
-    impl_arc_conversions!(
-        ArcStatefulMutator<T>,
-        BoxStatefulMutator,
-        RcStatefulMutator,
-        BoxMutatorOnce,
-        FnMut(input: &mut T)
-    );
 }
 
 // Use macro to generate Clone implementation

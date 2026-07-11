@@ -9,16 +9,8 @@
 //! Defines the `BoxMutatingFunction` public type.
 
 use super::{
-    BoxConditionalMutatingFunction,
-    BoxMutatingFunctionOnce,
-    Function,
-    MutatingFunction,
-    Predicate,
-    RcMutatingFunction,
-    impl_box_conversions,
-    impl_box_function_methods,
-    impl_function_common_methods,
-    impl_function_debug_display,
+    BoxConditionalMutatingFunction, Function, MutatingFunction, Predicate,
+    impl_box_function_methods, impl_function_common_methods, impl_function_debug_display,
     impl_function_identity_method,
 };
 
@@ -103,12 +95,4 @@ impl<T, R> MutatingFunction<T, R> for BoxMutatingFunction<T, R> {
     fn apply(&self, t: &mut T) -> R {
         (self.function)(t)
     }
-
-    // Generates: into_box(), into_rc(), into_fn(), into_once()
-    impl_box_conversions!(
-        BoxMutatingFunction<T, R>,
-        RcMutatingFunction,
-        Fn(&mut T) -> R,
-        BoxMutatingFunctionOnce
-    );
 }

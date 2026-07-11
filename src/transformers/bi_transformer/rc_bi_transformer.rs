@@ -9,19 +9,9 @@
 //! Defines the `RcBiTransformer` public type.
 
 use super::{
-    BiPredicate,
-    BiTransformer,
-    BoxBiTransformer,
-    BoxBiTransformerOnce,
-    Rc,
-    RcConditionalBiTransformer,
-    Transformer,
-    impl_rc_conversions,
-    impl_shared_transformer_methods,
-    impl_transformer_clone,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
-    impl_transformer_debug_display,
+    BiPredicate, BiTransformer, Rc, RcConditionalBiTransformer, Transformer,
+    impl_shared_transformer_methods, impl_transformer_clone, impl_transformer_common_methods,
+    impl_transformer_constant_method, impl_transformer_debug_display,
 };
 
 // ============================================================================
@@ -56,7 +46,7 @@ impl<T, U, R> RcBiTransformer<T, U, R> {
     impl_shared_transformer_methods!(
         RcBiTransformer<T, U, R>,
         RcConditionalBiTransformer,
-        into_rc,
+        RcBiPredicate,
         Transformer,
         'static
     );
@@ -76,20 +66,4 @@ impl<T, U, R> BiTransformer<T, U, R> for RcBiTransformer<T, U, R> {
     fn apply(&self, first: T, second: U) -> R {
         (self.function)(first, second)
     }
-
-    // Generate all conversion methods using the unified macro
-    impl_rc_conversions!(
-        RcBiTransformer<T, U, R>,
-        BoxBiTransformer,
-        BoxBiTransformerOnce,
-        Fn(first: T, second: U) -> R
-    );
-
-    // do NOT override RcBiTransformer::into_arc() because RcBiTransformer is
-    // not Send + Sync and calling RcBiTransformer::into_arc() will cause a
-    // compile error
-
-    // do NOT override RcBiTransformer::to_arc() because RcBiTransformer is not
-    // Send + Sync and calling RcBiTransformer::to_arc() will cause a
-    // compile error
 }

@@ -8,11 +8,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnBiFunctionOnceOps` public type.
 
-use super::{
-    BiPredicate,
-    BoxBiFunctionOnce,
-    BoxConditionalBiFunctionOnce,
-};
+use super::{BiPredicate, BoxBiFunctionOnce, BoxConditionalBiFunctionOnce};
 
 // ============================================================================
 // FnBiFunctionOnceOps - Extension trait for FnOnce(&T, &U) -> R bi-functions

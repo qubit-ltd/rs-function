@@ -9,13 +9,7 @@
 //! Defines the `BoxConditionalMutator` public type.
 
 use super::{
-    BoxMutator,
-    BoxPredicate,
-    Mutator,
-    Predicate,
-    RcMutator,
-    impl_box_conditional_mutator,
-    impl_conditional_mutator_conversions,
+    BoxMutator, BoxPredicate, Mutator, Predicate, impl_box_conditional_mutator,
     impl_conditional_mutator_debug_display,
 };
 
@@ -88,9 +82,6 @@ impl<T> Mutator<T> for BoxConditionalMutator<T> {
             self.mutator.apply(value);
         }
     }
-
-    // Generates: into_box(), into_rc(), into_fn()
-    impl_conditional_mutator_conversions!(BoxMutator<T>, RcMutator, Fn);
 }
 
 // Generate Debug and Display trait implementations for conditional mutator

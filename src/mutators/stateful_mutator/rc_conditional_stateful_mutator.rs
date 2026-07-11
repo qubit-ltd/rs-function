@@ -9,15 +9,8 @@
 //! Defines the `RcConditionalStatefulMutator` public type.
 
 use super::{
-    BoxStatefulMutator,
-    Predicate,
-    RcPredicate,
-    RcStatefulMutator,
-    StatefulMutator,
-    impl_conditional_mutator_clone,
-    impl_conditional_mutator_conversions,
-    impl_conditional_mutator_debug_display,
-    impl_shared_conditional_mutator,
+    Predicate, RcPredicate, RcStatefulMutator, StatefulMutator, impl_conditional_mutator_clone,
+    impl_conditional_mutator_debug_display, impl_shared_conditional_mutator,
 };
 
 // ============================================================================
@@ -75,13 +68,6 @@ impl<T> StatefulMutator<T> for RcConditionalStatefulMutator<T> {
             self.mutator.apply(value);
         }
     }
-
-    // Generates: into_box(), into_rc(), into_fn()
-    impl_conditional_mutator_conversions!(
-        BoxStatefulMutator<T>,
-        RcStatefulMutator,
-        FnMut
-    );
 }
 
 // Generate Clone trait implementation for conditional mutator

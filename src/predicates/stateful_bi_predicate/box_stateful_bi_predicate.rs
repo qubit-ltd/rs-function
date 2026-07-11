@@ -11,12 +11,7 @@
 use std::ops::Not;
 
 use super::{
-    ALWAYS_FALSE_NAME,
-    ALWAYS_TRUE_NAME,
-    RcStatefulBiPredicate,
-    StatefulBiPredicate,
-    impl_box_conversions,
-    impl_predicate_common_methods,
+    ALWAYS_FALSE_NAME, ALWAYS_TRUE_NAME, StatefulBiPredicate, impl_predicate_common_methods,
     impl_predicate_debug_display,
 };
 
@@ -168,9 +163,7 @@ where
     type Output = BoxStatefulBiPredicate<T, U>;
 
     fn not(mut self) -> Self::Output {
-        BoxStatefulBiPredicate::new(move |first, second| {
-            !self.test(first, second)
-        })
+        BoxStatefulBiPredicate::new(move |first, second| !self.test(first, second))
     }
 }
 
@@ -182,11 +175,4 @@ impl<T, U> StatefulBiPredicate<T, U> for BoxStatefulBiPredicate<T, U> {
     fn test(&mut self, first: &T, second: &U) -> bool {
         (self.function)(first, second)
     }
-
-    // Generates: into_box(), into_rc(), into_fn()
-    impl_box_conversions!(
-        BoxStatefulBiPredicate<T, U>,
-        RcStatefulBiPredicate,
-        FnMut(&T, &U) -> bool
-    );
 }

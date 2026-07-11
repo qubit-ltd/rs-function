@@ -8,10 +8,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnMutatorOps` public type.
 
-use super::{
-    BoxMutator,
-    Mutator,
-};
+use super::{BoxMutator, Mutator};
 
 // ============================================================================
 // 7. Provide extension methods for closures
@@ -85,10 +82,10 @@ pub trait FnMutatorOps<T>: Fn(&mut T) + Sized {
         T: 'static,
     {
         let first = self;
-        let second = next.into_fn();
-        BoxMutator::new(move |t| {
+        let second = next;
+        BoxMutator::new(move |t: &mut T| {
             (first)(t);
-            (second)(t);
+            second.apply(t);
         })
     }
 }

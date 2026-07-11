@@ -15,22 +15,13 @@
 //! implementations:
 //!
 //! - [`BoxBiTransformerOnce`]: Single ownership, one-time use
-use crate::macros::{
-    impl_box_once_conversions,
-    impl_closure_once_trait,
-};
-use crate::predicates::bi_predicate::{
-    BiPredicate,
-    BoxBiPredicate,
-};
+use crate::macros::{impl_box_once_conversions, impl_closure_once_trait};
+use crate::predicates::bi_predicate::{BiPredicate, BoxBiPredicate};
 use crate::transformers::{
     macros::{
-        impl_box_conditional_transformer,
-        impl_box_transformer_methods,
-        impl_conditional_transformer_debug_display,
-        impl_transformer_common_methods,
-        impl_transformer_constant_method,
-        impl_transformer_debug_display,
+        impl_box_conditional_transformer, impl_box_transformer_methods,
+        impl_conditional_transformer_debug_display, impl_transformer_common_methods,
+        impl_transformer_constant_method, impl_transformer_debug_display,
     },
     transformer_once::TransformerOnce,
 };
@@ -73,84 +64,4 @@ pub trait BiTransformerOnce<T, U, R> {
     ///
     /// The transformed output value
     fn apply(self, first: T, second: U) -> R;
-
-    /// Converts to BoxBiTransformerOnce
-    ///
-    /// **⚠️ Consumes `self`**: The original bi-transformer becomes unavailable
-    /// after calling this method.
-    ///
-    /// # Returns
-    ///
-    /// Returns `BoxBiTransformerOnce<T, U, R>`
-    fn into_box(self) -> BoxBiTransformerOnce<T, U, R>
-    where
-        Self: Sized + 'static,
-    {
-        BoxBiTransformerOnce::new(move |t: T, u: U| self.apply(t, u))
-    }
-
-    /// Converts bi-transformer to a closure
-    ///
-    /// **⚠️ Consumes `self`**: The original bi-transformer becomes unavailable
-    /// after calling this method.
-    ///
-    /// # Returns
-    ///
-    /// Returns a closure that implements `FnOnce(T, U) -> R`
-    fn into_fn(self) -> impl FnOnce(T, U) -> R
-    where
-        Self: Sized + 'static,
-    {
-        move |t: T, u: U| self.apply(t, u)
-    }
-
-    /// Converts bi-transformer to a boxed function pointer
-    ///
-    /// **📌 Borrows `&self`**: The original bi-transformer remains usable
-    /// after calling this method.
-    ///
-    /// # Returns
-    ///
-    /// Returns a boxed function pointer that implements `FnOnce(T, U) -> R`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::BiTransformerOnce;
-    ///
-    /// let add = |x: i32, y: i32| x + y;
-    /// let func = add.to_fn();
-    /// assert_eq!(func(20, 22), 42);
-    /// ```
-    fn to_box(&self) -> BoxBiTransformerOnce<T, U, R>
-    where
-        Self: Clone + 'static,
-    {
-        self.clone().into_box()
-    }
-
-    /// Converts bi-transformer to a closure
-    ///
-    /// **📌 Borrows `&self`**: The original bi-transformer remains usable
-    /// after calling this method.
-    ///
-    /// # Returns
-    ///
-    /// Returns a closure that implements `FnOnce(T, U) -> R`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::BiTransformerOnce;
-    ///
-    /// let add = |x: i32, y: i32| x + y;
-    /// let func = add.to_fn();
-    /// assert_eq!(func(20, 22), 42);
-    /// ```
-    fn to_fn(&self) -> impl FnOnce(T, U) -> R
-    where
-        Self: Clone + 'static,
-    {
-        self.clone().into_fn()
-    }
 }

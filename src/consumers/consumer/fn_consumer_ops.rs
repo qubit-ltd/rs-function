@@ -8,10 +8,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnConsumerOps` public type.
 
-use super::{
-    BoxConsumer,
-    Consumer,
-};
+use super::{BoxConsumer, Consumer};
 
 // ============================================================================
 // 6. Provide extension methods for closures
@@ -84,7 +81,7 @@ pub trait FnConsumerOps<T>: Fn(&T) + Sized {
     {
         let first = self;
         let second = next;
-        BoxConsumer::new(move |t| {
+        BoxConsumer::new(move |t: &T| {
             first(t);
             second.accept(t);
         })

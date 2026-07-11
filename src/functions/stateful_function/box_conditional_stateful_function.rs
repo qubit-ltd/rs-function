@@ -9,11 +9,7 @@
 //! Defines the `BoxConditionalStatefulFunction` public type.
 
 use super::{
-    BoxPredicate,
-    BoxStatefulFunction,
-    Predicate,
-    StatefulFunction,
-    impl_box_conditional_function,
+    BoxPredicate, BoxStatefulFunction, Predicate, StatefulFunction, impl_box_conditional_function,
     impl_conditional_function_debug_display,
 };
 

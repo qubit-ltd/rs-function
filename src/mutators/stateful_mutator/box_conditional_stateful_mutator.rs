@@ -9,13 +9,7 @@
 //! Defines the `BoxConditionalStatefulMutator` public type.
 
 use super::{
-    BoxPredicate,
-    BoxStatefulMutator,
-    Predicate,
-    RcStatefulMutator,
-    StatefulMutator,
-    impl_box_conditional_mutator,
-    impl_conditional_mutator_conversions,
+    BoxPredicate, BoxStatefulMutator, Predicate, StatefulMutator, impl_box_conditional_mutator,
     impl_conditional_mutator_debug_display,
 };
 
@@ -92,13 +86,6 @@ impl<T> StatefulMutator<T> for BoxConditionalStatefulMutator<T> {
             self.mutator.apply(value);
         }
     }
-
-    // Generates: into_box(), into_rc(), into_fn()
-    impl_conditional_mutator_conversions!(
-        BoxStatefulMutator<T>,
-        RcStatefulMutator,
-        FnMut
-    );
 }
 
 // Generate Debug and Display trait implementations for conditional mutator

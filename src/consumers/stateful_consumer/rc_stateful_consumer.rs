@@ -9,18 +9,8 @@
 //! Defines the `RcStatefulConsumer` public type.
 
 use super::{
-    BoxConsumerOnce,
-    BoxStatefulConsumer,
-    Predicate,
-    Rc,
-    RcConditionalStatefulConsumer,
-    RefCell,
-    StatefulConsumer,
-    impl_consumer_clone,
-    impl_consumer_common_methods,
-    impl_consumer_debug_display,
-    impl_rc_conversions,
-    impl_shared_consumer_methods,
+    Predicate, Rc, RcConditionalStatefulConsumer, RefCell, StatefulConsumer, impl_consumer_clone,
+    impl_consumer_common_methods, impl_consumer_debug_display, impl_shared_consumer_methods,
 };
 
 type RcStatefulConsumerFn<T> = Rc<RefCell<dyn FnMut(&T)>>;
@@ -97,17 +87,15 @@ pub struct RcStatefulConsumer<T> {
 
 impl<T> RcStatefulConsumer<T> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
-    impl_consumer_common_methods!(
-        RcStatefulConsumer<T>,
-        (FnMut(&T) + 'static),
-        |f| Rc::new(RefCell::new(f))
-    );
+    impl_consumer_common_methods!(RcStatefulConsumer<T>, (FnMut(&T) + 'static), |f| Rc::new(
+        RefCell::new(f)
+    ));
 
     // Generates: when() and and_then() methods that borrow &self (Rc can clone)
     impl_shared_consumer_methods!(
         RcStatefulConsumer<T>,
         RcConditionalStatefulConsumer,
-        into_rc,
+        RcPredicate,
         StatefulConsumer,
         'static
     );
@@ -117,14 +105,6 @@ impl<T> StatefulConsumer<T> for RcStatefulConsumer<T> {
     fn accept(&mut self, value: &T) {
         (self.function.borrow_mut())(value)
     }
-
-    // Use macro to implement conversion methods
-    impl_rc_conversions!(
-        RcStatefulConsumer<T>,
-        BoxStatefulConsumer,
-        BoxConsumerOnce,
-        FnMut(t: &T)
-    );
 }
 
 // Use macro to generate Clone implementation

@@ -98,6 +98,78 @@
 /// * `always_true()` - Creates a predicate that always returns true
 /// * `always_false()` - Creates a predicate that always returns false
 macro_rules! impl_predicate_common_methods {
+    // Single generic parameter with a semantic Predicate adapter.
+    (
+        $struct_name:ident < $t:ident >,
+        semantic ($($semantic_bounds:tt)+),
+        |$source:ident| $adapter_expr:expr,
+        |$f:ident| $wrapper_expr:expr
+    ) => {
+        crate::macros::impl_common_new_methods!(
+            semantic ($($semantic_bounds)+),
+            |$source| $adapter_expr,
+            |$f| $wrapper_expr,
+            "predicate"
+        );
+        crate::macros::impl_common_name_methods!("predicate");
+
+        /// Creates a predicate that always returns `true`.
+        ///
+        /// # Returns
+        ///
+        #[doc = concat!("A new `", stringify!($struct_name), "` that always returns `true`.")]
+        #[inline]
+        pub fn always_true() -> Self {
+            Self::new_with_name(ALWAYS_TRUE_NAME, |_: &$t| true)
+        }
+
+        /// Creates a predicate that always returns `false`.
+        ///
+        /// # Returns
+        ///
+        #[doc = concat!("A new `", stringify!($struct_name), "` that always returns `false`.")]
+        #[inline]
+        pub fn always_false() -> Self {
+            Self::new_with_name(ALWAYS_FALSE_NAME, |_: &$t| false)
+        }
+    };
+
+    // Two generic parameters with a semantic BiPredicate adapter.
+    (
+        $struct_name:ident < $t:ident, $u:ident >,
+        semantic ($($semantic_bounds:tt)+),
+        |$source:ident| $adapter_expr:expr,
+        |$f:ident| $wrapper_expr:expr
+    ) => {
+        crate::macros::impl_common_new_methods!(
+            semantic ($($semantic_bounds)+),
+            |$source| $adapter_expr,
+            |$f| $wrapper_expr,
+            "bi-predicate"
+        );
+        crate::macros::impl_common_name_methods!("bi-predicate");
+
+        /// Creates a bi-predicate that always returns `true`.
+        ///
+        /// # Returns
+        ///
+        #[doc = concat!("A new `", stringify!($struct_name), "` that always returns `true`.")]
+        #[inline]
+        pub fn always_true() -> Self {
+            Self::new_with_name(ALWAYS_TRUE_NAME, |_: &$t, _: &$u| true)
+        }
+
+        /// Creates a bi-predicate that always returns `false`.
+        ///
+        /// # Returns
+        ///
+        #[doc = concat!("A new `", stringify!($struct_name), "` that always returns `false`.")]
+        #[inline]
+        pub fn always_false() -> Self {
+            Self::new_with_name(ALWAYS_FALSE_NAME, |_: &$t, _: &$u| false)
+        }
+    };
+
     // Single generic parameter - Predicate types
     (
         $struct_name:ident < $t:ident >,

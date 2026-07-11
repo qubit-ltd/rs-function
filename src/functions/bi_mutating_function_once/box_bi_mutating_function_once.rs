@@ -9,20 +9,12 @@
 //! Defines the `BoxBiMutatingFunctionOnce` public type.
 
 use super::{
-    BiMutatingFunctionOnce,
-    BiPredicate,
-    BoxConditionalBiMutatingFunctionOnce,
-    MutatingFunctionOnce,
-    impl_box_function_methods,
-    impl_box_once_conversions,
-    impl_closure_once_trait,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
+    BiMutatingFunctionOnce, BiPredicate, BoxConditionalBiMutatingFunctionOnce,
+    MutatingFunctionOnce, impl_box_function_methods, impl_closure_once_trait,
+    impl_function_common_methods, impl_function_constant_method, impl_function_debug_display,
 };
 
-type BoxBiMutatingFunctionOnceFn<T, U, R> =
-    Box<dyn FnOnce(&mut T, &mut U) -> R>;
+type BoxBiMutatingFunctionOnceFn<T, U, R> = Box<dyn FnOnce(&mut T, &mut U) -> R>;
 
 // ============================================================================
 // BoxBiMutatingFunctionOnce - Box<dyn FnOnce(&mut T, &mut U) -> R>
@@ -64,19 +56,10 @@ impl<T, U, R> BoxBiMutatingFunctionOnce<T, U, R> {
 }
 
 // Implement BiMutatingFunctionOnce trait for BoxBiMutatingFunctionOnce
-impl<T, U, R> BiMutatingFunctionOnce<T, U, R>
-    for BoxBiMutatingFunctionOnce<T, U, R>
-{
+impl<T, U, R> BiMutatingFunctionOnce<T, U, R> for BoxBiMutatingFunctionOnce<T, U, R> {
     fn apply(self, first: &mut T, second: &mut U) -> R {
         (self.function)(first, second)
     }
-
-    // Generate into_box(), into_fn(), to_box()
-    impl_box_once_conversions!(
-        BoxBiMutatingFunctionOnce<T, U, R>,
-        BiMutatingFunctionOnce,
-        FnOnce(&mut T, &mut U) -> R
-    );
 }
 
 // Implement constant method for BoxBiMutatingFunctionOnce

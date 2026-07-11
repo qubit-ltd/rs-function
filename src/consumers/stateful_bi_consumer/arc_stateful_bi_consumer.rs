@@ -9,20 +9,9 @@
 //! Defines the `ArcStatefulBiConsumer` public type.
 
 use super::{
-    Arc,
-    ArcConditionalStatefulBiConsumer,
-    BiPredicate,
-    BoxBiConsumerOnce,
-    BoxStatefulBiConsumer,
-    Mutex,
-    RcStatefulBiConsumer,
-    StatefulBiConsumer,
-    impl_arc_conversions,
-    impl_closure_trait,
-    impl_consumer_clone,
-    impl_consumer_common_methods,
-    impl_consumer_debug_display,
-    impl_shared_consumer_methods,
+    Arc, ArcConditionalStatefulBiConsumer, BiPredicate, Mutex, StatefulBiConsumer,
+    impl_closure_trait, impl_consumer_clone, impl_consumer_common_methods,
+    impl_consumer_debug_display, impl_shared_consumer_methods,
 };
 
 type ArcStatefulBiConsumerFn<T, U> = Arc<Mutex<dyn FnMut(&T, &U) + Send>>;
@@ -100,7 +89,7 @@ impl<T, U> ArcStatefulBiConsumer<T, U> {
     impl_shared_consumer_methods!(
         ArcStatefulBiConsumer<T, U>,
         ArcConditionalStatefulBiConsumer,
-        into_arc,
+        ArcBiPredicate,
         StatefulBiConsumer,
         Send + Sync + 'static
     );
@@ -110,15 +99,6 @@ impl<T, U> StatefulBiConsumer<T, U> for ArcStatefulBiConsumer<T, U> {
     fn accept(&mut self, first: &T, second: &U) {
         (self.function.lock())(first, second)
     }
-
-    // Use macro to implement conversion methods
-    impl_arc_conversions!(
-        ArcStatefulBiConsumer<T, U>,
-        BoxStatefulBiConsumer,
-        RcStatefulBiConsumer,
-        BoxBiConsumerOnce,
-        FnMut(t: &T, u: &U)
-    );
 }
 
 // Use macro to generate Clone implementation

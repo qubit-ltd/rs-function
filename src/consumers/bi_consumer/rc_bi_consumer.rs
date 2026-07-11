@@ -9,18 +9,8 @@
 //! Defines the `RcBiConsumer` public type.
 
 use super::{
-    BiConsumer,
-    BiConsumerFn,
-    BiPredicate,
-    BoxBiConsumer,
-    BoxBiConsumerOnce,
-    Rc,
-    RcConditionalBiConsumer,
-    impl_consumer_clone,
-    impl_consumer_common_methods,
-    impl_consumer_debug_display,
-    impl_rc_conversions,
-    impl_shared_consumer_methods,
+    BiConsumer, BiConsumerFn, BiPredicate, Rc, RcConditionalBiConsumer, impl_consumer_clone,
+    impl_consumer_common_methods, impl_consumer_debug_display, impl_shared_consumer_methods,
 };
 
 // =======================================================================
@@ -84,7 +74,7 @@ impl<T, U> RcBiConsumer<T, U> {
     impl_shared_consumer_methods!(
         RcBiConsumer<T, U>,
         RcConditionalBiConsumer,
-        into_rc,
+        RcBiPredicate,
         BiConsumer,
         'static
     );
@@ -94,14 +84,6 @@ impl<T, U> BiConsumer<T, U> for RcBiConsumer<T, U> {
     fn accept(&self, first: &T, second: &U) {
         (self.function)(first, second)
     }
-
-    // Use macro to implement conversion methods
-    impl_rc_conversions!(
-        RcBiConsumer<T, U>,
-        BoxBiConsumer,
-        BoxBiConsumerOnce,
-        Fn(t: &T, u: &U)
-    );
 }
 
 // Use macro to generate Clone implementation

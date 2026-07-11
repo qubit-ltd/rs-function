@@ -34,20 +34,12 @@
 //! for initialization callbacks, cleanup callbacks, etc.
 use crate::{
     consumers::macros::{
-        impl_box_conditional_consumer,
-        impl_box_consumer_methods,
-        impl_conditional_consumer_debug_display,
-        impl_consumer_common_methods,
+        impl_box_conditional_consumer, impl_box_consumer_methods,
+        impl_conditional_consumer_debug_display, impl_consumer_common_methods,
         impl_consumer_debug_display,
     },
-    macros::{
-        impl_box_once_conversions,
-        impl_closure_once_trait,
-    },
-    predicates::bi_predicate::{
-        BiPredicate,
-        BoxBiPredicate,
-    },
+    macros::{impl_box_once_conversions, impl_closure_once_trait},
+    predicates::bi_predicate::{BiPredicate, BoxBiPredicate},
 };
 
 // ==========================================================================
@@ -137,117 +129,4 @@ pub trait BiConsumerOnce<T, U> {
     /// consumer.accept(&5, &3);
     /// ```
     fn accept(self, first: &T, second: &U);
-
-    /// Converts to BoxBiConsumerOnce
-    ///
-    /// **⚠️ Consumes `self`**: Original consumer becomes unavailable after
-    /// calling this method.
-    ///
-    /// # Returns
-    ///
-    /// Returns the wrapped `BoxBiConsumerOnce<T, U>`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::BiConsumerOnce;
-    /// use std::sync::{Arc, Mutex};
-    ///
-    /// let log = Arc::new(Mutex::new(Vec::new()));
-    /// let l = log.clone();
-    /// let closure = move |x: &i32, y: &i32| {
-    ///     l.lock().expect("mutex should not be poisoned").push(*x + *y);
-    /// };
-    /// let box_consumer = closure.into_box();
-    /// box_consumer.accept(&5, &3);
-    /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
-    /// ```
-    fn into_box(self) -> BoxBiConsumerOnce<T, U>
-    where
-        Self: Sized + 'static,
-    {
-        BoxBiConsumerOnce::new(move |t, u| self.accept(t, u))
-    }
-
-    /// Converts to a closure
-    ///
-    /// **⚠️ Consumes `self`**: Original consumer becomes unavailable after
-    /// calling this method.
-    ///
-    /// Converts the one-time bi-consumer to a closure usable with standard
-    /// library methods requiring `FnOnce`.
-    ///
-    /// # Returns
-    ///
-    /// Returns a closure implementing `FnOnce(&T, &U)`
-    fn into_fn(self) -> impl FnOnce(&T, &U)
-    where
-        Self: Sized + 'static,
-    {
-        move |t, u| self.accept(t, u)
-    }
-
-    /// Convert to BoxBiConsumerOnce without consuming self
-    ///
-    /// **⚠️ Requires Clone**: This method requires `Self` to implement
-    /// `Clone`. Clones the current bi-consumer and then converts the clone
-    /// to a `BoxBiConsumerOnce`.
-    ///
-    /// # Returns
-    ///
-    /// Returns the wrapped `BoxBiConsumerOnce<T, U>`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::BiConsumerOnce;
-    /// use std::sync::{Arc, Mutex};
-    ///
-    /// let log = Arc::new(Mutex::new(Vec::new()));
-    /// let l = log.clone();
-    /// let closure = move |x: &i32, y: &i32| {
-    ///     l.lock().expect("mutex should not be poisoned").push(*x + *y);
-    /// };
-    /// let box_consumer = closure.to_box();
-    /// box_consumer.accept(&5, &3);
-    /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
-    /// ```
-    fn to_box(&self) -> BoxBiConsumerOnce<T, U>
-    where
-        Self: Sized + Clone + 'static,
-    {
-        self.clone().into_box()
-    }
-
-    /// Convert to closure without consuming self
-    ///
-    /// **⚠️ Requires Clone**: This method requires `Self` to implement
-    /// `Clone`. Clones the current bi-consumer and then converts the clone
-    /// to a closure.
-    ///
-    /// # Returns
-    ///
-    /// Returns a closure implementing `FnOnce(&T, &U)`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::BiConsumerOnce;
-    /// use std::sync::{Arc, Mutex};
-    ///
-    /// let log = Arc::new(Mutex::new(Vec::new()));
-    /// let l = log.clone();
-    /// let closure = move |x: &i32, y: &i32| {
-    ///     l.lock().expect("mutex should not be poisoned").push(*x + *y);
-    /// };
-    /// let func = closure.to_fn();
-    /// func(&5, &3);
-    /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
-    /// ```
-    fn to_fn(&self) -> impl FnOnce(&T, &U)
-    where
-        Self: Sized + Clone + 'static,
-    {
-        self.clone().into_fn()
-    }
 }

@@ -9,17 +9,8 @@
 //! Defines the `RcTransformer` public type.
 
 use super::{
-    BoxTransformer,
-    BoxTransformerOnce,
-    Predicate,
-    Rc,
-    RcConditionalTransformer,
-    Transformer,
-    impl_rc_conversions,
-    impl_shared_transformer_methods,
-    impl_transformer_clone,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
+    Predicate, Rc, RcConditionalTransformer, Transformer, impl_shared_transformer_methods,
+    impl_transformer_clone, impl_transformer_common_methods, impl_transformer_constant_method,
     impl_transformer_debug_display,
 };
 
@@ -56,7 +47,7 @@ impl<T, R> RcTransformer<T, R> {
     impl_shared_transformer_methods!(
         RcTransformer<T, R>,
         RcConditionalTransformer,
-        into_rc,
+        RcPredicate,
         Transformer,
         'static
     );
@@ -75,12 +66,4 @@ impl<T, R> Transformer<T, R> for RcTransformer<T, R> {
     fn apply(&self, input: T) -> R {
         (self.function)(input)
     }
-
-    // Generate all conversion methods using the unified macro
-    impl_rc_conversions!(
-        RcTransformer<T, R>,
-        BoxTransformer,
-        BoxTransformerOnce,
-        Fn(input: T) -> R
-    );
 }

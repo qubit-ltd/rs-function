@@ -9,12 +9,8 @@
 //! Defines the `ArcConditionalStatefulTransformer` public type.
 
 use super::{
-    ArcPredicate,
-    ArcStatefulTransformer,
-    Predicate,
-    StatefulTransformer,
-    impl_conditional_transformer_clone,
-    impl_conditional_transformer_debug_display,
+    ArcPredicate, ArcStatefulTransformer, Predicate, StatefulTransformer,
+    impl_conditional_transformer_clone, impl_conditional_transformer_debug_display,
     impl_shared_conditional_transformer,
 };
 

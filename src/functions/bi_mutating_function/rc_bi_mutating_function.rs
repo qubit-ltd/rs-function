@@ -9,19 +9,9 @@
 //! Defines the `RcBiMutatingFunction` public type.
 
 use super::{
-    BiMutatingFunction,
-    BiPredicate,
-    BoxBiMutatingFunction,
-    BoxBiMutatingFunctionOnce,
-    MutatingFunction,
-    Rc,
-    RcConditionalBiMutatingFunction,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
-    impl_rc_conversions,
-    impl_shared_function_methods,
+    BiMutatingFunction, BiPredicate, MutatingFunction, Rc, RcConditionalBiMutatingFunction,
+    impl_function_clone, impl_function_common_methods, impl_function_constant_method,
+    impl_function_debug_display, impl_shared_function_methods,
 };
 
 type RcBiMutatingFunctionFn<T, U, R> = Rc<dyn Fn(&mut T, &mut U) -> R>;
@@ -62,7 +52,7 @@ impl<T, U, R> RcBiMutatingFunction<T, U, R> {
     impl_shared_function_methods!(
         RcBiMutatingFunction<T, U, R>,
         RcConditionalBiMutatingFunction,
-        into_rc,
+        RcBiPredicate,
         MutatingFunction,
         'static
     );
@@ -73,15 +63,6 @@ impl<T, U, R> BiMutatingFunction<T, U, R> for RcBiMutatingFunction<T, U, R> {
     fn apply(&self, first: &mut T, second: &mut U) -> R {
         (self.function)(first, second)
     }
-
-    // Generate into_box(), into_rc(), into_fn(), into_once(), to_box(),
-    // to_rc(), to_fn(), to_once()
-    impl_rc_conversions!(
-        RcBiMutatingFunction<T, U, R>,
-        BoxBiMutatingFunction,
-        BoxBiMutatingFunctionOnce,
-        Fn(first: &mut T, second: &mut U) -> R
-    );
 }
 
 // Implement constant method for RcBiMutatingFunction

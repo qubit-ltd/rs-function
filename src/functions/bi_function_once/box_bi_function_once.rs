@@ -9,16 +9,9 @@
 //! Defines the `BoxBiFunctionOnce` public type.
 
 use super::{
-    BiFunctionOnce,
-    BiPredicate,
-    BoxConditionalBiFunctionOnce,
-    FunctionOnce,
-    impl_box_function_methods,
-    impl_box_once_conversions,
-    impl_closure_once_trait,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
+    BiFunctionOnce, BiPredicate, BoxConditionalBiFunctionOnce, FunctionOnce,
+    impl_box_function_methods, impl_closure_once_trait, impl_function_common_methods,
+    impl_function_constant_method, impl_function_debug_display,
 };
 
 type BoxBiFunctionOnceFn<T, U, R> = Box<dyn FnOnce(&T, &U) -> R>;
@@ -67,13 +60,6 @@ impl<T, U, R> BiFunctionOnce<T, U, R> for BoxBiFunctionOnce<T, U, R> {
     fn apply(self, first: &T, second: &U) -> R {
         (self.function)(first, second)
     }
-
-    // Generate into_box(), into_fn(), to_box()
-    impl_box_once_conversions!(
-        BoxBiFunctionOnce<T, U, R>,
-        BiFunctionOnce,
-        FnOnce(&T, &U) -> R
-    );
 }
 
 // Implement constant method for BoxBiFunctionOnce

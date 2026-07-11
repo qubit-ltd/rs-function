@@ -11,18 +11,8 @@
 use std::ops::Not;
 
 use super::{
-    ALWAYS_FALSE_NAME,
-    ALWAYS_TRUE_NAME,
-    Arc,
-    BoxPredicate,
-    Predicate,
-    RcPredicate,
-    impl_arc_conversions,
-    impl_closure_trait,
-    impl_predicate_clone,
-    impl_predicate_common_methods,
-    impl_predicate_debug_display,
-    impl_shared_predicate_methods,
+    ALWAYS_FALSE_NAME, ALWAYS_TRUE_NAME, Arc, Predicate, impl_predicate_clone,
+    impl_predicate_common_methods, impl_predicate_debug_display, impl_shared_predicate_methods,
 };
 
 /// An Arc-based predicate with thread-safe shared ownership.
@@ -59,7 +49,8 @@ impl<T> ArcPredicate<T> {
     // always_false()
     impl_predicate_common_methods!(
         ArcPredicate<T>,
-        (Fn(&T) -> bool + Send + Sync + 'static),
+        semantic(Predicate<T> + Send + Sync + 'static),
+        |predicate| move |value: &T| predicate.test(value),
         |f| Arc::new(f)
     );
 
@@ -75,7 +66,7 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function;
-        ArcPredicate::new(move |value| !function(value))
+        ArcPredicate::new(move |value: &T| !function(value))
     }
 }
 
@@ -87,7 +78,7 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function.clone();
-        ArcPredicate::new(move |value| !function(value))
+        ArcPredicate::new(move |value: &T| !function(value))
     }
 }
 
@@ -103,20 +94,4 @@ impl<T> Predicate<T> for ArcPredicate<T> {
     fn test(&self, value: &T) -> bool {
         (self.function)(value)
     }
-
-    // Generates: into_box, into_rc, into_arc, into_fn, to_box, to_rc, to_arc,
-    // to_fn
-    impl_arc_conversions!(
-        ArcPredicate<T>,
-        BoxPredicate,
-        RcPredicate,
-        Fn(t: &T) -> bool
-    );
 }
-
-// Blanket implementation for all closures that match Fn(&T) -> bool
-impl_closure_trait!(
-    Predicate<T>,
-    test,
-    Fn(value: &T) -> bool
-);

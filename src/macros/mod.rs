@@ -20,10 +20,7 @@ pub mod rc_conversions;
 
 // Re-export macros for easier use
 pub(crate) use arc_conversions::impl_arc_conversions;
-pub(crate) use box_conversions::{
-    impl_box_conversions,
-    impl_box_once_conversions,
-};
+pub(crate) use box_conversions::{impl_box_conversions, impl_box_once_conversions};
 pub(crate) use closure_once_trait::impl_closure_once_trait;
 pub(crate) use closure_trait::impl_closure_trait;
 pub(crate) use common_name_methods::impl_common_name_methods;

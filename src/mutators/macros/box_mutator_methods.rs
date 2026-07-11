@@ -154,7 +154,7 @@ macro_rules! impl_box_mutator_methods {
         {
             $conditional_type {
                 mutator: self,
-                predicate: predicate.into_box(),
+                predicate: $crate::BoxPredicate::new(predicate),
             }
         }
 

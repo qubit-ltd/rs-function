@@ -8,10 +8,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxComparator` public type.
 
-use super::{
-    Comparator,
-    Ordering,
-};
+use super::{Comparator, Ordering};
 
 type BoxComparatorFn<T> = Box<dyn Fn(&T, &T) -> Ordering>;
 

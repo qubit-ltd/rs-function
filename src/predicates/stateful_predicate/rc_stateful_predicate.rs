@@ -11,16 +11,8 @@
 use std::ops::Not;
 
 use super::{
-    ALWAYS_FALSE_NAME,
-    ALWAYS_TRUE_NAME,
-    BoxStatefulPredicate,
-    Rc,
-    RefCell,
-    StatefulPredicate,
-    impl_predicate_clone,
-    impl_predicate_common_methods,
-    impl_predicate_debug_display,
-    impl_rc_conversions,
+    ALWAYS_FALSE_NAME, ALWAYS_TRUE_NAME, Rc, RefCell, StatefulPredicate, impl_predicate_clone,
+    impl_predicate_common_methods, impl_predicate_debug_display,
 };
 
 type RcStatefulPredicateFn<T> = Rc<RefCell<dyn FnMut(&T) -> bool>>;
@@ -37,11 +29,9 @@ pub struct RcStatefulPredicate<T> {
 impl<T> RcStatefulPredicate<T> {
     // Generates: new(), new_with_name(), name(), set_name(), always_true(),
     // always_false()
-    impl_predicate_common_methods!(
-        RcStatefulPredicate<T>,
-        (FnMut(&T) -> bool + 'static),
-        |f| { Rc::new(RefCell::new(f)) }
-    );
+    impl_predicate_common_methods!(RcStatefulPredicate<T>, (FnMut(&T) -> bool + 'static), |f| {
+        Rc::new(RefCell::new(f))
+    });
 
     /// Returns a predicate representing logical AND with another predicate.
     ///
@@ -203,11 +193,4 @@ impl<T> StatefulPredicate<T> for RcStatefulPredicate<T> {
     fn test(&mut self, value: &T) -> bool {
         (self.function.borrow_mut())(value)
     }
-
-    // Generates: into_box(), into_rc(), into_fn(), to_box(), to_rc(), to_fn()
-    impl_rc_conversions!(
-        RcStatefulPredicate<T>,
-        BoxStatefulPredicate,
-        FnMut(t: &T) -> bool
-    );
 }

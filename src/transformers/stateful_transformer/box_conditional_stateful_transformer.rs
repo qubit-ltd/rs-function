@@ -9,12 +9,8 @@
 //! Defines the `BoxConditionalStatefulTransformer` public type.
 
 use super::{
-    BoxPredicate,
-    BoxStatefulTransformer,
-    Predicate,
-    StatefulTransformer,
-    impl_box_conditional_transformer,
-    impl_conditional_transformer_debug_display,
+    BoxPredicate, BoxStatefulTransformer, Predicate, StatefulTransformer,
+    impl_box_conditional_transformer, impl_conditional_transformer_debug_display,
 };
 
 // ============================================================================

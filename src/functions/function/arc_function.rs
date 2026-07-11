@@ -9,21 +9,9 @@
 //! Defines the `ArcFunction` public type.
 
 use super::{
-    Arc,
-    ArcConditionalFunction,
-    BoxFunction,
-    BoxFunctionOnce,
-    Function,
-    Predicate,
-    RcFunction,
-    impl_arc_conversions,
-    impl_closure_trait,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
-    impl_function_identity_method,
-    impl_shared_function_methods,
+    Arc, ArcConditionalFunction, Function, Predicate, impl_closure_trait, impl_function_clone,
+    impl_function_common_methods, impl_function_constant_method, impl_function_debug_display,
+    impl_function_identity_method, impl_shared_function_methods,
 };
 
 // ============================================================================
@@ -61,7 +49,7 @@ impl<T, R> ArcFunction<T, R> {
     impl_shared_function_methods!(
         ArcFunction<T, R>,
         ArcConditionalFunction,
-        into_arc,
+        ArcPredicate,
         Function,
         Send + Sync + 'static
     );
@@ -84,15 +72,6 @@ impl<T, R> Function<T, R> for ArcFunction<T, R> {
     fn apply(&self, t: &T) -> R {
         (self.function)(t)
     }
-
-    // Use macro to implement conversion methods
-    impl_arc_conversions!(
-        ArcFunction<T, R>,
-        BoxFunction,
-        RcFunction,
-        BoxFunctionOnce,
-        Fn(t: &T) -> R
-    );
 }
 
 // ============================================================================

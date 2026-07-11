@@ -158,7 +158,7 @@ macro_rules! impl_shared_consumer_methods {
     (
         $struct_name:ident < $t:ident >,
         $return_type:ident,
-        $predicate_conversion:ident,
+        $predicate_type:ident,
         $consumer_trait:ident,
         $($extra_bounds:tt)+
     ) => {
@@ -196,7 +196,7 @@ macro_rules! impl_shared_consumer_methods {
         {
             $return_type {
                 consumer: self.clone(),
-                predicate: predicate.$predicate_conversion(),
+                predicate: $crate::$predicate_type::new(predicate),
             }
         }
 
@@ -240,7 +240,7 @@ macro_rules! impl_shared_consumer_methods {
     (
         $struct_name:ident < $t:ident, $u:ident >,
         $return_type:ident,
-        $predicate_conversion:ident,
+        $predicate_type:ident,
         $consumer_trait:ident,
         $($extra_bounds:tt)+
     ) => {
@@ -279,7 +279,7 @@ macro_rules! impl_shared_consumer_methods {
         {
             $return_type {
                 consumer: self.clone(),
-                predicate: predicate.$predicate_conversion(),
+                predicate: $crate::$predicate_type::new(predicate),
             }
         }
 

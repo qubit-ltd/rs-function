@@ -102,24 +102,6 @@ macro_rules! impl_closure_once_trait {
               self($($arg),*)
           }
 
-          // into_box: Convert to Box type
-          #[inline]
-          fn into_box(self) -> $box_type<$($generics),*>
-          where
-              Self: Sized + 'static,
-          {
-              $box_type::new(self)
-          }
-
-          // into_fn: Convert to closure (always return self directly since F is already FnOnce)
-          #[inline]
-          fn into_fn(self) -> impl FnOnce($($arg_ty),*) $(-> $ret)?
-          where
-              Self: Sized + 'static,
-          {
-              // F is already FnOnce with the correct signature, return directly (zero cost)
-              self
-          }
       }
   };
 

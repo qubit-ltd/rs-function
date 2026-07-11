@@ -9,11 +9,7 @@
 //! Defines the `FnFunctionOnceOps` public type.
 
 use super::{
-    BoxConditionalFunctionOnce,
-    BoxFunctionOnce,
-    FunctionOnce,
-    Predicate,
-    impl_fn_ops_trait,
+    BoxConditionalFunctionOnce, BoxFunctionOnce, FunctionOnce, Predicate, impl_fn_ops_trait,
 };
 
 // ============================================================================

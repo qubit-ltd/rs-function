@@ -10,11 +10,7 @@
 
 use std::ops::Not;
 
-use super::{
-    Rc,
-    Tester,
-    rc_tester::RcTester,
-};
+use super::Tester;
 
 // ============================================================================
 // BoxTester: Single Ownership Implementation
@@ -419,33 +415,4 @@ impl Tester for BoxTester {
     fn test(&self) -> bool {
         (self.function)()
     }
-
-    #[inline]
-    fn into_box(self) -> BoxTester {
-        self
-    }
-
-    #[inline]
-    fn into_rc(self) -> RcTester {
-        let func = self.function;
-        RcTester {
-            function: Rc::new(func),
-        }
-    }
-
-    // Note: BoxTester does not implement Send + Sync, so into_arc()
-    // cannot be implemented. Calling into_arc() on BoxTester will result
-    // in a compile error due to the Send + Sync trait bounds not being
-    // satisfied. The default Tester trait implementation will be used.
-
-    #[inline]
-    fn into_fn(self) -> impl Fn() -> bool {
-        self.function
-    }
-
-    // Note: BoxTester does not implement Clone, so to_box(), to_rc(),
-    // to_arc(), and to_fn() cannot be implemented. Calling these methods
-    // on BoxTester will result in a compile error due to the Clone trait
-    // bound not being satisfied. The default Tester trait implementations
-    // will be used.
 }

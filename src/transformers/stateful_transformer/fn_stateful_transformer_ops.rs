@@ -9,10 +9,7 @@
 //! Defines the `FnStatefulTransformerOps` public type.
 
 use super::{
-    BoxConditionalStatefulTransformer,
-    BoxStatefulTransformer,
-    Predicate,
-    StatefulTransformer,
+    BoxConditionalStatefulTransformer, BoxStatefulTransformer, Predicate, StatefulTransformer,
 };
 use crate::transformers::macros::impl_transformer_fn_ops_trait;
 

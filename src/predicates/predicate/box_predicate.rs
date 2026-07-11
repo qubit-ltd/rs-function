@@ -11,14 +11,8 @@
 use std::ops::Not;
 
 use super::{
-    ALWAYS_FALSE_NAME,
-    ALWAYS_TRUE_NAME,
-    Predicate,
-    RcPredicate,
-    impl_box_conversions,
-    impl_box_predicate_methods,
-    impl_predicate_common_methods,
-    impl_predicate_debug_display,
+    ALWAYS_FALSE_NAME, ALWAYS_TRUE_NAME, Predicate, impl_box_predicate_methods,
+    impl_predicate_common_methods, impl_predicate_debug_display,
 };
 
 /// A Box-based predicate with single ownership.
@@ -49,7 +43,8 @@ impl<T> BoxPredicate<T> {
     // always_false()
     impl_predicate_common_methods!(
         BoxPredicate<T>,
-        (Fn(&T) -> bool + 'static),
+        semantic(Predicate<T> + 'static),
+        |predicate| move |value: &T| predicate.test(value),
         |f| Box::new(f)
     );
 
@@ -64,7 +59,7 @@ where
     type Output = BoxPredicate<T>;
 
     fn not(self) -> Self::Output {
-        BoxPredicate::new(move |value| !(self.function)(value))
+        BoxPredicate::new(move |value: &T| !(self.function)(value))
     }
 }
 
@@ -77,11 +72,4 @@ impl<T> Predicate<T> for BoxPredicate<T> {
     fn test(&self, value: &T) -> bool {
         (self.function)(value)
     }
-
-    // Generates: into_box(), into_rc(), into_fn()
-    impl_box_conversions!(
-        BoxPredicate<T>,
-        RcPredicate,
-        Fn(&T) -> bool
-    );
 }

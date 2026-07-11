@@ -9,11 +9,7 @@
 //! Defines the `BoxConditionalMutatingFunction` public type.
 
 use super::{
-    BoxMutatingFunction,
-    BoxPredicate,
-    MutatingFunction,
-    Predicate,
-    impl_box_conditional_function,
+    BoxMutatingFunction, BoxPredicate, MutatingFunction, Predicate, impl_box_conditional_function,
     impl_conditional_function_debug_display,
 };
 

@@ -9,13 +9,8 @@
 //! Defines the `ArcConditionalBiFunction` public type.
 
 use super::{
-    ArcBiFunction,
-    ArcBiPredicate,
-    BiFunction,
-    BiPredicate,
-    impl_conditional_function_clone,
-    impl_conditional_function_debug_display,
-    impl_shared_conditional_function,
+    ArcBiFunction, ArcBiPredicate, BiFunction, BiPredicate, impl_conditional_function_clone,
+    impl_conditional_function_debug_display, impl_shared_conditional_function,
 };
 
 // ============================================================================

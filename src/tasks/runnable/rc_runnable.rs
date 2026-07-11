@@ -12,19 +12,9 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::{
-    macros::{
-        impl_common_name_methods,
-        impl_common_new_methods,
-        impl_rc_conversions,
-    },
-    suppliers::{
-        macros::impl_supplier_debug_display,
-        supplier::Supplier,
-    },
-    tasks::runnable::{
-        BoxRunnable,
-        Runnable,
-    },
+    macros::{impl_common_name_methods, impl_common_new_methods},
+    suppliers::{macros::impl_supplier_debug_display, supplier::Supplier},
+    tasks::runnable::Runnable,
 };
 
 // ============================================================================
@@ -89,12 +79,6 @@ impl<E> Runnable<E> for RcRunnable<E> {
     fn run(&mut self) -> Result<(), E> {
         (self.function.borrow_mut())()
     }
-
-    impl_rc_conversions!(
-        RcRunnable<E>,
-        BoxRunnable,
-        FnMut() -> Result<(), E>
-    );
 }
 
 impl_supplier_debug_display!(RcRunnable<E>);

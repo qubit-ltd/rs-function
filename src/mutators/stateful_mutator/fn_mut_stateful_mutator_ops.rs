@@ -8,10 +8,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnMutStatefulMutatorOps` public type.
 
-use super::{
-    BoxStatefulMutator,
-    StatefulMutator,
-};
+use super::{BoxStatefulMutator, StatefulMutator};
 
 // ============================================================================
 // 6. Provide extension methods for closures
@@ -88,10 +85,10 @@ pub trait FnMutStatefulMutatorOps<T>: FnMut(&mut T) + Sized {
         T: 'static,
     {
         let mut first = self;
-        let mut second = next.into_fn();
-        BoxStatefulMutator::new(move |t| {
+        let mut second = next;
+        BoxStatefulMutator::new(move |t: &mut T| {
             (first)(t);
-            second(t);
+            second.apply(t);
         })
     }
 }

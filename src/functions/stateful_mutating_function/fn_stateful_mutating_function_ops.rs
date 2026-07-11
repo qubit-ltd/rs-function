@@ -9,11 +9,8 @@
 //! Defines the `FnStatefulMutatingFunctionOps` public type.
 
 use super::{
-    BoxConditionalStatefulMutatingFunction,
-    BoxStatefulMutatingFunction,
-    Predicate,
-    StatefulMutatingFunction,
-    impl_fn_ops_trait,
+    BoxConditionalStatefulMutatingFunction, BoxStatefulMutatingFunction, Predicate,
+    StatefulMutatingFunction, impl_fn_ops_trait,
 };
 
 // =======================================================================

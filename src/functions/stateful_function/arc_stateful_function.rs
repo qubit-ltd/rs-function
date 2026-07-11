@@ -9,21 +9,9 @@
 //! Defines the `ArcStatefulFunction` public type.
 
 use super::{
-    Arc,
-    ArcConditionalStatefulFunction,
-    BoxFunctionOnce,
-    BoxStatefulFunction,
-    Mutex,
-    Predicate,
-    RcStatefulFunction,
-    StatefulFunction,
-    impl_arc_conversions,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
-    impl_function_identity_method,
-    impl_shared_function_methods,
+    Arc, ArcConditionalStatefulFunction, Mutex, Predicate, StatefulFunction, impl_function_clone,
+    impl_function_common_methods, impl_function_constant_method, impl_function_debug_display,
+    impl_function_identity_method, impl_shared_function_methods,
 };
 
 // ============================================================================
@@ -65,7 +53,7 @@ impl<T, R> ArcStatefulFunction<T, R> {
     impl_shared_function_methods!(
         ArcStatefulFunction<T, R>,
         ArcConditionalStatefulFunction,
-        into_arc,
+        ArcPredicate,
         StatefulFunction,
         Send + Sync + 'static
     );
@@ -87,116 +75,5 @@ impl_function_debug_display!(ArcStatefulFunction<T, R>);
 impl<T, R> StatefulFunction<T, R> for ArcStatefulFunction<T, R> {
     fn apply(&mut self, t: &T) -> R {
         (self.function.lock())(t)
-    }
-
-    // Use macro to implement conversion methods
-    impl_arc_conversions!(
-        ArcStatefulFunction<T, R>,
-        BoxStatefulFunction,
-        RcStatefulFunction,
-        BoxFunctionOnce,
-        FnMut(t: &T) -> R
-    );
-}
-
-// ============================================================================
-// Blanket implementation for standard FnMut trait
-// ============================================================================
-
-/// Implement StatefulFunction<T, R> for any type that implements FnMut(&T) -> R
-///
-/// This allows closures to be used directly with our StatefulFunction trait
-/// without wrapping.
-///
-/// # Examples
-///
-/// ```rust
-/// use qubit_function::StatefulFunction;
-///
-/// let mut counter = 0;
-/// let mut function = |x: &i32| {
-///     counter += 1;
-///     *x + counter
-/// };
-///
-/// assert_eq!(function.apply(&10), 11);
-/// assert_eq!(function.apply(&10), 12);
-/// ```
-impl<F, T, R> StatefulFunction<T, R> for F
-where
-    F: FnMut(&T) -> R,
-{
-    fn apply(&mut self, t: &T) -> R {
-        self(t)
-    }
-
-    fn into_box(self) -> BoxStatefulFunction<T, R>
-    where
-        Self: Sized + 'static,
-    {
-        BoxStatefulFunction::new(self)
-    }
-
-    fn into_rc(self) -> RcStatefulFunction<T, R>
-    where
-        Self: Sized + 'static,
-    {
-        RcStatefulFunction::new(self)
-    }
-
-    fn into_arc(self) -> ArcStatefulFunction<T, R>
-    where
-        Self: Sized + Send + 'static,
-    {
-        ArcStatefulFunction::new(self)
-    }
-
-    fn into_fn(self) -> impl FnMut(&T) -> R
-    where
-        Self: Sized + 'static,
-    {
-        self
-    }
-
-    fn to_box(&self) -> BoxStatefulFunction<T, R>
-    where
-        Self: Sized + Clone + 'static,
-    {
-        self.clone().into_box()
-    }
-
-    fn to_rc(&self) -> RcStatefulFunction<T, R>
-    where
-        Self: Sized + Clone + 'static,
-    {
-        self.clone().into_rc()
-    }
-
-    fn to_arc(&self) -> ArcStatefulFunction<T, R>
-    where
-        Self: Sized + Clone + Send + 'static,
-    {
-        self.clone().into_arc()
-    }
-
-    fn to_fn(&self) -> impl FnMut(&T) -> R
-    where
-        Self: Sized + Clone + 'static,
-    {
-        self.clone()
-    }
-
-    fn into_once(self) -> BoxFunctionOnce<T, R>
-    where
-        Self: Sized + 'static,
-    {
-        BoxFunctionOnce::new(self)
-    }
-
-    fn to_once(&self) -> BoxFunctionOnce<T, R>
-    where
-        Self: Sized + Clone + 'static,
-    {
-        BoxFunctionOnce::new(self.clone())
     }
 }

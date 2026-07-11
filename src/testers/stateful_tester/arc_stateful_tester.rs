@@ -11,12 +11,7 @@ use std::ops::Not;
 
 use parking_lot::Mutex;
 
-use super::{
-    Arc,
-    StatefulTester,
-    box_stateful_tester::BoxStatefulTester,
-    rc_stateful_tester::RcStatefulTester,
-};
+use super::{Arc, StatefulTester};
 
 type ArcStatefulTesterFn = Arc<Mutex<dyn FnMut() -> bool + Send + 'static>>;
 
@@ -139,22 +134,5 @@ impl StatefulTester for ArcStatefulTester {
     #[inline]
     fn test(&mut self) -> bool {
         (self.function.lock())()
-    }
-
-    #[inline]
-    fn into_box(self) -> BoxStatefulTester {
-        let function = self.function;
-        BoxStatefulTester::new(move || (function.lock())())
-    }
-
-    #[inline]
-    fn into_rc(self) -> RcStatefulTester {
-        let function = self.function;
-        RcStatefulTester::new(move || (function.lock())())
-    }
-
-    #[inline]
-    fn into_arc(self) -> ArcStatefulTester {
-        self
     }
 }

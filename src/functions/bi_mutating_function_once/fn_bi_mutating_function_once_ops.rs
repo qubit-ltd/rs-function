@@ -8,11 +8,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnBiMutatingFunctionOnceOps` public type.
 
-use super::{
-    BiPredicate,
-    BoxBiMutatingFunctionOnce,
-    BoxConditionalBiMutatingFunctionOnce,
-};
+use super::{BiPredicate, BoxBiMutatingFunctionOnce, BoxConditionalBiMutatingFunctionOnce};
 
 // ============================================================================
 // FnBiMutatingFunctionOnceOps - Extension trait for FnOnce(&mut T, &mut U) -> R
@@ -82,9 +78,7 @@ use super::{
 /// let mut b = 3;
 /// assert_eq!(conditional2.apply(&mut a, &mut b), -15); // multiply executed
 /// ```
-pub trait FnBiMutatingFunctionOnceOps<T, U, R>:
-    FnOnce(&mut T, &mut U) -> R + Sized
-{
+pub trait FnBiMutatingFunctionOnceOps<T, U, R>: FnOnce(&mut T, &mut U) -> R + Sized {
     /// Chain composition - applies self first, then after
     ///
     /// Creates a new bi-mutating-function that applies this
@@ -142,9 +136,7 @@ pub trait FnBiMutatingFunctionOnceOps<T, U, R>:
         U: 'static,
         R: 'static,
     {
-        BoxBiMutatingFunctionOnce::new(move |t: &mut T, u: &mut U| {
-            after.apply(&self(t, u))
-        })
+        BoxBiMutatingFunctionOnce::new(move |t: &mut T, u: &mut U| after.apply(&self(t, u)))
     }
 
     /// Creates a conditional bi-mutating-function
@@ -224,10 +216,7 @@ pub trait FnBiMutatingFunctionOnceOps<T, U, R>:
     /// let test_b = 3;
     /// assert!(both_positive.test(&test_a, &test_b));
     /// ```
-    fn when<P>(
-        self,
-        predicate: P,
-    ) -> BoxConditionalBiMutatingFunctionOnce<T, U, R>
+    fn when<P>(self, predicate: P) -> BoxConditionalBiMutatingFunctionOnce<T, U, R>
     where
         Self: 'static,
         P: BiPredicate<T, U> + 'static,

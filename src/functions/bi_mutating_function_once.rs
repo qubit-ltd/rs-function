@@ -19,23 +19,14 @@
 //! - [`BoxBiMutatingFunctionOnce`]: Single ownership, one-time use
 use crate::functions::{
     macros::{
-        impl_box_conditional_function,
-        impl_box_function_methods,
-        impl_conditional_function_debug_display,
-        impl_function_common_methods,
-        impl_function_constant_method,
-        impl_function_debug_display,
+        impl_box_conditional_function, impl_box_function_methods,
+        impl_conditional_function_debug_display, impl_function_common_methods,
+        impl_function_constant_method, impl_function_debug_display,
     },
     mutating_function_once::MutatingFunctionOnce,
 };
-use crate::macros::{
-    impl_box_once_conversions,
-    impl_closure_once_trait,
-};
-use crate::predicates::bi_predicate::{
-    BiPredicate,
-    BoxBiPredicate,
-};
+use crate::macros::{impl_box_once_conversions, impl_closure_once_trait};
+use crate::predicates::bi_predicate::{BiPredicate, BoxBiPredicate};
 
 mod box_bi_mutating_function_once;
 pub use box_bi_mutating_function_once::BoxBiMutatingFunctionOnce;
@@ -72,101 +63,4 @@ pub trait BiMutatingFunctionOnce<T, U, R> {
     ///
     /// The computed output value
     fn apply(self, first: &mut T, second: &mut U) -> R;
-
-    /// Converts to BoxBiMutatingFunctionOnce
-    ///
-    /// **⚠️ Consumes `self`**: The original bi-function becomes unavailable
-    /// after calling this method.
-    ///
-    /// # Returns
-    ///
-    /// Returns `BoxBiMutatingFunctionOnce<T, U, R>`
-    fn into_box(self) -> BoxBiMutatingFunctionOnce<T, U, R>
-    where
-        Self: Sized + 'static,
-    {
-        BoxBiMutatingFunctionOnce::new(move |t: &mut T, u: &mut U| {
-            self.apply(t, u)
-        })
-    }
-
-    /// Converts bi-mutating-function to a closure
-    ///
-    /// **⚠️ Consumes `self`**: The original bi-function becomes unavailable
-    /// after calling this method.
-    ///
-    /// # Returns
-    ///
-    /// Returns a closure that implements `FnOnce(&mut T, &mut U) -> R`
-    fn into_fn(self) -> impl FnOnce(&mut T, &mut U) -> R
-    where
-        Self: Sized + 'static,
-    {
-        move |t: &mut T, u: &mut U| self.apply(t, u)
-    }
-
-    /// Converts bi-mutating-function to a boxed function pointer
-    ///
-    /// **📌 Borrows `&self`**: The original bi-function remains usable
-    /// after calling this method.
-    ///
-    /// # Returns
-    ///
-    /// Returns a boxed function pointer that implements `FnOnce(&mut T, &mut U)
-    /// -> R`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::BiMutatingFunctionOnce;
-    ///
-    /// let swap_and_sum = |x: &mut i32, y: &mut i32| {
-    ///     let temp = *x;
-    ///     *x = *y;
-    ///     *y = temp;
-    ///     *x + *y
-    /// };
-    /// let func = swap_and_sum.to_box();
-    /// let mut a = 20;
-    /// let mut b = 22;
-    /// assert_eq!(func.apply(&mut a, &mut b), 42);
-    /// ```
-    fn to_box(&self) -> BoxBiMutatingFunctionOnce<T, U, R>
-    where
-        Self: Clone + 'static,
-    {
-        self.clone().into_box()
-    }
-
-    /// Converts bi-mutating-function to a closure
-    ///
-    /// **📌 Borrows `&self`**: The original bi-function remains usable
-    /// after calling this method.
-    ///
-    /// # Returns
-    ///
-    /// Returns a closure that implements `FnOnce(&mut T, &mut U) -> R`
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::BiMutatingFunctionOnce;
-    ///
-    /// let swap_and_sum = |x: &mut i32, y: &mut i32| {
-    ///     let temp = *x;
-    ///     *x = *y;
-    ///     *y = temp;
-    ///     *x + *y
-    /// };
-    /// let func = swap_and_sum.to_fn();
-    /// let mut a = 20;
-    /// let mut b = 22;
-    /// assert_eq!(func(&mut a, &mut b), 42);
-    /// ```
-    fn to_fn(&self) -> impl FnOnce(&mut T, &mut U) -> R
-    where
-        Self: Clone + 'static,
-    {
-        self.clone().into_fn()
-    }
 }

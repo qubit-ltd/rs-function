@@ -9,19 +9,8 @@
 //! Defines the `ArcStatefulSupplier` public type.
 
 use super::{
-    Arc,
-    BoxStatefulSupplier,
-    BoxSupplierOnce,
-    Mutex,
-    Predicate,
-    RcStatefulSupplier,
-    StatefulSupplier,
-    Transformer,
-    impl_arc_conversions,
-    impl_closure_trait,
-    impl_shared_supplier_methods,
-    impl_supplier_clone,
-    impl_supplier_debug_display,
+    Arc, Mutex, Predicate, StatefulSupplier, Transformer, impl_closure_trait,
+    impl_shared_supplier_methods, impl_supplier_clone, impl_supplier_debug_display,
 };
 
 // ==========================================================================
@@ -109,11 +98,7 @@ impl<T> ArcStatefulSupplier<T> {
     crate::macros::impl_common_name_methods!("supplier");
 
     // Generates: map(), filter(), zip()
-    impl_shared_supplier_methods!(
-        ArcStatefulSupplier<T>,
-        StatefulSupplier,
-        (arc)
-    );
+    impl_shared_supplier_methods!(ArcStatefulSupplier<T>, StatefulSupplier, (arc));
 }
 
 // Separate impl block for constant() and memoize() with stricter T: Send bound
@@ -212,15 +197,6 @@ impl<T> StatefulSupplier<T> for ArcStatefulSupplier<T> {
     fn get(&mut self) -> T {
         (self.function.lock())()
     }
-
-    // Use macro to implement conversion methods
-    impl_arc_conversions!(
-        ArcStatefulSupplier<T>,
-        BoxStatefulSupplier,
-        RcStatefulSupplier,
-        BoxSupplierOnce,
-        FnMut() -> T
-    );
 }
 
 // ==========================================================================

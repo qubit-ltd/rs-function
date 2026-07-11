@@ -11,18 +11,8 @@
 use std::ops::Not;
 
 use super::{
-    ALWAYS_FALSE_NAME,
-    ALWAYS_TRUE_NAME,
-    Arc,
-    BiPredicate,
-    BoxBiPredicate,
-    RcBiPredicate,
-    SendSyncBiPredicateFn,
-    impl_arc_conversions,
-    impl_closure_trait,
-    impl_predicate_clone,
-    impl_predicate_common_methods,
-    impl_predicate_debug_display,
+    ALWAYS_FALSE_NAME, ALWAYS_TRUE_NAME, Arc, BiPredicate, SendSyncBiPredicateFn,
+    impl_predicate_clone, impl_predicate_common_methods, impl_predicate_debug_display,
     impl_shared_predicate_methods,
 };
 
@@ -61,7 +51,8 @@ impl<T, U> ArcBiPredicate<T, U> {
     // always_false()
     impl_predicate_common_methods!(
         ArcBiPredicate<T, U>,
-        (Fn(&T, &U) -> bool + Send + Sync + 'static),
+        semantic (BiPredicate<T, U> + Send + Sync + 'static),
+        |predicate| move |first: &T, second: &U| predicate.test(first, second),
         |f| Arc::new(f)
     );
 
@@ -81,7 +72,7 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function;
-        ArcBiPredicate::new(move |first, second| !function(first, second))
+        ArcBiPredicate::new(move |first: &T, second: &U| !function(first, second))
     }
 }
 
@@ -94,7 +85,7 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function.clone();
-        ArcBiPredicate::new(move |first, second| !function(first, second))
+        ArcBiPredicate::new(move |first: &T, second: &U| !function(first, second))
     }
 }
 
@@ -110,22 +101,4 @@ impl<T, U> BiPredicate<T, U> for ArcBiPredicate<T, U> {
     fn test(&self, first: &T, second: &U) -> bool {
         (self.function)(first, second)
     }
-
-    // Generates: into_box, into_rc, into_arc, into_fn, to_box, to_rc, to_arc,
-    // to_fn
-    impl_arc_conversions!(
-        ArcBiPredicate<T, U>,
-        BoxBiPredicate,
-        RcBiPredicate,
-        Fn(first: &T, second: &U) -> bool
-    );
 }
-
-// Blanket implementation for all closures that match
-// Fn(&T, &U) -> bool. This provides optimal implementations for
-// closures by wrapping them directly into the target type.
-impl_closure_trait!(
-    BiPredicate<T, U>,
-    test,
-    Fn(first: &T, second: &U) -> bool
-);

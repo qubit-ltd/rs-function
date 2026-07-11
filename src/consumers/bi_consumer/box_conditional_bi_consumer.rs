@@ -9,13 +9,7 @@
 //! Defines the `BoxConditionalBiConsumer` public type.
 
 use super::{
-    BiConsumer,
-    BiPredicate,
-    BoxBiConsumer,
-    BoxBiPredicate,
-    RcBiConsumer,
-    impl_box_conditional_consumer,
-    impl_conditional_consumer_conversions,
+    BiConsumer, BiPredicate, BoxBiConsumer, BoxBiPredicate, impl_box_conditional_consumer,
     impl_conditional_consumer_debug_display,
 };
 
@@ -91,13 +85,6 @@ impl<T, U> BiConsumer<T, U> for BoxConditionalBiConsumer<T, U> {
             self.consumer.accept(first, second);
         }
     }
-
-    // Generates: into_box(), into_rc(), into_fn()
-    impl_conditional_consumer_conversions!(
-        BoxBiConsumer<T, U>,
-        RcBiConsumer,
-        Fn
-    );
 }
 
 // Use macro to generate Debug and Display implementations

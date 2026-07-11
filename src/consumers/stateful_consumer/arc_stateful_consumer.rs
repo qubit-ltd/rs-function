@@ -9,19 +9,8 @@
 //! Defines the `ArcStatefulConsumer` public type.
 
 use super::{
-    Arc,
-    ArcConditionalStatefulConsumer,
-    BoxConsumerOnce,
-    BoxStatefulConsumer,
-    Mutex,
-    Predicate,
-    RcStatefulConsumer,
-    StatefulConsumer,
-    impl_arc_conversions,
-    impl_closure_trait,
-    impl_consumer_clone,
-    impl_consumer_common_methods,
-    impl_consumer_debug_display,
+    Arc, ArcConditionalStatefulConsumer, Mutex, Predicate, StatefulConsumer, impl_closure_trait,
+    impl_consumer_clone, impl_consumer_common_methods, impl_consumer_debug_display,
     impl_shared_consumer_methods,
 };
 
@@ -89,18 +78,16 @@ pub struct ArcStatefulConsumer<T> {
 
 impl<T> ArcStatefulConsumer<T> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
-    impl_consumer_common_methods!(
-        ArcStatefulConsumer<T>,
-        (FnMut(&T) + Send + 'static),
-        |f| { Arc::new(Mutex::new(f)) }
-    );
+    impl_consumer_common_methods!(ArcStatefulConsumer<T>, (FnMut(&T) + Send + 'static), |f| {
+        Arc::new(Mutex::new(f))
+    });
 
     // Generates: when() and and_then() methods that borrow &self (Arc can
     // clone)
     impl_shared_consumer_methods!(
         ArcStatefulConsumer<T>,
         ArcConditionalStatefulConsumer,
-        into_arc,
+        ArcPredicate,
         StatefulConsumer,
         Send + Sync + 'static
     );
@@ -110,15 +97,6 @@ impl<T> StatefulConsumer<T> for ArcStatefulConsumer<T> {
     fn accept(&mut self, value: &T) {
         (self.function.lock())(value)
     }
-
-    // Use macro to implement conversion methods
-    impl_arc_conversions!(
-        ArcStatefulConsumer<T>,
-        BoxStatefulConsumer,
-        RcStatefulConsumer,
-        BoxConsumerOnce,
-        FnMut(t: &T)
-    );
 }
 
 // Use macro to generate Clone implementation

@@ -9,19 +9,8 @@
 //! Defines the `ArcMutator` public type.
 
 use super::{
-    Arc,
-    ArcConditionalMutator,
-    ArcMutatorFn,
-    BoxMutator,
-    BoxMutatorOnce,
-    Mutator,
-    Predicate,
-    RcMutator,
-    impl_arc_conversions,
-    impl_closure_trait,
-    impl_mutator_clone,
-    impl_mutator_common_methods,
-    impl_mutator_debug_display,
+    Arc, ArcConditionalMutator, ArcMutatorFn, Mutator, Predicate, impl_closure_trait,
+    impl_mutator_clone, impl_mutator_common_methods, impl_mutator_debug_display,
     impl_shared_mutator_methods,
 };
 
@@ -70,17 +59,15 @@ pub struct ArcMutator<T> {
 impl<T> ArcMutator<T> {
     // Generate common mutator methods (new, new_with_name, name, set_name,
     // noop)
-    impl_mutator_common_methods!(
-        ArcMutator<T>,
-        (Fn(&mut T) + Send + Sync + 'static),
-        |f| { Arc::new(f) }
-    );
+    impl_mutator_common_methods!(ArcMutator<T>, (Fn(&mut T) + Send + Sync + 'static), |f| {
+        Arc::new(f)
+    });
 
     // Generate shared mutator methods (when, and_then, or_else, conversions)
     impl_shared_mutator_methods!(
         ArcMutator<T>,
         ArcConditionalMutator,
-        into_arc,
+        ArcPredicate,
         Mutator,
         Send + Sync + 'static
     );
@@ -90,15 +77,6 @@ impl<T> Mutator<T> for ArcMutator<T> {
     fn apply(&self, value: &mut T) {
         (self.function)(value)
     }
-
-    // Use macro to implement conversion methods
-    impl_arc_conversions!(
-        ArcMutator<T>,
-        BoxMutator,
-        RcMutator,
-        BoxMutatorOnce,
-        Fn(input: &mut T)
-    );
 }
 
 // Generate Clone trait implementation for mutator

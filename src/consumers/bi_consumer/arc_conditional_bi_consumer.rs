@@ -9,16 +9,8 @@
 //! Defines the `ArcConditionalBiConsumer` public type.
 
 use super::{
-    ArcBiConsumer,
-    ArcBiPredicate,
-    BiConsumer,
-    BiPredicate,
-    BoxBiConsumer,
-    RcBiConsumer,
-    impl_conditional_consumer_clone,
-    impl_conditional_consumer_conversions,
-    impl_conditional_consumer_debug_display,
-    impl_shared_conditional_consumer,
+    ArcBiConsumer, ArcBiPredicate, BiConsumer, BiPredicate, impl_conditional_consumer_clone,
+    impl_conditional_consumer_debug_display, impl_shared_conditional_consumer,
 };
 
 // =======================================================================
@@ -59,13 +51,6 @@ impl<T, U> BiConsumer<T, U> for ArcConditionalBiConsumer<T, U> {
             self.consumer.accept(first, second);
         }
     }
-
-    // Generates: into_box(), into_rc(), into_fn()
-    impl_conditional_consumer_conversions!(
-        BoxBiConsumer<T, U>,
-        RcBiConsumer,
-        Fn
-    );
 }
 
 // Use macro to generate Clone implementation

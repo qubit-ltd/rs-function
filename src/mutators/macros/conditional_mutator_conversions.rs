@@ -172,7 +172,7 @@ macro_rules! impl_conditional_mutator_conversions {
         where
             Self: 'static,
         {
-            let pred = self.predicate.into_rc();
+            let pred = $crate::RcPredicate::new(self.predicate);
             impl_conditional_mutator_conversions!(@let_mutator $fn_trait, mutator, self.mutator.into_rc());
             $rc_type::new(move |t| {
                 if pred.test(t) {

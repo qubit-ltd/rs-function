@@ -9,16 +9,8 @@
 //! Defines the `BoxBiMutatingFunction` public type.
 
 use super::{
-    BiMutatingFunction,
-    BiPredicate,
-    BoxBiMutatingFunctionOnce,
-    BoxConditionalBiMutatingFunction,
-    MutatingFunction,
-    RcBiMutatingFunction,
-    impl_box_conversions,
-    impl_box_function_methods,
-    impl_function_common_methods,
-    impl_function_constant_method,
+    BiMutatingFunction, BiPredicate, BoxConditionalBiMutatingFunction, MutatingFunction,
+    impl_box_function_methods, impl_function_common_methods, impl_function_constant_method,
     impl_function_debug_display,
 };
 
@@ -68,14 +60,6 @@ impl<T, U, R> BiMutatingFunction<T, U, R> for BoxBiMutatingFunction<T, U, R> {
     fn apply(&self, first: &mut T, second: &mut U) -> R {
         (self.function)(first, second)
     }
-
-    // Generates: into_box(), into_rc(), into_fn(), into_once()
-    impl_box_conversions!(
-        BoxBiMutatingFunction<T, U, R>,
-        RcBiMutatingFunction,
-        Fn(&mut T, &mut U) -> R,
-        BoxBiMutatingFunctionOnce
-    );
 }
 
 // Implement constant method for BoxBiMutatingFunction

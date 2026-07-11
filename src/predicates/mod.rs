@@ -17,30 +17,14 @@ pub mod stateful_bi_predicate;
 pub mod stateful_predicate;
 
 pub use bi_predicate::{
-    ArcBiPredicate,
-    BiPredicate,
-    BoxBiPredicate,
-    FnBiPredicateOps,
-    RcBiPredicate,
+    ArcBiPredicate, BiPredicate, BoxBiPredicate, FnBiPredicateOps, RcBiPredicate,
 };
-pub use predicate::{
-    ArcPredicate,
-    BoxPredicate,
-    FnPredicateOps,
-    Predicate,
-    RcPredicate,
-};
+pub use predicate::{ArcPredicate, BoxPredicate, FnPredicateOps, Predicate, RcPredicate};
 pub use stateful_bi_predicate::{
-    ArcStatefulBiPredicate,
-    BoxStatefulBiPredicate,
-    FnStatefulBiPredicateOps,
-    RcStatefulBiPredicate,
-    StatefulBiPredicate,
+    ArcStatefulBiPredicate, BoxStatefulBiPredicate, FnStatefulBiPredicateOps,
+    RcStatefulBiPredicate, StatefulBiPredicate,
 };
 pub use stateful_predicate::{
-    ArcStatefulPredicate,
-    BoxStatefulPredicate,
-    FnStatefulPredicateOps,
-    RcStatefulPredicate,
+    ArcStatefulPredicate, BoxStatefulPredicate, FnStatefulPredicateOps, RcStatefulPredicate,
     StatefulPredicate,
 };

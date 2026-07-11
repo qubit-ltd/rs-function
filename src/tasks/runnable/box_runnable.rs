@@ -9,23 +9,11 @@
 //! Defines the `BoxRunnable` public type.
 
 use crate::{
-    macros::{
-        impl_box_conversions,
-        impl_common_name_methods,
-        impl_common_new_methods,
-    },
+    macros::{impl_common_name_methods, impl_common_new_methods},
     suppliers::{
-        macros::impl_supplier_debug_display,
-        supplier::Supplier,
-        supplier_once::SupplierOnce,
+        macros::impl_supplier_debug_display, supplier::Supplier, supplier_once::SupplierOnce,
     },
-    tasks::{
-        callable::BoxCallable,
-        runnable::{
-            RcRunnable,
-            Runnable,
-        },
-    },
+    tasks::{callable::BoxCallable, runnable::Runnable},
 };
 
 // ============================================================================
@@ -151,30 +139,6 @@ impl<E> Runnable<E> for BoxRunnable<E> {
     #[inline]
     fn run(&mut self) -> Result<(), E> {
         (self.function)()
-    }
-
-    impl_box_conversions!(
-        BoxRunnable<E>,
-        RcRunnable,
-        FnMut() -> Result<(), E>
-    );
-
-    /// Converts this boxed runnable into a boxed callable while preserving its
-    /// name.
-    #[inline]
-    fn into_callable(self) -> BoxCallable<(), E>
-    where
-        Self: Sized + 'static,
-    {
-        let name = self.name;
-        let mut function = self.function;
-        BoxCallable::new_with_optional_name(
-            move || {
-                function()?;
-                Ok(())
-            },
-            name,
-        )
     }
 }
 

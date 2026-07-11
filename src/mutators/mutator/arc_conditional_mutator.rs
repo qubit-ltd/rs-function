@@ -9,16 +9,8 @@
 //! Defines the `ArcConditionalMutator` public type.
 
 use super::{
-    ArcMutator,
-    ArcPredicate,
-    BoxMutator,
-    Mutator,
-    Predicate,
-    RcMutator,
-    impl_conditional_mutator_clone,
-    impl_conditional_mutator_conversions,
-    impl_conditional_mutator_debug_display,
-    impl_shared_conditional_mutator,
+    ArcMutator, ArcPredicate, Mutator, Predicate, impl_conditional_mutator_clone,
+    impl_conditional_mutator_debug_display, impl_shared_conditional_mutator,
 };
 
 // ============================================================================
@@ -76,9 +68,6 @@ impl<T> Mutator<T> for ArcConditionalMutator<T> {
             self.mutator.apply(value);
         }
     }
-
-    // Generates: into_box(), into_rc(), into_fn()
-    impl_conditional_mutator_conversions!(BoxMutator<T>, RcMutator, Fn);
 }
 
 // Generate Clone trait implementation for conditional mutator

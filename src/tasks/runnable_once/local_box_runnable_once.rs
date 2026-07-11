@@ -9,19 +9,10 @@
 //! Defines the `LocalBoxRunnableOnce` public type.
 
 use crate::{
-    macros::{
-        impl_common_name_methods,
-        impl_common_new_methods,
-    },
-    suppliers::{
-        macros::impl_supplier_debug_display,
-        supplier_once::SupplierOnce,
-    },
+    macros::{impl_common_name_methods, impl_common_new_methods},
+    suppliers::{macros::impl_supplier_debug_display, supplier_once::SupplierOnce},
     tasks::{
-        callable_once::{
-            CallableOnce,
-            LocalBoxCallableOnce,
-        },
+        callable_once::{CallableOnce, LocalBoxCallableOnce},
         runnable_once::RunnableOnce,
     },
 };
@@ -139,36 +130,6 @@ impl<E> RunnableOnce<E> for LocalBoxRunnableOnce<E> {
     #[inline]
     fn run(self) -> Result<(), E> {
         (self.function)()
-    }
-
-    /// Converts this local boxed runnable into itself.
-    #[inline]
-    fn into_local_box(self) -> LocalBoxRunnableOnce<E>
-    where
-        Self: Sized + 'static,
-    {
-        self
-    }
-
-    /// Extracts the underlying local one-time closure.
-    #[inline]
-    fn into_fn(self) -> impl FnOnce() -> Result<(), E>
-    where
-        Self: Sized + 'static,
-    {
-        self.function
-    }
-
-    /// Converts this local boxed runnable into a local boxed callable while
-    /// preserving its name.
-    #[inline]
-    fn into_local_callable(self) -> LocalBoxCallableOnce<(), E>
-    where
-        Self: Sized + 'static,
-    {
-        let name = self.name;
-        let function = self.function;
-        LocalBoxCallableOnce::new_with_optional_name(function, name)
     }
 }
 

@@ -14,25 +14,9 @@ use parking_lot::Mutex;
 
 use crate::{
     functions::macros::impl_function_debug_display,
-    macros::{
-        impl_arc_conversions,
-        impl_closure_trait,
-        impl_common_name_methods,
-        impl_common_new_methods,
-    },
+    macros::{impl_closure_trait, impl_common_name_methods, impl_common_new_methods},
     suppliers::supplier::Supplier,
-    tasks::{
-        callable::{
-            BoxCallable,
-            Callable,
-            RcCallable,
-        },
-        callable_once::{
-            BoxCallableOnce,
-            LocalBoxCallableOnce,
-        },
-        runnable::BoxRunnable,
-    },
+    tasks::callable::{BoxCallable, Callable, RcCallable},
 };
 
 // ============================================================================
@@ -97,54 +81,6 @@ impl<R, E> Callable<R, E> for ArcCallable<R, E> {
     #[inline]
     fn call(&mut self) -> Result<R, E> {
         (self.function.lock())()
-    }
-
-    impl_arc_conversions!(
-        ArcCallable<R, E>,
-        BoxCallable,
-        RcCallable,
-        BoxCallableOnce,
-        FnMut() -> Result<R, E>
-    );
-
-    /// Converts this shared callable into a local boxed one-time callable while
-    /// preserving its name.
-    #[inline]
-    fn into_local_once(self) -> LocalBoxCallableOnce<R, E>
-    where
-        Self: Sized + 'static,
-    {
-        let name = self.name;
-        let function = self.function;
-        LocalBoxCallableOnce::new_with_optional_name(
-            move || (function.lock())(),
-            name,
-        )
-    }
-
-    /// Converts this shared callable into a local boxed one-time callable
-    /// without consuming `self`.
-    #[inline]
-    fn to_local_once(&self) -> LocalBoxCallableOnce<R, E>
-    where
-        Self: Clone + Sized + 'static,
-    {
-        self.clone().into_local_once()
-    }
-
-    /// Converts this shared callable into a boxed runnable while preserving its
-    /// name.
-    #[inline]
-    fn into_runnable(self) -> BoxRunnable<E>
-    where
-        Self: Sized + 'static,
-    {
-        let name = self.name;
-        let function = self.function;
-        BoxRunnable::new_with_optional_name(
-            move || (function.lock())().map(|_| ()),
-            name,
-        )
     }
 }
 

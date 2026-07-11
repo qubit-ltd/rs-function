@@ -9,17 +9,8 @@
 //! Defines the `RcStatefulBiConsumer` public type.
 
 use super::{
-    BiPredicate,
-    BoxBiConsumerOnce,
-    BoxStatefulBiConsumer,
-    Rc,
-    RcConditionalStatefulBiConsumer,
-    RefCell,
-    StatefulBiConsumer,
-    impl_consumer_clone,
-    impl_consumer_common_methods,
-    impl_consumer_debug_display,
-    impl_rc_conversions,
+    BiPredicate, Rc, RcConditionalStatefulBiConsumer, RefCell, StatefulBiConsumer,
+    impl_consumer_clone, impl_consumer_common_methods, impl_consumer_debug_display,
     impl_shared_consumer_methods,
 };
 
@@ -107,7 +98,7 @@ impl<T, U> RcStatefulBiConsumer<T, U> {
     impl_shared_consumer_methods!(
         RcStatefulBiConsumer<T, U>,
         RcConditionalStatefulBiConsumer,
-        into_rc,
+        RcBiPredicate,
         StatefulBiConsumer,
         'static
     );
@@ -117,14 +108,6 @@ impl<T, U> StatefulBiConsumer<T, U> for RcStatefulBiConsumer<T, U> {
     fn accept(&mut self, first: &T, second: &U) {
         (self.function.borrow_mut())(first, second)
     }
-
-    // Use macro to implement conversion methods
-    impl_rc_conversions!(
-        RcStatefulBiConsumer<T, U>,
-        BoxStatefulBiConsumer,
-        BoxBiConsumerOnce,
-        FnMut(t: &T, u: &U)
-    );
 }
 
 // Use macro to generate Clone implementation

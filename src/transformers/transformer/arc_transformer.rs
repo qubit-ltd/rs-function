@@ -9,20 +9,9 @@
 //! Defines the `ArcTransformer` public type.
 
 use super::{
-    Arc,
-    ArcConditionalTransformer,
-    BoxTransformer,
-    BoxTransformerOnce,
-    Predicate,
-    RcTransformer,
-    Transformer,
-    impl_arc_conversions,
-    impl_closure_trait,
-    impl_shared_transformer_methods,
-    impl_transformer_clone,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
-    impl_transformer_debug_display,
+    Arc, ArcConditionalTransformer, Predicate, Transformer, impl_closure_trait,
+    impl_shared_transformer_methods, impl_transformer_clone, impl_transformer_common_methods,
+    impl_transformer_constant_method, impl_transformer_debug_display,
 };
 
 // ============================================================================
@@ -58,7 +47,7 @@ impl<T, R> ArcTransformer<T, R> {
     impl_shared_transformer_methods!(
         ArcTransformer<T, R>,
         ArcConditionalTransformer,
-        into_arc,
+        ArcPredicate,
         Transformer,
         Send + Sync + 'static
     );
@@ -78,15 +67,6 @@ impl<T, R> Transformer<T, R> for ArcTransformer<T, R> {
     fn apply(&self, input: T) -> R {
         (self.function)(input)
     }
-
-    // Use macro to implement conversion methods
-    impl_arc_conversions!(
-        ArcTransformer<T, R>,
-        BoxTransformer,
-        RcTransformer,
-        BoxTransformerOnce,
-        Fn(t: T) -> R
-    );
 }
 
 // ============================================================================

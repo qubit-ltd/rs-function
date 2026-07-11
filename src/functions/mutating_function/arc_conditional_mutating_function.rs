@@ -9,12 +9,8 @@
 //! Defines the `ArcConditionalMutatingFunction` public type.
 
 use super::{
-    ArcMutatingFunction,
-    ArcPredicate,
-    MutatingFunction,
-    Predicate,
-    impl_conditional_function_clone,
-    impl_conditional_function_debug_display,
+    ArcMutatingFunction, ArcPredicate, MutatingFunction, Predicate,
+    impl_conditional_function_clone, impl_conditional_function_debug_display,
     impl_shared_conditional_function,
 };
 

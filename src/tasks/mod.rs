@@ -26,37 +26,9 @@ pub mod runnable;
 pub mod runnable_once;
 pub mod runnable_with;
 
-pub use callable::{
-    ArcCallable,
-    BoxCallable,
-    Callable,
-    RcCallable,
-};
-pub use callable_once::{
-    BoxCallableOnce,
-    CallableOnce,
-    LocalBoxCallableOnce,
-};
-pub use callable_with::{
-    ArcCallableWith,
-    BoxCallableWith,
-    CallableWith,
-    RcCallableWith,
-};
-pub use runnable::{
-    ArcRunnable,
-    BoxRunnable,
-    RcRunnable,
-    Runnable,
-};
-pub use runnable_once::{
-    BoxRunnableOnce,
-    LocalBoxRunnableOnce,
-    RunnableOnce,
-};
-pub use runnable_with::{
-    ArcRunnableWith,
-    BoxRunnableWith,
-    RcRunnableWith,
-    RunnableWith,
-};
+pub use callable::{ArcCallable, BoxCallable, Callable, RcCallable};
+pub use callable_once::{BoxCallableOnce, CallableOnce, LocalBoxCallableOnce};
+pub use callable_with::{ArcCallableWith, BoxCallableWith, CallableWith, RcCallableWith};
+pub use runnable::{ArcRunnable, BoxRunnable, RcRunnable, Runnable};
+pub use runnable_once::{BoxRunnableOnce, LocalBoxRunnableOnce, RunnableOnce};
+pub use runnable_with::{ArcRunnableWith, BoxRunnableWith, RcRunnableWith, RunnableWith};

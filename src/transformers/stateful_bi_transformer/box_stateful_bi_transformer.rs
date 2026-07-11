@@ -9,15 +9,9 @@
 //! Defines the `BoxStatefulBiTransformer` public type.
 
 use super::{
-    BiPredicate,
-    BoxConditionalStatefulBiTransformer,
-    RcStatefulBiTransformer,
-    StatefulBiTransformer,
-    StatefulTransformer,
-    impl_box_transformer_methods,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
-    impl_transformer_debug_display,
+    BiPredicate, BoxConditionalStatefulBiTransformer, StatefulBiTransformer, StatefulTransformer,
+    impl_box_transformer_methods, impl_transformer_common_methods,
+    impl_transformer_constant_method, impl_transformer_debug_display,
 };
 
 // ============================================================================
@@ -62,34 +56,8 @@ impl_transformer_constant_method!(stateful BoxStatefulBiTransformer<T, U, R>);
 // Implement Debug and Display for BoxTransformer
 impl_transformer_debug_display!(BoxStatefulBiTransformer<T, U, R>);
 
-impl<T, U, R> StatefulBiTransformer<T, U, R>
-    for BoxStatefulBiTransformer<T, U, R>
-{
+impl<T, U, R> StatefulBiTransformer<T, U, R> for BoxStatefulBiTransformer<T, U, R> {
     fn apply(&mut self, first: T, second: U) -> R {
         (self.function)(first, second)
     }
-
-    fn into_box(self) -> BoxStatefulBiTransformer<T, U, R> {
-        // Zero-cost: directly return itself
-        self
-    }
-
-    fn into_rc(self) -> RcStatefulBiTransformer<T, U, R>
-    where
-        Self: 'static,
-    {
-        RcStatefulBiTransformer::new(self.function)
-    }
-
-    // do NOT override BoxStatefulBiTransformer::into_arc() because
-    // BoxStatefulBiTransformer is not Send + Sync and calling
-    // BoxStatefulBiTransformer::into_arc() will cause a compile error
-
-    fn into_fn(self) -> impl FnMut(T, U) -> R {
-        self.function
-    }
-
-    // do NOT override BoxStatefulBiTransformer::to_xxx() because
-    // BoxStatefulBiTransformer is not Clone and calling
-    // BoxStatefulBiTransformer::to_xxx() will cause a compile error
 }

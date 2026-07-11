@@ -29,7 +29,7 @@ pub(crate) use conditional_consumer_clone::impl_conditional_consumer_clone;
 pub(crate) use conditional_consumer_conversions::impl_conditional_consumer_conversions;
 pub(crate) use conditional_consumer_debug_display::impl_conditional_consumer_debug_display;
 pub(crate) use consumer_clone::impl_consumer_clone;
-pub(crate) use consumer_common_methods::impl_consumer_common_methods;
+pub(crate) use consumer_common_methods::{impl_consumer_common_methods, impl_consumer_new_methods};
 pub(crate) use consumer_debug_display::impl_consumer_debug_display;
 pub(crate) use shared_conditional_consumer::impl_shared_conditional_consumer;
 pub(crate) use shared_consumer_methods::impl_shared_consumer_methods;

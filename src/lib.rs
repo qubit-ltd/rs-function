@@ -288,29 +288,19 @@ pub use transformers::{
 // ---- Operator Types ----
 // Binary operators (Fn(T, T) -> T)
 pub use transformers::{
-    ArcBinaryOperator,
-    BinaryOperator,
-    BinaryOperatorOnce,
-    BoxBinaryOperator,
-    BoxBinaryOperatorOnce,
-    RcBinaryOperator,
+    ArcBinaryOperator, BinaryOperator, BinaryOperatorOnce, BoxBinaryOperator,
+    BoxBinaryOperatorOnce, RcBinaryOperator,
 };
 
 // Stateful binary operators (FnMut(T, T) -> T)
 pub use transformers::{
-    ArcStatefulBinaryOperator,
-    BoxStatefulBinaryOperator,
-    RcStatefulBinaryOperator,
+    ArcStatefulBinaryOperator, BoxStatefulBinaryOperator, RcStatefulBinaryOperator,
     StatefulBinaryOperator,
 };
 
 // Unary operators (Fn(T) -> T)
 pub use transformers::{
-    ArcUnaryOperator,
-    BoxUnaryOperator,
-    BoxUnaryOperatorOnce,
-    RcUnaryOperator,
-    UnaryOperator,
+    ArcUnaryOperator, BoxUnaryOperator, BoxUnaryOperatorOnce, RcUnaryOperator, UnaryOperator,
     UnaryOperatorOnce,
 };
 
@@ -447,28 +437,10 @@ pub use suppliers::{
 
 // ---- Task Types (fallible actions and computations) ----
 pub use tasks::{
-    ArcCallable,
-    ArcCallableWith,
-    ArcRunnable,
-    ArcRunnableWith,
-    BoxCallable,
-    BoxCallableOnce,
-    BoxCallableWith,
-    BoxRunnable,
-    BoxRunnableOnce,
-    BoxRunnableWith,
-    Callable,
-    CallableOnce,
-    CallableWith,
-    LocalBoxCallableOnce,
-    LocalBoxRunnableOnce,
-    RcCallable,
-    RcCallableWith,
-    RcRunnable,
-    RcRunnableWith,
-    Runnable,
-    RunnableOnce,
-    RunnableWith,
+    ArcCallable, ArcCallableWith, ArcRunnable, ArcRunnableWith, BoxCallable, BoxCallableOnce,
+    BoxCallableWith, BoxRunnable, BoxRunnableOnce, BoxRunnableWith, Callable, CallableOnce,
+    CallableWith, LocalBoxCallableOnce, LocalBoxRunnableOnce, RcCallable, RcCallableWith,
+    RcRunnable, RcRunnableWith, Runnable, RunnableOnce, RunnableWith,
 };
 
 // ---- Comparator Types (Fn(&T, &T) -> Ordering) ----
@@ -491,17 +463,12 @@ pub use comparator::{
 // ---- Tester Types (Fn() -> bool and FnMut() -> bool) ----
 pub use testers::{
     stateful_tester::{
-        StatefulTester,
-        arc_stateful_tester::ArcStatefulTester,
-        box_stateful_tester::BoxStatefulTester,
-        fn_stateful_tester_ops::FnStatefulTesterOps,
+        StatefulTester, arc_stateful_tester::ArcStatefulTester,
+        box_stateful_tester::BoxStatefulTester, fn_stateful_tester_ops::FnStatefulTesterOps,
         rc_stateful_tester::RcStatefulTester,
     },
     tester::{
-        Tester,
-        arc_tester::ArcTester,
-        box_tester::BoxTester,
-        fn_tester_ops::FnTesterOps,
+        Tester, arc_tester::ArcTester, box_tester::BoxTester, fn_tester_ops::FnTesterOps,
         rc_tester::RcTester,
     },
 };

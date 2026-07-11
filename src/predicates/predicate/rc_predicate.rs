@@ -11,16 +11,8 @@
 use std::ops::Not;
 
 use super::{
-    ALWAYS_FALSE_NAME,
-    ALWAYS_TRUE_NAME,
-    BoxPredicate,
-    Predicate,
-    Rc,
-    impl_predicate_clone,
-    impl_predicate_common_methods,
-    impl_predicate_debug_display,
-    impl_rc_conversions,
-    impl_shared_predicate_methods,
+    ALWAYS_FALSE_NAME, ALWAYS_TRUE_NAME, Predicate, Rc, impl_predicate_clone,
+    impl_predicate_common_methods, impl_predicate_debug_display, impl_shared_predicate_methods,
 };
 
 /// An Rc-based predicate with single-threaded shared ownership.
@@ -51,7 +43,8 @@ impl<T> RcPredicate<T> {
     // always_false()
     impl_predicate_common_methods!(
         RcPredicate<T>,
-        (Fn(&T) -> bool + 'static),
+        semantic(Predicate<T> + 'static),
+        |predicate| move |value: &T| predicate.test(value),
         |f| Rc::new(f)
     );
 
@@ -67,7 +60,7 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function;
-        RcPredicate::new(move |value| !function(value))
+        RcPredicate::new(move |value: &T| !function(value))
     }
 }
 
@@ -79,7 +72,7 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function.clone();
-        RcPredicate::new(move |value| !function(value))
+        RcPredicate::new(move |value: &T| !function(value))
     }
 }
 
@@ -94,11 +87,4 @@ impl<T> Predicate<T> for RcPredicate<T> {
     fn test(&self, value: &T) -> bool {
         (self.function)(value)
     }
-
-    // Generates: into_box(), into_rc(), into_fn(), to_box(), to_rc(), to_fn()
-    impl_rc_conversions!(
-        RcPredicate<T>,
-        BoxPredicate,
-        Fn(t: &T) -> bool
-    );
 }

@@ -188,7 +188,7 @@ macro_rules! impl_shared_function_methods {
     (
         $struct_name:ident < $t:ident, $r:ident >,
         $conditional_type:ident,
-        $predicate_conversion:ident,
+        $predicate_type:ident,
         $chained_function_trait:ident,
         $($extra_bounds:tt)+
     ) => {
@@ -225,7 +225,7 @@ macro_rules! impl_shared_function_methods {
         {
             $conditional_type {
                 function: self.clone(),
-                predicate: predicate.$predicate_conversion(),
+                predicate: $crate::$predicate_type::new(predicate),
             }
         }
 
@@ -274,7 +274,7 @@ macro_rules! impl_shared_function_methods {
     (
         $struct_name:ident < $t:ident, $u:ident, $r:ident >,
         $conditional_type:ident,
-        $predicate_conversion:ident,
+        $predicate_type:ident,
         $chained_function_trait:ident,
         $($extra_bounds:tt)+
     ) => {
@@ -312,7 +312,7 @@ macro_rules! impl_shared_function_methods {
         {
             $conditional_type {
                 function: self.clone(),
-                predicate: predicate.$predicate_conversion(),
+                predicate: $crate::$predicate_type::new(predicate),
             }
         }
 

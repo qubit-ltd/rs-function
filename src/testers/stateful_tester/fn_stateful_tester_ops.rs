@@ -7,10 +7,7 @@
 // =============================================================================
 //! Defines the `FnStatefulTesterOps` public type.
 
-use super::{
-    StatefulTester,
-    box_stateful_tester::BoxStatefulTester,
-};
+use super::{StatefulTester, box_stateful_tester::BoxStatefulTester};
 
 /// Extension trait providing logical composition methods for `FnMut() -> bool`.
 ///

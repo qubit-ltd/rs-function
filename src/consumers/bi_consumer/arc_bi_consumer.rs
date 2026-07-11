@@ -9,20 +9,9 @@
 //! Defines the `ArcBiConsumer` public type.
 
 use super::{
-    Arc,
-    ArcConditionalBiConsumer,
-    BiConsumer,
-    BiPredicate,
-    BoxBiConsumer,
-    BoxBiConsumerOnce,
-    RcBiConsumer,
-    ThreadSafeBiConsumerFn,
-    impl_arc_conversions,
-    impl_closure_trait,
-    impl_consumer_clone,
-    impl_consumer_common_methods,
-    impl_consumer_debug_display,
-    impl_shared_consumer_methods,
+    Arc, ArcConditionalBiConsumer, BiConsumer, BiPredicate, ThreadSafeBiConsumerFn,
+    impl_closure_trait, impl_consumer_clone, impl_consumer_common_methods,
+    impl_consumer_debug_display, impl_shared_consumer_methods,
 };
 
 // =======================================================================
@@ -87,7 +76,7 @@ impl<T, U> ArcBiConsumer<T, U> {
     impl_shared_consumer_methods!(
         ArcBiConsumer<T, U>,
         ArcConditionalBiConsumer,
-        into_arc,
+        ArcBiPredicate,
         BiConsumer,
         Send + Sync + 'static
     );
@@ -97,15 +86,6 @@ impl<T, U> BiConsumer<T, U> for ArcBiConsumer<T, U> {
     fn accept(&self, first: &T, second: &U) {
         (self.function)(first, second)
     }
-
-    // Use macro to implement conversion methods
-    impl_arc_conversions!(
-        ArcBiConsumer<T, U>,
-        BoxBiConsumer,
-        RcBiConsumer,
-        BoxBiConsumerOnce,
-        Fn(t: &T, u: &U)
-    );
 }
 
 // Use macro to generate Clone implementation

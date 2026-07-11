@@ -9,13 +9,8 @@
 //! Defines the `RcConditionalBiFunction` public type.
 
 use super::{
-    BiFunction,
-    BiPredicate,
-    RcBiFunction,
-    RcBiPredicate,
-    impl_conditional_function_clone,
-    impl_conditional_function_debug_display,
-    impl_shared_conditional_function,
+    BiFunction, BiPredicate, RcBiFunction, RcBiPredicate, impl_conditional_function_clone,
+    impl_conditional_function_debug_display, impl_shared_conditional_function,
 };
 
 // ============================================================================

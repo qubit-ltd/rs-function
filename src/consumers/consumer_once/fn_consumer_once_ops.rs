@@ -8,10 +8,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `FnConsumerOnceOps` public type.
 
-use super::{
-    BoxConsumerOnce,
-    ConsumerOnce,
-};
+use super::{BoxConsumerOnce, ConsumerOnce};
 
 // ============================================================================
 // 4. Extension methods for closures
@@ -99,7 +96,7 @@ pub trait FnConsumerOnceOps<T>: FnOnce(&T) + Sized {
     {
         let first = self;
         let second = next;
-        BoxConsumerOnce::new(move |t| {
+        BoxConsumerOnce::new(move |t: &T| {
             first(t);
             second.accept(t);
         })

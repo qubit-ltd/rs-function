@@ -9,20 +9,9 @@
 //! Defines the `RcStatefulFunction` public type.
 
 use super::{
-    BoxFunctionOnce,
-    BoxStatefulFunction,
-    Predicate,
-    Rc,
-    RcConditionalStatefulFunction,
-    RefCell,
-    StatefulFunction,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
-    impl_function_identity_method,
-    impl_rc_conversions,
-    impl_shared_function_methods,
+    Predicate, Rc, RcConditionalStatefulFunction, RefCell, StatefulFunction, impl_function_clone,
+    impl_function_common_methods, impl_function_constant_method, impl_function_debug_display,
+    impl_function_identity_method, impl_shared_function_methods,
 };
 
 // ============================================================================
@@ -63,7 +52,7 @@ impl<T, R> RcStatefulFunction<T, R> {
     impl_shared_function_methods!(
         RcStatefulFunction<T, R>,
         RcConditionalStatefulFunction,
-        into_rc,
+        RcPredicate,
         StatefulFunction,
         'static
     );
@@ -86,12 +75,4 @@ impl<T, R> StatefulFunction<T, R> for RcStatefulFunction<T, R> {
     fn apply(&mut self, t: &T) -> R {
         (self.function.borrow_mut())(t)
     }
-
-    // Use macro to implement conversion methods
-    impl_rc_conversions!(
-        RcStatefulFunction<T, R>,
-        BoxStatefulFunction,
-        BoxFunctionOnce,
-        FnMut(t: &T) -> R
-    );
 }
