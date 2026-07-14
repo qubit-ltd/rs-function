@@ -35,7 +35,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-qubit-function = "0.15"
+qubit-function = "0.16"
 ```
 
 ## Core Abstractions
