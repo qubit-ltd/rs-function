@@ -10,13 +10,16 @@
 
 use super::{
     BiFunction,
-    BiPredicate,
-    BoxConditionalBiFunction,
-    Function,
     impl_box_function_methods,
     impl_function_common_methods,
     impl_function_constant_method,
     impl_function_debug_display,
+};
+#[cfg(feature = "combinators")]
+use super::{
+    BiPredicate,
+    BoxConditionalBiFunction,
+    Function,
 };
 
 type BoxBiFunctionFn<T, U, R> = Box<dyn Fn(&T, &U) -> R>;

@@ -70,6 +70,7 @@
 /// // Use this macro from `qubit_function::suppliers` when implementing
 /// // supplier methods in that module.
 /// ```
+#[cfg(feature = "combinators")]
 macro_rules! impl_box_supplier_methods {
     (@let_supplier_fn Supplier, $name:ident, $value:expr) => {
         let $name = $value;
@@ -212,6 +213,11 @@ macro_rules! impl_box_supplier_methods {
             $struct_name::new(move || (self_fn(), other.get()))
         }
     };
+}
+
+#[cfg(not(feature = "combinators"))]
+macro_rules! impl_box_supplier_methods {
+    ($($tokens:tt)*) => {};
 }
 
 pub(crate) use impl_box_supplier_methods;

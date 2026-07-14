@@ -8,10 +8,13 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxFunction` public type.
 
+#[cfg(feature = "combinators")]
 use super::{
     BoxConditionalFunction,
-    Function,
     Predicate,
+};
+use super::{
+    Function,
     impl_box_function_methods,
     impl_function_common_methods,
     impl_function_constant_method,
@@ -26,15 +29,15 @@ use super::{
 /// BoxFunction - function wrapper based on `Box<dyn Fn>`
 ///
 /// A function wrapper that provides single ownership with reusable
-/// transformation. The function consumes the input and can be called
-/// multiple times.
+/// transformation. The function borrows the input and can be called multiple
+/// times.
 ///
 /// # Features
 ///
 /// - **Based on**: `Box<dyn Fn(&T) -> R>`
 /// - **Ownership**: Single ownership, cannot be cloned
-/// - **Reusability**: Can be called multiple times (each call consumes its
-///   input)
+/// - **Reusability**: Can be called multiple times (borrows its input each
+///   time)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
 pub struct BoxFunction<T, R> {
     pub(super) function: Box<dyn Fn(&T) -> R>,

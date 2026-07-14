@@ -20,9 +20,7 @@
 mod box_runnable_with;
 pub use box_runnable_with::BoxRunnableWith;
 #[cfg(feature = "rc")]
-#[cfg(feature = "rc")]
 mod rc_runnable_with;
-#[cfg(feature = "rc")]
 #[cfg(feature = "rc")]
 pub use rc_runnable_with::RcRunnableWith;
 #[cfg(feature = "stateful")]

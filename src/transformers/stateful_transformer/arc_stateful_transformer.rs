@@ -10,9 +10,7 @@
 
 use super::{
     Arc,
-    ArcConditionalStatefulTransformer,
     Mutex,
-    Predicate,
     StatefulTransformer,
     impl_closure_trait,
     impl_shared_transformer_methods,
@@ -20,6 +18,11 @@ use super::{
     impl_transformer_common_methods,
     impl_transformer_constant_method,
     impl_transformer_debug_display,
+};
+#[cfg(feature = "combinators")]
+use super::{
+    ArcConditionalStatefulTransformer,
+    Predicate,
 };
 
 // ============================================================================

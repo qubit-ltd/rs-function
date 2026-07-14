@@ -130,18 +130,22 @@
 //! ```
 #[cfg(feature = "combinators")]
 use crate::functions::macros::impl_fn_ops_trait;
+use crate::functions::macros::{
+    impl_box_function_methods,
+    impl_function_common_methods,
+    impl_function_debug_display,
+    impl_function_identity_method,
+};
+#[cfg(feature = "combinators")]
 use crate::functions::{
     function_once::FunctionOnce,
     macros::{
         impl_box_conditional_function,
-        impl_box_function_methods,
         impl_conditional_function_debug_display,
-        impl_function_common_methods,
-        impl_function_debug_display,
-        impl_function_identity_method,
     },
 };
 use crate::macros::impl_closure_once_trait;
+#[cfg(feature = "combinators")]
 use crate::predicates::predicate::{
     BoxPredicate,
     Predicate,
@@ -149,9 +153,8 @@ use crate::predicates::predicate::{
 
 mod box_mutating_function_once;
 pub use box_mutating_function_once::BoxMutatingFunctionOnce;
+#[cfg(feature = "combinators")]
 mod box_conditional_mutating_function_once;
-#[cfg(not(feature = "combinators"))]
-pub(crate) use box_conditional_mutating_function_once::BoxConditionalMutatingFunctionOnce;
 #[cfg(feature = "combinators")]
 pub use box_conditional_mutating_function_once::BoxConditionalMutatingFunctionOnce;
 #[cfg(feature = "combinators")]
@@ -186,9 +189,8 @@ pub use fn_mutating_function_once_ops::FnMutatingFunctionOnceOps;
 ///
 /// - **Unified Interface**: All one-time mutating functions share the same
 ///   `apply` method signature
-/// - **Automatic Implementation**: Closures automatically implement this trait
-///   with zero overhead
-/// - **Type Conversions**: Provides `into_box` method for type conversion
+/// - **Automatic Implementation**: Closures implement this trait directly,
+///   without allocating an adapter
 /// - **Generic Programming**: Write functions that work with any one-time
 ///   mutating function type
 ///
@@ -219,7 +221,7 @@ pub use fn_mutating_function_once_ops::FnMutatingFunctionOnceOps;
 /// assert_eq!(old_len, 1);
 /// ```
 ///
-/// ## Type Conversion
+/// ## Wrapper Construction
 ///
 /// ```rust
 /// use qubit_function::BoxMutatingFunctionOnce;

@@ -8,10 +8,13 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxFunctionOnce` public type.
 
+#[cfg(feature = "combinators")]
 use super::{
     BoxConditionalFunctionOnce,
-    FunctionOnce,
     Predicate,
+};
+use super::{
+    FunctionOnce,
     impl_box_function_methods,
     impl_closure_once_trait,
     impl_function_common_methods,

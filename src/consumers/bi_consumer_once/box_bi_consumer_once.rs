@@ -11,12 +11,15 @@
 use super::{
     BiConsumerOnce,
     BiConsumerOnceFn,
-    BiPredicate,
-    BoxConditionalBiConsumerOnce,
     impl_box_consumer_methods,
     impl_closure_once_trait,
     impl_consumer_common_methods,
     impl_consumer_debug_display,
+};
+#[cfg(feature = "combinators")]
+use super::{
+    BiPredicate,
+    BoxConditionalBiConsumerOnce,
 };
 
 // =======================================================================
@@ -32,7 +35,8 @@ use super::{
 /// # Features
 ///
 /// - **Single Ownership**: Not cloneable, ownership moves on use
-/// - **Zero Overhead**: No reference counting or locking
+/// - **Runtime cost**: One heap allocation and dynamic dispatch; no reference
+///   counting or locking
 /// - **One-Time Use**: Consumes self on first call
 /// - **Builder Pattern**: Method chaining consumes `self` naturally
 ///

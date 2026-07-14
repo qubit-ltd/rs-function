@@ -10,14 +10,17 @@
 
 use super::{
     BiMutatingFunctionOnce,
-    BiPredicate,
-    BoxConditionalBiMutatingFunctionOnce,
-    MutatingFunctionOnce,
     impl_box_function_methods,
     impl_closure_once_trait,
     impl_function_common_methods,
     impl_function_constant_method,
     impl_function_debug_display,
+};
+#[cfg(feature = "combinators")]
+use super::{
+    BiPredicate,
+    BoxConditionalBiMutatingFunctionOnce,
+    MutatingFunctionOnce,
 };
 
 type BoxBiMutatingFunctionOnceFn<T, U, R> =

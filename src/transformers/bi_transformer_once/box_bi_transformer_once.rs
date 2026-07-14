@@ -8,11 +8,14 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxBiTransformerOnce` public type.
 
+#[cfg(feature = "combinators")]
 use super::{
     BiPredicate,
-    BiTransformerOnce,
     BoxConditionalBiTransformerOnce,
     TransformerOnce,
+};
+use super::{
+    BiTransformerOnce,
     impl_box_transformer_methods,
     impl_closure_once_trait,
     impl_transformer_common_methods,

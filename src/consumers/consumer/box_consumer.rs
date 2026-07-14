@@ -8,10 +8,13 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConsumer` public type.
 
+#[cfg(feature = "combinators")]
 use super::{
     BoxConditionalConsumer,
-    Consumer,
     Predicate,
+};
+use super::{
+    Consumer,
     impl_box_consumer_methods,
     impl_consumer_common_methods,
     impl_consumer_debug_display,
@@ -29,7 +32,8 @@ use super::{
 /// # Features
 ///
 /// - **Single Ownership**: Not cloneable, transfers ownership when used
-/// - **Zero Overhead**: No reference counting or lock overhead
+/// - **Runtime cost**: One heap allocation and dynamic dispatch; no reference
+///   counting or locking
 /// - **Shared-reference API**: Invoked through `&self` and shared input
 ///   references
 /// - **No Wrapper Interior Mutability**: No need for Mutex or RefCell in the

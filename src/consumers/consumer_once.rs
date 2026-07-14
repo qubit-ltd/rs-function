@@ -34,14 +34,18 @@
 //! Unlike Consumer, ConsumerOnce consumes itself on first call. Suitable for
 //! initialization callbacks, cleanup callbacks, and similar scenarios.
 
+#[cfg(feature = "combinators")]
 use crate::consumers::macros::{
     impl_box_conditional_consumer,
-    impl_box_consumer_methods,
     impl_conditional_consumer_debug_display,
+};
+use crate::consumers::macros::{
+    impl_box_consumer_methods,
     impl_consumer_common_methods,
     impl_consumer_debug_display,
 };
 use crate::macros::impl_closure_once_trait;
+#[cfg(feature = "combinators")]
 use crate::predicates::predicate::{
     BoxPredicate,
     Predicate,
@@ -53,9 +57,8 @@ pub use box_consumer_once::BoxConsumerOnce;
 mod fn_consumer_once_ops;
 #[cfg(feature = "combinators")]
 pub use fn_consumer_once_ops::FnConsumerOnceOps;
+#[cfg(feature = "combinators")]
 mod box_conditional_consumer_once;
-#[cfg(not(feature = "combinators"))]
-pub(crate) use box_conditional_consumer_once::BoxConditionalConsumerOnce;
 #[cfg(feature = "combinators")]
 pub use box_conditional_consumer_once::BoxConditionalConsumerOnce;
 
@@ -81,9 +84,8 @@ pub use box_conditional_consumer_once::BoxConditionalConsumerOnce;
 ///
 /// - **Unified Interface**: All consumer types share the same `accept` method
 ///   signature
-/// - **Automatic Implementation**: Closures automatically implement this trait
-///   with zero overhead
-/// - **Type Conversion**: Can be converted to BoxConsumerOnce
+/// - **Automatic Implementation**: Closures implement this trait directly,
+///   without allocating an adapter
 /// - **Generic Programming**: Write functions that work with any one-time
 ///   consumer type
 ///

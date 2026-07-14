@@ -10,16 +10,19 @@
 
 use super::{
     Arc,
-    ArcConditionalBiFunction,
     BiFunction,
-    BiPredicate,
-    Function,
     impl_closure_trait,
     impl_function_clone,
     impl_function_common_methods,
     impl_function_constant_method,
     impl_function_debug_display,
     impl_shared_function_methods,
+};
+#[cfg(feature = "combinators")]
+use super::{
+    ArcConditionalBiFunction,
+    BiPredicate,
+    Function,
 };
 
 type ArcBiFunctionFn<T, U, R> = Arc<dyn Fn(&T, &U) -> R + Send + Sync>;

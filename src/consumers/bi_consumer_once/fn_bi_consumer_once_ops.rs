@@ -28,7 +28,7 @@ use super::{
 ///
 /// - **Natural Syntax**: Chain operations directly on closures
 /// - **Returns BoxBiConsumerOnce**: Composition results can be further chained
-/// - **Zero Cost**: No overhead when composing closures
+/// - **Typed Composition**: Returns a new closure that captures both operations
 /// - **Automatic Implementation**: All `FnOnce(&T, &U)` closures get these
 ///   methods automatically
 ///

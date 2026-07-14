@@ -8,10 +8,13 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxSupplier` public type.
 
+#[cfg(feature = "combinators")]
 use super::{
     Predicate,
-    Supplier,
     Transformer,
+};
+use super::{
+    Supplier,
     impl_box_supplier_methods,
     impl_supplier_common_methods,
     impl_supplier_debug_display,

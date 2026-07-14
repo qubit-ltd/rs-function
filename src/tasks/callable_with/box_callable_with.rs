@@ -9,6 +9,7 @@
 //! Defines the `BoxCallableWith` public type.
 
 use crate::{
+    functions::macros::impl_function_debug_display,
     macros::{
         impl_common_name_methods,
         impl_common_new_methods,
@@ -48,6 +49,7 @@ impl<T, R, E> BoxCallableWith<T, R, E> {
     /// # Returns
     ///
     /// A new callable with mutable input that applies `mapper` on success.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn map<U, M>(self, mut mapper: M) -> BoxCallableWith<T, U, E>
     where
@@ -73,6 +75,7 @@ impl<T, R, E> BoxCallableWith<T, R, E> {
     /// # Returns
     ///
     /// A new callable with mutable input that applies `mapper` on failure.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn map_err<E2, M>(self, mut mapper: M) -> BoxCallableWith<T, R, E2>
     where
@@ -98,6 +101,7 @@ impl<T, R, E> BoxCallableWith<T, R, E> {
     /// # Returns
     ///
     /// A new callable that runs `next` only when this callable succeeds.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn and_then<U, N>(self, next: N) -> BoxCallableWith<T, U, E>
     where
@@ -126,3 +130,5 @@ impl<T, R, E> CallableWith<T, R, E> for BoxCallableWith<T, R, E> {
         (self.function)(input)
     }
 }
+
+impl_function_debug_display!(BoxCallableWith<T, R, E>);

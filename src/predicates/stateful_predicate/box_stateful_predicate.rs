@@ -8,6 +8,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulPredicate` public type.
 
+#[cfg(feature = "combinators")]
 use std::ops::Not;
 
 use super::{
@@ -49,6 +50,7 @@ impl<T> BoxStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `BoxStatefulPredicate` representing logical AND.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn and<P>(mut self, mut other: P) -> BoxStatefulPredicate<T>
     where
@@ -72,6 +74,7 @@ impl<T> BoxStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `BoxStatefulPredicate` representing logical OR.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn or<P>(mut self, mut other: P) -> BoxStatefulPredicate<T>
     where
@@ -94,6 +97,7 @@ impl<T> BoxStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `BoxStatefulPredicate` representing logical NAND.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn nand<P>(mut self, mut other: P) -> BoxStatefulPredicate<T>
     where
@@ -117,6 +121,7 @@ impl<T> BoxStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `BoxStatefulPredicate` representing logical XOR.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn xor<P>(mut self, mut other: P) -> BoxStatefulPredicate<T>
     where
@@ -139,6 +144,7 @@ impl<T> BoxStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `BoxStatefulPredicate` representing logical NOR.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn nor<P>(mut self, mut other: P) -> BoxStatefulPredicate<T>
     where
@@ -151,6 +157,7 @@ impl<T> BoxStatefulPredicate<T> {
     }
 }
 
+#[cfg(feature = "combinators")]
 impl<T> Not for BoxStatefulPredicate<T>
 where
     T: 'static,

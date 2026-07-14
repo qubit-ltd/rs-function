@@ -143,12 +143,12 @@
 //! assert_eq!(value, 20);
 //! ```
 //!
-//! ## Type Conversions
+//! ## Wrapper Construction
 //!
 //! ```rust
 //! use qubit_function::{ArcStatefulMutator, BoxStatefulMutator, RcStatefulMutator};
 //!
-//! // Convert closure to concrete type
+//! // Construct each ownership-specific wrapper from a closure.
 //! let closure = |x: &mut i32| *x *= 2;
 //! let box_mutator = BoxStatefulMutator::new(closure);
 //!
@@ -193,6 +193,7 @@
 //! branched.apply(&mut negative);
 //! assert_eq!(negative, -6); // or_else branch
 //! ```
+#[cfg(feature = "rc")]
 use std::cell::RefCell;
 #[cfg(feature = "rc")]
 use std::rc::Rc;
@@ -201,19 +202,23 @@ use std::sync::Arc;
 use parking_lot::Mutex;
 
 use crate::macros::impl_closure_trait;
+#[cfg(feature = "combinators")]
 use crate::mutators::macros::{
     impl_box_conditional_mutator,
-    impl_box_mutator_methods,
     impl_conditional_mutator_clone,
     impl_conditional_mutator_debug_display,
+    impl_shared_conditional_mutator,
+};
+use crate::mutators::macros::{
+    impl_box_mutator_methods,
     impl_mutator_clone,
     impl_mutator_common_methods,
     impl_mutator_debug_display,
-    impl_shared_conditional_mutator,
     impl_shared_mutator_methods,
 };
-#[cfg(feature = "rc")]
+#[cfg(all(feature = "rc", feature = "combinators"))]
 use crate::predicates::predicate::RcPredicate;
+#[cfg(feature = "combinators")]
 use crate::predicates::predicate::{
     ArcPredicate,
     BoxPredicate,
@@ -243,21 +248,16 @@ pub use arc_stateful_mutator::ArcStatefulMutator;
 mod fn_mut_stateful_mutator_ops;
 #[cfg(feature = "combinators")]
 pub use fn_mut_stateful_mutator_ops::FnMutStatefulMutatorOps;
+#[cfg(feature = "combinators")]
 mod box_conditional_stateful_mutator;
-#[cfg(not(feature = "combinators"))]
-pub(crate) use box_conditional_stateful_mutator::BoxConditionalStatefulMutator;
 #[cfg(feature = "combinators")]
 pub use box_conditional_stateful_mutator::BoxConditionalStatefulMutator;
-#[cfg(feature = "rc")]
+#[cfg(all(feature = "rc", feature = "combinators"))]
 mod rc_conditional_stateful_mutator;
-#[cfg(feature = "rc")]
-#[cfg(not(feature = "combinators"))]
-pub(crate) use rc_conditional_stateful_mutator::RcConditionalStatefulMutator;
 #[cfg(all(feature = "rc", feature = "combinators"))]
 pub use rc_conditional_stateful_mutator::RcConditionalStatefulMutator;
+#[cfg(feature = "combinators")]
 mod arc_conditional_stateful_mutator;
-#[cfg(not(feature = "combinators"))]
-pub(crate) use arc_conditional_stateful_mutator::ArcConditionalStatefulMutator;
 #[cfg(feature = "combinators")]
 pub use arc_conditional_stateful_mutator::ArcConditionalStatefulMutator;
 
@@ -278,17 +278,14 @@ pub use arc_conditional_stateful_mutator::ArcConditionalStatefulMutator;
 /// # Design Rationale
 ///
 /// The trait provides a unified abstraction over different ownership models,
-/// allowing generic code to work with any mutator type. Type conversion
-/// methods (`into_box`, `into_arc`, `into_rc`) enable flexible ownership
-/// transitions based on usage requirements.
+/// allowing generic code to work with any stateful mutator type.
 ///
 /// # Features
 ///
 /// - **Unified Interface**: All mutator types share the same `mutate` method
 ///   signature
-/// - **Automatic Implementation**: Closures automatically implement this trait
-///   with zero overhead
-/// - **Type Conversions**: Easy conversion between ownership models
+/// - **Automatic Implementation**: Closures implement this trait directly,
+///   without allocating an adapter
 /// - **Generic Programming**: Write functions that work with any mutator type
 ///
 /// # Examples
@@ -318,14 +315,14 @@ pub use arc_conditional_stateful_mutator::ArcConditionalStatefulMutator;
 /// assert_eq!(apply_mutator(&mut closure, 5), 10);
 /// ```
 ///
-/// ## Type Conversion
+/// ## Wrapper Construction
 ///
 /// ```rust
 /// use qubit_function::BoxStatefulMutator;
 ///
 /// let closure = |x: &mut i32| *x *= 2;
 ///
-/// // Convert to different ownership models
+/// // Construct a concrete ownership wrapper.
 /// let box_mutator = BoxStatefulMutator::new(closure);
 /// ```
 pub trait StatefulMutator<T> {

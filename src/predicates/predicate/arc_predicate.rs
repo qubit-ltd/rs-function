@@ -8,6 +8,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcPredicate` public type.
 
+#[cfg(feature = "combinators")]
 use std::ops::Not;
 
 use super::{
@@ -64,6 +65,7 @@ impl<T> ArcPredicate<T> {
     impl_shared_predicate_methods!(ArcPredicate<T>, Send + Sync + 'static);
 }
 
+#[cfg(feature = "combinators")]
 impl<T> Not for ArcPredicate<T>
 where
     T: 'static,
@@ -76,6 +78,7 @@ where
     }
 }
 
+#[cfg(feature = "combinators")]
 impl<T> Not for &ArcPredicate<T>
 where
     T: 'static,

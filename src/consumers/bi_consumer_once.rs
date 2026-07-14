@@ -32,19 +32,24 @@
 //!
 //! Unlike BiConsumer, BiConsumerOnce consumes itself on first call. Suitable
 //! for initialization callbacks, cleanup callbacks, etc.
+#[cfg(feature = "combinators")]
 use crate::{
     consumers::macros::{
         impl_box_conditional_consumer,
-        impl_box_consumer_methods,
         impl_conditional_consumer_debug_display,
-        impl_consumer_common_methods,
-        impl_consumer_debug_display,
     },
-    macros::impl_closure_once_trait,
     predicates::bi_predicate::{
         BiPredicate,
         BoxBiPredicate,
     },
+};
+use crate::{
+    consumers::macros::{
+        impl_box_consumer_methods,
+        impl_consumer_common_methods,
+        impl_consumer_debug_display,
+    },
+    macros::impl_closure_once_trait,
 };
 
 // ==========================================================================
@@ -60,9 +65,8 @@ pub use box_bi_consumer_once::BoxBiConsumerOnce;
 mod fn_bi_consumer_once_ops;
 #[cfg(feature = "combinators")]
 pub use fn_bi_consumer_once_ops::FnBiConsumerOnceOps;
+#[cfg(feature = "combinators")]
 mod box_conditional_bi_consumer_once;
-#[cfg(not(feature = "combinators"))]
-pub(crate) use box_conditional_bi_consumer_once::BoxConditionalBiConsumerOnce;
 #[cfg(feature = "combinators")]
 pub use box_conditional_bi_consumer_once::BoxConditionalBiConsumerOnce;
 
@@ -88,9 +92,8 @@ pub use box_conditional_bi_consumer_once::BoxConditionalBiConsumerOnce;
 ///
 /// - **Unified Interface**: All bi-consumer types share the same `accept`
 ///   method signature
-/// - **Automatic Implementation**: Closures automatically implement this trait
-///   with zero overhead
-/// - **Type Conversions**: Can convert to BoxBiConsumerOnce
+/// - **Automatic Implementation**: Closures implement this trait directly,
+///   without allocating an adapter
 /// - **Generic Programming**: Write functions accepting any one-time
 ///   bi-consumer type
 ///

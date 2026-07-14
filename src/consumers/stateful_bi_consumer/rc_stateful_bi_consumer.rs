@@ -8,10 +8,13 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcStatefulBiConsumer` public type.
 
+#[cfg(feature = "combinators")]
 use super::{
     BiPredicate,
-    Rc,
     RcConditionalStatefulBiConsumer,
+};
+use super::{
+    Rc,
     RefCell,
     StatefulBiConsumer,
     impl_consumer_clone,

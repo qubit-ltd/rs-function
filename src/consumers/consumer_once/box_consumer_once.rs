@@ -8,10 +8,13 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxConsumerOnce` public type.
 
+#[cfg(feature = "combinators")]
 use super::{
     BoxConditionalConsumerOnce,
-    ConsumerOnce,
     Predicate,
+};
+use super::{
+    ConsumerOnce,
     impl_box_consumer_methods,
     impl_closure_once_trait,
     impl_consumer_common_methods,
@@ -31,7 +34,8 @@ use super::{
 /// # Features
 ///
 /// - **Single Ownership**: Not cloneable, transfers ownership on use
-/// - **Zero Overhead**: No reference counting or lock overhead
+/// - **Runtime cost**: One heap allocation and dynamic dispatch; no reference
+///   counting or locking
 /// - **One-time Use**: Consumes self on first call
 /// - **Builder Pattern**: Method chaining naturally consumes `self`
 ///

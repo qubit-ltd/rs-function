@@ -21,9 +21,7 @@ use crate::macros::impl_closure_trait;
 mod box_runnable;
 pub use box_runnable::BoxRunnable;
 #[cfg(feature = "rc")]
-#[cfg(feature = "rc")]
 mod rc_runnable;
-#[cfg(feature = "rc")]
 #[cfg(feature = "rc")]
 pub use rc_runnable::RcRunnable;
 #[cfg(feature = "stateful")]
@@ -43,8 +41,8 @@ pub use arc_runnable::ArcRunnable;
 ///
 /// Each call borrows `self` mutably and returns [`Result::Ok`] with unit or
 /// [`Result::Err`] with `E`. Semantically, this is a specialization of
-/// `SupplierOnce``<Result<(), E>>` for
-/// executable actions and deferred side effects.
+/// [`Callable`](super::Callable) with `R = ()` for executable actions and
+/// deferred side effects.
 ///
 /// The trait does not require [`Send`]. Concurrent executors should require
 /// `Runnable<E> + Send + 'static` (or similar) at their API boundary.

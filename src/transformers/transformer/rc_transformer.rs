@@ -8,10 +8,13 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcTransformer` public type.
 
+#[cfg(feature = "combinators")]
 use super::{
     Predicate,
-    Rc,
     RcConditionalTransformer,
+};
+use super::{
+    Rc,
     Transformer,
     impl_shared_transformer_methods,
     impl_transformer_clone,

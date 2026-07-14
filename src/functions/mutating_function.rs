@@ -123,24 +123,28 @@ use std::sync::Arc;
 
 #[cfg(feature = "combinators")]
 use crate::functions::macros::impl_fn_ops_trait;
+use crate::functions::macros::{
+    impl_box_function_methods,
+    impl_function_clone,
+    impl_function_common_methods,
+    impl_function_debug_display,
+    impl_function_identity_method,
+    impl_shared_function_methods,
+};
+#[cfg(feature = "combinators")]
 use crate::functions::{
     function::Function,
     macros::{
         impl_box_conditional_function,
-        impl_box_function_methods,
         impl_conditional_function_clone,
         impl_conditional_function_debug_display,
-        impl_function_clone,
-        impl_function_common_methods,
-        impl_function_debug_display,
-        impl_function_identity_method,
         impl_shared_conditional_function,
-        impl_shared_function_methods,
     },
 };
 use crate::macros::impl_closure_trait;
-#[cfg(feature = "rc")]
+#[cfg(all(feature = "rc", feature = "combinators"))]
 use crate::predicates::predicate::RcPredicate;
+#[cfg(feature = "combinators")]
 use crate::predicates::predicate::{
     ArcPredicate,
     BoxPredicate,
@@ -155,21 +159,16 @@ mod rc_mutating_function;
 pub use rc_mutating_function::RcMutatingFunction;
 mod arc_mutating_function;
 pub use arc_mutating_function::ArcMutatingFunction;
+#[cfg(feature = "combinators")]
 mod box_conditional_mutating_function;
-#[cfg(not(feature = "combinators"))]
-pub(crate) use box_conditional_mutating_function::BoxConditionalMutatingFunction;
 #[cfg(feature = "combinators")]
 pub use box_conditional_mutating_function::BoxConditionalMutatingFunction;
-#[cfg(feature = "rc")]
+#[cfg(all(feature = "rc", feature = "combinators"))]
 mod rc_conditional_mutating_function;
-#[cfg(feature = "rc")]
-#[cfg(not(feature = "combinators"))]
-pub(crate) use rc_conditional_mutating_function::RcConditionalMutatingFunction;
 #[cfg(all(feature = "rc", feature = "combinators"))]
 pub use rc_conditional_mutating_function::RcConditionalMutatingFunction;
+#[cfg(feature = "combinators")]
 mod arc_conditional_mutating_function;
-#[cfg(not(feature = "combinators"))]
-pub(crate) use arc_conditional_mutating_function::ArcConditionalMutatingFunction;
 #[cfg(feature = "combinators")]
 pub use arc_conditional_mutating_function::ArcConditionalMutatingFunction;
 #[cfg(feature = "combinators")]
@@ -208,7 +207,6 @@ pub use fn_mutating_function_ops::FnMutatingFunctionOps;
 /// - **Unified Interface**: All mutating function types share the same `apply`
 ///   method signature
 /// - **Automatic Implementation**: Closures automatically implement this trait
-/// - **Type Conversions**: Easy conversion between ownership models
 /// - **Generic Programming**: Write functions that work with any mutating
 ///   function type
 ///

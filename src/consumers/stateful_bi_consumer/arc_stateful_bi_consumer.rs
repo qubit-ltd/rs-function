@@ -10,8 +10,6 @@
 
 use super::{
     Arc,
-    ArcConditionalStatefulBiConsumer,
-    BiPredicate,
     Mutex,
     StatefulBiConsumer,
     impl_closure_trait,
@@ -19,6 +17,11 @@ use super::{
     impl_consumer_common_methods,
     impl_consumer_debug_display,
     impl_shared_consumer_methods,
+};
+#[cfg(feature = "combinators")]
+use super::{
+    ArcConditionalStatefulBiConsumer,
+    BiPredicate,
 };
 
 type ArcStatefulBiConsumerFn<T, U> = Arc<Mutex<dyn FnMut(&T, &U) + Send>>;

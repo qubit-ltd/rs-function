@@ -117,6 +117,7 @@
 ///     let _ = (*x, *y);
 /// }).when(|x: &i32, y: &i32| *x > 0 && *y > 0);
 /// ```
+#[cfg(feature = "combinators")]
 macro_rules! impl_shared_consumer_methods {
     (@and_then Consumer, $struct_name:ident, $first:expr, $after:expr, $t:ident) => {{
         let first = $first;
@@ -319,6 +320,11 @@ macro_rules! impl_shared_consumer_methods {
             impl_shared_consumer_methods!(@and_then_bi $consumer_trait, $struct_name, self.clone(), after, $t, $u)
         }
     };
+}
+
+#[cfg(not(feature = "combinators"))]
+macro_rules! impl_shared_consumer_methods {
+    ($($tokens:tt)*) => {};
 }
 
 pub(crate) use impl_shared_consumer_methods;

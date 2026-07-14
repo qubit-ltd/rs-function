@@ -28,7 +28,7 @@ use super::{
 ///
 /// - **Natural Syntax**: Chain operations directly on closures
 /// - **Returns BoxConsumer**: Combined results can continue chaining
-/// - **Zero Cost**: No overhead when composing closures
+/// - **Typed Composition**: Returns a new closure that captures both operations
 /// - **Auto-implementation**: All `Fn(&T)` closures automatically get these
 ///   methods
 ///

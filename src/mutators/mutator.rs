@@ -145,12 +145,12 @@
 //! assert_eq!(value, 20);
 //! ```
 //!
-//! ## Type Conversions
+//! ## Wrapper Construction
 //!
 //! ```rust
 //! use qubit_function::{ArcMutator, BoxMutator, RcMutator};
 //!
-//! // Convert closure to concrete type
+//! // Construct each ownership-specific wrapper from a closure.
 //! let closure = |x: &mut i32| *x *= 2;
 //! let box_mutator = BoxMutator::new(closure);
 //!
@@ -200,19 +200,23 @@ use std::rc::Rc;
 use std::sync::Arc;
 
 use crate::macros::impl_closure_trait;
+#[cfg(feature = "combinators")]
 use crate::mutators::macros::{
     impl_box_conditional_mutator,
-    impl_box_mutator_methods,
     impl_conditional_mutator_clone,
     impl_conditional_mutator_debug_display,
+    impl_shared_conditional_mutator,
+};
+use crate::mutators::macros::{
+    impl_box_mutator_methods,
     impl_mutator_clone,
     impl_mutator_common_methods,
     impl_mutator_debug_display,
-    impl_shared_conditional_mutator,
     impl_shared_mutator_methods,
 };
-#[cfg(feature = "rc")]
+#[cfg(all(feature = "rc", feature = "combinators"))]
 use crate::predicates::predicate::RcPredicate;
+#[cfg(feature = "combinators")]
 use crate::predicates::predicate::{
     ArcPredicate,
     BoxPredicate,
@@ -242,21 +246,16 @@ pub use arc_mutator::ArcMutator;
 mod fn_mutator_ops;
 #[cfg(feature = "combinators")]
 pub use fn_mutator_ops::FnMutatorOps;
+#[cfg(feature = "combinators")]
 mod box_conditional_mutator;
-#[cfg(not(feature = "combinators"))]
-pub(crate) use box_conditional_mutator::BoxConditionalMutator;
 #[cfg(feature = "combinators")]
 pub use box_conditional_mutator::BoxConditionalMutator;
-#[cfg(feature = "rc")]
+#[cfg(all(feature = "rc", feature = "combinators"))]
 mod rc_conditional_mutator;
-#[cfg(feature = "rc")]
-#[cfg(not(feature = "combinators"))]
-pub(crate) use rc_conditional_mutator::RcConditionalMutator;
 #[cfg(all(feature = "rc", feature = "combinators"))]
 pub use rc_conditional_mutator::RcConditionalMutator;
+#[cfg(feature = "combinators")]
 mod arc_conditional_mutator;
-#[cfg(not(feature = "combinators"))]
-pub(crate) use arc_conditional_mutator::ArcConditionalMutator;
 #[cfg(feature = "combinators")]
 pub use arc_conditional_mutator::ArcConditionalMutator;
 
@@ -287,7 +286,6 @@ pub use arc_conditional_mutator::ArcConditionalMutator;
 /// - **Unified Interface**: All mutator types share the same `mutate` method
 ///   signature
 /// - **Automatic Implementation**: Closures automatically implement this trait
-/// - **Type Conversions**: Easy conversion between ownership models
 /// - **Generic Programming**: Write functions that work with any mutator type
 ///
 /// # Examples

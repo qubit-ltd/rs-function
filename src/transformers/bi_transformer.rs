@@ -21,25 +21,29 @@
 use std::rc::Rc;
 use std::sync::Arc;
 
-#[cfg(feature = "rc")]
+#[cfg(all(feature = "rc", feature = "combinators"))]
 use crate::predicates::bi_predicate::RcBiPredicate;
+#[cfg(feature = "combinators")]
 use crate::predicates::bi_predicate::{
     ArcBiPredicate,
     BiPredicate,
     BoxBiPredicate,
 };
+use crate::transformers::macros::{
+    impl_box_transformer_methods,
+    impl_shared_transformer_methods,
+    impl_transformer_clone,
+    impl_transformer_common_methods,
+    impl_transformer_constant_method,
+    impl_transformer_debug_display,
+};
+#[cfg(feature = "combinators")]
 use crate::transformers::{
     macros::{
         impl_box_conditional_transformer,
-        impl_box_transformer_methods,
         impl_conditional_transformer_clone,
         impl_conditional_transformer_debug_display,
         impl_shared_conditional_transformer,
-        impl_shared_transformer_methods,
-        impl_transformer_clone,
-        impl_transformer_common_methods,
-        impl_transformer_constant_method,
-        impl_transformer_debug_display,
     },
     transformer::Transformer,
 };
@@ -66,21 +70,16 @@ pub use arc_binary_operator::ArcBinaryOperator;
 mod rc_binary_operator;
 #[cfg(feature = "rc")]
 pub use rc_binary_operator::RcBinaryOperator;
+#[cfg(feature = "combinators")]
 mod box_conditional_bi_transformer;
-#[cfg(not(feature = "combinators"))]
-pub(crate) use box_conditional_bi_transformer::BoxConditionalBiTransformer;
 #[cfg(feature = "combinators")]
 pub use box_conditional_bi_transformer::BoxConditionalBiTransformer;
-#[cfg(feature = "rc")]
+#[cfg(all(feature = "rc", feature = "combinators"))]
 mod rc_conditional_bi_transformer;
-#[cfg(feature = "rc")]
-#[cfg(not(feature = "combinators"))]
-pub(crate) use rc_conditional_bi_transformer::RcConditionalBiTransformer;
 #[cfg(all(feature = "rc", feature = "combinators"))]
 pub use rc_conditional_bi_transformer::RcConditionalBiTransformer;
+#[cfg(feature = "combinators")]
 mod arc_conditional_bi_transformer;
-#[cfg(not(feature = "combinators"))]
-pub(crate) use arc_conditional_bi_transformer::ArcConditionalBiTransformer;
 #[cfg(feature = "combinators")]
 pub use arc_conditional_bi_transformer::ArcConditionalBiTransformer;
 

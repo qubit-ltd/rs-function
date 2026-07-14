@@ -9,6 +9,7 @@
 //! Defines the `BoxCallable` public type.
 
 use crate::{
+    functions::macros::impl_function_debug_display,
     macros::{
         impl_common_name_methods,
         impl_common_new_methods,
@@ -86,6 +87,7 @@ impl<R, E> BoxCallable<R, E> {
     /// # Returns
     ///
     /// A new callable that applies `mapper` when this callable succeeds.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn map<U, M>(self, mut mapper: M) -> BoxCallable<U, E>
     where
@@ -110,6 +112,7 @@ impl<R, E> BoxCallable<R, E> {
     /// # Returns
     ///
     /// A new callable that applies `mapper` when this callable fails.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn map_err<E2, M>(self, mut mapper: M) -> BoxCallable<R, E2>
     where
@@ -135,6 +138,7 @@ impl<R, E> BoxCallable<R, E> {
     /// # Returns
     ///
     /// A new callable that runs `next` only when this callable succeeds.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn and_then<U, N>(self, next: N) -> BoxCallable<U, E>
     where
@@ -162,3 +166,5 @@ impl<R, E> Callable<R, E> for BoxCallable<R, E> {
         (self.function)()
     }
 }
+
+impl_function_debug_display!(BoxCallable<R, E>);

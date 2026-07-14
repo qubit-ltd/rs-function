@@ -84,6 +84,7 @@ impl<T> BoxComparator<T> {
     /// let rev = cmp.reversed();
     /// assert_eq!(rev.compare(&5, &3), Ordering::Less);
     /// ```
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn reversed(self) -> Self
     where
@@ -137,6 +138,7 @@ impl<T> BoxComparator<T> {
     /// assert_eq!(cmp.compare(&p1, &p2), Ordering::Greater);
     /// // by_age.compare(&p1, &p2); // Would not compile - moved
     /// ```
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn then_comparing(self, other: Self) -> Self
     where

@@ -8,9 +8,12 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulTransformer` public type.
 
+#[cfg(feature = "combinators")]
 use super::{
     BoxConditionalStatefulTransformer,
     Predicate,
+};
+use super::{
     StatefulTransformer,
     impl_box_transformer_methods,
     impl_transformer_common_methods,

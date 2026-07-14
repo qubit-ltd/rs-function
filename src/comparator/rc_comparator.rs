@@ -89,6 +89,7 @@ impl<T> RcComparator<T> {
     /// assert_eq!(rev.compare(&5, &3), Ordering::Less);
     /// assert_eq!(cmp.compare(&5, &3), Ordering::Greater); // cmp still works
     /// ```
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn reversed(&self) -> Self
     where
@@ -122,6 +123,7 @@ impl<T> RcComparator<T> {
     /// let chained = cmp1.then_comparing(&cmp2);
     /// assert_eq!(chained.compare(&4, &2), Ordering::Greater);
     /// ```
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn then_comparing(&self, other: &Self) -> Self
     where

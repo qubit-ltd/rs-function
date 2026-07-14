@@ -17,18 +17,22 @@
 //! one-time use implementations:
 //!
 //! - [`BoxBiMutatingFunctionOnce`]: Single ownership, one-time use
+use crate::functions::macros::{
+    impl_box_function_methods,
+    impl_function_common_methods,
+    impl_function_constant_method,
+    impl_function_debug_display,
+};
+#[cfg(feature = "combinators")]
 use crate::functions::{
     macros::{
         impl_box_conditional_function,
-        impl_box_function_methods,
         impl_conditional_function_debug_display,
-        impl_function_common_methods,
-        impl_function_constant_method,
-        impl_function_debug_display,
     },
     mutating_function_once::MutatingFunctionOnce,
 };
 use crate::macros::impl_closure_once_trait;
+#[cfg(feature = "combinators")]
 use crate::predicates::bi_predicate::{
     BiPredicate,
     BoxBiPredicate,
@@ -40,9 +44,8 @@ pub use box_bi_mutating_function_once::BoxBiMutatingFunctionOnce;
 mod fn_bi_mutating_function_once_ops;
 #[cfg(feature = "combinators")]
 pub use fn_bi_mutating_function_once_ops::FnBiMutatingFunctionOnceOps;
+#[cfg(feature = "combinators")]
 mod box_conditional_bi_mutating_function_once;
-#[cfg(not(feature = "combinators"))]
-pub(crate) use box_conditional_bi_mutating_function_once::BoxConditionalBiMutatingFunctionOnce;
 #[cfg(feature = "combinators")]
 pub use box_conditional_bi_mutating_function_once::BoxConditionalBiMutatingFunctionOnce;
 

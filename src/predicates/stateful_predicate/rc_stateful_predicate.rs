@@ -8,6 +8,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcStatefulPredicate` public type.
 
+#[cfg(feature = "combinators")]
 use std::ops::Not;
 
 use super::{
@@ -58,6 +59,7 @@ impl<T> RcStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `RcStatefulPredicate` representing logical AND.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn and<P>(&self, mut other: P) -> RcStatefulPredicate<T>
     where
@@ -83,6 +85,7 @@ impl<T> RcStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `RcStatefulPredicate` representing logical OR.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn or<P>(&self, mut other: P) -> RcStatefulPredicate<T>
     where
@@ -107,6 +110,7 @@ impl<T> RcStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `RcStatefulPredicate` representing logical NAND.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn nand<P>(&self, mut other: P) -> RcStatefulPredicate<T>
     where
@@ -132,6 +136,7 @@ impl<T> RcStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `RcStatefulPredicate` representing logical XOR.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn xor<P>(&self, mut other: P) -> RcStatefulPredicate<T>
     where
@@ -156,6 +161,7 @@ impl<T> RcStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `RcStatefulPredicate` representing logical NOR.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn nor<P>(&self, mut other: P) -> RcStatefulPredicate<T>
     where
@@ -170,6 +176,7 @@ impl<T> RcStatefulPredicate<T> {
     }
 }
 
+#[cfg(feature = "combinators")]
 impl<T> Not for RcStatefulPredicate<T>
 where
     T: 'static,
@@ -184,6 +191,7 @@ where
     }
 }
 
+#[cfg(feature = "combinators")]
 impl<T> Not for &RcStatefulPredicate<T>
 where
     T: 'static,

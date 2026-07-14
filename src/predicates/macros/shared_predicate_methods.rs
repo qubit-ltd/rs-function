@@ -95,6 +95,7 @@
 /// // Two-parameter with Rc
 /// impl_shared_predicate_methods!(RcBiPredicate<T, U>, 'static);
 /// ```
+#[cfg(feature = "combinators")]
 macro_rules! impl_shared_predicate_methods {
     // Internal macro for generating logical operations
     (
@@ -388,6 +389,11 @@ macro_rules! impl_shared_predicate_methods {
         );
     };
 
+}
+
+#[cfg(not(feature = "combinators"))]
+macro_rules! impl_shared_predicate_methods {
+    ($($tokens:tt)*) => {};
 }
 
 pub(crate) use impl_shared_predicate_methods;

@@ -88,6 +88,7 @@ impl<R, E> BoxCallableOnce<R, E> {
     /// # Returns
     ///
     /// A new callable that applies `mapper` when this callable succeeds.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn map<U, M>(self, mapper: M) -> BoxCallableOnce<U, E>
     where
@@ -112,6 +113,7 @@ impl<R, E> BoxCallableOnce<R, E> {
     /// # Returns
     ///
     /// A new callable that applies `mapper` when this callable fails.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn map_err<E2, M>(self, mapper: M) -> BoxCallableOnce<R, E2>
     where
@@ -137,6 +139,7 @@ impl<R, E> BoxCallableOnce<R, E> {
     /// # Returns
     ///
     /// A new callable that runs `next` only when this callable succeeds.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn and_then<U, N>(self, next: N) -> BoxCallableOnce<U, E>
     where

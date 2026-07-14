@@ -8,13 +8,16 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcStatefulBiTransformer` public type.
 
+#[cfg(feature = "combinators")]
 use super::{
     BiPredicate,
-    Rc,
     RcConditionalStatefulBiTransformer,
+    StatefulTransformer,
+};
+use super::{
+    Rc,
     RefCell,
     StatefulBiTransformer,
-    StatefulTransformer,
     impl_shared_transformer_methods,
     impl_transformer_clone,
     impl_transformer_common_methods,

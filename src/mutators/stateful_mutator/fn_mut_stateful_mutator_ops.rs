@@ -28,7 +28,7 @@ use super::{
 /// - **Natural Syntax**: Chain operations directly on closures
 /// - **Returns BoxMutator**: Composition results are `BoxMutator<T>` for
 ///   continued chaining
-/// - **Zero Cost**: No overhead when composing closures
+/// - **Typed Composition**: Returns a new closure that captures both operations
 /// - **Automatic Implementation**: All `FnMut(&mut T)` closures get these
 ///   methods automatically
 ///

@@ -137,6 +137,7 @@
 ///     'static
 /// );
 /// ```
+#[cfg(feature = "combinators")]
 macro_rules! impl_shared_transformer_methods {
     (@let_before ArcStatefulTransformer, $name:ident, $value:expr) => {
         let mut $name = $value;
@@ -243,6 +244,11 @@ macro_rules! impl_shared_transformer_methods {
             })
         }
     };
+}
+
+#[cfg(not(feature = "combinators"))]
+macro_rules! impl_shared_transformer_methods {
+    ($($tokens:tt)*) => {};
 }
 
 pub(crate) use impl_shared_transformer_methods;

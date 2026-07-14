@@ -10,17 +10,20 @@
 
 use super::{
     Arc,
-    ArcConditionalStatefulBiTransformer,
-    BiPredicate,
     Mutex,
     StatefulBiTransformer,
-    StatefulTransformer,
     impl_closure_trait,
     impl_shared_transformer_methods,
     impl_transformer_clone,
     impl_transformer_common_methods,
     impl_transformer_constant_method,
     impl_transformer_debug_display,
+};
+#[cfg(feature = "combinators")]
+use super::{
+    ArcConditionalStatefulBiTransformer,
+    BiPredicate,
+    StatefulTransformer,
 };
 
 // ============================================================================

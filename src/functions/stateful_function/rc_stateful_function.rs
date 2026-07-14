@@ -8,10 +8,13 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcStatefulFunction` public type.
 
+#[cfg(feature = "combinators")]
 use super::{
     Predicate,
-    Rc,
     RcConditionalStatefulFunction,
+};
+use super::{
+    Rc,
     RefCell,
     StatefulFunction,
     impl_function_clone,
@@ -35,8 +38,8 @@ use super::{
 ///
 /// - **Based on**: `Rc<RefCell<dyn FnMut(&T) -> R>>`
 /// - **Ownership**: Shared ownership via reference counting (non-atomic)
-/// - **Reusability**: Can be called multiple times (each call consumes its
-///   input)
+/// - **Reusability**: Can be called multiple times (borrows its input each
+///   time)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync`)
 /// - **Clonable**: Cheap cloning via `Rc::clone`
 /// - **Statefulness**: Can modify internal state between calls

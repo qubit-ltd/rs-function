@@ -83,6 +83,7 @@
 /// //     );
 /// // }
 /// ```
+#[cfg(feature = "combinators")]
 macro_rules! impl_box_mutator_methods {
     (@and_then Mutator, $struct_name:ident, $first:expr, $after:expr, $t:ident) => {{
         let first = $first;
@@ -209,6 +210,11 @@ macro_rules! impl_box_mutator_methods {
             impl_box_mutator_methods!(@and_then $mutator_trait, $struct_name, self, after, $t)
         }
     };
+}
+
+#[cfg(not(feature = "combinators"))]
+macro_rules! impl_box_mutator_methods {
+    ($($tokens:tt)*) => {};
 }
 
 pub(crate) use impl_box_mutator_methods;

@@ -79,6 +79,7 @@ impl<R, E> LocalBoxCallableOnce<R, E> {
     /// # Returns
     ///
     /// A new local callable that applies `mapper` when this callable succeeds.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn map<U, M>(self, mapper: M) -> LocalBoxCallableOnce<U, E>
     where
@@ -103,6 +104,7 @@ impl<R, E> LocalBoxCallableOnce<R, E> {
     /// # Returns
     ///
     /// A new local callable that applies `mapper` when this callable fails.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn map_err<E2, M>(self, mapper: M) -> LocalBoxCallableOnce<R, E2>
     where
@@ -128,6 +130,7 @@ impl<R, E> LocalBoxCallableOnce<R, E> {
     /// # Returns
     ///
     /// A new local callable that runs `next` only when this callable succeeds.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn and_then<U, N>(self, next: N) -> LocalBoxCallableOnce<U, E>
     where

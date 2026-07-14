@@ -8,10 +8,13 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcStatefulMutator` public type.
 
+#[cfg(feature = "combinators")]
 use super::{
     Predicate,
-    Rc,
     RcConditionalStatefulMutator,
+};
+use super::{
+    Rc,
     RcMutMutatorFn,
     RefCell,
     StatefulMutator,

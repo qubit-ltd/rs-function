@@ -10,13 +10,16 @@
 
 use super::{
     Consumer,
-    Predicate,
     Rc,
-    RcConditionalConsumer,
     impl_consumer_clone,
     impl_consumer_common_methods,
     impl_consumer_debug_display,
     impl_shared_consumer_methods,
+};
+#[cfg(feature = "combinators")]
+use super::{
+    Predicate,
+    RcConditionalConsumer,
 };
 
 // ============================================================================

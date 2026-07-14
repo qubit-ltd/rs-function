@@ -7,10 +7,9 @@
 // =============================================================================
 //! Defines the `RcStatefulTester` public type.
 
-use std::{
-    cell::RefCell,
-    ops::Not,
-};
+use std::cell::RefCell;
+#[cfg(feature = "combinators")]
+use std::ops::Not;
 
 use super::{
     Rc,
@@ -45,6 +44,7 @@ impl RcStatefulTester {
 
     /// Combines this tester with another stateful tester using logical AND.
     #[inline]
+    #[cfg(feature = "combinators")]
     pub fn and<T>(&self, mut next: T) -> RcStatefulTester
     where
         T: StatefulTester + 'static,
@@ -58,6 +58,7 @@ impl RcStatefulTester {
 
     /// Combines this tester with another stateful tester using logical OR.
     #[inline]
+    #[cfg(feature = "combinators")]
     pub fn or<T>(&self, mut next: T) -> RcStatefulTester
     where
         T: StatefulTester + 'static,
@@ -71,6 +72,7 @@ impl RcStatefulTester {
 
     /// Combines this tester with another stateful tester using logical NAND.
     #[inline]
+    #[cfg(feature = "combinators")]
     pub fn nand<T>(&self, mut next: T) -> RcStatefulTester
     where
         T: StatefulTester + 'static,
@@ -84,6 +86,7 @@ impl RcStatefulTester {
 
     /// Combines this tester with another stateful tester using logical XOR.
     #[inline]
+    #[cfg(feature = "combinators")]
     pub fn xor<T>(&self, mut next: T) -> RcStatefulTester
     where
         T: StatefulTester + 'static,
@@ -97,6 +100,7 @@ impl RcStatefulTester {
 
     /// Combines this tester with another stateful tester using logical NOR.
     #[inline]
+    #[cfg(feature = "combinators")]
     pub fn nor<T>(&self, mut next: T) -> RcStatefulTester
     where
         T: StatefulTester + 'static,
@@ -118,6 +122,7 @@ impl Clone for RcStatefulTester {
     }
 }
 
+#[cfg(feature = "combinators")]
 impl Not for RcStatefulTester {
     type Output = RcStatefulTester;
 
@@ -128,6 +133,7 @@ impl Not for RcStatefulTester {
     }
 }
 
+#[cfg(feature = "combinators")]
 impl Not for &RcStatefulTester {
     type Output = RcStatefulTester;
 

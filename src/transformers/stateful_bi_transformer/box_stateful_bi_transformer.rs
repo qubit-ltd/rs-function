@@ -8,11 +8,14 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulBiTransformer` public type.
 
+#[cfg(feature = "combinators")]
 use super::{
     BiPredicate,
     BoxConditionalStatefulBiTransformer,
-    StatefulBiTransformer,
     StatefulTransformer,
+};
+use super::{
+    StatefulBiTransformer,
     impl_box_transformer_methods,
     impl_transformer_common_methods,
     impl_transformer_constant_method,

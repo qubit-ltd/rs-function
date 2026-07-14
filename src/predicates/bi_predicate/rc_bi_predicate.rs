@@ -8,6 +8,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcBiPredicate` public type.
 
+#[cfg(feature = "combinators")]
 use std::ops::Not;
 
 use super::{
@@ -60,6 +61,7 @@ impl<T, U> RcBiPredicate<T, U> {
     impl_shared_predicate_methods!(RcBiPredicate<T, U>, 'static);
 }
 
+#[cfg(feature = "combinators")]
 impl<T, U> Not for RcBiPredicate<T, U>
 where
     T: 'static,
@@ -75,6 +77,7 @@ where
     }
 }
 
+#[cfg(feature = "combinators")]
 impl<T, U> Not for &RcBiPredicate<T, U>
 where
     T: 'static,

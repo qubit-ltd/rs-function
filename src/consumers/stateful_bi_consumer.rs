@@ -29,6 +29,7 @@
 //!
 //! Suitable for statistics, accumulation, and event processing scenarios
 //! involving two parameters.
+#[cfg(feature = "rc")]
 use std::cell::RefCell;
 #[cfg(feature = "rc")]
 use std::rc::Rc;
@@ -36,20 +37,24 @@ use std::sync::Arc;
 
 use parking_lot::Mutex;
 
+#[cfg(feature = "combinators")]
 use crate::consumers::macros::{
     impl_box_conditional_consumer,
-    impl_box_consumer_methods,
     impl_conditional_consumer_clone,
     impl_conditional_consumer_debug_display,
+    impl_shared_conditional_consumer,
+};
+use crate::consumers::macros::{
+    impl_box_consumer_methods,
     impl_consumer_clone,
     impl_consumer_common_methods,
     impl_consumer_debug_display,
-    impl_shared_conditional_consumer,
     impl_shared_consumer_methods,
 };
 use crate::macros::impl_closure_trait;
-#[cfg(feature = "rc")]
+#[cfg(all(feature = "rc", feature = "combinators"))]
 use crate::predicates::bi_predicate::RcBiPredicate;
+#[cfg(feature = "combinators")]
 use crate::predicates::bi_predicate::{
     ArcBiPredicate,
     BiPredicate,
@@ -68,21 +73,16 @@ pub use arc_stateful_bi_consumer::ArcStatefulBiConsumer;
 mod fn_stateful_bi_consumer_ops;
 #[cfg(feature = "combinators")]
 pub use fn_stateful_bi_consumer_ops::FnStatefulBiConsumerOps;
+#[cfg(feature = "combinators")]
 mod box_conditional_stateful_bi_consumer;
-#[cfg(not(feature = "combinators"))]
-pub(crate) use box_conditional_stateful_bi_consumer::BoxConditionalStatefulBiConsumer;
 #[cfg(feature = "combinators")]
 pub use box_conditional_stateful_bi_consumer::BoxConditionalStatefulBiConsumer;
+#[cfg(feature = "combinators")]
 mod arc_conditional_stateful_bi_consumer;
-#[cfg(not(feature = "combinators"))]
-pub(crate) use arc_conditional_stateful_bi_consumer::ArcConditionalStatefulBiConsumer;
 #[cfg(feature = "combinators")]
 pub use arc_conditional_stateful_bi_consumer::ArcConditionalStatefulBiConsumer;
-#[cfg(feature = "rc")]
+#[cfg(all(feature = "rc", feature = "combinators"))]
 mod rc_conditional_stateful_bi_consumer;
-#[cfg(feature = "rc")]
-#[cfg(not(feature = "combinators"))]
-pub(crate) use rc_conditional_stateful_bi_consumer::RcConditionalStatefulBiConsumer;
 #[cfg(all(feature = "rc", feature = "combinators"))]
 pub use rc_conditional_stateful_bi_consumer::RcConditionalStatefulBiConsumer;
 
@@ -111,9 +111,8 @@ pub use rc_conditional_stateful_bi_consumer::RcConditionalStatefulBiConsumer;
 ///
 /// - **Unified Interface**: All bi-consumer types share the same `accept`
 ///   method signature
-/// - **Automatic Implementation**: Closures automatically implement this trait
-///   with zero overhead
-/// - **Type Conversions**: Easy conversion between ownership models
+/// - **Automatic Implementation**: Closures implement this trait directly,
+///   without allocating an adapter
 /// - **Generic Programming**: Write functions accepting any bi-consumer type
 ///
 /// # Examples

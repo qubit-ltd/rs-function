@@ -10,12 +10,15 @@
 
 use super::{
     Arc,
-    Predicate,
     Supplier,
-    Transformer,
     impl_shared_supplier_methods,
     impl_supplier_clone,
     impl_supplier_debug_display,
+};
+#[cfg(feature = "combinators")]
+use super::{
+    Predicate,
+    Transformer,
 };
 
 // ======================================================================

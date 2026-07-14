@@ -8,9 +8,12 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulMutator` public type.
 
+#[cfg(feature = "combinators")]
 use super::{
     BoxConditionalStatefulMutator,
     Predicate,
+};
+use super::{
     StatefulMutator,
     impl_box_mutator_methods,
     impl_mutator_common_methods,
@@ -30,7 +33,8 @@ use super::{
 /// # Features
 ///
 /// - **Single Ownership**: Not cloneable, ownership moves on use
-/// - **Zero Overhead**: No reference counting or locking
+/// - **Runtime cost**: One heap allocation and dynamic dispatch; no reference
+///   counting or locking
 /// - **Mutable State**: Can modify captured environment via `FnMut`
 /// - **Builder Pattern**: Method chaining consumes `self` naturally
 /// - **Factory Methods**: Convenient constructors for common patterns

@@ -20,9 +20,7 @@
 mod box_callable;
 pub use box_callable::BoxCallable;
 #[cfg(feature = "rc")]
-#[cfg(feature = "rc")]
 mod rc_callable;
-#[cfg(feature = "rc")]
 #[cfg(feature = "rc")]
 pub use rc_callable::RcCallable;
 #[cfg(feature = "stateful")]
