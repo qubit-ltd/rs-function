@@ -82,7 +82,11 @@ use super::{
 ///
 /// ## Method Chaining
 ///
+/// This example requires the `combinators` feature.
+///
 /// ```rust
+/// # #[cfg(feature = "combinators")]
+/// # {
 /// use qubit_function::{MutatorOnce, BoxMutatorOnce};
 ///
 /// let data1 = vec![1, 2];
@@ -98,6 +102,7 @@ use super::{
 /// let mut target = vec![0];
 /// chained.apply(&mut target);
 /// assert_eq!(target, vec![0, 1, 2, 3, 4]);
+/// # }
 /// ```
 pub struct BoxMutatorOnce<T> {
     pub(super) function: Box<dyn FnOnce(&mut T)>,

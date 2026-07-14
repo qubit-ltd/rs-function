@@ -197,7 +197,11 @@ pub trait FnBiMutatingFunctionOnceOps<T, U, R>:
     ///
     /// ## Preserving bi-predicate with clone
     ///
+    /// This example requires the `rc` feature.
+    ///
     /// ```rust
+    /// # #[cfg(feature = "rc")]
+    /// # {
     /// use qubit_function::{BiMutatingFunctionOnce, FnBiMutatingFunctionOnceOps,
     ///     RcBiPredicate};
     ///
@@ -223,6 +227,7 @@ pub trait FnBiMutatingFunctionOnceOps<T, U, R>:
     /// let test_a = 5;
     /// let test_b = 3;
     /// assert!(both_positive.test(&test_a, &test_b));
+    /// # }
     /// ```
     fn when<P>(
         self,

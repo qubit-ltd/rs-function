@@ -30,9 +30,13 @@ use super::{
 /// borrow `&self`, allowing the original bi-predicate to remain
 /// usable after composition.
 ///
+/// Composition methods require the `combinators` feature.
+///
 /// # Examples
 ///
 /// ```rust
+/// # #[cfg(feature = "combinators")]
+/// # {
 /// use qubit_function::{BiPredicate, RcBiPredicate};
 ///
 /// let pred = RcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
@@ -41,6 +45,7 @@ use super::{
 /// // Original bi-predicate remains usable after composition
 /// let combined = pred.and(RcBiPredicate::new(|x: &i32, y: &i32| x > y));
 /// assert!(pred.test(&5, &3));  // Still works
+/// # }
 /// ```
 pub struct RcBiPredicate<T, U> {
     pub(super) function: Rc<BiPredicateFn<T, U>>,

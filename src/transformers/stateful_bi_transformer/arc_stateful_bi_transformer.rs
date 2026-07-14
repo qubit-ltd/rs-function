@@ -37,12 +37,19 @@ use super::{
 ///
 /// # Features
 ///
-/// - **Based on**: `Arc<dyn FnMut(T, U) -> R + Send + Sync>`
+/// - **Based on**: `Arc<Mutex<dyn FnMut(T, U) -> R + Send>>`
 /// - **Ownership**: Shared ownership via reference counting
 /// - **Reusability**: Can be called multiple times (each call consumes its
 ///   inputs)
-/// - **Thread Safety**: Thread-safe (`Send + Sync` required)
+/// - **Thread Safety**: Thread-safe (`Send` required; calls are serialized)
 /// - **Clonable**: Cheap cloning via `Arc::clone`
+///
+/// # Locking and reentrancy
+///
+/// Each call acquires a `parking_lot::Mutex` and holds it while the user
+/// callback runs. Synchronous re-entry through the same shared state
+/// deadlocks. The mutex is not poisoned after a panic, and mutations completed
+/// before a panic are not rolled back.
 pub struct ArcStatefulBiTransformer<T, U, R> {
     pub(super) function: Arc<Mutex<dyn FnMut(T, U) -> R + Send>>,
     pub(super) name: Option<String>,

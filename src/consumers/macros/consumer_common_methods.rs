@@ -27,7 +27,11 @@
 //!
 //! # Usage
 //!
+//! The example requires the `stateful` feature.
+//!
 //! ```rust
+//! # #[cfg(feature = "stateful")]
+//! # {
 //! // Single generic parameter - Consumer
 //! use std::sync::Arc;
 //! use std::sync::Mutex;
@@ -63,6 +67,7 @@
 //!     (Fn(&i32, &i32) + 'static),
 //!     |f| Box::new(f)
 //! );
+//! # }
 //! ```
 //!
 //! # Generated Methods
@@ -94,7 +99,11 @@
 ///
 /// # Usage
 ///
+/// The example requires the `stateful` feature.
+///
 /// ```rust
+/// # #[cfg(feature = "stateful")]
+/// # {
 /// // Single generic parameter - Consumer
 /// use qubit_function::{ArcStatefulConsumer, BoxBiConsumer, BoxConsumer};
 /// use std::sync::Arc;
@@ -130,6 +139,7 @@
 ///     (Fn(&i32, &i32) + 'static),
 ///     |f| Box::new(f)
 /// );
+/// # }
 /// ```
 ///
 /// # Generated Methods

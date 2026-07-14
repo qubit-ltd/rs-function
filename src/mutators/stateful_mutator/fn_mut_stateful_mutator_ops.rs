@@ -17,7 +17,7 @@ use super::{
 // 6. Provide extension methods for closures
 // ============================================================================
 
-/// Extension trait providing mutator composition methods for closures
+/// Extension trait providing stateful mutator composition for closures.
 ///
 /// Provides `and_then` and other composition methods for all closures that
 /// implement `FnMut(&mut T)`, enabling direct method chaining on closures
@@ -26,8 +26,8 @@ use super::{
 /// # Features
 ///
 /// - **Natural Syntax**: Chain operations directly on closures
-/// - **Returns BoxMutator**: Composition results are `BoxMutator<T>` for
-///   continued chaining
+/// - **Returns BoxStatefulMutator**: Composition results are
+///   `BoxStatefulMutator<T>` for continued chaining
 /// - **Typed Composition**: Returns a new closure that captures both operations
 /// - **Automatic Implementation**: All `FnMut(&mut T)` closures get these
 ///   methods automatically
@@ -35,21 +35,23 @@ use super::{
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{Mutator, FnMutatorOps};
+/// use qubit_function::{FnMutStatefulMutatorOps, StatefulMutator};
 ///
-/// let chained = (|x: &mut i32| *x *= 2)
-///     .and_then(|x: &mut i32| *x += 10);
-/// let mut value = 5;
-/// let mut result = chained;
-/// result.apply(&mut value);
-/// assert_eq!(value, 20); // (5 * 2) + 10
+/// let mut calls = 0;
+/// let mut chained = (move |x: &mut i32| {
+///     calls += 1;
+///     *x += calls;
+/// }).and_then(|x: &mut i32| *x *= 2);
+/// let mut value = 10;
+/// chained.apply(&mut value);
+/// assert_eq!(value, 22);
 /// ```
 pub trait FnMutStatefulMutatorOps<T>: FnMut(&mut T) + Sized {
     /// Chains another mutator in sequence
     ///
     /// Returns a new mutator that first executes the current operation, then
     /// executes the next operation. Consumes the current closure and returns
-    /// `BoxMutator<T>`.
+    /// `BoxStatefulMutator<T>`.
     ///
     /// # Parameters
     ///
@@ -58,28 +60,31 @@ pub trait FnMutStatefulMutatorOps<T>: FnMut(&mut T) + Sized {
     ///   you need to preserve the original mutator, clone it first (if it
     ///   implements `Clone`). Can be:
     ///   - A closure: `|x: &mut T|`
-    ///   - A `BoxMutator<T>`
-    ///   - An `ArcMutator<T>`
-    ///   - An `RcMutator<T>`
-    ///   - Any type implementing `Mutator<T>`
+    ///   - A `BoxStatefulMutator<T>`
+    ///   - An `ArcStatefulMutator<T>`
+    ///   - An `RcStatefulMutator<T>`
+    ///   - Any type implementing `StatefulMutator<T>`
     ///
     /// # Returns
     ///
-    /// Returns the composed `BoxMutator<T>`
+    /// Returns the composed `BoxStatefulMutator<T>`
     ///
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_function::{Mutator, FnMutatorOps};
+    /// use qubit_function::{FnMutStatefulMutatorOps, StatefulMutator};
     ///
-    /// let chained = (|x: &mut i32| *x *= 2)
-    ///     .and_then(|x: &mut i32| *x += 10)
-    ///     .and_then(|x: &mut i32| println!("Result: {}", x));
+    /// let mut calls = 0;
+    /// let mut chained = (move |x: &mut i32| {
+    ///     calls += 1;
+    ///     *x += calls;
+    /// })
+    /// .and_then(|x: &mut i32| *x *= 2)
+    /// .and_then(|x: &mut i32| println!("Result: {x}"));
     ///
-    /// let mut value = 5;
-    /// let mut result = chained;
-    /// result.apply(&mut value); // Prints: Result: 20
-    /// assert_eq!(value, 20);
+    /// let mut value = 10;
+    /// chained.apply(&mut value); // Prints: Result: 22
+    /// assert_eq!(value, 22);
     /// ```
     fn and_then<C>(self, next: C) -> BoxStatefulMutator<T>
     where
@@ -96,5 +101,5 @@ pub trait FnMutStatefulMutatorOps<T>: FnMut(&mut T) + Sized {
     }
 }
 
-/// Implements FnMutatorOps for all closure types
+/// Implements `FnMutStatefulMutatorOps` for all `FnMut` closure types.
 impl<T, F> FnMutStatefulMutatorOps<T> for F where F: FnMut(&mut T) {}

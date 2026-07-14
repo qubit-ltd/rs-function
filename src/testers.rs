@@ -81,7 +81,11 @@
 //!
 //! ## Logical Combination
 //!
+//! This example requires the `combinators` feature.
+//!
 //! ```rust
+//! # #[cfg(feature = "combinators")]
+//! # {
 //! use qubit_function::{BoxTester, Tester};
 //! use std::sync::{Arc, atomic::{AtomicUsize, AtomicBool, Ordering}};
 //!
@@ -136,6 +140,7 @@
 //! is_healthy.store(false, Ordering::Relaxed);
 //! cpu_usage.store(50, Ordering::Relaxed);
 //! assert!(can_accept_traffic.test()); // still ready
+//! # }
 //! ```
 //!
 //! ## Thread-Safe Sharing

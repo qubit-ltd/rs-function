@@ -87,7 +87,11 @@
 ///
 /// # Usage Examples
 ///
+/// This example requires the `rc` feature.
+///
 /// ```rust
+/// # #[cfg(feature = "rc")]
+/// # {
 /// // Arc single-parameter Consumer
 /// use std::sync::atomic::{AtomicI32, Ordering};
 /// use std::sync::Arc;
@@ -137,6 +141,7 @@
 /// let _ = bi_conditional_rc.and_then(RcBiConsumer::new(|x: &i32, y: &i32| {
 ///     let _ = (*x, *y);
 /// }));
+/// # }
 /// ```
 macro_rules! impl_shared_conditional_consumer {
     (@let_consumer Consumer, $name:ident, $value:expr) => {

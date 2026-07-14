@@ -30,9 +30,13 @@ use super::{
 /// allowing the original bi-predicate to remain usable after
 /// composition.
 ///
+/// Composition methods require the `combinators` feature.
+///
 /// # Examples
 ///
 /// ```rust
+/// # #[cfg(feature = "combinators")]
+/// # {
 /// use qubit_function::{BiPredicate, ArcBiPredicate};
 ///
 /// let pred = ArcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
@@ -47,6 +51,7 @@ use super::{
 /// std::thread::spawn(move || {
 ///     assert!(pred_clone.test(&10, &5));
 /// }).join().expect("thread should not panic");
+/// # }
 /// ```
 pub struct ArcBiPredicate<T, U> {
     pub(super) function: Arc<SendSyncBiPredicateFn<T, U>>,

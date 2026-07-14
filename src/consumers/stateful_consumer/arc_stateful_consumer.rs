@@ -81,6 +81,13 @@ type ArcStatefulConsumerFn<T> = Arc<Mutex<dyn FnMut(&T) + Send>>;
 /// consumer.accept(&5);
 /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![10]);
 /// ```
+///
+/// # Locking and reentrancy
+///
+/// Each call acquires a `parking_lot::Mutex` and holds it while the user
+/// callback runs. Synchronous re-entry through the same shared state
+/// deadlocks. The mutex is not poisoned after a panic, and mutations completed
+/// before a panic are not rolled back.
 pub struct ArcStatefulConsumer<T> {
     pub(super) function: ArcStatefulConsumerFn<T>,
     pub(super) name: Option<String>,

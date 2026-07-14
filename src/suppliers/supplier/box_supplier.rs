@@ -36,12 +36,17 @@ use super::{
 /// read-only operations. When you call methods like `map()`, the
 /// original supplier is consumed and you get a new one:
 ///
+/// Transformation methods require the `combinators` feature.
+///
 /// ```rust
+/// # #[cfg(feature = "combinators")]
+/// # {
 /// use qubit_function::{BoxSupplier, Supplier};
 ///
 /// let supplier = BoxSupplier::new(|| 10);
 /// let mapped = supplier.map(|x| x * 2);
 /// // supplier is no longer usable here
+/// # }
 /// ```
 ///
 /// # Examples
@@ -58,7 +63,11 @@ use super::{
 ///
 /// ## Method Chaining
 ///
+/// This example requires the `combinators` feature.
+///
 /// ```rust
+/// # #[cfg(feature = "combinators")]
+/// # {
 /// use qubit_function::{BoxSupplier, Supplier};
 ///
 /// let pipeline = BoxSupplier::new(|| 10)
@@ -66,6 +75,7 @@ use super::{
 ///     .map(|x| x + 5);
 ///
 /// assert_eq!(pipeline.get(), 25);
+/// # }
 /// ```
 pub struct BoxSupplier<T> {
     pub(super) function: Box<dyn Fn() -> T>,

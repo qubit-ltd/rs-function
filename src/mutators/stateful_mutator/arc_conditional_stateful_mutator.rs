@@ -19,17 +19,17 @@ use super::{
 };
 
 // ============================================================================
-// 9. ArcConditionalMutator - Arc-based Conditional Mutator
+// 9. ArcConditionalStatefulMutator - Arc-based Conditional Stateful Mutator
 // ============================================================================
 
-/// ArcConditionalMutator struct
+/// Arc-based conditional stateful mutator.
 ///
-/// A thread-safe conditional mutator that only executes when a predicate is
-/// satisfied. Uses `ArcMutator` and `ArcPredicate` for shared ownership across
-/// threads.
+/// A thread-safe conditional stateful mutator that only executes when a
+/// predicate is satisfied. Uses `ArcStatefulMutator` and `ArcPredicate` for
+/// shared ownership across threads.
 ///
-/// This type is typically created by calling `ArcMutator::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
+/// This type is typically created by calling `ArcStatefulMutator::when()` and
+/// works with `or_else()` to create if-then-else logic.
 ///
 /// # Features
 ///
@@ -41,9 +41,13 @@ use super::{
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{Mutator, ArcMutator};
+/// use qubit_function::{ArcStatefulMutator, StatefulMutator};
 ///
-/// let conditional = ArcMutator::new(|x: &mut i32| *x *= 2)
+/// let mut calls = 0;
+/// let conditional = ArcStatefulMutator::new(move |x: &mut i32| {
+///     calls += 1;
+///     *x += calls;
+/// })
 ///     .when(|x: &i32| *x > 0);
 ///
 /// let conditional_clone = conditional.clone();
@@ -51,8 +55,16 @@ use super::{
 /// let mut value = 5;
 /// let mut m = conditional;
 /// m.apply(&mut value);
-/// assert_eq!(value, 10);
+/// assert_eq!(value, 6);
 /// ```
+///
+/// # Locking and reentrancy
+///
+/// When the wrapped stateful callback executes, the underlying
+/// `parking_lot::Mutex` remains locked until that callback returns.
+/// Synchronous re-entry through the same shared state deadlocks. The mutex is
+/// not poisoned after a panic, and mutations completed before a panic are not
+/// rolled back.
 pub struct ArcConditionalStatefulMutator<T> {
     pub(super) mutator: ArcStatefulMutator<T>,
     pub(super) predicate: ArcPredicate<T>,

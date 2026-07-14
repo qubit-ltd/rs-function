@@ -25,14 +25,14 @@ use super::{
 };
 
 // ============================================================================
-// 3. RcMutator - Single-Threaded Shared Ownership Implementation
+// 3. RcStatefulMutator - Single-Threaded Shared Ownership Implementation
 // ============================================================================
 
-/// RcMutator struct
+/// Rc-based stateful mutator.
 ///
-/// A mutator implementation based on `Rc<RefCell<dyn FnMut(&mut T)>>` for
-/// single-threaded shared ownership scenarios. This type allows multiple
-/// references to the same mutator without the overhead of thread safety.
+/// A stateful mutator based on `Rc<RefCell<dyn FnMut(&mut T)>>` for
+/// single-threaded shared ownership scenarios. Clones share the callback and
+/// its captured state.
 ///
 /// # Features
 ///
@@ -41,11 +41,11 @@ use super::{
 /// - **Interior Mutability**: Uses `RefCell` for runtime borrow checking
 /// - **Mutable State**: Can modify captured environment via `FnMut`
 /// - **Chainable**: Method chaining via `&self` (non-consuming)
-/// - **Performance**: More efficient than `ArcMutator` (no locking)
+/// - **Performance**: More efficient than `ArcStatefulMutator` (no locking)
 ///
 /// # Use Cases
 ///
-/// Choose `RcMutator` when:
+/// Choose `RcStatefulMutator` when:
 /// - The mutator needs to be shared within a single thread
 /// - Thread safety is not required
 /// - Performance is important (avoiding lock overhead)
@@ -53,15 +53,21 @@ use super::{
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{Mutator, RcMutator};
+/// use qubit_function::{RcStatefulMutator, StatefulMutator};
 ///
-/// let mutator = RcMutator::new(|x: &mut i32| *x *= 2);
-/// let clone = mutator.clone();
+/// let mut calls = 0;
+/// let mutator = RcStatefulMutator::new(move |x: &mut i32| {
+///     calls += 1;
+///     *x += calls;
+/// });
+/// let mut first = mutator.clone();
+/// let mut second = mutator;
 ///
-/// let mut value = 5;
-/// let mut m = mutator;
-/// m.apply(&mut value);
-/// assert_eq!(value, 10);
+/// let mut value = 10;
+/// first.apply(&mut value);
+/// assert_eq!(value, 11);
+/// second.apply(&mut value);
+/// assert_eq!(value, 13);
 /// ```
 /// # Borrowing and reentrancy
 ///

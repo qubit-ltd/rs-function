@@ -28,9 +28,13 @@ use super::{
 /// shared across threads. Composition methods borrow `&self`, allowing the
 /// original predicate to remain usable after composition.
 ///
+/// Composition methods require the `combinators` feature.
+///
 /// # Examples
 ///
 /// ```rust
+/// # #[cfg(feature = "combinators")]
+/// # {
 /// use qubit_function::{Predicate, ArcPredicate};
 ///
 /// let pred = ArcPredicate::new(|x: &i32| *x > 0);
@@ -45,6 +49,7 @@ use super::{
 /// std::thread::spawn(move || {
 ///     assert!(pred_clone.test(&10));
 /// }).join().expect("thread should not panic");
+/// # }
 /// ```
 pub struct ArcPredicate<T> {
     pub(super) function: Arc<dyn Fn(&T) -> bool + Send + Sync>,

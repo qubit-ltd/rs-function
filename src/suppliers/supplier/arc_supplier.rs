@@ -36,12 +36,17 @@ use super::{
 /// Methods borrow `&self` instead of consuming `self`. The
 /// original supplier remains usable after method calls:
 ///
+/// Transformation methods require the `combinators` feature.
+///
 /// ```rust
+/// # #[cfg(feature = "combinators")]
+/// # {
 /// use qubit_function::{ArcSupplier, Supplier};
 ///
 /// let source = ArcSupplier::new(|| 10);
 /// let mapped = source.map(|x| x * 2);
 /// // source is still usable here!
+/// # }
 /// ```
 ///
 /// # Lock-Free Performance
@@ -74,7 +79,11 @@ use super::{
 ///
 /// ## Reusable Transformations
 ///
+/// This example requires the `combinators` feature.
+///
 /// ```rust
+/// # #[cfg(feature = "combinators")]
+/// # {
 /// use qubit_function::{ArcSupplier, Supplier};
 ///
 /// let base = ArcSupplier::new(|| 10);
@@ -85,6 +94,7 @@ use super::{
 /// assert_eq!(base.get(), 10);
 /// assert_eq!(doubled.get(), 20);
 /// assert_eq!(tripled.get(), 30);
+/// # }
 /// ```
 pub struct ArcSupplier<T> {
     pub(super) function: Arc<dyn Fn() -> T + Send + Sync>,

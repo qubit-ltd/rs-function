@@ -152,7 +152,11 @@ pub trait FnBiFunctionOnceOps<T, U, R>: FnOnce(&T, &U) -> R + Sized {
     ///
     /// ## Preserving bi-predicate with clone
     ///
+    /// This example requires the `rc` feature.
+    ///
     /// ```rust
+    /// # #[cfg(feature = "rc")]
+    /// # {
     /// use qubit_function::{BiFunctionOnce, FnBiFunctionOnceOps,
     ///     RcBiPredicate};
     ///
@@ -169,6 +173,7 @@ pub trait FnBiFunctionOnceOps<T, U, R>: FnOnce(&T, &U) -> R + Sized {
     /// // Original bi-predicate still usable
     /// use qubit_function::BiPredicate;
     /// assert!(both_positive.test(&5, &3));
+    /// # }
     /// ```
     fn when<P>(self, predicate: P) -> BoxConditionalBiFunctionOnce<T, U, R>
     where

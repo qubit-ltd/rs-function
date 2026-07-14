@@ -60,12 +60,17 @@
 //!
 //! ### BoxBiPredicate - Single Ownership
 //!
+//! This example requires the `combinators` feature.
+//!
 //! ```rust
+//! # #[cfg(feature = "combinators")]
+//! # {
 //! use qubit_function::{BiPredicate, BoxBiPredicate};
 //!
 //! let pred = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0)
 //!     .and(BoxBiPredicate::new(|x: &i32, y: &i32| x > y));
 //! assert!(pred.test(&10, &5));
+//! # }
 //! ```
 //!
 //! ### Closure Composition with Extension Methods
@@ -74,6 +79,8 @@
 //! `FnBiPredicateOps` extension trait, returning `BoxBiPredicate`:
 //!
 //! ```rust
+//! # #[cfg(feature = "combinators")]
+//! # {
 //! use qubit_function::{BiPredicate,
 //!     FnBiPredicateOps};
 //!
@@ -91,11 +98,16 @@
 //! let either = negative_sum.or(both_large);
 //! assert!(either.test(&-10, &5));
 //! assert!(either.test(&200, &150));
+//! # }
 //! ```
 //!
 //! ### RcBiPredicate - Single-threaded Reuse
 //!
+//! This example requires the `rc` and `combinators` features.
+//!
 //! ```rust
+//! # #[cfg(all(feature = "rc", feature = "combinators"))]
+//! # {
 //! use qubit_function::{BiPredicate, RcBiPredicate};
 //!
 //! let pred = RcBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
@@ -104,6 +116,7 @@
 //!
 //! // Original predicate is still usable
 //! assert!(pred.test(&5, &3));
+//! # }
 //! ```
 //!
 //! ### ArcBiPredicate - Thread-safe Sharing

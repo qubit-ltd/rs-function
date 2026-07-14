@@ -37,12 +37,17 @@ use super::{
 /// Like `ArcStatefulSupplier`, methods borrow `&self` instead of consuming
 /// `self`:
 ///
+/// This example requires the `combinators` feature.
+///
 /// ```rust
+/// # #[cfg(feature = "combinators")]
+/// # {
 /// use qubit_function::{RcStatefulSupplier, StatefulSupplier};
 ///
 /// let source = RcStatefulSupplier::new(|| 10);
 /// let mapped = source.map(|x| x * 2);
 /// // source is still usable here!
+/// # }
 /// ```
 ///
 /// # Examples
@@ -71,7 +76,11 @@ use super::{
 ///
 /// ## Reusable Transformations
 ///
+/// This example requires the `combinators` feature.
+///
 /// ```rust
+/// # #[cfg(feature = "combinators")]
+/// # {
 /// use qubit_function::{RcStatefulSupplier, StatefulSupplier};
 ///
 /// let base = RcStatefulSupplier::new(|| 10);
@@ -84,6 +93,7 @@ use super::{
 /// assert_eq!(b.get(), 10);
 /// assert_eq!(d.get(), 20);
 /// assert_eq!(t.get(), 30);
+/// # }
 /// ```
 /// # Borrowing and reentrancy
 ///

@@ -59,6 +59,14 @@ use super::{
 /// m.accept(&value);
 /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
 /// ```
+///
+/// # Locking and reentrancy
+///
+/// When the wrapped stateful callback executes, the underlying
+/// `parking_lot::Mutex` remains locked until that callback returns.
+/// Synchronous re-entry through the same shared state deadlocks. The mutex is
+/// not poisoned after a panic, and mutations completed before a panic are not
+/// rolled back.
 pub struct ArcConditionalStatefulConsumer<T> {
     pub(super) consumer: ArcStatefulConsumer<T>,
     pub(super) predicate: ArcPredicate<T>,

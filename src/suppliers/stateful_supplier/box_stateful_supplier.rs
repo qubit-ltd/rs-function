@@ -36,12 +36,17 @@ use super::{
 /// like `map()`, the original supplier is consumed and you get a new
 /// one:
 ///
+/// This example requires the `combinators` feature.
+///
 /// ```rust
+/// # #[cfg(feature = "combinators")]
+/// # {
 /// use qubit_function::{BoxStatefulSupplier, StatefulSupplier};
 ///
 /// let supplier = BoxStatefulSupplier::new(|| 10);
 /// let mapped = supplier.map(|x| x * 2);
 /// // supplier is no longer usable here
+/// # }
 /// ```
 ///
 /// # Examples
@@ -63,7 +68,11 @@ use super::{
 ///
 /// ## Method Chaining
 ///
+/// This example requires the `combinators` feature.
+///
 /// ```rust
+/// # #[cfg(feature = "combinators")]
+/// # {
 /// use qubit_function::{BoxStatefulSupplier, StatefulSupplier};
 ///
 /// let mut pipeline = BoxStatefulSupplier::new(|| 10)
@@ -71,6 +80,7 @@ use super::{
 ///     .map(|x| x + 5);
 ///
 /// assert_eq!(pipeline.get(), 25);
+/// # }
 /// ```
 pub struct BoxStatefulSupplier<T> {
     pub(super) function: Box<dyn FnMut() -> T>,

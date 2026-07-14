@@ -26,14 +26,14 @@ use super::{
 };
 
 // ============================================================================
-// 4. ArcMutator - Thread-Safe Shared Ownership Implementation
+// 4. ArcStatefulMutator - Thread-Safe Shared Ownership Implementation
 // ============================================================================
 
-/// ArcMutator struct
+/// Arc-based stateful mutator.
 ///
-/// A mutator implementation based on `Arc<Mutex<dyn FnMut(&mut T) + Send>>`
-/// for thread-safe shared ownership scenarios. This type allows the mutator
-/// to be safely shared and used across multiple threads.
+/// A stateful mutator based on `Arc<Mutex<dyn FnMut(&mut T) + Send>>` for
+/// thread-safe shared ownership scenarios. Clones share the callback and its
+/// captured state.
 ///
 /// # Features
 ///
@@ -45,7 +45,7 @@ use super::{
 ///
 /// # Use Cases
 ///
-/// Choose `ArcMutator` when:
+/// Choose `ArcStatefulMutator` when:
 /// - The mutator needs to be shared across multiple threads
 /// - Concurrent task processing (e.g., thread pools)
 /// - Thread safety is required (Send + Sync)
@@ -53,16 +53,29 @@ use super::{
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{Mutator, ArcMutator};
+/// use qubit_function::{ArcStatefulMutator, StatefulMutator};
 ///
-/// let mutator = ArcMutator::new(|x: &mut i32| *x *= 2);
-/// let clone = mutator.clone();
+/// let mut calls = 0;
+/// let mutator = ArcStatefulMutator::new(move |x: &mut i32| {
+///     calls += 1;
+///     *x += calls;
+/// });
+/// let mut first = mutator.clone();
+/// let mut second = mutator;
 ///
-/// let mut value = 5;
-/// let mut m = mutator;
-/// m.apply(&mut value);
-/// assert_eq!(value, 10);
+/// let mut value = 10;
+/// first.apply(&mut value);
+/// assert_eq!(value, 11);
+/// second.apply(&mut value);
+/// assert_eq!(value, 13);
 /// ```
+///
+/// # Locking and reentrancy
+///
+/// Each call acquires a `parking_lot::Mutex` and holds it while the user
+/// callback runs. Synchronous re-entry through the same shared state
+/// deadlocks. The mutex is not poisoned after a panic, and mutations completed
+/// before a panic are not rolled back.
 pub struct ArcStatefulMutator<T> {
     pub(super) function: ArcMutMutatorFn<T>,
     pub(super) name: Option<String>,
@@ -98,7 +111,7 @@ impl_mutator_clone!(ArcStatefulMutator<T>);
 impl_mutator_debug_display!(ArcStatefulMutator<T>);
 
 // ============================================================================
-// 5. Implement Mutator trait for closures
+// 5. Implement StatefulMutator trait for closures
 // ============================================================================
 
 impl_closure_trait!(

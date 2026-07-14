@@ -18,37 +18,43 @@ use super::{
 };
 
 // ============================================================================
-// 7. BoxConditionalMutator - Box-based Conditional Mutator
+// 7. BoxConditionalStatefulMutator - Box-based Conditional Stateful Mutator
 // ============================================================================
 
-/// BoxConditionalMutator struct
+/// Box-based conditional stateful mutator.
 ///
-/// A conditional mutator that only executes when a predicate is satisfied.
-/// Uses `BoxMutator` and `BoxPredicate` for single ownership semantics.
+/// A conditional stateful mutator that only executes when a predicate is
+/// satisfied. Uses `BoxStatefulMutator` and `BoxPredicate` for single ownership
+/// semantics.
 ///
-/// This type is typically created by calling `BoxMutator::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
+/// This type is typically created by calling `BoxStatefulMutator::when()` and
+/// works with `or_else()` to create if-then-else logic.
 ///
 /// # Features
 ///
-/// - **Single Ownership**: Not cloneable, consumes `self` on use
+/// - **Single Ownership**: Not cloneable; `apply` borrows `&mut self`
 /// - **Conditional Execution**: Only mutates when predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
-/// - **Implements Mutator**: Can be used anywhere a `Mutator` is expected
+/// - **Implements StatefulMutator**: Can be used anywhere a `StatefulMutator`
+///   is expected
 ///
 /// # Examples
 ///
 /// ## Basic Conditional Execution
 ///
 /// ```rust
-/// use qubit_function::{Mutator, BoxMutator};
+/// use qubit_function::{BoxStatefulMutator, StatefulMutator};
 ///
-/// let mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
+/// let mut calls = 0;
+/// let mutator = BoxStatefulMutator::new(move |x: &mut i32| {
+///     calls += 1;
+///     *x += calls;
+/// });
 /// let mut conditional = mutator.when(|x: &i32| *x > 0);
 ///
 /// let mut positive = 5;
 /// conditional.apply(&mut positive);
-/// assert_eq!(positive, 10); // Executed
+/// assert_eq!(positive, 6);
 ///
 /// let mut negative = -5;
 /// conditional.apply(&mut negative);
@@ -58,15 +64,19 @@ use super::{
 /// ## With or_else Branch
 ///
 /// ```rust
-/// use qubit_function::{Mutator, BoxMutator};
+/// use qubit_function::{BoxStatefulMutator, StatefulMutator};
 ///
-/// let mut mutator = BoxMutator::new(|x: &mut i32| *x *= 2)
+/// let mut calls = 0;
+/// let mut mutator = BoxStatefulMutator::new(move |x: &mut i32| {
+///     calls += 1;
+///     *x += calls;
+/// })
 ///     .when(|x: &i32| *x > 0)
 ///     .or_else(|x: &mut i32| *x -= 1);
 ///
 /// let mut positive = 5;
 /// mutator.apply(&mut positive);
-/// assert_eq!(positive, 10); // when branch executed
+/// assert_eq!(positive, 6); // when branch executed
 ///
 /// let mut negative = -5;
 /// mutator.apply(&mut negative);

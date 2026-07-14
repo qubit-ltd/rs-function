@@ -76,7 +76,11 @@
 //!
 //! ## Basic Usage
 //!
+//! This example requires the `rc` feature.
+//!
 //! ```rust
+//! # #[cfg(feature = "rc")]
+//! # {
 //! use qubit_function::{BoxMutator, ArcMutator, RcMutator, Mutator};
 //!
 //! // BoxMutator: Single ownership, consumes self
@@ -100,11 +104,16 @@
 //! let mut m = rc;
 //! m.apply(&mut value);
 //! assert_eq!(value, 10);
+//! # }
 //! ```
 //!
 //! ## Method Chaining
 //!
+//! This example requires the `combinators` feature.
+//!
 //! ```rust
+//! # #[cfg(feature = "combinators")]
+//! # {
 //! use qubit_function::{Mutator, BoxMutator, ArcMutator};
 //!
 //! // BoxMutator: Consumes self
@@ -122,6 +131,7 @@
 //! combined.apply(&mut value);
 //! assert_eq!(value, 20); // (5 * 2) + 10
 //! // first and second are still usable here
+//! # }
 //! ```
 //!
 //! ## Working with Closures
@@ -129,6 +139,8 @@
 //! All closures automatically implement the `Mutator` trait:
 //!
 //! ```rust
+//! # #[cfg(feature = "combinators")]
+//! # {
 //! use qubit_function::{Mutator, FnMutatorOps};
 //!
 //! // Closures can use .apply() directly
@@ -143,11 +155,16 @@
 //! let mut value = 5;
 //! chained.apply(&mut value);
 //! assert_eq!(value, 20);
+//! # }
 //! ```
 //!
 //! ## Wrapper Construction
 //!
+//! This example requires the `rc` feature.
+//!
 //! ```rust
+//! # #[cfg(feature = "rc")]
+//! # {
 //! use qubit_function::{ArcMutator, BoxMutator, RcMutator};
 //!
 //! // Construct each ownership-specific wrapper from a closure.
@@ -159,15 +176,19 @@
 //!
 //! let closure = |x: &mut i32| *x *= 2;
 //! let arc_mutator = ArcMutator::new(closure);
+//! # }
 //! ```
 //!
 //! ## Conditional Execution
 //!
 //! All mutator types support conditional execution through the `when` method,
 //! which returns a `ConditionalMutator`. You can optionally add an `or_else`
-//! branch to create if-then-else logic:
+//! branch to create if-then-else logic. These APIs require the `combinators`
+//! feature:
 //!
 //! ```rust
+//! # #[cfg(feature = "combinators")]
+//! # {
 //! use qubit_function::{Mutator, BoxMutator};
 //!
 //! // Simple conditional (if-then)
@@ -194,6 +215,7 @@
 //! let mut negative = -5;
 //! branched.apply(&mut negative);
 //! assert_eq!(negative, -6); // or_else branch
+//! # }
 //! ```
 #[cfg(feature = "rc")]
 use std::rc::Rc;

@@ -21,7 +21,11 @@
 //!
 //! # Examples
 //!
+//! The example requires the `rc` feature.
+//!
 //! ```rust
+//! # #[cfg(feature = "rc")]
+//! # {
 //! // For single type parameter
 //! use qubit_function::{ArcConsumer, RcConsumer};
 //! use qubit_function::consumers::{ArcBiConsumer, RcBiConsumer};
@@ -45,6 +49,7 @@
 //!
 //! // For two type parameters with Rc
 //! impl_consumer_clone!(RcBiConsumer<i32, i32>);
+//! # }
 //! ```
 
 /// Generates Clone trait implementation for basic Consumer types
@@ -63,7 +68,11 @@
 ///
 /// # Examples
 ///
+/// The example requires the `rc` feature.
+///
 /// ```rust
+/// # #[cfg(feature = "rc")]
+/// # {
 /// // For single type parameter with Arc
 /// use qubit_function::{ArcConsumer, RcConsumer};
 /// use qubit_function::consumers::{ArcBiConsumer, RcBiConsumer};
@@ -87,6 +96,7 @@
 ///
 /// // For two type parameters with Rc
 /// impl_consumer_clone!(RcBiConsumer<i32, i32>);
+/// # }
 /// ```
 macro_rules! impl_consumer_clone {
     // Single generic parameter - Consumer types

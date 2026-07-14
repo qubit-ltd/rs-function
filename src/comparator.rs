@@ -35,7 +35,7 @@
 //!    inherent methods (`reversed`, `then_comparing`, etc.) that return the
 //!    same concrete type, preserving their specific characteristics (e.g.,
 //!    `ArcComparator` compositions remain `ArcComparator` and stay cloneable
-//!    and thread-safe).
+//!    and thread-safe). These methods require the `combinators` feature.
 //!
 //! 4. **Extension Trait for Closures**: The `FnComparatorOps<T>` extension
 //!    trait provides composition methods for all closures and function
@@ -65,6 +65,8 @@
 //! composition:
 //!
 //! ```rust
+//! # #[cfg(feature = "combinators")]
+//! # {
 //! use qubit_function::comparator::{Comparator, ArcComparator};
 //! use std::cmp::Ordering;
 //!
@@ -78,6 +80,7 @@
 //!
 //! // Original comparators remain usable
 //! assert_eq!(arc_cmp.compare(&5, &3), Ordering::Greater);
+//! # }
 //! ```
 //!
 //! ### 2. Elegant API without Explicit Cloning
@@ -87,6 +90,8 @@
 //! `.clone()` calls:
 //!
 //! ```rust
+//! # #[cfg(feature = "combinators")]
+//! # {
 //! use qubit_function::comparator::{Comparator, ArcComparator};
 //!
 //! let cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
@@ -97,6 +102,7 @@
 //!
 //! // cmp is still available
 //! cmp.compare(&1, &2);
+//! # }
 //! ```
 //!
 //! ### 3. Efficient Closure Composition
@@ -105,6 +111,8 @@
 //! closures:
 //!
 //! ```rust
+//! # #[cfg(feature = "combinators")]
+//! # {
 //! use qubit_function::comparator::{Comparator, FnComparatorOps, BoxComparator};
 //! use std::cmp::Ordering;
 //!
@@ -113,6 +121,7 @@
 //!     .then_comparing(BoxComparator::new(|a: &i32, b: &i32| b.cmp(a)));
 //!
 //! assert_eq!(cmp.compare(&5, &3), Ordering::Less);
+//! # }
 //! ```
 //!
 //! ## Usage Examples
@@ -130,17 +139,22 @@
 //! ### Reversed Comparison
 //!
 //! ```rust
+//! # #[cfg(feature = "combinators")]
+//! # {
 //! use qubit_function::comparator::{Comparator, BoxComparator};
 //! use std::cmp::Ordering;
 //!
 //! let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
 //! let rev = cmp.reversed();
 //! assert_eq!(rev.compare(&5, &3), Ordering::Less);
+//! # }
 //! ```
 //!
 //! ### Chained Comparison
 //!
 //! ```rust
+//! # #[cfg(feature = "combinators")]
+//! # {
 //! use qubit_function::comparator::{Comparator, BoxComparator};
 //! use std::cmp::Ordering;
 //!
@@ -161,6 +175,7 @@
 //! let p1 = Person { name: "Alice".to_string(), age: 30 };
 //! let p2 = Person { name: "Alice".to_string(), age: 25 };
 //! assert_eq!(cmp.compare(&p1, &p2), Ordering::Greater);
+//! # }
 //! ```
 use std::cmp::Ordering;
 #[cfg(feature = "rc")]
