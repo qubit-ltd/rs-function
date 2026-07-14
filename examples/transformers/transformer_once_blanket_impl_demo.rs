@@ -38,9 +38,9 @@ fn test_transformer_once() {
     assert_eq!(boxed.apply("hello".to_string()), "HELLO");
     println!("✓ into_box() test passed");
 
-    // Test into_fn
+    // Test the original closure directly.
     let transform2 = |s: String| s.len();
     let func = transform2;
     assert_eq!(func("hello".to_string()), 5);
-    println!("✓ into_fn() test passed");
+    println!("✓ direct closure invocation test passed");
 }

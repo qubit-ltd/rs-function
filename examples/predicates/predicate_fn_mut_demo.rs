@@ -6,8 +6,7 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-//! Demonstrates how Predicate's into_fn/to_fn methods can be used in scenarios
-//! requiring FnMut
+//! Demonstrates adapting predicate objects to APIs that accept `FnMut`.
 
 use qubit_function::{
     ArcPredicate,
@@ -39,7 +38,7 @@ fn demo_with_iterator_filter() {
     println!("   Original data: {:?}", numbers);
     println!("   Filtered result: {:?}", positives);
     assert_eq!(positives, vec![1, 2, 3]);
-    println!("   ✓ BoxPredicate::into_fn() can be used in filter\n");
+    println!("   ✓ BoxPredicate can be adapted for filter\n");
 }
 
 /// Demonstrates usage with Vec::retain (retain requires FnMut)
@@ -56,7 +55,7 @@ fn demo_with_vec_retain() {
 
     // Original predicate is still available
     assert!(pred.test(&10));
-    println!("   ✓ RcPredicate::to_fn() can be used in retain");
+    println!("   ✓ RcPredicate can be adapted for retain");
     println!("   ✓ Original predicate is still available\n");
 }
 
@@ -81,12 +80,8 @@ fn demo_with_generic_function() {
     println!("   Second call: count = {}", count2);
     assert_eq!(count2, 2);
 
-    println!(
-        "   ✓ RcPredicate::to_fn() can be passed to generic functions requiring FnMut"
-    );
-    println!(
-        "   ✓ Original predicate can be converted and used multiple times\n"
-    );
+    println!("   ✓ RcPredicate can be passed through a forwarding closure");
+    println!("   ✓ Original predicate remains reusable\n");
 }
 
 /// Demonstrates thread-safe usage
@@ -111,6 +106,6 @@ fn demo_thread_safe() {
 
     // Original predicate is still available
     assert!(pred.test(&5));
-    println!("   ✓ ArcPredicate::to_fn() returns a thread-safe closure");
+    println!("   ✓ ArcPredicate can be adapted to a thread-safe closure");
     println!("   ✓ Original predicate is still available in main thread\n");
 }

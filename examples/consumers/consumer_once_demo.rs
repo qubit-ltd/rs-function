@@ -12,7 +12,6 @@
 use qubit_function::{
     BoxConsumerOnce,
     ConsumerOnce,
-    FnConsumerOnceOps,
 };
 use std::sync::{
     Arc,
@@ -131,13 +130,13 @@ fn main() {
         );
     }
 
-    // 5. Closure chaining
-    println!("5. Closure chaining");
+    // 5. Explicitly wrapped closure chaining
+    println!("5. Explicitly wrapped closure chaining");
     {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l1 = log.clone();
         let l2 = log.clone();
-        let chained = (move |x: &i32| {
+        let chained = BoxConsumerOnce::new(move |x: &i32| {
             l1.lock()
                 .expect("mutex should not be poisoned")
                 .push(*x * 2);
@@ -183,7 +182,8 @@ fn main() {
             l.lock().expect("mutex should not be poisoned").push(*x * 2);
         });
         // Note: This will panic because BoxConsumerOnce can only be called once
-        // vec![1, 2, 3, 4, 5].iter().for_each(consumer.into_fn());
+        // Adapt the consumer with a forwarding closure when an iterator API
+        // needs one.
         consumer.accept(&1);
         println!(
             "  BoxConsumerOnce with single value: {:?}\n",

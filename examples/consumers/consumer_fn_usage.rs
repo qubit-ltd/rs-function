@@ -5,8 +5,7 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-//! Demonstrates how into_fn and to_fn are used with function parameters that
-//! accept closures
+//! Demonstrates adapting consumer objects to APIs that accept closures.
 
 use qubit_function::{
     ArcConsumer,
@@ -22,10 +21,10 @@ use std::sync::{
 };
 
 fn main() {
-    println!("=== Consumer into_fn/to_fn Usage Examples ===\n");
+    println!("=== Consumer Closure Interoperability Examples ===\n");
 
-    // Example 1: Using BoxConsumer::into_fn to pass to standard library's map
-    println!("1. BoxConsumer::into_fn used with Iterator::for_each");
+    // Example 1: Adapt BoxConsumer to Iterator::for_each.
+    println!("1. BoxConsumer used with Iterator::for_each");
     let log = Arc::new(Mutex::new(Vec::new()));
     let l = log.clone();
     let consumer = BoxConsumer::new(move |x: &i32| {
@@ -41,8 +40,8 @@ fn main() {
         *log.lock().expect("mutex should not be poisoned")
     );
 
-    // Example 2: Using ArcConsumer::to_fn can be used multiple times
-    println!("2. ArcConsumer::to_fn can be used multiple times");
+    // Example 2: A shared ArcConsumer can be reused.
+    println!("2. ArcConsumer can be used multiple times");
     let log2 = Arc::new(Mutex::new(Vec::new()));
     let l2 = log2.clone();
     let consumer2 = ArcConsumer::new(move |x: &i32| {
@@ -51,7 +50,7 @@ fn main() {
             .push(*x + 10);
     });
 
-    // to_fn doesn't consume consumer, can be called multiple times
+    // Calling through a borrowed ArcConsumer does not consume it.
     [1, 2, 3].iter().for_each(|value| consumer2.accept(value));
     println!(
         "   First time: {:?}",
@@ -64,8 +63,8 @@ fn main() {
         *log2.lock().expect("mutex should not be poisoned")
     );
 
-    // Example 3: Using RcConsumer::to_fn
-    println!("3. RcConsumer::to_fn used for single-threaded scenarios");
+    // Example 3: Adapt RcConsumer in a single-threaded scenario.
+    println!("3. RcConsumer used for single-threaded scenarios");
     let log3 = Rc::new(RefCell::new(Vec::new()));
     let l3 = log3.clone();
     let consumer3 = RcConsumer::new(move |x: &i32| {
@@ -94,15 +93,15 @@ fn main() {
             .push(*x * 5);
     });
 
-    // Use into_fn to convert Consumer to closure and pass to function
+    // Adapt the consumer with a forwarding closure.
     process_items(vec![1, 2, 3], move |value| consumer4.accept(value));
     println!(
         "   Result: {:?}\n",
         *log4.lock().expect("mutex should not be poisoned")
     );
 
-    // Example 5: Using into_fn after chained operations
-    println!("5. Using into_fn after chained operations");
+    // Example 5: Adapt a composed consumer.
+    println!("5. Using a forwarding closure after chained operations");
     let log5 = Arc::new(Mutex::new(Vec::new()));
     let l5 = log5.clone();
     let l6 = log5.clone();

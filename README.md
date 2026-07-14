@@ -7,11 +7,17 @@
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![中文文档](https://img.shields.io/badge/文档-中文版-blue.svg)](README.zh_CN.md)
 
-Comprehensive functional programming abstractions for Rust, providing Java-style functional interfaces adapted to Rust's ownership model.
+Semantic callback objects for Rust: traits for domain constraints plus Box, Rc,
+and Arc wrappers for storing, naming, sharing, and composing callbacks.
 
 ## Overview
 
-This crate provides a complete set of functional programming abstractions inspired by Java's functional interfaces, carefully adapted to Rust's ownership system. It offers multiple implementations for each abstraction (Box/Arc/Rc) to cover various use cases from simple single-threaded scenarios to complex multi-threaded applications.
+This crate turns closures and custom callback implementations into explicit
+semantic objects. Traits such as `Consumer`, `Predicate`, and `Runnable` express
+the invocation contract, while concrete wrappers select single ownership,
+single-threaded sharing, or thread-safe sharing. Chaining is implemented on the
+wrappers so callbacks can be stored in fields and composed without ambiguous
+extension traits.
 
 ## Key Features
 
@@ -20,14 +26,15 @@ This crate provides a complete set of functional programming abstractions inspir
 - **Multiple Ownership Models**: Box-based single ownership, Arc-based thread-safe sharing, and Rc-based single-threaded sharing
 - **Flexible API Design**: Trait-based unified interface with concrete implementations optimized for different scenarios
 - **Type-Oriented Module Layout**: Public source files are organized around a single exported type, keeping modules shorter and easier to scan
-- **Method Chaining**: The `combinators` feature enables fluent composition APIs
+- **Explicit Method Chaining**: fluent composition starts from a concrete Box, Rc, or Arc wrapper
 - **Thread-Safety Options**: Choose between thread-safe (Arc) and efficient single-threaded (Rc) implementations
 - **Ergonomic callback abstractions**: Box uses dynamic dispatch, Rc/Arc add reference counting, and stateful Arc adapters add locking
 
 Cargo features keep optional API costs explicit: `rc` enables single-threaded
-shared wrappers, `once` enables one-shot families, `stateful` enables mutable
-callback families and `parking_lot`, and `combinators` exposes conditional and
-extension APIs. `full` enables every layer; the default feature set is empty.
+shared wrappers, `once` enables one-shot families, and `stateful` enables
+mutable callback families and `parking_lot`. Wrapper composition is part of the
+baseline API. `full` enables all optional families; the default feature set is
+empty.
 
 ## Installation
 
@@ -744,7 +751,6 @@ Use `StatefulTester` when a zero-argument condition needs native
 - `BoxStatefulTester` - Single ownership
 - `ArcStatefulTester` - Thread-safe with parking_lot::Mutex
 - `RcStatefulTester` - Single-threaded with RefCell
-- `FnStatefulTesterOps` - Logical composition helpers for `FnMut() -> bool`
 
 **Example**:
 ```rust
@@ -806,9 +812,6 @@ assert!(every_second_call.test());
 | `Tester` | `test(&self) -> bool` | `Fn() -> bool` |
 | `StatefulTester` | `test(&mut self) -> bool` | `FnMut() -> bool` |
 
-For stateful traits, closure conversions expose `into_fn` / `to_fn`; types that
-return mutable closures also expose `into_mut_fn` / `to_mut_fn` for explicitness.
-
 ## Implementation Types Comparison
 
 Each trait has multiple implementations based on ownership model:
@@ -863,7 +866,7 @@ Each trait has multiple implementations based on ownership model:
 | StatefulTester | BoxStatefulTester | ArcStatefulTester | RcStatefulTester |
 
 **Legend**:
-- **Box**: Single ownership, cannot be cloned, consumes self
+- **Box**: Single ownership and dynamic dispatch; composition commonly consumes `self`, while reusable core calls follow their trait receiver
 - **Arc**: Shared ownership, thread-safe, cloneable
 - **Rc**: Shared ownership, single-threaded, cloneable
 - **-**: Not applicable (Once types don't need sharing)
@@ -874,10 +877,17 @@ This crate adopts the **Trait + Multiple Implementations** pattern:
 
 1. **Unified Interface**: Each functional type has a trait defining core behavior
 2. **Specialized Implementations**: Multiple concrete types optimized for different scenarios
-3. **Type Preservation**: Composition methods return the same concrete type
+3. **Ownership-Aware Composition**: Applicable composition methods return the same wrapper family
 4. **Ownership Flexibility**: Choose between single ownership, thread-safe sharing, or single-threaded sharing
 5. **Thread-safe callbacks**: Stateful Arc adapters serialize calls with a mutex; callbacks run while the lock is held
 6. **Ergonomic API**: Natural method chaining and functional composition
+
+Stateful Rc wrappers share one `RefCell`-backed callback across clones and hold
+the mutable borrow while user code runs; synchronous re-entry panics. Stateful
+Arc wrappers similarly share one `parking_lot::Mutex`-backed callback and hold
+the lock while user code runs; synchronous re-entry deadlocks. A panic does not
+roll back state changes made before the panic, and `parking_lot::Mutex` is not
+poisoned.
 
 ## Examples
 

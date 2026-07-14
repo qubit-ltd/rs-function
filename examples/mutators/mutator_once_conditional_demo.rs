@@ -12,7 +12,6 @@
 use qubit_function::{
     BoxMutatorOnce,
     BoxPredicate,
-    FnPredicateOps,
     MutatorOnce,
 };
 
@@ -73,7 +72,7 @@ fn main() {
 
     // 4. Using composed predicate
     println!("4. Using composed predicate");
-    let pred = (|x: &Vec<i32>| {
+    let pred = BoxPredicate::new(|x: &Vec<i32>| {
         println!("   Condition 1: !x.is_empty()");
         !x.is_empty()
     })

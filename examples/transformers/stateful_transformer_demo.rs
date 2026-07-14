@@ -15,7 +15,6 @@ use qubit_function::{
     ArcStatefulTransformer,
     BoxStatefulTransformer,
     BoxTransformerOnce,
-    FnStatefulTransformerOps,
     RcStatefulTransformer,
     StatefulTransformer,
     TransformerOnce,
@@ -101,10 +100,10 @@ fn main() {
     println!("  Original: {}", mapper_clone.apply(5)); // Result[1]: 10
     println!("  Clone:    {}", mapper_clone.apply(7)); // Result[2]: 14
 
-    // 6. Using FnStatefulTransformerOps extension trait
-    println!("\n6. Using FnStatefulTransformerOps extension trait:");
+    // 6. Explicitly wrapping a closure before composition
+    println!("\n6. Explicit closure wrapping:");
     let mut count = 0;
-    let mut mapper = (move |x: i32| {
+    let mut mapper = BoxStatefulTransformer::new(move |x: i32| {
         count += 1;
         x + count
     })

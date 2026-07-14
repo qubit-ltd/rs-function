@@ -19,7 +19,6 @@ use qubit_function::{
     BoxConsumer,
     BoxStatefulConsumer,
     Consumer,
-    FnConsumerOps,
     RcConsumer,
     StatefulConsumer,
 };
@@ -86,16 +85,16 @@ fn main() {
     println!("Original value: {} (not modified)\n", value);
 
     // ========================================================================
-    // Example 3: Closure extension methods
+    // Example 3: Explicitly wrapping a closure before composition
     // ========================================================================
-    println!("Example 3: Direct use of extension methods on closures");
+    println!("Example 3: Explicit closure wrapping");
     println!("{}", "-".repeat(50));
 
     let result = Arc::new(Mutex::new(0));
     let r1 = result.clone();
     let r2 = result.clone();
 
-    let closure_chain = (move |x: &i32| {
+    let closure_chain = BoxConsumer::new(move |x: &i32| {
         *r1.lock().expect("mutex should not be poisoned") = *x * 2;
     })
     .and_then(move |_x: &i32| {

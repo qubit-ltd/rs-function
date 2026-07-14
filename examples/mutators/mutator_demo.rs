@@ -16,7 +16,6 @@
 use qubit_function::{
     ArcMutator,
     BoxMutator,
-    FnMutatorOps,
     Mutator,
     RcMutator,
 };
@@ -61,13 +60,13 @@ fn main() {
     println!("Result: {} (5 * 2 + 10 = 20, 20 * 20 = 400)\n", value);
 
     // ========================================================================
-    // Example 3: Closure Extension Methods
+    // Example 3: Explicitly wrapping a closure before composition
     // ========================================================================
-    println!("Example 3: Direct Use of Closure Extension Methods");
+    println!("Example 3: Explicit Closure Wrapping");
     println!("{}", "-".repeat(50));
 
     let closure_chain =
-        (|x: &mut i32| *x *= 2).and_then(|x: &mut i32| *x += 10);
+        BoxMutator::new(|x: &mut i32| *x *= 2).and_then(|x: &mut i32| *x += 10);
 
     let mut value = 5;
     println!("Initial value: {}", value);
