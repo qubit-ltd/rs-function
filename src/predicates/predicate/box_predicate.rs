@@ -26,9 +26,13 @@ use super::{
 /// not need to be cloned or shared. Composition methods consume `self`,
 /// reflecting the single-ownership model.
 ///
+/// Composition methods require the `combinators` feature.
+///
 /// # Examples
 ///
 /// ```rust
+/// # #[cfg(feature = "combinators")]
+/// # {
 /// use qubit_function::{Predicate, BoxPredicate};
 ///
 /// let pred = BoxPredicate::new(|x: &i32| *x > 0);
@@ -37,6 +41,7 @@ use super::{
 /// // Chaining consumes the predicate
 /// let combined = pred.and(BoxPredicate::new(|x: &i32| x % 2 == 0));
 /// assert!(combined.test(&4));
+/// # }
 /// ```
 pub struct BoxPredicate<T> {
     pub(super) function: Box<dyn Fn(&T) -> bool>,

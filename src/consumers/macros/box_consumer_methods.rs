@@ -37,7 +37,11 @@
 //!
 //! # Examples
 //!
+//! The example requires the `combinators` feature.
+//!
 //! ```rust
+//! # #[cfg(feature = "combinators")]
+//! # {
 //! use qubit_function::{BiConsumer, Consumer};
 //! use qubit_function::consumers::BoxConditionalConsumer;
 //! use qubit_function::consumers::BoxConditionalBiConsumer;
@@ -51,6 +55,7 @@
 //! }
 //! impl_box_consumer_methods!(BoxConsumer<i32>, BoxConditionalConsumer<i32>, Consumer);
 //! impl_box_consumer_methods!(BoxBiConsumer<i32, i32>, BoxConditionalBiConsumer<i32, i32>, BiConsumer);
+//! # }
 //! ```
 
 /// Generates when and and_then method implementations for Box-based Consumer

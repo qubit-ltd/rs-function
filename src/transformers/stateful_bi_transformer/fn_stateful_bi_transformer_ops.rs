@@ -182,7 +182,11 @@ pub trait FnStatefulBiTransformerOps<T, U, R>:
     ///
     /// ## Preserving bi-predicate with clone
     ///
+    /// This example requires the `rc` feature.
+    ///
     /// ```rust
+    /// # #[cfg(feature = "rc")]
+    /// # {
     /// use qubit_function::{BiPredicate, StatefulBiTransformer, FnStatefulBiTransformerOps,
     ///     RcBiPredicate};
     ///
@@ -198,6 +202,7 @@ pub trait FnStatefulBiTransformerOps<T, U, R>:
     ///
     /// // Original bi-predicate still usable
     /// assert!(both_positive.test(&5, &3));
+    /// # }
     /// ```
     fn when<P>(
         self,

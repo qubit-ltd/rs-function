@@ -19,31 +19,35 @@ use super::{
 };
 
 // ============================================================================
-// 8. RcConditionalMutator - Rc-based Conditional Mutator
+// 8. RcConditionalStatefulMutator - Rc-based Conditional Stateful Mutator
 // ============================================================================
 
-/// RcConditionalMutator struct
+/// Rc-based conditional stateful mutator.
 ///
-/// A single-threaded conditional mutator that only executes when a predicate is
-/// satisfied. Uses `RcMutator` and `RcPredicate` for shared ownership within a
-/// single thread.
+/// A single-threaded conditional stateful mutator that only executes when a
+/// predicate is satisfied. Uses `RcStatefulMutator` and `RcPredicate` for
+/// shared ownership within a single thread.
 ///
-/// This type is typically created by calling `RcMutator::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
+/// This type is typically created by calling `RcStatefulMutator::when()` and
+/// works with `or_else()` to create if-then-else logic.
 ///
 /// # Features
 ///
 /// - **Shared Ownership**: Cloneable via `Rc`, multiple owners allowed
 /// - **Single-Threaded**: Not thread-safe, cannot be sent across threads
 /// - **Conditional Execution**: Only mutates when predicate returns `true`
-/// - **No Lock Overhead**: More efficient than `ArcConditionalMutator`
+/// - **No Lock Overhead**: More efficient than `ArcConditionalStatefulMutator`
 ///
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{Mutator, RcMutator};
+/// use qubit_function::{RcStatefulMutator, StatefulMutator};
 ///
-/// let conditional = RcMutator::new(|x: &mut i32| *x *= 2)
+/// let mut calls = 0;
+/// let conditional = RcStatefulMutator::new(move |x: &mut i32| {
+///     calls += 1;
+///     *x += calls;
+/// })
 ///     .when(|x: &i32| *x > 0);
 ///
 /// let conditional_clone = conditional.clone();
@@ -51,7 +55,7 @@ use super::{
 /// let mut value = 5;
 /// let mut m = conditional;
 /// m.apply(&mut value);
-/// assert_eq!(value, 10);
+/// assert_eq!(value, 6);
 /// ```
 pub struct RcConditionalStatefulMutator<T> {
     pub(super) mutator: RcStatefulMutator<T>,

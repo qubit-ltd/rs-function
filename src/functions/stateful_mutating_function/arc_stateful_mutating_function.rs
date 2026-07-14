@@ -71,6 +71,13 @@ use super::{
 /// let mut value = 5;
 /// assert_eq!(clone.apply(&mut value), 1);
 /// ```
+///
+/// # Locking and reentrancy
+///
+/// Each call acquires a `parking_lot::Mutex` and holds it while the user
+/// callback runs. Synchronous re-entry through the same shared state
+/// deadlocks. The mutex is not poisoned after a panic, and mutations completed
+/// before a panic are not rolled back.
 pub struct ArcStatefulMutatingFunction<T, R> {
     pub(super) function: ArcStatefulMutatingFunctionFn<T, R>,
     pub(super) name: Option<String>,

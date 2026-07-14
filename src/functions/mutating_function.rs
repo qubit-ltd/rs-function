@@ -84,7 +84,11 @@
 //!
 //! ## Method Chaining
 //!
+//! This example requires the `combinators` feature.
+//!
 //! ```rust
+//! # #[cfg(feature = "combinators")]
+//! # {
 //! use qubit_function::{BoxMutatingFunction, MutatingFunction};
 //!
 //! let chained = BoxMutatingFunction::new(|x: &mut i32| {
@@ -97,6 +101,7 @@
 //! let result = chained.apply(&mut value);
 //! assert_eq!(value, 10); // (5 * 2), value is still mutated by the first function
 //! assert_eq!(result, 20);
+//! # }
 //! ```
 //!
 //! ## Cache Update Pattern

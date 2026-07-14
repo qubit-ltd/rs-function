@@ -32,7 +32,11 @@
 //!
 //! # Examples
 //!
+//! The example requires the `rc` and `combinators` features.
+//!
 //! ```rust
+//! # #[cfg(all(feature = "rc", feature = "combinators"))]
+//! # {
 //! use qubit_function::Supplier;
 //! use qubit_function::{ArcSupplier, RcSupplier};
 //!
@@ -51,6 +55,7 @@
 //! assert_eq!(filtered.get(), Some("hello".to_string()));
 //! let zipped = rc.zip(RcSupplier::new(|| 1));
 //! assert_eq!(zipped.get(), ("hello".to_string(), 1));
+//! # }
 //! ```
 
 /// Generates map, filter, zip method implementations for Arc/Rc-based Supplier
@@ -78,7 +83,11 @@
 ///
 /// # Examples
 ///
+/// The example requires the `rc` and `combinators` features.
+///
 /// ```rust
+/// # #[cfg(all(feature = "rc", feature = "combinators"))]
+/// # {
 /// use qubit_function::Supplier;
 /// use qubit_function::{ArcSupplier, RcSupplier};
 ///
@@ -97,6 +106,7 @@
 /// assert_eq!(filtered.get(), Some("hello".to_string()));
 /// let zipped = rc.zip(RcSupplier::new(|| 1));
 /// assert_eq!(zipped.get(), ("hello".to_string(), 1));
+/// # }
 /// ```
 #[cfg(feature = "combinators")]
 macro_rules! impl_shared_supplier_methods {

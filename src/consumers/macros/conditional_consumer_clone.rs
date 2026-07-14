@@ -20,7 +20,11 @@
 //!
 //! # Examples
 //!
+//! This example requires the `rc` feature.
+//!
 //! ```rust
+//! # #[cfg(feature = "rc")]
+//! # {
 //! use qubit_function::consumers::{ArcConditionalBiConsumer, RcConditionalBiConsumer};
 //! use qubit_function::consumers::{ArcConditionalConsumer, RcConditionalConsumer};
 //! macro_rules! impl_conditional_consumer_clone {
@@ -40,6 +44,7 @@
 //! // For two type parameters
 //! impl_conditional_consumer_clone!(ArcConditionalBiConsumer<i32, i32>);
 //! impl_conditional_consumer_clone!(RcConditionalBiConsumer<i32, i32>);
+//! # }
 //! ```
 
 /// Generates Clone trait implementation for Conditional Consumer types
@@ -58,7 +63,11 @@
 ///
 /// # Examples
 ///
+/// This example requires the `rc` feature.
+///
 /// ```rust
+/// # #[cfg(feature = "rc")]
+/// # {
 /// use qubit_function::consumers::{ArcConditionalBiConsumer, RcConditionalBiConsumer};
 /// use qubit_function::consumers::{ArcConditionalConsumer, RcConditionalConsumer};
 /// use std::marker::PhantomData;
@@ -77,6 +86,7 @@
 /// // For two type parameters
 /// impl_conditional_consumer_clone!(ArcConditionalBiConsumer<i32, i32>);
 /// impl_conditional_consumer_clone!(RcConditionalBiConsumer<i32, i32>);
+/// # }
 /// ```
 macro_rules! impl_conditional_consumer_clone {
     // Single generic parameter - Consumer types

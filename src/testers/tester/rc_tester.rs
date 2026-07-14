@@ -31,7 +31,8 @@ use super::{
 /// - **Shared ownership**: Can be cloned
 /// - **Single-threaded**: Cannot be sent across threads
 /// - **Low overhead**: Uses `Fn` without needing `RefCell`
-/// - **Borrowing combination**: `and()`/`or()` borrow `&self`
+/// - **Borrowing combination**: With `combinators`, `and()`/`or()` borrow
+///   `&self`
 ///
 /// # Use Cases
 ///
@@ -43,6 +44,8 @@ use super::{
 /// # Examples
 ///
 /// ```rust
+/// # #[cfg(feature = "combinators")]
+/// # {
 /// use qubit_function::{RcTester, Tester};
 ///
 /// let shared = RcTester::new(|| true);
@@ -53,6 +56,7 @@ use super::{
 ///
 /// // Non-consuming combination
 /// let combined = shared.and(&clone1);
+/// # }
 /// ```
 pub struct RcTester {
     pub(super) function: Rc<dyn Fn() -> bool>,

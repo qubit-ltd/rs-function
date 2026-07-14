@@ -28,9 +28,13 @@ use super::{
 /// reused in a single-threaded context. Composition methods borrow `&self`,
 /// allowing the original predicate to remain usable after composition.
 ///
+/// Composition methods require the `combinators` feature.
+///
 /// # Examples
 ///
 /// ```rust
+/// # #[cfg(feature = "combinators")]
+/// # {
 /// use qubit_function::{Predicate, RcPredicate};
 ///
 /// let pred = RcPredicate::new(|x: &i32| *x > 0);
@@ -39,6 +43,7 @@ use super::{
 /// // Original predicate remains usable after composition
 /// let combined = pred.and(RcPredicate::new(|x: &i32| x % 2 == 0));
 /// assert!(pred.test(&5));  // Still works
+/// # }
 /// ```
 pub struct RcPredicate<T> {
     pub(super) function: Rc<dyn Fn(&T) -> bool>,

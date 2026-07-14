@@ -88,7 +88,11 @@
 //!
 //! ## Method Chaining
 //!
+//! This example requires the `combinators` feature.
+//!
 //! ```rust
+//! # #[cfg(feature = "combinators")]
+//! # {
 //! use qubit_function::{BoxMutatingFunctionOnce, MutatingFunctionOnce};
 //!
 //! let data1 = vec![1, 2];
@@ -103,6 +107,7 @@
 //! let final_len = chained.apply(&mut target);
 //! assert_eq!(final_len, 5);
 //! assert_eq!(target, vec![0, 1, 2]);
+//! # }
 //! ```
 //!
 //! ## Validation Pattern

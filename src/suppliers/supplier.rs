@@ -187,7 +187,7 @@ pub use rc_supplier::RcSupplier;
 /// ## Stateless Factory
 ///
 /// ```rust
-/// use qubit_function::{Supplier, SupplierOnce};
+/// use qubit_function::Supplier;
 ///
 /// struct User {
 ///     name: String,

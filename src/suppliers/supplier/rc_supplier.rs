@@ -36,12 +36,17 @@ use super::{
 /// Like `ArcSupplier`, methods borrow `&self` instead of
 /// consuming `self`:
 ///
+/// Transformation methods require the `combinators` feature.
+///
 /// ```rust
+/// # #[cfg(feature = "combinators")]
+/// # {
 /// use qubit_function::{RcSupplier, Supplier};
 ///
 /// let source = RcSupplier::new(|| 10);
 /// let mapped = source.map(|x| x * 2);
 /// // source is still usable here!
+/// # }
 /// ```
 ///
 /// # Examples
@@ -63,7 +68,11 @@ use super::{
 ///
 /// ## Reusable Transformations
 ///
+/// This example requires the `combinators` feature.
+///
 /// ```rust
+/// # #[cfg(feature = "combinators")]
+/// # {
 /// use qubit_function::{RcSupplier, Supplier};
 ///
 /// let base = RcSupplier::new(|| 10);
@@ -73,6 +82,7 @@ use super::{
 /// assert_eq!(base.get(), 10);
 /// assert_eq!(doubled.get(), 20);
 /// assert_eq!(tripled.get(), 30);
+/// # }
 /// ```
 pub struct RcSupplier<T> {
     pub(super) function: Rc<dyn Fn() -> T>,

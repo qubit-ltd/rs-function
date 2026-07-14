@@ -78,7 +78,11 @@
 //!
 //! ## Method Chaining
 //!
+//! This example requires the `combinators` feature.
+//!
 //! ```rust
+//! # #[cfg(feature = "combinators")]
+//! # {
 //! use qubit_function::{BoxMutatorOnce, MutatorOnce};
 //!
 //! let data1 = vec![1, 2];
@@ -94,6 +98,7 @@
 //! let mut target = vec![0];
 //! chained.apply(&mut target);
 //! assert_eq!(target, vec![0, 1, 2, 3, 4]);
+//! # }
 //! ```
 //!
 //! ## Initialization Callback

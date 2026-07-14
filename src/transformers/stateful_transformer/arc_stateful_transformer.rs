@@ -44,6 +44,13 @@ use super::{
 /// - **Thread Safety**: Thread-safe (`Send` required)
 /// - **Clonable**: Cheap cloning via `Arc::clone`
 /// - **Statefulness**: Can modify internal state between calls
+///
+/// # Locking and reentrancy
+///
+/// Each call acquires a `parking_lot::Mutex` and holds it while the user
+/// callback runs. Synchronous re-entry through the same shared state
+/// deadlocks. The mutex is not poisoned after a panic, and mutations completed
+/// before a panic are not rolled back.
 pub struct ArcStatefulTransformer<T, R> {
     pub(super) function: Arc<Mutex<dyn FnMut(T) -> R + Send>>,
     pub(super) name: Option<String>,

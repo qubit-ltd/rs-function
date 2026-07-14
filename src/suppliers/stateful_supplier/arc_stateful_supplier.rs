@@ -37,12 +37,17 @@ use super::{
 /// Methods borrow `&self` instead of consuming `self`. The original
 /// supplier remains usable after method calls:
 ///
+/// This example requires the `combinators` feature.
+///
 /// ```rust
+/// # #[cfg(feature = "combinators")]
+/// # {
 /// use qubit_function::{ArcStatefulSupplier, StatefulSupplier};
 ///
 /// let source = ArcStatefulSupplier::new(|| 10);
 /// let mapped = source.map(|x| x * 2);
 /// // source is still usable here!
+/// # }
 /// ```
 ///
 /// # Examples
@@ -76,7 +81,11 @@ use super::{
 ///
 /// ## Reusable Transformations
 ///
+/// This example requires the `combinators` feature.
+///
 /// ```rust
+/// # #[cfg(feature = "combinators")]
+/// # {
 /// use qubit_function::{ArcStatefulSupplier, StatefulSupplier};
 ///
 /// let base = ArcStatefulSupplier::new(|| 10);
@@ -90,7 +99,15 @@ use super::{
 /// assert_eq!(b.get(), 10);
 /// assert_eq!(d.get(), 20);
 /// assert_eq!(t.get(), 30);
+/// # }
 /// ```
+///
+/// # Locking and reentrancy
+///
+/// Each call acquires a `parking_lot::Mutex` and holds it while the user
+/// callback runs. Synchronous re-entry through the same shared state
+/// deadlocks. The mutex is not poisoned after a panic, and mutations completed
+/// before a panic are not rolled back.
 pub struct ArcStatefulSupplier<T> {
     pub(super) function: Arc<Mutex<dyn FnMut() -> T + Send>>,
     pub(super) name: Option<String>,

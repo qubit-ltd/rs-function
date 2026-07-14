@@ -27,9 +27,13 @@ use super::{
 /// bi-predicate does not need to be cloned or shared. Composition
 /// methods consume `self`, reflecting the single-ownership model.
 ///
+/// Composition methods require the `combinators` feature.
+///
 /// # Examples
 ///
 /// ```rust
+/// # #[cfg(feature = "combinators")]
+/// # {
 /// use qubit_function::{BiPredicate, BoxBiPredicate};
 ///
 /// let pred = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0);
@@ -38,6 +42,7 @@ use super::{
 /// // Chaining consumes the bi-predicate
 /// let combined = pred.and(BoxBiPredicate::new(|x: &i32, y: &i32| x > y));
 /// assert!(combined.test(&10, &5));
+/// # }
 /// ```
 pub struct BoxBiPredicate<T, U> {
     pub(super) function: Box<BiPredicateFn<T, U>>,

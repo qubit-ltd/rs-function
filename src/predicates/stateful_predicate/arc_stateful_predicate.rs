@@ -29,6 +29,13 @@ type ArcStatefulPredicateFn<T> =
 ///
 /// This type stores the predicate closure inside `Arc<Mutex<_>>`, allowing
 /// cheap clones that share mutable predicate state across threads.
+///
+/// # Locking and reentrancy
+///
+/// Each call acquires a `parking_lot::Mutex` and holds it while the user
+/// callback runs. Synchronous re-entry through the same shared state
+/// deadlocks. The mutex is not poisoned after a panic, and mutations completed
+/// before a panic are not rolled back.
 pub struct ArcStatefulPredicate<T> {
     pub(super) function: ArcStatefulPredicateFn<T>,
     pub(super) name: Option<String>,

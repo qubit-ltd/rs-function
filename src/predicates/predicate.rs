@@ -60,12 +60,17 @@
 //!
 //! ### BoxPredicate - Single Ownership
 //!
+//! This example requires the `combinators` feature.
+//!
 //! ```rust
+//! # #[cfg(feature = "combinators")]
+//! # {
 //! use qubit_function::{Predicate, BoxPredicate};
 //!
 //! let pred = BoxPredicate::new(|x: &i32| *x > 0)
 //!     .and(BoxPredicate::new(|x: &i32| x % 2 == 0));
 //! assert!(pred.test(&4));
+//! # }
 //! ```
 //!
 //! ### Closure Composition with Extension Methods
@@ -74,6 +79,8 @@
 //! `FnPredicateOps` extension trait, returning `BoxPredicate`:
 //!
 //! ```rust
+//! # #[cfg(feature = "combinators")]
+//! # {
 //! use qubit_function::{Predicate, FnPredicateOps, BoxPredicate};
 //!
 //! // Compose closures directly - result is BoxPredicate
@@ -100,6 +107,7 @@
 //! let not_zero = (|x: &i32| *x == 0).not();
 //! assert!(not_zero.test(&5));
 //! assert!(!not_zero.test(&0));
+//! # }
 //! ```
 //!
 //! ### Complex Predicate Composition
@@ -107,6 +115,8 @@
 //! Build complex predicates by mixing closures and predicate types:
 //!
 //! ```rust
+//! # #[cfg(feature = "combinators")]
+//! # {
 //! use qubit_function::{Predicate, BoxPredicate, FnPredicateOps};
 //!
 //! // Start with a closure, compose with BoxPredicate
@@ -120,11 +130,16 @@
 //!     .filter(|value| in_range.test(value))
 //!     .collect();
 //! assert_eq!(filtered, vec![5, 50, 75]);
+//! # }
 //! ```
 //!
 //! ### RcPredicate - Single-threaded Reuse
 //!
+//! This example requires the `rc` and `combinators` features.
+//!
 //! ```rust
+//! # #[cfg(all(feature = "rc", feature = "combinators"))]
+//! # {
 //! use qubit_function::{Predicate, RcPredicate};
 //!
 //! let pred = RcPredicate::new(|x: &i32| *x > 0);
@@ -133,6 +148,7 @@
 //!
 //! // Original predicate is still usable
 //! assert!(pred.test(&5));
+//! # }
 //! ```
 //!
 //! ### ArcPredicate - Thread-safe Sharing
@@ -154,7 +170,11 @@
 //!
 //! ### Stateful Predicate Closures
 //!
+//! This example requires the `stateful` feature.
+//!
 //! ```rust
+//! # #[cfg(feature = "stateful")]
+//! # {
 //! use qubit_function::{StatefulPredicate, BoxStatefulPredicate};
 //!
 //! let mut count = 0;
@@ -165,6 +185,7 @@
 //!
 //! assert!(pred.test(&5));
 //! assert!(!pred.test(&-3));
+//! # }
 //! ```
 #[cfg(feature = "rc")]
 use std::rc::Rc;
@@ -255,7 +276,11 @@ pub use fn_predicate_ops::FnPredicateOps;
 ///
 /// ### Stateful Predicate Alternative
 ///
+/// This example requires the `stateful` feature.
+///
 /// ```rust
+/// # #[cfg(feature = "stateful")]
+/// # {
 /// use qubit_function::{StatefulPredicate, BoxStatefulPredicate};
 ///
 /// let mut count = 0;
@@ -266,6 +291,7 @@ pub use fn_predicate_ops::FnPredicateOps;
 ///
 /// assert!(counting_pred.test(&5));
 /// assert!(!counting_pred.test(&-3));
+/// # }
 /// ```
 pub trait Predicate<T> {
     /// Tests whether the given value satisfies this predicate.

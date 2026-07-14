@@ -110,7 +110,11 @@ pub trait FnStatefulConsumerOps<T>: FnMut(&T) + Sized {
     ///
     /// ## Preserving original with clone
     ///
+    /// This example requires the `rc` feature.
+    ///
     /// ```rust
+    /// # #[cfg(feature = "rc")]
+    /// # {
     /// use qubit_function::{Consumer, StatefulConsumer, FnStatefulConsumerOps, RcStatefulConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
@@ -132,6 +136,7 @@ pub trait FnStatefulConsumerOps<T>: FnMut(&T) + Sized {
     /// // Original still usable
     /// second.accept(&3);
     /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![10, 15, 13]);
+    /// # }
     /// ```
     fn and_then<C>(self, next: C) -> BoxStatefulConsumer<T>
     where

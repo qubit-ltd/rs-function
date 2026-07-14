@@ -22,7 +22,11 @@
 //!
 //! # Examples
 //!
+//! The example requires the `rc` and `stateful` features.
+//!
 //! ```rust
+//! # #[cfg(all(feature = "rc", feature = "stateful"))]
+//! # {
 //! use qubit_function::{ArcStatefulSupplier, ArcSupplier, RcStatefulSupplier, RcSupplier, Supplier};
 //!
 //! let arc = ArcSupplier::new(|| 1);
@@ -38,6 +42,7 @@
 //!
 //! let stateful_rc = RcStatefulSupplier::new(|| 1);
 //! let _stateful_rc_clone = stateful_rc.clone();
+//! # }
 //! ```
 
 /// Generates Clone trait implementation for basic Supplier types
@@ -55,7 +60,11 @@
 ///
 /// # Examples
 ///
+/// The example requires the `rc` and `stateful` features.
+///
 /// ```rust
+/// # #[cfg(all(feature = "rc", feature = "stateful"))]
+/// # {
 /// use qubit_function::{ArcStatefulSupplier, ArcSupplier, RcStatefulSupplier, RcSupplier, Supplier};
 ///
 /// let arc = ArcSupplier::new(|| 1);
@@ -71,6 +80,7 @@
 ///
 /// let stateful_rc = RcStatefulSupplier::new(|| 1);
 /// let _stateful_rc_clone = stateful_rc.clone();
+/// # }
 /// ```
 macro_rules! impl_supplier_clone {
     // Single generic parameter

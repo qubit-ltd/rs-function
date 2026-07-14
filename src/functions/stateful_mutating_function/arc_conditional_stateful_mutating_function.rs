@@ -59,6 +59,14 @@ use super::{
 /// assert_eq!(conditional.apply(&mut positive), 10);
 /// assert_eq!(conditional_clone.apply(&mut negative), -5);
 /// ```
+///
+/// # Locking and reentrancy
+///
+/// When the wrapped stateful callback executes, the underlying
+/// `parking_lot::Mutex` remains locked until that callback returns.
+/// Synchronous re-entry through the same shared state deadlocks. The mutex is
+/// not poisoned after a panic, and mutations completed before a panic are not
+/// rolled back.
 pub struct ArcConditionalStatefulMutatingFunction<T, R> {
     pub(super) function: ArcStatefulMutatingFunction<T, R>,
     pub(super) predicate: ArcPredicate<T>,

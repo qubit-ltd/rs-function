@@ -72,7 +72,11 @@
 //!
 //! ## Method Chaining
 //!
+//! This example requires the `combinators` feature.
+//!
 //! ```rust
+//! # #[cfg(feature = "combinators")]
+//! # {
 //! use qubit_function::{BoxStatefulSupplier, StatefulSupplier};
 //!
 //! let mut pipeline = BoxStatefulSupplier::new(|| 10)
@@ -80,6 +84,7 @@
 //!     .map(|x| x + 5);
 //!
 //! assert_eq!(pipeline.get(), 25);
+//! # }
 //! ```
 //!
 //! ## Thread-safe Sharing

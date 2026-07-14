@@ -21,27 +21,27 @@ use super::{
 };
 
 // ============================================================================
-// 3. BoxMutator - Single Ownership Implementation
+// 3. BoxStatefulMutator - Single Ownership Implementation
 // ============================================================================
 
-/// BoxMutator struct
+/// Box-based stateful mutator.
 ///
-/// A mutator implementation based on `Box<dyn FnMut(&mut T)>` for single
-/// ownership scenarios. This is the simplest and most efficient mutator
-/// type when sharing is not required.
+/// A stateful mutator based on `Box<dyn FnMut(&mut T)>` for single ownership
+/// scenarios. This is the simplest stateful mutator when sharing is not
+/// required.
 ///
 /// # Features
 ///
-/// - **Single Ownership**: Not cloneable, ownership moves on use
+/// - **Single Ownership**: Not cloneable; `apply` borrows `&mut self`
 /// - **Runtime cost**: One heap allocation and dynamic dispatch; no reference
 ///   counting or locking
 /// - **Mutable State**: Can modify captured environment via `FnMut`
-/// - **Builder Pattern**: Method chaining consumes `self` naturally
+/// - **Builder Pattern**: Composition methods consume `self` naturally
 /// - **Factory Methods**: Convenient constructors for common patterns
 ///
 /// # Use Cases
 ///
-/// Choose `BoxMutator` when:
+/// Choose `BoxStatefulMutator` when:
 /// - The mutator is used only once or in a linear flow
 /// - Building pipelines where ownership naturally flows
 /// - No need to share the mutator across contexts
@@ -49,7 +49,8 @@ use super::{
 ///
 /// # Performance
 ///
-/// `BoxMutator` has the best performance among the three mutator types:
+/// `BoxStatefulMutator` has the least sharing overhead among the three stateful
+/// mutator wrappers:
 /// - No reference counting overhead
 /// - No lock acquisition or runtime borrow checking
 /// - Direct function call through vtable
@@ -58,12 +59,18 @@ use super::{
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{Mutator, BoxMutator};
+/// use qubit_function::{BoxStatefulMutator, StatefulMutator};
 ///
-/// let mut mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
-/// let mut value = 5;
+/// let mut calls = 0;
+/// let mut mutator = BoxStatefulMutator::new(move |x: &mut i32| {
+///     calls += 1;
+///     *x += calls;
+/// });
+/// let mut value = 10;
 /// mutator.apply(&mut value);
-/// assert_eq!(value, 10);
+/// assert_eq!(value, 11);
+/// mutator.apply(&mut value);
+/// assert_eq!(value, 13);
 /// ```
 pub struct BoxStatefulMutator<T> {
     pub(super) function: Box<dyn FnMut(&mut T)>,

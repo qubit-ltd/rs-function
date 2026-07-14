@@ -53,6 +53,14 @@ use super::{
 /// assert_eq!(transformer.apply(5), 10);
 /// assert_eq!(transformer_clone.apply(-5), 5);
 /// ```
+///
+/// # Locking and reentrancy
+///
+/// When the wrapped stateful callback executes, the underlying
+/// `parking_lot::Mutex` remains locked until that callback returns.
+/// Synchronous re-entry through the same shared state deadlocks. The mutex is
+/// not poisoned after a panic, and mutations completed before a panic are not
+/// rolled back.
 pub struct ArcConditionalStatefulTransformer<T, R> {
     pub(super) transformer: ArcStatefulTransformer<T, R>,
     pub(super) predicate: ArcPredicate<T>,

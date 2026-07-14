@@ -109,7 +109,11 @@ pub trait FnBiFunctionOps<T, U, R>: Fn(&T, &U) -> R + Sized {
     ///
     /// ## Preserving original with clone
     ///
+    /// This example requires the `rc` feature.
+    ///
     /// ```rust
+    /// # #[cfg(feature = "rc")]
+    /// # {
     /// use qubit_function::{BiFunction, FnBiFunctionOps,
     ///     Function, RcFunction};
     ///
@@ -122,6 +126,7 @@ pub trait FnBiFunctionOps<T, U, R>: Fn(&T, &U) -> R + Sized {
     ///
     /// // Original still usable
     /// assert_eq!(to_string.apply(&10), "10");
+    /// # }
     /// ```
     fn and_then<S, F>(self, after: F) -> BoxBiFunction<T, U, S>
     where
@@ -175,7 +180,11 @@ pub trait FnBiFunctionOps<T, U, R>: Fn(&T, &U) -> R + Sized {
     ///
     /// ## Preserving bi-predicate with clone
     ///
+    /// This example requires the `rc` feature.
+    ///
     /// ```rust
+    /// # #[cfg(feature = "rc")]
+    /// # {
     /// use qubit_function::{BiFunction, FnBiFunctionOps,
     ///     RcBiPredicate};
     ///
@@ -192,6 +201,7 @@ pub trait FnBiFunctionOps<T, U, R>: Fn(&T, &U) -> R + Sized {
     /// // Original bi-predicate still usable
     /// use qubit_function::BiPredicate;
     /// assert!(both_positive.test(&5, &3));
+    /// # }
     /// ```
     fn when<P>(self, predicate: P) -> BoxConditionalBiFunction<T, U, R>
     where

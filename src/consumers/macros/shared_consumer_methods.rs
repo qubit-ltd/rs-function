@@ -100,7 +100,11 @@
 ///
 /// # Examples
 ///
+/// This example requires the `rc` feature.
+///
 /// ```rust
+/// # #[cfg(feature = "rc")]
+/// # {
 /// // Single-parameter with Arc
 /// use qubit_function::{ArcConsumer, RcConsumer};
 ///
@@ -116,6 +120,7 @@
 /// let _rc_bi_conditional = RcBiConsumer::new(|x: &i32, y: &i32| {
 ///     let _ = (*x, *y);
 /// }).when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+/// # }
 /// ```
 #[cfg(feature = "combinators")]
 macro_rules! impl_shared_consumer_methods {

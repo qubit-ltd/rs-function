@@ -61,10 +61,13 @@ use super::Tester;
 /// assert!(!tester.test());
 ///
 /// // Logical combination
+/// # #[cfg(feature = "combinators")]
+/// # {
 /// let combined = BoxTester::new(|| true)
 ///     .and(|| false)
 ///     .or(|| true);
 /// assert!(combined.test());
+/// # }
 /// ```
 pub struct BoxTester {
     pub(super) function: Box<dyn Fn() -> bool>,
