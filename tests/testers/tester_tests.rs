@@ -193,7 +193,7 @@ mod tests {
     fn test_arc_tester_and() {
         let first = ArcTester::new(|| true);
         let second = ArcTester::new(|| true);
-        let combined = first.and(&second);
+        let combined = first.and(second.clone());
         assert!(combined.test());
 
         // Verify that the original tester is still available
@@ -204,7 +204,7 @@ mod tests {
     fn test_arc_tester_or() {
         let first = ArcTester::new(|| false);
         let second = ArcTester::new(|| true);
-        let combined = first.or(&second);
+        let combined = first.or(second.clone());
         assert!(combined.test());
 
         // Verify that the original tester is still available
@@ -285,7 +285,7 @@ mod tests {
     fn test_rc_tester_and() {
         let first = RcTester::new(|| true);
         let second = RcTester::new(|| true);
-        let combined = first.and(&second);
+        let combined = first.and(second.clone());
         assert!(combined.test());
 
         // Verify that the original tester is still available
@@ -296,7 +296,7 @@ mod tests {
     fn test_rc_tester_or() {
         let first = RcTester::new(|| false);
         let second = RcTester::new(|| true);
-        let combined = first.or(&second);
+        let combined = first.or(second.clone());
         assert!(combined.test());
 
         // Verify that the original tester is still available
@@ -605,7 +605,7 @@ mod tests {
     fn test_arc_tester_nand_true_true() {
         let first = ArcTester::new(|| true);
         let second = ArcTester::new(|| true);
-        let combined = first.nand(&second);
+        let combined = first.nand(second.clone());
         assert!(!combined.test()); // NAND: !(true && true) = false
     }
 
@@ -613,7 +613,7 @@ mod tests {
     fn test_arc_tester_nand_true_false() {
         let first = ArcTester::new(|| true);
         let second = ArcTester::new(|| false);
-        let combined = first.nand(&second);
+        let combined = first.nand(second.clone());
         assert!(combined.test()); // NAND: !(true && false) = true
     }
 
@@ -621,7 +621,7 @@ mod tests {
     fn test_arc_tester_nand_false_false() {
         let first = ArcTester::new(|| false);
         let second = ArcTester::new(|| false);
-        let combined = first.nand(&second);
+        let combined = first.nand(second.clone());
         assert!(combined.test()); // NAND: !(false && false) = true
     }
 
@@ -629,7 +629,7 @@ mod tests {
     fn test_arc_tester_xor_true_true() {
         let first = ArcTester::new(|| true);
         let second = ArcTester::new(|| true);
-        let combined = first.xor(&second);
+        let combined = first.xor(second.clone());
         assert!(!combined.test()); // XOR: true ^ true = false
     }
 
@@ -637,7 +637,7 @@ mod tests {
     fn test_arc_tester_xor_true_false() {
         let first = ArcTester::new(|| true);
         let second = ArcTester::new(|| false);
-        let combined = first.xor(&second);
+        let combined = first.xor(second.clone());
         assert!(combined.test()); // XOR: true ^ false = true
     }
 
@@ -645,7 +645,7 @@ mod tests {
     fn test_arc_tester_xor_false_false() {
         let first = ArcTester::new(|| false);
         let second = ArcTester::new(|| false);
-        let combined = first.xor(&second);
+        let combined = first.xor(second.clone());
         assert!(!combined.test()); // XOR: false ^ false = false
     }
 
@@ -653,7 +653,7 @@ mod tests {
     fn test_arc_tester_nor_true_true() {
         let first = ArcTester::new(|| true);
         let second = ArcTester::new(|| true);
-        let combined = first.nor(&second);
+        let combined = first.nor(second.clone());
         assert!(!combined.test()); // NOR: !(true || true) = false
     }
 
@@ -661,7 +661,7 @@ mod tests {
     fn test_arc_tester_nor_false_true() {
         let first = ArcTester::new(|| false);
         let second = ArcTester::new(|| true);
-        let combined = first.nor(&second);
+        let combined = first.nor(second.clone());
         assert!(!combined.test()); // NOR: !(false || true) = false
     }
 
@@ -669,7 +669,7 @@ mod tests {
     fn test_arc_tester_nor_false_false() {
         let first = ArcTester::new(|| false);
         let second = ArcTester::new(|| false);
-        let combined = first.nor(&second);
+        let combined = first.nor(second.clone());
         assert!(combined.test()); // NOR: !(false || false) = true
     }
 
@@ -681,7 +681,7 @@ mod tests {
     fn test_rc_tester_nand_true_true() {
         let first = RcTester::new(|| true);
         let second = RcTester::new(|| true);
-        let combined = first.nand(&second);
+        let combined = first.nand(second.clone());
         assert!(!combined.test()); // NAND: !(true && true) = false
     }
 
@@ -689,7 +689,7 @@ mod tests {
     fn test_rc_tester_nand_true_false() {
         let first = RcTester::new(|| true);
         let second = RcTester::new(|| false);
-        let combined = first.nand(&second);
+        let combined = first.nand(second.clone());
         assert!(combined.test()); // NAND: !(true && false) = true
     }
 
@@ -697,7 +697,7 @@ mod tests {
     fn test_rc_tester_nand_false_false() {
         let first = RcTester::new(|| false);
         let second = RcTester::new(|| false);
-        let combined = first.nand(&second);
+        let combined = first.nand(second.clone());
         assert!(combined.test()); // NAND: !(false && false) = true
     }
 
@@ -705,7 +705,7 @@ mod tests {
     fn test_rc_tester_xor_true_true() {
         let first = RcTester::new(|| true);
         let second = RcTester::new(|| true);
-        let combined = first.xor(&second);
+        let combined = first.xor(second.clone());
         assert!(!combined.test()); // XOR: true ^ true = false
     }
 
@@ -713,7 +713,7 @@ mod tests {
     fn test_rc_tester_xor_true_false() {
         let first = RcTester::new(|| true);
         let second = RcTester::new(|| false);
-        let combined = first.xor(&second);
+        let combined = first.xor(second.clone());
         assert!(combined.test()); // XOR: true ^ false = true
     }
 
@@ -721,7 +721,7 @@ mod tests {
     fn test_rc_tester_xor_false_false() {
         let first = RcTester::new(|| false);
         let second = RcTester::new(|| false);
-        let combined = first.xor(&second);
+        let combined = first.xor(second.clone());
         assert!(!combined.test()); // XOR: false ^ false = false
     }
 
@@ -729,7 +729,7 @@ mod tests {
     fn test_rc_tester_nor_true_true() {
         let first = RcTester::new(|| true);
         let second = RcTester::new(|| true);
-        let combined = first.nor(&second);
+        let combined = first.nor(second.clone());
         assert!(!combined.test()); // NOR: !(true || true) = false
     }
 
@@ -737,7 +737,7 @@ mod tests {
     fn test_rc_tester_nor_false_true() {
         let first = RcTester::new(|| false);
         let second = RcTester::new(|| true);
-        let combined = first.nor(&second);
+        let combined = first.nor(second.clone());
         assert!(!combined.test()); // NOR: !(false || true) = false
     }
 
@@ -745,7 +745,7 @@ mod tests {
     fn test_rc_tester_nor_false_false() {
         let first = RcTester::new(|| false);
         let second = RcTester::new(|| false);
-        let combined = first.nor(&second);
+        let combined = first.nor(second.clone());
         assert!(combined.test()); // NOR: !(false || false) = true
     }
 

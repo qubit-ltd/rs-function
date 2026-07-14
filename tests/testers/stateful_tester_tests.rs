@@ -50,6 +50,27 @@ fn test_stateful_tester_closure_mutates_state() {
     assert!(StatefulTester::test(&mut tester));
 }
 
+/// Verifies that all stateful wrapper owners accept semantic tester objects.
+#[test]
+fn test_stateful_tester_combinators_accept_semantic_trait() {
+    let mut boxed = BoxStatefulTester::new(|| true).and(ThresholdTester {
+        count: 0,
+        threshold: 1,
+    });
+    let mut rc = RcStatefulTester::new(|| true).and(ThresholdTester {
+        count: 0,
+        threshold: 1,
+    });
+    let mut arc = ArcStatefulTester::new(|| true).and(ThresholdTester {
+        count: 0,
+        threshold: 1,
+    });
+
+    assert!(boxed.test());
+    assert!(rc.test());
+    assert!(arc.test());
+}
+
 #[test]
 fn test_box_stateful_tester_logical_operations_cover_branches() {
     let skipped = Rc::new(RefCell::new(false));
@@ -261,4 +282,52 @@ fn test_box_stateful_tester_logical_operations_cover_all_branches() {
 
     let mut nor_false = BoxStatefulTester::new(|| true).nor(|| false);
     assert!(!nor_false.test());
+}
+
+/// Verifies naming and diagnostic formatting for an owned stateful tester.
+#[test]
+fn test_box_stateful_tester_name_and_diagnostics() {
+    let mut tester = BoxStatefulTester::new_with_name("threshold", || true);
+
+    assert_eq!(tester.name(), Some("threshold"));
+    assert_eq!(
+        format!("{tester:?}"),
+        "BoxStatefulTester { name: Some(\"threshold\") }"
+    );
+    assert_eq!(format!("{tester}"), "BoxStatefulTester(threshold)");
+    tester.clear_name();
+    assert_eq!(tester.name(), None);
+}
+
+/// Verifies clone-independent metadata for a shared Rc stateful tester.
+#[test]
+fn test_rc_stateful_tester_name_and_diagnostics() {
+    let original = RcStatefulTester::new_with_name("threshold", || true);
+    let renamed = original.clone().with_name("renamed");
+
+    assert_eq!(original.name(), Some("threshold"));
+    assert_eq!(renamed.name(), Some("renamed"));
+    assert_eq!(
+        format!("{original:?}"),
+        "RcStatefulTester { name: Some(\"threshold\") }"
+    );
+    assert_eq!(format!("{original}"), "RcStatefulTester(threshold)");
+}
+
+/// Verifies clone-independent metadata for a shared Arc stateful tester.
+#[test]
+fn test_arc_stateful_tester_name_and_diagnostics() {
+    let original = ArcStatefulTester::new_with_optional_name(
+        || true,
+        Some("threshold".to_owned()),
+    );
+    let renamed = original.clone().with_name("renamed");
+
+    assert_eq!(original.name(), Some("threshold"));
+    assert_eq!(renamed.name(), Some("renamed"));
+    assert_eq!(
+        format!("{original:?}"),
+        "ArcStatefulTester { name: Some(\"threshold\") }"
+    );
+    assert_eq!(format!("{original}"), "ArcStatefulTester(threshold)");
 }

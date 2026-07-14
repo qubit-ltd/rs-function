@@ -257,7 +257,7 @@ mod arc_comparator_tests {
         let cmp2 = qubit_function::comparator::ArcComparator::new(
             |a: &i32, b: &i32| a.cmp(b),
         );
-        let chained = cmp1.then_comparing(&cmp2);
+        let chained = cmp1.then_comparing(cmp2.clone());
         assert_eq!(chained.compare(&4, &2), Ordering::Greater);
         // Originals still work
         assert_eq!(cmp1.compare(&4, &2), Ordering::Equal);
@@ -275,7 +275,7 @@ mod arc_comparator_tests {
                 panic!("Second comparator should not be called")
             },
         );
-        let chained = cmp1.then_comparing(&cmp2);
+        let chained = cmp1.then_comparing(cmp2.clone());
         // 5 > 3, so first comparator returns Greater, second not called
         assert_eq!(chained.compare(&5, &3), Ordering::Greater);
     }
@@ -291,7 +291,7 @@ mod arc_comparator_tests {
                 panic!("Second comparator should not be called")
             },
         );
-        let chained = cmp1.then_comparing(&cmp2);
+        let chained = cmp1.then_comparing(cmp2.clone());
         // 3 < 5, so first comparator returns Less, second not called
         assert_eq!(chained.compare(&3, &5), Ordering::Less);
     }
@@ -424,7 +424,7 @@ mod rc_comparator_tests {
         let cmp2 = qubit_function::comparator::RcComparator::new(
             |a: &i32, b: &i32| a.cmp(b),
         );
-        let chained = cmp1.then_comparing(&cmp2);
+        let chained = cmp1.then_comparing(cmp2.clone());
         assert_eq!(chained.compare(&4, &2), Ordering::Greater);
         // Originals still work
         assert_eq!(cmp1.compare(&4, &2), Ordering::Equal);
@@ -442,7 +442,7 @@ mod rc_comparator_tests {
                 panic!("Second comparator should not be called")
             },
         );
-        let chained = cmp1.then_comparing(&cmp2);
+        let chained = cmp1.then_comparing(cmp2.clone());
         // 5 > 3, so first comparator returns Greater, second not called
         assert_eq!(chained.compare(&5, &3), Ordering::Greater);
     }
@@ -458,7 +458,7 @@ mod rc_comparator_tests {
                 panic!("Second comparator should not be called")
             },
         );
-        let chained = cmp1.then_comparing(&cmp2);
+        let chained = cmp1.then_comparing(cmp2.clone());
         // 3 < 5, so first comparator returns Less, second not called
         assert_eq!(chained.compare(&3, &5), Ordering::Less);
     }

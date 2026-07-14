@@ -11,6 +11,14 @@ use qubit_function::testers::tester::{
     rc_tester::RcTester,
 };
 
+struct RcAlwaysTrue;
+
+impl Tester for RcAlwaysTrue {
+    fn test(&self) -> bool {
+        true
+    }
+}
+
 #[test]
 fn test_rc_tester_observable_behavior() {
     let type_name = std::any::type_name::<RcTester>();
@@ -26,4 +34,29 @@ fn test_rc_tester_not_operator_observable_behavior() {
     let borrowed_negated = !&original;
     assert!(!borrowed_negated.test());
     assert!(original.test());
+}
+
+/// Verifies naming, diagnostics, and clone-independent metadata updates.
+#[test]
+fn test_rc_tester_name_and_diagnostics() {
+    let original = RcTester::new_with_name("ready", || true);
+    let renamed = original.clone().with_name("renamed");
+
+    assert_eq!(original.name(), Some("ready"));
+    assert_eq!(renamed.name(), Some("renamed"));
+    assert_eq!(
+        format!("{original:?}"),
+        "RcTester { name: Some(\"ready\") }"
+    );
+    assert_eq!(format!("{original}"), "RcTester(ready)");
+}
+
+/// Verifies that Rc logical composition accepts semantic Tester objects.
+#[test]
+fn test_rc_tester_and_semantic_trait() {
+    let first = RcTester::new(|| true);
+    let combined = first.and(RcAlwaysTrue);
+
+    assert!(combined.test());
+    assert!(first.test());
 }
