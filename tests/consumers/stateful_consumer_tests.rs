@@ -15,7 +15,6 @@ use qubit_function::{
     BoxConsumer,
     BoxStatefulConsumer,
     Consumer,
-    ConsumerOnce,
     FnConsumerOps,
     RcConsumer,
     RcStatefulConsumer,
@@ -278,6 +277,11 @@ mod test_box_consumer {
 
 #[cfg(test)]
 mod test_arc_consumer {
+    use std::panic::{
+        AssertUnwindSafe,
+        catch_unwind,
+    };
+
     use super::{
         Arc,
         ArcConsumer,
@@ -315,6 +319,36 @@ mod test_arc_consumer {
         assert_eq!(
             *log.lock().expect("mutex should not be poisoned"),
             vec![5, 10]
+        );
+    }
+
+    /// Verifies that callback mutations survive a panic and that the shared
+    /// consumer remains usable after unwinding.
+    #[test]
+    fn test_accept_after_callback_panic() {
+        let log = Arc::new(Mutex::new(Vec::new()));
+        let callback_log = log.clone();
+        let mut consumer = ArcStatefulConsumer::new(move |value: &i32| {
+            callback_log
+                .lock()
+                .expect("mutex should not be poisoned")
+                .push(*value);
+            assert_ne!(*value, 1, "first callback should panic");
+        });
+
+        let result = catch_unwind(AssertUnwindSafe(|| consumer.accept(&1)));
+        assert!(result.is_err(), "the first callback should panic");
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![1],
+            "mutations completed before the panic should be preserved"
+        );
+
+        consumer.accept(&2);
+        assert_eq!(
+            *log.lock().expect("mutex should not be poisoned"),
+            vec![1, 2],
+            "the consumer should remain usable after unwinding"
         );
     }
 
@@ -605,26 +639,6 @@ mod test_arc_consumer {
             vec![10, 15]
         ); // 5*2=10, 5+10=15
     }
-
-    // Test into_box() preserves name
-
-    // Test into_box() with no name
-
-    // Test into_rc() preserves name
-
-    // Test into_rc() with no name
-
-    // Test to_box() preserves name
-
-    // Test to_box() with no name
-
-    // Test to_rc() preserves name
-
-    // Test to_rc() with no name
-
-    // Test to_arc() preserves name (clones self)
-
-    // Test to_arc() with no name
 }
 
 // ============================================================================
@@ -633,6 +647,11 @@ mod test_arc_consumer {
 
 #[cfg(test)]
 mod test_rc_consumer {
+    use std::panic::{
+        AssertUnwindSafe,
+        catch_unwind,
+    };
+
     use super::{
         Consumer,
         Rc,
@@ -666,6 +685,49 @@ mod test_rc_consumer {
         consumer.accept(&5);
         clone.accept(&10);
         assert_eq!(*log.borrow(), vec![5, 10]);
+    }
+
+    /// Verifies that synchronous re-entry panics after preserving prior
+    /// mutations, and that the shared consumer remains usable after unwinding.
+    #[test]
+    fn test_accept_reentrant_call_panics_and_recovers() {
+        let log = Rc::new(RefCell::new(Vec::new()));
+        let callback_log = log.clone();
+        let shared_consumer =
+            Rc::new(RefCell::new(None::<RcStatefulConsumer<i32>>));
+        let callback_consumer = shared_consumer.clone();
+        let mut consumer = RcStatefulConsumer::new(move |value: &i32| {
+            callback_log.borrow_mut().push(*value);
+            if *value == 1 {
+                let mut reentrant = callback_consumer
+                    .borrow()
+                    .as_ref()
+                    .expect("shared consumer should be initialized")
+                    .clone();
+                reentrant.accept(&2);
+            }
+        });
+        *shared_consumer.borrow_mut() = Some(consumer.clone());
+
+        let result = catch_unwind(AssertUnwindSafe(|| consumer.accept(&1)));
+        assert!(result.is_err(), "synchronous re-entry should panic");
+        assert_eq!(
+            *log.borrow(),
+            vec![1],
+            "mutations completed before the panic should be preserved"
+        );
+
+        consumer.accept(&3);
+        assert_eq!(
+            *log.borrow(),
+            vec![1, 3],
+            "the consumer should remain usable after unwinding"
+        );
+
+        assert!(
+            shared_consumer.borrow_mut().take().is_some(),
+            "shared consumer should be present during cleanup"
+        );
     }
 
     #[test]
@@ -745,14 +807,6 @@ mod test_rc_consumer {
         let display_str = format!("{}", consumer);
         assert_eq!(display_str, "RcStatefulConsumer(my_consumer)");
     }
-
-    // Test into_box() preserves name
-
-    // Test into_box() with no name
-
-    // Test to_box() preserves name
-
-    // Test to_box() with no name
 }
 
 // ============================================================================
@@ -946,11 +1000,6 @@ mod test_fn_consumer_ops {
             vec![10, 15]
         );
     }
-
-    // Test closure's to_xxx methods
-    // Note: Only Clone closures can use to_xxx methods
-    // Since standard closures do not implement Clone, we use function pointers
-    // (function pointers implement Clone)
 }
 
 // ============================================================================
@@ -1048,13 +1097,6 @@ mod test_consumer_names {
         assert_eq!(consumer.name(), Some("my_consumer"));
     }
 }
-
-// ============================================================================
-// to_fn Tests
-// ============================================================================
-
-#[cfg(test)]
-mod test_to_fn {}
 
 // ============================================================================
 // Edge Cases Tests
@@ -1369,60 +1411,8 @@ mod test_edge_cases {
         assert!(display_str.contains("RcConditionalStatefulConsumer"));
     }
 }
-
 // ============================================================================
-// Default Implementation Tests for into_xxx() methods
-// ============================================================================
-
-#[cfg(test)]
-mod test_default_into_implementations {
-    use super::{
-        Arc,
-        Mutex,
-        StatefulConsumer,
-    };
-
-    // Define a custom Consumer implementation for testing default into_xxx()
-    // methods
-    struct CustomConsumer {
-        log: Arc<Mutex<Vec<i32>>>,
-    }
-
-    impl StatefulConsumer<i32> for CustomConsumer {
-        fn accept(&mut self, value: &i32) {
-            self.log
-                .lock()
-                .expect("mutex should not be poisoned")
-                .push(*value * 10);
-        }
-
-        // Do not implement into_box, into_rc, into_arc, into_fn
-        // Use default implementations
-    }
-
-    // Test custom Consumer composition with other Consumers
-
-    // Define a stateful custom Consumer
-    struct StatefulConsumerImpl {
-        log: Arc<Mutex<Vec<i32>>>,
-        multiplier: i32,
-    }
-
-    impl StatefulConsumer<i32> for StatefulConsumerImpl {
-        fn accept(&mut self, value: &i32) {
-            self.log
-                .lock()
-                .expect("mutex should not be poisoned")
-                .push(*value * self.multiplier);
-            self.multiplier += 1; // Increment multiplier after each call
-        }
-    }
-
-    // Test thread-safe custom Consumer
-}
-
-// ============================================================================
-// Closure to_xxx Tests - Testing closure's Consumer trait implementation
+// Closure StatefulConsumer Tests
 // ============================================================================
 
 #[cfg(test)]
@@ -1532,17 +1522,11 @@ mod consumer_once_trait_tests {
         ArcConsumer,
         BoxConsumer,
         Consumer,
-        ConsumerOnce,
         Mutex,
         Rc,
         RcConsumer,
         RefCell,
     };
-
-    // Helper function that accepts ConsumerOnce
-    fn accept_consumer_once<C: ConsumerOnce<i32>>(consumer: C, value: &i32) {
-        consumer.accept(value);
-    }
 
     #[test]
     fn test_box_consumer_accept_once() {
@@ -1586,13 +1570,6 @@ mod consumer_once_trait_tests {
         assert_eq!(*log.borrow(), vec![10]);
     }
 }
-
-// ============================================================================
-// Closure StatefulConsumer into_xxx Tests
-// ============================================================================
-
-#[cfg(test)]
-mod test_closure_stateful_consumer_into_methods {}
 
 // ============================================================================
 // FnStatefulConsumerOps and_then Tests
@@ -1757,48 +1734,5 @@ mod test_fn_stateful_consumer_ops {
             *log.lock().expect("mutex should not be poisoned"),
             vec![10, 15, 13]
         );
-    }
-}
-
-// ============================================================================
-// Custom Struct Tests - Testing StatefulConsumer trait default implementations
-// ============================================================================
-
-#[cfg(test)]
-mod custom_struct_tests {
-    use super::{
-        Arc,
-        StatefulConsumer,
-    };
-
-    use std::sync::atomic::{
-        AtomicUsize,
-        Ordering,
-    };
-
-    /// Custom struct implementing StatefulConsumer for testing default trait
-    /// methods
-    pub struct MyStatefulConsumer {
-        counter: Arc<AtomicUsize>,
-    }
-
-    impl MyStatefulConsumer {
-        pub fn new(counter: Arc<AtomicUsize>) -> Self {
-            Self { counter }
-        }
-    }
-
-    impl StatefulConsumer<i32> for MyStatefulConsumer {
-        fn accept(&mut self, _value: &i32) {
-            self.counter.fetch_add(1, Ordering::SeqCst);
-        }
-    }
-
-    impl Clone for MyStatefulConsumer {
-        fn clone(&self) -> Self {
-            Self {
-                counter: self.counter.clone(),
-            }
-        }
     }
 }

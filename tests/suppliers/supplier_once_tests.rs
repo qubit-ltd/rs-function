@@ -117,10 +117,6 @@ mod test_box_supplier_once {
         }
     }
 
-    mod test_into_box {}
-
-    mod test_into_fn {}
-
     mod test_use_cases {
         use super::{
             BoxSupplierOnce,
@@ -170,8 +166,6 @@ mod test_box_supplier_once {
             assert_eq!(*result, vec![1, 2, 3]);
         }
     }
-
-    mod test_into_box_conversion {}
 
     mod test_edge_cases {
         use super::{
@@ -257,37 +251,6 @@ mod test_custom_supplier_once_default_implementation {
         assert_eq!(custom.get(), 42);
     }
 }
-
-// ==========================================================================
-// Tests for to_box and to_fn
-// ==========================================================================
-
-#[cfg(test)]
-mod test_to_box_and_to_fn {
-    use super::SupplierOnce;
-    use std::sync::{
-        Arc,
-        Mutex,
-    };
-
-    // A custom cloneable supplier to test the default `to_box` and `to_fn`
-    // implementations.
-    #[derive(Clone)]
-    struct CloneableSupplier {
-        value: Arc<Mutex<Option<i32>>>,
-    }
-
-    impl SupplierOnce<i32> for CloneableSupplier {
-        fn get(self) -> i32 {
-            self.value
-                .lock()
-                .expect("mutex should not be poisoned")
-                .take()
-                .expect("CloneableSupplier already consumed")
-        }
-    }
-}
-
 // ======================================================================
 // Debug and Display Trait Tests
 // ======================================================================

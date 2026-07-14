@@ -1215,38 +1215,6 @@ mod test_custom_stateless_supplier_default_impl {
         }
     }
 }
-
-// ======================================================================
-// Tests for to_* Methods
-// ======================================================================
-
-#[cfg(test)]
-mod test_to_methods {
-
-    // ============================================================
-    // Tests for ArcSupplier to_* methods
-    // ============================================================
-
-    mod test_arc_stateless_supplier_to_methods {}
-
-    // ============================================================
-    // Tests for RcSupplier to_* methods
-    // ============================================================
-
-    mod test_rc_stateless_supplier_to_methods {
-
-        // Note: to_arc is not implemented for RcSupplier
-        // because Rc is not Send + Sync. If you try to call it,
-        // the compiler will fail with a trait bound error.
-    }
-
-    // ============================================================
-    // Tests for Closure to_* methods
-    // ============================================================
-
-    mod test_closure_to_methods {}
-}
-
 // ======================================================================
 // Debug and Display Trait Tests
 // ======================================================================
@@ -1395,6 +1363,3 @@ mod test_supplier_debug_display {
 // ============================================================================
 // Supplier Trait Default Methods Tests - into_once, to_once
 // ============================================================================
-
-#[cfg(test)]
-mod test_supplier_trait_default_methods {}

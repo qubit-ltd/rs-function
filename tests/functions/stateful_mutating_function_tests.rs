@@ -52,9 +52,6 @@ impl Clone for TestStatefulMutatingFunction {
     }
 }
 
-#[cfg(test)]
-mod test_stateful_mutating_function_default_impl {}
-
 // ============================================================================
 // BoxStatefulMutatingFunction Tests
 // ============================================================================
@@ -816,6 +813,3 @@ fn test_arc_conditional_stateful_mutating_function_debug_display() {
 // ============================================================================
 // StatefulMutatingFunction Trait Default Methods Tests - into_once, to_once
 // ============================================================================
-
-#[cfg(test)]
-mod test_stateful_mutating_function_trait_default_methods {}

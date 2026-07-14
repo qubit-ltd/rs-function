@@ -171,39 +171,69 @@ fn test_arc_runnable_with_shares_state_between_clones() {
 
 #[test]
 fn test_box_runnable_with_combinators_cover_error_branches() {
-    let mut input = 0;
-    let next_ran = Rc::new(Cell::new(false));
-    let next_ran_capture = Rc::clone(&next_ran);
+    let next_runs = Rc::new(Cell::new(0));
+    let next_runs_capture = Rc::clone(&next_runs);
     let mut chained =
-        BoxRunnableWith::<i32, io::Error>::new(|_value: &mut i32| {
-            Err(io::Error::other("first failed"))
+        BoxRunnableWith::<i32, io::Error>::new(|value: &mut i32| {
+            if *value < 0 {
+                Err(io::Error::other("first failed"))
+            } else {
+                *value += 1;
+                Ok(())
+            }
         })
         .and_then(move |value: &mut i32| {
-            next_ran_capture.set(true);
-            *value += 1;
+            next_runs_capture.set(next_runs_capture.get() + 1);
+            *value *= 2;
             Ok::<(), io::Error>(())
         });
+
+    let mut input = 1;
+    chained
+        .run_with(&mut input)
+        .expect("and_then should run after success");
+    assert_eq!(input, 4);
+    assert_eq!(next_runs.get(), 1);
+
+    let mut input = -1;
     let error = chained
         .run_with(&mut input)
         .expect_err("and_then should short-circuit");
     assert_eq!(error.to_string(), "first failed");
-    assert!(!next_ran.get());
-    assert_eq!(input, 0);
+    assert_eq!(input, -1);
+    assert_eq!(next_runs.get(), 1);
 
-    let callable_ran = Rc::new(Cell::new(false));
-    let callable_ran_capture = Rc::clone(&callable_ran);
+    let callable_runs = Rc::new(Cell::new(0));
+    let callable_runs_capture = Rc::clone(&callable_runs);
     let mut callable =
-        BoxRunnableWith::<i32, io::Error>::new(|_value: &mut i32| {
-            Err(io::Error::other("prepare failed"))
+        BoxRunnableWith::<i32, io::Error>::new(|value: &mut i32| {
+            if *value < 0 {
+                Err(io::Error::other("prepare failed"))
+            } else {
+                *value += 1;
+                Ok(())
+            }
         })
         .then_callable_with(move |value: &mut i32| {
-            callable_ran_capture.set(true);
-            Ok::<i32, io::Error>(*value + 1)
+            callable_runs_capture.set(callable_runs_capture.get() + 1);
+            Ok::<i32, io::Error>(*value * 2)
         });
+
+    let mut input = 2;
+    assert_eq!(
+        callable
+            .call_with(&mut input)
+            .expect("then_callable_with should run after success"),
+        6,
+    );
+    assert_eq!(input, 3);
+    assert_eq!(callable_runs.get(), 1);
+
+    let mut input = -1;
     let error = callable
         .call_with(&mut input)
         .expect_err("then_callable_with should short-circuit");
     assert_eq!(error.to_string(), "prepare failed");
-    assert!(!callable_ran.get());
-    assert_eq!(input, 0);
+    assert_eq!(input, -1);
+    assert_eq!(callable_runs.get(), 1);
 }

@@ -43,50 +43,6 @@ mod trait_tests {
         assert_eq!(concat.apply(owned_x, owned_y), "hello world");
     }
 }
-
-// ============================================================================
-// Tests for BiTransformerOnce trait default implementations (to_box, to_fn)
-// ============================================================================
-
-#[cfg(test)]
-mod trait_default_impl_tests {
-    use super::BiTransformerOnce;
-
-    // Create a cloneable custom type that implements BiTransformerOnce
-    #[derive(Clone)]
-    struct CustomAddTransformer {
-        offset: i32,
-    }
-
-    impl BiTransformerOnce<i32, i32, i32> for CustomAddTransformer {
-        fn apply(self, first: i32, second: i32) -> i32 {
-            first + second + self.offset
-        }
-    }
-
-    #[derive(Clone)]
-    struct CustomConcatTransformer {
-        separator: String,
-    }
-
-    impl BiTransformerOnce<String, String, String> for CustomConcatTransformer {
-        fn apply(self, first: String, second: String) -> String {
-            format!("{}{}{}", first, self.separator, second)
-        }
-    }
-
-    #[derive(Clone)]
-    struct CustomMultiplyTransformer {
-        multiplier: f64,
-    }
-
-    impl BiTransformerOnce<f64, f64, f64> for CustomMultiplyTransformer {
-        fn apply(self, first: f64, second: f64) -> f64 {
-            (first + second) * self.multiplier
-        }
-    }
-}
-
 // ============================================================================
 // Tests for BoxBiTransformerOnce
 // ============================================================================

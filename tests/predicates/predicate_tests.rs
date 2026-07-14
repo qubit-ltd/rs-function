@@ -530,9 +530,6 @@ mod interior_mutability_tests {
 }
 
 #[cfg(test)]
-mod type_conversion_tests {}
-
-#[cfg(test)]
 mod different_types_tests {
     use super::{
         BoxPredicate,
@@ -1769,9 +1766,6 @@ mod always_predicates_tests {
 }
 
 #[cfg(test)]
-mod to_fn_tests {}
-
-#[cfg(test)]
 mod not_composition_tests {
     use super::{
         ArcPredicate,
@@ -1914,9 +1908,6 @@ mod not_composition_tests {
 // Additional Type Conversion Tests
 // ============================================================================
 
-#[cfg(test)]
-mod additional_type_conversion_tests {}
-
 // ============================================================================
 // Custom Predicate Type Tests (Default Implementation)
 // ============================================================================
@@ -2049,91 +2040,6 @@ mod display_debug_tests {
         assert!(debug_str.contains("name"));
     }
 }
-
-// ============================================================================
-// to_xxx Methods Tests for All Predicate Implementations
-// ============================================================================
-
-#[cfg(test)]
-mod to_methods_comprehensive_tests {
-    use super::Predicate;
-
-    // ========================================================================
-    // RcPredicate to_xxx methods
-    // ========================================================================
-
-    // ========================================================================
-    // ArcPredicate to_xxx methods
-    // ========================================================================
-
-    // ========================================================================
-    // Closure to_xxx methods (testing the blanket implementation)
-    // ========================================================================
-
-    // ========================================================================
-    // Custom Predicate with Clone - testing default to_xxx implementations
-    // ========================================================================
-
-    #[derive(Clone)]
-    struct ClonableThresholdPredicate {
-        threshold: i32,
-    }
-
-    impl Predicate<i32> for ClonableThresholdPredicate {
-        fn test(&self, value: &i32) -> bool {
-            *value > self.threshold
-        }
-        // Using all default implementations for to_xxx methods
-    }
-
-    // ========================================================================
-    // Custom Predicate with Send + Sync for Arc conversion
-    // ========================================================================
-
-    #[derive(Clone)]
-    struct ThreadSafeRangePredicate {
-        min: i32,
-        max: i32,
-    }
-
-    // Mark it as Send + Sync explicitly
-    unsafe impl Send for ThreadSafeRangePredicate {}
-    unsafe impl Sync for ThreadSafeRangePredicate {}
-
-    impl Predicate<i32> for ThreadSafeRangePredicate {
-        fn test(&self, value: &i32) -> bool {
-            *value >= self.min && *value <= self.max
-        }
-    }
-
-    // ========================================================================
-    // Complex scenarios with to_xxx methods
-    // ========================================================================
-
-    // ========================================================================
-    // Custom predicate with state
-    // ========================================================================
-
-    #[derive(Clone)]
-    struct StatefulPredicate {
-        allowed_values: Vec<i32>,
-    }
-
-    impl Predicate<i32> for StatefulPredicate {
-        fn test(&self, value: &i32) -> bool {
-            self.allowed_values.contains(value)
-        }
-    }
-
-    // ========================================================================
-    // Test String predicate with to_xxx methods
-    // ========================================================================
-
-    // ========================================================================
-    // Test with complex types
-    // ========================================================================
-}
-
 // ============================================================================
 // Name Preservation Tests for into_xxx and to_xxx Methods
 // ============================================================================

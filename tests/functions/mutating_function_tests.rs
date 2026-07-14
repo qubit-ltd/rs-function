@@ -341,9 +341,6 @@ impl Clone for TestMutatingFunction {
     }
 }
 
-#[cfg(test)]
-mod test_mutating_function_default_impl {}
-
 // ============================================================================
 // MutatingFunction Debug and Display Tests
 // ============================================================================
@@ -646,6 +643,3 @@ fn test_arc_conditional_mutating_function_debug_display() {
 // ============================================================================
 // MutatingFunction Trait Default Methods Tests - into_once, to_once
 // ============================================================================
-
-#[cfg(test)]
-mod test_mutating_function_trait_default_methods {}

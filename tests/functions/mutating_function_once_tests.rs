@@ -39,9 +39,6 @@ impl MutatingFunctionOnce<i32, i32> for TestMutatingFunctionOnce {
     }
 }
 
-#[cfg(test)]
-mod test_mutating_function_once_default_impl {}
-
 // ============================================================================
 // BoxMutatingFunctionOnce Tests
 // ============================================================================

@@ -317,12 +317,6 @@ mod test_box_stateful_supplier {
             assert_eq!(memoized.get(), 1); // Cached
         }
     }
-
-    mod test_into_box {}
-
-    mod test_into_rc {}
-
-    mod test_into_fn {}
 }
 
 // ==========================================================================
@@ -657,22 +651,6 @@ mod test_arc_stateful_supplier {
             );
         }
     }
-
-    mod test_into_box {}
-
-    mod test_into_rc {}
-
-    mod test_into_arc {}
-
-    mod test_into_fn {}
-
-    mod test_to_box {}
-
-    mod test_to_rc {}
-
-    mod test_to_arc {}
-
-    mod test_to_fn {}
 }
 
 // ==========================================================================
@@ -763,12 +741,6 @@ mod test_rc_stateful_supplier {
             assert_eq!(s.get(), 3);
         }
     }
-
-    mod test_to_box {}
-
-    mod test_to_rc {}
-
-    mod test_to_fn {}
 
     mod test_clone {
         use super::{
@@ -959,12 +931,6 @@ mod test_rc_stateful_supplier {
         }
     }
 
-    mod test_into_box {}
-
-    mod test_into_rc {}
-
-    mod test_into_fn {}
-
     // Note: RcStatefulSupplier cannot be converted to ArcStatefulSupplier
     // because Rc is not Send. This is prevented at compile time by the
     // trait bound, so we don't test it.
@@ -1029,10 +995,6 @@ mod test_box_stateful_supplier_once {
             assert_eq!(value, 1);
         }
     }
-
-    mod test_into_box {}
-
-    mod test_into_fn {}
 }
 
 // ==========================================================================
@@ -1125,14 +1087,6 @@ mod test_arc_stateful_supplier_once {
             );
         }
     }
-
-    mod test_into_box {}
-
-    mod test_into_fn {}
-
-    mod test_to_box {}
-
-    mod test_to_fn {}
 }
 
 // ==========================================================================
@@ -1216,47 +1170,7 @@ mod test_rc_stateful_supplier_once {
             assert_eq!(*counter.borrow(), 2);
         }
     }
-
-    mod test_into_box {}
-
-    mod test_into_fn {}
-
-    mod test_to_box {}
-
-    mod test_to_fn {}
 }
-
-// ==========================================================================
-// Custom StatefulSupplier Implementation Tests
-// ==========================================================================
-
-#[cfg(test)]
-mod test_custom_stateful_supplier_default_impl {
-    use super::StatefulSupplier;
-
-    /// A custom StatefulSupplier implementation that only implements the
-    /// core `get()` method, relying on default implementations for
-    /// conversion methods.
-    struct CounterStatefulSupplier {
-        counter: i32,
-    }
-
-    impl CounterStatefulSupplier {
-        fn new(initial: i32) -> Self {
-            Self { counter: initial }
-        }
-    }
-
-    impl StatefulSupplier<i32> for CounterStatefulSupplier {
-        fn get(&mut self) -> i32 {
-            // This implementation intentionally leaves its state unchanged.
-            self.counter
-        }
-        // Note: into_box(), into_rc(), and into_arc() use the
-        // default implementations from the trait
-    }
-}
-
 // ==========================================================================
 // FnStatefulSupplierOps Extension Trait Tests
 // ==========================================================================
@@ -1589,23 +1503,6 @@ mod test_fn_stateful_supplier_ops {
         assert_eq!(result1, result2);
     }
 }
-
-#[cfg(test)]
-mod test_custom_clone_stateful_supplier {
-    use super::StatefulSupplier;
-
-    #[derive(Clone)]
-    struct CustomStatefulSupplier {
-        value: i32,
-    }
-
-    impl StatefulSupplier<i32> for CustomStatefulSupplier {
-        fn get(&mut self) -> i32 {
-            self.value
-        }
-    }
-}
-
 // ======================================================================
 // Debug and Display Trait Tests
 // ======================================================================
@@ -1760,6 +1657,3 @@ mod test_stateful_supplier_debug_display {
 // ============================================================================
 // StatefulSupplier Trait Default Methods Tests - into_once, to_once
 // ============================================================================
-
-#[cfg(test)]
-mod test_stateful_supplier_trait_default_methods {}
