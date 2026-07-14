@@ -20,7 +20,7 @@ This crate provides a complete set of functional programming abstractions inspir
 - **Multiple Ownership Models**: Box-based single ownership, Arc-based thread-safe sharing, and Rc-based single-threaded sharing
 - **Flexible API Design**: Trait-based unified interface with concrete implementations optimized for different scenarios
 - **Type-Oriented Module Layout**: Public source files are organized around a single exported type, keeping modules shorter and easier to scan
-- **Method Chaining**: All types support fluent API and functional composition
+- **Method Chaining**: The `combinators` feature enables fluent composition APIs
 - **Thread-Safety Options**: Choose between thread-safe (Arc) and efficient single-threaded (Rc) implementations
 - **Ergonomic callback abstractions**: Box uses dynamic dispatch, Rc/Arc add reference counting, and stateful Arc adapters add locking
 
@@ -31,12 +31,21 @@ extension APIs. `full` enables every layer; the default feature set is empty.
 
 ## Installation
 
-Add this to your `Cargo.toml`:
+For the core API without optional features, add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
 qubit-function = "0.16"
 ```
+
+To enable every optional API used by the examples below:
+
+```toml
+[dependencies]
+qubit-function = { version = "0.16", features = ["full"] }
+```
+
+Unless noted otherwise, examples below assume the `full` feature is enabled.
 
 ## Core Abstractions
 
