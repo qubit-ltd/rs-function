@@ -34,7 +34,7 @@ Cargo feature 明确划分可选 API 成本：`rc` 启用单线程共享包装�
 
 ```toml
 [dependencies]
-qubit-function = "0.15"
+qubit-function = "0.16"
 ```
 
 ## 核心抽象
