@@ -1066,6 +1066,3 @@ fn test_arc_conditional_stateful_function_debug_display() {
 // ============================================================================
 // StatefulFunction Trait Default Methods Tests - into_once, to_once
 // ============================================================================
-
-#[cfg(test)]
-mod test_stateful_function_trait_default_methods {}

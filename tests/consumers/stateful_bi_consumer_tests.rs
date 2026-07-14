@@ -226,12 +226,6 @@ mod box_stateful_bi_consumer_tests {
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![]);
     }
 
-    // Test into_box() method (identity conversion)
-
-    // Test into_rc() method
-
-    // Test into_fn() method
-
     // Test accept_once() from BiConsumerOnce trait
     #[test]
     fn test_accept_once() {
@@ -246,10 +240,6 @@ mod box_stateful_bi_consumer_tests {
         consumer.accept(&5, &3);
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
     }
-
-    // Test into_box() from BiConsumerOnce trait
-
-    // Test into_fn() from BiConsumerOnce trait
 
     // Test with different types
     #[test]
@@ -442,12 +432,6 @@ mod box_conditional_bi_consumer_tests {
             vec![8, -15]
         );
     }
-
-    // Test into_box() method
-
-    // Test into_rc() method
-
-    // Test into_fn() method
 
     // Test with always true predicate
     #[test]
@@ -673,22 +657,6 @@ mod arc_stateful_bi_consumer_tests {
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
     }
 
-    // Test to_fn() method
-
-    // Test into_box() method
-
-    // Test into_rc() method
-
-    // Test into_arc() method
-
-    // Test into_fn() method
-
-    // Test to_box() method
-
-    // Test to_rc() method
-
-    // Test to_arc() method
-
     // Test accept_once() from BiConsumerOnce trait
     #[test]
     fn test_accept_once() {
@@ -703,10 +671,6 @@ mod arc_stateful_bi_consumer_tests {
         consumer.accept(&5, &3);
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
     }
-
-    // Test into_box() from BiConsumerOnce trait
-
-    // Test into_fn() from BiConsumerOnce trait
 
     // Test thread safety
     #[test]
@@ -762,26 +726,6 @@ mod arc_stateful_bi_consumer_tests {
         let display_str = format!("{}", consumer);
         assert_eq!(display_str, "ArcStatefulBiConsumer(my_consumer)");
     }
-
-    // Test into_box() preserves name
-
-    // Test into_box() with no name
-
-    // Test into_rc() preserves name
-
-    // Test into_rc() with no name
-
-    // Test to_box() preserves name
-
-    // Test to_box() with no name
-
-    // Test to_rc() preserves name
-
-    // Test to_rc() with no name
-
-    // Test to_arc() preserves name (clones self)
-
-    // Test to_arc() with no name
 }
 
 // ============================================================================
@@ -875,22 +819,6 @@ mod arc_conditional_bi_consumer_tests {
             vec![8, -15]
         );
     }
-
-    // Test into_box() method
-
-    // Test into_rc() method
-
-    // Test into_arc() method
-
-    // Test into_fn() method
-
-    // Test to_box() method
-
-    // Test to_rc() method
-
-    // Test to_arc() method
-
-    // Test to_fn() method
 
     // Test Debug trait implementation
     #[test]
@@ -1037,18 +965,6 @@ mod rc_stateful_bi_consumer_tests {
         assert_eq!(*log.borrow(), vec![8]);
     }
 
-    // Test to_fn() method
-
-    // Test into_box() method
-
-    // Test into_rc() method
-
-    // Test into_fn() method
-
-    // Test to_box() method
-
-    // Test to_rc() method
-
     // Test accept_once() from BiConsumerOnce trait
     #[test]
     fn test_accept_once() {
@@ -1061,10 +977,6 @@ mod rc_stateful_bi_consumer_tests {
         consumer.accept(&5, &3);
         assert_eq!(*log.borrow(), vec![8]);
     }
-
-    // Test into_box() from BiConsumerOnce trait
-
-    // Test into_fn() from BiConsumerOnce trait
 
     // Test Debug trait implementation
     #[test]
@@ -1090,14 +1002,6 @@ mod rc_stateful_bi_consumer_tests {
         let display_str = format!("{}", consumer);
         assert_eq!(display_str, "RcStatefulBiConsumer(my_consumer)");
     }
-
-    // Test into_box() preserves name
-
-    // Test into_box() with no name
-
-    // Test to_box() preserves name
-
-    // Test to_box() with no name
 }
 
 // ============================================================================
@@ -1175,18 +1079,6 @@ mod rc_conditional_bi_consumer_tests {
         with_else.accept(&-5, &3);
         assert_eq!(*log.borrow(), vec![8, -15]);
     }
-
-    // Test into_box() method
-
-    // Test into_rc() method
-
-    // Test into_fn() method
-
-    // Test to_box() method
-
-    // Test to_rc() method
-
-    // Test to_fn() method
 
     // Test Debug trait implementation
     #[test]
@@ -1380,28 +1272,6 @@ mod closure_stateful_bi_consumer_tests {
         closure.accept(&5, &3);
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
     }
-
-    // Test into_box() on closure
-
-    // Test into_rc() on closure
-
-    // Test into_arc() on closure
-
-    // Test into_fn() on closure
-
-    // Test to_box() on closure
-
-    // Test to_rc() on closure
-
-    // Test to_arc() on closure
-
-    // Test to_fn() on closure - returns the closure itself
-
-    // Test into_fn() on closure - consumes the closure
-
-    // Test into_once() on closure
-
-    // Test to_once() on closure
 }
 
 // ============================================================================
@@ -1576,48 +1446,3 @@ impl StatefulBiConsumer<i32, i32> for CustomStatefulBiConsumer {
 // Implement Send and Sync for CustomStatefulBiConsumer to support Arc
 unsafe impl Send for CustomStatefulBiConsumer {}
 unsafe impl Sync for CustomStatefulBiConsumer {}
-
-// ============================================================================
-// Custom Struct into_once/to_once Tests - Testing StatefulBiConsumer trait
-// default implementations
-// ============================================================================
-
-#[cfg(test)]
-mod custom_struct_once_tests {
-    use super::{
-        Arc,
-        StatefulBiConsumer,
-    };
-
-    use std::sync::atomic::{
-        AtomicUsize,
-        Ordering,
-    };
-
-    /// Custom struct implementing StatefulBiConsumer for testing default trait
-    /// methods
-    pub struct MyStatefulBiConsumer {
-        counter: Arc<AtomicUsize>,
-    }
-
-    impl MyStatefulBiConsumer {
-        pub fn new(counter: Arc<AtomicUsize>) -> Self {
-            Self { counter }
-        }
-    }
-
-    impl StatefulBiConsumer<i32, i32> for MyStatefulBiConsumer {
-        fn accept(&mut self, first: &i32, second: &i32) {
-            self.counter
-                .fetch_add((first + second) as usize, Ordering::SeqCst);
-        }
-    }
-
-    impl Clone for MyStatefulBiConsumer {
-        fn clone(&self) -> Self {
-            Self {
-                counter: self.counter.clone(),
-            }
-        }
-    }
-}

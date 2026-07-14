@@ -699,46 +699,6 @@ mod box_conditional_consumer_once_tests {
         );
     }
 }
-
-// ============================================================================
-// to_box() and to_fn() Tests - Custom Consumer with Clone
-// ============================================================================
-
-#[cfg(test)]
-mod custom_consumer_to_methods_tests {
-    use super::{
-        Arc,
-        ConsumerOnce,
-        Mutex,
-    };
-
-    /// Cloneable custom consumer for testing to_xxx() methods
-    #[derive(Clone)]
-    struct CloneableConsumer {
-        log: Arc<Mutex<Vec<i32>>>,
-        multiplier: i32,
-    }
-
-    impl CloneableConsumer {
-        fn new(log: Arc<Mutex<Vec<i32>>>, multiplier: i32) -> Self {
-            Self { log, multiplier }
-        }
-    }
-
-    impl ConsumerOnce<i32> for CloneableConsumer {
-        fn accept(self, value: &i32) {
-            self.log
-                .lock()
-                .expect("mutex should not be poisoned")
-                .push(*value * self.multiplier);
-        }
-    }
-
-    // Tests for to_box() method
-
-    // Tests for to_fn() method
-}
-
 // ============================================================================
 // to_box() and to_fn() Tests - Closure Implementation
 // ============================================================================
@@ -837,38 +797,5 @@ mod closure_to_xxx_methods_tests {
             *log.lock().expect("mutex should not be poisoned"),
             vec![10, 15]
         ); // Both execute because condition is true (5 < 15)
-    }
-}
-
-// ============================================================================
-// Advanced to_box() and to_fn() Scenarios
-// ============================================================================
-
-#[cfg(test)]
-mod advanced_to_methods_tests {
-    use super::{
-        Arc,
-        ConsumerOnce,
-        Mutex,
-    };
-
-    #[derive(Clone)]
-    struct CountingCloneableConsumer {
-        log: Arc<Mutex<Vec<i32>>>,
-    }
-
-    impl CountingCloneableConsumer {
-        fn new(log: Arc<Mutex<Vec<i32>>>) -> Self {
-            Self { log }
-        }
-    }
-
-    impl ConsumerOnce<i32> for CountingCloneableConsumer {
-        fn accept(self, value: &i32) {
-            self.log
-                .lock()
-                .expect("mutex should not be poisoned")
-                .push(*value);
-        }
     }
 }

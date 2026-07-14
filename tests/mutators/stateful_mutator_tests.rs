@@ -1025,9 +1025,6 @@ mod test_custom_mutator_default_impl {
 // into_fn Tests
 // ============================================================================
 
-#[cfg(test)]
-mod test_into_fn {}
-
 // ============================================================================
 // Conditional Execution Tests (when/or_else with various parameter types)
 // ============================================================================

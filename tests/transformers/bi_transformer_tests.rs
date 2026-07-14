@@ -410,9 +410,6 @@ mod rc_conditional_tests {
 // Conversion Tests
 // ============================================================================
 
-#[cfg(test)]
-mod conversion_tests {}
-
 // ============================================================================
 // Trait Usage Tests
 // ============================================================================
@@ -559,9 +556,6 @@ mod edge_cases_tests {
 // ============================================================================
 // Type Conversion Tests - Testing into_box, into_rc, into_arc methods
 // ============================================================================
-
-#[cfg(test)]
-mod type_conversion_tests {}
 
 // ============================================================================
 // Closure BiTransformer Tests - Testing blanket implementation for closures
@@ -741,63 +735,33 @@ mod custom_bi_transformer_tests {
 // BiTransformer Default Methods - to_xxx() Non-consuming Conversions
 // ============================================================================
 
-#[cfg(test)]
-mod box_bi_transformer_to_methods_tests {}
-
-#[cfg(test)]
-mod arc_bi_transformer_to_methods_tests {}
-
-#[cfg(test)]
-mod rc_bi_transformer_to_methods_tests {}
-
 // ============================================================================
 // Closure BiTransformer to_xxx() Methods Tests
 // ============================================================================
-
-#[cfg(test)]
-mod closure_bi_transformer_to_methods_tests {}
 
 // ============================================================================
 // Complete to_xxx() Test Coverage for All Types
 // ============================================================================
 
-#[cfg(test)]
-mod complete_to_methods_coverage {}
-
 // ============================================================================
 // Consuming into_xxx() and Non-consuming to_xxx() Comparison Tests
 // ============================================================================
-
-#[cfg(test)]
-mod into_vs_to_comparison_tests {}
 
 // ============================================================================
 // BiTransformer Default Trait Methods - into_xxx() with Various Inputs
 // ============================================================================
 
-#[cfg(test)]
-mod into_methods_comprehensive_tests {}
-
 // ============================================================================
 // Type Conversion Chain Tests
 // ============================================================================
-
-#[cfg(test)]
-mod conversion_chain_tests {}
 
 // ============================================================================
 // String and Complex Types Conversion Tests
 // ============================================================================
 
-#[cfg(test)]
-mod complex_types_conversion_tests {}
-
 // ============================================================================
 // Send+Sync Verification Tests for Arc Conversions
 // ============================================================================
-
-#[cfg(test)]
-mod arc_thread_safety_tests {}
 
 // ============================================================================
 // BoxBiTransformer BiTransformerOnce Tests
@@ -997,56 +961,4 @@ mod conditional_transformer_display_debug_tests {
         let debug_str = format!("{:?}", conditional);
         assert!(debug_str.contains("ArcConditionalBiTransformer"));
     }
-}
-
-// ============================================================================
-// Custom BiTransformer Implementation Tests - Test Trait Default Methods
-// (into_*)
-// ============================================================================
-
-#[cfg(test)]
-mod custom_bi_transformer_into_tests {
-    use super::BiTransformer;
-
-    /// Test custom BiTransformer that implements into_* methods by consuming
-    /// self
-    #[derive(Clone)]
-    struct CustomBiTransformer {
-        multiplier: i32,
-    }
-
-    impl CustomBiTransformer {
-        fn new(multiplier: i32) -> Self {
-            Self { multiplier }
-        }
-    }
-
-    impl BiTransformer<i32, i32, i32> for CustomBiTransformer {
-        fn apply(&self, first: i32, second: i32) -> i32 {
-            (first + second) * self.multiplier
-        }
-    }
-
-    /// Test custom Send + Sync BiTransformer's default into_arc()
-    /// implementation
-    #[derive(Clone)]
-    struct ThreadSafeBiTransformer {
-        multiplier: i32,
-    }
-
-    impl ThreadSafeBiTransformer {
-        fn new(multiplier: i32) -> Self {
-            Self { multiplier }
-        }
-    }
-
-    impl BiTransformer<i32, i32, i32> for ThreadSafeBiTransformer {
-        fn apply(&self, first: i32, second: i32) -> i32 {
-            (first + second) * self.multiplier
-        }
-    }
-
-    // Manual implementation of Send and Sync
-    unsafe impl Send for ThreadSafeBiTransformer {}
-    unsafe impl Sync for ThreadSafeBiTransformer {}
 }

@@ -902,37 +902,6 @@ mod conditional_stateful_bi_transformer_display_debug_tests {
         assert!(debug_str.contains("ArcConditionalStatefulBiTransformer"));
     }
 }
-
-// ============================================================================
-// StatefulBiTransformer Trait Default Methods Tests
-// ============================================================================
-
-#[cfg(test)]
-mod stateful_bi_transformer_trait_default_methods_tests {
-    use super::StatefulBiTransformer;
-
-    // Custom struct implementing StatefulBiTransformer to test default methods
-    #[derive(Clone)]
-    struct TestStatefulBiTransformer {
-        state: i32,
-    }
-
-    impl TestStatefulBiTransformer {
-        fn new(initial_state: i32) -> Self {
-            Self {
-                state: initial_state,
-            }
-        }
-    }
-
-    impl StatefulBiTransformer<i32, i32, i32> for TestStatefulBiTransformer {
-        fn apply(&mut self, first: i32, second: i32) -> i32 {
-            self.state += 1;
-            first + second + self.state
-        }
-    }
-}
-
 // ============================================================================
 // Basic StatefulBiTransformer Display Tests
 // ============================================================================

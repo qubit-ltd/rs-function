@@ -865,6 +865,3 @@ fn test_arc_stateful_transformer_display_without_name() {
 // ============================================================================
 // StatefulTransformer Trait Default Methods Tests - into_once, to_once
 // ============================================================================
-
-#[cfg(test)]
-mod test_stateful_transformer_trait_default_methods {}

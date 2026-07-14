@@ -297,36 +297,3 @@ mod test_box_conditional_mutator_once_debug_display {
         assert_eq!(value, 6);
     }
 }
-
-// Tests for to_box() method
-#[cfg(test)]
-mod custom_mutator_to_methods_tests {
-    use super::MutatorOnce;
-    use std::sync::{
-        Arc,
-        Mutex,
-    };
-
-    /// Cloneable custom mutator for testing to_xxx() methods
-    #[derive(Clone)]
-    struct CloneableMutator {
-        log: Arc<Mutex<Vec<i32>>>,
-        multiplier: i32,
-    }
-
-    impl CloneableMutator {
-        fn new(log: Arc<Mutex<Vec<i32>>>, multiplier: i32) -> Self {
-            Self { log, multiplier }
-        }
-    }
-
-    impl MutatorOnce<i32> for CloneableMutator {
-        fn apply(self, value: &mut i32) {
-            *value *= self.multiplier;
-            self.log
-                .lock()
-                .expect("mutex should not be poisoned")
-                .push(*value);
-        }
-    }
-}

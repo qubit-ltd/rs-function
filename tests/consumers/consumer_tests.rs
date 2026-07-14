@@ -396,14 +396,6 @@ mod closure_tests {
 }
 
 #[cfg(test)]
-mod conversion_tests {
-
-    // Note: Box and Rc cannot be converted to Arc because they don't implement
-    // Send+Sync These conversions are prevented at compile time, not
-    // runtime
-}
-
-#[cfg(test)]
 mod generic_tests {
     use super::{
         ArcConsumer,
@@ -607,59 +599,13 @@ mod display_debug_tests {
         assert_eq!(display_str, "RcConsumer(test_consumer)");
     }
 }
-
-#[cfg(test)]
-mod custom_struct_tests {
-    use super::Consumer;
-    use std::sync::Arc;
-    use std::sync::atomic::{
-        AtomicUsize,
-        Ordering,
-    };
-
-    pub struct MyConsumer {
-        counter: Arc<AtomicUsize>,
-    }
-
-    impl MyConsumer {
-        pub fn new(counter: Arc<AtomicUsize>) -> Self {
-            Self { counter }
-        }
-    }
-
-    impl Consumer<i32> for MyConsumer {
-        fn accept(&self, _value: &i32) {
-            self.counter.fetch_add(1, Ordering::SeqCst);
-        }
-    }
-
-    impl Clone for MyConsumer {
-        fn clone(&self) -> Self {
-            Self {
-                counter: self.counter.clone(),
-            }
-        }
-    }
-}
-
 // ============================================================================
 // to_xxx Methods Tests - Testing non-consuming conversion methods
 // ============================================================================
 
-#[cfg(test)]
-mod to_xxx_methods_tests {
-
-    // BoxConsumer cannot implement Clone because it uses Box<dyn Fn>
-    // So it cannot have to_box, to_rc, to_fn methods
-    // It can only have into_xxx methods
-}
-
 // ============================================================================
 // to_once Tests - Testing Consumer trait default to_once implementation
 // ============================================================================
-
-#[cfg(test)]
-mod to_once_tests {}
 
 // ============================================================================
 // Conditional Consumer Tests

@@ -376,9 +376,6 @@ mod rc_conditional_tests {
 // Conversion Tests
 // ============================================================================
 
-#[cfg(test)]
-mod conversion_tests {}
-
 // ============================================================================
 // Non-consuming Conversion Tests (to_xxx methods)
 // ============================================================================
@@ -582,35 +579,9 @@ mod edge_cases_tests {
         assert_eq!(process.apply(data), 5050);
     }
 }
-
-// ============================================================================
-// Default Implementation Tests
-// ============================================================================
-
-#[cfg(test)]
-mod default_implementation_tests {
-    use qubit_function::Transformer;
-
-    // A custom transformer that only implements the core `transform`
-    // method, relying on default implementations for all `into_xxx`
-    // methods.
-    struct CustomTransformer {
-        multiplier: i32,
-    }
-
-    impl Transformer<i32, i32> for CustomTransformer {
-        fn apply(&self, input: i32) -> i32 {
-            input * self.multiplier
-        }
-    }
-}
-
 // ============================================================================
 // Specialized into_fn Implementation Tests
 // ============================================================================
-
-#[cfg(test)]
-mod specialized_into_fn_tests {}
 
 // ============================================================================
 // Type Conversion Tests
@@ -640,147 +611,6 @@ mod type_conversion_tests {
         assert_eq!(constant.apply(3), "test");
     }
 }
-
-// ============================================================================
-// Transformer Default Implementation Tests - to_xxx() methods
-// ============================================================================
-
-#[cfg(test)]
-mod transformer_default_to_methods_tests {
-
-    // ========================================================================
-    // ArcTransformer::to_box() Tests
-    // ========================================================================
-
-    // ========================================================================
-    // ArcTransformer::to_rc() Tests
-    // ========================================================================
-
-    // ========================================================================
-    // ArcTransformer::to_arc() Tests
-    // ========================================================================
-
-    // ========================================================================
-    // ArcTransformer::to_fn() Tests
-    // ========================================================================
-
-    // ========================================================================
-    // RcTransformer::to_box() Tests
-    // ========================================================================
-
-    // ========================================================================
-    // RcTransformer::to_rc() Tests
-    // ========================================================================
-
-    // ========================================================================
-    // RcTransformer::to_fn() Tests
-    // ========================================================================
-
-    // ========================================================================
-    // Cross-type conversion tests
-    // ========================================================================
-
-    // ========================================================================
-    // Complex type tests
-    // ========================================================================
-
-    // ========================================================================
-    // Identity and constant tests
-    // ========================================================================
-}
-
-// ============================================================================
-// Custom Type with Default to_xxx Implementation Tests
-// ============================================================================
-
-#[cfg(test)]
-mod custom_transformer_to_methods_tests {
-    use qubit_function::Transformer;
-
-    /// Custom Transformer implementation for testing default to_xxx methods
-    /// This is a simple multiplication transformer
-    #[derive(Clone)]
-    struct MultiplyTransformer {
-        multiplier: i32,
-    }
-
-    impl Transformer<i32, i32> for MultiplyTransformer {
-        fn apply(&self, input: i32) -> i32 {
-            input * self.multiplier
-        }
-    }
-
-    /// Thread-safe custom Transformer implementation
-    #[derive(Clone)]
-    struct ThreadSafeMultiplyTransformer {
-        multiplier: i32,
-    }
-
-    // Manual implementation of Send + Sync
-    unsafe impl Send for ThreadSafeMultiplyTransformer {}
-    unsafe impl Sync for ThreadSafeMultiplyTransformer {}
-
-    impl Transformer<i32, i32> for ThreadSafeMultiplyTransformer {
-        fn apply(&self, input: i32) -> i32 {
-            input * self.multiplier
-        }
-    }
-
-    // ========================================================================
-    // Custom Type to_box() Tests
-    // ========================================================================
-
-    // ========================================================================
-    // Custom Type to_rc() Tests
-    // ========================================================================
-
-    // ========================================================================
-    // Custom Type to_arc() Tests (Thread-Safe)
-    // ========================================================================
-
-    // ========================================================================
-    // Custom Type to_fn() Tests
-    // ========================================================================
-
-    // ========================================================================
-    // Cross-type conversion tests
-    // ========================================================================
-
-    // ========================================================================
-    // Different type transformation tests
-    // ========================================================================
-
-    /// Custom Transformer: i32 -> String
-    #[derive(Clone)]
-    struct IntToStringTransformer {
-        prefix: String,
-    }
-
-    impl Transformer<i32, String> for IntToStringTransformer {
-        fn apply(&self, input: i32) -> String {
-            format!("{}{}", self.prefix, input)
-        }
-    }
-
-    // ========================================================================
-    // Complex state tests
-    // ========================================================================
-
-    /// Custom Transformer with complex state
-    #[derive(Clone)]
-    struct StatefulTransformer {
-        base: i32,
-        multiplier: i32,
-        offset: i32,
-    }
-
-    impl Transformer<i32, i32> for StatefulTransformer {
-        fn apply(&self, input: i32) -> i32 {
-            (input + self.base) * self.multiplier + self.offset
-        }
-    }
-}
-
 // ============================================================================
 // TransformerOnce Tests for BoxTransformer, RcTransformer, ArcTransformer
 // ============================================================================
@@ -1030,6 +860,3 @@ mod transformer_once_tests {
 // ============================================================================
 // Transformer Trait Default Methods Tests - into_once, to_once
 // ============================================================================
-
-#[cfg(test)]
-mod test_transformer_trait_default_methods {}

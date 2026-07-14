@@ -421,9 +421,6 @@ mod edge_cases_tests {
 // Conversion Tests
 // ============================================================================
 
-#[cfg(test)]
-mod conversion_tests {}
-
 // ============================================================================
 // Name Tests - Testing name() and set_name() methods
 // ============================================================================
@@ -609,41 +606,6 @@ mod display_debug_tests {
         assert_eq!(display_str, "RcBiConsumer(test_consumer)");
     }
 }
-
-// ============================================================================
-// Custom BiConsumer Implementation Tests - Testing default into_xxx methods
-// ============================================================================
-
-#[cfg(test)]
-mod custom_non_mutating_bi_consumer_tests {
-    use super::{
-        Arc,
-        BiConsumer,
-    };
-
-    /// Custom BiConsumer implementation for testing trait's default methods
-    struct CustomBiConsumer<T, U> {
-        counter: Arc<std::sync::Mutex<i32>>,
-        _phantom: std::marker::PhantomData<(T, U)>,
-    }
-
-    impl<T, U> CustomBiConsumer<T, U> {
-        fn new(counter: Arc<std::sync::Mutex<i32>>) -> Self {
-            Self {
-                counter,
-                _phantom: std::marker::PhantomData,
-            }
-        }
-    }
-
-    impl<T, U> BiConsumer<T, U> for CustomBiConsumer<T, U> {
-        fn accept(&self, _first: &T, _second: &U) {
-            *self.counter.lock().expect("mutex should not be poisoned") += 1;
-        }
-        // Use default into_xxx implementations from the trait
-    }
-}
-
 #[cfg(test)]
 mod noop_tests {
     use super::{
@@ -719,64 +681,9 @@ mod noop_tests {
         assert_eq!(counter.get(), 1);
     }
 }
-
-// ============================================================================
-// to_xxx Methods Tests - Testing non-consuming conversion methods
-// ============================================================================
-
-#[cfg(test)]
-mod to_methods_tests {
-    use super::{
-        Arc,
-        BiConsumer,
-    };
-
-    // ========================================================================
-    // ArcBiConsumer to_xxx tests
-    // ========================================================================
-
-    // ========================================================================
-    // RcBiConsumer to_xxx tests
-    // ========================================================================
-
-    // ========================================================================
-    // Closure to_xxx tests
-    // ========================================================================
-
-    // ========================================================================
-    // Custom BiConsumer to_xxx tests
-    // ========================================================================
-
-    /// Custom BiConsumer implementation for testing default to_xxx methods
-    #[derive(Clone)]
-    pub struct CustomConsumer {
-        counter: Arc<std::sync::Mutex<i32>>,
-    }
-
-    impl CustomConsumer {
-        pub fn new(counter: Arc<std::sync::Mutex<i32>>) -> Self {
-            Self { counter }
-        }
-    }
-
-    impl BiConsumer<i32, i32> for CustomConsumer {
-        fn accept(&self, first: &i32, second: &i32) {
-            *self.counter.lock().expect("mutex should not be poisoned") +=
-                first + second;
-        }
-        // Use default to_xxx implementations from the trait
-    }
-
-    unsafe impl Send for CustomConsumer {}
-    unsafe impl Sync for CustomConsumer {}
-}
-
 // ============================================================================
 // to_once Tests - Testing BiConsumer trait default to_once implementation
 // ============================================================================
-
-#[cfg(test)]
-mod to_once_tests {}
 
 // ============================================================================
 // Conditional BiConsumer Tests

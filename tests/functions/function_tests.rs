@@ -548,44 +548,6 @@ fn test_fn_function_ops_when() {
     assert_eq!(conditional.apply(&5), 10);
     assert_eq!(conditional.apply(&-5), 5);
 }
-
-// ============================================================================
-// Function Trait Default Implementation Tests
-// ============================================================================
-
-#[cfg(test)]
-mod function_default_impl_tests {
-    use qubit_function::Function;
-
-    /// Custom struct that only implements the core apply method of Function
-    /// trait All into_xxx() and to_xxx() methods use default implementation
-    struct CustomFunction {
-        multiplier: i32,
-    }
-
-    impl Function<i32, i32> for CustomFunction {
-        fn apply(&self, input: &i32) -> i32 {
-            input * self.multiplier
-        }
-        // Does not override any into_xxx() or to_xxx() methods, testing default
-        // implementations
-    }
-
-    /// Cloneable custom function for testing to_xxx() methods
-    #[derive(Clone)]
-    struct CloneableCustomFunction {
-        multiplier: i32,
-    }
-
-    impl Function<i32, i32> for CloneableCustomFunction {
-        fn apply(&self, input: &i32) -> i32 {
-            input * self.multiplier
-        }
-        // Does not override any into_xxx() or to_xxx() methods, testing default
-        // implementations
-    }
-}
-
 // ============================================================================
 // ArcConditionalFunction Clone Tests
 // ============================================================================

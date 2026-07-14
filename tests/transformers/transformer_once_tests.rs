@@ -148,9 +148,6 @@ mod conditional_tests {
 // Conversion Tests
 // ============================================================================
 
-#[cfg(test)]
-mod conversion_tests {}
-
 // ============================================================================
 // Complex Composition Tests
 // ============================================================================
@@ -321,79 +318,6 @@ mod trait_usage_tests {
         assert_eq!(apply_transformer_once(to_string, 42), "42");
     }
 }
-
-// ============================================================================
-// Type Conversion Tests
-// ============================================================================
-
-#[cfg(test)]
-mod type_conversion_tests {}
-
-// ============================================================================
-// Default Implementation Tests
-// ============================================================================
-
-#[cfg(test)]
-mod default_implementation_tests {
-    use super::TransformerOnce;
-
-    // Custom type test default implementation
-    struct CustomTransformer {
-        factor: i32,
-    }
-
-    impl TransformerOnce<i32, i32> for CustomTransformer {
-        fn apply(self, input: i32) -> i32 {
-            input * self.factor
-        }
-        // Use default into_box and into_fn implementations
-    }
-}
-
-// ============================================================================
-// Zero-Cost Specialization Tests
-// ============================================================================
-
-#[cfg(test)]
-mod zero_cost_specialization_tests {}
-
-// ============================================================================
-// Custom Type Default Implementation Tests
-// ============================================================================
-
-#[cfg(test)]
-mod custom_type_default_impl_tests {
-    use super::TransformerOnce;
-
-    /// Custom cloneable TransformerOnce type
-    ///
-    /// This type demonstrates how to implement the TransformerOnce trait,
-    /// and by implementing Clone, it can use the to_box() and to_fn() methods
-    #[derive(Clone)]
-    struct CustomTransformer {
-        multiplier: i32,
-    }
-
-    impl TransformerOnce<i32, i32> for CustomTransformer {
-        fn apply(self, input: i32) -> i32 {
-            input * self.multiplier
-        }
-    }
-
-    /// Custom transformer with complex state
-    #[derive(Clone)]
-    struct ComplexTransformer {
-        prefix: String,
-        suffix: String,
-    }
-
-    impl TransformerOnce<i32, String> for ComplexTransformer {
-        fn apply(self, input: i32) -> String {
-            format!("{}{}{}", self.prefix, input, self.suffix)
-        }
-    }
-}
-
 // ============================================================================
 // BoxTransformer TransformerOnce Tests
 // ============================================================================
