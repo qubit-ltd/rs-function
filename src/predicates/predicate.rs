@@ -12,14 +12,13 @@
 //!
 //! ## Core Semantics
 //!
-//! A **Predicate** is fundamentally a pure judgment operation that tests
-//! whether a value satisfies a specific condition. It should be:
+//! A **Predicate** is a judgment operation that tests whether a value satisfies
+//! a condition through a shared reference. The API guarantees that it cannot
+//! mutate the input through that reference, but implementations may use
+//! interior mutability or observe external state. Purity and determinism are
+//! application-level conventions, not type-system guarantees.
 //!
 //! - **Read-only**: Does not modify the tested value
-//! - **Side-effect free**: Does not change external state (from the user's
-//!   perspective)
-//! - **Repeatable**: Same input should produce the same result
-//! - **Deterministic**: Judgment logic should be predictable
 //!
 //! It is similar to the `Fn(&T) -> bool` trait in the standard library.
 //!
@@ -40,7 +39,7 @@
 //!
 //! | Scenario | Recommended Type | Reason |
 //! |----------|------------------|--------|
-//! | One-time use | `BoxPredicate` | Single ownership, no overhead |
+//! | Single ownership | `BoxPredicate` | Type erasure with heap allocation and dynamic dispatch |
 //! | Multi-threaded | `ArcPredicate` | Thread-safe, clonable |
 //! | Single-threaded reuse | `RcPredicate` | Better performance |
 //! | Stateful closure | `BoxStatefulPredicate`, `RcStatefulPredicate`, or `ArcStatefulPredicate` | Native `FnMut(&T) -> bool` support |
@@ -60,10 +59,7 @@
 //!
 //! ### BoxPredicate - Single Ownership
 //!
-//! This example requires the `combinators` feature.
-//!
 //! ```rust
-//! # #[cfg(feature = "combinators")]
 //! # {
 //! use qubit_function::{Predicate, BoxPredicate};
 //!
@@ -73,38 +69,33 @@
 //! # }
 //! ```
 //!
-//! ### Closure Composition with Extension Methods
+//! ### Explicit Closure Composition
 //!
-//! Closures automatically gain `and`, `or`, `not` methods through the
-//! `FnPredicateOps` extension trait, returning `BoxPredicate`:
+//! Closures implement `Predicate`, but chaining is intentionally available
+//! only on concrete wrappers. Construct a wrapper first to choose the ownership
+//! model explicitly:
 //!
 //! ```rust
-//! # #[cfg(feature = "combinators")]
 //! # {
-//! use qubit_function::{Predicate, FnPredicateOps, BoxPredicate};
+//! use qubit_function::{Predicate, BoxPredicate};
+//! use std::ops::Not;
 //!
-//! // Compose closures directly - result is BoxPredicate
-//! let is_positive = |x: &i32| *x > 0;
-//! let is_even = |x: &i32| x % 2 == 0;
-//!
-//! let positive_and_even = is_positive.and(is_even);
+//! let positive_and_even = BoxPredicate::new(|x: &i32| *x > 0)
+//!     .and(|x: &i32| x % 2 == 0);
 //! assert!(positive_and_even.test(&4));
 //! assert!(!positive_and_even.test(&3));
 //!
-//! // Can chain multiple operations
-//! let pred = (|x: &i32| *x > 0)
+//! let pred = BoxPredicate::new(|x: &i32| *x > 0)
 //!     .and(|x: &i32| x % 2 == 0)
 //!     .and(BoxPredicate::new(|x: &i32| *x < 100));
 //! assert!(pred.test(&42));
 //!
-//! // Use `or` for disjunction
-//! let negative_or_large = (|x: &i32| *x < 0)
+//! let negative_or_large = BoxPredicate::new(|x: &i32| *x < 0)
 //!     .or(|x: &i32| *x > 100);
 //! assert!(negative_or_large.test(&-5));
 //! assert!(negative_or_large.test(&200));
 //!
-//! // Use `not` for negation
-//! let not_zero = (|x: &i32| *x == 0).not();
+//! let not_zero = BoxPredicate::new(|x: &i32| *x == 0).not();
 //! assert!(not_zero.test(&5));
 //! assert!(!not_zero.test(&0));
 //! # }
@@ -115,12 +106,10 @@
 //! Build complex predicates by mixing closures and predicate types:
 //!
 //! ```rust
-//! # #[cfg(feature = "combinators")]
 //! # {
-//! use qubit_function::{Predicate, BoxPredicate, FnPredicateOps};
+//! use qubit_function::{Predicate, BoxPredicate};
 //!
-//! // Start with a closure, compose with BoxPredicate
-//! let in_range = (|x: &i32| *x >= 0)
+//! let in_range = BoxPredicate::new(|x: &i32| *x >= 0)
 //!     .and(BoxPredicate::new(|x: &i32| *x <= 100));
 //!
 //! // Use in filtering
@@ -135,10 +124,10 @@
 //!
 //! ### RcPredicate - Single-threaded Reuse
 //!
-//! This example requires the `rc` and `combinators` features.
+//! This example requires the `rc` feature.
 //!
 //! ```rust
-//! # #[cfg(all(feature = "rc", feature = "combinators"))]
+//! # #[cfg(feature = "rc")]
 //! # {
 //! use qubit_function::{Predicate, RcPredicate};
 //!
@@ -187,20 +176,10 @@
 //! assert!(!pred.test(&-3));
 //! # }
 //! ```
-#[cfg(feature = "rc")]
-use std::rc::Rc;
-use std::sync::Arc;
 
-use crate::predicates::macros::{
-    constants::{
-        ALWAYS_FALSE_NAME,
-        ALWAYS_TRUE_NAME,
-    },
-    impl_box_predicate_methods,
-    impl_predicate_clone,
-    impl_predicate_common_methods,
-    impl_predicate_debug_display,
-    impl_shared_predicate_methods,
+use crate::predicates::macros::constants::{
+    ALWAYS_FALSE_NAME,
+    ALWAYS_TRUE_NAME,
 };
 
 mod box_predicate;
@@ -211,17 +190,12 @@ mod rc_predicate;
 pub use rc_predicate::RcPredicate;
 mod arc_predicate;
 pub use arc_predicate::ArcPredicate;
-#[cfg(feature = "combinators")]
-mod fn_predicate_ops;
-#[cfg(feature = "combinators")]
-pub use fn_predicate_ops::FnPredicateOps;
 
 /// A predicate trait for testing whether a value satisfies a condition.
 ///
-/// This trait represents a **pure judgment operation** - it tests whether
-/// a given value meets certain criteria without modifying either the value
-/// or the predicate itself (from the user's perspective). This semantic
-/// clarity distinguishes predicates from consumers or transformers.
+/// This trait tests whether a value meets a condition through `&self` and a
+/// shared input reference. It does not guarantee purity, determinism, or the
+/// absence of interior mutability and external side effects.
 ///
 /// ## Design Rationale
 ///

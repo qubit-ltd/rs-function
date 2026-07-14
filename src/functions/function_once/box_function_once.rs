@@ -5,22 +5,20 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxFunctionOnce` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    BoxConditionalFunctionOnce,
-    Predicate,
+use {
+    crate::BoxConditionalFunctionOnce,
+    crate::Predicate,
 };
-use super::{
-    FunctionOnce,
-    impl_box_function_methods,
-    impl_closure_once_trait,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
-    impl_function_identity_method,
+use {
+    crate::FunctionOnce,
+    crate::functions::macros::impl_box_function_methods,
+    crate::functions::macros::impl_function_common_methods,
+    crate::functions::macros::impl_function_constant_method,
+    crate::functions::macros::impl_function_debug_display,
+    crate::functions::macros::impl_function_identity_method,
+    crate::macros::impl_closure_once_trait,
 };
 
 // ============================================================================
@@ -41,7 +39,7 @@ use super::{
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
 pub struct BoxFunctionOnce<T, R> {
     pub(super) function: Box<dyn FnOnce(&T) -> R>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, R> BoxFunctionOnce<T, R> {

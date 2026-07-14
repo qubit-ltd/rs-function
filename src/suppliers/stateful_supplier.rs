@@ -72,10 +72,8 @@
 //!
 //! ## Method Chaining
 //!
-//! This example requires the `combinators` feature.
 //!
 //! ```rust
-//! # #[cfg(feature = "combinators")]
 //! # {
 //! use qubit_function::{BoxStatefulSupplier, StatefulSupplier};
 //!
@@ -115,26 +113,6 @@
 //! assert!(v1 != v2);
 //! assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 2);
 //! ```
-#[cfg(feature = "rc")]
-use std::cell::RefCell;
-#[cfg(feature = "rc")]
-use std::rc::Rc;
-use std::sync::Arc;
-
-use parking_lot::Mutex;
-
-use crate::macros::impl_closure_trait;
-#[cfg(feature = "combinators")]
-use crate::predicates::predicate::Predicate;
-use crate::suppliers::macros::{
-    impl_box_supplier_methods,
-    impl_shared_supplier_methods,
-    impl_supplier_clone,
-    impl_supplier_common_methods,
-    impl_supplier_debug_display,
-};
-#[cfg(feature = "combinators")]
-use crate::transformers::transformer::Transformer;
 
 mod box_stateful_supplier;
 pub use box_stateful_supplier::BoxStatefulSupplier;
@@ -144,10 +122,6 @@ mod rc_stateful_supplier;
 pub use rc_stateful_supplier::RcStatefulSupplier;
 mod arc_stateful_supplier;
 pub use arc_stateful_supplier::ArcStatefulSupplier;
-#[cfg(feature = "combinators")]
-mod fn_stateful_supplier_ops;
-#[cfg(feature = "combinators")]
-pub use fn_stateful_supplier_ops::FnStatefulSupplierOps;
 
 // ==========================================================================
 // Supplier Trait

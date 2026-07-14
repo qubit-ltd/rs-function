@@ -14,8 +14,8 @@
 //! This module provides a unified `Mutator` trait and three concrete
 //! implementations based on different ownership models:
 //!
-//! - **`BoxMutator<T>`**: Box-based single ownership implementation for
-//!   one-time use scenarios and builder patterns
+//! - **`BoxMutator<T>`**: Box-based single ownership implementation for stored
+//!   callbacks and builder patterns
 //! - **`ArcMutator<T>`**: Arc-based thread-safe shared ownership implementation
 //!   for multi-threaded scenarios
 //! - **`RcMutator<T>`**: Rc-based single-threaded shared ownership
@@ -27,15 +27,16 @@
 //!
 //! `Mutator` is designed for **stateless** operations using `Fn(&mut T)`.
 //! Unlike `StatefulMutator` which uses `FnMut(&mut T)` and can maintain
-//! internal state, `Mutator` operations are pure transformations without side
-//! effects on the mutator itself.
+//! internal state through `FnMut`, `Mutator` cannot mutate ordinary captured
+//! values through its `Fn` receiver. Implementations can still use interior
+//! mutability or produce external side effects.
 //!
 //! ## Mutator vs StatefulMutator vs Consumer
 //!
 //! | Type | Input | Modifies Input? | Modifies Self? | Use Cases |
 //! |------|-------|----------------|----------------|-----------|
 //! | **Consumer** | `&T` | ❌ | ❌ | Observe, log, notify |
-//! | **Mutator** | `&mut T` | ✅ | ❌ | Pure transform, validate, normalize |
+//! | **Mutator** | `&mut T` | ✅ | Not through ordinary `Fn` captures | Transform, validate, normalize |
 //! | **StatefulMutator** | `&mut T` | ✅ | ✅ | Stateful transform, accumulate |
 //!
 //! **Key Insight**: Use `Mutator` for stateless transformations,
@@ -109,10 +110,7 @@
 //!
 //! ## Method Chaining
 //!
-//! This example requires the `combinators` feature.
-//!
 //! ```rust
-//! # #[cfg(feature = "combinators")]
 //! # {
 //! use qubit_function::{Mutator, BoxMutator, ArcMutator};
 //!
@@ -136,12 +134,12 @@
 //!
 //! ## Working with Closures
 //!
-//! All closures automatically implement the `Mutator` trait:
+//! Compatible closures automatically implement the `Mutator` trait. Chaining
+//! starts from a concrete wrapper:
 //!
 //! ```rust
-//! # #[cfg(feature = "combinators")]
 //! # {
-//! use qubit_function::{Mutator, FnMutatorOps};
+//! use qubit_function::{Mutator, BoxMutator};
 //!
 //! // Closures can use .apply() directly
 //! let mut closure = |x: &mut i32| *x *= 2;
@@ -149,8 +147,7 @@
 //! closure.apply(&mut value);
 //! assert_eq!(value, 10);
 //!
-//! // Closures can be chained, returning BoxMutator
-//! let mut chained = (|x: &mut i32| *x *= 2)
+//! let mut chained = BoxMutator::new(|x: &mut i32| *x *= 2)
 //!     .and_then(|x: &mut i32| *x += 10);
 //! let mut value = 5;
 //! chained.apply(&mut value);
@@ -183,11 +180,9 @@
 //!
 //! All mutator types support conditional execution through the `when` method,
 //! which returns a `ConditionalMutator`. You can optionally add an `or_else`
-//! branch to create if-then-else logic. These APIs require the `combinators`
-//! feature:
+//! branch to create if-then-else logic.
 //!
 //! ```rust
-//! # #[cfg(feature = "combinators")]
 //! # {
 //! use qubit_function::{Mutator, BoxMutator};
 //!
@@ -221,30 +216,6 @@
 use std::rc::Rc;
 use std::sync::Arc;
 
-use crate::macros::impl_closure_trait;
-#[cfg(feature = "combinators")]
-use crate::mutators::macros::{
-    impl_box_conditional_mutator,
-    impl_conditional_mutator_clone,
-    impl_conditional_mutator_debug_display,
-    impl_shared_conditional_mutator,
-};
-use crate::mutators::macros::{
-    impl_box_mutator_methods,
-    impl_mutator_clone,
-    impl_mutator_common_methods,
-    impl_mutator_debug_display,
-    impl_shared_mutator_methods,
-};
-#[cfg(all(feature = "rc", feature = "combinators"))]
-use crate::predicates::predicate::RcPredicate;
-#[cfg(feature = "combinators")]
-use crate::predicates::predicate::{
-    ArcPredicate,
-    BoxPredicate,
-    Predicate,
-};
-
 // ============================================================================
 // 1. Type Aliases
 // ============================================================================
@@ -264,21 +235,13 @@ mod rc_mutator;
 pub use rc_mutator::RcMutator;
 mod arc_mutator;
 pub use arc_mutator::ArcMutator;
-#[cfg(feature = "combinators")]
-mod fn_mutator_ops;
-#[cfg(feature = "combinators")]
-pub use fn_mutator_ops::FnMutatorOps;
-#[cfg(feature = "combinators")]
 mod box_conditional_mutator;
-#[cfg(feature = "combinators")]
 pub use box_conditional_mutator::BoxConditionalMutator;
-#[cfg(all(feature = "rc", feature = "combinators"))]
+#[cfg(feature = "rc")]
 mod rc_conditional_mutator;
-#[cfg(all(feature = "rc", feature = "combinators"))]
+#[cfg(feature = "rc")]
 pub use rc_conditional_mutator::RcConditionalMutator;
-#[cfg(feature = "combinators")]
 mod arc_conditional_mutator;
-#[cfg(feature = "combinators")]
 pub use arc_conditional_mutator::ArcConditionalMutator;
 
 // ============================================================================
@@ -299,7 +262,8 @@ pub use arc_conditional_mutator::ArcConditionalMutator;
 ///
 /// The trait provides a unified abstraction over different ownership models for
 /// **stateless** operations. Unlike `StatefulMutator` which uses `FnMut` and
-/// can modify its internal state, `Mutator` uses `Fn` for pure transformations.
+/// can modify ordinary captured state, `Mutator` uses `Fn`. Implementations may
+/// still use interior mutability or external side effects.
 ///
 /// # Features
 ///
@@ -351,7 +315,8 @@ pub trait Mutator<T> {
     /// Performs the stateless mutation operation
     ///
     /// Executes an operation on the given mutable reference without modifying
-    /// the mutator's internal state. This is a pure transformation operation.
+    /// ordinary captured state through the `Fn` receiver. Implementations may
+    /// still use interior mutability or external side effects.
     ///
     /// # Parameters
     ///

@@ -5,17 +5,16 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcConditionalBiMutatingFunction` public type.
 
-use super::{
-    BiMutatingFunction,
-    BiPredicate,
-    RcBiMutatingFunction,
-    RcBiPredicate,
-    impl_conditional_function_clone,
-    impl_conditional_function_debug_display,
-    impl_shared_conditional_function,
+use {
+    crate::BiMutatingFunction,
+    crate::BiPredicate,
+    crate::RcBiMutatingFunction,
+    crate::RcBiPredicate,
+    crate::functions::macros::impl_conditional_function_clone,
+    crate::functions::macros::impl_conditional_function_debug_display,
+    crate::functions::macros::impl_shared_conditional_function,
 };
 
 // ============================================================================

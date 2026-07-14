@@ -32,25 +32,6 @@
 //!
 //! Unlike BiConsumer, BiConsumerOnce consumes itself on first call. Suitable
 //! for initialization callbacks, cleanup callbacks, etc.
-#[cfg(feature = "combinators")]
-use crate::{
-    consumers::macros::{
-        impl_box_conditional_consumer,
-        impl_conditional_consumer_debug_display,
-    },
-    predicates::bi_predicate::{
-        BiPredicate,
-        BoxBiPredicate,
-    },
-};
-use crate::{
-    consumers::macros::{
-        impl_box_consumer_methods,
-        impl_consumer_common_methods,
-        impl_consumer_debug_display,
-    },
-    macros::impl_closure_once_trait,
-};
 
 // ==========================================================================
 // Type Aliases
@@ -61,13 +42,7 @@ type BiConsumerOnceFn<T, U> = dyn FnOnce(&T, &U);
 
 mod box_bi_consumer_once;
 pub use box_bi_consumer_once::BoxBiConsumerOnce;
-#[cfg(feature = "combinators")]
-mod fn_bi_consumer_once_ops;
-#[cfg(feature = "combinators")]
-pub use fn_bi_consumer_once_ops::FnBiConsumerOnceOps;
-#[cfg(feature = "combinators")]
 mod box_conditional_bi_consumer_once;
-#[cfg(feature = "combinators")]
 pub use box_conditional_bi_consumer_once::BoxConditionalBiConsumerOnce;
 
 // =======================================================================

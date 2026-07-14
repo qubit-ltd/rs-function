@@ -5,22 +5,20 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxBiTransformerOnce` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    BiPredicate,
-    BoxConditionalBiTransformerOnce,
-    TransformerOnce,
+use {
+    crate::BiPredicate,
+    crate::BoxConditionalBiTransformerOnce,
+    crate::TransformerOnce,
 };
-use super::{
-    BiTransformerOnce,
-    impl_box_transformer_methods,
-    impl_closure_once_trait,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
-    impl_transformer_debug_display,
+use {
+    crate::BiTransformerOnce,
+    crate::macros::impl_closure_once_trait,
+    crate::transformers::macros::impl_box_transformer_methods,
+    crate::transformers::macros::impl_transformer_common_methods,
+    crate::transformers::macros::impl_transformer_constant_method,
+    crate::transformers::macros::impl_transformer_debug_display,
 };
 
 // ============================================================================
@@ -41,7 +39,7 @@ use super::{
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
 pub struct BoxBiTransformerOnce<T, U, R> {
     pub(super) function: Box<dyn FnOnce(T, U) -> R>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 // Implement BoxBiTransformerOnce

@@ -5,7 +5,6 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `ArcCallable` public type.
 
 use std::sync::Arc;
@@ -45,7 +44,7 @@ pub struct ArcCallable<R, E> {
     /// The stateful closure executed by this callable.
     pub(super) function: Arc<Mutex<dyn FnMut() -> Result<R, E> + Send>>,
     /// The optional name of this callable.
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<R, E> Clone for ArcCallable<R, E> {
@@ -53,7 +52,7 @@ impl<R, E> Clone for ArcCallable<R, E> {
     fn clone(&self) -> Self {
         Self {
             function: Arc::clone(&self.function),
-            name: self.name.clone(),
+            metadata: self.metadata.clone(),
         }
     }
 }

@@ -17,36 +17,6 @@
 //! - [`BoxBiTransformer`]: Single ownership, not cloneable
 //! - [`ArcBiTransformer`]: Thread-safe shared ownership, cloneable
 //! - `RcBiTransformer`: Single-threaded shared ownership, cloneable
-#[cfg(feature = "rc")]
-use std::rc::Rc;
-use std::sync::Arc;
-
-#[cfg(all(feature = "rc", feature = "combinators"))]
-use crate::predicates::bi_predicate::RcBiPredicate;
-#[cfg(feature = "combinators")]
-use crate::predicates::bi_predicate::{
-    ArcBiPredicate,
-    BiPredicate,
-    BoxBiPredicate,
-};
-use crate::transformers::macros::{
-    impl_box_transformer_methods,
-    impl_shared_transformer_methods,
-    impl_transformer_clone,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
-    impl_transformer_debug_display,
-};
-#[cfg(feature = "combinators")]
-use crate::transformers::{
-    macros::{
-        impl_box_conditional_transformer,
-        impl_conditional_transformer_clone,
-        impl_conditional_transformer_debug_display,
-        impl_shared_conditional_transformer,
-    },
-    transformer::Transformer,
-};
 
 mod box_bi_transformer;
 pub use box_bi_transformer::BoxBiTransformer;
@@ -56,10 +26,6 @@ mod rc_bi_transformer;
 pub use rc_bi_transformer::RcBiTransformer;
 mod arc_bi_transformer;
 pub use arc_bi_transformer::ArcBiTransformer;
-#[cfg(feature = "combinators")]
-mod fn_bi_transformer_ops;
-#[cfg(feature = "combinators")]
-pub use fn_bi_transformer_ops::FnBiTransformerOps;
 mod binary_operator;
 pub use binary_operator::BinaryOperator;
 mod box_binary_operator;
@@ -70,17 +36,13 @@ pub use arc_binary_operator::ArcBinaryOperator;
 mod rc_binary_operator;
 #[cfg(feature = "rc")]
 pub use rc_binary_operator::RcBinaryOperator;
-#[cfg(feature = "combinators")]
 mod box_conditional_bi_transformer;
-#[cfg(feature = "combinators")]
 pub use box_conditional_bi_transformer::BoxConditionalBiTransformer;
-#[cfg(all(feature = "rc", feature = "combinators"))]
+#[cfg(feature = "rc")]
 mod rc_conditional_bi_transformer;
-#[cfg(all(feature = "rc", feature = "combinators"))]
+#[cfg(feature = "rc")]
 pub use rc_conditional_bi_transformer::RcConditionalBiTransformer;
-#[cfg(feature = "combinators")]
 mod arc_conditional_bi_transformer;
-#[cfg(feature = "combinators")]
 pub use arc_conditional_bi_transformer::ArcConditionalBiTransformer;
 
 // ============================================================================

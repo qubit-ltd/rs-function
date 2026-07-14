@@ -5,23 +5,21 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcStatefulTransformer` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    Predicate,
-    RcConditionalStatefulTransformer,
+use {
+    crate::Predicate,
+    crate::RcConditionalStatefulTransformer,
 };
-use super::{
-    Rc,
-    RefCell,
-    StatefulTransformer,
-    impl_shared_transformer_methods,
-    impl_transformer_clone,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
-    impl_transformer_debug_display,
+use {
+    crate::StatefulTransformer,
+    crate::transformers::macros::impl_shared_transformer_methods,
+    crate::transformers::macros::impl_transformer_clone,
+    crate::transformers::macros::impl_transformer_common_methods,
+    crate::transformers::macros::impl_transformer_constant_method,
+    crate::transformers::macros::impl_transformer_debug_display,
+    std::cell::RefCell,
+    std::rc::Rc,
 };
 
 // ============================================================================
@@ -49,7 +47,7 @@ use super::{
 /// error. Mutations completed before a panic are not rolled back.
 pub struct RcStatefulTransformer<T, R> {
     pub(super) function: Rc<RefCell<dyn FnMut(T) -> R>>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 // Implement RcStatefulTransformer

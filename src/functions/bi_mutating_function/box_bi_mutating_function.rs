@@ -5,21 +5,19 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxBiMutatingFunction` public type.
 
-use super::{
-    BiMutatingFunction,
-    impl_box_function_methods,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
+use {
+    crate::BiMutatingFunction,
+    crate::functions::macros::impl_box_function_methods,
+    crate::functions::macros::impl_function_common_methods,
+    crate::functions::macros::impl_function_constant_method,
+    crate::functions::macros::impl_function_debug_display,
 };
-#[cfg(feature = "combinators")]
-use super::{
-    BiPredicate,
-    BoxConditionalBiMutatingFunction,
-    MutatingFunction,
+use {
+    crate::BiPredicate,
+    crate::BoxConditionalBiMutatingFunction,
+    crate::MutatingFunction,
 };
 
 type BoxBiMutatingFunctionFn<T, U, R> = Box<dyn Fn(&mut T, &mut U) -> R>;
@@ -42,7 +40,7 @@ type BoxBiMutatingFunctionFn<T, U, R> = Box<dyn Fn(&mut T, &mut U) -> R>;
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
 pub struct BoxBiMutatingFunction<T, U, R> {
     pub(super) function: BoxBiMutatingFunctionFn<T, U, R>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 // Implement BoxBiMutatingFunction

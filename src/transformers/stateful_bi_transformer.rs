@@ -17,41 +17,6 @@
 //! - [`BoxStatefulBiTransformer`]: Single ownership, not cloneable
 //! - [`ArcStatefulBiTransformer`]: Thread-safe shared ownership, cloneable
 //! - [`RcStatefulBiTransformer`]: Single-threaded shared ownership, cloneable
-#[cfg(feature = "rc")]
-use std::cell::RefCell;
-#[cfg(feature = "rc")]
-use std::rc::Rc;
-use std::sync::Arc;
-
-use parking_lot::Mutex;
-
-use crate::macros::impl_closure_trait;
-#[cfg(all(feature = "rc", feature = "combinators"))]
-use crate::predicates::bi_predicate::RcBiPredicate;
-#[cfg(feature = "combinators")]
-use crate::predicates::bi_predicate::{
-    ArcBiPredicate,
-    BiPredicate,
-    BoxBiPredicate,
-};
-use crate::transformers::macros::{
-    impl_box_transformer_methods,
-    impl_shared_transformer_methods,
-    impl_transformer_clone,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
-    impl_transformer_debug_display,
-};
-#[cfg(feature = "combinators")]
-use crate::transformers::{
-    macros::{
-        impl_box_conditional_transformer,
-        impl_conditional_transformer_clone,
-        impl_conditional_transformer_debug_display,
-        impl_shared_conditional_transformer,
-    },
-    stateful_transformer::StatefulTransformer,
-};
 
 mod box_stateful_bi_transformer;
 pub use box_stateful_bi_transformer::BoxStatefulBiTransformer;
@@ -61,10 +26,6 @@ mod rc_stateful_bi_transformer;
 pub use rc_stateful_bi_transformer::RcStatefulBiTransformer;
 mod arc_stateful_bi_transformer;
 pub use arc_stateful_bi_transformer::ArcStatefulBiTransformer;
-#[cfg(feature = "combinators")]
-mod fn_stateful_bi_transformer_ops;
-#[cfg(feature = "combinators")]
-pub use fn_stateful_bi_transformer_ops::FnStatefulBiTransformerOps;
 mod stateful_binary_operator;
 pub use stateful_binary_operator::StatefulBinaryOperator;
 mod box_stateful_binary_operator;
@@ -75,17 +36,13 @@ pub use arc_stateful_binary_operator::ArcStatefulBinaryOperator;
 mod rc_stateful_binary_operator;
 #[cfg(feature = "rc")]
 pub use rc_stateful_binary_operator::RcStatefulBinaryOperator;
-#[cfg(feature = "combinators")]
 mod box_conditional_stateful_bi_transformer;
-#[cfg(feature = "combinators")]
 pub use box_conditional_stateful_bi_transformer::BoxConditionalStatefulBiTransformer;
-#[cfg(all(feature = "rc", feature = "combinators"))]
+#[cfg(feature = "rc")]
 mod rc_conditional_stateful_bi_transformer;
-#[cfg(all(feature = "rc", feature = "combinators"))]
+#[cfg(feature = "rc")]
 pub use rc_conditional_stateful_bi_transformer::RcConditionalStatefulBiTransformer;
-#[cfg(feature = "combinators")]
 mod arc_conditional_stateful_bi_transformer;
-#[cfg(feature = "combinators")]
 pub use arc_conditional_stateful_bi_transformer::ArcConditionalStatefulBiTransformer;
 
 // ============================================================================

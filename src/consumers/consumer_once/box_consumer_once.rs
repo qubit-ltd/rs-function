@@ -5,20 +5,18 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxConsumerOnce` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    BoxConditionalConsumerOnce,
-    Predicate,
+use {
+    crate::BoxConditionalConsumerOnce,
+    crate::Predicate,
 };
-use super::{
-    ConsumerOnce,
-    impl_box_consumer_methods,
-    impl_closure_once_trait,
-    impl_consumer_common_methods,
-    impl_consumer_debug_display,
+use {
+    crate::ConsumerOnce,
+    crate::consumers::macros::impl_box_consumer_methods,
+    crate::consumers::macros::impl_consumer_common_methods,
+    crate::consumers::macros::impl_consumer_debug_display,
+    crate::macros::impl_closure_once_trait,
 };
 
 // ============================================================================
@@ -67,7 +65,7 @@ use super::{
 /// ```
 pub struct BoxConsumerOnce<T> {
     pub(super) function: Box<dyn FnOnce(&T)>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 // All methods require T: 'static because Box<dyn FnOnce(&T)> requires it

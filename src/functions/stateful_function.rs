@@ -19,40 +19,6 @@
 //! - [`BoxStatefulFunction`]: Single ownership, not cloneable
 //! - [`ArcStatefulFunction`]: Thread-safe shared ownership, cloneable
 //! - [`RcStatefulFunction`]: Single-threaded shared ownership, cloneable
-#[cfg(feature = "rc")]
-use std::cell::RefCell;
-#[cfg(feature = "rc")]
-use std::rc::Rc;
-use std::sync::Arc;
-
-use parking_lot::Mutex;
-
-#[cfg(feature = "combinators")]
-use crate::functions::macros::impl_fn_ops_trait;
-#[cfg(feature = "combinators")]
-use crate::functions::macros::{
-    impl_box_conditional_function,
-    impl_conditional_function_clone,
-    impl_conditional_function_debug_display,
-    impl_shared_conditional_function,
-};
-use crate::functions::macros::{
-    impl_box_function_methods,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
-    impl_function_identity_method,
-    impl_shared_function_methods,
-};
-#[cfg(all(feature = "rc", feature = "combinators"))]
-use crate::predicates::predicate::RcPredicate;
-#[cfg(feature = "combinators")]
-use crate::predicates::predicate::{
-    ArcPredicate,
-    BoxPredicate,
-    Predicate,
-};
 
 mod box_stateful_function;
 pub use box_stateful_function::BoxStatefulFunction;
@@ -62,22 +28,14 @@ mod rc_stateful_function;
 pub use rc_stateful_function::RcStatefulFunction;
 mod arc_stateful_function;
 pub use arc_stateful_function::ArcStatefulFunction;
-#[cfg(feature = "combinators")]
 mod box_conditional_stateful_function;
-#[cfg(feature = "combinators")]
 pub use box_conditional_stateful_function::BoxConditionalStatefulFunction;
-#[cfg(all(feature = "rc", feature = "combinators"))]
+#[cfg(feature = "rc")]
 mod rc_conditional_stateful_function;
-#[cfg(all(feature = "rc", feature = "combinators"))]
+#[cfg(feature = "rc")]
 pub use rc_conditional_stateful_function::RcConditionalStatefulFunction;
-#[cfg(feature = "combinators")]
 mod arc_conditional_stateful_function;
-#[cfg(feature = "combinators")]
 pub use arc_conditional_stateful_function::ArcConditionalStatefulFunction;
-#[cfg(feature = "combinators")]
-mod fn_stateful_function_ops;
-#[cfg(feature = "combinators")]
-pub use fn_stateful_function_ops::FnStatefulFunctionOps;
 
 // ============================================================================
 // Core Trait

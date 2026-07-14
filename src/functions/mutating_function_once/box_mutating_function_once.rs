@@ -5,22 +5,20 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxMutatingFunctionOnce` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    BoxConditionalMutatingFunctionOnce,
-    FunctionOnce,
-    Predicate,
+use {
+    crate::BoxConditionalMutatingFunctionOnce,
+    crate::FunctionOnce,
+    crate::Predicate,
 };
-use super::{
-    MutatingFunctionOnce,
-    impl_box_function_methods,
-    impl_closure_once_trait,
-    impl_function_common_methods,
-    impl_function_debug_display,
-    impl_function_identity_method,
+use {
+    crate::MutatingFunctionOnce,
+    crate::functions::macros::impl_box_function_methods,
+    crate::functions::macros::impl_function_common_methods,
+    crate::functions::macros::impl_function_debug_display,
+    crate::functions::macros::impl_function_identity_method,
+    crate::macros::impl_closure_once_trait,
 };
 
 // =======================================================================
@@ -89,10 +87,8 @@ use super::{
 ///
 /// ## Method Chaining
 ///
-/// This example requires the `combinators` feature.
 ///
 /// ```rust
-/// # #[cfg(feature = "combinators")]
 /// # {
 /// use qubit_function::{MutatingFunctionOnce, BoxMutatingFunctionOnce};
 ///
@@ -113,7 +109,7 @@ use super::{
 /// ```
 pub struct BoxMutatingFunctionOnce<T, R> {
     pub(super) function: Box<dyn FnOnce(&mut T) -> R>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, R> BoxMutatingFunctionOnce<T, R> {

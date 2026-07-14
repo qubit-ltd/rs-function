@@ -123,35 +123,6 @@ use std::sync::Arc;
 
 use parking_lot::Mutex;
 
-#[cfg(feature = "combinators")]
-use crate::functions::macros::impl_fn_ops_trait;
-use crate::functions::macros::{
-    impl_box_function_methods,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_debug_display,
-    impl_function_identity_method,
-    impl_shared_function_methods,
-};
-#[cfg(feature = "combinators")]
-use crate::functions::{
-    function::Function,
-    macros::{
-        impl_box_conditional_function,
-        impl_conditional_function_clone,
-        impl_conditional_function_debug_display,
-        impl_shared_conditional_function,
-    },
-};
-#[cfg(all(feature = "rc", feature = "combinators"))]
-use crate::predicates::predicate::RcPredicate;
-#[cfg(feature = "combinators")]
-use crate::predicates::predicate::{
-    ArcPredicate,
-    BoxPredicate,
-    Predicate,
-};
-
 mod box_stateful_mutating_function;
 pub use box_stateful_mutating_function::BoxStatefulMutatingFunction;
 #[cfg(feature = "rc")]
@@ -160,22 +131,14 @@ mod rc_stateful_mutating_function;
 pub use rc_stateful_mutating_function::RcStatefulMutatingFunction;
 mod arc_stateful_mutating_function;
 pub use arc_stateful_mutating_function::ArcStatefulMutatingFunction;
-#[cfg(feature = "combinators")]
 mod box_conditional_stateful_mutating_function;
-#[cfg(feature = "combinators")]
 pub use box_conditional_stateful_mutating_function::BoxConditionalStatefulMutatingFunction;
-#[cfg(all(feature = "rc", feature = "combinators"))]
+#[cfg(feature = "rc")]
 mod rc_conditional_stateful_mutating_function;
-#[cfg(all(feature = "rc", feature = "combinators"))]
+#[cfg(feature = "rc")]
 pub use rc_conditional_stateful_mutating_function::RcConditionalStatefulMutatingFunction;
-#[cfg(feature = "combinators")]
 mod arc_conditional_stateful_mutating_function;
-#[cfg(feature = "combinators")]
 pub use arc_conditional_stateful_mutating_function::ArcConditionalStatefulMutatingFunction;
-#[cfg(feature = "combinators")]
-mod fn_stateful_mutating_function_ops;
-#[cfg(feature = "combinators")]
-pub use fn_stateful_mutating_function_ops::FnStatefulMutatingFunctionOps;
 
 // =======================================================================
 // 1. StatefulMutatingFunction Trait - Unified Interface

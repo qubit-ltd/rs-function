@@ -5,34 +5,30 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxBiPredicate` public type.
 
-#[cfg(feature = "combinators")]
 use std::ops::Not;
 
-use super::{
-    ALWAYS_FALSE_NAME,
-    ALWAYS_TRUE_NAME,
-    BiPredicate,
-    BiPredicateFn,
-    impl_box_predicate_methods,
-    impl_predicate_common_methods,
-    impl_predicate_debug_display,
+use {
+    super::ALWAYS_FALSE_NAME,
+    super::ALWAYS_TRUE_NAME,
+    super::BiPredicateFn,
+    crate::BiPredicate,
+    crate::predicates::macros::impl_box_predicate_methods,
+    crate::predicates::macros::impl_predicate_common_methods,
+    crate::predicates::macros::impl_predicate_debug_display,
 };
 
 /// A Box-based bi-predicate with single ownership.
 ///
-/// This type is suitable for one-time use scenarios where the
-/// bi-predicate does not need to be cloned or shared. Composition
+/// This type is suitable when the bi-predicate needs a stable single-owner
+/// type but does not need to be cloned or shared. Composition
 /// methods consume `self`, reflecting the single-ownership model.
 ///
-/// Composition methods require the `combinators` feature.
 ///
 /// # Examples
 ///
 /// ```rust
-/// # #[cfg(feature = "combinators")]
 /// # {
 /// use qubit_function::{BiPredicate, BoxBiPredicate};
 ///
@@ -46,7 +42,7 @@ use super::{
 /// ```
 pub struct BoxBiPredicate<T, U> {
     pub(super) function: Box<BiPredicateFn<T, U>>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, U> BoxBiPredicate<T, U> {
@@ -63,7 +59,6 @@ impl<T, U> BoxBiPredicate<T, U> {
     impl_box_predicate_methods!(BoxBiPredicate<T, U>);
 }
 
-#[cfg(feature = "combinators")]
 impl<T, U> Not for BoxBiPredicate<T, U>
 where
     T: 'static,

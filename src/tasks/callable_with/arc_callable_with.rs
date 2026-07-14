@@ -5,7 +5,6 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `ArcCallableWith` public type.
 
 use std::sync::Arc;
@@ -38,7 +37,7 @@ pub struct ArcCallableWith<T, R, E> {
     /// The stateful closure executed by this callable.
     pub(super) function: ArcCallableWithFn<T, R, E>,
     /// The optional name of this callable.
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, R, E> Clone for ArcCallableWith<T, R, E> {
@@ -46,7 +45,7 @@ impl<T, R, E> Clone for ArcCallableWith<T, R, E> {
     fn clone(&self) -> Self {
         Self {
             function: Arc::clone(&self.function),
-            name: self.name.clone(),
+            metadata: self.metadata.clone(),
         }
     }
 }

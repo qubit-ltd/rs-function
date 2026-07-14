@@ -25,7 +25,7 @@
 //!
 //! 2. **Three Concrete Struct Implementations**:
 //!    - [`BoxComparator<T>`]: Box-based single ownership implementation for
-//!      one-time use scenarios
+//!      stored, reusable comparison callbacks
 //!    - [`ArcComparator<T>`]: Arc-based thread-safe shared ownership
 //!      implementation for multi-threaded scenarios
 //!    - `RcComparator<T>`: Rc-based single-threaded shared ownership
@@ -35,14 +35,14 @@
 //!    inherent methods (`reversed`, `then_comparing`, etc.) that return the
 //!    same concrete type, preserving their specific characteristics (e.g.,
 //!    `ArcComparator` compositions remain `ArcComparator` and stay cloneable
-//!    and thread-safe). These methods require the `combinators` feature.
+//!    and thread-safe).
 //!
-//! 4. **Extension Trait for Closures**: The `FnComparatorOps<T>` extension
-//!    trait provides composition methods for all closures and function
-//!    pointers, returning `BoxComparator<T>` to initiate method chaining.
+//! 4. **Explicit Object Model**: Closures implement `Comparator<T>` directly,
+//!    but chaining starts by constructing a Box, Rc, or Arc wrapper. This makes
+//!    the ownership and sharing model visible at the call site.
 //!
-//! 5. **Unified Trait Implementation**: All closures and the three structs
-//!    implement the `Comparator<T>` trait, enabling them to be handled
+//! 5. **Unified Trait Implementation**: Compatible closures and the three
+//!    structs implement the `Comparator<T>` trait, enabling them to be handled
 //!    uniformly by generic functions.
 //!
 //! ## Ownership Model Coverage
@@ -65,7 +65,6 @@
 //! composition:
 //!
 //! ```rust
-//! # #[cfg(feature = "combinators")]
 //! # {
 //! use qubit_function::comparator::{Comparator, ArcComparator};
 //! use std::cmp::Ordering;
@@ -90,7 +89,6 @@
 //! `.clone()` calls:
 //!
 //! ```rust
-//! # #[cfg(feature = "combinators")]
 //! # {
 //! use qubit_function::comparator::{Comparator, ArcComparator};
 //!
@@ -105,18 +103,16 @@
 //! # }
 //! ```
 //!
-//! ### 3. Efficient Closure Composition
+//! ### 3. Explicit Closure Composition
 //!
-//! The `FnComparatorOps` extension trait allows direct composition on
-//! closures:
+//! Wrap a closure before composing it so the ownership model is explicit:
 //!
 //! ```rust
-//! # #[cfg(feature = "combinators")]
 //! # {
-//! use qubit_function::comparator::{Comparator, FnComparatorOps, BoxComparator};
+//! use qubit_function::comparator::{Comparator, BoxComparator};
 //! use std::cmp::Ordering;
 //!
-//! let cmp = (|a: &i32, b: &i32| a.cmp(b))
+//! let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b))
 //!     .reversed()
 //!     .then_comparing(BoxComparator::new(|a: &i32, b: &i32| b.cmp(a)));
 //!
@@ -139,7 +135,6 @@
 //! ### Reversed Comparison
 //!
 //! ```rust
-//! # #[cfg(feature = "combinators")]
 //! # {
 //! use qubit_function::comparator::{Comparator, BoxComparator};
 //! use std::cmp::Ordering;
@@ -153,7 +148,6 @@
 //! ### Chained Comparison
 //!
 //! ```rust
-//! # #[cfg(feature = "combinators")]
 //! # {
 //! use qubit_function::comparator::{Comparator, BoxComparator};
 //! use std::cmp::Ordering;
@@ -177,10 +171,9 @@
 //! assert_eq!(cmp.compare(&p1, &p2), Ordering::Greater);
 //! # }
 //! ```
-use std::cmp::Ordering;
-#[cfg(feature = "rc")]
-use std::rc::Rc;
-use std::sync::Arc;
+#[allow(clippy::module_inception)]
+mod comparator;
+pub use comparator::Comparator;
 
 mod box_comparator;
 pub use box_comparator::BoxComparator;
@@ -190,83 +183,3 @@ pub use arc_comparator::ArcComparator;
 mod rc_comparator;
 #[cfg(feature = "rc")]
 pub use rc_comparator::RcComparator;
-#[cfg(feature = "combinators")]
-mod fn_comparator_ops;
-#[cfg(feature = "combinators")]
-pub use fn_comparator_ops::FnComparatorOps;
-
-// ==========================================================================
-// Type Aliases
-// ==========================================================================
-
-/// A trait for comparison operations.
-///
-/// This trait defines only the core comparison operation. It does NOT include
-/// composition methods like `reversed` or
-/// `then_comparing` to maintain a clean separation between the trait
-/// interface and specialized implementations.
-///
-/// # Type Parameters
-///
-/// * `T` - The type of values being compared
-///
-/// # Examples
-///
-/// ```rust
-/// use qubit_function::comparator::{Comparator, BoxComparator};
-/// use std::cmp::Ordering;
-///
-/// let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
-/// assert_eq!(cmp.compare(&5, &3), Ordering::Greater);
-/// ```
-pub trait Comparator<T> {
-    /// Compares two values and returns an ordering.
-    ///
-    /// # Parameters
-    ///
-    /// * `a` - The first value to compare
-    /// * `b` - The second value to compare
-    ///
-    /// # Returns
-    ///
-    /// An `Ordering` indicating whether `a` is less than, equal to, or
-    /// greater than `b`.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::comparator::{Comparator, BoxComparator};
-    /// use std::cmp::Ordering;
-    ///
-    /// let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
-    /// assert_eq!(cmp.compare(&5, &3), Ordering::Greater);
-    /// assert_eq!(cmp.compare(&3, &5), Ordering::Less);
-    /// assert_eq!(cmp.compare(&5, &5), Ordering::Equal);
-    /// ```
-    fn compare(&self, a: &T, b: &T) -> Ordering;
-}
-
-/// Blanket implementation of `Comparator` for all closures and function
-/// pointers.
-///
-/// This allows any closure or function with the signature
-/// `Fn(&T, &T) -> Ordering` to be used as a comparator.
-///
-/// # Examples
-///
-/// ```rust
-/// use qubit_function::comparator::Comparator;
-/// use std::cmp::Ordering;
-///
-/// let cmp = |a: &i32, b: &i32| a.cmp(b);
-/// assert_eq!(cmp.compare(&5, &3), Ordering::Greater);
-/// ```
-impl<T, F> Comparator<T> for F
-where
-    F: Fn(&T, &T) -> Ordering,
-{
-    #[inline]
-    fn compare(&self, a: &T, b: &T) -> Ordering {
-        self(a, b)
-    }
-}

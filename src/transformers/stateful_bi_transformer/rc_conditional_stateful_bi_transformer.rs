@@ -5,17 +5,16 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcConditionalStatefulBiTransformer` public type.
 
-use super::{
-    BiPredicate,
-    RcBiPredicate,
-    RcStatefulBiTransformer,
-    StatefulBiTransformer,
-    impl_conditional_transformer_clone,
-    impl_conditional_transformer_debug_display,
-    impl_shared_conditional_transformer,
+use {
+    crate::BiPredicate,
+    crate::RcBiPredicate,
+    crate::RcStatefulBiTransformer,
+    crate::StatefulBiTransformer,
+    crate::transformers::macros::impl_conditional_transformer_clone,
+    crate::transformers::macros::impl_conditional_transformer_debug_display,
+    crate::transformers::macros::impl_shared_conditional_transformer,
 };
 
 // ============================================================================

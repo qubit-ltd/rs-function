@@ -5,16 +5,15 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalMutatingFunction` public type.
 
-use super::{
-    BoxMutatingFunction,
-    BoxPredicate,
-    MutatingFunction,
-    Predicate,
-    impl_box_conditional_function,
-    impl_conditional_function_debug_display,
+use {
+    crate::BoxMutatingFunction,
+    crate::BoxPredicate,
+    crate::MutatingFunction,
+    crate::Predicate,
+    crate::functions::macros::impl_box_conditional_function,
+    crate::functions::macros::impl_conditional_function_debug_display,
 };
 
 // ============================================================================

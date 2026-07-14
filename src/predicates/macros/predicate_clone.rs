@@ -71,7 +71,7 @@ macro_rules! impl_predicate_clone {
             fn clone(&self) -> Self {
                 Self {
                     function: self.function.clone(),
-                    name: self.name.clone(),
+                    metadata: self.metadata.clone(),
                 }
             }
         }
@@ -82,7 +82,7 @@ macro_rules! impl_predicate_clone {
             fn clone(&self) -> Self {
                 Self {
                     function: self.function.clone(),
-                    name: self.name.clone(),
+                    metadata: self.metadata.clone(),
                 }
             }
         }

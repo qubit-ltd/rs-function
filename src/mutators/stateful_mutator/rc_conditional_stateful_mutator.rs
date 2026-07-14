@@ -5,17 +5,16 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcConditionalStatefulMutator` public type.
 
-use super::{
-    Predicate,
-    RcPredicate,
-    RcStatefulMutator,
-    StatefulMutator,
-    impl_conditional_mutator_clone,
-    impl_conditional_mutator_debug_display,
-    impl_shared_conditional_mutator,
+use {
+    crate::Predicate,
+    crate::RcPredicate,
+    crate::RcStatefulMutator,
+    crate::StatefulMutator,
+    crate::mutators::macros::impl_conditional_mutator_clone,
+    crate::mutators::macros::impl_conditional_mutator_debug_display,
+    crate::mutators::macros::impl_shared_conditional_mutator,
 };
 
 // ============================================================================

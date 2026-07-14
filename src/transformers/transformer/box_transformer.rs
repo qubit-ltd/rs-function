@@ -5,20 +5,18 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxTransformer` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    BoxConditionalTransformer,
-    Predicate,
+use {
+    crate::BoxConditionalTransformer,
+    crate::Predicate,
 };
-use super::{
-    Transformer,
-    impl_box_transformer_methods,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
-    impl_transformer_debug_display,
+use {
+    crate::Transformer,
+    crate::transformers::macros::impl_box_transformer_methods,
+    crate::transformers::macros::impl_transformer_common_methods,
+    crate::transformers::macros::impl_transformer_constant_method,
+    crate::transformers::macros::impl_transformer_debug_display,
 };
 
 // ============================================================================
@@ -40,7 +38,7 @@ use super::{
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
 pub struct BoxTransformer<T, R> {
     pub(super) function: Box<dyn Fn(T) -> R>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 // Implement BoxTransformer

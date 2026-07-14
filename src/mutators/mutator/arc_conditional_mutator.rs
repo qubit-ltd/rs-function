@@ -5,17 +5,16 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `ArcConditionalMutator` public type.
 
-use super::{
-    ArcMutator,
-    ArcPredicate,
-    Mutator,
-    Predicate,
-    impl_conditional_mutator_clone,
-    impl_conditional_mutator_debug_display,
-    impl_shared_conditional_mutator,
+use {
+    crate::ArcMutator,
+    crate::ArcPredicate,
+    crate::Mutator,
+    crate::Predicate,
+    crate::mutators::macros::impl_conditional_mutator_clone,
+    crate::mutators::macros::impl_conditional_mutator_debug_display,
+    crate::mutators::macros::impl_shared_conditional_mutator,
 };
 
 // ============================================================================

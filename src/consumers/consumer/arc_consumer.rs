@@ -5,22 +5,20 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `ArcConsumer` public type.
 
-use super::{
-    Arc,
-    Consumer,
-    impl_closure_trait,
-    impl_consumer_clone,
-    impl_consumer_common_methods,
-    impl_consumer_debug_display,
-    impl_shared_consumer_methods,
+use {
+    crate::ArcConditionalConsumer,
+    crate::Predicate,
 };
-#[cfg(feature = "combinators")]
-use super::{
-    ArcConditionalConsumer,
-    Predicate,
+use {
+    crate::Consumer,
+    crate::consumers::macros::impl_consumer_clone,
+    crate::consumers::macros::impl_consumer_common_methods,
+    crate::consumers::macros::impl_consumer_debug_display,
+    crate::consumers::macros::impl_shared_consumer_methods,
+    crate::macros::impl_closure_trait,
+    std::sync::Arc,
 };
 
 // ============================================================================
@@ -68,7 +66,7 @@ use super::{
 /// ```
 pub struct ArcConsumer<T> {
     pub(super) function: Arc<dyn Fn(&T) + Send + Sync>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T> ArcConsumer<T> {

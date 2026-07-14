@@ -5,18 +5,16 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulBiPredicate` public type.
 
-#[cfg(feature = "combinators")]
 use std::ops::Not;
 
-use super::{
-    ALWAYS_FALSE_NAME,
-    ALWAYS_TRUE_NAME,
-    StatefulBiPredicate,
-    impl_predicate_common_methods,
-    impl_predicate_debug_display,
+use {
+    super::ALWAYS_FALSE_NAME,
+    super::ALWAYS_TRUE_NAME,
+    crate::StatefulBiPredicate,
+    crate::predicates::macros::impl_predicate_common_methods,
+    crate::predicates::macros::impl_predicate_debug_display,
 };
 
 type BoxStatefulBiPredicateFn<T, U> = dyn FnMut(&T, &U) -> bool;
@@ -28,7 +26,7 @@ type BoxStatefulBiPredicateFn<T, U> = dyn FnMut(&T, &U) -> bool;
 /// matching the single-ownership model.
 pub struct BoxStatefulBiPredicate<T, U> {
     pub(super) function: Box<BoxStatefulBiPredicateFn<T, U>>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, U> BoxStatefulBiPredicate<T, U> {
@@ -52,7 +50,6 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `BoxStatefulBiPredicate` representing logical AND.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn and<P>(mut self, mut other: P) -> BoxStatefulBiPredicate<T, U>
     where
@@ -77,7 +74,6 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `BoxStatefulBiPredicate` representing logical OR.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn or<P>(mut self, mut other: P) -> BoxStatefulBiPredicate<T, U>
     where
@@ -101,7 +97,6 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `BoxStatefulBiPredicate` representing logical NAND.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn nand<P>(mut self, mut other: P) -> BoxStatefulBiPredicate<T, U>
     where
@@ -126,7 +121,6 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `BoxStatefulBiPredicate` representing logical XOR.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn xor<P>(mut self, mut other: P) -> BoxStatefulBiPredicate<T, U>
     where
@@ -150,7 +144,6 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `BoxStatefulBiPredicate` representing logical NOR.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn nor<P>(mut self, mut other: P) -> BoxStatefulBiPredicate<T, U>
     where
@@ -164,7 +157,6 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
     }
 }
 
-#[cfg(feature = "combinators")]
 impl<T, U> Not for BoxStatefulBiPredicate<T, U>
 where
     T: 'static,

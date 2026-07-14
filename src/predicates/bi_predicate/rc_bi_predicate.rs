@@ -5,22 +5,20 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcBiPredicate` public type.
 
-#[cfg(feature = "combinators")]
 use std::ops::Not;
 
-use super::{
-    ALWAYS_FALSE_NAME,
-    ALWAYS_TRUE_NAME,
-    BiPredicate,
-    BiPredicateFn,
-    Rc,
-    impl_predicate_clone,
-    impl_predicate_common_methods,
-    impl_predicate_debug_display,
-    impl_shared_predicate_methods,
+use {
+    super::ALWAYS_FALSE_NAME,
+    super::ALWAYS_TRUE_NAME,
+    super::BiPredicateFn,
+    crate::BiPredicate,
+    crate::predicates::macros::impl_predicate_clone,
+    crate::predicates::macros::impl_predicate_common_methods,
+    crate::predicates::macros::impl_predicate_debug_display,
+    crate::predicates::macros::impl_shared_predicate_methods,
+    std::rc::Rc,
 };
 
 /// An Rc-based bi-predicate with single-threaded shared ownership.
@@ -30,12 +28,10 @@ use super::{
 /// borrow `&self`, allowing the original bi-predicate to remain
 /// usable after composition.
 ///
-/// Composition methods require the `combinators` feature.
 ///
 /// # Examples
 ///
 /// ```rust
-/// # #[cfg(feature = "combinators")]
 /// # {
 /// use qubit_function::{BiPredicate, RcBiPredicate};
 ///
@@ -49,7 +45,7 @@ use super::{
 /// ```
 pub struct RcBiPredicate<T, U> {
     pub(super) function: Rc<BiPredicateFn<T, U>>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, U> RcBiPredicate<T, U> {
@@ -66,7 +62,6 @@ impl<T, U> RcBiPredicate<T, U> {
     impl_shared_predicate_methods!(RcBiPredicate<T, U>, 'static);
 }
 
-#[cfg(feature = "combinators")]
 impl<T, U> Not for RcBiPredicate<T, U>
 where
     T: 'static,
@@ -82,7 +77,6 @@ where
     }
 }
 
-#[cfg(feature = "combinators")]
 impl<T, U> Not for &RcBiPredicate<T, U>
 where
     T: 'static,

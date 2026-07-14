@@ -5,21 +5,19 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxMutatingFunction` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    BoxConditionalMutatingFunction,
-    Function,
-    Predicate,
+use {
+    crate::BoxConditionalMutatingFunction,
+    crate::Function,
+    crate::Predicate,
 };
-use super::{
-    MutatingFunction,
-    impl_box_function_methods,
-    impl_function_common_methods,
-    impl_function_debug_display,
-    impl_function_identity_method,
+use {
+    crate::MutatingFunction,
+    crate::functions::macros::impl_box_function_methods,
+    crate::functions::macros::impl_function_common_methods,
+    crate::functions::macros::impl_function_debug_display,
+    crate::functions::macros::impl_function_identity_method,
 };
 
 // =======================================================================
@@ -73,7 +71,7 @@ use super::{
 /// ```
 pub struct BoxMutatingFunction<T, R> {
     pub(super) function: Box<dyn Fn(&mut T) -> R>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, R> BoxMutatingFunction<T, R> {

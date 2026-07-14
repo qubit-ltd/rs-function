@@ -5,20 +5,18 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulTransformer` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    BoxConditionalStatefulTransformer,
-    Predicate,
+use {
+    crate::BoxConditionalStatefulTransformer,
+    crate::Predicate,
 };
-use super::{
-    StatefulTransformer,
-    impl_box_transformer_methods,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
-    impl_transformer_debug_display,
+use {
+    crate::StatefulTransformer,
+    crate::transformers::macros::impl_box_transformer_methods,
+    crate::transformers::macros::impl_transformer_common_methods,
+    crate::transformers::macros::impl_transformer_constant_method,
+    crate::transformers::macros::impl_transformer_debug_display,
 };
 
 // ============================================================================
@@ -41,7 +39,7 @@ use super::{
 /// - **Statefulness**: Can modify internal state between calls
 pub struct BoxStatefulTransformer<T, R> {
     pub(super) function: Box<dyn FnMut(T) -> R>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, R> BoxStatefulTransformer<T, R> {

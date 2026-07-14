@@ -5,19 +5,17 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulSupplier` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    Predicate,
-    Transformer,
+use {
+    crate::Predicate,
+    crate::Transformer,
 };
-use super::{
-    StatefulSupplier,
-    impl_box_supplier_methods,
-    impl_supplier_common_methods,
-    impl_supplier_debug_display,
+use {
+    crate::StatefulSupplier,
+    crate::suppliers::macros::impl_box_supplier_methods,
+    crate::suppliers::macros::impl_supplier_common_methods,
+    crate::suppliers::macros::impl_supplier_debug_display,
 };
 
 // ==========================================================================
@@ -36,10 +34,8 @@ use super::{
 /// like `map()`, the original supplier is consumed and you get a new
 /// one:
 ///
-/// This example requires the `combinators` feature.
 ///
 /// ```rust
-/// # #[cfg(feature = "combinators")]
 /// # {
 /// use qubit_function::{BoxStatefulSupplier, StatefulSupplier};
 ///
@@ -68,10 +64,8 @@ use super::{
 ///
 /// ## Method Chaining
 ///
-/// This example requires the `combinators` feature.
 ///
 /// ```rust
-/// # #[cfg(feature = "combinators")]
 /// # {
 /// use qubit_function::{BoxStatefulSupplier, StatefulSupplier};
 ///
@@ -84,7 +78,7 @@ use super::{
 /// ```
 pub struct BoxStatefulSupplier<T> {
     pub(super) function: Box<dyn FnMut() -> T>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T> BoxStatefulSupplier<T> {

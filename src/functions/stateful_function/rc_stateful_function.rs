@@ -5,24 +5,22 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcStatefulFunction` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    Predicate,
-    RcConditionalStatefulFunction,
+use {
+    crate::Predicate,
+    crate::RcConditionalStatefulFunction,
 };
-use super::{
-    Rc,
-    RefCell,
-    StatefulFunction,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
-    impl_function_identity_method,
-    impl_shared_function_methods,
+use {
+    crate::StatefulFunction,
+    crate::functions::macros::impl_function_clone,
+    crate::functions::macros::impl_function_common_methods,
+    crate::functions::macros::impl_function_constant_method,
+    crate::functions::macros::impl_function_debug_display,
+    crate::functions::macros::impl_function_identity_method,
+    crate::functions::macros::impl_shared_function_methods,
+    std::cell::RefCell,
+    std::rc::Rc,
 };
 
 // ============================================================================
@@ -50,7 +48,7 @@ use super::{
 /// error. Mutations completed before a panic are not rolled back.
 pub struct RcStatefulFunction<T, R> {
     pub(super) function: RcStatefulFn<T, R>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 type RcStatefulFn<T, R> = Rc<RefCell<dyn FnMut(&T) -> R>>;

@@ -5,7 +5,6 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `ArcRunnable` public type.
 
 use std::sync::Arc;
@@ -46,7 +45,7 @@ pub struct ArcRunnable<E> {
     /// The stateful closure executed by this runnable.
     pub(super) function: Arc<Mutex<dyn FnMut() -> Result<(), E> + Send>>,
     /// The optional name of this runnable.
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<E> Clone for ArcRunnable<E> {
@@ -54,7 +53,7 @@ impl<E> Clone for ArcRunnable<E> {
     fn clone(&self) -> Self {
         Self {
             function: Arc::clone(&self.function),
-            name: self.name.clone(),
+            metadata: self.metadata.clone(),
         }
     }
 }

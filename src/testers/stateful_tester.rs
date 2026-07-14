@@ -7,18 +7,10 @@
 // =============================================================================
 //! Defines the `StatefulTester` public trait.
 
-use super::Arc;
-#[cfg(feature = "rc")]
-use super::Rc;
-
 pub mod arc_stateful_tester;
 pub use arc_stateful_tester::ArcStatefulTester;
 pub mod box_stateful_tester;
 pub use box_stateful_tester::BoxStatefulTester;
-#[cfg(feature = "combinators")]
-pub mod fn_stateful_tester_ops;
-#[cfg(feature = "combinators")]
-pub use fn_stateful_tester_ops::FnStatefulTesterOps;
 #[cfg(feature = "rc")]
 pub mod rc_stateful_tester;
 #[cfg(feature = "rc")]

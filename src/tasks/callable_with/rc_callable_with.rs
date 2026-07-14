@@ -5,7 +5,6 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcCallableWith` public type.
 
 use std::cell::RefCell;
@@ -36,7 +35,7 @@ pub struct RcCallableWith<T, R, E> {
     /// The stateful closure executed by this callable.
     pub(super) function: RcCallableWithFn<T, R, E>,
     /// The optional name of this callable.
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, R, E> Clone for RcCallableWith<T, R, E> {
@@ -44,7 +43,7 @@ impl<T, R, E> Clone for RcCallableWith<T, R, E> {
     fn clone(&self) -> Self {
         Self {
             function: Rc::clone(&self.function),
-            name: self.name.clone(),
+            metadata: self.metadata.clone(),
         }
     }
 }

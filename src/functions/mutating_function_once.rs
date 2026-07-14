@@ -88,10 +88,8 @@
 //!
 //! ## Method Chaining
 //!
-//! This example requires the `combinators` feature.
 //!
 //! ```rust
-//! # #[cfg(feature = "combinators")]
 //! # {
 //! use qubit_function::{BoxMutatingFunctionOnce, MutatingFunctionOnce};
 //!
@@ -133,39 +131,11 @@
 //! assert_eq!(data.value, 0);
 //! assert!(result.is_err());
 //! ```
-#[cfg(feature = "combinators")]
-use crate::functions::macros::impl_fn_ops_trait;
-use crate::functions::macros::{
-    impl_box_function_methods,
-    impl_function_common_methods,
-    impl_function_debug_display,
-    impl_function_identity_method,
-};
-#[cfg(feature = "combinators")]
-use crate::functions::{
-    function_once::FunctionOnce,
-    macros::{
-        impl_box_conditional_function,
-        impl_conditional_function_debug_display,
-    },
-};
-use crate::macros::impl_closure_once_trait;
-#[cfg(feature = "combinators")]
-use crate::predicates::predicate::{
-    BoxPredicate,
-    Predicate,
-};
 
 mod box_mutating_function_once;
 pub use box_mutating_function_once::BoxMutatingFunctionOnce;
-#[cfg(feature = "combinators")]
 mod box_conditional_mutating_function_once;
-#[cfg(feature = "combinators")]
 pub use box_conditional_mutating_function_once::BoxConditionalMutatingFunctionOnce;
-#[cfg(feature = "combinators")]
-mod fn_mutating_function_once_ops;
-#[cfg(feature = "combinators")]
-pub use fn_mutating_function_once_ops::FnMutatingFunctionOnceOps;
 
 // =======================================================================
 // 1. MutatingFunctionOnce Trait - One-time Function Interface

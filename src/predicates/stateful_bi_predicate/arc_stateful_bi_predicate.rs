@@ -5,22 +5,20 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulBiPredicate` public type.
 
-#[cfg(feature = "combinators")]
 use std::ops::Not;
 
-use super::{
-    ALWAYS_FALSE_NAME,
-    ALWAYS_TRUE_NAME,
-    Arc,
-    Mutex,
-    StatefulBiPredicate,
-    impl_closure_trait,
-    impl_predicate_clone,
-    impl_predicate_common_methods,
-    impl_predicate_debug_display,
+use {
+    super::ALWAYS_FALSE_NAME,
+    super::ALWAYS_TRUE_NAME,
+    crate::StatefulBiPredicate,
+    crate::macros::impl_closure_trait,
+    crate::predicates::macros::impl_predicate_clone,
+    crate::predicates::macros::impl_predicate_common_methods,
+    crate::predicates::macros::impl_predicate_debug_display,
+    parking_lot::Mutex,
+    std::sync::Arc,
 };
 
 type ArcStatefulBiPredicateFn<T, U> =
@@ -39,7 +37,7 @@ type ArcStatefulBiPredicateFn<T, U> =
 /// before a panic are not rolled back.
 pub struct ArcStatefulBiPredicate<T, U> {
     pub(super) function: ArcStatefulBiPredicateFn<T, U>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, U> ArcStatefulBiPredicate<T, U> {
@@ -63,7 +61,6 @@ impl<T, U> ArcStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `ArcStatefulBiPredicate` representing logical AND.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn and<P>(&self, mut other: P) -> ArcStatefulBiPredicate<T, U>
     where
@@ -90,7 +87,6 @@ impl<T, U> ArcStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `ArcStatefulBiPredicate` representing logical OR.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn or<P>(&self, mut other: P) -> ArcStatefulBiPredicate<T, U>
     where
@@ -116,7 +112,6 @@ impl<T, U> ArcStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `ArcStatefulBiPredicate` representing logical NAND.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn nand<P>(&self, mut other: P) -> ArcStatefulBiPredicate<T, U>
     where
@@ -143,7 +138,6 @@ impl<T, U> ArcStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `ArcStatefulBiPredicate` representing logical XOR.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn xor<P>(&self, mut other: P) -> ArcStatefulBiPredicate<T, U>
     where
@@ -169,7 +163,6 @@ impl<T, U> ArcStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `ArcStatefulBiPredicate` representing logical NOR.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn nor<P>(&self, mut other: P) -> ArcStatefulBiPredicate<T, U>
     where
@@ -185,7 +178,6 @@ impl<T, U> ArcStatefulBiPredicate<T, U> {
     }
 }
 
-#[cfg(feature = "combinators")]
 impl<T, U> Not for ArcStatefulBiPredicate<T, U>
 where
     T: 'static,
@@ -201,7 +193,6 @@ where
     }
 }
 
-#[cfg(feature = "combinators")]
 impl<T, U> Not for &ArcStatefulBiPredicate<T, U>
 where
     T: 'static,

@@ -16,37 +16,13 @@
 //!
 //! - [`BoxTransformerOnce`]: Single ownership, one-time use
 
-use crate::macros::impl_closure_once_trait;
-#[cfg(feature = "combinators")]
-use crate::predicates::predicate::{
-    BoxPredicate,
-    Predicate,
-};
-#[cfg(feature = "combinators")]
-use crate::transformers::macros::{
-    impl_box_conditional_transformer,
-    impl_conditional_transformer_debug_display,
-};
-use crate::transformers::macros::{
-    impl_box_transformer_methods,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
-    impl_transformer_debug_display,
-};
-
 mod box_transformer_once;
 pub use box_transformer_once::BoxTransformerOnce;
-#[cfg(feature = "combinators")]
-mod fn_transformer_once_ops;
-#[cfg(feature = "combinators")]
-pub use fn_transformer_once_ops::FnTransformerOnceOps;
 mod unary_operator_once;
 pub use unary_operator_once::UnaryOperatorOnce;
 mod box_unary_operator_once;
 pub use box_unary_operator_once::BoxUnaryOperatorOnce;
-#[cfg(feature = "combinators")]
 mod box_conditional_transformer_once;
-#[cfg(feature = "combinators")]
 pub use box_conditional_transformer_once::BoxConditionalTransformerOnce;
 
 // ============================================================================

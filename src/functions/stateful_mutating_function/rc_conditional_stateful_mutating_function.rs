@@ -5,17 +5,16 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcConditionalStatefulMutatingFunction` public type.
 
-use super::{
-    Predicate,
-    RcPredicate,
-    RcStatefulMutatingFunction,
-    StatefulMutatingFunction,
-    impl_conditional_function_clone,
-    impl_conditional_function_debug_display,
-    impl_shared_conditional_function,
+use {
+    crate::Predicate,
+    crate::RcPredicate,
+    crate::RcStatefulMutatingFunction,
+    crate::StatefulMutatingFunction,
+    crate::functions::macros::impl_conditional_function_clone,
+    crate::functions::macros::impl_conditional_function_debug_display,
+    crate::functions::macros::impl_shared_conditional_function,
 };
 
 // ============================================================================

@@ -5,22 +5,20 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulSupplier` public type.
 
-use super::{
-    Arc,
-    Mutex,
-    StatefulSupplier,
-    impl_closure_trait,
-    impl_shared_supplier_methods,
-    impl_supplier_clone,
-    impl_supplier_debug_display,
+use {
+    crate::Predicate,
+    crate::Transformer,
 };
-#[cfg(feature = "combinators")]
-use super::{
-    Predicate,
-    Transformer,
+use {
+    crate::StatefulSupplier,
+    crate::macros::impl_closure_trait,
+    crate::suppliers::macros::impl_shared_supplier_methods,
+    crate::suppliers::macros::impl_supplier_clone,
+    crate::suppliers::macros::impl_supplier_debug_display,
+    parking_lot::Mutex,
+    std::sync::Arc,
 };
 
 // ==========================================================================
@@ -37,10 +35,8 @@ use super::{
 /// Methods borrow `&self` instead of consuming `self`. The original
 /// supplier remains usable after method calls:
 ///
-/// This example requires the `combinators` feature.
 ///
 /// ```rust
-/// # #[cfg(feature = "combinators")]
 /// # {
 /// use qubit_function::{ArcStatefulSupplier, StatefulSupplier};
 ///
@@ -81,10 +77,8 @@ use super::{
 ///
 /// ## Reusable Transformations
 ///
-/// This example requires the `combinators` feature.
 ///
 /// ```rust
-/// # #[cfg(feature = "combinators")]
 /// # {
 /// use qubit_function::{ArcStatefulSupplier, StatefulSupplier};
 ///
@@ -110,7 +104,7 @@ use super::{
 /// before a panic are not rolled back.
 pub struct ArcStatefulSupplier<T> {
     pub(super) function: Arc<Mutex<dyn FnMut() -> T + Send>>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T> ArcStatefulSupplier<T> {
@@ -214,7 +208,7 @@ impl<T> ArcStatefulSupplier<T> {
                     value
                 }
             })),
-            name: None,
+            metadata: crate::callback_metadata::CallbackMetadata::unnamed(),
         }
     }
 }

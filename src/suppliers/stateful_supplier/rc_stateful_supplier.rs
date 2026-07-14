@@ -5,22 +5,20 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcStatefulSupplier` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    Predicate,
-    Transformer,
+use {
+    crate::Predicate,
+    crate::Transformer,
 };
-use super::{
-    Rc,
-    RefCell,
-    StatefulSupplier,
-    impl_shared_supplier_methods,
-    impl_supplier_clone,
-    impl_supplier_common_methods,
-    impl_supplier_debug_display,
+use {
+    crate::StatefulSupplier,
+    crate::suppliers::macros::impl_shared_supplier_methods,
+    crate::suppliers::macros::impl_supplier_clone,
+    crate::suppliers::macros::impl_supplier_common_methods,
+    crate::suppliers::macros::impl_supplier_debug_display,
+    std::cell::RefCell,
+    std::rc::Rc,
 };
 
 // ==========================================================================
@@ -37,10 +35,8 @@ use super::{
 /// Like `ArcStatefulSupplier`, methods borrow `&self` instead of consuming
 /// `self`:
 ///
-/// This example requires the `combinators` feature.
 ///
 /// ```rust
-/// # #[cfg(feature = "combinators")]
 /// # {
 /// use qubit_function::{RcStatefulSupplier, StatefulSupplier};
 ///
@@ -76,10 +72,8 @@ use super::{
 ///
 /// ## Reusable Transformations
 ///
-/// This example requires the `combinators` feature.
 ///
 /// ```rust
-/// # #[cfg(feature = "combinators")]
 /// # {
 /// use qubit_function::{RcStatefulSupplier, StatefulSupplier};
 ///
@@ -102,7 +96,7 @@ use super::{
 /// error. Mutations completed before a panic are not rolled back.
 pub struct RcStatefulSupplier<T> {
     pub(super) function: Rc<RefCell<dyn FnMut() -> T>>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T> RcStatefulSupplier<T> {
@@ -164,7 +158,7 @@ impl<T> RcStatefulSupplier<T> {
                     value
                 }
             })),
-            name: None,
+            metadata: crate::callback_metadata::CallbackMetadata::unnamed(),
         }
     }
 }

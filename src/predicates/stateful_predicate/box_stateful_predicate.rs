@@ -5,18 +5,16 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulPredicate` public type.
 
-#[cfg(feature = "combinators")]
 use std::ops::Not;
 
-use super::{
-    ALWAYS_FALSE_NAME,
-    ALWAYS_TRUE_NAME,
-    StatefulPredicate,
-    impl_predicate_common_methods,
-    impl_predicate_debug_display,
+use {
+    super::ALWAYS_FALSE_NAME,
+    super::ALWAYS_TRUE_NAME,
+    crate::StatefulPredicate,
+    crate::predicates::macros::impl_predicate_common_methods,
+    crate::predicates::macros::impl_predicate_debug_display,
 };
 
 /// A Box-based stateful predicate with single ownership.
@@ -26,7 +24,7 @@ use super::{
 /// matching the single-ownership model.
 pub struct BoxStatefulPredicate<T> {
     pub(super) function: Box<dyn FnMut(&T) -> bool>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T> BoxStatefulPredicate<T> {
@@ -50,7 +48,6 @@ impl<T> BoxStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `BoxStatefulPredicate` representing logical AND.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn and<P>(mut self, mut other: P) -> BoxStatefulPredicate<T>
     where
@@ -74,7 +71,6 @@ impl<T> BoxStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `BoxStatefulPredicate` representing logical OR.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn or<P>(mut self, mut other: P) -> BoxStatefulPredicate<T>
     where
@@ -97,7 +93,6 @@ impl<T> BoxStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `BoxStatefulPredicate` representing logical NAND.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn nand<P>(mut self, mut other: P) -> BoxStatefulPredicate<T>
     where
@@ -121,7 +116,6 @@ impl<T> BoxStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `BoxStatefulPredicate` representing logical XOR.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn xor<P>(mut self, mut other: P) -> BoxStatefulPredicate<T>
     where
@@ -144,7 +138,6 @@ impl<T> BoxStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `BoxStatefulPredicate` representing logical NOR.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn nor<P>(mut self, mut other: P) -> BoxStatefulPredicate<T>
     where
@@ -157,7 +150,6 @@ impl<T> BoxStatefulPredicate<T> {
     }
 }
 
-#[cfg(feature = "combinators")]
 impl<T> Not for BoxStatefulPredicate<T>
 where
     T: 'static,

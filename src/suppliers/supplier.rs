@@ -33,8 +33,8 @@
 //!
 //! # Three Implementations
 //!
-//! - **`BoxSupplier<T>`**: Single ownership using `Box<dyn Fn() -> T>`. Zero
-//!   overhead, cannot be cloned. Best for one-time use in read-only contexts.
+//! - **`BoxSupplier<T>`**: Single ownership using `Box<dyn Fn() -> T>`. It uses
+//!   one heap allocation and dynamic dispatch and cannot be cloned.
 //!
 //! - **`ArcSupplier<T>`**: Thread-safe shared ownership using `Arc<dyn Fn() ->
 //!   T + Send + Sync>`. **Lock-free** - no Mutex needed! Can be cloned and sent
@@ -114,22 +114,6 @@
 //!
 //! Actual performance depends on the callback and contention pattern; measure
 //! the workload when the distinction matters.
-
-#[cfg(feature = "rc")]
-use std::rc::Rc;
-use std::sync::Arc;
-
-#[cfg(feature = "combinators")]
-use crate::predicates::predicate::Predicate;
-use crate::suppliers::macros::{
-    impl_box_supplier_methods,
-    impl_shared_supplier_methods,
-    impl_supplier_clone,
-    impl_supplier_common_methods,
-    impl_supplier_debug_display,
-};
-#[cfg(feature = "combinators")]
-use crate::transformers::transformer::Transformer;
 
 mod box_supplier;
 pub use box_supplier::BoxSupplier;

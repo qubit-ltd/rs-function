@@ -5,17 +5,16 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `ArcConditionalStatefulConsumer` public type.
 
-use super::{
-    ArcPredicate,
-    ArcStatefulConsumer,
-    Predicate,
-    StatefulConsumer,
-    impl_conditional_consumer_clone,
-    impl_conditional_consumer_debug_display,
-    impl_shared_conditional_consumer,
+use {
+    crate::ArcPredicate,
+    crate::ArcStatefulConsumer,
+    crate::Predicate,
+    crate::StatefulConsumer,
+    crate::consumers::macros::impl_conditional_consumer_clone,
+    crate::consumers::macros::impl_conditional_consumer_debug_display,
+    crate::consumers::macros::impl_shared_conditional_consumer,
 };
 
 // ============================================================================

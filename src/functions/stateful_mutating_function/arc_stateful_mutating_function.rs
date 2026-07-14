@@ -5,25 +5,23 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulMutatingFunction` public type.
 
-use super::{
-    Arc,
-    ArcStatefulMutatingFunctionFn,
-    Mutex,
-    StatefulMutatingFunction,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_debug_display,
-    impl_function_identity_method,
-    impl_shared_function_methods,
+use {
+    super::ArcStatefulMutatingFunctionFn,
+    crate::StatefulMutatingFunction,
+    crate::functions::macros::impl_function_clone,
+    crate::functions::macros::impl_function_common_methods,
+    crate::functions::macros::impl_function_debug_display,
+    crate::functions::macros::impl_function_identity_method,
+    crate::functions::macros::impl_shared_function_methods,
+    parking_lot::Mutex,
+    std::sync::Arc,
 };
-#[cfg(feature = "combinators")]
-use super::{
-    ArcConditionalStatefulMutatingFunction,
-    Function,
-    Predicate,
+use {
+    crate::ArcConditionalStatefulMutatingFunction,
+    crate::Function,
+    crate::Predicate,
 };
 
 // =======================================================================
@@ -80,7 +78,7 @@ use super::{
 /// before a panic are not rolled back.
 pub struct ArcStatefulMutatingFunction<T, R> {
     pub(super) function: ArcStatefulMutatingFunctionFn<T, R>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, R> ArcStatefulMutatingFunction<T, R> {

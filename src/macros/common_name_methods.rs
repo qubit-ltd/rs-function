@@ -34,7 +34,7 @@ macro_rules! impl_common_name_methods {
         /// Returns `Some(&str)` if a name was set, `None` otherwise.
         #[inline]
         pub fn name(&self) -> Option<&str> {
-            self.name.as_deref()
+            self.metadata.name()
         }
 
         #[doc = concat!("Sets the name of this ", $type_desc, ".")]
@@ -43,15 +43,13 @@ macro_rules! impl_common_name_methods {
         #[doc = concat!("* `name` - The name to set for this ", $type_desc)]
         #[inline]
         pub fn set_name(&mut self, name: &str) {
-            if self.name.as_deref() != Some(name) {
-                self.name = Some(name.to_owned());
-            }
+            self.metadata.set_name(name);
         }
 
         #[doc = concat!("Clears the name of this ", $type_desc, ".")]
         #[inline]
         pub fn clear_name(&mut self) {
-            self.name = None;
+            self.metadata.clear_name();
         }
     };
 }

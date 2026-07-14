@@ -34,8 +34,7 @@ default = []
 rc = []
 once = []
 stateful = ["dep:parking_lot"]
-combinators = []
-full = ["rc", "once", "stateful", "combinators"]
+full = ["rc", "once", "stateful"]
 
 [dependencies]
 parking_lot = { version = "0.12", optional = true }
@@ -43,159 +42,139 @@ parking_lot = { version = "0.12", optional = true }
 [[example]]
 name = "always_bi_predicate_demo"
 path = "examples/predicates/always_bi_predicate_demo.rs"
-required-features = ["full"]
+required-features = ["rc"]
 
 [[example]]
 name = "always_predicate_demo"
 path = "examples/predicates/always_predicate_demo.rs"
-required-features = ["full"]
+required-features = ["rc"]
 
 [[example]]
 name = "bi_consumer_demo"
 path = "examples/consumers/bi_consumer_demo.rs"
-required-features = ["full"]
+required-features = ["rc", "stateful"]
 
 [[example]]
 name = "bi_consumer_once_demo"
 path = "examples/consumers/bi_consumer_once_demo.rs"
-required-features = ["full"]
+required-features = ["once"]
 
 [[example]]
 name = "bi_transformer_and_then_demo"
 path = "examples/transformers/bi_transformer_and_then_demo.rs"
-required-features = ["full"]
+required-features = ["rc"]
 
 [[example]]
 name = "bi_transformer_demo"
 path = "examples/transformers/bi_transformer_demo.rs"
-required-features = ["full"]
+required-features = ["rc"]
 
 [[example]]
 name = "bi_transformer_once_and_then_demo"
 path = "examples/transformers/bi_transformer_once_and_then_demo.rs"
-required-features = ["full"]
+required-features = ["once"]
 
 [[example]]
 name = "bi_transformer_once_demo"
 path = "examples/transformers/bi_transformer_once_demo.rs"
-required-features = ["full"]
-
-[[example]]
-name = "closure_supplier_ops_demo"
-path = "examples/suppliers/closure_supplier_ops_demo.rs"
-required-features = ["full"]
+required-features = ["once"]
 
 [[example]]
 name = "comparator_demo"
 path = "examples/comparator/comparator_demo.rs"
-required-features = ["full"]
+required-features = ["rc"]
 
 [[example]]
 name = "consumer_demo"
 path = "examples/consumers/consumer_demo.rs"
-required-features = ["full"]
+required-features = ["rc", "stateful"]
 
 [[example]]
 name = "consumer_fn_usage"
 path = "examples/consumers/consumer_fn_usage.rs"
-required-features = ["full"]
+required-features = ["rc"]
 
 [[example]]
 name = "consumer_once_demo"
 path = "examples/consumers/consumer_once_demo.rs"
-required-features = ["full"]
-
-[[example]]
-name = "fn_bi_transformer_ops_demo"
-path = "examples/transformers/fn_bi_transformer_ops_demo.rs"
-required-features = ["full"]
-
-[[example]]
-name = "fn_transformer_once_ops_demo"
-path = "examples/transformers/fn_transformer_once_ops_demo.rs"
-required-features = ["full"]
-
-[[example]]
-name = "fn_transformer_ops_demo"
-path = "examples/transformers/fn_transformer_ops_demo.rs"
-required-features = ["full"]
+required-features = ["once"]
 
 [[example]]
 name = "function_family_demo"
 path = "examples/functions/function_family_demo.rs"
-required-features = ["full"]
+required-features = ["once", "stateful"]
 
 [[example]]
 name = "mutator_demo"
 path = "examples/mutators/mutator_demo.rs"
-required-features = ["full"]
+required-features = ["rc"]
 
 [[example]]
 name = "mutator_once_conditional_demo"
 path = "examples/mutators/mutator_once_conditional_demo.rs"
-required-features = ["full"]
+required-features = ["once"]
 
 [[example]]
 name = "mutator_once_demo"
 path = "examples/mutators/mutator_once_demo.rs"
-required-features = ["full"]
+required-features = ["once"]
 
 [[example]]
 name = "predicate_demo"
 path = "examples/predicates/predicate_demo.rs"
-required-features = ["full"]
+required-features = ["rc"]
 
 [[example]]
 name = "predicate_fn_mut_demo"
 path = "examples/predicates/predicate_fn_mut_demo.rs"
-required-features = ["full"]
+required-features = ["rc"]
 
 [[example]]
 name = "predicate_set_name_demo"
 path = "examples/predicates/predicate_set_name_demo.rs"
-required-features = ["full"]
+required-features = ["rc"]
 
 [[example]]
 name = "bi_consumer_observation_demo"
 path = "examples/consumers/bi_consumer_observation_demo.rs"
-required-features = ["full"]
+required-features = ["rc"]
 
 [[example]]
 name = "stateful_supplier_demo"
 path = "examples/suppliers/stateful_supplier_demo.rs"
-required-features = ["full"]
+required-features = ["rc", "once", "stateful"]
 
 [[example]]
 name = "stateful_transformer_demo"
 path = "examples/transformers/stateful_transformer_demo.rs"
-required-features = ["full"]
+required-features = ["rc", "once", "stateful"]
 
 [[example]]
 name = "task_demo"
 path = "examples/tasks/task_demo.rs"
-required-features = ["full"]
+required-features = ["once", "stateful"]
 
 [[example]]
 name = "tester_demo"
 path = "examples/tester/tester_demo.rs"
-required-features = ["full"]
+required-features = ["rc"]
 
 [[example]]
 name = "transformer_blanket_impl_demo"
 path = "examples/transformers/transformer_blanket_impl_demo.rs"
-required-features = ["full"]
+required-features = ["rc"]
 
 [[example]]
 name = "transformer_demo"
 path = "examples/transformers/transformer_demo.rs"
-required-features = ["full"]
+required-features = ["rc"]
 
 [[example]]
 name = "transformer_once_blanket_impl_demo"
 path = "examples/transformers/transformer_once_blanket_impl_demo.rs"
-required-features = ["full"]
+required-features = ["once"]
 
 [[example]]
 name = "transformer_once_demo"
 path = "examples/transformers/transformer_once_demo.rs"
-required-features = ["full"]
+required-features = ["rc", "once"]

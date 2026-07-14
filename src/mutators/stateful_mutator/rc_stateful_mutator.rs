@@ -5,23 +5,21 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcStatefulMutator` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    Predicate,
-    RcConditionalStatefulMutator,
+use {
+    super::RcMutMutatorFn,
+    crate::StatefulMutator,
+    crate::mutators::macros::impl_mutator_clone,
+    crate::mutators::macros::impl_mutator_common_methods,
+    crate::mutators::macros::impl_mutator_debug_display,
+    crate::mutators::macros::impl_shared_mutator_methods,
+    std::cell::RefCell,
+    std::rc::Rc,
 };
-use super::{
-    Rc,
-    RcMutMutatorFn,
-    RefCell,
-    StatefulMutator,
-    impl_mutator_clone,
-    impl_mutator_common_methods,
-    impl_mutator_debug_display,
-    impl_shared_mutator_methods,
+use {
+    crate::Predicate,
+    crate::RcConditionalStatefulMutator,
 };
 
 // ============================================================================
@@ -76,7 +74,7 @@ use super::{
 /// error. Mutations completed before a panic are not rolled back.
 pub struct RcStatefulMutator<T> {
     pub(super) function: RcMutMutatorFn<T>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T> RcStatefulMutator<T> {

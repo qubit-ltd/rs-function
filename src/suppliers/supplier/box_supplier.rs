@@ -5,19 +5,17 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxSupplier` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    Predicate,
-    Transformer,
+use {
+    crate::Predicate,
+    crate::Transformer,
 };
-use super::{
-    Supplier,
-    impl_box_supplier_methods,
-    impl_supplier_common_methods,
-    impl_supplier_debug_display,
+use {
+    crate::Supplier,
+    crate::suppliers::macros::impl_box_supplier_methods,
+    crate::suppliers::macros::impl_supplier_common_methods,
+    crate::suppliers::macros::impl_supplier_debug_display,
 };
 
 // ======================================================================
@@ -36,10 +34,8 @@ use super::{
 /// read-only operations. When you call methods like `map()`, the
 /// original supplier is consumed and you get a new one:
 ///
-/// Transformation methods require the `combinators` feature.
 ///
 /// ```rust
-/// # #[cfg(feature = "combinators")]
 /// # {
 /// use qubit_function::{BoxSupplier, Supplier};
 ///
@@ -63,10 +59,8 @@ use super::{
 ///
 /// ## Method Chaining
 ///
-/// This example requires the `combinators` feature.
 ///
 /// ```rust
-/// # #[cfg(feature = "combinators")]
 /// # {
 /// use qubit_function::{BoxSupplier, Supplier};
 ///
@@ -79,7 +73,7 @@ use super::{
 /// ```
 pub struct BoxSupplier<T> {
     pub(super) function: Box<dyn Fn() -> T>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T> BoxSupplier<T> {

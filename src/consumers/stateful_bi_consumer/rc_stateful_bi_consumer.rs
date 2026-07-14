@@ -5,22 +5,20 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcStatefulBiConsumer` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    BiPredicate,
-    RcConditionalStatefulBiConsumer,
+use {
+    crate::BiPredicate,
+    crate::RcConditionalStatefulBiConsumer,
 };
-use super::{
-    Rc,
-    RefCell,
-    StatefulBiConsumer,
-    impl_consumer_clone,
-    impl_consumer_common_methods,
-    impl_consumer_debug_display,
-    impl_shared_consumer_methods,
+use {
+    crate::StatefulBiConsumer,
+    crate::consumers::macros::impl_consumer_clone,
+    crate::consumers::macros::impl_consumer_common_methods,
+    crate::consumers::macros::impl_consumer_debug_display,
+    crate::consumers::macros::impl_shared_consumer_methods,
+    std::cell::RefCell,
+    std::rc::Rc,
 };
 
 type RcStatefulBiConsumerFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U)>>;
@@ -97,7 +95,7 @@ type RcStatefulBiConsumerFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U)>>;
 /// error. Mutations completed before a panic are not rolled back.
 pub struct RcStatefulBiConsumer<T, U> {
     pub(super) function: RcStatefulBiConsumerFn<T, U>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, U> RcStatefulBiConsumer<T, U> {

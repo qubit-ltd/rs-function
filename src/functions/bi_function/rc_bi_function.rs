@@ -5,23 +5,21 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcBiFunction` public type.
 
-use super::{
-    BiFunction,
-    Rc,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
-    impl_shared_function_methods,
+use {
+    crate::BiFunction,
+    crate::functions::macros::impl_function_clone,
+    crate::functions::macros::impl_function_common_methods,
+    crate::functions::macros::impl_function_constant_method,
+    crate::functions::macros::impl_function_debug_display,
+    crate::functions::macros::impl_shared_function_methods,
+    std::rc::Rc,
 };
-#[cfg(feature = "combinators")]
-use super::{
-    BiPredicate,
-    Function,
-    RcConditionalBiFunction,
+use {
+    crate::BiPredicate,
+    crate::Function,
+    crate::RcConditionalBiFunction,
 };
 
 type RcBiFunctionFn<T, U, R> = Rc<dyn Fn(&T, &U) -> R>;
@@ -44,7 +42,7 @@ type RcBiFunctionFn<T, U, R> = Rc<dyn Fn(&T, &U) -> R>;
 /// - **Clonable**: Cheap cloning via `Rc::clone`
 pub struct RcBiFunction<T, U, R> {
     pub(super) function: RcBiFunctionFn<T, U, R>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, U, R> RcBiFunction<T, U, R> {

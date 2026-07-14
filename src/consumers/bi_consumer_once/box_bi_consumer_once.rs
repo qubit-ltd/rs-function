@@ -5,21 +5,19 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxBiConsumerOnce` public type.
 
-use super::{
-    BiConsumerOnce,
-    BiConsumerOnceFn,
-    impl_box_consumer_methods,
-    impl_closure_once_trait,
-    impl_consumer_common_methods,
-    impl_consumer_debug_display,
+use {
+    super::BiConsumerOnceFn,
+    crate::BiConsumerOnce,
+    crate::consumers::macros::impl_box_consumer_methods,
+    crate::consumers::macros::impl_consumer_common_methods,
+    crate::consumers::macros::impl_consumer_debug_display,
+    crate::macros::impl_closure_once_trait,
 };
-#[cfg(feature = "combinators")]
-use super::{
-    BiPredicate,
-    BoxConditionalBiConsumerOnce,
+use {
+    crate::BiPredicate,
+    crate::BoxConditionalBiConsumerOnce,
 };
 
 // =======================================================================
@@ -68,7 +66,7 @@ use super::{
 /// ```
 pub struct BoxBiConsumerOnce<T, U> {
     pub(super) function: Box<BiConsumerOnceFn<T, U>>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 // All methods require T: 'static and U: 'static because

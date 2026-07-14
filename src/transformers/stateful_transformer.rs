@@ -19,38 +19,6 @@
 //! - [`BoxStatefulTransformer`]: Single ownership, not cloneable
 //! - [`ArcStatefulTransformer`]: Thread-safe shared ownership, cloneable
 //! - [`RcStatefulTransformer`]: Single-threaded shared ownership, cloneable
-#[cfg(feature = "rc")]
-use std::cell::RefCell;
-#[cfg(feature = "rc")]
-use std::rc::Rc;
-use std::sync::Arc;
-
-use parking_lot::Mutex;
-
-use crate::macros::impl_closure_trait;
-#[cfg(all(feature = "rc", feature = "combinators"))]
-use crate::predicates::predicate::RcPredicate;
-#[cfg(feature = "combinators")]
-use crate::predicates::predicate::{
-    ArcPredicate,
-    BoxPredicate,
-    Predicate,
-};
-#[cfg(feature = "combinators")]
-use crate::transformers::macros::{
-    impl_box_conditional_transformer,
-    impl_conditional_transformer_clone,
-    impl_conditional_transformer_debug_display,
-    impl_shared_conditional_transformer,
-};
-use crate::transformers::macros::{
-    impl_box_transformer_methods,
-    impl_shared_transformer_methods,
-    impl_transformer_clone,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
-    impl_transformer_debug_display,
-};
 
 mod box_stateful_transformer;
 pub use box_stateful_transformer::BoxStatefulTransformer;
@@ -60,21 +28,13 @@ mod rc_stateful_transformer;
 pub use rc_stateful_transformer::RcStatefulTransformer;
 mod arc_stateful_transformer;
 pub use arc_stateful_transformer::ArcStatefulTransformer;
-#[cfg(feature = "combinators")]
-mod fn_stateful_transformer_ops;
-#[cfg(feature = "combinators")]
-pub use fn_stateful_transformer_ops::FnStatefulTransformerOps;
-#[cfg(feature = "combinators")]
 mod box_conditional_stateful_transformer;
-#[cfg(feature = "combinators")]
 pub use box_conditional_stateful_transformer::BoxConditionalStatefulTransformer;
-#[cfg(all(feature = "rc", feature = "combinators"))]
+#[cfg(feature = "rc")]
 mod rc_conditional_stateful_transformer;
-#[cfg(all(feature = "rc", feature = "combinators"))]
+#[cfg(feature = "rc")]
 pub use rc_conditional_stateful_transformer::RcConditionalStatefulTransformer;
-#[cfg(feature = "combinators")]
 mod arc_conditional_stateful_transformer;
-#[cfg(feature = "combinators")]
 pub use arc_conditional_stateful_transformer::ArcConditionalStatefulTransformer;
 
 // ============================================================================

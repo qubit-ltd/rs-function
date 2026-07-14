@@ -5,25 +5,23 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcStatefulMutatingFunction` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    Function,
-    Predicate,
-    RcConditionalStatefulMutatingFunction,
+use {
+    super::RcStatefulMutatingFunctionFn,
+    crate::StatefulMutatingFunction,
+    crate::functions::macros::impl_function_clone,
+    crate::functions::macros::impl_function_common_methods,
+    crate::functions::macros::impl_function_debug_display,
+    crate::functions::macros::impl_function_identity_method,
+    crate::functions::macros::impl_shared_function_methods,
+    std::cell::RefCell,
+    std::rc::Rc,
 };
-use super::{
-    Rc,
-    RcStatefulMutatingFunctionFn,
-    RefCell,
-    StatefulMutatingFunction,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_debug_display,
-    impl_function_identity_method,
-    impl_shared_function_methods,
+use {
+    crate::Function,
+    crate::Predicate,
+    crate::RcConditionalStatefulMutatingFunction,
 };
 
 // =======================================================================
@@ -80,7 +78,7 @@ use super::{
 /// error. Mutations completed before a panic are not rolled back.
 pub struct RcStatefulMutatingFunction<T, R> {
     pub(super) function: RcStatefulMutatingFunctionFn<T, R>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, R> RcStatefulMutatingFunction<T, R> {

@@ -5,22 +5,20 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxBiMutatingFunctionOnce` public type.
 
-use super::{
-    BiMutatingFunctionOnce,
-    impl_box_function_methods,
-    impl_closure_once_trait,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
+use {
+    crate::BiMutatingFunctionOnce,
+    crate::functions::macros::impl_box_function_methods,
+    crate::functions::macros::impl_function_common_methods,
+    crate::functions::macros::impl_function_constant_method,
+    crate::functions::macros::impl_function_debug_display,
+    crate::macros::impl_closure_once_trait,
 };
-#[cfg(feature = "combinators")]
-use super::{
-    BiPredicate,
-    BoxConditionalBiMutatingFunctionOnce,
-    MutatingFunctionOnce,
+use {
+    crate::BiPredicate,
+    crate::BoxConditionalBiMutatingFunctionOnce,
+    crate::MutatingFunctionOnce,
 };
 
 type BoxBiMutatingFunctionOnceFn<T, U, R> =
@@ -44,7 +42,7 @@ type BoxBiMutatingFunctionOnceFn<T, U, R> =
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
 pub struct BoxBiMutatingFunctionOnce<T, U, R> {
     pub(super) function: BoxBiMutatingFunctionOnceFn<T, U, R>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 // Implement BoxBiMutatingFunctionOnce

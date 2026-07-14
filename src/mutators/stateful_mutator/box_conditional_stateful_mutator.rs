@@ -5,16 +5,15 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalStatefulMutator` public type.
 
-use super::{
-    BoxPredicate,
-    BoxStatefulMutator,
-    Predicate,
-    StatefulMutator,
-    impl_box_conditional_mutator,
-    impl_conditional_mutator_debug_display,
+use {
+    crate::BoxPredicate,
+    crate::BoxStatefulMutator,
+    crate::Predicate,
+    crate::StatefulMutator,
+    crate::mutators::macros::impl_box_conditional_mutator,
+    crate::mutators::macros::impl_conditional_mutator_debug_display,
 };
 
 // ============================================================================

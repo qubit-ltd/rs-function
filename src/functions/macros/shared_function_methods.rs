@@ -123,7 +123,6 @@
 /// //     'static
 /// // );
 /// ```
-#[cfg(feature = "combinators")]
 macro_rules! impl_shared_function_methods {
     (@let_before ArcStatefulFunction, $name:ident, $value:expr) => {
         let mut $name = $value;
@@ -358,11 +357,6 @@ macro_rules! impl_shared_function_methods {
             })
         }
     };
-}
-
-#[cfg(not(feature = "combinators"))]
-macro_rules! impl_shared_function_methods {
-    ($($tokens:tt)*) => {};
 }
 
 pub(crate) use impl_shared_function_methods;

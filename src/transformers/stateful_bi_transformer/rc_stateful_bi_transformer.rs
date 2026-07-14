@@ -5,24 +5,22 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcStatefulBiTransformer` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    BiPredicate,
-    RcConditionalStatefulBiTransformer,
-    StatefulTransformer,
+use {
+    crate::BiPredicate,
+    crate::RcConditionalStatefulBiTransformer,
+    crate::StatefulTransformer,
 };
-use super::{
-    Rc,
-    RefCell,
-    StatefulBiTransformer,
-    impl_shared_transformer_methods,
-    impl_transformer_clone,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
-    impl_transformer_debug_display,
+use {
+    crate::StatefulBiTransformer,
+    crate::transformers::macros::impl_shared_transformer_methods,
+    crate::transformers::macros::impl_transformer_clone,
+    crate::transformers::macros::impl_transformer_common_methods,
+    crate::transformers::macros::impl_transformer_constant_method,
+    crate::transformers::macros::impl_transformer_debug_display,
+    std::cell::RefCell,
+    std::rc::Rc,
 };
 
 // ============================================================================
@@ -49,7 +47,7 @@ use super::{
 /// error. Mutations completed before a panic are not rolled back.
 pub struct RcStatefulBiTransformer<T, U, R> {
     pub(super) function: Rc<RefCell<dyn FnMut(T, U) -> R>>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, U, R> RcStatefulBiTransformer<T, U, R> {

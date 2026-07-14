@@ -5,16 +5,15 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalBiConsumerOnce` public type.
 
-use super::{
-    BiConsumerOnce,
-    BiPredicate,
-    BoxBiConsumerOnce,
-    BoxBiPredicate,
-    impl_box_conditional_consumer,
-    impl_conditional_consumer_debug_display,
+use {
+    crate::BiConsumerOnce,
+    crate::BiPredicate,
+    crate::BoxBiConsumerOnce,
+    crate::BoxBiPredicate,
+    crate::consumers::macros::impl_box_conditional_consumer,
+    crate::consumers::macros::impl_conditional_consumer_debug_display,
 };
 
 // =======================================================================

@@ -5,21 +5,19 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxFunction` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    BoxConditionalFunction,
-    Predicate,
+use {
+    crate::BoxConditionalFunction,
+    crate::Predicate,
 };
-use super::{
-    Function,
-    impl_box_function_methods,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
-    impl_function_identity_method,
+use {
+    crate::Function,
+    crate::functions::macros::impl_box_function_methods,
+    crate::functions::macros::impl_function_common_methods,
+    crate::functions::macros::impl_function_constant_method,
+    crate::functions::macros::impl_function_debug_display,
+    crate::functions::macros::impl_function_identity_method,
 };
 
 // ============================================================================
@@ -41,7 +39,7 @@ use super::{
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
 pub struct BoxFunction<T, R> {
     pub(super) function: Box<dyn Fn(&T) -> R>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, R> BoxFunction<T, R> {

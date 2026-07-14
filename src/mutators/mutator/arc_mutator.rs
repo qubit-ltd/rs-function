@@ -5,23 +5,21 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `ArcMutator` public type.
 
-use super::{
-    Arc,
-    ArcMutatorFn,
-    Mutator,
-    impl_closure_trait,
-    impl_mutator_clone,
-    impl_mutator_common_methods,
-    impl_mutator_debug_display,
-    impl_shared_mutator_methods,
+use {
+    super::ArcMutatorFn,
+    crate::Mutator,
+    crate::macros::impl_closure_trait,
+    crate::mutators::macros::impl_mutator_clone,
+    crate::mutators::macros::impl_mutator_common_methods,
+    crate::mutators::macros::impl_mutator_debug_display,
+    crate::mutators::macros::impl_shared_mutator_methods,
+    std::sync::Arc,
 };
-#[cfg(feature = "combinators")]
-use super::{
-    ArcConditionalMutator,
-    Predicate,
+use {
+    crate::ArcConditionalMutator,
+    crate::Predicate,
 };
 
 // ============================================================================
@@ -63,7 +61,7 @@ use super::{
 /// ```
 pub struct ArcMutator<T> {
     pub(super) function: ArcMutatorFn<T>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T> ArcMutator<T> {

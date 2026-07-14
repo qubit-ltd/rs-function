@@ -78,10 +78,8 @@
 //!
 //! ## Method Chaining
 //!
-//! This example requires the `combinators` feature.
 //!
 //! ```rust
-//! # #[cfg(feature = "combinators")]
 //! # {
 //! use qubit_function::{BoxMutatorOnce, MutatorOnce};
 //!
@@ -140,32 +138,10 @@
 //! init.run(&mut result);
 //! assert_eq!(result, vec![42, 1, 2, 3]);
 //! ```
-use crate::macros::impl_closure_once_trait;
-#[cfg(feature = "combinators")]
-use crate::mutators::macros::{
-    impl_box_conditional_mutator,
-    impl_conditional_mutator_debug_display,
-};
-use crate::mutators::macros::{
-    impl_box_mutator_methods,
-    impl_mutator_common_methods,
-    impl_mutator_debug_display,
-};
-#[cfg(feature = "combinators")]
-use crate::predicates::predicate::{
-    BoxPredicate,
-    Predicate,
-};
 
 mod box_mutator_once;
 pub use box_mutator_once::BoxMutatorOnce;
-#[cfg(feature = "combinators")]
-mod fn_mutator_once_ops;
-#[cfg(feature = "combinators")]
-pub use fn_mutator_once_ops::FnMutatorOnceOps;
-#[cfg(feature = "combinators")]
 mod box_conditional_mutator_once;
-#[cfg(feature = "combinators")]
 pub use box_conditional_mutator_once::BoxConditionalMutatorOnce;
 
 // ============================================================================

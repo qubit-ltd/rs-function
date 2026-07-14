@@ -5,21 +5,19 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcStatefulPredicate` public type.
 
-#[cfg(feature = "combinators")]
 use std::ops::Not;
 
-use super::{
-    ALWAYS_FALSE_NAME,
-    ALWAYS_TRUE_NAME,
-    Rc,
-    RefCell,
-    StatefulPredicate,
-    impl_predicate_clone,
-    impl_predicate_common_methods,
-    impl_predicate_debug_display,
+use {
+    super::ALWAYS_FALSE_NAME,
+    super::ALWAYS_TRUE_NAME,
+    crate::StatefulPredicate,
+    crate::predicates::macros::impl_predicate_clone,
+    crate::predicates::macros::impl_predicate_common_methods,
+    crate::predicates::macros::impl_predicate_debug_display,
+    std::cell::RefCell,
+    std::rc::Rc,
 };
 
 type RcStatefulPredicateFn<T> = Rc<RefCell<dyn FnMut(&T) -> bool>>;
@@ -35,7 +33,7 @@ type RcStatefulPredicateFn<T> = Rc<RefCell<dyn FnMut(&T) -> bool>>;
 /// error. Mutations completed before a panic are not rolled back.
 pub struct RcStatefulPredicate<T> {
     pub(super) function: RcStatefulPredicateFn<T>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T> RcStatefulPredicate<T> {
@@ -59,7 +57,6 @@ impl<T> RcStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `RcStatefulPredicate` representing logical AND.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn and<P>(&self, mut other: P) -> RcStatefulPredicate<T>
     where
@@ -85,7 +82,6 @@ impl<T> RcStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `RcStatefulPredicate` representing logical OR.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn or<P>(&self, mut other: P) -> RcStatefulPredicate<T>
     where
@@ -110,7 +106,6 @@ impl<T> RcStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `RcStatefulPredicate` representing logical NAND.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn nand<P>(&self, mut other: P) -> RcStatefulPredicate<T>
     where
@@ -136,7 +131,6 @@ impl<T> RcStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `RcStatefulPredicate` representing logical XOR.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn xor<P>(&self, mut other: P) -> RcStatefulPredicate<T>
     where
@@ -161,7 +155,6 @@ impl<T> RcStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `RcStatefulPredicate` representing logical NOR.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn nor<P>(&self, mut other: P) -> RcStatefulPredicate<T>
     where
@@ -176,7 +169,6 @@ impl<T> RcStatefulPredicate<T> {
     }
 }
 
-#[cfg(feature = "combinators")]
 impl<T> Not for RcStatefulPredicate<T>
 where
     T: 'static,
@@ -191,7 +183,6 @@ where
     }
 }
 
-#[cfg(feature = "combinators")]
 impl<T> Not for &RcStatefulPredicate<T>
 where
     T: 'static,

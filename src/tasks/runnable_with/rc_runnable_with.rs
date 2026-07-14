@@ -5,7 +5,6 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcRunnableWith` public type.
 
 use std::cell::RefCell;
@@ -36,7 +35,7 @@ pub struct RcRunnableWith<T, E> {
     /// The stateful closure executed by this runnable.
     pub(super) function: RcRunnableWithFn<T, E>,
     /// The optional name of this runnable.
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, E> Clone for RcRunnableWith<T, E> {
@@ -44,7 +43,7 @@ impl<T, E> Clone for RcRunnableWith<T, E> {
     fn clone(&self) -> Self {
         Self {
             function: Rc::clone(&self.function),
-            name: self.name.clone(),
+            metadata: self.metadata.clone(),
         }
     }
 }

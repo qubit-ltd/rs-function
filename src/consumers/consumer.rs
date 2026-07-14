@@ -31,34 +31,6 @@
 //! interior mutability (`Mutex`/`RefCell`), making it more efficient and easier
 //! to share.
 
-#[cfg(feature = "rc")]
-use std::rc::Rc;
-use std::sync::Arc;
-
-#[cfg(feature = "combinators")]
-use crate::consumers::macros::{
-    impl_box_conditional_consumer,
-    impl_conditional_consumer_clone,
-    impl_conditional_consumer_debug_display,
-    impl_shared_conditional_consumer,
-};
-use crate::consumers::macros::{
-    impl_box_consumer_methods,
-    impl_consumer_clone,
-    impl_consumer_common_methods,
-    impl_consumer_debug_display,
-    impl_shared_consumer_methods,
-};
-use crate::macros::impl_closure_trait;
-#[cfg(all(feature = "rc", feature = "combinators"))]
-use crate::predicates::predicate::RcPredicate;
-#[cfg(feature = "combinators")]
-use crate::predicates::predicate::{
-    ArcPredicate,
-    BoxPredicate,
-    Predicate,
-};
-
 mod box_consumer;
 pub use box_consumer::BoxConsumer;
 #[cfg(feature = "rc")]
@@ -67,21 +39,13 @@ mod rc_consumer;
 pub use rc_consumer::RcConsumer;
 mod arc_consumer;
 pub use arc_consumer::ArcConsumer;
-#[cfg(feature = "combinators")]
-mod fn_consumer_ops;
-#[cfg(feature = "combinators")]
-pub use fn_consumer_ops::FnConsumerOps;
-#[cfg(feature = "combinators")]
 mod box_conditional_consumer;
-#[cfg(feature = "combinators")]
 pub use box_conditional_consumer::BoxConditionalConsumer;
-#[cfg(all(feature = "rc", feature = "combinators"))]
+#[cfg(feature = "rc")]
 mod rc_conditional_consumer;
-#[cfg(all(feature = "rc", feature = "combinators"))]
+#[cfg(feature = "rc")]
 pub use rc_conditional_consumer::RcConditionalConsumer;
-#[cfg(feature = "combinators")]
 mod arc_conditional_consumer;
-#[cfg(feature = "combinators")]
 pub use arc_conditional_consumer::ArcConditionalConsumer;
 
 // ============================================================================

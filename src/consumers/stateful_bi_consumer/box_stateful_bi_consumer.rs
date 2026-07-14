@@ -5,19 +5,17 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulBiConsumer` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    BiPredicate,
-    BoxConditionalStatefulBiConsumer,
+use {
+    crate::BiPredicate,
+    crate::BoxConditionalStatefulBiConsumer,
 };
-use super::{
-    StatefulBiConsumer,
-    impl_box_consumer_methods,
-    impl_consumer_common_methods,
-    impl_consumer_debug_display,
+use {
+    crate::StatefulBiConsumer,
+    crate::consumers::macros::impl_box_consumer_methods,
+    crate::consumers::macros::impl_consumer_common_methods,
+    crate::consumers::macros::impl_consumer_debug_display,
 };
 
 type BoxStatefulBiConsumerFn<T, U> = Box<dyn FnMut(&T, &U)>;
@@ -73,7 +71,7 @@ type BoxStatefulBiConsumerFn<T, U> = Box<dyn FnMut(&T, &U)>;
 /// ```
 pub struct BoxStatefulBiConsumer<T, U> {
     pub(super) function: BoxStatefulBiConsumerFn<T, U>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, U> BoxStatefulBiConsumer<T, U> {

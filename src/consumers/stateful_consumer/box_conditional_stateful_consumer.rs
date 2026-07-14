@@ -5,16 +5,15 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalStatefulConsumer` public type.
 
-use super::{
-    BoxPredicate,
-    BoxStatefulConsumer,
-    Predicate,
-    StatefulConsumer,
-    impl_box_conditional_consumer,
-    impl_conditional_consumer_debug_display,
+use {
+    crate::BoxPredicate,
+    crate::BoxStatefulConsumer,
+    crate::Predicate,
+    crate::StatefulConsumer,
+    crate::consumers::macros::impl_box_conditional_consumer,
+    crate::consumers::macros::impl_conditional_consumer_debug_display,
 };
 
 // ============================================================================

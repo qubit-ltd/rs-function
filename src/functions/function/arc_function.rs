@@ -5,24 +5,22 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `ArcFunction` public type.
 
-use super::{
-    Arc,
-    Function,
-    impl_closure_trait,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
-    impl_function_identity_method,
-    impl_shared_function_methods,
+use {
+    crate::ArcConditionalFunction,
+    crate::Predicate,
 };
-#[cfg(feature = "combinators")]
-use super::{
-    ArcConditionalFunction,
-    Predicate,
+use {
+    crate::Function,
+    crate::functions::macros::impl_function_clone,
+    crate::functions::macros::impl_function_common_methods,
+    crate::functions::macros::impl_function_constant_method,
+    crate::functions::macros::impl_function_debug_display,
+    crate::functions::macros::impl_function_identity_method,
+    crate::functions::macros::impl_shared_function_methods,
+    crate::macros::impl_closure_trait,
+    std::sync::Arc,
 };
 
 // ============================================================================
@@ -44,7 +42,7 @@ use super::{
 /// - **Clonable**: Cheap cloning via `Arc::clone`
 pub struct ArcFunction<T, R> {
     pub(super) function: Arc<dyn Fn(&T) -> R + Send + Sync>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, R> ArcFunction<T, R> {

@@ -5,22 +5,20 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcTransformer` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    Predicate,
-    RcConditionalTransformer,
+use {
+    crate::Predicate,
+    crate::RcConditionalTransformer,
 };
-use super::{
-    Rc,
-    Transformer,
-    impl_shared_transformer_methods,
-    impl_transformer_clone,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
-    impl_transformer_debug_display,
+use {
+    crate::Transformer,
+    crate::transformers::macros::impl_shared_transformer_methods,
+    crate::transformers::macros::impl_transformer_clone,
+    crate::transformers::macros::impl_transformer_common_methods,
+    crate::transformers::macros::impl_transformer_constant_method,
+    crate::transformers::macros::impl_transformer_debug_display,
+    std::rc::Rc,
 };
 
 // ============================================================================
@@ -42,7 +40,7 @@ use super::{
 /// - **Clonable**: Cheap cloning via `Rc::clone`
 pub struct RcTransformer<T, R> {
     pub(super) function: Rc<dyn Fn(T) -> R>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 // Implement RcTransformer

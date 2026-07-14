@@ -5,24 +5,22 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulMutator` public type.
 
-use super::{
-    Arc,
-    ArcMutMutatorFn,
-    Mutex,
-    StatefulMutator,
-    impl_closure_trait,
-    impl_mutator_clone,
-    impl_mutator_common_methods,
-    impl_mutator_debug_display,
-    impl_shared_mutator_methods,
+use {
+    super::ArcMutMutatorFn,
+    crate::StatefulMutator,
+    crate::macros::impl_closure_trait,
+    crate::mutators::macros::impl_mutator_clone,
+    crate::mutators::macros::impl_mutator_common_methods,
+    crate::mutators::macros::impl_mutator_debug_display,
+    crate::mutators::macros::impl_shared_mutator_methods,
+    parking_lot::Mutex,
+    std::sync::Arc,
 };
-#[cfg(feature = "combinators")]
-use super::{
-    ArcConditionalStatefulMutator,
-    Predicate,
+use {
+    crate::ArcConditionalStatefulMutator,
+    crate::Predicate,
 };
 
 // ============================================================================
@@ -78,7 +76,7 @@ use super::{
 /// before a panic are not rolled back.
 pub struct ArcStatefulMutator<T> {
     pub(super) function: ArcMutMutatorFn<T>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T> ArcStatefulMutator<T> {

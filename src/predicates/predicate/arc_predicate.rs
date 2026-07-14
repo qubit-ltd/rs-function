@@ -5,21 +5,19 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `ArcPredicate` public type.
 
-#[cfg(feature = "combinators")]
 use std::ops::Not;
 
-use super::{
-    ALWAYS_FALSE_NAME,
-    ALWAYS_TRUE_NAME,
-    Arc,
-    Predicate,
-    impl_predicate_clone,
-    impl_predicate_common_methods,
-    impl_predicate_debug_display,
-    impl_shared_predicate_methods,
+use {
+    super::ALWAYS_FALSE_NAME,
+    super::ALWAYS_TRUE_NAME,
+    crate::Predicate,
+    crate::predicates::macros::impl_predicate_clone,
+    crate::predicates::macros::impl_predicate_common_methods,
+    crate::predicates::macros::impl_predicate_debug_display,
+    crate::predicates::macros::impl_shared_predicate_methods,
+    std::sync::Arc,
 };
 
 /// An Arc-based predicate with thread-safe shared ownership.
@@ -28,12 +26,10 @@ use super::{
 /// shared across threads. Composition methods borrow `&self`, allowing the
 /// original predicate to remain usable after composition.
 ///
-/// Composition methods require the `combinators` feature.
 ///
 /// # Examples
 ///
 /// ```rust
-/// # #[cfg(feature = "combinators")]
 /// # {
 /// use qubit_function::{Predicate, ArcPredicate};
 ///
@@ -53,7 +49,7 @@ use super::{
 /// ```
 pub struct ArcPredicate<T> {
     pub(super) function: Arc<dyn Fn(&T) -> bool + Send + Sync>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T> ArcPredicate<T> {
@@ -70,7 +66,6 @@ impl<T> ArcPredicate<T> {
     impl_shared_predicate_methods!(ArcPredicate<T>, Send + Sync + 'static);
 }
 
-#[cfg(feature = "combinators")]
 impl<T> Not for ArcPredicate<T>
 where
     T: 'static,
@@ -83,7 +78,6 @@ where
     }
 }
 
-#[cfg(feature = "combinators")]
 impl<T> Not for &ArcPredicate<T>
 where
     T: 'static,

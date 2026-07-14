@@ -5,16 +5,15 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalTransformer` public type.
 
-use super::{
-    BoxPredicate,
-    BoxTransformer,
-    Predicate,
-    Transformer,
-    impl_box_conditional_transformer,
-    impl_conditional_transformer_debug_display,
+use {
+    crate::BoxPredicate,
+    crate::BoxTransformer,
+    crate::Predicate,
+    crate::Transformer,
+    crate::transformers::macros::impl_box_conditional_transformer,
+    crate::transformers::macros::impl_conditional_transformer_debug_display,
 };
 
 // ============================================================================
