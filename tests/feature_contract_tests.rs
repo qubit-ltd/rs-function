@@ -177,6 +177,75 @@ fn main() {
 }
 
 #[test]
+fn test_without_combinators_rejects_box_runnable_then_callable() {
+    let output = compile_consumer(
+        &[],
+        r#"
+use qubit_function::BoxRunnable;
+
+fn main() {
+    let runnable = BoxRunnable::new(|| Ok::<(), ()>(()));
+    let _callable = runnable.then_callable(|| Ok::<i32, ()>(42));
+}
+"#,
+    );
+
+    assert_compile_failure(&output, "no method named `then_callable`");
+}
+
+#[test]
+fn test_without_combinators_rejects_box_runnable_with_then_callable() {
+    let output = compile_consumer(
+        &[],
+        r#"
+use qubit_function::BoxRunnableWith;
+
+fn main() {
+    let runnable = BoxRunnableWith::new(|_: &mut i32| Ok::<(), ()>(()));
+    let _callable =
+        runnable.then_callable_with(|value: &mut i32| Ok::<i32, ()>(*value));
+}
+"#,
+    );
+
+    assert_compile_failure(&output, "no method named `then_callable_with`");
+}
+
+#[test]
+fn test_without_combinators_rejects_box_runnable_once_then_callable() {
+    let output = compile_consumer(
+        &["once"],
+        r#"
+use qubit_function::BoxRunnableOnce;
+
+fn main() {
+    let runnable = BoxRunnableOnce::new(|| Ok::<(), ()>(()));
+    let _callable = runnable.then_callable(|| Ok::<i32, ()>(42));
+}
+"#,
+    );
+
+    assert_compile_failure(&output, "no method named `then_callable`");
+}
+
+#[test]
+fn test_without_combinators_rejects_local_box_runnable_once_then_callable() {
+    let output = compile_consumer(
+        &["once"],
+        r#"
+use qubit_function::LocalBoxRunnableOnce;
+
+fn main() {
+    let runnable = LocalBoxRunnableOnce::new(|| Ok::<(), ()>(()));
+    let _callable = runnable.then_callable(|| Ok::<i32, ()>(42));
+}
+"#,
+    );
+
+    assert_compile_failure(&output, "no method named `then_callable`");
+}
+
+#[test]
 fn test_with_combinators_accepts_public_extension_apis() {
     let output = compile_consumer(
         &["combinators"],
@@ -187,6 +256,38 @@ fn main() {
     let consumer = BoxConsumer::new(|_: &i32| {});
     let _conditional = consumer.when(|value: &i32| *value > 0);
     let _tester = (|| true).and(|| true);
+}
+"#,
+    );
+
+    assert!(output.status.success(), "{}", cargo_diagnostics(&output));
+}
+
+#[test]
+fn test_with_combinators_accepts_task_chaining_apis() {
+    let output = compile_consumer(
+        &["once", "combinators"],
+        r#"
+use qubit_function::{
+    BoxRunnable,
+    BoxRunnableOnce,
+    BoxRunnableWith,
+    LocalBoxRunnableOnce,
+};
+
+fn main() {
+    let runnable = BoxRunnable::new(|| Ok::<(), ()>(()));
+    let _callable = runnable.then_callable(|| Ok::<i32, ()>(42));
+
+    let runnable = BoxRunnableWith::new(|_: &mut i32| Ok::<(), ()>(()));
+    let _callable =
+        runnable.then_callable_with(|value: &mut i32| Ok::<i32, ()>(*value));
+
+    let runnable = BoxRunnableOnce::new(|| Ok::<(), ()>(()));
+    let _callable = runnable.then_callable(|| Ok::<i32, ()>(42));
+
+    let runnable = LocalBoxRunnableOnce::new(|| Ok::<(), ()>(()));
+    let _callable = runnable.then_callable(|| Ok::<i32, ()>(42));
 }
 "#,
     );

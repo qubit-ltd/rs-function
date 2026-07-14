@@ -17,11 +17,11 @@ use crate::{
         macros::impl_supplier_debug_display,
         supplier::Supplier,
     },
-    tasks::{
-        callable::BoxCallable,
-        runnable::Runnable,
-    },
+    tasks::runnable::Runnable,
 };
+
+#[cfg(feature = "combinators")]
+use crate::tasks::callable::BoxCallable;
 
 // ============================================================================
 // BoxRunnable
@@ -123,6 +123,7 @@ impl<E> BoxRunnable<E> {
     /// # Returns
     ///
     /// A callable producing the second computation's result.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn then_callable<R, C>(self, callable: C) -> BoxCallable<R, E>
     where
