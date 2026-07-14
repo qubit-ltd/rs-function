@@ -8,8 +8,13 @@
 //! Defines the `ArcComparator` public type.
 
 use {
-    crate::Comparator,
+    crate::{
+        Comparator,
+        callback_metadata::CallbackMetadata,
+        macros::impl_common_name_methods,
+    },
     std::cmp::Ordering,
+    std::fmt,
     std::sync::Arc,
 };
 
@@ -39,14 +44,15 @@ type ArcComparatorFn<T> = Arc<dyn Fn(&T, &T) -> Ordering + Send + Sync>;
 #[derive(Clone)]
 pub struct ArcComparator<T> {
     pub(super) function: ArcComparatorFn<T>,
+    pub(super) metadata: CallbackMetadata,
 }
 
 impl<T> ArcComparator<T> {
-    /// Creates a new `ArcComparator` from a closure.
+    /// Creates a new `ArcComparator` from a comparator implementation.
     ///
     /// # Parameters
     ///
-    /// * `f` - The closure to wrap
+    /// * `source` - The comparator implementation to wrap
     ///
     /// # Returns
     ///
@@ -68,8 +74,56 @@ impl<T> ArcComparator<T> {
             function: Arc::new(move |left: &T, right: &T| {
                 source.compare(left, right)
             }),
+            metadata: CallbackMetadata::unnamed(),
         }
     }
+
+    /// Creates a named `ArcComparator` from a thread-safe comparator.
+    #[inline]
+    pub fn new_with_name<F>(name: &str, source: F) -> Self
+    where
+        F: Comparator<T> + Send + Sync + 'static,
+    {
+        Self {
+            function: Arc::new(move |left: &T, right: &T| {
+                source.compare(left, right)
+            }),
+            metadata: CallbackMetadata::named(name),
+        }
+    }
+
+    /// Creates an `ArcComparator` with an optional diagnostic name.
+    #[inline]
+    pub fn new_with_optional_name<F>(source: F, name: Option<String>) -> Self
+    where
+        F: Comparator<T> + Send + Sync + 'static,
+    {
+        Self {
+            function: Arc::new(move |left: &T, right: &T| {
+                source.compare(left, right)
+            }),
+            metadata: CallbackMetadata::from_optional_name(name),
+        }
+    }
+
+    /// Creates a comparator while preserving existing callback metadata.
+    #[inline]
+    pub(crate) fn new_with_metadata<F>(
+        source: F,
+        metadata: CallbackMetadata,
+    ) -> Self
+    where
+        F: Comparator<T> + Send + Sync + 'static,
+    {
+        Self {
+            function: Arc::new(move |left: &T, right: &T| {
+                source.compare(left, right)
+            }),
+            metadata,
+        }
+    }
+
+    impl_common_name_methods!("comparator");
 
     /// Returns a comparator that imposes the reverse ordering.
     ///
@@ -94,7 +148,10 @@ impl<T> ArcComparator<T> {
         T: 'static,
     {
         let self_fn = self.function.clone();
-        ArcComparator::new(move |a: &T, b: &T| self_fn(b, a))
+        ArcComparator::new_with_metadata(
+            move |a: &T, b: &T| self_fn(b, a),
+            self.metadata.clone(),
+        )
     }
 
     /// Returns a comparator that uses this comparator first, then another
@@ -102,7 +159,8 @@ impl<T> ArcComparator<T> {
     ///
     /// # Parameters
     ///
-    /// * `other` - The comparator to use for tie-breaking
+    /// * `other` - The comparator to move into the result for tie-breaking;
+    ///   clone shared wrappers first if they must remain available
     ///
     /// # Returns
     ///
@@ -118,18 +176,18 @@ impl<T> ArcComparator<T> {
     ///     (a % 2).cmp(&(b % 2))
     /// });
     /// let cmp2 = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
-    /// let chained = cmp1.then_comparing(&cmp2);
+    /// let chained = cmp1.then_comparing(cmp2.clone());
     /// assert_eq!(chained.compare(&4, &2), Ordering::Greater);
     /// ```
     #[inline]
-    pub fn then_comparing(&self, other: &Self) -> Self
+    pub fn then_comparing<C>(&self, other: C) -> Self
     where
         T: 'static,
+        C: Comparator<T> + Send + Sync + 'static,
     {
         let first = self.function.clone();
-        let second = other.function.clone();
         ArcComparator::new(move |a: &T, b: &T| match first(a, b) {
-            Ordering::Equal => second(a, b),
+            Ordering::Equal => other.compare(a, b),
             ord => ord,
         })
     }
@@ -197,5 +255,23 @@ impl<T> Comparator<T> for ArcComparator<T> {
     #[inline]
     fn compare(&self, a: &T, b: &T) -> Ordering {
         (self.function)(a, b)
+    }
+}
+
+impl<T> fmt::Debug for ArcComparator<T> {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter
+            .debug_struct("ArcComparator")
+            .field("name", &self.metadata.name())
+            .finish()
+    }
+}
+
+impl<T> fmt::Display for ArcComparator<T> {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.metadata.name() {
+            Some(name) => write!(formatter, "ArcComparator({name})"),
+            None => formatter.write_str("ArcComparator"),
+        }
     }
 }

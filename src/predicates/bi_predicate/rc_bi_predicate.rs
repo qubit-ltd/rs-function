@@ -70,10 +70,12 @@ where
     type Output = RcBiPredicate<T, U>;
 
     fn not(self) -> Self::Output {
+        let metadata = self.metadata;
         let function = self.function;
-        RcBiPredicate::new(move |first: &T, second: &U| {
-            !function(first, second)
-        })
+        RcBiPredicate::new_with_metadata(
+            move |first: &T, second: &U| !function(first, second),
+            metadata,
+        )
     }
 }
 
@@ -86,9 +88,10 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function.clone();
-        RcBiPredicate::new(move |first: &T, second: &U| {
-            !function(first, second)
-        })
+        RcBiPredicate::new_with_metadata(
+            move |first: &T, second: &U| !function(first, second),
+            self.metadata.clone(),
+        )
     }
 }
 

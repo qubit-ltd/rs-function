@@ -106,16 +106,12 @@ impl<T, R, E> BoxCallableWith<T, R, E> {
         R: 'static,
         E: 'static,
     {
-        let metadata = self.metadata;
         let mut function = self.function;
         let mut next = next;
-        BoxCallableWith::new_with_metadata(
-            move |input: &mut T| {
-                let value = function(&mut *input)?;
-                next(value, input)
-            },
-            metadata,
-        )
+        BoxCallableWith::new(move |input: &mut T| {
+            let value = function(&mut *input)?;
+            next(value, input)
+        })
     }
 }
 

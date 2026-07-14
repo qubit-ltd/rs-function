@@ -87,6 +87,7 @@ impl_function_debug_display!(RcStatefulFunction<T, R>);
 // Implement StatefulFunction trait for RcStatefulFunction<T, R>
 impl<T, R> StatefulFunction<T, R> for RcStatefulFunction<T, R> {
     fn apply(&mut self, t: &T) -> R {
-        (self.function.borrow_mut())(t)
+        let mut function = self.function.borrow_mut();
+        function(t)
     }
 }

@@ -7,9 +7,21 @@
 // =============================================================================
 //! Defines the `BoxTester` public type.
 
-use std::ops::Not;
+use std::{
+    fmt,
+    ops::Not,
+};
 
-use super::Tester;
+use {
+    super::Tester,
+    crate::{
+        callback_metadata::CallbackMetadata,
+        macros::{
+            impl_common_name_methods,
+            impl_common_new_methods,
+        },
+    },
+};
 
 // ============================================================================
 // BoxTester: Single Ownership Implementation
@@ -30,7 +42,6 @@ use super::Tester;
 ///
 /// # Use Cases
 ///
-/// - One-time testing scenarios
 /// - Builder patterns requiring ownership transfer
 /// - Simple state checking without sharing
 /// - Chained calls with ownership transfer
@@ -67,39 +78,18 @@ use super::Tester;
 /// ```
 pub struct BoxTester {
     pub(super) function: Box<dyn Fn() -> bool>,
+    pub(super) metadata: CallbackMetadata,
 }
 
 impl BoxTester {
-    /// Creates a new `BoxTester` from a closure
-    ///
-    /// # Type Parameters
-    ///
-    /// * `F` - Closure type implementing `Fn() -> bool`
-    ///
-    /// # Parameters
-    ///
-    /// * `f` - The closure to wrap
-    ///
-    /// # Return Value
-    ///
-    /// A new `BoxTester` instance
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::BoxTester;
-    ///
-    /// let tester = BoxTester::new(|| true);
-    /// ```
-    #[inline]
-    pub fn new<F>(source: F) -> Self
-    where
-        F: Tester + 'static,
-    {
-        BoxTester {
-            function: Box::new(move || source.test()),
-        }
-    }
+    impl_common_new_methods!(
+        semantic(Tester + 'static),
+        |source| move || source.test(),
+        |function| Box::new(function),
+        "tester"
+    );
+
+    impl_common_name_methods!("tester");
 
     /// Combines this tester with another tester using logical AND
     ///
@@ -406,8 +396,9 @@ impl Not for BoxTester {
 
     #[inline]
     fn not(self) -> Self::Output {
+        let metadata = self.metadata;
         let self_fn = self.function;
-        BoxTester::new(move || !self_fn())
+        BoxTester::new_with_metadata(move || !self_fn(), metadata)
     }
 }
 
@@ -415,5 +406,23 @@ impl Tester for BoxTester {
     #[inline]
     fn test(&self) -> bool {
         (self.function)()
+    }
+}
+
+impl fmt::Debug for BoxTester {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter
+            .debug_struct("BoxTester")
+            .field("name", &self.metadata.name())
+            .finish()
+    }
+}
+
+impl fmt::Display for BoxTester {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.metadata.name() {
+            Some(name) => write!(formatter, "BoxTester({name})"),
+            None => formatter.write_str("BoxTester"),
+        }
     }
 }

@@ -65,7 +65,8 @@ impl<T, R, E> CallableWith<T, R, E> for ArcCallableWith<T, R, E> {
     /// Executes the thread-safe callable with mutable input.
     #[inline]
     fn call_with(&mut self, input: &mut T) -> Result<R, E> {
-        (self.function.lock())(input)
+        let mut function = self.function.lock();
+        function(input)
     }
 }
 

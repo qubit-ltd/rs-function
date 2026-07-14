@@ -111,3 +111,9 @@ pub trait Consumer<T> {
     /// ```
     fn accept(&self, value: &T);
 }
+
+crate::macros::impl_closure_trait!(
+    Consumer<T>,
+    accept,
+    Fn(value: &T)
+);

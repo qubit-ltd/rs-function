@@ -89,7 +89,8 @@ impl<E> Runnable<E> for RcRunnable<E> {
     /// Executes the shared runnable.
     #[inline]
     fn run(&mut self) -> Result<(), E> {
-        (self.function.borrow_mut())()
+        let mut function = self.function.borrow_mut();
+        function()
     }
 }
 

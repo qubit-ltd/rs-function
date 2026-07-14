@@ -14,7 +14,6 @@ use {
 };
 use {
     crate::StatefulBiTransformer,
-    crate::macros::impl_closure_trait,
     crate::transformers::macros::impl_shared_transformer_methods,
     crate::transformers::macros::impl_transformer_clone,
     crate::transformers::macros::impl_transformer_common_methods,
@@ -87,16 +86,3 @@ impl<T, U, R> StatefulBiTransformer<T, U, R>
         func(first, second)
     }
 }
-
-// ============================================================================
-// Blanket implementation for standard Fn trait
-// ============================================================================
-
-// Implement StatefulBiTransformer<T, U, R> for any type that implements
-// FnMut(T, U) -> R
-impl_closure_trait!(
-    StatefulBiTransformer<T, U, R>,
-    apply,
-    BoxBiTransformerOnce,
-    FnMut(first: T, second: U) -> R
-);

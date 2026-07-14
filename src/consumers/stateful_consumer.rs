@@ -116,3 +116,9 @@ pub trait StatefulConsumer<T> {
     /// ```
     fn accept(&mut self, value: &T);
 }
+
+crate::macros::impl_closure_trait!(
+    StatefulConsumer<T>,
+    accept,
+    FnMut(value: &T)
+);

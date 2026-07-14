@@ -116,6 +116,7 @@ impl<T, R> StatefulMutatingFunction<T, R>
     for ArcStatefulMutatingFunction<T, R>
 {
     fn apply(&mut self, t: &mut T) -> R {
-        (self.function.lock())(t)
+        let mut function = self.function.lock();
+        function(t)
     }
 }

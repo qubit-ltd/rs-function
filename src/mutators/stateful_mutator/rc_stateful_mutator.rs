@@ -96,7 +96,8 @@ impl<T> RcStatefulMutator<T> {
 
 impl<T> StatefulMutator<T> for RcStatefulMutator<T> {
     fn apply(&mut self, value: &mut T) {
-        (self.function.borrow_mut())(value)
+        let mut function = self.function.borrow_mut();
+        function(value)
     }
 }
 

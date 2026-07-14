@@ -143,12 +143,8 @@ impl<R, E> BoxCallableOnce<R, E> {
         R: 'static,
         E: 'static,
     {
-        let metadata = self.metadata;
         let function = self.function;
-        BoxCallableOnce::new_with_metadata(
-            move || function().and_then(next),
-            metadata,
-        )
+        BoxCallableOnce::new(move || function().and_then(next))
     }
 }
 

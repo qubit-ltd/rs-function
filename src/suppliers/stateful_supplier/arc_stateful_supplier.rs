@@ -13,7 +13,6 @@ use {
 };
 use {
     crate::StatefulSupplier,
-    crate::macros::impl_closure_trait,
     crate::suppliers::macros::impl_shared_supplier_methods,
     crate::suppliers::macros::impl_supplier_clone,
     crate::suppliers::macros::impl_supplier_debug_display,
@@ -221,18 +220,7 @@ impl_supplier_clone!(ArcStatefulSupplier<T>);
 
 impl<T> StatefulSupplier<T> for ArcStatefulSupplier<T> {
     fn get(&mut self) -> T {
-        (self.function.lock())()
+        let mut function = self.function.lock();
+        function()
     }
 }
-
-// ==========================================================================
-// Implement StatefulSupplier for Closures
-// ==========================================================================
-
-// Implement StatefulSupplier<T> for any type that implements FnMut() -> T
-impl_closure_trait!(
-    StatefulSupplier<T>,
-    get,
-    BoxSupplierOnce,
-    FnMut() -> T
-);

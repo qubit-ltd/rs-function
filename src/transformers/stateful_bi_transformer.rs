@@ -73,3 +73,9 @@ pub trait StatefulBiTransformer<T, U, R> {
     /// The transformed output value
     fn apply(&mut self, first: T, second: U) -> R;
 }
+
+crate::macros::impl_closure_trait!(
+    StatefulBiTransformer<T, U, R>,
+    apply,
+    FnMut(first: T, second: U) -> R
+);

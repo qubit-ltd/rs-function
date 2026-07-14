@@ -142,16 +142,12 @@ impl<R, E> BoxCallable<R, E> {
         R: 'static,
         E: 'static,
     {
-        let metadata = self.metadata;
         let mut function = self.function;
         let mut next = next;
-        BoxCallable::new_with_metadata(
-            move || {
-                let value = function()?;
-                next(value)
-            },
-            metadata,
-        )
+        BoxCallable::new(move || {
+            let value = function()?;
+            next(value)
+        })
     }
 }
 

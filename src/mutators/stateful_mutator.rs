@@ -305,3 +305,9 @@ pub trait StatefulMutator<T> {
     /// ```
     fn apply(&mut self, value: &mut T);
 }
+
+crate::macros::impl_closure_trait!(
+    StatefulMutator<T>,
+    apply,
+    FnMut(value: &mut T)
+);

@@ -118,7 +118,8 @@ impl<T, U> RcStatefulBiConsumer<T, U> {
 
 impl<T, U> StatefulBiConsumer<T, U> for RcStatefulBiConsumer<T, U> {
     fn accept(&mut self, first: &T, second: &U) {
-        (self.function.borrow_mut())(first, second)
+        let mut function = self.function.borrow_mut();
+        function(first, second)
     }
 }
 

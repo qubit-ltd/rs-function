@@ -156,8 +156,13 @@ where
 {
     type Output = BoxStatefulPredicate<T>;
 
-    fn not(mut self) -> Self::Output {
-        BoxStatefulPredicate::new(move |value: &T| !self.test(value))
+    fn not(self) -> Self::Output {
+        let metadata = self.metadata;
+        let mut function = self.function;
+        BoxStatefulPredicate::new_with_metadata(
+            move |value: &T| !function(value),
+            metadata,
+        )
     }
 }
 

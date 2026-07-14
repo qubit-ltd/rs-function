@@ -127,3 +127,9 @@ pub trait BiConsumer<T, U> {
     /// ```
     fn accept(&self, first: &T, second: &U);
 }
+
+crate::macros::impl_closure_trait!(
+    BiConsumer<T, U>,
+    accept,
+    Fn(first: &T, second: &U)
+);

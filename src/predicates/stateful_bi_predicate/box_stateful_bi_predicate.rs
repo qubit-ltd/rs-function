@@ -164,10 +164,13 @@ where
 {
     type Output = BoxStatefulBiPredicate<T, U>;
 
-    fn not(mut self) -> Self::Output {
-        BoxStatefulBiPredicate::new(move |first: &T, second: &U| {
-            !self.test(first, second)
-        })
+    fn not(self) -> Self::Output {
+        let metadata = self.metadata;
+        let mut function = self.function;
+        BoxStatefulBiPredicate::new_with_metadata(
+            move |first: &T, second: &U| !function(first, second),
+            metadata,
+        )
     }
 }
 

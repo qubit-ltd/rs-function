@@ -63,7 +63,8 @@ impl<T, E> RunnableWith<T, E> for RcRunnableWith<T, E> {
     /// Executes the shared runnable with mutable input.
     #[inline]
     fn run_with(&mut self, input: &mut T) -> Result<(), E> {
-        (self.function.borrow_mut())(input)
+        let mut function = self.function.borrow_mut();
+        function(input)
     }
 }
 

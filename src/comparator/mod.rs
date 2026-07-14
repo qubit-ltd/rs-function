@@ -12,10 +12,8 @@
 //!
 //! ## Design Overview
 //!
-//! This module adopts the **Trait + Multiple Implementations** design
-//! pattern, which is the most flexible and elegant approach for
-//! implementing comparators in Rust. It achieves a perfect balance
-//! between semantic clarity, type safety, and API flexibility.
+//! This module separates the semantic [`Comparator`] contract from concrete
+//! Box, Rc, and Arc ownership models.
 //!
 //! ### Core Components
 //!
@@ -52,11 +50,11 @@
 //!
 //! | Type | Ownership | Clonable | Thread-Safe | API | Use Case |
 //! |:-----|:----------|:---------|:------------|:----|:---------|
-//! | [`BoxComparator`] | Single | ❌ | ❌ | consumes `self` | One-time |
+//! | [`BoxComparator`] | Single | ❌ | ❌ | consumes `self` | Owned reuse |
 //! | [`ArcComparator`] | Shared | ✅ | ✅ | borrows `&self` | Multi-thread |
 //! | `RcComparator` | Shared | ✅ | ❌ | borrows `&self` | Single-thread |
 //!
-//! ## Key Design Advantages
+//! ## Composition Properties
 //!
 //! ### 1. Type Preservation through Specialization
 //!
@@ -74,7 +72,7 @@
 //!
 //! // Composition returns ArcComparator, preserving clonability and
 //! // thread-safety
-//! let combined = arc_cmp.then_comparing(&another);
+//! let combined = arc_cmp.then_comparing(another.clone());
 //! let cloned = combined.clone();  // ✅ Still cloneable
 //!
 //! // Original comparators remain usable
@@ -82,11 +80,11 @@
 //! # }
 //! ```
 //!
-//! ### 2. Elegant API without Explicit Cloning
+//! ### 2. Borrowing Composition
 //!
-//! `ArcComparator` and `RcComparator` use `&self` in their composition
-//! methods, providing a natural experience without requiring explicit
-//! `.clone()` calls:
+//! `ArcComparator` and `RcComparator` borrow the left comparator in their
+//! composition methods. The right comparator is moved into the result, so
+//! clone it at the call site when it must remain independently available:
 //!
 //! ```rust
 //! # {
@@ -94,9 +92,9 @@
 //!
 //! let cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
 //!
-//! // No need for explicit clone()
+//! // The left comparator remains available.
 //! let reversed = cmp.reversed();
-//! let chained = cmp.then_comparing(&ArcComparator::new(|a: &i32, b: &i32| b.cmp(a)));
+//! let chained = cmp.then_comparing(ArcComparator::new(|a: &i32, b: &i32| b.cmp(a)));
 //!
 //! // cmp is still available
 //! cmp.compare(&1, &2);

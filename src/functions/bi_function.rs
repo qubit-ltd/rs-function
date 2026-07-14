@@ -76,3 +76,9 @@ pub trait BiFunction<T, U, R> {
     /// The computed output value
     fn apply(&self, first: &T, second: &U) -> R;
 }
+
+crate::macros::impl_closure_trait!(
+    BiFunction<T, U, R>,
+    apply,
+    Fn(first: &T, second: &U) -> R
+);

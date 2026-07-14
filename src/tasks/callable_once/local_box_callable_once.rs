@@ -134,12 +134,8 @@ impl<R, E> LocalBoxCallableOnce<R, E> {
         R: 'static,
         E: 'static,
     {
-        let metadata = self.metadata;
         let function = self.function;
-        LocalBoxCallableOnce::new_with_metadata(
-            move || function().and_then(next),
-            metadata,
-        )
+        LocalBoxCallableOnce::new(move || function().and_then(next))
     }
 }
 

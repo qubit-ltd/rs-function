@@ -89,7 +89,8 @@ impl<R, E> Callable<R, E> for ArcCallable<R, E> {
     /// Executes the thread-safe callable.
     #[inline]
     fn call(&mut self) -> Result<R, E> {
-        (self.function.lock())()
+        let mut function = self.function.lock();
+        function()
     }
 }
 

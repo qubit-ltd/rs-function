@@ -19,7 +19,6 @@ use {
     crate::functions::macros::impl_function_debug_display,
     crate::functions::macros::impl_function_identity_method,
     crate::functions::macros::impl_shared_function_methods,
-    crate::macros::impl_closure_trait,
     std::sync::Arc,
 };
 
@@ -82,15 +81,3 @@ impl<T, R> Function<T, R> for ArcFunction<T, R> {
         (self.function)(t)
     }
 }
-
-// ============================================================================
-// Blanket implementation for standard Fn trait
-// ============================================================================
-
-// Implement Function<T, R> for any type that implements Fn(&T) -> R
-impl_closure_trait!(
-    Function<T, R>,
-    apply,
-    BoxFunctionOnce,
-    Fn(input: &T) -> R
-);

@@ -72,3 +72,9 @@ pub trait Transformer<T, R> {
     /// The transformed output value
     fn apply(&self, input: T) -> R;
 }
+
+crate::macros::impl_closure_trait!(
+    Transformer<T, R>,
+    apply,
+    Fn(input: T) -> R
+);

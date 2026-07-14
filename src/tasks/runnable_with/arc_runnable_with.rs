@@ -65,7 +65,8 @@ impl<T, E> RunnableWith<T, E> for ArcRunnableWith<T, E> {
     /// Executes the thread-safe runnable with mutable input.
     #[inline]
     fn run_with(&mut self, input: &mut T) -> Result<(), E> {
-        (self.function.lock())(input)
+        let mut function = self.function.lock();
+        function(input)
     }
 }
 

@@ -64,3 +64,9 @@ pub trait Function<T, R> {
     /// The computed output value
     fn apply(&self, t: &T) -> R;
 }
+
+crate::macros::impl_closure_trait!(
+    Function<T, R>,
+    apply,
+    Fn(input: &T) -> R
+);

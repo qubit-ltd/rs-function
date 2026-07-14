@@ -113,6 +113,7 @@ impl_function_identity_method!(RcStatefulMutatingFunction<T, T>, mutating);
 // Implement StatefulMutatingFunction trait for RcStatefulMutatingFunction<T, R>
 impl<T, R> StatefulMutatingFunction<T, R> for RcStatefulMutatingFunction<T, R> {
     fn apply(&mut self, t: &mut T) -> R {
-        (self.function.borrow_mut())(t)
+        let mut function = self.function.borrow_mut();
+        function(t)
     }
 }
