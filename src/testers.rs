@@ -50,7 +50,7 @@
 //! | Tester          | None  | `bool` | `&self`     | `Fn() -> bool`    | State Check |
 //! | StatefulTester  | None  | `bool` | `&mut self` | `FnMut() -> bool` | Stateful Check |
 //! | Predicate       | `&T`  | `bool` | `&self`     | `Fn(&T) -> bool`  | Filter      |
-//! | Supplier        | None  | `T`    | `&mut self` | `FnMut() -> T`    | Factory     |
+//! | Supplier        | None  | `T`    | `&self`     | `Fn() -> T`       | Factory     |
 //!
 //! # Examples
 //!

@@ -10,14 +10,17 @@
 
 use super::{
     Mutator,
-    Predicate,
     Rc,
-    RcConditionalMutator,
     RcMutatorFn,
     impl_mutator_clone,
     impl_mutator_common_methods,
     impl_mutator_debug_display,
     impl_shared_mutator_methods,
+};
+#[cfg(feature = "combinators")]
+use super::{
+    Predicate,
+    RcConditionalMutator,
 };
 
 // ============================================================================

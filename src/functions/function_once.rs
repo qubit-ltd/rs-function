@@ -16,16 +16,20 @@
 //! - [`BoxFunctionOnce`]: Single ownership, one-time use
 #[cfg(feature = "combinators")]
 use crate::functions::macros::impl_fn_ops_trait;
+#[cfg(feature = "combinators")]
 use crate::functions::macros::{
     impl_box_conditional_function,
-    impl_box_function_methods,
     impl_conditional_function_debug_display,
+};
+use crate::functions::macros::{
+    impl_box_function_methods,
     impl_function_common_methods,
     impl_function_constant_method,
     impl_function_debug_display,
     impl_function_identity_method,
 };
 use crate::macros::impl_closure_once_trait;
+#[cfg(feature = "combinators")]
 use crate::predicates::predicate::{
     BoxPredicate,
     Predicate,
@@ -33,9 +37,8 @@ use crate::predicates::predicate::{
 
 mod box_function_once;
 pub use box_function_once::BoxFunctionOnce;
+#[cfg(feature = "combinators")]
 mod box_conditional_function_once;
-#[cfg(not(feature = "combinators"))]
-pub(crate) use box_conditional_function_once::BoxConditionalFunctionOnce;
 #[cfg(feature = "combinators")]
 pub use box_conditional_function_once::BoxConditionalFunctionOnce;
 #[cfg(feature = "combinators")]

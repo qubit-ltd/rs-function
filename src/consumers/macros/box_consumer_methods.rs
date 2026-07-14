@@ -100,6 +100,7 @@
 /// impl_box_consumer_methods!(BoxConsumer<i32>, BoxConditionalConsumer<i32>, Consumer);
 /// impl_box_consumer_methods!(BoxBiConsumer<i32, i32>, BoxConditionalBiConsumer<i32, i32>, BiConsumer);
 /// ```
+#[cfg(feature = "combinators")]
 macro_rules! impl_box_consumer_methods {
     (@and_then Consumer, $struct_name:ident, $first:expr, $after:expr, $t:ident) => {{
         let first = $first;
@@ -358,6 +359,11 @@ macro_rules! impl_box_consumer_methods {
             impl_box_consumer_methods!(@and_then_bi $consumer_trait, $struct_name, self, after, $t, $u)
         }
     };
+}
+
+#[cfg(not(feature = "combinators"))]
+macro_rules! impl_box_consumer_methods {
+    ($($tokens:tt)*) => {};
 }
 
 pub(crate) use impl_box_consumer_methods;

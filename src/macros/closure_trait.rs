@@ -24,11 +24,9 @@
 /// # Generated implementation
 ///
 /// Generates a blanket implementation for all closures matching the signature,
-/// including:
-/// - Core method implementation
-/// - `into_box`, `into_rc`, `into_arc`, `into_fn` methods
-/// - `to_box`, `to_rc`, `to_arc`, `to_fn` methods
-/// - `into_once`, `to_once` methods (if once_type is provided)
+/// forwarding the trait's core method directly to the closure. The optional
+/// once-wrapper argument is accepted for compatibility but does not generate
+/// conversion methods.
 ///
 /// # Examples
 ///

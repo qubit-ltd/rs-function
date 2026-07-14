@@ -8,6 +8,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcBiPredicate` public type.
 
+#[cfg(feature = "combinators")]
 use std::ops::Not;
 
 use super::{
@@ -69,6 +70,7 @@ impl<T, U> ArcBiPredicate<T, U> {
     );
 }
 
+#[cfg(feature = "combinators")]
 impl<T, U> Not for ArcBiPredicate<T, U>
 where
     T: 'static,
@@ -84,6 +86,7 @@ where
     }
 }
 
+#[cfg(feature = "combinators")]
 impl<T, U> Not for &ArcBiPredicate<T, U>
 where
     T: 'static,

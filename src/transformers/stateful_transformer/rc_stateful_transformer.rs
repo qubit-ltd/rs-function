@@ -8,10 +8,13 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcStatefulTransformer` public type.
 
+#[cfg(feature = "combinators")]
 use super::{
     Predicate,
-    Rc,
     RcConditionalStatefulTransformer,
+};
+use super::{
+    Rc,
     RefCell,
     StatefulTransformer,
     impl_shared_transformer_methods,

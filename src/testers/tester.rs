@@ -15,6 +15,7 @@ pub mod arc_tester;
 pub use arc_tester::ArcTester;
 pub mod box_tester;
 pub use box_tester::BoxTester;
+#[cfg(feature = "combinators")]
 pub mod fn_tester_ops;
 #[cfg(feature = "combinators")]
 pub use fn_tester_ops::FnTesterOps;

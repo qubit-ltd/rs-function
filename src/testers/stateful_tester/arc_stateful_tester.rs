@@ -7,6 +7,7 @@
 // =============================================================================
 //! Defines the `ArcStatefulTester` public type.
 
+#[cfg(feature = "combinators")]
 use std::ops::Not;
 
 use parking_lot::Mutex;
@@ -46,6 +47,7 @@ impl ArcStatefulTester {
 
     /// Combines this tester with another stateful tester using logical AND.
     #[inline]
+    #[cfg(feature = "combinators")]
     pub fn and<T>(&self, mut next: T) -> ArcStatefulTester
     where
         T: StatefulTester + Send + 'static,
@@ -59,6 +61,7 @@ impl ArcStatefulTester {
 
     /// Combines this tester with another stateful tester using logical OR.
     #[inline]
+    #[cfg(feature = "combinators")]
     pub fn or<T>(&self, mut next: T) -> ArcStatefulTester
     where
         T: StatefulTester + Send + 'static,
@@ -72,6 +75,7 @@ impl ArcStatefulTester {
 
     /// Combines this tester with another stateful tester using logical NAND.
     #[inline]
+    #[cfg(feature = "combinators")]
     pub fn nand<T>(&self, mut next: T) -> ArcStatefulTester
     where
         T: StatefulTester + Send + 'static,
@@ -85,6 +89,7 @@ impl ArcStatefulTester {
 
     /// Combines this tester with another stateful tester using logical XOR.
     #[inline]
+    #[cfg(feature = "combinators")]
     pub fn xor<T>(&self, mut next: T) -> ArcStatefulTester
     where
         T: StatefulTester + Send + 'static,
@@ -98,6 +103,7 @@ impl ArcStatefulTester {
 
     /// Combines this tester with another stateful tester using logical NOR.
     #[inline]
+    #[cfg(feature = "combinators")]
     pub fn nor<T>(&self, mut next: T) -> ArcStatefulTester
     where
         T: StatefulTester + Send + 'static,
@@ -119,6 +125,7 @@ impl Clone for ArcStatefulTester {
     }
 }
 
+#[cfg(feature = "combinators")]
 impl Not for ArcStatefulTester {
     type Output = ArcStatefulTester;
 
@@ -129,6 +136,7 @@ impl Not for ArcStatefulTester {
     }
 }
 
+#[cfg(feature = "combinators")]
 impl Not for &ArcStatefulTester {
     type Output = ArcStatefulTester;
 

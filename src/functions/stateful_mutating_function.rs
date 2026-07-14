@@ -115,6 +115,7 @@
 //! assert_eq!(accumulator.apply(&mut value2), 16); // 10 + 6
 //! assert_eq!(value2, 6);
 //! ```
+#[cfg(feature = "rc")]
 use std::cell::RefCell;
 #[cfg(feature = "rc")]
 use std::rc::Rc;
@@ -124,23 +125,27 @@ use parking_lot::Mutex;
 
 #[cfg(feature = "combinators")]
 use crate::functions::macros::impl_fn_ops_trait;
+use crate::functions::macros::{
+    impl_box_function_methods,
+    impl_function_clone,
+    impl_function_common_methods,
+    impl_function_debug_display,
+    impl_function_identity_method,
+    impl_shared_function_methods,
+};
+#[cfg(feature = "combinators")]
 use crate::functions::{
     function::Function,
     macros::{
         impl_box_conditional_function,
-        impl_box_function_methods,
         impl_conditional_function_clone,
         impl_conditional_function_debug_display,
-        impl_function_clone,
-        impl_function_common_methods,
-        impl_function_debug_display,
-        impl_function_identity_method,
         impl_shared_conditional_function,
-        impl_shared_function_methods,
     },
 };
-#[cfg(feature = "rc")]
+#[cfg(all(feature = "rc", feature = "combinators"))]
 use crate::predicates::predicate::RcPredicate;
+#[cfg(feature = "combinators")]
 use crate::predicates::predicate::{
     ArcPredicate,
     BoxPredicate,
@@ -155,21 +160,16 @@ mod rc_stateful_mutating_function;
 pub use rc_stateful_mutating_function::RcStatefulMutatingFunction;
 mod arc_stateful_mutating_function;
 pub use arc_stateful_mutating_function::ArcStatefulMutatingFunction;
+#[cfg(feature = "combinators")]
 mod box_conditional_stateful_mutating_function;
-#[cfg(not(feature = "combinators"))]
-pub(crate) use box_conditional_stateful_mutating_function::BoxConditionalStatefulMutatingFunction;
 #[cfg(feature = "combinators")]
 pub use box_conditional_stateful_mutating_function::BoxConditionalStatefulMutatingFunction;
-#[cfg(feature = "rc")]
+#[cfg(all(feature = "rc", feature = "combinators"))]
 mod rc_conditional_stateful_mutating_function;
-#[cfg(feature = "rc")]
-#[cfg(not(feature = "combinators"))]
-pub(crate) use rc_conditional_stateful_mutating_function::RcConditionalStatefulMutatingFunction;
 #[cfg(all(feature = "rc", feature = "combinators"))]
 pub use rc_conditional_stateful_mutating_function::RcConditionalStatefulMutatingFunction;
+#[cfg(feature = "combinators")]
 mod arc_conditional_stateful_mutating_function;
-#[cfg(not(feature = "combinators"))]
-pub(crate) use arc_conditional_stateful_mutating_function::ArcConditionalStatefulMutatingFunction;
 #[cfg(feature = "combinators")]
 pub use arc_conditional_stateful_mutating_function::ArcConditionalStatefulMutatingFunction;
 #[cfg(feature = "combinators")]
@@ -209,7 +209,6 @@ pub use fn_stateful_mutating_function_ops::FnStatefulMutatingFunctionOps;
 /// - **Unified Interface**: All stateful mutating function types share the same
 ///   `apply` method signature
 /// - **Automatic Implementation**: Closures automatically implement this trait
-/// - **Type Conversions**: Easy conversion between ownership models
 /// - **Generic Programming**: Write functions that work with any stateful
 ///   mutating function type
 ///

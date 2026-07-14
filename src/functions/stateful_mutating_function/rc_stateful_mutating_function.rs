@@ -8,11 +8,14 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcStatefulMutatingFunction` public type.
 
+#[cfg(feature = "combinators")]
 use super::{
     Function,
     Predicate,
-    Rc,
     RcConditionalStatefulMutatingFunction,
+};
+use super::{
+    Rc,
     RcStatefulMutatingFunctionFn,
     RefCell,
     StatefulMutatingFunction,

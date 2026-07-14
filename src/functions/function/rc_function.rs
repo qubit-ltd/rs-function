@@ -10,15 +10,18 @@
 
 use super::{
     Function,
-    Predicate,
     Rc,
-    RcConditionalFunction,
     impl_function_clone,
     impl_function_common_methods,
     impl_function_constant_method,
     impl_function_debug_display,
     impl_function_identity_method,
     impl_shared_function_methods,
+};
+#[cfg(feature = "combinators")]
+use super::{
+    Predicate,
+    RcConditionalFunction,
 };
 
 // ============================================================================
@@ -34,8 +37,8 @@ use super::{
 ///
 /// - **Based on**: `Rc<dyn Fn(&T) -> R>`
 /// - **Ownership**: Shared ownership via reference counting (non-atomic)
-/// - **Reusability**: Can be called multiple times (each call consumes its
-///   input)
+/// - **Reusability**: Can be called multiple times (borrows its input each
+///   time)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync`)
 /// - **Clonable**: Cheap cloning via `Rc::clone`
 pub struct RcFunction<T, R> {

@@ -8,6 +8,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcStatefulBiPredicate` public type.
 
+#[cfg(feature = "combinators")]
 use std::ops::Not;
 
 use super::{
@@ -58,6 +59,7 @@ impl<T, U> RcStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `RcStatefulBiPredicate` representing logical AND.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn and<P>(&self, mut other: P) -> RcStatefulBiPredicate<T, U>
     where
@@ -84,6 +86,7 @@ impl<T, U> RcStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `RcStatefulBiPredicate` representing logical OR.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn or<P>(&self, mut other: P) -> RcStatefulBiPredicate<T, U>
     where
@@ -109,6 +112,7 @@ impl<T, U> RcStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `RcStatefulBiPredicate` representing logical NAND.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn nand<P>(&self, mut other: P) -> RcStatefulBiPredicate<T, U>
     where
@@ -135,6 +139,7 @@ impl<T, U> RcStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `RcStatefulBiPredicate` representing logical XOR.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn xor<P>(&self, mut other: P) -> RcStatefulBiPredicate<T, U>
     where
@@ -160,6 +165,7 @@ impl<T, U> RcStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `RcStatefulBiPredicate` representing logical NOR.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn nor<P>(&self, mut other: P) -> RcStatefulBiPredicate<T, U>
     where
@@ -175,6 +181,7 @@ impl<T, U> RcStatefulBiPredicate<T, U> {
     }
 }
 
+#[cfg(feature = "combinators")]
 impl<T, U> Not for RcStatefulBiPredicate<T, U>
 where
     T: 'static,
@@ -190,6 +197,7 @@ where
     }
 }
 
+#[cfg(feature = "combinators")]
 impl<T, U> Not for &RcStatefulBiPredicate<T, U>
 where
     T: 'static,

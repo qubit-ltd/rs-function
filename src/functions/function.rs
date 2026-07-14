@@ -25,22 +25,26 @@ use std::sync::Arc;
 
 #[cfg(feature = "combinators")]
 use crate::functions::macros::impl_fn_ops_trait;
+#[cfg(feature = "combinators")]
 use crate::functions::macros::{
     impl_box_conditional_function,
-    impl_box_function_methods,
     impl_conditional_function_clone,
     impl_conditional_function_debug_display,
+    impl_shared_conditional_function,
+};
+use crate::functions::macros::{
+    impl_box_function_methods,
     impl_function_clone,
     impl_function_common_methods,
     impl_function_constant_method,
     impl_function_debug_display,
     impl_function_identity_method,
-    impl_shared_conditional_function,
     impl_shared_function_methods,
 };
 use crate::macros::impl_closure_trait;
-#[cfg(feature = "rc")]
+#[cfg(all(feature = "rc", feature = "combinators"))]
 use crate::predicates::predicate::RcPredicate;
+#[cfg(feature = "combinators")]
 use crate::predicates::predicate::{
     ArcPredicate,
     BoxPredicate,
@@ -55,21 +59,16 @@ mod rc_function;
 pub use rc_function::RcFunction;
 mod arc_function;
 pub use arc_function::ArcFunction;
+#[cfg(feature = "combinators")]
 mod box_conditional_function;
-#[cfg(not(feature = "combinators"))]
-pub(crate) use box_conditional_function::BoxConditionalFunction;
 #[cfg(feature = "combinators")]
 pub use box_conditional_function::BoxConditionalFunction;
-#[cfg(feature = "rc")]
+#[cfg(all(feature = "rc", feature = "combinators"))]
 mod rc_conditional_function;
-#[cfg(feature = "rc")]
-#[cfg(not(feature = "combinators"))]
-pub(crate) use rc_conditional_function::RcConditionalFunction;
 #[cfg(all(feature = "rc", feature = "combinators"))]
 pub use rc_conditional_function::RcConditionalFunction;
+#[cfg(feature = "combinators")]
 mod arc_conditional_function;
-#[cfg(not(feature = "combinators"))]
-pub(crate) use arc_conditional_function::ArcConditionalFunction;
 #[cfg(feature = "combinators")]
 pub use arc_conditional_function::ArcConditionalFunction;
 #[cfg(feature = "combinators")]

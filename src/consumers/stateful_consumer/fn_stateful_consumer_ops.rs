@@ -34,7 +34,7 @@ use super::{
 /// - **Natural Syntax**: Direct method chaining on closures
 /// - **Returns BoxStatefulConsumer**: Composition results in
 ///   `BoxStatefulConsumer<T>`, can continue chaining
-/// - **Zero Cost**: No overhead when composing closures
+/// - **Typed Composition**: Returns a new closure that captures both operations
 /// - **Automatic Implementation**: All `FnMut(&T)` closures automatically get
 ///   these methods
 ///

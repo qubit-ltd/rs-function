@@ -12,8 +12,6 @@ use std::sync::Arc;
 
 use parking_lot::Mutex;
 
-#[cfg(feature = "rc")]
-use crate::tasks::callable::RcCallable;
 use crate::{
     functions::macros::impl_function_debug_display,
     macros::{
@@ -21,10 +19,7 @@ use crate::{
         impl_common_new_methods,
     },
     suppliers::supplier::Supplier,
-    tasks::callable::{
-        BoxCallable,
-        Callable,
-    },
+    tasks::callable::Callable,
 };
 
 // ============================================================================
@@ -99,7 +94,4 @@ impl<R, E> Callable<R, E> for ArcCallable<R, E> {
     }
 }
 
-impl_function_debug_display!(BoxCallable<R, E>);
-#[cfg(feature = "rc")]
-impl_function_debug_display!(RcCallable<R, E>);
 impl_function_debug_display!(ArcCallable<R, E>);

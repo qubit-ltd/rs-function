@@ -10,9 +10,7 @@
 
 use super::{
     Arc,
-    ArcConditionalStatefulFunction,
     Mutex,
-    Predicate,
     StatefulFunction,
     impl_function_clone,
     impl_function_common_methods,
@@ -20,6 +18,11 @@ use super::{
     impl_function_debug_display,
     impl_function_identity_method,
     impl_shared_function_methods,
+};
+#[cfg(feature = "combinators")]
+use super::{
+    ArcConditionalStatefulFunction,
+    Predicate,
 };
 
 // ============================================================================
@@ -36,8 +39,8 @@ use super::{
 ///
 /// - **Based on**: `Arc<Mutex<dyn FnMut(&T) -> R + Send>>`
 /// - **Ownership**: Shared ownership via reference counting
-/// - **Reusability**: Can be called multiple times (each call consumes its
-///   input)
+/// - **Reusability**: Can be called multiple times (borrows its input each
+///   time)
 /// - **Thread Safety**: Thread-safe (`Send` required)
 /// - **Clonable**: Cheap cloning via `Arc::clone`
 /// - **Statefulness**: Can modify internal state between calls

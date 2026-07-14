@@ -8,9 +8,12 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxTransformerOnce` public type.
 
+#[cfg(feature = "combinators")]
 use super::{
     BoxConditionalTransformerOnce,
     Predicate,
+};
+use super::{
     TransformerOnce,
     impl_box_transformer_methods,
     impl_closure_once_trait,

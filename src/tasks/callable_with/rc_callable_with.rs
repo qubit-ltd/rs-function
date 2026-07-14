@@ -13,6 +13,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::{
+    functions::macros::impl_function_debug_display,
     macros::{
         impl_common_name_methods,
         impl_common_new_methods,
@@ -66,3 +67,5 @@ impl<T, R, E> CallableWith<T, R, E> for RcCallableWith<T, R, E> {
         (self.function.borrow_mut())(input)
     }
 }
+
+impl_function_debug_display!(RcCallableWith<T, R, E>);

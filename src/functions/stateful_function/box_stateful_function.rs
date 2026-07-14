@@ -8,9 +8,12 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulFunction` public type.
 
+#[cfg(feature = "combinators")]
 use super::{
     BoxConditionalStatefulFunction,
     Predicate,
+};
+use super::{
     StatefulFunction,
     impl_box_function_methods,
     impl_function_common_methods,
@@ -26,15 +29,15 @@ use super::{
 /// BoxStatefulFunction - stateful function wrapper based on `Box<dyn FnMut>`
 ///
 /// A stateful function wrapper that provides single ownership with reusable
-/// stateful transformation. The stateful function consumes the input and can be
+/// stateful transformation. The stateful function borrows the input and can be
 /// called multiple times while maintaining internal state.
 ///
 /// # Features
 ///
 /// - **Based on**: `Box<dyn FnMut(&T) -> R>`
 /// - **Ownership**: Single ownership, cannot be cloned
-/// - **Reusability**: Can be called multiple times (each call consumes its
-///   input)
+/// - **Reusability**: Can be called multiple times (borrows its input each
+///   time)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
 /// - **Statefulness**: Can modify internal state between calls
 pub struct BoxStatefulFunction<T, R> {

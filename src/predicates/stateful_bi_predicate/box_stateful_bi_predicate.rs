@@ -8,6 +8,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulBiPredicate` public type.
 
+#[cfg(feature = "combinators")]
 use std::ops::Not;
 
 use super::{
@@ -51,6 +52,7 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `BoxStatefulBiPredicate` representing logical AND.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn and<P>(mut self, mut other: P) -> BoxStatefulBiPredicate<T, U>
     where
@@ -75,6 +77,7 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `BoxStatefulBiPredicate` representing logical OR.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn or<P>(mut self, mut other: P) -> BoxStatefulBiPredicate<T, U>
     where
@@ -98,6 +101,7 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `BoxStatefulBiPredicate` representing logical NAND.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn nand<P>(mut self, mut other: P) -> BoxStatefulBiPredicate<T, U>
     where
@@ -122,6 +126,7 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `BoxStatefulBiPredicate` representing logical XOR.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn xor<P>(mut self, mut other: P) -> BoxStatefulBiPredicate<T, U>
     where
@@ -145,6 +150,7 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `BoxStatefulBiPredicate` representing logical NOR.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn nor<P>(mut self, mut other: P) -> BoxStatefulBiPredicate<T, U>
     where
@@ -158,6 +164,7 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
     }
 }
 
+#[cfg(feature = "combinators")]
 impl<T, U> Not for BoxStatefulBiPredicate<T, U>
 where
     T: 'static,

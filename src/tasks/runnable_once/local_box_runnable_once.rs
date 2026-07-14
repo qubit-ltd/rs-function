@@ -88,6 +88,7 @@ impl<E> LocalBoxRunnableOnce<E> {
     /// # Returns
     ///
     /// A new local runnable executing both actions in sequence.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn and_then<N>(self, next: N) -> LocalBoxRunnableOnce<E>
     where

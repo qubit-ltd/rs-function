@@ -8,10 +8,13 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxSupplierOnce` public type.
 
+#[cfg(feature = "combinators")]
 use super::{
     Predicate,
-    SupplierOnce,
     Transformer,
+};
+use super::{
+    SupplierOnce,
     impl_box_supplier_methods,
     impl_closure_once_trait,
     impl_supplier_common_methods,

@@ -105,8 +105,8 @@ fn main() {
     let add4 = BoxBiTransformerOnce::new(|x: i32, y: i32| x + y);
     println!("   add4.apply(10, 20) = {}", add4.apply(10, 20));
 
-    // Example 12: Converting to box (zero-cost)
-    println!("\n12. Converting to box (zero-cost):");
+    // Example 12: Converting to a boxed wrapper
+    println!("\n12. Converting to a boxed wrapper:");
     let add5 = BoxBiTransformerOnce::new(|x: i32, y: i32| x + y);
     println!("   add5.apply(15, 25) = {}", add5.apply(15, 25));
 

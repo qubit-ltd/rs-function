@@ -15,6 +15,7 @@
 //! `Fn(&T, &U) -> bool` predicates and `StatefulBiPredicate` when the
 //! predicate needs native `FnMut` semantics, such as counters, rolling
 //! windows, sampling, or stateful filters over pairs of values.
+#[cfg(feature = "rc")]
 use std::cell::RefCell;
 #[cfg(feature = "rc")]
 use std::rc::Rc;

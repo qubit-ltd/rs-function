@@ -10,9 +10,7 @@
 
 use super::{
     Arc,
-    ArcConditionalFunction,
     Function,
-    Predicate,
     impl_closure_trait,
     impl_function_clone,
     impl_function_common_methods,
@@ -20,6 +18,11 @@ use super::{
     impl_function_debug_display,
     impl_function_identity_method,
     impl_shared_function_methods,
+};
+#[cfg(feature = "combinators")]
+use super::{
+    ArcConditionalFunction,
+    Predicate,
 };
 
 // ============================================================================
@@ -35,8 +38,8 @@ use super::{
 ///
 /// - **Based on**: `Arc<dyn Fn(&T) -> R + Send + Sync>`
 /// - **Ownership**: Shared ownership via reference counting
-/// - **Reusability**: Can be called multiple times (each call consumes its
-///   input)
+/// - **Reusability**: Can be called multiple times (borrows its input each
+///   time)
 /// - **Thread Safety**: Thread-safe (`Send + Sync` required)
 /// - **Clonable**: Cheap cloning via `Arc::clone`
 pub struct ArcFunction<T, R> {

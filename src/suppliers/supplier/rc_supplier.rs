@@ -8,11 +8,14 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcSupplier` public type.
 
+#[cfg(feature = "combinators")]
 use super::{
     Predicate,
+    Transformer,
+};
+use super::{
     Rc,
     Supplier,
-    Transformer,
     impl_shared_supplier_methods,
     impl_supplier_clone,
     impl_supplier_common_methods,

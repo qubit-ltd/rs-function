@@ -15,6 +15,7 @@
 //! predicates and `StatefulPredicate` when the predicate needs native
 //! `FnMut` semantics, such as counters, rolling windows, sampling, or
 //! stateful filters.
+#[cfg(feature = "rc")]
 use std::cell::RefCell;
 #[cfg(feature = "rc")]
 use std::rc::Rc;

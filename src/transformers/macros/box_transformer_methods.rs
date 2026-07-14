@@ -104,6 +104,7 @@
 /// //     BiTransformer
 /// // );
 /// ```
+#[cfg(feature = "combinators")]
 macro_rules! impl_box_transformer_methods {
     (@let_before BoxStatefulTransformer, $name:ident, $value:expr) => {
         let mut $name = $value;
@@ -313,6 +314,11 @@ macro_rules! impl_box_transformer_methods {
             })
         }
     };
+}
+
+#[cfg(not(feature = "combinators"))]
+macro_rules! impl_box_transformer_methods {
+    ($($tokens:tt)*) => {};
 }
 
 pub(crate) use impl_box_transformer_methods;

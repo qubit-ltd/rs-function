@@ -8,12 +8,15 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcMutatingFunction` public type.
 
+#[cfg(feature = "combinators")]
 use super::{
     Function,
-    MutatingFunction,
     Predicate,
-    Rc,
     RcConditionalMutatingFunction,
+};
+use super::{
+    MutatingFunction,
+    Rc,
     impl_function_clone,
     impl_function_common_methods,
     impl_function_debug_display,

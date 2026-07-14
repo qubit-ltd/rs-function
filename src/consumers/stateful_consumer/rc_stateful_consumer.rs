@@ -8,10 +8,13 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcStatefulConsumer` public type.
 
+#[cfg(feature = "combinators")]
 use super::{
     Predicate,
-    Rc,
     RcConditionalStatefulConsumer,
+};
+use super::{
+    Rc,
     RefCell,
     StatefulConsumer,
     impl_consumer_clone,

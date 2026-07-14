@@ -10,16 +10,19 @@
 
 use super::{
     Arc,
-    ArcConditionalStatefulMutator,
     ArcMutMutatorFn,
     Mutex,
-    Predicate,
     StatefulMutator,
     impl_closure_trait,
     impl_mutator_clone,
     impl_mutator_common_methods,
     impl_mutator_debug_display,
     impl_shared_mutator_methods,
+};
+#[cfg(feature = "combinators")]
+use super::{
+    ArcConditionalStatefulMutator,
+    Predicate,
 };
 
 // ============================================================================

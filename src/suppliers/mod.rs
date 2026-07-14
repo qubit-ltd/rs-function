@@ -18,7 +18,6 @@ pub mod supplier;
 pub mod supplier_once;
 
 #[cfg(feature = "stateful")]
-#[cfg(feature = "stateful")]
 pub use stateful_supplier::*;
 pub use supplier::*;
 #[cfg(feature = "once")]

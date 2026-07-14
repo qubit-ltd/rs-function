@@ -8,9 +8,12 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulConsumer` public type.
 
+#[cfg(feature = "combinators")]
 use super::{
     BoxConditionalStatefulConsumer,
     Predicate,
+};
+use super::{
     StatefulConsumer,
     impl_box_consumer_methods,
     impl_consumer_common_methods,
@@ -30,7 +33,8 @@ use super::{
 /// # Features
 ///
 /// - **Single Ownership**: Not cloneable, transfers ownership when used
-/// - **Zero Overhead**: No reference counting or lock overhead
+/// - **Runtime cost**: One heap allocation and dynamic dispatch; no reference
+///   counting or locking
 /// - **Mutable State**: Can modify captured environment through `FnMut`
 /// - **Builder Pattern**: Method chaining naturally consumes `self`
 ///

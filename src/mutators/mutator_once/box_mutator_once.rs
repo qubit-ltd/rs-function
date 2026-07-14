@@ -8,10 +8,13 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxMutatorOnce` public type.
 
+#[cfg(feature = "combinators")]
 use super::{
     BoxConditionalMutatorOnce,
-    MutatorOnce,
     Predicate,
+};
+use super::{
+    MutatorOnce,
     impl_box_mutator_methods,
     impl_closure_once_trait,
     impl_mutator_common_methods,
@@ -31,7 +34,8 @@ use super::{
 /// # Features
 ///
 /// - **Single Ownership**: Not cloneable, consumes self on use
-/// - **Zero Overhead**: No reference counting or locking
+/// - **Runtime cost**: One heap allocation and dynamic dispatch; no reference
+///   counting or locking
 /// - **Move Semantics**: Can capture and move variables
 /// - **Method Chaining**: Compose multiple operations via `and_then`
 ///

@@ -131,6 +131,7 @@ macro_rules! impl_function_common_methods {
 
 pub(crate) use impl_function_common_methods;
 
+#[cfg(feature = "combinators")]
 macro_rules! impl_function_new_callback {
     ($_trait:ident, BoxMutatingFunction, $t:ident, |$v:ident| $body:block) => {
         BoxMutatingFunction::new(move |$v: &mut $t| $body)
@@ -209,4 +210,5 @@ macro_rules! impl_function_new_callback {
     };
 }
 
+#[cfg(feature = "combinators")]
 pub(crate) use impl_function_new_callback;

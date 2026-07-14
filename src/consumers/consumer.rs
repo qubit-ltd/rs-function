@@ -35,20 +35,24 @@
 use std::rc::Rc;
 use std::sync::Arc;
 
+#[cfg(feature = "combinators")]
 use crate::consumers::macros::{
     impl_box_conditional_consumer,
-    impl_box_consumer_methods,
     impl_conditional_consumer_clone,
     impl_conditional_consumer_debug_display,
+    impl_shared_conditional_consumer,
+};
+use crate::consumers::macros::{
+    impl_box_consumer_methods,
     impl_consumer_clone,
     impl_consumer_common_methods,
     impl_consumer_debug_display,
-    impl_shared_conditional_consumer,
     impl_shared_consumer_methods,
 };
 use crate::macros::impl_closure_trait;
-#[cfg(feature = "rc")]
+#[cfg(all(feature = "rc", feature = "combinators"))]
 use crate::predicates::predicate::RcPredicate;
+#[cfg(feature = "combinators")]
 use crate::predicates::predicate::{
     ArcPredicate,
     BoxPredicate,
@@ -67,21 +71,16 @@ pub use arc_consumer::ArcConsumer;
 mod fn_consumer_ops;
 #[cfg(feature = "combinators")]
 pub use fn_consumer_ops::FnConsumerOps;
+#[cfg(feature = "combinators")]
 mod box_conditional_consumer;
-#[cfg(not(feature = "combinators"))]
-pub(crate) use box_conditional_consumer::BoxConditionalConsumer;
 #[cfg(feature = "combinators")]
 pub use box_conditional_consumer::BoxConditionalConsumer;
-#[cfg(feature = "rc")]
+#[cfg(all(feature = "rc", feature = "combinators"))]
 mod rc_conditional_consumer;
-#[cfg(feature = "rc")]
-#[cfg(not(feature = "combinators"))]
-pub(crate) use rc_conditional_consumer::RcConditionalConsumer;
 #[cfg(all(feature = "rc", feature = "combinators"))]
 pub use rc_conditional_consumer::RcConditionalConsumer;
+#[cfg(feature = "combinators")]
 mod arc_conditional_consumer;
-#[cfg(not(feature = "combinators"))]
-pub(crate) use arc_conditional_consumer::ArcConditionalConsumer;
 #[cfg(feature = "combinators")]
 pub use arc_conditional_consumer::ArcConditionalConsumer;
 
@@ -106,9 +105,8 @@ pub use arc_conditional_consumer::ArcConditionalConsumer;
 ///
 /// - **Unified Interface**: All non-mutating consumer types share the same
 ///   `accept` method signature
-/// - **Auto-implementation**: Closures automatically implement this trait with
-///   zero overhead
-/// - **Type Conversion**: Easy conversion between different ownership models
+/// - **Auto-implementation**: Closures implement this trait directly, without
+///   allocating an adapter
 /// - **Generic Programming**: Write functions that work with any non-mutating
 ///   consumer type
 /// - **No Wrapper Interior Mutability**: No need for Mutex or RefCell in the

@@ -19,6 +19,7 @@
 //! - [`BoxStatefulFunction`]: Single ownership, not cloneable
 //! - [`ArcStatefulFunction`]: Thread-safe shared ownership, cloneable
 //! - [`RcStatefulFunction`]: Single-threaded shared ownership, cloneable
+#[cfg(feature = "rc")]
 use std::cell::RefCell;
 #[cfg(feature = "rc")]
 use std::rc::Rc;
@@ -28,21 +29,25 @@ use parking_lot::Mutex;
 
 #[cfg(feature = "combinators")]
 use crate::functions::macros::impl_fn_ops_trait;
+#[cfg(feature = "combinators")]
 use crate::functions::macros::{
     impl_box_conditional_function,
-    impl_box_function_methods,
     impl_conditional_function_clone,
     impl_conditional_function_debug_display,
+    impl_shared_conditional_function,
+};
+use crate::functions::macros::{
+    impl_box_function_methods,
     impl_function_clone,
     impl_function_common_methods,
     impl_function_constant_method,
     impl_function_debug_display,
     impl_function_identity_method,
-    impl_shared_conditional_function,
     impl_shared_function_methods,
 };
-#[cfg(feature = "rc")]
+#[cfg(all(feature = "rc", feature = "combinators"))]
 use crate::predicates::predicate::RcPredicate;
+#[cfg(feature = "combinators")]
 use crate::predicates::predicate::{
     ArcPredicate,
     BoxPredicate,
@@ -57,21 +62,16 @@ mod rc_stateful_function;
 pub use rc_stateful_function::RcStatefulFunction;
 mod arc_stateful_function;
 pub use arc_stateful_function::ArcStatefulFunction;
+#[cfg(feature = "combinators")]
 mod box_conditional_stateful_function;
-#[cfg(not(feature = "combinators"))]
-pub(crate) use box_conditional_stateful_function::BoxConditionalStatefulFunction;
 #[cfg(feature = "combinators")]
 pub use box_conditional_stateful_function::BoxConditionalStatefulFunction;
-#[cfg(feature = "rc")]
+#[cfg(all(feature = "rc", feature = "combinators"))]
 mod rc_conditional_stateful_function;
-#[cfg(feature = "rc")]
-#[cfg(not(feature = "combinators"))]
-pub(crate) use rc_conditional_stateful_function::RcConditionalStatefulFunction;
 #[cfg(all(feature = "rc", feature = "combinators"))]
 pub use rc_conditional_stateful_function::RcConditionalStatefulFunction;
+#[cfg(feature = "combinators")]
 mod arc_conditional_stateful_function;
-#[cfg(not(feature = "combinators"))]
-pub(crate) use arc_conditional_stateful_function::ArcConditionalStatefulFunction;
 #[cfg(feature = "combinators")]
 pub use arc_conditional_stateful_function::ArcConditionalStatefulFunction;
 #[cfg(feature = "combinators")]
@@ -85,21 +85,21 @@ pub use fn_stateful_function_ops::FnStatefulFunctionOps;
 
 /// StatefulFunction trait - transforms values from type T to type R with state
 ///
-/// Defines the behavior of a stateful transformation: converting a value
-/// of type `T` to a value of type `R` by consuming the input while
-/// allowing modification of internal state. This is analogous to
+/// Defines the behavior of a stateful transformation: converting a borrowed
+/// value of type `T` to a value of type `R` while allowing modification of
+/// internal state. This is analogous to
 /// `FnMut(&T) -> R` in Rust's standard library.
 ///
 /// # Type Parameters
 ///
-/// * `T` - The type of the input value (consumed)
+/// * `T` - The type of the borrowed input value
 /// * `R` - The type of the output value
 pub trait StatefulFunction<T, R> {
     /// Applies the mapping to the input value to produce an output value
     ///
     /// # Parameters
     ///
-    /// * `t` - The input value to transform (consumed)
+    /// * `t` - The borrowed input value to transform
     ///
     /// # Returns
     ///

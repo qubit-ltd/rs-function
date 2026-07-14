@@ -8,6 +8,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulPredicate` public type.
 
+#[cfg(feature = "combinators")]
 use std::ops::Not;
 
 use super::{
@@ -54,6 +55,7 @@ impl<T> ArcStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `ArcStatefulPredicate` representing logical AND.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn and<P>(&self, mut other: P) -> ArcStatefulPredicate<T>
     where
@@ -79,6 +81,7 @@ impl<T> ArcStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `ArcStatefulPredicate` representing logical OR.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn or<P>(&self, mut other: P) -> ArcStatefulPredicate<T>
     where
@@ -103,6 +106,7 @@ impl<T> ArcStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `ArcStatefulPredicate` representing logical NAND.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn nand<P>(&self, mut other: P) -> ArcStatefulPredicate<T>
     where
@@ -128,6 +132,7 @@ impl<T> ArcStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `ArcStatefulPredicate` representing logical XOR.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn xor<P>(&self, mut other: P) -> ArcStatefulPredicate<T>
     where
@@ -152,6 +157,7 @@ impl<T> ArcStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `ArcStatefulPredicate` representing logical NOR.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn nor<P>(&self, mut other: P) -> ArcStatefulPredicate<T>
     where
@@ -166,6 +172,7 @@ impl<T> ArcStatefulPredicate<T> {
     }
 }
 
+#[cfg(feature = "combinators")]
 impl<T> Not for ArcStatefulPredicate<T>
 where
     T: 'static,
@@ -178,6 +185,7 @@ where
     }
 }
 
+#[cfg(feature = "combinators")]
 impl<T> Not for &ArcStatefulPredicate<T>
 where
     T: 'static,

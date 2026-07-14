@@ -23,19 +23,23 @@ use std::rc::Rc;
 use std::sync::Arc;
 
 use crate::macros::impl_closure_trait;
-#[cfg(feature = "rc")]
+#[cfg(all(feature = "rc", feature = "combinators"))]
 use crate::predicates::predicate::RcPredicate;
+#[cfg(feature = "combinators")]
 use crate::predicates::predicate::{
     ArcPredicate,
     BoxPredicate,
     Predicate,
 };
+#[cfg(feature = "combinators")]
 use crate::transformers::macros::{
     impl_box_conditional_transformer,
-    impl_box_transformer_methods,
     impl_conditional_transformer_clone,
     impl_conditional_transformer_debug_display,
     impl_shared_conditional_transformer,
+};
+use crate::transformers::macros::{
+    impl_box_transformer_methods,
     impl_shared_transformer_methods,
     impl_transformer_clone,
     impl_transformer_common_methods,
@@ -65,21 +69,16 @@ pub use arc_unary_operator::ArcUnaryOperator;
 mod rc_unary_operator;
 #[cfg(feature = "rc")]
 pub use rc_unary_operator::RcUnaryOperator;
+#[cfg(feature = "combinators")]
 mod box_conditional_transformer;
-#[cfg(not(feature = "combinators"))]
-pub(crate) use box_conditional_transformer::BoxConditionalTransformer;
 #[cfg(feature = "combinators")]
 pub use box_conditional_transformer::BoxConditionalTransformer;
-#[cfg(feature = "rc")]
+#[cfg(all(feature = "rc", feature = "combinators"))]
 mod rc_conditional_transformer;
-#[cfg(feature = "rc")]
-#[cfg(not(feature = "combinators"))]
-pub(crate) use rc_conditional_transformer::RcConditionalTransformer;
 #[cfg(all(feature = "rc", feature = "combinators"))]
 pub use rc_conditional_transformer::RcConditionalTransformer;
+#[cfg(feature = "combinators")]
 mod arc_conditional_transformer;
-#[cfg(not(feature = "combinators"))]
-pub(crate) use arc_conditional_transformer::ArcConditionalTransformer;
 #[cfg(feature = "combinators")]
 pub use arc_conditional_transformer::ArcConditionalTransformer;
 

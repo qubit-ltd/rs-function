@@ -10,15 +10,18 @@
 
 use super::{
     Arc,
-    ArcConditionalBiTransformer,
-    BiPredicate,
     BiTransformer,
-    Transformer,
     impl_shared_transformer_methods,
     impl_transformer_clone,
     impl_transformer_common_methods,
     impl_transformer_constant_method,
     impl_transformer_debug_display,
+};
+#[cfg(feature = "combinators")]
+use super::{
+    ArcConditionalBiTransformer,
+    BiPredicate,
+    Transformer,
 };
 
 // ============================================================================

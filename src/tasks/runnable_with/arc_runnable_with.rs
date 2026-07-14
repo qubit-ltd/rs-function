@@ -12,18 +12,13 @@ use std::sync::Arc;
 
 use parking_lot::Mutex;
 
-#[cfg(feature = "rc")]
-use crate::tasks::runnable_with::RcRunnableWith;
 use crate::{
     functions::macros::impl_function_debug_display,
     macros::{
         impl_common_name_methods,
         impl_common_new_methods,
     },
-    tasks::runnable_with::{
-        BoxRunnableWith,
-        RunnableWith,
-    },
+    tasks::runnable_with::RunnableWith,
 };
 
 type ArcRunnableWithFn<T, E> =
@@ -75,7 +70,4 @@ impl<T, E> RunnableWith<T, E> for ArcRunnableWith<T, E> {
     }
 }
 
-impl_function_debug_display!(BoxRunnableWith<T, E>);
-#[cfg(feature = "rc")]
-impl_function_debug_display!(RcRunnableWith<T, E>);
 impl_function_debug_display!(ArcRunnableWith<T, E>);

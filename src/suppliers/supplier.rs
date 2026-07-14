@@ -103,7 +103,7 @@
 //! assert_eq!(config_factory.get().timeout, 30);
 //! ```
 //!
-//! # Performance Comparison
+//! # Concurrency Characteristics
 //!
 //! For stateless scenarios in multi-threaded environments:
 //!
@@ -112,14 +112,14 @@
 //! - `ArcSupplier<T>`: Lock-free, can call `get()` concurrently without
 //!   contention.
 //!
-//! Benchmark results show `ArcSupplier` can be **10x
-//! faster** than `ArcStatefulSupplier` in high-concurrency stateless
-//! scenarios.
+//! Actual performance depends on the callback and contention pattern; measure
+//! the workload when the distinction matters.
 
 #[cfg(feature = "rc")]
 use std::rc::Rc;
 use std::sync::Arc;
 
+#[cfg(feature = "combinators")]
 use crate::predicates::predicate::Predicate;
 use crate::suppliers::macros::{
     impl_box_supplier_methods,
@@ -128,6 +128,7 @@ use crate::suppliers::macros::{
     impl_supplier_common_methods,
     impl_supplier_debug_display,
 };
+#[cfg(feature = "combinators")]
 use crate::transformers::transformer::Transformer;
 
 mod box_supplier;

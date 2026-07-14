@@ -8,6 +8,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxTester` public type.
 
+#[cfg(feature = "combinators")]
 use std::ops::Not;
 
 use super::Tester;
@@ -25,8 +26,9 @@ use super::Tester;
 /// # Characteristics
 ///
 /// - **Single ownership**: Cannot be cloned
-/// - **Zero overhead**: Single heap allocation
-/// - **Consuming combination**: `and()`/`or()` consume `self`
+/// - **Runtime cost**: One heap allocation and dynamic dispatch
+/// - **Consuming combination**: With `combinators`, `and()`/`or()` consume
+///   `self`
 /// - **Type flexibility**: Accepts any `Tester` implementation
 ///
 /// # Use Cases
@@ -156,6 +158,7 @@ impl BoxTester {
     /// assert!(!service_ok.test());
     /// ```
     #[inline]
+    #[cfg(feature = "combinators")]
     pub fn and<T>(self, next: T) -> BoxTester
     where
         T: Tester + 'static,
@@ -226,6 +229,7 @@ impl BoxTester {
     /// assert!(!can_serve.test());
     /// ```
     #[inline]
+    #[cfg(feature = "combinators")]
     pub fn or<T>(self, next: T) -> BoxTester
     where
         T: Tester + 'static,
@@ -279,6 +283,7 @@ impl BoxTester {
     /// assert!(nand.test());
     /// ```
     #[inline]
+    #[cfg(feature = "combinators")]
     pub fn nand<T>(self, next: T) -> BoxTester
     where
         T: Tester + 'static,
@@ -337,6 +342,7 @@ impl BoxTester {
     /// assert!(!xor.test());
     /// ```
     #[inline]
+    #[cfg(feature = "combinators")]
     pub fn xor<T>(self, next: T) -> BoxTester
     where
         T: Tester + 'static,
@@ -390,6 +396,7 @@ impl BoxTester {
     /// assert!(!nor.test());
     /// ```
     #[inline]
+    #[cfg(feature = "combinators")]
     pub fn nor<T>(self, next: T) -> BoxTester
     where
         T: Tester + 'static,
@@ -400,6 +407,7 @@ impl BoxTester {
     }
 }
 
+#[cfg(feature = "combinators")]
 impl Not for BoxTester {
     type Output = BoxTester;
 

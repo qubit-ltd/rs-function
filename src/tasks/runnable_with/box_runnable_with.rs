@@ -9,6 +9,7 @@
 //! Defines the `BoxRunnableWith` public type.
 
 use crate::{
+    functions::macros::impl_function_debug_display,
     macros::{
         impl_common_name_methods,
         impl_common_new_methods,
@@ -51,6 +52,7 @@ impl<T, E> BoxRunnableWith<T, E> {
     /// # Returns
     ///
     /// A runnable executing both actions in sequence.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn and_then<N>(self, next: N) -> BoxRunnableWith<T, E>
     where
@@ -112,3 +114,5 @@ impl<T, E> RunnableWith<T, E> for BoxRunnableWith<T, E> {
         (self.function)(input)
     }
 }
+
+impl_function_debug_display!(BoxRunnableWith<T, E>);

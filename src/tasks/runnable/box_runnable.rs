@@ -93,6 +93,7 @@ impl<E> BoxRunnable<E> {
     /// # Returns
     ///
     /// A runnable executing both actions in sequence.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn and_then<N>(self, next: N) -> BoxRunnable<E>
     where

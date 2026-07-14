@@ -10,14 +10,17 @@
 
 use super::{
     BiFunctionOnce,
-    BiPredicate,
-    BoxConditionalBiFunctionOnce,
-    FunctionOnce,
     impl_box_function_methods,
     impl_closure_once_trait,
     impl_function_common_methods,
     impl_function_constant_method,
     impl_function_debug_display,
+};
+#[cfg(feature = "combinators")]
+use super::{
+    BiPredicate,
+    BoxConditionalBiFunctionOnce,
+    FunctionOnce,
 };
 
 type BoxBiFunctionOnceFn<T, U, R> = Box<dyn FnOnce(&T, &U) -> R>;

@@ -32,8 +32,7 @@
 //! # Three Implementations
 //!
 //! - **`BoxStatefulSupplier<T>`**: Single ownership using `Box<dyn FnMut() ->
-//!   T>`. Zero overhead, cannot be cloned. Best for one-time use and builder
-//!   patterns.
+//!   T>`. Uses one heap allocation and dynamic dispatch, cannot be cloned.
 //!
 //! - **`ArcStatefulSupplier<T>`**: Thread-safe shared ownership using
 //!   `Arc<Mutex<dyn FnMut() -> T + Send>>`. Can be cloned and sent across
@@ -47,8 +46,9 @@
 //!
 //! | Type      | Input | Output | self      | Modifies? | Use Case      |
 //! |-----------|-------|--------|-----------|-----------|---------------|
-//! | Supplier  | None  | `T`    | `&mut`    | Yes       | Factory       |
-//! | Consumer  | `&T`  | `()`   | `&mut`    | Yes       | Observer      |
+//! | Supplier  | None  | `T`    | `&self`   | No        | Factory       |
+//! | StatefulSupplier | None | `T` | `&mut self` | Yes | Stateful factory |
+//! | Consumer  | `&T`  | `()`   | `&self`   | No        | Observer      |
 //! | Predicate | `&T`  | `bool` | `&self`   | No        | Filter        |
 //! | Function  | `&T`  | `R`    | `&self`   | No        | Transform     |
 //!
@@ -110,6 +110,7 @@
 //! assert!(v1 != v2);
 //! assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 2);
 //! ```
+#[cfg(feature = "rc")]
 use std::cell::RefCell;
 #[cfg(feature = "rc")]
 use std::rc::Rc;
@@ -118,6 +119,7 @@ use std::sync::Arc;
 use parking_lot::Mutex;
 
 use crate::macros::impl_closure_trait;
+#[cfg(feature = "combinators")]
 use crate::predicates::predicate::Predicate;
 use crate::suppliers::macros::{
     impl_box_supplier_methods,
@@ -126,6 +128,7 @@ use crate::suppliers::macros::{
     impl_supplier_common_methods,
     impl_supplier_debug_display,
 };
+#[cfg(feature = "combinators")]
 use crate::transformers::transformer::Transformer;
 
 mod box_stateful_supplier;

@@ -8,6 +8,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `BoxPredicate` public type.
 
+#[cfg(feature = "combinators")]
 use std::ops::Not;
 
 use super::{
@@ -56,6 +57,7 @@ impl<T> BoxPredicate<T> {
     impl_box_predicate_methods!(BoxPredicate<T>);
 }
 
+#[cfg(feature = "combinators")]
 impl<T> Not for BoxPredicate<T>
 where
     T: 'static,

@@ -8,6 +8,7 @@
 // qubit-style: allow explicit-imports
 //! Defines the `RcTester` public type.
 
+#[cfg(feature = "combinators")]
 use std::ops::Not;
 
 use super::{
@@ -113,6 +114,7 @@ impl RcTester {
     /// // first and second are still available
     /// ```
     #[inline]
+    #[cfg(feature = "combinators")]
     pub fn and(&self, next: &RcTester) -> RcTester {
         let self_fn = Rc::clone(&self.function);
         let next_fn = Rc::clone(&next.function);
@@ -145,6 +147,7 @@ impl RcTester {
     /// // first and second are still available
     /// ```
     #[inline]
+    #[cfg(feature = "combinators")]
     pub fn or(&self, next: &RcTester) -> RcTester {
         let self_fn = Rc::clone(&self.function);
         let next_fn = Rc::clone(&next.function);
@@ -183,6 +186,7 @@ impl RcTester {
     /// assert!(second.test());
     /// ```
     #[inline]
+    #[cfg(feature = "combinators")]
     pub fn nand(&self, next: &RcTester) -> RcTester {
         let self_fn = Rc::clone(&self.function);
         let next_fn = Rc::clone(&next.function);
@@ -221,6 +225,7 @@ impl RcTester {
     /// assert!(!second.test());
     /// ```
     #[inline]
+    #[cfg(feature = "combinators")]
     pub fn xor(&self, next: &RcTester) -> RcTester {
         let self_fn = Rc::clone(&self.function);
         let next_fn = Rc::clone(&next.function);
@@ -259,6 +264,7 @@ impl RcTester {
     /// assert!(!second.test());
     /// ```
     #[inline]
+    #[cfg(feature = "combinators")]
     pub fn nor(&self, next: &RcTester) -> RcTester {
         let self_fn = Rc::clone(&self.function);
         let next_fn = Rc::clone(&next.function);
@@ -268,6 +274,7 @@ impl RcTester {
     }
 }
 
+#[cfg(feature = "combinators")]
 impl Not for RcTester {
     type Output = RcTester;
 
@@ -280,6 +287,7 @@ impl Not for RcTester {
     }
 }
 
+#[cfg(feature = "combinators")]
 impl Not for &RcTester {
     type Output = RcTester;
 

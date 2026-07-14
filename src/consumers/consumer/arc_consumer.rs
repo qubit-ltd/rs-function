@@ -10,14 +10,17 @@
 
 use super::{
     Arc,
-    ArcConditionalConsumer,
     Consumer,
-    Predicate,
     impl_closure_trait,
     impl_consumer_clone,
     impl_consumer_common_methods,
     impl_consumer_debug_display,
     impl_shared_consumer_methods,
+};
+#[cfg(feature = "combinators")]
+use super::{
+    ArcConditionalConsumer,
+    Predicate,
 };
 
 // ============================================================================

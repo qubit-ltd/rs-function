@@ -136,13 +136,17 @@
 //! assert_eq!(result, vec![42, 1, 2, 3]);
 //! ```
 use crate::macros::impl_closure_once_trait;
+#[cfg(feature = "combinators")]
 use crate::mutators::macros::{
     impl_box_conditional_mutator,
-    impl_box_mutator_methods,
     impl_conditional_mutator_debug_display,
+};
+use crate::mutators::macros::{
+    impl_box_mutator_methods,
     impl_mutator_common_methods,
     impl_mutator_debug_display,
 };
+#[cfg(feature = "combinators")]
 use crate::predicates::predicate::{
     BoxPredicate,
     Predicate,
@@ -154,9 +158,8 @@ pub use box_mutator_once::BoxMutatorOnce;
 mod fn_mutator_once_ops;
 #[cfg(feature = "combinators")]
 pub use fn_mutator_once_ops::FnMutatorOnceOps;
+#[cfg(feature = "combinators")]
 mod box_conditional_mutator_once;
-#[cfg(not(feature = "combinators"))]
-pub(crate) use box_conditional_mutator_once::BoxConditionalMutatorOnce;
 #[cfg(feature = "combinators")]
 pub use box_conditional_mutator_once::BoxConditionalMutatorOnce;
 
@@ -184,9 +187,8 @@ pub use box_conditional_mutator_once::BoxConditionalMutatorOnce;
 ///
 /// - **Unified Interface**: All one-time mutators share the same `mutate`
 ///   method signature
-/// - **Automatic Implementation**: Closures automatically implement this trait
-///   with zero overhead
-/// - **Type Conversions**: Provides `into_box` method for type conversion
+/// - **Automatic Implementation**: Closures implement this trait directly,
+///   without allocating an adapter
 /// - **Generic Programming**: Write functions that work with any one-time
 ///   mutator type
 ///
@@ -214,7 +216,7 @@ pub use box_conditional_mutator_once::BoxConditionalMutatorOnce;
 /// assert_eq!(result, vec![0, 1, 2, 3]);
 /// ```
 ///
-/// ## Type Conversion
+/// ## Wrapper Construction
 ///
 /// ```rust
 /// use qubit_function::BoxMutatorOnce;

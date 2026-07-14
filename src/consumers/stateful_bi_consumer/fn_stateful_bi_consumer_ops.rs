@@ -35,7 +35,7 @@ use super::{
 /// - **Natural Syntax**: Chain operations directly on closures
 /// - **Returns BoxStatefulBiConsumer**: Composition results are
 ///   `BoxStatefulBiConsumer<T, U>` for continued chaining
-/// - **Zero Cost**: No overhead when composing closures
+/// - **Typed Composition**: Returns a new closure that captures both operations
 /// - **Automatic Implementation**: All `FnMut(&T, &U)` closures get these
 ///   methods automatically
 ///

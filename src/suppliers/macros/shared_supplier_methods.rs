@@ -98,6 +98,7 @@
 /// let zipped = rc.zip(RcSupplier::new(|| 1));
 /// assert_eq!(zipped.get(), ("hello".to_string(), 1));
 /// ```
+#[cfg(feature = "combinators")]
 macro_rules! impl_shared_supplier_methods {
     (@let_supplier Supplier, $name:ident, $value:expr) => {
         let $name = $value;
@@ -338,6 +339,11 @@ macro_rules! impl_shared_supplier_methods {
             })
         }
     };
+}
+
+#[cfg(not(feature = "combinators"))]
+macro_rules! impl_shared_supplier_methods {
+    ($($tokens:tt)*) => {};
 }
 
 pub(crate) use impl_shared_supplier_methods;

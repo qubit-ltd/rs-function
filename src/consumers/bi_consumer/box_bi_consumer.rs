@@ -11,11 +11,14 @@
 use super::{
     BiConsumer,
     BiConsumerFn,
-    BiPredicate,
-    BoxConditionalBiConsumer,
     impl_box_consumer_methods,
     impl_consumer_common_methods,
     impl_consumer_debug_display,
+};
+#[cfg(feature = "combinators")]
+use super::{
+    BiPredicate,
+    BoxConditionalBiConsumer,
 };
 
 // =======================================================================
@@ -30,7 +33,8 @@ use super::{
 /// # Features
 ///
 /// - **Single Ownership**: Not cloneable, ownership moves on use
-/// - **Zero Overhead**: No reference counting or locking
+/// - **Runtime cost**: One heap allocation and dynamic dispatch; no reference
+///   counting or locking
 /// - **Shared-reference API**: Invoked through `&self` and shared input
 ///   references
 /// - **No Wrapper Interior Mutability**: No need for Mutex or RefCell in the
