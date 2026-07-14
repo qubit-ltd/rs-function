@@ -14,11 +14,11 @@ use crate::{
         impl_common_name_methods,
         impl_common_new_methods,
     },
-    tasks::{
-        callable_with::BoxCallableWith,
-        runnable_with::RunnableWith,
-    },
+    tasks::runnable_with::RunnableWith,
 };
+
+#[cfg(feature = "combinators")]
+use crate::tasks::callable_with::BoxCallableWith;
 
 type BoxRunnableWithFn<T, E> = Box<dyn FnMut(&mut T) -> Result<(), E>>;
 
@@ -83,6 +83,7 @@ impl<T, E> BoxRunnableWith<T, E> {
     /// # Returns
     ///
     /// A callable producing the second computation's result.
+    #[cfg(feature = "combinators")]
     #[inline]
     pub fn then_callable_with<R, C>(
         self,
