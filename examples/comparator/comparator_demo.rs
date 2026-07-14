@@ -73,7 +73,7 @@ fn demo_shared_comparators() {
     });
     let alphabetic =
         RcComparator::new(|left: &String, right: &String| left.cmp(right));
-    let combined = by_length.then_comparing(&alphabetic);
+    let combined = by_length.then_comparing(alphabetic.clone());
     println!(
         "RcComparator length/name 'aa' vs 'b': {:?}",
         combined.compare(&String::from("aa"), &String::from("b"))
