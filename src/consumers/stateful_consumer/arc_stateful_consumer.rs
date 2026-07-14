@@ -17,7 +17,6 @@ use {
     crate::consumers::macros::impl_consumer_common_methods,
     crate::consumers::macros::impl_consumer_debug_display,
     crate::consumers::macros::impl_shared_consumer_methods,
-    crate::macros::impl_closure_trait,
     parking_lot::Mutex,
     std::sync::Arc,
 };
@@ -112,7 +111,8 @@ impl<T> ArcStatefulConsumer<T> {
 
 impl<T> StatefulConsumer<T> for ArcStatefulConsumer<T> {
     fn accept(&mut self, value: &T) {
-        (self.function.lock())(value)
+        let mut function = self.function.lock();
+        function(value)
     }
 }
 
@@ -121,15 +121,3 @@ impl_consumer_clone!(ArcStatefulConsumer<T>);
 
 // Use macro to generate Debug and Display implementations
 impl_consumer_debug_display!(ArcStatefulConsumer<T>);
-
-// ============================================================================
-// 5. Implement Consumer trait for closures
-// ============================================================================
-
-// Implement Consumer for all FnMut(&T)
-impl_closure_trait!(
-    StatefulConsumer<T>,
-    accept,
-    BoxConsumerOnce,
-    FnMut(value: &T)
-);

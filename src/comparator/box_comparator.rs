@@ -8,8 +8,13 @@
 //! Defines the `BoxComparator` public type.
 
 use {
-    crate::Comparator,
+    crate::{
+        Comparator,
+        callback_metadata::CallbackMetadata,
+        macros::impl_common_name_methods,
+    },
     std::cmp::Ordering,
+    std::fmt,
 };
 
 type BoxComparatorFn<T> = Box<dyn Fn(&T, &T) -> Ordering>;
@@ -35,14 +40,15 @@ type BoxComparatorFn<T> = Box<dyn Fn(&T, &T) -> Ordering>;
 /// ```
 pub struct BoxComparator<T> {
     pub(super) function: BoxComparatorFn<T>,
+    pub(super) metadata: CallbackMetadata,
 }
 
 impl<T> BoxComparator<T> {
-    /// Creates a new `BoxComparator` from a closure.
+    /// Creates a new `BoxComparator` from a comparator implementation.
     ///
     /// # Parameters
     ///
-    /// * `f` - The closure to wrap
+    /// * `source` - The comparator implementation to wrap
     ///
     /// # Returns
     ///
@@ -64,8 +70,56 @@ impl<T> BoxComparator<T> {
             function: Box::new(move |left: &T, right: &T| {
                 source.compare(left, right)
             }),
+            metadata: CallbackMetadata::unnamed(),
         }
     }
+
+    /// Creates a named `BoxComparator` from a comparator implementation.
+    #[inline]
+    pub fn new_with_name<F>(name: &str, source: F) -> Self
+    where
+        F: Comparator<T> + 'static,
+    {
+        Self {
+            function: Box::new(move |left: &T, right: &T| {
+                source.compare(left, right)
+            }),
+            metadata: CallbackMetadata::named(name),
+        }
+    }
+
+    /// Creates a `BoxComparator` with an optional diagnostic name.
+    #[inline]
+    pub fn new_with_optional_name<F>(source: F, name: Option<String>) -> Self
+    where
+        F: Comparator<T> + 'static,
+    {
+        Self {
+            function: Box::new(move |left: &T, right: &T| {
+                source.compare(left, right)
+            }),
+            metadata: CallbackMetadata::from_optional_name(name),
+        }
+    }
+
+    /// Creates a comparator while preserving existing callback metadata.
+    #[inline]
+    pub(crate) fn new_with_metadata<F>(
+        source: F,
+        metadata: CallbackMetadata,
+    ) -> Self
+    where
+        F: Comparator<T> + 'static,
+    {
+        Self {
+            function: Box::new(move |left: &T, right: &T| {
+                source.compare(left, right)
+            }),
+            metadata,
+        }
+    }
+
+    impl_common_name_methods!("comparator");
 
     /// Returns a comparator that imposes the reverse ordering.
     ///
@@ -88,7 +142,12 @@ impl<T> BoxComparator<T> {
     where
         T: 'static,
     {
-        BoxComparator::new(move |a: &T, b: &T| (self.function)(b, a))
+        let metadata = self.metadata;
+        let function = self.function;
+        BoxComparator::new_with_metadata(
+            move |a: &T, b: &T| function(b, a),
+            metadata,
+        )
     }
 
     /// Returns a comparator that uses this comparator first, then another
@@ -137,12 +196,13 @@ impl<T> BoxComparator<T> {
     /// // by_age.compare(&p1, &p2); // Would not compile - moved
     /// ```
     #[inline]
-    pub fn then_comparing(self, other: Self) -> Self
+    pub fn then_comparing<C>(self, other: C) -> Self
     where
         T: 'static,
+        C: Comparator<T> + 'static,
     {
         BoxComparator::new(move |a: &T, b: &T| match (self.function)(a, b) {
-            Ordering::Equal => (other.function)(a, b),
+            Ordering::Equal => other.compare(a, b),
             ord => ord,
         })
     }
@@ -210,5 +270,23 @@ impl<T> Comparator<T> for BoxComparator<T> {
     #[inline]
     fn compare(&self, a: &T, b: &T) -> Ordering {
         (self.function)(a, b)
+    }
+}
+
+impl<T> fmt::Debug for BoxComparator<T> {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter
+            .debug_struct("BoxComparator")
+            .field("name", &self.metadata.name())
+            .finish()
+    }
+}
+
+impl<T> fmt::Display for BoxComparator<T> {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.metadata.name() {
+            Some(name) => write!(formatter, "BoxComparator({name})"),
+            None => formatter.write_str("BoxComparator"),
+        }
     }
 }

@@ -17,7 +17,6 @@ use {
     crate::consumers::macros::impl_consumer_common_methods,
     crate::consumers::macros::impl_consumer_debug_display,
     crate::consumers::macros::impl_shared_consumer_methods,
-    crate::macros::impl_closure_trait,
     parking_lot::Mutex,
     std::sync::Arc,
 };
@@ -112,7 +111,8 @@ impl<T, U> ArcStatefulBiConsumer<T, U> {
 
 impl<T, U> StatefulBiConsumer<T, U> for ArcStatefulBiConsumer<T, U> {
     fn accept(&mut self, first: &T, second: &U) {
-        (self.function.lock())(first, second)
+        let mut function = self.function.lock();
+        function(first, second)
     }
 }
 
@@ -121,15 +121,3 @@ impl_consumer_clone!(ArcStatefulBiConsumer<T, U>);
 
 // Use macro to generate Debug and Display implementations
 impl_consumer_debug_display!(ArcStatefulBiConsumer<T, U>);
-
-// =======================================================================
-// 5. Implement BiConsumer trait for closures
-// =======================================================================
-
-// Implements BiConsumer for all FnMut(&T, &U)
-impl_closure_trait!(
-    StatefulBiConsumer<T, U>,
-    accept,
-    BoxBiConsumerOnce,
-    FnMut(first: &T, second: &U)
-);

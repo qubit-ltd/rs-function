@@ -10,7 +10,6 @@
 use {
     super::ArcMutatorFn,
     crate::Mutator,
-    crate::macros::impl_closure_trait,
     crate::mutators::macros::impl_mutator_clone,
     crate::mutators::macros::impl_mutator_common_methods,
     crate::mutators::macros::impl_mutator_debug_display,
@@ -94,14 +93,3 @@ impl_mutator_clone!(ArcMutator<T>);
 
 // Generate Debug and Display trait implementations
 impl_mutator_debug_display!(ArcMutator<T>);
-
-// ============================================================================
-// 6. Implement Mutator trait for closures
-// ============================================================================
-
-impl_closure_trait!(
-    Mutator<T>,
-    apply,
-    BoxMutatorOnce,
-    Fn(value: &mut T)
-);

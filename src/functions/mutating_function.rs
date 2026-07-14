@@ -241,3 +241,9 @@ pub trait MutatingFunction<T, R> {
     /// ```
     fn apply(&self, t: &mut T) -> R;
 }
+
+crate::macros::impl_closure_trait!(
+    MutatingFunction<T, R>,
+    apply,
+    Fn(input: &mut T) -> R
+);

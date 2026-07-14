@@ -65,7 +65,12 @@ where
     type Output = BoxPredicate<T>;
 
     fn not(self) -> Self::Output {
-        BoxPredicate::new(move |value: &T| !(self.function)(value))
+        let metadata = self.metadata;
+        let function = self.function;
+        BoxPredicate::new_with_metadata(
+            move |value: &T| !function(value),
+            metadata,
+        )
     }
 }
 

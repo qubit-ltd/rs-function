@@ -12,9 +12,9 @@
 
 /// Implements common name management methods for function-like structs.
 ///
-/// This macro generates `name`, and `set_name` methods for structs that have
-/// an optional name field. These methods provide a standardized way to get
-/// and set names for debugging and logging purposes.
+/// This macro generates name-management methods for structs that have callback
+/// metadata. These methods provide a standardized way to get, set, clear, and
+/// chain names for debugging and logging purposes.
 ///
 /// # Parameters
 ///
@@ -25,6 +25,8 @@
 /// * `name(&self) -> Option<&str>` - Gets the current name if set
 /// * `set_name(&mut self, name: &str)` - Sets a new name for the instance
 /// * `clear_name(&mut self)` - Clears the current name
+/// * `with_name(self, name: &str) -> Self` - Sets a name and returns the
+///   instance
 macro_rules! impl_common_name_methods {
     ($type_desc:literal) => {
         #[doc = concat!("Gets the name of this ", $type_desc, ".")]
@@ -50,6 +52,20 @@ macro_rules! impl_common_name_methods {
         #[inline]
         pub fn clear_name(&mut self) {
             self.metadata.clear_name();
+        }
+
+        #[doc = concat!("Sets the name of this ", $type_desc, " and returns it.")]
+        ///
+        /// # Parameters
+        #[doc = concat!("* `name` - The name to set for this ", $type_desc)]
+        ///
+        /// # Returns
+        ///
+        #[doc = concat!("This ", $type_desc, " with the supplied name.")]
+        #[inline]
+        pub fn with_name(mut self, name: &str) -> Self {
+            self.metadata.set_name(name);
+            self
         }
     };
 }

@@ -90,7 +90,8 @@ impl<E> Runnable<E> for ArcRunnable<E> {
     /// Executes the thread-safe runnable.
     #[inline]
     fn run(&mut self) -> Result<(), E> {
-        (self.function.lock())()
+        let mut function = self.function.lock();
+        function()
     }
 }
 

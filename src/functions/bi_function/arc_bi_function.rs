@@ -19,7 +19,6 @@ use {
     crate::functions::macros::impl_function_constant_method,
     crate::functions::macros::impl_function_debug_display,
     crate::functions::macros::impl_shared_function_methods,
-    crate::macros::impl_closure_trait,
     std::sync::Arc,
 };
 
@@ -76,15 +75,3 @@ impl<T, U, R> BiFunction<T, U, R> for ArcBiFunction<T, U, R> {
         (self.function)(first, second)
     }
 }
-
-// ============================================================================
-// Blanket implementation for standard Fn trait
-// ============================================================================
-
-// Implement BiFunction<T, U, R> for any type that implements Fn(&T, &U) -> R
-impl_closure_trait!(
-    BiFunction<T, U, R>,
-    apply,
-    BoxBiFunctionOnce,
-    Fn(first: &T, second: &U) -> R
-);

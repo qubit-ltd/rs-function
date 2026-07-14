@@ -65,7 +65,10 @@ impl<T> RcStatefulPredicate<T> {
     {
         let self_fn = self.function.clone();
         RcStatefulPredicate::new(move |value: &T| {
-            let matched = (self_fn.borrow_mut())(value);
+            let matched = {
+                let mut function = self_fn.borrow_mut();
+                function(value)
+            };
             matched && other.test(value)
         })
     }
@@ -90,7 +93,10 @@ impl<T> RcStatefulPredicate<T> {
     {
         let self_fn = self.function.clone();
         RcStatefulPredicate::new(move |value: &T| {
-            let matched = (self_fn.borrow_mut())(value);
+            let matched = {
+                let mut function = self_fn.borrow_mut();
+                function(value)
+            };
             matched || other.test(value)
         })
     }
@@ -114,7 +120,10 @@ impl<T> RcStatefulPredicate<T> {
     {
         let self_fn = self.function.clone();
         RcStatefulPredicate::new(move |value: &T| {
-            let matched = (self_fn.borrow_mut())(value);
+            let matched = {
+                let mut function = self_fn.borrow_mut();
+                function(value)
+            };
             !(matched && other.test(value))
         })
     }
@@ -139,7 +148,10 @@ impl<T> RcStatefulPredicate<T> {
     {
         let self_fn = self.function.clone();
         RcStatefulPredicate::new(move |value: &T| {
-            let matched = (self_fn.borrow_mut())(value);
+            let matched = {
+                let mut function = self_fn.borrow_mut();
+                function(value)
+            };
             matched ^ other.test(value)
         })
     }
@@ -163,7 +175,10 @@ impl<T> RcStatefulPredicate<T> {
     {
         let self_fn = self.function.clone();
         RcStatefulPredicate::new(move |value: &T| {
-            let matched = (self_fn.borrow_mut())(value);
+            let matched = {
+                let mut function = self_fn.borrow_mut();
+                function(value)
+            };
             !(matched || other.test(value))
         })
     }
@@ -176,10 +191,15 @@ where
     type Output = RcStatefulPredicate<T>;
 
     fn not(self) -> Self::Output {
+        let metadata = self.metadata;
         let function = self.function;
-        RcStatefulPredicate::new(move |value: &T| {
-            !((function.borrow_mut())(value))
-        })
+        RcStatefulPredicate::new_with_metadata(
+            move |value: &T| {
+                let mut function = function.borrow_mut();
+                !function(value)
+            },
+            metadata,
+        )
     }
 }
 
@@ -191,9 +211,13 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function.clone();
-        RcStatefulPredicate::new(move |value: &T| {
-            !((function.borrow_mut())(value))
-        })
+        RcStatefulPredicate::new_with_metadata(
+            move |value: &T| {
+                let mut function = function.borrow_mut();
+                !function(value)
+            },
+            self.metadata.clone(),
+        )
     }
 }
 
@@ -207,6 +231,7 @@ impl_predicate_debug_display!(RcStatefulPredicate<T>);
 // Implements StatefulPredicate trait for RcStatefulPredicate<T>
 impl<T> StatefulPredicate<T> for RcStatefulPredicate<T> {
     fn test(&mut self, value: &T) -> bool {
-        (self.function.borrow_mut())(value)
+        let mut function = self.function.borrow_mut();
+        function(value)
     }
 }

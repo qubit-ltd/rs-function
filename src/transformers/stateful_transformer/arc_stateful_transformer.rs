@@ -13,7 +13,6 @@ use {
 };
 use {
     crate::StatefulTransformer,
-    crate::macros::impl_closure_trait,
     crate::transformers::macros::impl_shared_transformer_methods,
     crate::transformers::macros::impl_transformer_clone,
     crate::transformers::macros::impl_transformer_common_methods,
@@ -85,16 +84,3 @@ impl<T, R> StatefulTransformer<T, R> for ArcStatefulTransformer<T, R> {
         func(input)
     }
 }
-
-// ============================================================================
-// Blanket implementation for standard FnMut trait
-// ============================================================================
-
-// Implement StatefulTransformer<T, R> for any type that implements FnMut(T) ->
-// R
-impl_closure_trait!(
-    StatefulTransformer<T, R>,
-    apply,
-    BoxTransformerOnce,
-    FnMut(input: T) -> R
-);

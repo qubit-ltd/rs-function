@@ -88,7 +88,8 @@ impl<R, E> Callable<R, E> for RcCallable<R, E> {
     /// Executes the shared callable.
     #[inline]
     fn call(&mut self) -> Result<R, E> {
-        (self.function.borrow_mut())()
+        let mut function = self.function.borrow_mut();
+        function()
     }
 }
 

@@ -10,7 +10,6 @@
 use {
     super::ArcMutMutatorFn,
     crate::StatefulMutator,
-    crate::macros::impl_closure_trait,
     crate::mutators::macros::impl_mutator_clone,
     crate::mutators::macros::impl_mutator_common_methods,
     crate::mutators::macros::impl_mutator_debug_display,
@@ -98,7 +97,8 @@ impl<T> ArcStatefulMutator<T> {
 
 impl<T> StatefulMutator<T> for ArcStatefulMutator<T> {
     fn apply(&mut self, value: &mut T) {
-        (self.function.lock())(value)
+        let mut function = self.function.lock();
+        function(value)
     }
 }
 
@@ -107,14 +107,3 @@ impl_mutator_clone!(ArcStatefulMutator<T>);
 
 // Generate Debug and Display trait implementations
 impl_mutator_debug_display!(ArcStatefulMutator<T>);
-
-// ============================================================================
-// 5. Implement StatefulMutator trait for closures
-// ============================================================================
-
-impl_closure_trait!(
-    StatefulMutator<T>,
-    apply,
-    BoxMutatorOnce,
-    FnMut(value: &mut T)
-);

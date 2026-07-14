@@ -79,10 +79,12 @@ where
     type Output = ArcBiPredicate<T, U>;
 
     fn not(self) -> Self::Output {
+        let metadata = self.metadata;
         let function = self.function;
-        ArcBiPredicate::new(move |first: &T, second: &U| {
-            !function(first, second)
-        })
+        ArcBiPredicate::new_with_metadata(
+            move |first: &T, second: &U| !function(first, second),
+            metadata,
+        )
     }
 }
 
@@ -95,9 +97,10 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function.clone();
-        ArcBiPredicate::new(move |first: &T, second: &U| {
-            !function(first, second)
-        })
+        ArcBiPredicate::new_with_metadata(
+            move |first: &T, second: &U| !function(first, second),
+            self.metadata.clone(),
+        )
     }
 }
 

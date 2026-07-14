@@ -90,6 +90,7 @@ impl_function_debug_display!(ArcStatefulFunction<T, R>);
 // Implement StatefulFunction trait for ArcStatefulFunction<T, R>
 impl<T, R> StatefulFunction<T, R> for ArcStatefulFunction<T, R> {
     fn apply(&mut self, t: &T) -> R {
-        (self.function.lock())(t)
+        let mut function = self.function.lock();
+        function(t)
     }
 }

@@ -7,10 +7,20 @@
 // =============================================================================
 //! Defines the `ArcTester` public type.
 
-use std::ops::Not;
+use std::{
+    fmt,
+    ops::Not,
+};
 
 use {
-    crate::Tester,
+    crate::{
+        Tester,
+        callback_metadata::CallbackMetadata,
+        macros::{
+            impl_common_name_methods,
+            impl_common_new_methods,
+        },
+    },
     std::sync::Arc,
 };
 
@@ -63,44 +73,24 @@ use {
 /// ```
 pub struct ArcTester {
     pub(super) function: Arc<dyn Fn() -> bool + Send + Sync>,
+    pub(super) metadata: CallbackMetadata,
 }
 
 impl ArcTester {
-    /// Creates a new `ArcTester` from a closure
-    ///
-    /// # Type Parameters
-    ///
-    /// * `F` - Closure type implementing `Fn() -> bool + Send + Sync`
-    ///
-    /// # Parameters
-    ///
-    /// * `f` - The closure to wrap
-    ///
-    /// # Return Value
-    ///
-    /// A new `ArcTester` instance
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::ArcTester;
-    ///
-    /// let tester = ArcTester::new(|| true);
-    /// ```
-    #[inline]
-    pub fn new<F>(source: F) -> Self
-    where
-        F: Tester + Send + Sync + 'static,
-    {
-        ArcTester {
-            function: Arc::new(move || source.test()),
-        }
-    }
+    impl_common_new_methods!(
+        semantic(Tester + Send + Sync + 'static),
+        |source| move || source.test(),
+        |function| Arc::new(function),
+        "tester"
+    );
+
+    impl_common_name_methods!("tester");
 
     /// Combines this tester with another tester using logical AND
     ///
     /// Returns a new `ArcTester` that returns `true` only when both tests
-    /// pass. Borrows `&self`, so the original tester remains available.
+    /// pass. Borrows `&self`, so the original tester remains available, and
+    /// moves `next` into the result.
     ///
     /// # Parameters
     ///
@@ -136,7 +126,7 @@ impl ArcTester {
     /// });
     ///
     /// // Combined check: pool healthy and connection count not exceeded
-    /// let pool_ready = pool_healthy.and(&conn_ok);
+    /// let pool_ready = pool_healthy.and(conn_ok.clone());
     ///
     /// // Multi-threaded test
     /// let pool_ready_clone = pool_ready.clone();
@@ -157,18 +147,19 @@ impl ArcTester {
     /// assert!(!pool_ready.test());
     /// ```
     #[inline]
-    pub fn and(&self, next: &ArcTester) -> ArcTester {
+    pub fn and<T>(&self, next: T) -> ArcTester
+    where
+        T: Tester + Send + Sync + 'static,
+    {
         let self_fn = Arc::clone(&self.function);
-        let next_fn = Arc::clone(&next.function);
-        ArcTester {
-            function: Arc::new(move || self_fn() && next_fn()),
-        }
+        ArcTester::new(move || self_fn() && next.test())
     }
 
     /// Combines this tester with another tester using logical OR
     ///
     /// Returns a new `ArcTester` that returns `true` if either test passes.
-    /// Borrows `&self`, so the original tester remains available.
+    /// Borrows `&self`, so the original tester remains available, and moves
+    /// `next` into the result.
     ///
     /// # Parameters
     ///
@@ -211,10 +202,10 @@ impl ArcTester {
     /// });
     ///
     /// // Emergency mode or server healthy
-    /// let can_handle_requests = emergency_check.or(&server_healthy);
+    /// let can_handle_requests = emergency_check.or(server_healthy.clone());
     ///
     /// // Combined condition: low load or can handle requests
-    /// let should_route_here = low_load.or(&can_handle_requests);
+    /// let should_route_here = low_load.or(can_handle_requests.clone());
     ///
     /// // Multi-threaded test
     /// let router_clone = should_route_here.clone();
@@ -240,18 +231,19 @@ impl ArcTester {
     /// assert!(!should_route_here.test());
     /// ```
     #[inline]
-    pub fn or(&self, next: &ArcTester) -> ArcTester {
+    pub fn or<T>(&self, next: T) -> ArcTester
+    where
+        T: Tester + Send + Sync + 'static,
+    {
         let self_fn = Arc::clone(&self.function);
-        let next_fn = Arc::clone(&next.function);
-        ArcTester {
-            function: Arc::new(move || self_fn() || next_fn()),
-        }
+        ArcTester::new(move || self_fn() || next.test())
     }
 
     /// Combines this tester with another tester using logical NAND
     ///
     /// Returns a new `ArcTester` that returns `true` unless both tests pass.
-    /// Borrows `&self`, so the original tester remains available.
+    /// Borrows `&self`, so the original tester remains available, and moves
+    /// `next` into the result.
     ///
     /// # Parameters
     ///
@@ -282,7 +274,7 @@ impl ArcTester {
     ///     flag2_clone.load(Ordering::Relaxed)
     /// });
     ///
-    /// let nand = tester1.nand(&tester2);
+    /// let nand = tester1.nand(tester2.clone());
     ///
     /// // Both true returns false
     /// assert!(!nand.test());
@@ -296,18 +288,19 @@ impl ArcTester {
     /// assert!(tester2.test());
     /// ```
     #[inline]
-    pub fn nand(&self, next: &ArcTester) -> ArcTester {
+    pub fn nand<T>(&self, next: T) -> ArcTester
+    where
+        T: Tester + Send + Sync + 'static,
+    {
         let self_fn = Arc::clone(&self.function);
-        let next_fn = Arc::clone(&next.function);
-        ArcTester {
-            function: Arc::new(move || !(self_fn() && next_fn())),
-        }
+        ArcTester::new(move || !(self_fn() && next.test()))
     }
 
     /// Combines this tester with another tester using logical XOR
     ///
     /// Returns a new `ArcTester` that returns `true` if exactly one test
-    /// passes. Borrows `&self`, so the original tester remains available.
+    /// passes. Borrows `&self`, so the original tester remains available, and
+    /// moves `next` into the result.
     ///
     /// # Parameters
     ///
@@ -338,7 +331,7 @@ impl ArcTester {
     ///     flag2_clone.load(Ordering::Relaxed)
     /// });
     ///
-    /// let xor = tester1.xor(&tester2);
+    /// let xor = tester1.xor(tester2.clone());
     ///
     /// // One true one false returns true
     /// assert!(xor.test());
@@ -357,18 +350,19 @@ impl ArcTester {
     /// assert!(!tester2.test());
     /// ```
     #[inline]
-    pub fn xor(&self, next: &ArcTester) -> ArcTester {
+    pub fn xor<T>(&self, next: T) -> ArcTester
+    where
+        T: Tester + Send + Sync + 'static,
+    {
         let self_fn = Arc::clone(&self.function);
-        let next_fn = Arc::clone(&next.function);
-        ArcTester {
-            function: Arc::new(move || self_fn() ^ next_fn()),
-        }
+        ArcTester::new(move || self_fn() ^ next.test())
     }
 
     /// Combines this tester with another tester using logical NOR
     ///
     /// Returns a new `ArcTester` that returns `true` only when both tests
-    /// fail. Borrows `&self`, so the original tester remains available.
+    /// fail. Borrows `&self`, so the original tester remains available, and
+    /// moves `next` into the result.
     ///
     /// # Parameters
     ///
@@ -399,7 +393,7 @@ impl ArcTester {
     ///     flag2_clone.load(Ordering::Relaxed)
     /// });
     ///
-    /// let nor = tester1.nor(&tester2);
+    /// let nor = tester1.nor(tester2.clone());
     ///
     /// // Both false returns true
     /// assert!(nor.test());
@@ -413,12 +407,12 @@ impl ArcTester {
     /// assert!(!tester2.test());
     /// ```
     #[inline]
-    pub fn nor(&self, next: &ArcTester) -> ArcTester {
+    pub fn nor<T>(&self, next: T) -> ArcTester
+    where
+        T: Tester + Send + Sync + 'static,
+    {
         let self_fn = Arc::clone(&self.function);
-        let next_fn = Arc::clone(&next.function);
-        ArcTester {
-            function: Arc::new(move || !(self_fn() || next_fn())),
-        }
+        ArcTester::new(move || !(self_fn() || next.test()))
     }
 }
 
@@ -427,10 +421,9 @@ impl Not for ArcTester {
 
     #[inline]
     fn not(self) -> Self::Output {
+        let metadata = self.metadata;
         let func = self.function;
-        ArcTester {
-            function: Arc::new(move || !func()),
-        }
+        ArcTester::new_with_metadata(move || !func(), metadata)
     }
 }
 
@@ -440,9 +433,7 @@ impl Not for &ArcTester {
     #[inline]
     fn not(self) -> Self::Output {
         let func = Arc::clone(&self.function);
-        ArcTester {
-            function: Arc::new(move || !func()),
-        }
+        ArcTester::new_with_metadata(move || !func(), self.metadata.clone())
     }
 }
 
@@ -463,6 +454,25 @@ impl Clone for ArcTester {
     fn clone(&self) -> Self {
         Self {
             function: Arc::clone(&self.function),
+            metadata: self.metadata.clone(),
+        }
+    }
+}
+
+impl fmt::Debug for ArcTester {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter
+            .debug_struct("ArcTester")
+            .field("name", &self.metadata.name())
+            .finish()
+    }
+}
+
+impl fmt::Display for ArcTester {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.metadata.name() {
+            Some(name) => write!(formatter, "ArcTester({name})"),
+            None => formatter.write_str("ArcTester"),
         }
     }
 }

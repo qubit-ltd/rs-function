@@ -92,15 +92,11 @@ impl<E> LocalBoxRunnableOnce<E> {
         N: RunnableOnce<E> + 'static,
         E: 'static,
     {
-        let metadata = self.metadata;
         let function = self.function;
-        LocalBoxRunnableOnce::new_with_metadata(
-            move || {
-                function()?;
-                next.run()
-            },
-            metadata,
-        )
+        LocalBoxRunnableOnce::new(move || {
+            function()?;
+            next.run()
+        })
     }
 
     /// Runs this runnable before a local callable.

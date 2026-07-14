@@ -19,7 +19,6 @@ use {
     crate::functions::macros::impl_function_constant_method,
     crate::functions::macros::impl_function_debug_display,
     crate::functions::macros::impl_shared_function_methods,
-    crate::macros::impl_closure_trait,
     std::sync::Arc,
 };
 
@@ -83,16 +82,3 @@ impl_function_debug_display!(ArcBiMutatingFunction<T, U, R>);
 
 // Implement Clone for ArcBiMutatingFunction
 impl_function_clone!(ArcBiMutatingFunction<T, U, R>);
-
-// ============================================================================
-// Blanket implementation for standard Fn trait
-// ============================================================================
-
-// Implement BiMutatingFunction<T, U, R> for any type that implements Fn(&mut T,
-// &mut U) -> R
-impl_closure_trait!(
-    BiMutatingFunction<T, U, R>,
-    apply,
-    BoxBiMutatingFunctionOnce,
-    Fn(first: &mut T, second: &mut U) -> R
-);

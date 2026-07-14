@@ -200,3 +200,9 @@ pub trait StatefulSupplier<T> {
     /// ```
     fn get(&mut self) -> T;
 }
+
+crate::macros::impl_closure_trait!(
+    StatefulSupplier<T>,
+    get,
+    FnMut() -> T
+);

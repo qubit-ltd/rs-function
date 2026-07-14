@@ -58,3 +58,9 @@ pub trait StatefulBiPredicate<T, U> {
     /// `true` if the values satisfy this bi-predicate, `false` otherwise.
     fn test(&mut self, first: &T, second: &U) -> bool;
 }
+
+crate::macros::impl_closure_trait!(
+    StatefulBiPredicate<T, U>,
+    test,
+    FnMut(first: &T, second: &U) -> bool
+);

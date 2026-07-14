@@ -171,6 +171,7 @@ impl_supplier_clone!(RcStatefulSupplier<T>);
 
 impl<T> StatefulSupplier<T> for RcStatefulSupplier<T> {
     fn get(&mut self) -> T {
-        (self.function.borrow_mut())()
+        let mut function = self.function.borrow_mut();
+        function()
     }
 }

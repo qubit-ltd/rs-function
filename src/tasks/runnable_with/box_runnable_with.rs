@@ -57,16 +57,12 @@ impl<T, E> BoxRunnableWith<T, E> {
         T: 'static,
         E: 'static,
     {
-        let metadata = self.metadata;
         let mut function = self.function;
         let mut next = next;
-        BoxRunnableWith::new_with_metadata(
-            move |input: &mut T| {
-                function(&mut *input)?;
-                next.run_with(input)
-            },
-            metadata,
-        )
+        BoxRunnableWith::new(move |input: &mut T| {
+            function(&mut *input)?;
+            next.run_with(input)
+        })
     }
 
     /// Runs this runnable before a callable.

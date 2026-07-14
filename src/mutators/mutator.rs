@@ -334,3 +334,9 @@ pub trait Mutator<T> {
     /// ```
     fn apply(&self, value: &mut T);
 }
+
+crate::macros::impl_closure_trait!(
+    Mutator<T>,
+    apply,
+    Fn(value: &mut T)
+);

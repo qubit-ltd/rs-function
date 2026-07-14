@@ -7,9 +7,21 @@
 // =============================================================================
 //! Defines the `BoxStatefulTester` public type.
 
-use std::ops::Not;
+use std::{
+    fmt,
+    ops::Not,
+};
 
-use super::StatefulTester;
+use {
+    super::StatefulTester,
+    crate::{
+        callback_metadata::CallbackMetadata,
+        macros::{
+            impl_common_name_methods,
+            impl_common_new_methods,
+        },
+    },
+};
 
 /// A single-ownership stateful tester backed by `Box<dyn FnMut() -> bool>`.
 ///
@@ -18,19 +30,18 @@ use super::StatefulTester;
 /// mutate state captured by the wrapped closure.
 pub struct BoxStatefulTester {
     pub(super) function: Box<dyn FnMut() -> bool>,
+    pub(super) metadata: CallbackMetadata,
 }
 
 impl BoxStatefulTester {
-    /// Creates a new boxed stateful tester.
-    #[inline]
-    pub fn new<F>(mut source: F) -> Self
-    where
-        F: StatefulTester + 'static,
-    {
-        BoxStatefulTester {
-            function: Box::new(move || source.test()),
-        }
-    }
+    impl_common_new_methods!(
+        semantic_mut(StatefulTester + 'static),
+        |source| move || source.test(),
+        |function| Box::new(function),
+        "stateful tester"
+    );
+
+    impl_common_name_methods!("stateful tester");
 
     /// Combines this tester with another stateful tester using logical AND.
     ///
@@ -88,8 +99,10 @@ impl Not for BoxStatefulTester {
     type Output = BoxStatefulTester;
 
     #[inline]
-    fn not(mut self) -> Self::Output {
-        BoxStatefulTester::new(move || !self.test())
+    fn not(self) -> Self::Output {
+        let metadata = self.metadata;
+        let mut function = self.function;
+        BoxStatefulTester::new_with_metadata(move || !function(), metadata)
     }
 }
 
@@ -97,5 +110,23 @@ impl StatefulTester for BoxStatefulTester {
     #[inline]
     fn test(&mut self) -> bool {
         (self.function)()
+    }
+}
+
+impl fmt::Debug for BoxStatefulTester {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter
+            .debug_struct("BoxStatefulTester")
+            .field("name", &self.metadata.name())
+            .finish()
+    }
+}
+
+impl fmt::Display for BoxStatefulTester {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.metadata.name() {
+            Some(name) => write!(formatter, "BoxStatefulTester({name})"),
+            None => formatter.write_str("BoxStatefulTester"),
+        }
     }
 }

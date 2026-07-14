@@ -150,11 +150,15 @@ macro_rules! impl_shared_supplier_methods {
             M: Transformer<$t, U> + Send + Sync + 'static,
             U: 'static,
         {
+            let metadata = self.metadata.clone();
             impl_shared_supplier_methods!(@let_supplier $supplier_trait, self_cloned, self.clone());
-            $struct_name::new(move || {
-                let value = self_cloned.get();
-                mapper.apply(value)
-            })
+            $struct_name::new_with_metadata(
+                move || {
+                    let value = self_cloned.get();
+                    mapper.apply(value)
+                },
+                metadata,
+            )
         }
 
         /// Filters output based on a predicate.
@@ -266,11 +270,15 @@ macro_rules! impl_shared_supplier_methods {
             M: Transformer<$t, U> + $($extra_bounds)+,
             U: $($extra_bounds)+,
         {
+            let metadata = self.metadata.clone();
             impl_shared_supplier_methods!(@let_supplier $supplier_trait, self_cloned, self.clone());
-            $struct_name::new(move || {
-                let value = self_cloned.get();
-                mapper.apply(value)
-            })
+            $struct_name::new_with_metadata(
+                move || {
+                    let value = self_cloned.get();
+                    mapper.apply(value)
+                },
+                metadata,
+            )
         }
 
         /// Filters output based on a predicate.

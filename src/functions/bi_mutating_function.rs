@@ -76,3 +76,9 @@ pub trait BiMutatingFunction<T, U, R> {
     /// The computed output value
     fn apply(&self, first: &mut T, second: &mut U) -> R;
 }
+
+crate::macros::impl_closure_trait!(
+    BiMutatingFunction<T, U, R>,
+    apply,
+    Fn(first: &mut T, second: &mut U) -> R
+);

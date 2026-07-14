@@ -7,12 +7,22 @@
 // =============================================================================
 //! Defines the `ArcStatefulTester` public type.
 
-use std::ops::Not;
+use std::{
+    fmt,
+    ops::Not,
+};
 
 use parking_lot::Mutex;
 
 use {
-    crate::StatefulTester,
+    crate::{
+        StatefulTester,
+        callback_metadata::CallbackMetadata,
+        macros::{
+            impl_common_name_methods,
+            impl_common_new_methods,
+        },
+    },
     std::sync::Arc,
 };
 
@@ -30,19 +40,18 @@ type ArcStatefulTesterFn = Arc<Mutex<dyn FnMut() -> bool + Send + 'static>>;
 /// before a panic are not rolled back.
 pub struct ArcStatefulTester {
     pub(super) function: ArcStatefulTesterFn,
+    pub(super) metadata: CallbackMetadata,
 }
 
 impl ArcStatefulTester {
-    /// Creates a new thread-safe shared stateful tester.
-    #[inline]
-    pub fn new<F>(mut source: F) -> Self
-    where
-        F: StatefulTester + Send + 'static,
-    {
-        ArcStatefulTester {
-            function: Arc::new(Mutex::new(move || source.test())),
-        }
-    }
+    impl_common_new_methods!(
+        semantic_mut(StatefulTester + Send + 'static),
+        |source| move || source.test(),
+        |function| Arc::new(Mutex::new(function)),
+        "stateful tester"
+    );
+
+    impl_common_name_methods!("stateful tester");
 
     /// Combines this tester with another stateful tester using logical AND.
     #[inline]
@@ -52,7 +61,10 @@ impl ArcStatefulTester {
     {
         let self_fn = Arc::clone(&self.function);
         ArcStatefulTester::new(move || {
-            let matched = (self_fn.lock())();
+            let matched = {
+                let mut function = self_fn.lock();
+                function()
+            };
             matched && next.test()
         })
     }
@@ -65,7 +77,10 @@ impl ArcStatefulTester {
     {
         let self_fn = Arc::clone(&self.function);
         ArcStatefulTester::new(move || {
-            let matched = (self_fn.lock())();
+            let matched = {
+                let mut function = self_fn.lock();
+                function()
+            };
             matched || next.test()
         })
     }
@@ -78,7 +93,10 @@ impl ArcStatefulTester {
     {
         let self_fn = Arc::clone(&self.function);
         ArcStatefulTester::new(move || {
-            let matched = (self_fn.lock())();
+            let matched = {
+                let mut function = self_fn.lock();
+                function()
+            };
             !(matched && next.test())
         })
     }
@@ -91,7 +109,10 @@ impl ArcStatefulTester {
     {
         let self_fn = Arc::clone(&self.function);
         ArcStatefulTester::new(move || {
-            let matched = (self_fn.lock())();
+            let matched = {
+                let mut function = self_fn.lock();
+                function()
+            };
             matched ^ next.test()
         })
     }
@@ -104,7 +125,10 @@ impl ArcStatefulTester {
     {
         let self_fn = Arc::clone(&self.function);
         ArcStatefulTester::new(move || {
-            let matched = (self_fn.lock())();
+            let matched = {
+                let mut function = self_fn.lock();
+                function()
+            };
             !(matched || next.test())
         })
     }
@@ -115,6 +139,7 @@ impl Clone for ArcStatefulTester {
     fn clone(&self) -> Self {
         ArcStatefulTester {
             function: Arc::clone(&self.function),
+            metadata: self.metadata.clone(),
         }
     }
 }
@@ -124,8 +149,15 @@ impl Not for ArcStatefulTester {
 
     #[inline]
     fn not(self) -> Self::Output {
+        let metadata = self.metadata;
         let function = self.function;
-        ArcStatefulTester::new(move || !((function.lock())()))
+        ArcStatefulTester::new_with_metadata(
+            move || {
+                let mut function = function.lock();
+                !function()
+            },
+            metadata,
+        )
     }
 }
 
@@ -135,13 +167,38 @@ impl Not for &ArcStatefulTester {
     #[inline]
     fn not(self) -> Self::Output {
         let function = Arc::clone(&self.function);
-        ArcStatefulTester::new(move || !((function.lock())()))
+        ArcStatefulTester::new_with_metadata(
+            move || {
+                let mut function = function.lock();
+                !function()
+            },
+            self.metadata.clone(),
+        )
     }
 }
 
 impl StatefulTester for ArcStatefulTester {
     #[inline]
     fn test(&mut self) -> bool {
-        (self.function.lock())()
+        let mut function = self.function.lock();
+        function()
+    }
+}
+
+impl fmt::Debug for ArcStatefulTester {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter
+            .debug_struct("ArcStatefulTester")
+            .field("name", &self.metadata.name())
+            .finish()
+    }
+}
+
+impl fmt::Display for ArcStatefulTester {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.metadata.name() {
+            Some(name) => write!(formatter, "ArcStatefulTester({name})"),
+            None => formatter.write_str("ArcStatefulTester"),
+        }
     }
 }

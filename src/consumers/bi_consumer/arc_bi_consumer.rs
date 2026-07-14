@@ -14,7 +14,6 @@ use {
     crate::consumers::macros::impl_consumer_common_methods,
     crate::consumers::macros::impl_consumer_debug_display,
     crate::consumers::macros::impl_shared_consumer_methods,
-    crate::macros::impl_closure_trait,
     std::sync::Arc,
 };
 use {
@@ -101,15 +100,3 @@ impl_consumer_clone!(ArcBiConsumer<T, U>);
 
 // Use macro to generate Debug and Display implementations
 impl_consumer_debug_display!(ArcBiConsumer<T, U>);
-
-// =======================================================================
-// 5. Implement BiConsumer trait for closures
-// =======================================================================
-
-// Implements BiConsumer for all Fn(&T, &U)
-impl_closure_trait!(
-    BiConsumer<T, U>,
-    accept,
-    BoxBiConsumerOnce,
-    Fn(first: &T, second: &U)
-);

@@ -13,7 +13,6 @@ use {
 };
 use {
     crate::Transformer,
-    crate::macros::impl_closure_trait,
     crate::transformers::macros::impl_shared_transformer_methods,
     crate::transformers::macros::impl_transformer_clone,
     crate::transformers::macros::impl_transformer_common_methods,
@@ -76,15 +75,3 @@ impl<T, R> Transformer<T, R> for ArcTransformer<T, R> {
         (self.function)(input)
     }
 }
-
-// ============================================================================
-// Blanket implementation for standard Fn trait
-// ============================================================================
-
-// Implement Transformer<T, R> for any type that implements Fn(T) -> R
-impl_closure_trait!(
-    Transformer<T, R>,
-    apply,
-    BoxTransformerOnce,
-    Fn(input: T) -> R
-);

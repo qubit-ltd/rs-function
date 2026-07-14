@@ -132,8 +132,12 @@ macro_rules! impl_box_supplier_methods {
             M: Transformer<$t, U> + 'static,
             U: 'static,
         {
+            let metadata = self.metadata;
             impl_box_supplier_methods!(@let_supplier_fn $supplier_trait, self_fn, self.function);
-            $struct_name::new(move || mapper.apply(self_fn()))
+            $struct_name::new_with_metadata(
+                move || mapper.apply(self_fn()),
+                metadata,
+            )
         }
 
         /// Filters output based on a predicate.

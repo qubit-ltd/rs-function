@@ -67,9 +67,12 @@ where
     type Output = BoxBiPredicate<T, U>;
 
     fn not(self) -> Self::Output {
-        BoxBiPredicate::new(move |first: &T, second: &U| {
-            !(self.function)(first, second)
-        })
+        let metadata = self.metadata;
+        let function = self.function;
+        BoxBiPredicate::new_with_metadata(
+            move |first: &T, second: &U| !function(first, second),
+            metadata,
+        )
     }
 }
 

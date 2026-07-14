@@ -7,11 +7,21 @@
 // =============================================================================
 //! Defines the `RcStatefulTester` public type.
 
-use std::cell::RefCell;
-use std::ops::Not;
+use std::{
+    cell::RefCell,
+    fmt,
+    ops::Not,
+};
 
 use {
-    crate::StatefulTester,
+    crate::{
+        StatefulTester,
+        callback_metadata::CallbackMetadata,
+        macros::{
+            impl_common_name_methods,
+            impl_common_new_methods,
+        },
+    },
     std::rc::Rc,
 };
 
@@ -27,19 +37,18 @@ type RcStatefulTesterFn = Rc<RefCell<dyn FnMut() -> bool>>;
 /// error. Mutations completed before a panic are not rolled back.
 pub struct RcStatefulTester {
     pub(super) function: RcStatefulTesterFn,
+    pub(super) metadata: CallbackMetadata,
 }
 
 impl RcStatefulTester {
-    /// Creates a new single-threaded shared stateful tester.
-    #[inline]
-    pub fn new<F>(mut source: F) -> Self
-    where
-        F: StatefulTester + 'static,
-    {
-        RcStatefulTester {
-            function: Rc::new(RefCell::new(move || source.test())),
-        }
-    }
+    impl_common_new_methods!(
+        semantic_mut(StatefulTester + 'static),
+        |source| move || source.test(),
+        |function| Rc::new(RefCell::new(function)),
+        "stateful tester"
+    );
+
+    impl_common_name_methods!("stateful tester");
 
     /// Combines this tester with another stateful tester using logical AND.
     #[inline]
@@ -49,7 +58,10 @@ impl RcStatefulTester {
     {
         let self_fn = Rc::clone(&self.function);
         RcStatefulTester::new(move || {
-            let matched = (self_fn.borrow_mut())();
+            let matched = {
+                let mut function = self_fn.borrow_mut();
+                function()
+            };
             matched && next.test()
         })
     }
@@ -62,7 +74,10 @@ impl RcStatefulTester {
     {
         let self_fn = Rc::clone(&self.function);
         RcStatefulTester::new(move || {
-            let matched = (self_fn.borrow_mut())();
+            let matched = {
+                let mut function = self_fn.borrow_mut();
+                function()
+            };
             matched || next.test()
         })
     }
@@ -75,7 +90,10 @@ impl RcStatefulTester {
     {
         let self_fn = Rc::clone(&self.function);
         RcStatefulTester::new(move || {
-            let matched = (self_fn.borrow_mut())();
+            let matched = {
+                let mut function = self_fn.borrow_mut();
+                function()
+            };
             !(matched && next.test())
         })
     }
@@ -88,7 +106,10 @@ impl RcStatefulTester {
     {
         let self_fn = Rc::clone(&self.function);
         RcStatefulTester::new(move || {
-            let matched = (self_fn.borrow_mut())();
+            let matched = {
+                let mut function = self_fn.borrow_mut();
+                function()
+            };
             matched ^ next.test()
         })
     }
@@ -101,7 +122,10 @@ impl RcStatefulTester {
     {
         let self_fn = Rc::clone(&self.function);
         RcStatefulTester::new(move || {
-            let matched = (self_fn.borrow_mut())();
+            let matched = {
+                let mut function = self_fn.borrow_mut();
+                function()
+            };
             !(matched || next.test())
         })
     }
@@ -112,6 +136,7 @@ impl Clone for RcStatefulTester {
     fn clone(&self) -> Self {
         RcStatefulTester {
             function: Rc::clone(&self.function),
+            metadata: self.metadata.clone(),
         }
     }
 }
@@ -121,8 +146,15 @@ impl Not for RcStatefulTester {
 
     #[inline]
     fn not(self) -> Self::Output {
+        let metadata = self.metadata;
         let function = self.function;
-        RcStatefulTester::new(move || !((function.borrow_mut())()))
+        RcStatefulTester::new_with_metadata(
+            move || {
+                let mut function = function.borrow_mut();
+                !function()
+            },
+            metadata,
+        )
     }
 }
 
@@ -132,13 +164,38 @@ impl Not for &RcStatefulTester {
     #[inline]
     fn not(self) -> Self::Output {
         let function = Rc::clone(&self.function);
-        RcStatefulTester::new(move || !((function.borrow_mut())()))
+        RcStatefulTester::new_with_metadata(
+            move || {
+                let mut function = function.borrow_mut();
+                !function()
+            },
+            self.metadata.clone(),
+        )
     }
 }
 
 impl StatefulTester for RcStatefulTester {
     #[inline]
     fn test(&mut self) -> bool {
-        (self.function.borrow_mut())()
+        let mut function = self.function.borrow_mut();
+        function()
+    }
+}
+
+impl fmt::Debug for RcStatefulTester {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter
+            .debug_struct("RcStatefulTester")
+            .field("name", &self.metadata.name())
+            .finish()
+    }
+}
+
+impl fmt::Display for RcStatefulTester {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.metadata.name() {
+            Some(name) => write!(formatter, "RcStatefulTester({name})"),
+            None => formatter.write_str("RcStatefulTester"),
+        }
     }
 }

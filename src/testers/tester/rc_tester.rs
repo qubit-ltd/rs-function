@@ -7,10 +7,20 @@
 // =============================================================================
 //! Defines the `RcTester` public type.
 
-use std::ops::Not;
+use std::{
+    fmt,
+    ops::Not,
+};
 
 use {
-    crate::Tester,
+    crate::{
+        Tester,
+        callback_metadata::CallbackMetadata,
+        macros::{
+            impl_common_name_methods,
+            impl_common_new_methods,
+        },
+    },
     std::rc::Rc,
 };
 
@@ -51,49 +61,29 @@ use {
 /// let clone2 = shared.clone();
 ///
 /// // Non-consuming combination
-/// let combined = shared.and(&clone1);
+/// let combined = shared.and(clone1.clone());
 /// # }
 /// ```
 pub struct RcTester {
     pub(super) function: Rc<dyn Fn() -> bool>,
+    pub(super) metadata: CallbackMetadata,
 }
 
 impl RcTester {
-    /// Creates a new `RcTester` from a closure
-    ///
-    /// # Type Parameters
-    ///
-    /// * `F` - Closure type implementing `Fn() -> bool`
-    ///
-    /// # Parameters
-    ///
-    /// * `f` - The closure to wrap
-    ///
-    /// # Return Value
-    ///
-    /// A new `RcTester` instance
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::RcTester;
-    ///
-    /// let tester = RcTester::new(|| true);
-    /// ```
-    #[inline]
-    pub fn new<F>(source: F) -> Self
-    where
-        F: Tester + 'static,
-    {
-        RcTester {
-            function: Rc::new(move || source.test()),
-        }
-    }
+    impl_common_new_methods!(
+        semantic(Tester + 'static),
+        |source| move || source.test(),
+        |function| Rc::new(function),
+        "tester"
+    );
+
+    impl_common_name_methods!("tester");
 
     /// Combines this tester with another tester using logical AND
     ///
     /// Returns a new `RcTester` that returns `true` only when both tests
-    /// pass. Borrows `&self`, so the original tester remains available.
+    /// pass. Borrows `&self`, so the original tester remains available, and
+    /// moves `next` into the result.
     ///
     /// # Parameters
     ///
@@ -110,22 +100,23 @@ impl RcTester {
     ///
     /// let first = RcTester::new(|| true);
     /// let second = RcTester::new(|| true);
-    /// let combined = first.and(&second);
+    /// let combined = first.and(second.clone());
     /// // first and second are still available
     /// ```
     #[inline]
-    pub fn and(&self, next: &RcTester) -> RcTester {
+    pub fn and<T>(&self, next: T) -> RcTester
+    where
+        T: Tester + 'static,
+    {
         let self_fn = Rc::clone(&self.function);
-        let next_fn = Rc::clone(&next.function);
-        RcTester {
-            function: Rc::new(move || self_fn() && next_fn()),
-        }
+        RcTester::new(move || self_fn() && next.test())
     }
 
     /// Combines this tester with another tester using logical OR
     ///
     /// Returns a new `RcTester` that returns `true` if either test passes.
-    /// Borrows `&self`, so the original tester remains available.
+    /// Borrows `&self`, so the original tester remains available, and moves
+    /// `next` into the result.
     ///
     /// # Parameters
     ///
@@ -142,22 +133,23 @@ impl RcTester {
     ///
     /// let first = RcTester::new(|| false);
     /// let second = RcTester::new(|| true);
-    /// let combined = first.or(&second);
+    /// let combined = first.or(second.clone());
     /// // first and second are still available
     /// ```
     #[inline]
-    pub fn or(&self, next: &RcTester) -> RcTester {
+    pub fn or<T>(&self, next: T) -> RcTester
+    where
+        T: Tester + 'static,
+    {
         let self_fn = Rc::clone(&self.function);
-        let next_fn = Rc::clone(&next.function);
-        RcTester {
-            function: Rc::new(move || self_fn() || next_fn()),
-        }
+        RcTester::new(move || self_fn() || next.test())
     }
 
     /// Combines this tester with another tester using logical NAND
     ///
     /// Returns a new `RcTester` that returns `true` unless both tests pass.
-    /// Borrows `&self`, so the original tester remains available.
+    /// Borrows `&self`, so the original tester remains available, and moves
+    /// `next` into the result.
     ///
     /// # Parameters
     ///
@@ -174,7 +166,7 @@ impl RcTester {
     ///
     /// let first = RcTester::new(|| true);
     /// let second = RcTester::new(|| true);
-    /// let nand = first.nand(&second);
+    /// let nand = first.nand(second.clone());
     ///
     /// // Both true returns false
     /// assert!(!nand.test());
@@ -184,18 +176,19 @@ impl RcTester {
     /// assert!(second.test());
     /// ```
     #[inline]
-    pub fn nand(&self, next: &RcTester) -> RcTester {
+    pub fn nand<T>(&self, next: T) -> RcTester
+    where
+        T: Tester + 'static,
+    {
         let self_fn = Rc::clone(&self.function);
-        let next_fn = Rc::clone(&next.function);
-        RcTester {
-            function: Rc::new(move || !(self_fn() && next_fn())),
-        }
+        RcTester::new(move || !(self_fn() && next.test()))
     }
 
     /// Combines this tester with another tester using logical XOR
     ///
     /// Returns a new `RcTester` that returns `true` if exactly one test
-    /// passes. Borrows `&self`, so the original tester remains available.
+    /// passes. Borrows `&self`, so the original tester remains available, and
+    /// moves `next` into the result.
     ///
     /// # Parameters
     ///
@@ -212,7 +205,7 @@ impl RcTester {
     ///
     /// let first = RcTester::new(|| true);
     /// let second = RcTester::new(|| false);
-    /// let xor = first.xor(&second);
+    /// let xor = first.xor(second.clone());
     ///
     /// // One true one false returns true
     /// assert!(xor.test());
@@ -222,18 +215,19 @@ impl RcTester {
     /// assert!(!second.test());
     /// ```
     #[inline]
-    pub fn xor(&self, next: &RcTester) -> RcTester {
+    pub fn xor<T>(&self, next: T) -> RcTester
+    where
+        T: Tester + 'static,
+    {
         let self_fn = Rc::clone(&self.function);
-        let next_fn = Rc::clone(&next.function);
-        RcTester {
-            function: Rc::new(move || self_fn() ^ next_fn()),
-        }
+        RcTester::new(move || self_fn() ^ next.test())
     }
 
     /// Combines this tester with another tester using logical NOR
     ///
     /// Returns a new `RcTester` that returns `true` only when both tests
-    /// fail. Borrows `&self`, so the original tester remains available.
+    /// fail. Borrows `&self`, so the original tester remains available, and
+    /// moves `next` into the result.
     ///
     /// # Parameters
     ///
@@ -250,7 +244,7 @@ impl RcTester {
     ///
     /// let first = RcTester::new(|| false);
     /// let second = RcTester::new(|| false);
-    /// let nor = first.nor(&second);
+    /// let nor = first.nor(second.clone());
     ///
     /// // Both false returns true
     /// assert!(nor.test());
@@ -260,12 +254,12 @@ impl RcTester {
     /// assert!(!second.test());
     /// ```
     #[inline]
-    pub fn nor(&self, next: &RcTester) -> RcTester {
+    pub fn nor<T>(&self, next: T) -> RcTester
+    where
+        T: Tester + 'static,
+    {
         let self_fn = Rc::clone(&self.function);
-        let next_fn = Rc::clone(&next.function);
-        RcTester {
-            function: Rc::new(move || !(self_fn() || next_fn())),
-        }
+        RcTester::new(move || !(self_fn() || next.test()))
     }
 }
 
@@ -274,10 +268,9 @@ impl Not for RcTester {
 
     #[inline]
     fn not(self) -> Self::Output {
+        let metadata = self.metadata;
         let func = self.function;
-        RcTester {
-            function: Rc::new(move || !func()),
-        }
+        RcTester::new_with_metadata(move || !func(), metadata)
     }
 }
 
@@ -287,9 +280,7 @@ impl Not for &RcTester {
     #[inline]
     fn not(self) -> Self::Output {
         let func = Rc::clone(&self.function);
-        RcTester {
-            function: Rc::new(move || !func()),
-        }
+        RcTester::new_with_metadata(move || !func(), self.metadata.clone())
     }
 }
 
@@ -310,6 +301,25 @@ impl Clone for RcTester {
     fn clone(&self) -> Self {
         Self {
             function: Rc::clone(&self.function),
+            metadata: self.metadata.clone(),
+        }
+    }
+}
+
+impl fmt::Debug for RcTester {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter
+            .debug_struct("RcTester")
+            .field("name", &self.metadata.name())
+            .finish()
+    }
+}
+
+impl fmt::Display for RcTester {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self.metadata.name() {
+            Some(name) => write!(formatter, "RcTester({name})"),
+            None => formatter.write_str("RcTester"),
         }
     }
 }

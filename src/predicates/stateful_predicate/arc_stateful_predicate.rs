@@ -68,7 +68,10 @@ impl<T> ArcStatefulPredicate<T> {
     {
         let self_fn = self.function.clone();
         ArcStatefulPredicate::new(move |value: &T| {
-            let matched = (self_fn.lock())(value);
+            let matched = {
+                let mut function = self_fn.lock();
+                function(value)
+            };
             matched && other.test(value)
         })
     }
@@ -93,7 +96,10 @@ impl<T> ArcStatefulPredicate<T> {
     {
         let self_fn = self.function.clone();
         ArcStatefulPredicate::new(move |value: &T| {
-            let matched = (self_fn.lock())(value);
+            let matched = {
+                let mut function = self_fn.lock();
+                function(value)
+            };
             matched || other.test(value)
         })
     }
@@ -117,7 +123,10 @@ impl<T> ArcStatefulPredicate<T> {
     {
         let self_fn = self.function.clone();
         ArcStatefulPredicate::new(move |value: &T| {
-            let matched = (self_fn.lock())(value);
+            let matched = {
+                let mut function = self_fn.lock();
+                function(value)
+            };
             !(matched && other.test(value))
         })
     }
@@ -142,7 +151,10 @@ impl<T> ArcStatefulPredicate<T> {
     {
         let self_fn = self.function.clone();
         ArcStatefulPredicate::new(move |value: &T| {
-            let matched = (self_fn.lock())(value);
+            let matched = {
+                let mut function = self_fn.lock();
+                function(value)
+            };
             matched ^ other.test(value)
         })
     }
@@ -166,7 +178,10 @@ impl<T> ArcStatefulPredicate<T> {
     {
         let self_fn = self.function.clone();
         ArcStatefulPredicate::new(move |value: &T| {
-            let matched = (self_fn.lock())(value);
+            let matched = {
+                let mut function = self_fn.lock();
+                function(value)
+            };
             !(matched || other.test(value))
         })
     }
@@ -179,8 +194,15 @@ where
     type Output = ArcStatefulPredicate<T>;
 
     fn not(self) -> Self::Output {
+        let metadata = self.metadata;
         let function = self.function;
-        ArcStatefulPredicate::new(move |value: &T| !((function.lock())(value)))
+        ArcStatefulPredicate::new_with_metadata(
+            move |value: &T| {
+                let mut function = function.lock();
+                !function(value)
+            },
+            metadata,
+        )
     }
 }
 
@@ -192,7 +214,13 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function.clone();
-        ArcStatefulPredicate::new(move |value: &T| !((function.lock())(value)))
+        ArcStatefulPredicate::new_with_metadata(
+            move |value: &T| {
+                let mut function = function.lock();
+                !function(value)
+            },
+            self.metadata.clone(),
+        )
     }
 }
 
@@ -206,7 +234,8 @@ impl_predicate_debug_display!(ArcStatefulPredicate<T>);
 // Implements StatefulPredicate trait for ArcStatefulPredicate<T>
 impl<T> StatefulPredicate<T> for ArcStatefulPredicate<T> {
     fn test(&mut self, value: &T) -> bool {
-        (self.function.lock())(value)
+        let mut function = self.function.lock();
+        function(value)
     }
 }
 

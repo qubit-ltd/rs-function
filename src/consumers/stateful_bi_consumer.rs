@@ -129,3 +129,9 @@ pub trait StatefulBiConsumer<T, U> {
     /// ```
     fn accept(&mut self, first: &T, second: &U);
 }
+
+crate::macros::impl_closure_trait!(
+    StatefulBiConsumer<T, U>,
+    accept,
+    FnMut(first: &T, second: &U)
+);

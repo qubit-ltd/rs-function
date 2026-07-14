@@ -101,15 +101,11 @@ impl<E> BoxRunnableOnce<E> {
         N: RunnableOnce<E> + Send + 'static,
         E: 'static,
     {
-        let metadata = self.metadata;
         let function = self.function;
-        BoxRunnableOnce::new_with_metadata(
-            move || {
-                function()?;
-                next.run()
-            },
-            metadata,
-        )
+        BoxRunnableOnce::new(move || {
+            function()?;
+            next.run()
+        })
     }
 
     /// Runs this runnable before a callable.

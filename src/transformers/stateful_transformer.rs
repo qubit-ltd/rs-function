@@ -65,3 +65,9 @@ pub trait StatefulTransformer<T, R> {
     /// The transformed output value
     fn apply(&mut self, input: T) -> R;
 }
+
+crate::macros::impl_closure_trait!(
+    StatefulTransformer<T, R>,
+    apply,
+    FnMut(input: T) -> R
+);

@@ -17,7 +17,6 @@ use {
     crate::consumers::macros::impl_consumer_common_methods,
     crate::consumers::macros::impl_consumer_debug_display,
     crate::consumers::macros::impl_shared_consumer_methods,
-    crate::macros::impl_closure_trait,
     std::sync::Arc,
 };
 
@@ -99,15 +98,3 @@ impl_consumer_clone!(ArcConsumer<T>);
 
 // Use macro to generate Debug and Display implementations
 impl_consumer_debug_display!(ArcConsumer<T>);
-
-// ============================================================================
-// 5. Implement Consumer trait for closures
-// ============================================================================
-
-// Implement Consumer for all Fn(&T)
-impl_closure_trait!(
-    Consumer<T>,
-    accept,
-    BoxConsumerOnce,
-    Fn(value: &T)
-);

@@ -63,7 +63,8 @@ impl<T, R, E> CallableWith<T, R, E> for RcCallableWith<T, R, E> {
     /// Executes the shared callable with mutable input.
     #[inline]
     fn call_with(&mut self, input: &mut T) -> Result<R, E> {
-        (self.function.borrow_mut())(input)
+        let mut function = self.function.borrow_mut();
+        function(input)
     }
 }
 

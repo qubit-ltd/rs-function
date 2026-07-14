@@ -13,7 +13,6 @@ use {
     super::ALWAYS_FALSE_NAME,
     super::ALWAYS_TRUE_NAME,
     crate::StatefulBiPredicate,
-    crate::macros::impl_closure_trait,
     crate::predicates::macros::impl_predicate_clone,
     crate::predicates::macros::impl_predicate_common_methods,
     crate::predicates::macros::impl_predicate_debug_display,
@@ -70,7 +69,10 @@ impl<T, U> ArcStatefulBiPredicate<T, U> {
     {
         let self_fn = self.function.clone();
         ArcStatefulBiPredicate::new(move |first: &T, second: &U| {
-            let matched = (self_fn.lock())(first, second);
+            let matched = {
+                let mut function = self_fn.lock();
+                function(first, second)
+            };
             matched && other.test(first, second)
         })
     }
@@ -96,7 +98,10 @@ impl<T, U> ArcStatefulBiPredicate<T, U> {
     {
         let self_fn = self.function.clone();
         ArcStatefulBiPredicate::new(move |first: &T, second: &U| {
-            let matched = (self_fn.lock())(first, second);
+            let matched = {
+                let mut function = self_fn.lock();
+                function(first, second)
+            };
             matched || other.test(first, second)
         })
     }
@@ -121,7 +126,10 @@ impl<T, U> ArcStatefulBiPredicate<T, U> {
     {
         let self_fn = self.function.clone();
         ArcStatefulBiPredicate::new(move |first: &T, second: &U| {
-            let matched = (self_fn.lock())(first, second);
+            let matched = {
+                let mut function = self_fn.lock();
+                function(first, second)
+            };
             !(matched && other.test(first, second))
         })
     }
@@ -147,7 +155,10 @@ impl<T, U> ArcStatefulBiPredicate<T, U> {
     {
         let self_fn = self.function.clone();
         ArcStatefulBiPredicate::new(move |first: &T, second: &U| {
-            let matched = (self_fn.lock())(first, second);
+            let matched = {
+                let mut function = self_fn.lock();
+                function(first, second)
+            };
             matched ^ other.test(first, second)
         })
     }
@@ -172,7 +183,10 @@ impl<T, U> ArcStatefulBiPredicate<T, U> {
     {
         let self_fn = self.function.clone();
         ArcStatefulBiPredicate::new(move |first: &T, second: &U| {
-            let matched = (self_fn.lock())(first, second);
+            let matched = {
+                let mut function = self_fn.lock();
+                function(first, second)
+            };
             !(matched || other.test(first, second))
         })
     }
@@ -186,10 +200,15 @@ where
     type Output = ArcStatefulBiPredicate<T, U>;
 
     fn not(self) -> Self::Output {
+        let metadata = self.metadata;
         let function = self.function;
-        ArcStatefulBiPredicate::new(move |first: &T, second: &U| {
-            !((function.lock())(first, second))
-        })
+        ArcStatefulBiPredicate::new_with_metadata(
+            move |first: &T, second: &U| {
+                let mut function = function.lock();
+                !function(first, second)
+            },
+            metadata,
+        )
     }
 }
 
@@ -202,9 +221,13 @@ where
 
     fn not(self) -> Self::Output {
         let function = self.function.clone();
-        ArcStatefulBiPredicate::new(move |first: &T, second: &U| {
-            !((function.lock())(first, second))
-        })
+        ArcStatefulBiPredicate::new_with_metadata(
+            move |first: &T, second: &U| {
+                let mut function = function.lock();
+                !function(first, second)
+            },
+            self.metadata.clone(),
+        )
     }
 }
 
@@ -217,13 +240,7 @@ impl_predicate_debug_display!(ArcStatefulBiPredicate<T, U>);
 
 impl<T, U> StatefulBiPredicate<T, U> for ArcStatefulBiPredicate<T, U> {
     fn test(&mut self, first: &T, second: &U) -> bool {
-        (self.function.lock())(first, second)
+        let mut function = self.function.lock();
+        function(first, second)
     }
 }
-
-// Blanket implementation for mutable closures matching FnMut(&T, &U) -> bool.
-impl_closure_trait!(
-    StatefulBiPredicate<T, U>,
-    test,
-    FnMut(first: &T, second: &U) -> bool
-);
