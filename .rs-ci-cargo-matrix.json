@@ -26,28 +26,16 @@
       "features": ["stateful"]
     },
     {
-      "name": "combinators",
-      "commands": ["test"],
-      "defaultFeatures": false,
-      "features": ["combinators"]
-    },
-    {
       "name": "rc-stateful",
       "commands": ["test"],
       "defaultFeatures": false,
       "features": ["rc", "stateful"]
     },
     {
-      "name": "once-combinators",
+      "name": "once-stateful",
       "commands": ["test"],
       "defaultFeatures": false,
-      "features": ["once", "combinators"]
-    },
-    {
-      "name": "stateful-combinators",
-      "commands": ["test"],
-      "defaultFeatures": false,
-      "features": ["stateful", "combinators"]
+      "features": ["once", "stateful"]
     },
     {
       "name": "full",

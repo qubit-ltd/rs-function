@@ -15,5 +15,4 @@ permissions:
 
 jobs:
   rust-ci:
-    uses: qubit-ltd/rs-ci/.github/workflows/rust-ci.yml@main
-    secrets: inherit
+    uses: qubit-ltd/rs-ci/.github/workflows/rust-ci.yml@4912370cd7529f2a3bbb7086fdcaf704eb75247d
