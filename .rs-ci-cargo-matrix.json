@@ -3,45 +3,51 @@
   "checks": [
     {
       "name": "baseline",
-      "commands": ["check"],
+      "commands": ["test", "doc"],
       "defaultFeatures": false,
       "features": []
     },
     {
       "name": "rc",
-      "commands": ["check"],
+      "commands": ["test"],
       "defaultFeatures": false,
       "features": ["rc"]
     },
     {
       "name": "once",
-      "commands": ["check"],
+      "commands": ["test"],
       "defaultFeatures": false,
       "features": ["once"]
     },
     {
       "name": "stateful",
-      "commands": ["check"],
+      "commands": ["test"],
       "defaultFeatures": false,
       "features": ["stateful"]
     },
     {
       "name": "combinators",
-      "commands": ["check"],
+      "commands": ["test"],
       "defaultFeatures": false,
       "features": ["combinators"]
     },
     {
       "name": "rc-stateful",
-      "commands": ["check"],
+      "commands": ["test"],
       "defaultFeatures": false,
       "features": ["rc", "stateful"]
     },
     {
       "name": "once-combinators",
-      "commands": ["check"],
+      "commands": ["test"],
       "defaultFeatures": false,
       "features": ["once", "combinators"]
+    },
+    {
+      "name": "stateful-combinators",
+      "commands": ["test"],
+      "defaultFeatures": false,
+      "features": ["stateful", "combinators"]
     },
     {
       "name": "full",
