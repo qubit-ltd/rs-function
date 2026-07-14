@@ -11,6 +11,14 @@ use qubit_function::testers::tester::{
     arc_tester::ArcTester,
 };
 
+struct ArcAlwaysTrue;
+
+impl Tester for ArcAlwaysTrue {
+    fn test(&self) -> bool {
+        true
+    }
+}
+
 #[test]
 fn test_arc_tester_observable_behavior() {
     let type_name = std::any::type_name::<ArcTester>();
@@ -26,4 +34,29 @@ fn test_arc_tester_not_operator_observable_behavior() {
     let borrowed_negated = !&original;
     assert!(!borrowed_negated.test());
     assert!(original.test());
+}
+
+/// Verifies naming, diagnostics, and clone-independent metadata updates.
+#[test]
+fn test_arc_tester_name_and_diagnostics() {
+    let original = ArcTester::new_with_name("ready", || true);
+    let renamed = original.clone().with_name("renamed");
+
+    assert_eq!(original.name(), Some("ready"));
+    assert_eq!(renamed.name(), Some("renamed"));
+    assert_eq!(
+        format!("{original:?}"),
+        "ArcTester { name: Some(\"ready\") }"
+    );
+    assert_eq!(format!("{original}"), "ArcTester(ready)");
+}
+
+/// Verifies that Arc logical composition accepts thread-safe Tester objects.
+#[test]
+fn test_arc_tester_and_semantic_trait() {
+    let first = ArcTester::new(|| true);
+    let combined = first.and(ArcAlwaysTrue);
+
+    assert!(combined.test());
+    assert!(first.test());
 }

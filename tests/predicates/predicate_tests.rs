@@ -164,8 +164,8 @@ mod box_predicate_tests {
         let pred = BoxPredicate::new_with_name("positive", |x: &i32| *x > 0);
         let negated = !pred;
 
-        // Combined predicates do not inherit or generate names
-        assert_eq!(negated.name(), None);
+        // Negation preserves the identity of its single source predicate.
+        assert_eq!(negated.name(), Some("positive"));
         assert!(!negated.test(&5));
     }
 

@@ -162,6 +162,27 @@ fn main() {
     assert!(output.status.success(), "{}", cargo_diagnostics(&output));
 }
 
+/// Verifies that semantic closure implementations do not depend on wrappers.
+#[test]
+fn test_baseline_semantic_trait_accepts_closure() {
+    let output = compile_consumer(
+        &[],
+        r#"
+use qubit_function::Function;
+
+fn invoke<F: Function<i32, i32>>(function: F) -> i32 {
+    function.apply(&1)
+}
+
+fn main() {
+    assert_eq!(invoke(|value: &i32| *value + 1), 2);
+}
+"#,
+    );
+
+    assert!(output.status.success(), "{}", cargo_diagnostics(&output));
+}
+
 #[test]
 fn test_baseline_rejects_deep_tester_ops_path() {
     let output = compile_consumer(

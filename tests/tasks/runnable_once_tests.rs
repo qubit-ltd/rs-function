@@ -135,6 +135,7 @@ fn test_box_runnable_once_name_management() {
     task.clear_name();
     assert_eq!(task.name(), None);
     assert_eq!(task.to_string(), "BoxRunnableOnce");
+    task.run().expect("named runnable-once should succeed");
 }
 
 #[test]
@@ -188,6 +189,28 @@ fn test_box_runnable_once_and_then_skips_next_on_error() {
 
 #[test]
 fn test_box_runnable_once_combinators_cover_branches_with_same_next_types() {
+    let events = Arc::new(AtomicUsize::new(0));
+    let first = BoxRunnableOnce::new(|| Ok::<(), &'static str>(()));
+    first
+        .and_then(SendClonedRunnableOnce {
+            events: Arc::clone(&events),
+        })
+        .run()
+        .expect("send concrete and_then next should run after success");
+    assert_eq!(events.load(Ordering::SeqCst), 1);
+
+    let first = BoxRunnableOnce::new(|| Err::<(), &'static str>("stop"));
+    assert_eq!(
+        first
+            .and_then(SendClonedRunnableOnce {
+                events: Arc::clone(&events),
+            })
+            .run()
+            .expect_err("send concrete and_then next should be skipped"),
+        "stop",
+    );
+    assert_eq!(events.load(Ordering::SeqCst), 1);
+
     let success_flag = Rc::new(Cell::new(false));
     let first = LocalBoxRunnableOnce::new(|| Ok::<(), io::Error>(()));
     let chained = first.and_then(ClonedRunnableOnce {
