@@ -8,6 +8,4 @@
 
 mod box_conditional_transformer_once_tests;
 mod box_transformer_once_tests;
-mod fn_transformer_once_ops_additional_tests;
-mod fn_transformer_once_ops_tests;
 mod unary_operator_once_tests;

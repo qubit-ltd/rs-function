@@ -8,4 +8,3 @@
 
 mod box_conditional_mutating_function_once_tests;
 mod box_mutating_function_once_tests;
-mod fn_mutating_function_once_ops_tests;

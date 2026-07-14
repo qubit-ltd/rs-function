@@ -10,6 +10,5 @@ mod arc_conditional_stateful_transformer_tests;
 mod arc_stateful_transformer_tests;
 mod box_conditional_stateful_transformer_tests;
 mod box_stateful_transformer_tests;
-mod fn_stateful_transformer_ops_tests;
 mod rc_conditional_stateful_transformer_tests;
 mod rc_stateful_transformer_tests;

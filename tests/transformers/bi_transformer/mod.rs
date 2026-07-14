@@ -12,6 +12,5 @@ mod bi_transformer_and_then_tests;
 mod binary_operator_tests;
 mod box_bi_transformer_tests;
 mod box_conditional_bi_transformer_tests;
-mod fn_bi_transformer_ops_tests;
 mod rc_bi_transformer_tests;
 mod rc_conditional_bi_transformer_tests;

@@ -8,5 +8,5 @@
 
 mod arc_comparator_tests;
 mod box_comparator_tests;
-mod fn_comparator_ops_tests;
+mod comparator_tests;
 mod rc_comparator_tests;

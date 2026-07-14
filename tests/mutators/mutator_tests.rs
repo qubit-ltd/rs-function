@@ -6,13 +6,11 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-// qubit-style: allow explicit-imports
 //! Unit tests for Mutator types (stateless Fn(&mut T))
 
 use qubit_function::{
     ArcMutator,
     BoxMutator,
-    FnMutatorOps,
     Mutator,
     MutatorOnce,
     RcMutator,
@@ -664,9 +662,8 @@ mod test_rc_mutator {
 // ============================================================================
 
 #[cfg(test)]
-mod test_fn_mutator_ops {
+mod wrapper_composition_tests {
     use super::{
-        FnMutatorOps,
         Mutator,
         MutatorOnce,
     };
@@ -677,15 +674,6 @@ mod test_fn_mutator_ops {
         let mut value = 5;
         closure.apply(&mut value);
         assert_eq!(value, 10);
-    }
-
-    #[test]
-    fn test_closure_and_then() {
-        let chained = (|x: &mut i32| *x *= 2).and_then(|x: &mut i32| *x += 10);
-
-        let mut value = 5;
-        chained.apply(&mut value);
-        assert_eq!(value, 20); // (5 * 2) + 10
     }
 }
 

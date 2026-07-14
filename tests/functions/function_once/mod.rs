@@ -8,4 +8,3 @@
 
 mod box_conditional_function_once_tests;
 mod box_function_once_tests;
-mod fn_function_once_ops_tests;

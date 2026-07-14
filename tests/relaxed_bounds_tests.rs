@@ -39,20 +39,6 @@ use qubit_function::{
     BoxTransformerOnce,
     Consumer,
     ConsumerOnce,
-    FnBiFunctionOnceOps,
-    FnBiFunctionOps,
-    FnBiMutatingFunctionOnceOps,
-    FnBiMutatingFunctionOps,
-    FnBiPredicateOps,
-    FnBiTransformerOnceOps,
-    FnBiTransformerOps,
-    FnPredicateOps,
-    FnStatefulBiTransformerOps,
-    FnStatefulSupplierOps,
-    FnStatefulTransformerOps,
-    FnTesterOps,
-    FnTransformerOnceOps,
-    FnTransformerOps,
     Mutator,
     MutatorOnce,
     Predicate,
@@ -60,7 +46,6 @@ use qubit_function::{
     StatefulFunction,
     Supplier,
     SupplierOnce,
-    Tester,
     Transformer,
     TransformerOnce,
     UnaryOperator,
@@ -292,83 +277,8 @@ fn make_arc_supplier_with_lifetime(_: &i32) -> ArcSupplier<PhantomData<&i32>> {
 }
 
 #[test]
-fn test_fn_ops_traits_allow_non_static_closure_implementations() {
+fn test_semantic_traits_allow_non_static_closure_implementations() {
     let a = 3;
-    let b = 5;
-    let a_ref = &a;
-    let b_ref = &b;
-
-    let bi_function = |x: &i32, y: &i32| x + y + a_ref;
-    assert_fn_bi_function_ops_impl::<i32, i32, i32, _>(bi_function);
-
-    let bi_mutating_function = |x: &mut i32, y: &mut i32| {
-        *x += *a_ref;
-        *y += *b_ref;
-        *x + *y
-    };
-    assert_fn_bi_mutating_function_ops_impl::<i32, i32, i32, _>(
-        bi_mutating_function,
-    );
-
-    let predicate = |x: &i32| *x > *a_ref;
-    assert_fn_predicate_ops_impl::<i32, _>(predicate);
-
-    let bi_predicate = |x: &i32, y: &i32| *x + *y > *b_ref;
-    assert_fn_bi_predicate_ops_impl::<i32, i32, _>(bi_predicate);
-
-    let mut counter = 0;
-    let stateful_supplier = || {
-        counter += 1;
-        counter + *a_ref
-    };
-    assert_fn_stateful_supplier_ops_impl::<i32, _>(stateful_supplier);
-
-    let transformer = |x: i32| x + *a_ref;
-    assert_fn_transformer_ops_impl::<i32, i32, _>(transformer);
-
-    let bi_transformer = |x: i32, y: i32| x + y + *a_ref;
-    assert_fn_bi_transformer_ops_impl::<i32, i32, i32, _>(bi_transformer);
-
-    let mut offset = 0;
-    let stateful_transformer = move |x: i32| {
-        offset += 1;
-        x + offset + *a_ref
-    };
-    assert_fn_stateful_transformer_ops_impl::<i32, i32, _>(
-        stateful_transformer,
-    );
-
-    let mut delta = 0;
-    let stateful_bi_transformer = move |x: i32, y: i32| {
-        delta += 1;
-        x + y + delta + *b_ref
-    };
-    assert_fn_stateful_bi_transformer_ops_impl::<i32, i32, i32, _>(
-        stateful_bi_transformer,
-    );
-
-    let transformer_once = move |x: i32| x + *b_ref;
-    assert_fn_transformer_once_ops_impl::<i32, i32, _>(transformer_once);
-
-    let bi_transformer_once = move |x: i32, y: i32| x * y + *a_ref;
-    assert_fn_bi_transformer_once_ops_impl::<i32, i32, i32, _>(
-        bi_transformer_once,
-    );
-
-    let bi_function_once = move |x: &i32, y: &i32| *x + *y + *a_ref;
-    assert_fn_bi_function_once_ops_impl::<i32, i32, i32, _>(bi_function_once);
-
-    let bi_mutating_function_once = move |x: &mut i32, y: &mut i32| {
-        *x += *a_ref;
-        *y += *b_ref;
-        *x + *y
-    };
-    assert_fn_bi_mutating_function_once_ops_impl::<i32, i32, i32, _>(
-        bi_mutating_function_once,
-    );
-
-    let tester = || *a_ref < *b_ref;
-    assert_fn_tester_ops_impl::<_>(tester);
 
     let stateful_function = |value: &Borrowed<'_>| *value.value;
     assert_stateful_function_impl(&a, stateful_function);
@@ -381,104 +291,6 @@ fn test_fn_ops_traits_allow_non_static_closure_implementations() {
     assert_binary_operator_impl(&a, BorrowedBinaryOp);
     assert_unary_operator_once_impl(&a, BorrowedUnaryOpOnce);
     assert_binary_operator_once_impl(&a, BorrowedBinaryOpOnce);
-}
-
-fn assert_fn_bi_function_ops_impl<T, U, R, F>(f: F)
-where
-    F: FnBiFunctionOps<T, U, R>,
-{
-    let _ = f;
-}
-
-fn assert_fn_bi_mutating_function_ops_impl<T, U, R, F>(f: F)
-where
-    F: FnBiMutatingFunctionOps<T, U, R>,
-{
-    let _ = f;
-}
-
-fn assert_fn_bi_function_once_ops_impl<T, U, R, F>(f: F)
-where
-    F: FnBiFunctionOnceOps<T, U, R>,
-{
-    let _ = f;
-}
-
-fn assert_fn_bi_mutating_function_once_ops_impl<T, U, R, F>(f: F)
-where
-    F: FnBiMutatingFunctionOnceOps<T, U, R>,
-{
-    let _ = f;
-}
-
-fn assert_fn_predicate_ops_impl<T, F>(f: F)
-where
-    F: FnPredicateOps<T>,
-{
-    let _ = f;
-}
-
-fn assert_fn_bi_predicate_ops_impl<T, U, F>(f: F)
-where
-    F: FnBiPredicateOps<T, U>,
-{
-    let _ = f;
-}
-
-fn assert_fn_stateful_supplier_ops_impl<T, F>(f: F)
-where
-    F: FnStatefulSupplierOps<T>,
-{
-    let _ = f;
-}
-
-fn assert_fn_transformer_ops_impl<T, R, F>(f: F)
-where
-    F: FnTransformerOps<T, R>,
-{
-    let _ = f;
-}
-
-fn assert_fn_bi_transformer_ops_impl<T, U, R, F>(f: F)
-where
-    F: FnBiTransformerOps<T, U, R>,
-{
-    let _ = f;
-}
-
-fn assert_fn_stateful_transformer_ops_impl<T, R, F>(f: F)
-where
-    F: FnStatefulTransformerOps<T, R>,
-{
-    let _ = f;
-}
-
-fn assert_fn_stateful_bi_transformer_ops_impl<T, U, R, F>(f: F)
-where
-    F: FnStatefulBiTransformerOps<T, U, R>,
-{
-    let _ = f;
-}
-
-fn assert_fn_transformer_once_ops_impl<T, R, F>(f: F)
-where
-    F: FnTransformerOnceOps<T, R>,
-{
-    let _ = f;
-}
-
-fn assert_fn_bi_transformer_once_ops_impl<T, U, R, F>(f: F)
-where
-    F: FnBiTransformerOnceOps<T, U, R>,
-{
-    let _ = f;
-}
-
-fn assert_fn_tester_ops_impl<F>(f: F)
-where
-    F: FnTesterOps + Tester,
-{
-    let _ = f;
 }
 
 fn assert_stateful_function_impl<'a, F>(_: &'a i32, f: F)

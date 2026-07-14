@@ -10,6 +10,5 @@ mod arc_conditional_consumer_tests;
 mod arc_consumer_tests;
 mod box_conditional_consumer_tests;
 mod box_consumer_tests;
-mod fn_consumer_ops_tests;
 mod rc_conditional_consumer_tests;
 mod rc_consumer_tests;

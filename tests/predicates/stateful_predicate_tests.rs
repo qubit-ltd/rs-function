@@ -6,7 +6,6 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-// qubit-style: allow explicit-imports
 //! Unit tests for the stateful predicate module.
 
 use std::cell::RefCell;
@@ -22,7 +21,6 @@ use std::sync::{
 use qubit_function::predicates::{
     ArcStatefulPredicate,
     BoxStatefulPredicate,
-    FnStatefulPredicateOps,
     RcStatefulPredicate,
     StatefulPredicate,
 };
@@ -93,7 +91,8 @@ fn test_box_stateful_predicate_composition_preserves_state() {
 }
 
 #[test]
-fn test_box_stateful_predicate_logical_operations_cover_all_branches() {
+fn test_box_stateful_predicate_logical_operations_cover_all_branches_migrated()
+{
     let mut and_pred = BoxStatefulPredicate::new(|value: &i32| *value > 0)
         .and(|value: &i32| value % 2 == 0);
     assert!(and_pred.test(&4));
@@ -286,15 +285,12 @@ fn test_stateful_predicate_not_operator() {
 }
 
 #[test]
-fn test_fn_stateful_predicate_ops_observable_behavior() {
-    fn assert_ops<F: FnStatefulPredicateOps<i32>>(_: &F) {}
-
+fn test_box_stateful_predicate_observable_behavior() {
     let mut calls = 0;
-    let predicate = move |value: &i32| {
+    let predicate = BoxStatefulPredicate::new(move |value: &i32| {
         calls += 1;
         calls % 2 == 0 && *value > 0
-    };
-    assert_ops(&predicate);
+    });
 
     let mut composed = predicate.or(|value: &i32| *value == 0);
 
@@ -304,38 +300,38 @@ fn test_fn_stateful_predicate_ops_observable_behavior() {
 }
 
 #[test]
-fn test_fn_stateful_predicate_ops_logical_operations_cover_all_branches() {
-    let mut and_pred =
-        (|value: &i32| *value > 0).and(|value: &i32| value % 2 == 0);
+fn test_box_stateful_predicate_logical_operations_cover_all_branches() {
+    let mut and_pred = BoxStatefulPredicate::new(|value: &i32| *value > 0)
+        .and(|value: &i32| value % 2 == 0);
     assert!(and_pred.test(&4));
     assert!(!and_pred.test(&3));
     assert!(!and_pred.test(&-2));
 
-    let mut or_pred =
-        (|value: &i32| *value > 0).or(|value: &i32| value % 2 == 0);
+    let mut or_pred = BoxStatefulPredicate::new(|value: &i32| *value > 0)
+        .or(|value: &i32| value % 2 == 0);
     assert!(or_pred.test(&4));
     assert!(or_pred.test(&-2));
     assert!(!or_pred.test(&-3));
 
-    let mut not_pred = (|value: &i32| *value > 0).not();
+    let mut not_pred = !BoxStatefulPredicate::new(|value: &i32| *value > 0);
     assert!(!not_pred.test(&5));
     assert!(not_pred.test(&-5));
 
-    let mut nand_pred =
-        (|value: &i32| *value > 0).nand(|value: &i32| value % 2 == 0);
+    let mut nand_pred = BoxStatefulPredicate::new(|value: &i32| *value > 0)
+        .nand(|value: &i32| value % 2 == 0);
     assert!(!nand_pred.test(&4));
     assert!(nand_pred.test(&3));
     assert!(nand_pred.test(&-2));
 
-    let mut xor_pred =
-        (|value: &i32| *value > 0).xor(|value: &i32| value % 2 == 0);
+    let mut xor_pred = BoxStatefulPredicate::new(|value: &i32| *value > 0)
+        .xor(|value: &i32| value % 2 == 0);
     assert!(!xor_pred.test(&4));
     assert!(xor_pred.test(&3));
     assert!(xor_pred.test(&-2));
     assert!(!xor_pred.test(&-3));
 
-    let mut nor_pred =
-        (|value: &i32| *value > 0).nor(|value: &i32| value % 2 == 0);
+    let mut nor_pred = BoxStatefulPredicate::new(|value: &i32| *value > 0)
+        .nor(|value: &i32| value % 2 == 0);
     assert!(!nor_pred.test(&4));
     assert!(!nor_pred.test(&-2));
     assert!(nor_pred.test(&-3));

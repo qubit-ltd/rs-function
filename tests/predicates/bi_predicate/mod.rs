@@ -8,5 +8,4 @@
 
 mod arc_bi_predicate_tests;
 mod box_bi_predicate_tests;
-mod fn_bi_predicate_ops_tests;
 mod rc_bi_predicate_tests;

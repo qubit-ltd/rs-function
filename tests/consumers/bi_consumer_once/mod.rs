@@ -8,4 +8,3 @@
 
 mod box_bi_consumer_once_tests;
 mod box_conditional_bi_consumer_once_tests;
-mod fn_bi_consumer_once_ops_tests;

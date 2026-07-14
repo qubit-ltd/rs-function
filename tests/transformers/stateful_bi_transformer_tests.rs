@@ -6,7 +6,6 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-// qubit-style: allow explicit-imports
 use qubit_function::{
     ArcStatefulBiTransformer,
     ArcStatefulBinaryOperator,
@@ -15,7 +14,6 @@ use qubit_function::{
     BoxStatefulBiTransformer,
     BoxStatefulBinaryOperator,
     BoxStatefulTransformer,
-    FnStatefulBiTransformerOps,
     RcStatefulBiTransformer,
     RcStatefulBinaryOperator,
     RcStatefulTransformer,
@@ -504,69 +502,8 @@ fn test_closure_as_stateful_bi_transformer() {
 }
 
 // ============================================================================
-// FnStatefulBiTransformerOps Tests
+// Concrete wrapper composition tests
 // ============================================================================
-
-#[test]
-fn test_fn_stateful_bi_transformer_ops_and_then() {
-    // Test and_then extension method for closures
-    let mut counter1 = 0;
-    let bi_trans = move |x: i32, y: i32| {
-        counter1 += 1;
-        x + y + counter1
-    };
-
-    let mut counter2 = 0;
-    let trans = move |x: i32| {
-        counter2 += 1;
-        x * counter2
-    };
-
-    let mut composed = bi_trans.and_then(trans);
-    assert_eq!(composed.apply(10, 20), 31); // (10 + 20 + 1) * 1
-    assert_eq!(composed.apply(10, 20), 64); // (10 + 20 + 2) * 2
-}
-
-#[test]
-fn test_fn_stateful_bi_transformer_ops_and_then_with_transformer() {
-    // Test and_then with a stateful transformer object
-    let mut counter = 0;
-    let bi_trans = move |x: i32, y: i32| {
-        counter += 1;
-        x + y + counter
-    };
-
-    let trans = BoxStatefulTransformer::new(|x: i32| x * 2);
-    let mut composed = bi_trans.and_then(trans);
-
-    assert_eq!(composed.apply(5, 5), 22); // (5 + 5 + 1) * 2
-    assert_eq!(composed.apply(5, 5), 24); // (5 + 5 + 2) * 2
-}
-
-#[test]
-fn test_fn_stateful_bi_transformer_ops_when() {
-    // Test when extension method for closures
-    let mut transformer = (|x: i32, y: i32| x + y)
-        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-        .or_else(|x, y| x * y);
-
-    assert_eq!(transformer.apply(5, 3), 8);
-    assert_eq!(transformer.apply(-5, 3), -15);
-    assert_eq!(transformer.apply(0, 5), 0);
-}
-
-#[test]
-fn test_fn_stateful_bi_transformer_ops_when_with_predicate() {
-    // Test when with a predicate object
-    let predicate = BoxBiPredicate::new(|x: &i32, _y: &i32| *x >= 10);
-
-    let mut transformer = (|x: i32, y: i32| x + y)
-        .when(predicate)
-        .or_else(|x, y| x * y);
-
-    assert_eq!(transformer.apply(15, 5), 20); // x >= 10, add
-    assert_eq!(transformer.apply(5, 10), 50); // x < 10, multiply
-}
 
 // ============================================================================
 // BoxConditionalStatefulBiTransformer Tests

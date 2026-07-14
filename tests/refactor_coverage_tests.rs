@@ -19,7 +19,6 @@ use qubit_function::{
     BoxStatefulBiPredicate,
     BoxStatefulTester,
     Callable,
-    FnStatefulBiTransformerOps,
     RcCallable,
     RcComparator,
     RcRunnable,
@@ -176,12 +175,4 @@ fn stateful_tester_not_covers_owned_and_borrowed_wrappers() {
     assert!(!box_owned.test());
     assert!(!rc_owned.test());
     assert!(rc_borrowed.test());
-}
-
-#[test]
-fn stateful_bi_transformer_to_fn_clones_the_transformer() {
-    let transformer = |left: i32, right: i32| left + right;
-    let mut function = FnStatefulBiTransformerOps::to_fn(&transformer);
-
-    assert_eq!(function(20, 22), 42);
 }

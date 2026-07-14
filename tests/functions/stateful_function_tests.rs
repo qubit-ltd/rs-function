@@ -6,7 +6,6 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-// qubit-style: allow explicit-imports
 //! Comprehensive tests for StatefulFunction trait and its implementations
 
 use std::cell::RefCell;
@@ -572,47 +571,8 @@ fn test_stateful_function_toggle() {
 }
 
 // ============================================================================
-// FnStatefulFunctionOps Extension Trait Tests
+// Concrete wrapper composition tests
 // ============================================================================
-
-#[test]
-fn test_fn_stateful_function_ops_and_then() {
-    // Test FnStatefulFunctionOps::and_then for closures
-    use qubit_function::FnStatefulFunctionOps;
-
-    let mut counter1 = 0;
-    let func1 = move |x: &i32| {
-        counter1 += 1;
-        x + counter1
-    };
-
-    let mut counter2 = 0;
-    let func2 = move |x: &i32| {
-        counter2 += 1;
-        x * counter2
-    };
-
-    let mut composed = func1.and_then(func2);
-    assert_eq!(composed.apply(&10), 11);
-}
-
-#[test]
-fn test_fn_stateful_function_ops_when() {
-    // Test FnStatefulFunctionOps::when for closures
-    use qubit_function::FnStatefulFunctionOps;
-
-    let counter = Rc::new(RefCell::new(0));
-    let counter_clone = Rc::clone(&counter);
-    let func = move |x: &i32| {
-        *counter_clone.borrow_mut() += 1;
-        x * 2
-    };
-
-    let mut conditional = func.when(|x: &i32| *x > 0).or_else(|x: &i32| -(*x));
-    assert_eq!(conditional.apply(&5), 10); // 5 > 0, apply * 2
-    assert_eq!(conditional.apply(&-5), 5); // -5 <= 0, apply -(*x) = -(-5) = 5
-    assert_eq!(*counter.borrow(), 1); // Only the first call satisfies the condition
-}
 
 // ============================================================================
 // Complex State Management Tests

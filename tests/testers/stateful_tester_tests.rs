@@ -10,7 +10,6 @@ use qubit_function::testers::stateful_tester::{
     StatefulTester,
     arc_stateful_tester::ArcStatefulTester,
     box_stateful_tester::BoxStatefulTester,
-    fn_stateful_tester_ops::FnStatefulTesterOps,
     rc_stateful_tester::RcStatefulTester,
 };
 use std::{
@@ -229,37 +228,37 @@ fn test_arc_stateful_tester_logical_operations_cover_branches() {
 }
 
 #[test]
-fn test_fn_stateful_tester_ops_logical_operations_cover_branches() {
-    let mut and_true = FnStatefulTesterOps::and(|| true, || true);
+fn test_box_stateful_tester_logical_operations_cover_all_branches() {
+    let mut and_true = BoxStatefulTester::new(|| true).and(|| true);
     assert!(and_true.test());
 
-    let mut and_false = FnStatefulTesterOps::and(|| false, || true);
+    let mut and_false = BoxStatefulTester::new(|| false).and(|| true);
     assert!(!and_false.test());
 
-    let mut or_true = FnStatefulTesterOps::or(|| true, || false);
+    let mut or_true = BoxStatefulTester::new(|| true).or(|| false);
     assert!(or_true.test());
 
-    let mut or_false = FnStatefulTesterOps::or(|| false, || false);
+    let mut or_false = BoxStatefulTester::new(|| false).or(|| false);
     assert!(!or_false.test());
 
-    let mut not_true = FnStatefulTesterOps::not(|| false);
+    let mut not_true = !BoxStatefulTester::new(|| false);
     assert!(not_true.test());
 
-    let mut nand_false = FnStatefulTesterOps::nand(|| true, || true);
+    let mut nand_false = BoxStatefulTester::new(|| true).nand(|| true);
     assert!(!nand_false.test());
 
-    let mut nand_true = FnStatefulTesterOps::nand(|| false, || true);
+    let mut nand_true = BoxStatefulTester::new(|| false).nand(|| true);
     assert!(nand_true.test());
 
-    let mut xor_true = FnStatefulTesterOps::xor(|| true, || false);
+    let mut xor_true = BoxStatefulTester::new(|| true).xor(|| false);
     assert!(xor_true.test());
 
-    let mut xor_false = FnStatefulTesterOps::xor(|| true, || true);
+    let mut xor_false = BoxStatefulTester::new(|| true).xor(|| true);
     assert!(!xor_false.test());
 
-    let mut nor_true = FnStatefulTesterOps::nor(|| false, || false);
+    let mut nor_true = BoxStatefulTester::new(|| false).nor(|| false);
     assert!(nor_true.test());
 
-    let mut nor_false = FnStatefulTesterOps::nor(|| true, || false);
+    let mut nor_false = BoxStatefulTester::new(|| true).nor(|| false);
     assert!(!nor_false.test());
 }

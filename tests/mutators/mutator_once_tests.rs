@@ -5,7 +5,6 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! # MutatorOnce Tests
 //!
 //! Tests the complete functionality of MutatorOnce trait and its
@@ -13,7 +12,6 @@
 
 use qubit_function::{
     BoxMutatorOnce,
-    FnMutatorOnceOps,
     MutatorOnce,
 };
 
@@ -76,6 +74,16 @@ fn test_box_mutator_once_when() {
     let mut target2 = vec![0];
     conditional2.apply(&mut target2);
     assert_eq!(target2, vec![0]); // Should not execute
+}
+
+#[test]
+fn test_box_mutator_once_and_then() {
+    let chained = BoxMutatorOnce::new(|value: &mut i32| *value *= 2)
+        .and_then(|value: &mut i32| *value += 3);
+
+    let mut value = 4;
+    chained.apply(&mut value);
+    assert_eq!(value, 11);
 }
 
 // ============================================================================
@@ -184,33 +192,6 @@ fn test_box_conditional_mutator_once_or_else() {
 // ============================================================================
 // Tests for closure implementations
 // ============================================================================
-
-#[test]
-fn test_closure_and_then() {
-    // Test and_then() from FnMutatorOnceOps trait
-    let data1 = vec![1, 2];
-    let data2 = vec![3, 4];
-
-    let chained = (move |x: &mut Vec<i32>| x.extend(data1))
-        .and_then(move |x: &mut Vec<i32>| x.extend(data2));
-
-    let mut target = vec![0];
-    chained.apply(&mut target);
-    assert_eq!(target, vec![0, 1, 2, 3, 4]);
-
-    // Test chaining multiple closures
-    let data3 = vec![5];
-    let data4 = vec![6];
-    let data5 = vec![7];
-
-    let multi_chained = (move |x: &mut Vec<i32>| x.extend(data3))
-        .and_then(move |x: &mut Vec<i32>| x.extend(data4))
-        .and_then(move |x: &mut Vec<i32>| x.extend(data5));
-
-    let mut target2 = vec![0];
-    multi_chained.apply(&mut target2);
-    assert_eq!(target2, vec![0, 5, 6, 7]);
-}
 
 // ============================================================================
 // BoxConditionalMutatorOnce Debug/Display Tests

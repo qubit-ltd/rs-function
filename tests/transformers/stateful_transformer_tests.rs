@@ -6,14 +6,11 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-// qubit-style: allow explicit-imports
-
 use qubit_function::{
     ArcPredicate,
     ArcStatefulTransformer,
     BoxPredicate,
     BoxStatefulTransformer,
-    FnStatefulTransformerOps,
     Predicate,
     RcPredicate,
     RcStatefulTransformer,
@@ -53,7 +50,7 @@ fn test_box_mapper_constant() {
 }
 
 #[test]
-fn test_box_mapper_and_then() {
+fn test_box_mapper_and_then_migrated() {
     let mut counter1 = 0;
     let mapper1 = BoxStatefulTransformer::new(move |x: i32| {
         counter1 += 1;
@@ -329,11 +326,11 @@ fn test_closure_as_mapper() {
 }
 
 // ============================================================================
-// FnStatefulTransformerOps Tests
+// BoxStatefulTransformer composition tests
 // ============================================================================
 
 #[test]
-fn test_fn_mapper_ops_and_then() {
+fn test_box_mapper_and_then() {
     let mut counter1 = 0;
     let mapper1 = move |x: i32| {
         counter1 += 1;
@@ -346,16 +343,16 @@ fn test_fn_mapper_ops_and_then() {
         x * counter2
     };
 
-    let mut composed = FnStatefulTransformerOps::and_then(mapper1, mapper2);
+    let mut composed = BoxStatefulTransformer::new(mapper1).and_then(mapper2);
     assert_eq!(composed.apply(10), 11); // (10 + 1) * 1
     assert_eq!(composed.apply(10), 24); // (10 + 2) * 2
 }
 
 #[test]
-fn test_fn_mapper_ops_when() {
-    let mut mapper =
-        FnStatefulTransformerOps::when(|x: i32| x * 2, |x: &i32| *x > 0)
-            .or_else(|x: i32| -x);
+fn test_box_mapper_when() {
+    let mut mapper = BoxStatefulTransformer::new(|x: i32| x * 2)
+        .when(|x: &i32| *x > 0)
+        .or_else(|x: i32| -x);
 
     assert_eq!(mapper.apply(5), 10);
     assert_eq!(mapper.apply(-5), 5);

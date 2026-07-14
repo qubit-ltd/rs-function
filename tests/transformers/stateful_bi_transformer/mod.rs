@@ -10,7 +10,6 @@ mod arc_conditional_stateful_bi_transformer_tests;
 mod arc_stateful_bi_transformer_tests;
 mod box_conditional_stateful_bi_transformer_tests;
 mod box_stateful_bi_transformer_tests;
-mod fn_stateful_bi_transformer_ops_tests;
 mod rc_conditional_stateful_bi_transformer_tests;
 mod rc_stateful_bi_transformer_tests;
 mod stateful_binary_operator_tests;

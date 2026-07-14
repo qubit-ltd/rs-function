@@ -10,7 +10,6 @@ mod arc_conditional_transformer_tests;
 mod arc_transformer_tests;
 mod box_conditional_transformer_tests;
 mod box_transformer_tests;
-mod fn_transformer_ops_tests;
 mod rc_conditional_transformer_tests;
 mod rc_transformer_tests;
 mod unary_operator_tests;

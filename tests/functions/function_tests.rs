@@ -524,30 +524,9 @@ fn test_conditional_function_edge_cases() {
 }
 
 // ============================================================================
-// FnFunctionOps Extension Trait Tests
+// Concrete wrapper composition tests
 // ============================================================================
 
-#[test]
-fn test_fn_function_ops_and_then() {
-    // Test FnFunctionOps::and_then for closures
-    use qubit_function::FnFunctionOps;
-
-    let double = |x: &i32| x * 2;
-    let to_string = |x: &i32| x.to_string();
-    let composed = double.and_then(to_string);
-    assert_eq!(composed.apply(&21), "42");
-}
-
-#[test]
-fn test_fn_function_ops_when() {
-    // Test FnFunctionOps::when for closures
-    use qubit_function::FnFunctionOps;
-
-    let double = |x: &i32| x * 2;
-    let conditional = double.when(|x: &i32| *x > 0).or_else(|x: &i32| -(*x));
-    assert_eq!(conditional.apply(&5), 10);
-    assert_eq!(conditional.apply(&-5), 5);
-}
 // ============================================================================
 // ArcConditionalFunction Clone Tests
 // ============================================================================

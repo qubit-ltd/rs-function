@@ -10,6 +10,5 @@ mod arc_conditional_stateful_consumer_tests;
 mod arc_stateful_consumer_tests;
 mod box_conditional_stateful_consumer_tests;
 mod box_stateful_consumer_tests;
-mod fn_stateful_consumer_ops_tests;
 mod rc_conditional_stateful_consumer_tests;
 mod rc_stateful_consumer_tests;

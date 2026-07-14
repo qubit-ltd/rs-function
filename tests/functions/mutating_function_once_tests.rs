@@ -6,12 +6,10 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-// qubit-style: allow explicit-imports
 //! Unit tests for MutatingFunctionOnce types (one-time FnOnce(&mut T) -> R)
 
 use qubit_function::{
     BoxMutatingFunctionOnce,
-    FnMutatingFunctionOnceOps,
     MutatingFunctionOnce,
 };
 
@@ -221,10 +219,7 @@ mod test_box_mutating_function_once {
 
 #[cfg(test)]
 mod test_closure {
-    use super::{
-        FnMutatingFunctionOnceOps,
-        MutatingFunctionOnce,
-    };
+    use super::MutatingFunctionOnce;
 
     #[test]
     fn test_closure_implements_trait() {
@@ -238,44 +233,6 @@ mod test_closure {
         let mut target = vec![0];
         let old_len = closure.apply(&mut target);
         assert_eq!(old_len, 1);
-        assert_eq!(target, vec![0, 1, 2, 3]);
-    }
-
-    #[test]
-    fn test_closure_and_then() {
-        let data1 = vec![1, 2];
-        let data2 = [3, 4];
-
-        let chained = (move |x: &mut Vec<i32>| {
-            x.extend(data1);
-            x.len() // returns usize
-        })
-        .and_then(move |len: &usize| {
-            // Calculate based on the length returned by the previous function
-            *len + data2.len()
-        });
-
-        let mut target = vec![0];
-        let final_len = chained.apply(&mut target);
-        assert_eq!(final_len, 5); // 2 (from data1) + 2 (data2.len()) + 1 (original len)
-        assert_eq!(target, vec![0, 1, 2]);
-    }
-
-    #[test]
-    fn test_closure_map() {
-        let data = vec![1, 2, 3];
-        let mapped = (move |x: &mut Vec<i32>| {
-            let old_len = x.len();
-            x.extend(data);
-            old_len
-        })
-        .and_then::<String, _>(|old_len: &usize| {
-            format!("Old length: {}", *old_len)
-        });
-
-        let mut target = vec![0];
-        let result = mapped.apply(&mut target);
-        assert_eq!(result, "Old length: 1");
         assert_eq!(target, vec![0, 1, 2, 3]);
     }
 

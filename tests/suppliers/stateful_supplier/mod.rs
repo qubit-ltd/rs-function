@@ -8,5 +8,4 @@
 
 mod arc_stateful_supplier_tests;
 mod box_stateful_supplier_tests;
-mod fn_stateful_supplier_ops_tests;
 mod rc_stateful_supplier_tests;

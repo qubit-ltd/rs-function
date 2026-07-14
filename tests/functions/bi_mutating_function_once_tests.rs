@@ -11,7 +11,6 @@
 use qubit_function::{
     BiMutatingFunctionOnce,
     BoxBiMutatingFunctionOnce,
-    FnBiMutatingFunctionOnceOps,
 };
 
 // ============================================================================
@@ -264,91 +263,9 @@ fn test_box_bi_mutating_function_once_one_time_use() {
 // Function Composition Tests - and_then
 // ============================================================================
 
-#[test]
-fn test_fn_bi_mutating_function_once_ops_and_then() {
-    let swap_and_sum = |x: &mut i32, y: &mut i32| {
-        std::mem::swap(&mut *x, &mut *y);
-        *x + *y
-    };
-
-    let double = |result: &i32| *result * 2;
-    let composed = swap_and_sum.and_then(double);
-
-    let mut a = 3;
-    let mut b = 5;
-    // swap_and_sum: a=5, b=3, result=5+3=8
-    // double: 8*2=16
-    assert_eq!(composed.apply(&mut a, &mut b), 16);
-    assert_eq!(a, 5);
-    assert_eq!(b, 3);
-}
-
-#[test]
-fn test_fn_bi_mutating_function_once_ops_and_then_chain() {
-    let add_and_modify = |x: &mut i32, y: &mut i32| {
-        *x += 10;
-        *y += 20;
-        *x + *y
-    };
-
-    let to_string = |x: &i32| x.to_string();
-    let add_prefix = |s: &mut String| {
-        let result = format!("Result: {}", *s);
-        *s = String::new();
-        result
-    };
-
-    let composed = add_and_modify.and_then(to_string).and_then(add_prefix);
-
-    let mut a = 5;
-    let mut b = 3;
-    // add_and_modify: a=15, b=23, result=15+23=38
-    // to_string: "38"
-    // add_prefix: "Result: 38"
-    let result = composed.apply(&mut a, &mut b);
-    assert_eq!(result, "Result: 38");
-    assert_eq!(a, 15);
-    assert_eq!(b, 23);
-}
-
 // ============================================================================
 // Conditional Function Tests - when/or_else
 // ============================================================================
-
-#[test]
-fn test_fn_bi_mutating_function_once_ops_when_or_else() {
-    let swap_and_sum = |x: &mut i32, y: &mut i32| {
-        std::mem::swap(&mut *x, &mut *y);
-        *x + *y
-    };
-
-    let multiply = |x: &mut i32, y: &mut i32| {
-        *x *= *y;
-        *x
-    };
-
-    let conditional = swap_and_sum
-        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-        .or_else(multiply);
-
-    // Test when condition is true
-    let mut a = 5;
-    let mut b = 3;
-    assert_eq!(conditional.apply(&mut a, &mut b), 8); // swap_and_sum: (3+5) = 8
-    assert_eq!(a, 3); // swapped from 5
-    assert_eq!(b, 5); // swapped from 3
-
-    // Test when condition is false (negative numbers) - create separate
-    // conditional
-    let conditional_false = swap_and_sum
-        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-        .or_else(multiply);
-    let mut c = -5;
-    let mut d = 3;
-    assert_eq!(conditional_false.apply(&mut c, &mut d), -15); // multiply: (-5 * 3) = -15
-    assert_eq!(c, -15);
-    assert_eq!(d, 3);
-}
 
 #[test]
 fn test_box_conditional_bi_mutating_function_once() {
@@ -655,107 +572,9 @@ fn test_bi_mutating_function_once_with_moving_data() {
 // Complex Composition Scenarios
 // ============================================================================
 
-#[test]
-fn test_complex_conditional_chains() {
-    // Create a complex conditional chain
-    let add = |x: &mut i32, y: &mut i32| {
-        *x += *y;
-        *x
-    };
-
-    let subtract = |x: &mut i32, y: &mut i32| {
-        *x -= *y;
-        *x
-    };
-
-    let multiply = |x: &mut i32, y: &mut i32| {
-        *x *= *y;
-        *x
-    };
-
-    // Complex conditional: if x > y then add, else if x < 0 then multiply, else
-    // subtract
-    let complex = add
-        .when(|x: &i32, y: &i32| *x > *y)
-        .or_else(multiply.when(|x: &i32, _y: &i32| *x < 0).or_else(subtract));
-
-    // Test case 1: x > y (add)
-    let mut a = 10;
-    let mut b = 5;
-    assert_eq!(complex.apply(&mut a, &mut b), 15); // 10 + 5 = 15
-
-    // Test case 2: x < 0 (multiply) - create new since BiMutatingFunctionOnce
-    // consumes self
-    let complex2 = add
-        .when(|x: &i32, y: &i32| *x > *y)
-        .or_else(multiply.when(|x: &i32, _y: &i32| *x < 0).or_else(subtract));
-    let mut c = -3;
-    let mut d = 4;
-    assert_eq!(complex2.apply(&mut c, &mut d), -12); // -3 * 4 = -12
-
-    // Test case 3: neither condition (subtract) - create new since
-    // BiMutatingFunctionOnce consumes self
-    let complex3 = add
-        .when(|x: &i32, y: &i32| *x > *y)
-        .or_else(multiply.when(|x: &i32, _y: &i32| *x < 0).or_else(subtract));
-    let mut e = 3;
-    let mut f = 5;
-    assert_eq!(complex3.apply(&mut e, &mut f), -2); // 3 - 5 = -2
-}
-
-#[test]
-fn test_nested_composition() {
-    let base = |x: &mut i32, y: &mut i32| {
-        *x += 1;
-        *y += 1;
-        *x + *y
-    };
-
-    // Create nested composition
-    let inner_composed = base.and_then(|sum: &i32| *sum * 2);
-    let outer_composed = inner_composed.and_then(|doubled: &mut i32| {
-        let result = format!("Result: {}", *doubled);
-        *doubled = 0;
-        result
-    });
-
-    let mut a = 10;
-    let mut b = 20;
-    // base: a=11, b=21, sum=32
-    // inner: 32*2=64
-    // outer: "Result: 64"
-    let result = outer_composed.apply(&mut a, &mut b);
-    assert_eq!(result, "Result: 64");
-    assert_eq!(a, 11);
-    assert_eq!(b, 21);
-}
-
 // ============================================================================
 // Integration Tests
 // ============================================================================
-
-#[test]
-fn test_mixed_function_types() {
-    // Mix BiMutatingFunctionOnce with regular Function
-    let mutating = |x: &mut i32, y: &mut i32| {
-        *x += 10;
-        *y += 20;
-        *x + *y
-    };
-
-    let double = |x: &i32| *x * 2;
-
-    // Chain mutating -> regular function
-    let composed = mutating.and_then(double);
-
-    let mut a = 5;
-    let mut b = 3;
-    // mutating: a=15, b=23, sum=38
-    // double: 38 * 2 = 76
-    assert_eq!(composed.apply(&mut a, &mut b), 76);
-    assert_eq!(a, 15);
-    assert_eq!(b, 23);
-}
 
 // ============================================================================
 // Custom BiMutatingFunctionOnce Implementation Tests - Test Trait Default

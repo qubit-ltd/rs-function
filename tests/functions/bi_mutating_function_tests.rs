@@ -14,7 +14,6 @@ use qubit_function::{
     BiMutatingFunction,
     BiMutatingFunctionOnce,
     BoxBiMutatingFunction,
-    FnBiMutatingFunctionOps,
     RcBiMutatingFunction,
     RcBiPredicate,
 };
@@ -395,90 +394,9 @@ fn test_arc_bi_mutating_function_debug_display() {
 // Function Composition Tests - and_then
 // ============================================================================
 
-#[test]
-fn test_fn_bi_mutating_function_ops_and_then() {
-    let swap_and_sum = |x: &mut i32, y: &mut i32| {
-        std::mem::swap(&mut *x, &mut *y);
-        *x + *y
-    };
-
-    let double = |result: &i32| *result * 2;
-    let composed = swap_and_sum.and_then(double);
-
-    let mut a = 3;
-    let mut b = 5;
-    // swap_and_sum: a=5, b=3, result=5+3=8
-    // double: 8*2=16
-    assert_eq!(composed.apply(&mut a, &mut b), 16);
-    assert_eq!(a, 5);
-    assert_eq!(b, 3);
-}
-
-#[test]
-fn test_fn_bi_mutating_function_ops_and_then_chain() {
-    let add_and_modify = |x: &mut i32, y: &mut i32| {
-        *x += 10;
-        *y += 20;
-        *x + *y
-    };
-
-    let to_string = |x: &i32| x.to_string();
-    let add_prefix = |s: &mut String| {
-        let result = format!("Result: {}", *s);
-        *s = String::new();
-        result
-    };
-
-    let composed = add_and_modify.and_then(to_string).and_then(add_prefix);
-
-    let mut a = 5;
-    let mut b = 3;
-    // add_and_modify: a=15, b=23, result=15+23=38
-    // to_string: "38"
-    // add_prefix: "Result: 38"
-    let result = composed.apply(&mut a, &mut b);
-    assert_eq!(result, "Result: 38");
-    assert_eq!(a, 15);
-    assert_eq!(b, 23);
-}
-
 // ============================================================================
 // Conditional Function Tests - when/or_else
 // ============================================================================
-
-#[test]
-fn test_fn_bi_mutating_function_ops_when_or_else() {
-    let swap_and_sum = |x: &mut i32, y: &mut i32| {
-        std::mem::swap(&mut *x, &mut *y);
-        *x + *y
-    };
-
-    let multiply = |x: &mut i32, y: &mut i32| {
-        *x *= *y;
-        *x
-    };
-
-    let conditional = swap_and_sum
-        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-        .or_else(multiply);
-
-    // Test when condition is true
-    let mut a = 5;
-    let mut b = 3;
-    assert_eq!(conditional.apply(&mut a, &mut b), 8); // swap_and_sum: (3+5) = 8
-    assert_eq!(a, 3); // swapped from 5
-    assert_eq!(b, 5); // swapped from 3
-
-    // Test when condition is false (negative numbers)
-    let conditional2 = swap_and_sum
-        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-        .or_else(multiply);
-    let mut c = -5;
-    let mut d = 3;
-    assert_eq!(conditional2.apply(&mut c, &mut d), -15); // multiply: (-5 * 3) = -15
-    assert_eq!(c, -15);
-    assert_eq!(d, 3);
-}
 
 #[test]
 fn test_box_conditional_bi_mutating_function() {
@@ -898,27 +816,6 @@ fn test_bi_mutating_function_with_option_modification() {
 // ============================================================================
 // Integration with Other Function Types
 // ============================================================================
-
-#[test]
-fn test_bi_mutating_function_with_function_composition() {
-    let add = |x: &mut i32, y: &mut i32| {
-        *x += *y;
-        *x
-    };
-
-    let double = |x: &i32| *x * 2;
-
-    // First apply bi-mutating function, then regular function
-    let composed = add.and_then(double);
-
-    let mut a = 10;
-    let mut b = 5;
-    // add: a = 10+5=15, return 15
-    // double: 15*2=30
-    assert_eq!(composed.apply(&mut a, &mut b), 30);
-    assert_eq!(a, 15);
-    assert_eq!(b, 5);
-}
 
 // ============================================================================
 // Custom BiMutatingFunction Implementation Tests - Test Trait Default Methods
