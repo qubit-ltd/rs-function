@@ -5,19 +5,17 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulMutator` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    BoxConditionalStatefulMutator,
-    Predicate,
+use {
+    crate::BoxConditionalStatefulMutator,
+    crate::Predicate,
 };
-use super::{
-    StatefulMutator,
-    impl_box_mutator_methods,
-    impl_mutator_common_methods,
-    impl_mutator_debug_display,
+use {
+    crate::StatefulMutator,
+    crate::mutators::macros::impl_box_mutator_methods,
+    crate::mutators::macros::impl_mutator_common_methods,
+    crate::mutators::macros::impl_mutator_debug_display,
 };
 
 // ============================================================================
@@ -74,7 +72,7 @@ use super::{
 /// ```
 pub struct BoxStatefulMutator<T> {
     pub(super) function: Box<dyn FnMut(&mut T)>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T> BoxStatefulMutator<T> {

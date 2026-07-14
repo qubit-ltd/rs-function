@@ -5,19 +5,17 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxMutator` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    BoxConditionalMutator,
-    Predicate,
+use {
+    crate::BoxConditionalMutator,
+    crate::Predicate,
 };
-use super::{
-    Mutator,
-    impl_box_mutator_methods,
-    impl_mutator_common_methods,
-    impl_mutator_debug_display,
+use {
+    crate::Mutator,
+    crate::mutators::macros::impl_box_mutator_methods,
+    crate::mutators::macros::impl_mutator_common_methods,
+    crate::mutators::macros::impl_mutator_debug_display,
 };
 
 // ============================================================================
@@ -67,7 +65,7 @@ use super::{
 /// ```
 pub struct BoxMutator<T> {
     pub(super) function: Box<dyn Fn(&mut T)>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T> BoxMutator<T> {

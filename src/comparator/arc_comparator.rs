@@ -5,13 +5,12 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `ArcComparator` public type.
 
-use super::{
-    Arc,
-    Comparator,
-    Ordering,
+use {
+    crate::Comparator,
+    std::cmp::Ordering,
+    std::sync::Arc,
 };
 
 type ArcComparatorFn<T> = Arc<dyn Fn(&T, &T) -> Ordering + Send + Sync>;
@@ -89,7 +88,6 @@ impl<T> ArcComparator<T> {
     /// assert_eq!(rev.compare(&5, &3), Ordering::Less);
     /// assert_eq!(cmp.compare(&5, &3), Ordering::Greater); // cmp still works
     /// ```
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn reversed(&self) -> Self
     where
@@ -123,7 +121,6 @@ impl<T> ArcComparator<T> {
     /// let chained = cmp1.then_comparing(&cmp2);
     /// assert_eq!(chained.compare(&4, &2), Ordering::Greater);
     /// ```
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn then_comparing(&self, other: &Self) -> Self
     where

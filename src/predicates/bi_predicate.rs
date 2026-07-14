@@ -12,15 +12,11 @@
 //!
 //! ## Core Semantics
 //!
-//! A **BiPredicate** is fundamentally a pure judgment operation that
-//! tests whether two values satisfy a specific condition. It should
-//! be:
+//! A **BiPredicate** tests whether two values satisfy a condition through
+//! shared references. Implementations may use interior mutability or observe
+//! external state; purity and determinism are application-level conventions.
 //!
 //! - **Read-only**: Does not modify the tested values
-//! - **Side-effect free**: Does not change external state (from the user's
-//!   perspective)
-//! - **Repeatable**: Same inputs should produce the same result
-//! - **Deterministic**: Judgment logic should be predictable
 //!
 //! It is similar to the `Fn(&T, &U) -> bool` trait in the standard library.
 //!
@@ -41,7 +37,7 @@
 //!
 //! | Scenario | Recommended Type | Reason |
 //! |----------|------------------|--------|
-//! | One-time use | `BoxBiPredicate` | Single ownership, no overhead |
+//! | Single ownership | `BoxBiPredicate` | Type erasure with heap allocation and dynamic dispatch |
 //! | Multi-threaded | `ArcBiPredicate` | Thread-safe, clonable |
 //! | Single-threaded reuse | `RcBiPredicate` | Better performance |
 //! | Stateful predicate | Any type + `RefCell`/`Cell`/`Mutex` | Interior mutability |
@@ -60,10 +56,7 @@
 //!
 //! ### BoxBiPredicate - Single Ownership
 //!
-//! This example requires the `combinators` feature.
-//!
 //! ```rust
-//! # #[cfg(feature = "combinators")]
 //! # {
 //! use qubit_function::{BiPredicate, BoxBiPredicate};
 //!
@@ -73,29 +66,22 @@
 //! # }
 //! ```
 //!
-//! ### Closure Composition with Extension Methods
+//! ### Explicit Closure Composition
 //!
-//! Closures automatically gain `and`, `or`, `not` methods through the
-//! `FnBiPredicateOps` extension trait, returning `BoxBiPredicate`:
+//! Closures implement `BiPredicate`, but chaining begins with a concrete
+//! wrapper so the ownership model is explicit:
 //!
 //! ```rust
-//! # #[cfg(feature = "combinators")]
 //! # {
-//! use qubit_function::{BiPredicate,
-//!     FnBiPredicateOps};
+//! use qubit_function::{BiPredicate, BoxBiPredicate};
 //!
-//! // Compose closures directly - result is BoxBiPredicate
-//! let is_sum_positive = |x: &i32, y: &i32| x + y > 0;
-//! let first_larger = |x: &i32, y: &i32| x > y;
-//!
-//! let combined = is_sum_positive.and(first_larger);
+//! let combined = BoxBiPredicate::new(|x: &i32, y: &i32| x + y > 0)
+//!     .and(|x: &i32, y: &i32| x > y);
 //! assert!(combined.test(&10, &5));
 //! assert!(!combined.test(&3, &8));
 //!
-//! // Use `or` for disjunction
-//! let negative_sum = |x: &i32, y: &i32| x + y < 0;
-//! let both_large = |x: &i32, y: &i32| *x > 100 && *y > 100;
-//! let either = negative_sum.or(both_large);
+//! let either = BoxBiPredicate::new(|x: &i32, y: &i32| x + y < 0)
+//!     .or(|x: &i32, y: &i32| *x > 100 && *y > 100);
 //! assert!(either.test(&-10, &5));
 //! assert!(either.test(&200, &150));
 //! # }
@@ -103,10 +89,10 @@
 //!
 //! ### RcBiPredicate - Single-threaded Reuse
 //!
-//! This example requires the `rc` and `combinators` features.
+//! This example requires the `rc` feature.
 //!
 //! ```rust
-//! # #[cfg(all(feature = "rc", feature = "combinators"))]
+//! # #[cfg(feature = "rc")]
 //! # {
 //! use qubit_function::{BiPredicate, RcBiPredicate};
 //!
@@ -152,20 +138,10 @@
 //! assert!(pred.test(&5, &3));
 //! assert!(!pred.test(&-8, &-3));
 //! ```
-#[cfg(feature = "rc")]
-use std::rc::Rc;
-use std::sync::Arc;
 
-use crate::predicates::macros::{
-    constants::{
-        ALWAYS_FALSE_NAME,
-        ALWAYS_TRUE_NAME,
-    },
-    impl_box_predicate_methods,
-    impl_predicate_clone,
-    impl_predicate_common_methods,
-    impl_predicate_debug_display,
-    impl_shared_predicate_methods,
+use crate::predicates::macros::constants::{
+    ALWAYS_FALSE_NAME,
+    ALWAYS_TRUE_NAME,
 };
 
 /// Type alias for bi-predicate function to simplify complex types.
@@ -189,19 +165,13 @@ mod rc_bi_predicate;
 pub use rc_bi_predicate::RcBiPredicate;
 mod arc_bi_predicate;
 pub use arc_bi_predicate::ArcBiPredicate;
-#[cfg(feature = "combinators")]
-mod fn_bi_predicate_ops;
-#[cfg(feature = "combinators")]
-pub use fn_bi_predicate_ops::FnBiPredicateOps;
 
 /// A bi-predicate trait for testing whether two values satisfy a
 /// condition.
 ///
-/// This trait represents a **pure judgment operation** - it tests
-/// whether two given values meet certain criteria without modifying
-/// either the values or the bi-predicate itself (from the user's
-/// perspective). This semantic clarity distinguishes bi-predicates
-/// from consumers or transformers.
+/// This trait tests whether two values meet a condition through `&self` and
+/// shared input references. It does not guarantee purity, determinism, or the
+/// absence of interior mutability and external side effects.
 ///
 /// ## Design Rationale
 ///

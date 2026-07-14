@@ -5,24 +5,22 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulFunction` public type.
 
-use super::{
-    Arc,
-    Mutex,
-    StatefulFunction,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
-    impl_function_identity_method,
-    impl_shared_function_methods,
+use {
+    crate::ArcConditionalStatefulFunction,
+    crate::Predicate,
 };
-#[cfg(feature = "combinators")]
-use super::{
-    ArcConditionalStatefulFunction,
-    Predicate,
+use {
+    crate::StatefulFunction,
+    crate::functions::macros::impl_function_clone,
+    crate::functions::macros::impl_function_common_methods,
+    crate::functions::macros::impl_function_constant_method,
+    crate::functions::macros::impl_function_debug_display,
+    crate::functions::macros::impl_function_identity_method,
+    crate::functions::macros::impl_shared_function_methods,
+    parking_lot::Mutex,
+    std::sync::Arc,
 };
 
 // ============================================================================
@@ -53,7 +51,7 @@ use super::{
 /// before a panic are not rolled back.
 pub struct ArcStatefulFunction<T, R> {
     pub(super) function: ArcStatefulFn<T, R>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 type ArcStatefulFn<T, R> = Arc<Mutex<dyn FnMut(&T) -> R + Send + 'static>>;

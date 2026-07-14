@@ -5,7 +5,6 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxCallable` public type.
 
 use crate::{
@@ -45,7 +44,7 @@ pub struct BoxCallable<R, E> {
     /// The stateful closure executed by this callable.
     pub(super) function: Box<dyn FnMut() -> Result<R, E>>,
     /// The optional name of this callable.
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<R, E> BoxCallable<R, E> {
@@ -87,7 +86,6 @@ impl<R, E> BoxCallable<R, E> {
     /// # Returns
     ///
     /// A new callable that applies `mapper` when this callable succeeds.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn map<U, M>(self, mut mapper: M) -> BoxCallable<U, E>
     where
@@ -95,11 +93,11 @@ impl<R, E> BoxCallable<R, E> {
         R: 'static,
         E: 'static,
     {
-        let name = self.name;
+        let metadata = self.metadata;
         let mut function = self.function;
-        BoxCallable::new_with_optional_name(
+        BoxCallable::new_with_metadata(
             move || function().map(&mut mapper),
-            name,
+            metadata,
         )
     }
 
@@ -112,7 +110,6 @@ impl<R, E> BoxCallable<R, E> {
     /// # Returns
     ///
     /// A new callable that applies `mapper` when this callable fails.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn map_err<E2, M>(self, mut mapper: M) -> BoxCallable<R, E2>
     where
@@ -120,11 +117,11 @@ impl<R, E> BoxCallable<R, E> {
         R: 'static,
         E: 'static,
     {
-        let name = self.name;
+        let metadata = self.metadata;
         let mut function = self.function;
-        BoxCallable::new_with_optional_name(
+        BoxCallable::new_with_metadata(
             move || function().map_err(&mut mapper),
-            name,
+            metadata,
         )
     }
 
@@ -138,7 +135,6 @@ impl<R, E> BoxCallable<R, E> {
     /// # Returns
     ///
     /// A new callable that runs `next` only when this callable succeeds.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn and_then<U, N>(self, next: N) -> BoxCallable<U, E>
     where
@@ -146,15 +142,15 @@ impl<R, E> BoxCallable<R, E> {
         R: 'static,
         E: 'static,
     {
-        let name = self.name;
+        let metadata = self.metadata;
         let mut function = self.function;
         let mut next = next;
-        BoxCallable::new_with_optional_name(
+        BoxCallable::new_with_metadata(
             move || {
                 let value = function()?;
                 next(value)
             },
-            name,
+            metadata,
         )
     }
 }

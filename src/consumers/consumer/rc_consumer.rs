@@ -5,21 +5,19 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcConsumer` public type.
 
-use super::{
-    Consumer,
-    Rc,
-    impl_consumer_clone,
-    impl_consumer_common_methods,
-    impl_consumer_debug_display,
-    impl_shared_consumer_methods,
+use {
+    crate::Consumer,
+    crate::consumers::macros::impl_consumer_clone,
+    crate::consumers::macros::impl_consumer_common_methods,
+    crate::consumers::macros::impl_consumer_debug_display,
+    crate::consumers::macros::impl_shared_consumer_methods,
+    std::rc::Rc,
 };
-#[cfg(feature = "combinators")]
-use super::{
-    Predicate,
-    RcConditionalConsumer,
+use {
+    crate::Predicate,
+    crate::RcConditionalConsumer,
 };
 
 // ============================================================================
@@ -69,7 +67,7 @@ use super::{
 /// ```
 pub struct RcConsumer<T> {
     pub(super) function: Rc<dyn Fn(&T)>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T> RcConsumer<T> {

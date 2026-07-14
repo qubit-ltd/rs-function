@@ -5,23 +5,21 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcBiMutatingFunction` public type.
 
-use super::{
-    BiMutatingFunction,
-    Rc,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
-    impl_shared_function_methods,
+use {
+    crate::BiMutatingFunction,
+    crate::functions::macros::impl_function_clone,
+    crate::functions::macros::impl_function_common_methods,
+    crate::functions::macros::impl_function_constant_method,
+    crate::functions::macros::impl_function_debug_display,
+    crate::functions::macros::impl_shared_function_methods,
+    std::rc::Rc,
 };
-#[cfg(feature = "combinators")]
-use super::{
-    BiPredicate,
-    MutatingFunction,
-    RcConditionalBiMutatingFunction,
+use {
+    crate::BiPredicate,
+    crate::MutatingFunction,
+    crate::RcConditionalBiMutatingFunction,
 };
 
 type RcBiMutatingFunctionFn<T, U, R> = Rc<dyn Fn(&mut T, &mut U) -> R>;
@@ -45,7 +43,7 @@ type RcBiMutatingFunctionFn<T, U, R> = Rc<dyn Fn(&mut T, &mut U) -> R>;
 /// - **Clonable**: Cheap cloning via `Rc::clone`
 pub struct RcBiMutatingFunction<T, U, R> {
     pub(super) function: RcBiMutatingFunctionFn<T, U, R>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, U, R> RcBiMutatingFunction<T, U, R> {

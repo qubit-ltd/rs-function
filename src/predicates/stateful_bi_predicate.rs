@@ -15,33 +15,16 @@
 //! `Fn(&T, &U) -> bool` predicates and `StatefulBiPredicate` when the
 //! predicate needs native `FnMut` semantics, such as counters, rolling
 //! windows, sampling, or stateful filters over pairs of values.
-#[cfg(feature = "rc")]
-use std::cell::RefCell;
-#[cfg(feature = "rc")]
-use std::rc::Rc;
-use std::sync::Arc;
 
-use parking_lot::Mutex;
-
-use crate::macros::impl_closure_trait;
-use crate::predicates::macros::{
-    constants::{
-        ALWAYS_FALSE_NAME,
-        ALWAYS_TRUE_NAME,
-    },
-    impl_predicate_clone,
-    impl_predicate_common_methods,
-    impl_predicate_debug_display,
+use crate::predicates::macros::constants::{
+    ALWAYS_FALSE_NAME,
+    ALWAYS_TRUE_NAME,
 };
 
 mod arc_stateful_bi_predicate;
 pub use arc_stateful_bi_predicate::ArcStatefulBiPredicate;
 mod box_stateful_bi_predicate;
 pub use box_stateful_bi_predicate::BoxStatefulBiPredicate;
-#[cfg(feature = "combinators")]
-mod fn_stateful_bi_predicate_ops;
-#[cfg(feature = "combinators")]
-pub use fn_stateful_bi_predicate_ops::FnStatefulBiPredicateOps;
 #[cfg(feature = "rc")]
 mod rc_stateful_bi_predicate;
 #[cfg(feature = "rc")]

@@ -56,7 +56,7 @@ macro_rules! impl_transformer_debug_display {
         impl<$t, $r> std::fmt::Debug for $struct_name<$t, $r> {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 f.debug_struct(stringify!($struct_name))
-                    .field("name", &self.name)
+                    .field("name", &self.metadata.name())
                     .field("function", &"<function>")
                     .finish()
             }
@@ -64,7 +64,7 @@ macro_rules! impl_transformer_debug_display {
 
         impl<$t, $r> std::fmt::Display for $struct_name<$t, $r> {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                match &self.name {
+                match self.metadata.name() {
                     Some(name) => {
                         write!(f, "{}({})", stringify!($struct_name), name)
                     }
@@ -79,7 +79,7 @@ macro_rules! impl_transformer_debug_display {
         impl<$t, $u, $r> std::fmt::Debug for $struct_name<$t, $u, $r> {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 f.debug_struct(stringify!($struct_name))
-                    .field("name", &self.name)
+                    .field("name", &self.metadata.name())
                     .field("function", &"<function>")
                     .finish()
             }
@@ -87,7 +87,7 @@ macro_rules! impl_transformer_debug_display {
 
         impl<$t, $u, $r> std::fmt::Display for $struct_name<$t, $u, $r> {
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-                match &self.name {
+                match self.metadata.name() {
                     Some(name) => {
                         write!(f, "{}({})", stringify!($struct_name), name)
                     }

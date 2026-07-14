@@ -5,23 +5,21 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulConsumer` public type.
 
-use super::{
-    Arc,
-    Mutex,
-    StatefulConsumer,
-    impl_closure_trait,
-    impl_consumer_clone,
-    impl_consumer_common_methods,
-    impl_consumer_debug_display,
-    impl_shared_consumer_methods,
+use {
+    crate::ArcConditionalStatefulConsumer,
+    crate::Predicate,
 };
-#[cfg(feature = "combinators")]
-use super::{
-    ArcConditionalStatefulConsumer,
-    Predicate,
+use {
+    crate::StatefulConsumer,
+    crate::consumers::macros::impl_consumer_clone,
+    crate::consumers::macros::impl_consumer_common_methods,
+    crate::consumers::macros::impl_consumer_debug_display,
+    crate::consumers::macros::impl_shared_consumer_methods,
+    crate::macros::impl_closure_trait,
+    parking_lot::Mutex,
+    std::sync::Arc,
 };
 
 type ArcStatefulConsumerFn<T> = Arc<Mutex<dyn FnMut(&T) + Send>>;
@@ -90,7 +88,7 @@ type ArcStatefulConsumerFn<T> = Arc<Mutex<dyn FnMut(&T) + Send>>;
 /// before a panic are not rolled back.
 pub struct ArcStatefulConsumer<T> {
     pub(super) function: ArcStatefulConsumerFn<T>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T> ArcStatefulConsumer<T> {

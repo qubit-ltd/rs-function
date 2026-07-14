@@ -5,19 +5,17 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxStatefulConsumer` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    BoxConditionalStatefulConsumer,
-    Predicate,
+use {
+    crate::BoxConditionalStatefulConsumer,
+    crate::Predicate,
 };
-use super::{
-    StatefulConsumer,
-    impl_box_consumer_methods,
-    impl_consumer_common_methods,
-    impl_consumer_debug_display,
+use {
+    crate::StatefulConsumer,
+    crate::consumers::macros::impl_box_consumer_methods,
+    crate::consumers::macros::impl_consumer_common_methods,
+    crate::consumers::macros::impl_consumer_debug_display,
 };
 
 // ============================================================================
@@ -71,7 +69,7 @@ use super::{
 /// ```
 pub struct BoxStatefulConsumer<T> {
     pub(super) function: Box<dyn FnMut(&T)>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T> BoxStatefulConsumer<T> {

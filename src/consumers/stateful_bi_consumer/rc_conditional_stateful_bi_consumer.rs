@@ -5,17 +5,16 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcConditionalStatefulBiConsumer` public type.
 
-use super::{
-    BiPredicate,
-    RcBiPredicate,
-    RcStatefulBiConsumer,
-    StatefulBiConsumer,
-    impl_conditional_consumer_clone,
-    impl_conditional_consumer_debug_display,
-    impl_shared_conditional_consumer,
+use {
+    crate::BiPredicate,
+    crate::RcBiPredicate,
+    crate::RcStatefulBiConsumer,
+    crate::StatefulBiConsumer,
+    crate::consumers::macros::impl_conditional_consumer_clone,
+    crate::consumers::macros::impl_conditional_consumer_debug_display,
+    crate::consumers::macros::impl_shared_conditional_consumer,
 };
 
 // =======================================================================

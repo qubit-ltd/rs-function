@@ -84,10 +84,8 @@
 //!
 //! ## Method Chaining
 //!
-//! This example requires the `combinators` feature.
 //!
 //! ```rust
-//! # #[cfg(feature = "combinators")]
 //! # {
 //! use qubit_function::{BoxMutatingFunction, MutatingFunction};
 //!
@@ -122,39 +120,6 @@
 //! assert_eq!(old_value, Some(10));
 //! assert_eq!(cache.get("key"), Some(&42));
 //! ```
-#[cfg(feature = "rc")]
-use std::rc::Rc;
-use std::sync::Arc;
-
-#[cfg(feature = "combinators")]
-use crate::functions::macros::impl_fn_ops_trait;
-use crate::functions::macros::{
-    impl_box_function_methods,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_debug_display,
-    impl_function_identity_method,
-    impl_shared_function_methods,
-};
-#[cfg(feature = "combinators")]
-use crate::functions::{
-    function::Function,
-    macros::{
-        impl_box_conditional_function,
-        impl_conditional_function_clone,
-        impl_conditional_function_debug_display,
-        impl_shared_conditional_function,
-    },
-};
-use crate::macros::impl_closure_trait;
-#[cfg(all(feature = "rc", feature = "combinators"))]
-use crate::predicates::predicate::RcPredicate;
-#[cfg(feature = "combinators")]
-use crate::predicates::predicate::{
-    ArcPredicate,
-    BoxPredicate,
-    Predicate,
-};
 
 mod box_mutating_function;
 pub use box_mutating_function::BoxMutatingFunction;
@@ -164,22 +129,14 @@ mod rc_mutating_function;
 pub use rc_mutating_function::RcMutatingFunction;
 mod arc_mutating_function;
 pub use arc_mutating_function::ArcMutatingFunction;
-#[cfg(feature = "combinators")]
 mod box_conditional_mutating_function;
-#[cfg(feature = "combinators")]
 pub use box_conditional_mutating_function::BoxConditionalMutatingFunction;
-#[cfg(all(feature = "rc", feature = "combinators"))]
+#[cfg(feature = "rc")]
 mod rc_conditional_mutating_function;
-#[cfg(all(feature = "rc", feature = "combinators"))]
+#[cfg(feature = "rc")]
 pub use rc_conditional_mutating_function::RcConditionalMutatingFunction;
-#[cfg(feature = "combinators")]
 mod arc_conditional_mutating_function;
-#[cfg(feature = "combinators")]
 pub use arc_conditional_mutating_function::ArcConditionalMutatingFunction;
-#[cfg(feature = "combinators")]
-mod fn_mutating_function_ops;
-#[cfg(feature = "combinators")]
-pub use fn_mutating_function_ops::FnMutatingFunctionOps;
 
 // =======================================================================
 // 1. MutatingFunction Trait - Unified Interface

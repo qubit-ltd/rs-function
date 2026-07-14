@@ -29,33 +29,6 @@
 //! parameters. Compared to `StatefulBiConsumer`, `BiConsumer` does not require
 //! wrapper-level interior mutability (`Mutex`/`RefCell`), making it more
 //! efficient and easier to share.
-#[cfg(feature = "rc")]
-use std::rc::Rc;
-use std::sync::Arc;
-
-#[cfg(feature = "combinators")]
-use crate::consumers::macros::{
-    impl_box_conditional_consumer,
-    impl_conditional_consumer_clone,
-    impl_conditional_consumer_debug_display,
-    impl_shared_conditional_consumer,
-};
-use crate::consumers::macros::{
-    impl_box_consumer_methods,
-    impl_consumer_clone,
-    impl_consumer_common_methods,
-    impl_consumer_debug_display,
-    impl_shared_consumer_methods,
-};
-use crate::macros::impl_closure_trait;
-#[cfg(all(feature = "rc", feature = "combinators"))]
-use crate::predicates::bi_predicate::RcBiPredicate;
-#[cfg(feature = "combinators")]
-use crate::predicates::bi_predicate::{
-    ArcBiPredicate,
-    BiPredicate,
-    BoxBiPredicate,
-};
 
 // ==========================================================================
 // Type Aliases
@@ -75,21 +48,13 @@ mod rc_bi_consumer;
 pub use rc_bi_consumer::RcBiConsumer;
 mod arc_bi_consumer;
 pub use arc_bi_consumer::ArcBiConsumer;
-#[cfg(feature = "combinators")]
-mod fn_bi_consumer_ops;
-#[cfg(feature = "combinators")]
-pub use fn_bi_consumer_ops::FnBiConsumerOps;
-#[cfg(feature = "combinators")]
 mod box_conditional_bi_consumer;
-#[cfg(feature = "combinators")]
 pub use box_conditional_bi_consumer::BoxConditionalBiConsumer;
-#[cfg(feature = "combinators")]
 mod arc_conditional_bi_consumer;
-#[cfg(feature = "combinators")]
 pub use arc_conditional_bi_consumer::ArcConditionalBiConsumer;
-#[cfg(all(feature = "rc", feature = "combinators"))]
+#[cfg(feature = "rc")]
 mod rc_conditional_bi_consumer;
-#[cfg(all(feature = "rc", feature = "combinators"))]
+#[cfg(feature = "rc")]
 pub use rc_conditional_bi_consumer::RcConditionalBiConsumer;
 
 // =======================================================================

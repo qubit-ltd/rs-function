@@ -15,40 +15,14 @@
 //! implementations:
 //!
 //! - [`BoxBiTransformerOnce`]: Single ownership, one-time use
-use crate::macros::impl_closure_once_trait;
-#[cfg(feature = "combinators")]
-use crate::predicates::bi_predicate::{
-    BiPredicate,
-    BoxBiPredicate,
-};
-use crate::transformers::macros::{
-    impl_box_transformer_methods,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
-    impl_transformer_debug_display,
-};
-#[cfg(feature = "combinators")]
-use crate::transformers::{
-    macros::{
-        impl_box_conditional_transformer,
-        impl_conditional_transformer_debug_display,
-    },
-    transformer_once::TransformerOnce,
-};
 
 mod box_bi_transformer_once;
 pub use box_bi_transformer_once::BoxBiTransformerOnce;
-#[cfg(feature = "combinators")]
-mod fn_bi_transformer_once_ops;
-#[cfg(feature = "combinators")]
-pub use fn_bi_transformer_once_ops::FnBiTransformerOnceOps;
 mod binary_operator_once;
 pub use binary_operator_once::BinaryOperatorOnce;
 mod box_binary_operator_once;
 pub use box_binary_operator_once::BoxBinaryOperatorOnce;
-#[cfg(feature = "combinators")]
 mod box_conditional_bi_transformer_once;
-#[cfg(feature = "combinators")]
 pub use box_conditional_bi_transformer_once::BoxConditionalBiTransformerOnce;
 
 // ============================================================================

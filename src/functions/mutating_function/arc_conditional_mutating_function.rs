@@ -5,17 +5,16 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `ArcConditionalMutatingFunction` public type.
 
-use super::{
-    ArcMutatingFunction,
-    ArcPredicate,
-    MutatingFunction,
-    Predicate,
-    impl_conditional_function_clone,
-    impl_conditional_function_debug_display,
-    impl_shared_conditional_function,
+use {
+    crate::ArcMutatingFunction,
+    crate::ArcPredicate,
+    crate::MutatingFunction,
+    crate::Predicate,
+    crate::functions::macros::impl_conditional_function_clone,
+    crate::functions::macros::impl_conditional_function_debug_display,
+    crate::functions::macros::impl_shared_conditional_function,
 };
 
 // ============================================================================

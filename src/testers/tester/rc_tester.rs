@@ -5,15 +5,13 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcTester` public type.
 
-#[cfg(feature = "combinators")]
 use std::ops::Not;
 
-use super::{
-    Rc,
-    Tester,
+use {
+    crate::Tester,
+    std::rc::Rc,
 };
 
 // ============================================================================
@@ -31,8 +29,7 @@ use super::{
 /// - **Shared ownership**: Can be cloned
 /// - **Single-threaded**: Cannot be sent across threads
 /// - **Low overhead**: Uses `Fn` without needing `RefCell`
-/// - **Borrowing combination**: With `combinators`, `and()`/`or()` borrow
-///   `&self`
+/// - **Borrowing combination**: `and()`/`or()` borrow `&self`
 ///
 /// # Use Cases
 ///
@@ -44,7 +41,6 @@ use super::{
 /// # Examples
 ///
 /// ```rust
-/// # #[cfg(feature = "combinators")]
 /// # {
 /// use qubit_function::{RcTester, Tester};
 ///
@@ -118,7 +114,6 @@ impl RcTester {
     /// // first and second are still available
     /// ```
     #[inline]
-    #[cfg(feature = "combinators")]
     pub fn and(&self, next: &RcTester) -> RcTester {
         let self_fn = Rc::clone(&self.function);
         let next_fn = Rc::clone(&next.function);
@@ -151,7 +146,6 @@ impl RcTester {
     /// // first and second are still available
     /// ```
     #[inline]
-    #[cfg(feature = "combinators")]
     pub fn or(&self, next: &RcTester) -> RcTester {
         let self_fn = Rc::clone(&self.function);
         let next_fn = Rc::clone(&next.function);
@@ -190,7 +184,6 @@ impl RcTester {
     /// assert!(second.test());
     /// ```
     #[inline]
-    #[cfg(feature = "combinators")]
     pub fn nand(&self, next: &RcTester) -> RcTester {
         let self_fn = Rc::clone(&self.function);
         let next_fn = Rc::clone(&next.function);
@@ -229,7 +222,6 @@ impl RcTester {
     /// assert!(!second.test());
     /// ```
     #[inline]
-    #[cfg(feature = "combinators")]
     pub fn xor(&self, next: &RcTester) -> RcTester {
         let self_fn = Rc::clone(&self.function);
         let next_fn = Rc::clone(&next.function);
@@ -268,7 +260,6 @@ impl RcTester {
     /// assert!(!second.test());
     /// ```
     #[inline]
-    #[cfg(feature = "combinators")]
     pub fn nor(&self, next: &RcTester) -> RcTester {
         let self_fn = Rc::clone(&self.function);
         let next_fn = Rc::clone(&next.function);
@@ -278,7 +269,6 @@ impl RcTester {
     }
 }
 
-#[cfg(feature = "combinators")]
 impl Not for RcTester {
     type Output = RcTester;
 
@@ -291,7 +281,6 @@ impl Not for RcTester {
     }
 }
 
-#[cfg(feature = "combinators")]
 impl Not for &RcTester {
     type Output = RcTester;
 

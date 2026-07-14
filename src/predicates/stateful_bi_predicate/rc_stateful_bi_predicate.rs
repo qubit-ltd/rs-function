@@ -5,21 +5,19 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcStatefulBiPredicate` public type.
 
-#[cfg(feature = "combinators")]
 use std::ops::Not;
 
-use super::{
-    ALWAYS_FALSE_NAME,
-    ALWAYS_TRUE_NAME,
-    Rc,
-    RefCell,
-    StatefulBiPredicate,
-    impl_predicate_clone,
-    impl_predicate_common_methods,
-    impl_predicate_debug_display,
+use {
+    super::ALWAYS_FALSE_NAME,
+    super::ALWAYS_TRUE_NAME,
+    crate::StatefulBiPredicate,
+    crate::predicates::macros::impl_predicate_clone,
+    crate::predicates::macros::impl_predicate_common_methods,
+    crate::predicates::macros::impl_predicate_debug_display,
+    std::cell::RefCell,
+    std::rc::Rc,
 };
 
 type RcStatefulBiPredicateFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U) -> bool>>;
@@ -35,7 +33,7 @@ type RcStatefulBiPredicateFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U) -> bool>>;
 /// error. Mutations completed before a panic are not rolled back.
 pub struct RcStatefulBiPredicate<T, U> {
     pub(super) function: RcStatefulBiPredicateFn<T, U>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, U> RcStatefulBiPredicate<T, U> {
@@ -59,7 +57,6 @@ impl<T, U> RcStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `RcStatefulBiPredicate` representing logical AND.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn and<P>(&self, mut other: P) -> RcStatefulBiPredicate<T, U>
     where
@@ -86,7 +83,6 @@ impl<T, U> RcStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `RcStatefulBiPredicate` representing logical OR.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn or<P>(&self, mut other: P) -> RcStatefulBiPredicate<T, U>
     where
@@ -112,7 +108,6 @@ impl<T, U> RcStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `RcStatefulBiPredicate` representing logical NAND.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn nand<P>(&self, mut other: P) -> RcStatefulBiPredicate<T, U>
     where
@@ -139,7 +134,6 @@ impl<T, U> RcStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `RcStatefulBiPredicate` representing logical XOR.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn xor<P>(&self, mut other: P) -> RcStatefulBiPredicate<T, U>
     where
@@ -165,7 +159,6 @@ impl<T, U> RcStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `RcStatefulBiPredicate` representing logical NOR.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn nor<P>(&self, mut other: P) -> RcStatefulBiPredicate<T, U>
     where
@@ -181,7 +174,6 @@ impl<T, U> RcStatefulBiPredicate<T, U> {
     }
 }
 
-#[cfg(feature = "combinators")]
 impl<T, U> Not for RcStatefulBiPredicate<T, U>
 where
     T: 'static,
@@ -197,7 +189,6 @@ where
     }
 }
 
-#[cfg(feature = "combinators")]
 impl<T, U> Not for &RcStatefulBiPredicate<T, U>
 where
     T: 'static,

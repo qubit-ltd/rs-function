@@ -5,7 +5,6 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxRunnableWith` public type.
 
 use crate::{
@@ -17,7 +16,6 @@ use crate::{
     tasks::runnable_with::RunnableWith,
 };
 
-#[cfg(feature = "combinators")]
 use crate::tasks::callable_with::BoxCallableWith;
 
 type BoxRunnableWithFn<T, E> = Box<dyn FnMut(&mut T) -> Result<(), E>>;
@@ -30,7 +28,7 @@ pub struct BoxRunnableWith<T, E> {
     /// The stateful closure executed by this runnable.
     pub(super) function: BoxRunnableWithFn<T, E>,
     /// The optional name of this runnable.
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, E> BoxRunnableWith<T, E> {
@@ -52,7 +50,6 @@ impl<T, E> BoxRunnableWith<T, E> {
     /// # Returns
     ///
     /// A runnable executing both actions in sequence.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn and_then<N>(self, next: N) -> BoxRunnableWith<T, E>
     where
@@ -60,15 +57,15 @@ impl<T, E> BoxRunnableWith<T, E> {
         T: 'static,
         E: 'static,
     {
-        let name = self.name;
+        let metadata = self.metadata;
         let mut function = self.function;
         let mut next = next;
-        BoxRunnableWith::new_with_optional_name(
+        BoxRunnableWith::new_with_metadata(
             move |input: &mut T| {
                 function(&mut *input)?;
                 next.run_with(input)
             },
-            name,
+            metadata,
         )
     }
 
@@ -83,7 +80,6 @@ impl<T, E> BoxRunnableWith<T, E> {
     /// # Returns
     ///
     /// A callable producing the second computation's result.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn then_callable_with<R, C>(
         self,
@@ -95,15 +91,15 @@ impl<T, E> BoxRunnableWith<T, E> {
         R: 'static,
         E: 'static,
     {
-        let name = self.name;
+        let metadata = self.metadata;
         let mut function = self.function;
         let mut callable = callable;
-        BoxCallableWith::new_with_optional_name(
+        BoxCallableWith::new_with_metadata(
             move |input: &mut T| {
                 function(&mut *input)?;
                 callable.call_with(input)
             },
-            name,
+            metadata,
         )
     }
 }

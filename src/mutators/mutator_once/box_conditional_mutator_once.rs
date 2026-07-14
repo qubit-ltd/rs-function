@@ -5,16 +5,15 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalMutatorOnce` public type.
 
-use super::{
-    BoxMutatorOnce,
-    BoxPredicate,
-    MutatorOnce,
-    Predicate,
-    impl_box_conditional_mutator,
-    impl_conditional_mutator_debug_display,
+use {
+    crate::BoxMutatorOnce,
+    crate::BoxPredicate,
+    crate::MutatorOnce,
+    crate::Predicate,
+    crate::mutators::macros::impl_box_conditional_mutator,
+    crate::mutators::macros::impl_conditional_mutator_debug_display,
 };
 
 // ============================================================================

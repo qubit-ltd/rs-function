@@ -5,17 +5,16 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `ArcConditionalBiConsumer` public type.
 
-use super::{
-    ArcBiConsumer,
-    ArcBiPredicate,
-    BiConsumer,
-    BiPredicate,
-    impl_conditional_consumer_clone,
-    impl_conditional_consumer_debug_display,
-    impl_shared_conditional_consumer,
+use {
+    crate::ArcBiConsumer,
+    crate::ArcBiPredicate,
+    crate::BiConsumer,
+    crate::BiPredicate,
+    crate::consumers::macros::impl_conditional_consumer_clone,
+    crate::consumers::macros::impl_conditional_consumer_debug_display,
+    crate::consumers::macros::impl_shared_conditional_consumer,
 };
 
 // =======================================================================

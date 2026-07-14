@@ -5,24 +5,22 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `ArcBiFunction` public type.
 
-use super::{
-    Arc,
-    BiFunction,
-    impl_closure_trait,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
-    impl_shared_function_methods,
+use {
+    crate::ArcConditionalBiFunction,
+    crate::BiPredicate,
+    crate::Function,
 };
-#[cfg(feature = "combinators")]
-use super::{
-    ArcConditionalBiFunction,
-    BiPredicate,
-    Function,
+use {
+    crate::BiFunction,
+    crate::functions::macros::impl_function_clone,
+    crate::functions::macros::impl_function_common_methods,
+    crate::functions::macros::impl_function_constant_method,
+    crate::functions::macros::impl_function_debug_display,
+    crate::functions::macros::impl_shared_function_methods,
+    crate::macros::impl_closure_trait,
+    std::sync::Arc,
 };
 
 type ArcBiFunctionFn<T, U, R> = Arc<dyn Fn(&T, &U) -> R + Send + Sync>;
@@ -45,7 +43,7 @@ type ArcBiFunctionFn<T, U, R> = Arc<dyn Fn(&T, &U) -> R + Send + Sync>;
 /// - **Clonable**: Cheap cloning via `Arc::clone`
 pub struct ArcBiFunction<T, U, R> {
     pub(super) function: ArcBiFunctionFn<T, U, R>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, U, R> ArcBiFunction<T, U, R> {

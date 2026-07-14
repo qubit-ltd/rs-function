@@ -5,22 +5,20 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `ArcBiPredicate` public type.
 
-#[cfg(feature = "combinators")]
 use std::ops::Not;
 
-use super::{
-    ALWAYS_FALSE_NAME,
-    ALWAYS_TRUE_NAME,
-    Arc,
-    BiPredicate,
-    SendSyncBiPredicateFn,
-    impl_predicate_clone,
-    impl_predicate_common_methods,
-    impl_predicate_debug_display,
-    impl_shared_predicate_methods,
+use {
+    super::ALWAYS_FALSE_NAME,
+    super::ALWAYS_TRUE_NAME,
+    super::SendSyncBiPredicateFn,
+    crate::BiPredicate,
+    crate::predicates::macros::impl_predicate_clone,
+    crate::predicates::macros::impl_predicate_common_methods,
+    crate::predicates::macros::impl_predicate_debug_display,
+    crate::predicates::macros::impl_shared_predicate_methods,
+    std::sync::Arc,
 };
 
 /// An Arc-based bi-predicate with thread-safe shared ownership.
@@ -30,12 +28,10 @@ use super::{
 /// allowing the original bi-predicate to remain usable after
 /// composition.
 ///
-/// Composition methods require the `combinators` feature.
 ///
 /// # Examples
 ///
 /// ```rust
-/// # #[cfg(feature = "combinators")]
 /// # {
 /// use qubit_function::{BiPredicate, ArcBiPredicate};
 ///
@@ -55,7 +51,7 @@ use super::{
 /// ```
 pub struct ArcBiPredicate<T, U> {
     pub(super) function: Arc<SendSyncBiPredicateFn<T, U>>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, U> ArcBiPredicate<T, U> {
@@ -75,7 +71,6 @@ impl<T, U> ArcBiPredicate<T, U> {
     );
 }
 
-#[cfg(feature = "combinators")]
 impl<T, U> Not for ArcBiPredicate<T, U>
 where
     T: 'static,
@@ -91,7 +86,6 @@ where
     }
 }
 
-#[cfg(feature = "combinators")]
 impl<T, U> Not for &ArcBiPredicate<T, U>
 where
     T: 'static,

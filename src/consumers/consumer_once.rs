@@ -34,32 +34,9 @@
 //! Unlike Consumer, ConsumerOnce consumes itself on first call. Suitable for
 //! initialization callbacks, cleanup callbacks, and similar scenarios.
 
-#[cfg(feature = "combinators")]
-use crate::consumers::macros::{
-    impl_box_conditional_consumer,
-    impl_conditional_consumer_debug_display,
-};
-use crate::consumers::macros::{
-    impl_box_consumer_methods,
-    impl_consumer_common_methods,
-    impl_consumer_debug_display,
-};
-use crate::macros::impl_closure_once_trait;
-#[cfg(feature = "combinators")]
-use crate::predicates::predicate::{
-    BoxPredicate,
-    Predicate,
-};
-
 mod box_consumer_once;
 pub use box_consumer_once::BoxConsumerOnce;
-#[cfg(feature = "combinators")]
-mod fn_consumer_once_ops;
-#[cfg(feature = "combinators")]
-pub use fn_consumer_once_ops::FnConsumerOnceOps;
-#[cfg(feature = "combinators")]
 mod box_conditional_consumer_once;
-#[cfg(feature = "combinators")]
 pub use box_conditional_consumer_once::BoxConditionalConsumerOnce;
 
 // ============================================================================

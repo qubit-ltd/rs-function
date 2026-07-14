@@ -5,22 +5,20 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcMutator` public type.
 
-use super::{
-    Mutator,
-    Rc,
-    RcMutatorFn,
-    impl_mutator_clone,
-    impl_mutator_common_methods,
-    impl_mutator_debug_display,
-    impl_shared_mutator_methods,
+use {
+    super::RcMutatorFn,
+    crate::Mutator,
+    crate::mutators::macros::impl_mutator_clone,
+    crate::mutators::macros::impl_mutator_common_methods,
+    crate::mutators::macros::impl_mutator_debug_display,
+    crate::mutators::macros::impl_shared_mutator_methods,
+    std::rc::Rc,
 };
-#[cfg(feature = "combinators")]
-use super::{
-    Predicate,
-    RcConditionalMutator,
+use {
+    crate::Predicate,
+    crate::RcConditionalMutator,
 };
 
 // ============================================================================
@@ -63,7 +61,7 @@ use super::{
 /// ```
 pub struct RcMutator<T> {
     pub(super) function: RcMutatorFn<T>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T> RcMutator<T> {

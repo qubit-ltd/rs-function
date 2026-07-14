@@ -5,16 +5,15 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalFunctionOnce` public type.
 
-use super::{
-    BoxFunctionOnce,
-    BoxPredicate,
-    FunctionOnce,
-    Predicate,
-    impl_box_conditional_function,
-    impl_conditional_function_debug_display,
+use {
+    crate::BoxFunctionOnce,
+    crate::BoxPredicate,
+    crate::FunctionOnce,
+    crate::Predicate,
+    crate::functions::macros::impl_box_conditional_function,
+    crate::functions::macros::impl_conditional_function_debug_display,
 };
 
 // ============================================================================

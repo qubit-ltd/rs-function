@@ -20,37 +20,6 @@
 //! - [`BoxBiFunction`]: Single ownership, not cloneable
 //! - [`ArcBiFunction`]: Thread-safe shared ownership, cloneable
 //! - `RcBiFunction`: Single-threaded shared ownership, cloneable
-#[cfg(feature = "rc")]
-use std::rc::Rc;
-use std::sync::Arc;
-
-use crate::functions::macros::{
-    impl_box_function_methods,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
-    impl_shared_function_methods,
-};
-#[cfg(feature = "combinators")]
-use crate::functions::{
-    function::Function,
-    macros::{
-        impl_box_conditional_function,
-        impl_conditional_function_clone,
-        impl_conditional_function_debug_display,
-        impl_shared_conditional_function,
-    },
-};
-use crate::macros::impl_closure_trait;
-#[cfg(all(feature = "rc", feature = "combinators"))]
-use crate::predicates::bi_predicate::RcBiPredicate;
-#[cfg(feature = "combinators")]
-use crate::predicates::bi_predicate::{
-    ArcBiPredicate,
-    BiPredicate,
-    BoxBiPredicate,
-};
 
 mod box_bi_function;
 pub use box_bi_function::BoxBiFunction;
@@ -60,10 +29,6 @@ mod rc_bi_function;
 pub use rc_bi_function::RcBiFunction;
 mod arc_bi_function;
 pub use arc_bi_function::ArcBiFunction;
-#[cfg(feature = "combinators")]
-mod fn_bi_function_ops;
-#[cfg(feature = "combinators")]
-pub use fn_bi_function_ops::FnBiFunctionOps;
 mod box_binary_function;
 pub use box_binary_function::BoxBinaryFunction;
 mod arc_binary_function;
@@ -72,17 +37,13 @@ pub use arc_binary_function::ArcBinaryFunction;
 mod rc_binary_function;
 #[cfg(feature = "rc")]
 pub use rc_binary_function::RcBinaryFunction;
-#[cfg(feature = "combinators")]
 mod box_conditional_bi_function;
-#[cfg(feature = "combinators")]
 pub use box_conditional_bi_function::BoxConditionalBiFunction;
-#[cfg(all(feature = "rc", feature = "combinators"))]
+#[cfg(feature = "rc")]
 mod rc_conditional_bi_function;
-#[cfg(all(feature = "rc", feature = "combinators"))]
+#[cfg(feature = "rc")]
 pub use rc_conditional_bi_function::RcConditionalBiFunction;
-#[cfg(feature = "combinators")]
 mod arc_conditional_bi_function;
-#[cfg(feature = "combinators")]
 pub use arc_conditional_bi_function::ArcConditionalBiFunction;
 
 // ============================================================================

@@ -5,21 +5,19 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcSupplier` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    Predicate,
-    Transformer,
+use {
+    crate::Predicate,
+    crate::Transformer,
 };
-use super::{
-    Rc,
-    Supplier,
-    impl_shared_supplier_methods,
-    impl_supplier_clone,
-    impl_supplier_common_methods,
-    impl_supplier_debug_display,
+use {
+    crate::Supplier,
+    crate::suppliers::macros::impl_shared_supplier_methods,
+    crate::suppliers::macros::impl_supplier_clone,
+    crate::suppliers::macros::impl_supplier_common_methods,
+    crate::suppliers::macros::impl_supplier_debug_display,
+    std::rc::Rc,
 };
 
 // ======================================================================
@@ -36,10 +34,7 @@ use super::{
 /// Like `ArcSupplier`, methods borrow `&self` instead of
 /// consuming `self`:
 ///
-/// Transformation methods require the `combinators` feature.
-///
 /// ```rust
-/// # #[cfg(feature = "combinators")]
 /// # {
 /// use qubit_function::{RcSupplier, Supplier};
 ///
@@ -68,10 +63,7 @@ use super::{
 ///
 /// ## Reusable Transformations
 ///
-/// This example requires the `combinators` feature.
-///
 /// ```rust
-/// # #[cfg(feature = "combinators")]
 /// # {
 /// use qubit_function::{RcSupplier, Supplier};
 ///
@@ -86,7 +78,7 @@ use super::{
 /// ```
 pub struct RcSupplier<T> {
     pub(super) function: Rc<dyn Fn() -> T>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T> RcSupplier<T> {
@@ -114,18 +106,3 @@ impl<T> Supplier<T> for RcSupplier<T> {
         (self.function)()
     }
 }
-
-// ======================================================================
-// Note on Extension Traits for Closures
-// ======================================================================
-//
-// We don't provide `FnSupplierOps` trait for `Fn() -> T` closures
-// because:
-//
-// 1. All `Fn` closures also implement `FnMut`, so they can use `FnSupplierOps`
-//    from the `supplier` module
-// 2. Providing both would cause ambiguity errors due to overlapping trait impls
-// 3. Rust doesn't support negative trait bounds to exclude `FnMut`
-//
-// Users of `Fn` closures should use `FnSupplierOps` from the `supplier` module
-// or construct the desired wrapper explicitly with `BoxSupplier::new`.

@@ -5,22 +5,20 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcStatefulConsumer` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    Predicate,
-    RcConditionalStatefulConsumer,
+use {
+    crate::Predicate,
+    crate::RcConditionalStatefulConsumer,
 };
-use super::{
-    Rc,
-    RefCell,
-    StatefulConsumer,
-    impl_consumer_clone,
-    impl_consumer_common_methods,
-    impl_consumer_debug_display,
-    impl_shared_consumer_methods,
+use {
+    crate::StatefulConsumer,
+    crate::consumers::macros::impl_consumer_clone,
+    crate::consumers::macros::impl_consumer_common_methods,
+    crate::consumers::macros::impl_consumer_debug_display,
+    crate::consumers::macros::impl_shared_consumer_methods,
+    std::cell::RefCell,
+    std::rc::Rc,
 };
 
 type RcStatefulConsumerFn<T> = Rc<RefCell<dyn FnMut(&T)>>;
@@ -97,7 +95,7 @@ type RcStatefulConsumerFn<T> = Rc<RefCell<dyn FnMut(&T)>>;
 /// error. Mutations completed before a panic are not rolled back.
 pub struct RcStatefulConsumer<T> {
     pub(super) function: RcStatefulConsumerFn<T>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T> RcStatefulConsumer<T> {

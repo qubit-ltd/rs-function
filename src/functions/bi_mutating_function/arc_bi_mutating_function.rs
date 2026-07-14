@@ -5,24 +5,22 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `ArcBiMutatingFunction` public type.
 
-use super::{
-    Arc,
-    BiMutatingFunction,
-    impl_closure_trait,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
-    impl_shared_function_methods,
+use {
+    crate::ArcConditionalBiMutatingFunction,
+    crate::BiPredicate,
+    crate::MutatingFunction,
 };
-#[cfg(feature = "combinators")]
-use super::{
-    ArcConditionalBiMutatingFunction,
-    BiPredicate,
-    MutatingFunction,
+use {
+    crate::BiMutatingFunction,
+    crate::functions::macros::impl_function_clone,
+    crate::functions::macros::impl_function_common_methods,
+    crate::functions::macros::impl_function_constant_method,
+    crate::functions::macros::impl_function_debug_display,
+    crate::functions::macros::impl_shared_function_methods,
+    crate::macros::impl_closure_trait,
+    std::sync::Arc,
 };
 
 type ArcBiMutatingFunctionFn<T, U, R> =
@@ -48,7 +46,7 @@ type ArcBiMutatingFunctionFn<T, U, R> =
 /// - **Clonable**: Cheap cloning via `Arc::clone`
 pub struct ArcBiMutatingFunction<T, U, R> {
     pub(super) function: ArcBiMutatingFunctionFn<T, U, R>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, U, R> ArcBiMutatingFunction<T, U, R> {

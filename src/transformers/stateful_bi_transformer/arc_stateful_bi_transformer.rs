@@ -5,25 +5,23 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `ArcStatefulBiTransformer` public type.
 
-use super::{
-    Arc,
-    Mutex,
-    StatefulBiTransformer,
-    impl_closure_trait,
-    impl_shared_transformer_methods,
-    impl_transformer_clone,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
-    impl_transformer_debug_display,
+use {
+    crate::ArcConditionalStatefulBiTransformer,
+    crate::BiPredicate,
+    crate::StatefulTransformer,
 };
-#[cfg(feature = "combinators")]
-use super::{
-    ArcConditionalStatefulBiTransformer,
-    BiPredicate,
-    StatefulTransformer,
+use {
+    crate::StatefulBiTransformer,
+    crate::macros::impl_closure_trait,
+    crate::transformers::macros::impl_shared_transformer_methods,
+    crate::transformers::macros::impl_transformer_clone,
+    crate::transformers::macros::impl_transformer_common_methods,
+    crate::transformers::macros::impl_transformer_constant_method,
+    crate::transformers::macros::impl_transformer_debug_display,
+    parking_lot::Mutex,
+    std::sync::Arc,
 };
 
 // ============================================================================
@@ -52,7 +50,7 @@ use super::{
 /// before a panic are not rolled back.
 pub struct ArcStatefulBiTransformer<T, U, R> {
     pub(super) function: Arc<Mutex<dyn FnMut(T, U) -> R + Send>>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, U, R> ArcStatefulBiTransformer<T, U, R> {

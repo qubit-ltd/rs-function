@@ -5,20 +5,18 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxSupplierOnce` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    Predicate,
-    Transformer,
+use {
+    crate::Predicate,
+    crate::Transformer,
 };
-use super::{
-    SupplierOnce,
-    impl_box_supplier_methods,
-    impl_closure_once_trait,
-    impl_supplier_common_methods,
-    impl_supplier_debug_display,
+use {
+    crate::SupplierOnce,
+    crate::macros::impl_closure_once_trait,
+    crate::suppliers::macros::impl_box_supplier_methods,
+    crate::suppliers::macros::impl_supplier_common_methods,
+    crate::suppliers::macros::impl_supplier_debug_display,
 };
 
 // ==========================================================================
@@ -59,7 +57,7 @@ use super::{
 /// ```
 pub struct BoxSupplierOnce<T> {
     pub(super) function: Box<dyn FnOnce() -> T>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T> BoxSupplierOnce<T> {

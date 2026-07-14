@@ -5,16 +5,15 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalStatefulBiTransformer` public type.
 
-use super::{
-    BiPredicate,
-    BoxBiPredicate,
-    BoxStatefulBiTransformer,
-    StatefulBiTransformer,
-    impl_box_conditional_transformer,
-    impl_conditional_transformer_debug_display,
+use {
+    crate::BiPredicate,
+    crate::BoxBiPredicate,
+    crate::BoxStatefulBiTransformer,
+    crate::StatefulBiTransformer,
+    crate::transformers::macros::impl_box_conditional_transformer,
+    crate::transformers::macros::impl_conditional_transformer_debug_display,
 };
 
 // ============================================================================

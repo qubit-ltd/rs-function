@@ -21,38 +21,6 @@
 //! - [`ArcBiMutatingFunction`]: Thread-safe shared ownership, cloneable
 //! - `RcBiMutatingFunction`: Single-threaded shared ownership, cloneable
 
-#[cfg(feature = "rc")]
-use std::rc::Rc;
-use std::sync::Arc;
-
-use crate::functions::macros::{
-    impl_box_function_methods,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
-    impl_shared_function_methods,
-};
-#[cfg(feature = "combinators")]
-use crate::functions::{
-    macros::{
-        impl_box_conditional_function,
-        impl_conditional_function_clone,
-        impl_conditional_function_debug_display,
-        impl_shared_conditional_function,
-    },
-    mutating_function::MutatingFunction,
-};
-use crate::macros::impl_closure_trait;
-#[cfg(all(feature = "rc", feature = "combinators"))]
-use crate::predicates::bi_predicate::RcBiPredicate;
-#[cfg(feature = "combinators")]
-use crate::predicates::bi_predicate::{
-    ArcBiPredicate,
-    BiPredicate,
-    BoxBiPredicate,
-};
-
 mod box_bi_mutating_function;
 pub use box_bi_mutating_function::BoxBiMutatingFunction;
 #[cfg(feature = "rc")]
@@ -61,10 +29,6 @@ mod rc_bi_mutating_function;
 pub use rc_bi_mutating_function::RcBiMutatingFunction;
 mod arc_bi_mutating_function;
 pub use arc_bi_mutating_function::ArcBiMutatingFunction;
-#[cfg(feature = "combinators")]
-mod fn_bi_mutating_function_ops;
-#[cfg(feature = "combinators")]
-pub use fn_bi_mutating_function_ops::FnBiMutatingFunctionOps;
 mod box_binary_mutating_function;
 pub use box_binary_mutating_function::BoxBinaryMutatingFunction;
 mod arc_binary_mutating_function;
@@ -73,17 +37,13 @@ pub use arc_binary_mutating_function::ArcBinaryMutatingFunction;
 mod rc_binary_mutating_function;
 #[cfg(feature = "rc")]
 pub use rc_binary_mutating_function::RcBinaryMutatingFunction;
-#[cfg(feature = "combinators")]
 mod box_conditional_bi_mutating_function;
-#[cfg(feature = "combinators")]
 pub use box_conditional_bi_mutating_function::BoxConditionalBiMutatingFunction;
-#[cfg(all(feature = "rc", feature = "combinators"))]
+#[cfg(feature = "rc")]
 mod rc_conditional_bi_mutating_function;
-#[cfg(all(feature = "rc", feature = "combinators"))]
+#[cfg(feature = "rc")]
 pub use rc_conditional_bi_mutating_function::RcConditionalBiMutatingFunction;
-#[cfg(feature = "combinators")]
 mod arc_conditional_bi_mutating_function;
-#[cfg(feature = "combinators")]
 pub use arc_conditional_bi_mutating_function::ArcConditionalBiMutatingFunction;
 
 // ============================================================================

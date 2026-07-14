@@ -5,17 +5,16 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `ArcConditionalBiMutatingFunction` public type.
 
-use super::{
-    ArcBiMutatingFunction,
-    ArcBiPredicate,
-    BiMutatingFunction,
-    BiPredicate,
-    impl_conditional_function_clone,
-    impl_conditional_function_debug_display,
-    impl_shared_conditional_function,
+use {
+    crate::ArcBiMutatingFunction,
+    crate::ArcBiPredicate,
+    crate::BiMutatingFunction,
+    crate::BiPredicate,
+    crate::functions::macros::impl_conditional_function_clone,
+    crate::functions::macros::impl_conditional_function_debug_display,
+    crate::functions::macros::impl_shared_conditional_function,
 };
 
 // ============================================================================

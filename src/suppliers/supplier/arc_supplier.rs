@@ -5,20 +5,18 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `ArcSupplier` public type.
 
-use super::{
-    Arc,
-    Supplier,
-    impl_shared_supplier_methods,
-    impl_supplier_clone,
-    impl_supplier_debug_display,
+use {
+    crate::Predicate,
+    crate::Transformer,
 };
-#[cfg(feature = "combinators")]
-use super::{
-    Predicate,
-    Transformer,
+use {
+    crate::Supplier,
+    crate::suppliers::macros::impl_shared_supplier_methods,
+    crate::suppliers::macros::impl_supplier_clone,
+    crate::suppliers::macros::impl_supplier_debug_display,
+    std::sync::Arc,
 };
 
 // ======================================================================
@@ -36,10 +34,8 @@ use super::{
 /// Methods borrow `&self` instead of consuming `self`. The
 /// original supplier remains usable after method calls:
 ///
-/// Transformation methods require the `combinators` feature.
 ///
 /// ```rust
-/// # #[cfg(feature = "combinators")]
 /// # {
 /// use qubit_function::{ArcSupplier, Supplier};
 ///
@@ -79,10 +75,8 @@ use super::{
 ///
 /// ## Reusable Transformations
 ///
-/// This example requires the `combinators` feature.
 ///
 /// ```rust
-/// # #[cfg(feature = "combinators")]
 /// # {
 /// use qubit_function::{ArcSupplier, Supplier};
 ///
@@ -98,7 +92,7 @@ use super::{
 /// ```
 pub struct ArcSupplier<T> {
     pub(super) function: Arc<dyn Fn() -> T + Send + Sync>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T> ArcSupplier<T> {

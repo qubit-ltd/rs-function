@@ -14,7 +14,7 @@
 //! implementations based on different ownership models:
 //!
 //! - **`BoxStatefulMutator<T>`**: Box-based single ownership implementation for
-//!   one-time use scenarios and builder patterns
+//!   stored callbacks and builder patterns
 //! - **`ArcStatefulMutator<T>`**: `Arc<Mutex<_>>`-based thread-safe shared
 //!   ownership implementation for multi-threaded scenarios
 //! - **`RcStatefulMutator<T>`**: `Rc<RefCell<_>>`-based single-threaded shared
@@ -85,10 +85,7 @@
 //!
 //! ## Method Chaining
 //!
-//! This example additionally requires the `combinators` feature.
-//!
 //! ```rust
-//! # #[cfg(feature = "combinators")]
 //! # {
 //! use qubit_function::{BoxStatefulMutator, StatefulMutator};
 //!
@@ -105,16 +102,15 @@
 //!
 //! ## Working with Closures
 //!
-//! `FnMut(&mut T)` closures automatically implement `StatefulMutator`. The
-//! chaining extension additionally requires the `combinators` feature:
+//! `FnMut(&mut T)` closures automatically implement `StatefulMutator`.
+//! Chaining starts from a concrete wrapper:
 //!
 //! ```rust
-//! # #[cfg(feature = "combinators")]
 //! # {
-//! use qubit_function::{FnMutStatefulMutatorOps, StatefulMutator};
+//! use qubit_function::{BoxStatefulMutator, StatefulMutator};
 //!
 //! let mut call_count = 0;
-//! let mut chained = (move |x: &mut i32| {
+//! let mut chained = BoxStatefulMutator::new(move |x: &mut i32| {
 //!     call_count += 1;
 //!     *x += call_count;
 //! }).and_then(|x: &mut i32| *x *= 2);
@@ -147,11 +143,10 @@
 //!
 //! ## Conditional Execution
 //!
-//! With the `combinators` feature, stateful mutator wrappers support
-//! conditional execution through `when` and an optional `or_else` branch:
+//! Stateful mutator wrappers support conditional execution through `when` and
+//! an optional `or_else` branch:
 //!
 //! ```rust
-//! # #[cfg(feature = "combinators")]
 //! # {
 //! use qubit_function::{BoxStatefulMutator, StatefulMutator};
 //!
@@ -195,30 +190,6 @@ use std::sync::Arc;
 
 use parking_lot::Mutex;
 
-use crate::macros::impl_closure_trait;
-#[cfg(feature = "combinators")]
-use crate::mutators::macros::{
-    impl_box_conditional_mutator,
-    impl_conditional_mutator_clone,
-    impl_conditional_mutator_debug_display,
-    impl_shared_conditional_mutator,
-};
-use crate::mutators::macros::{
-    impl_box_mutator_methods,
-    impl_mutator_clone,
-    impl_mutator_common_methods,
-    impl_mutator_debug_display,
-    impl_shared_mutator_methods,
-};
-#[cfg(all(feature = "rc", feature = "combinators"))]
-use crate::predicates::predicate::RcPredicate;
-#[cfg(feature = "combinators")]
-use crate::predicates::predicate::{
-    ArcPredicate,
-    BoxPredicate,
-    Predicate,
-};
-
 // ============================================================================
 // 1. Type Aliases
 // ============================================================================
@@ -238,21 +209,13 @@ mod rc_stateful_mutator;
 pub use rc_stateful_mutator::RcStatefulMutator;
 mod arc_stateful_mutator;
 pub use arc_stateful_mutator::ArcStatefulMutator;
-#[cfg(feature = "combinators")]
-mod fn_mut_stateful_mutator_ops;
-#[cfg(feature = "combinators")]
-pub use fn_mut_stateful_mutator_ops::FnMutStatefulMutatorOps;
-#[cfg(feature = "combinators")]
 mod box_conditional_stateful_mutator;
-#[cfg(feature = "combinators")]
 pub use box_conditional_stateful_mutator::BoxConditionalStatefulMutator;
-#[cfg(all(feature = "rc", feature = "combinators"))]
+#[cfg(feature = "rc")]
 mod rc_conditional_stateful_mutator;
-#[cfg(all(feature = "rc", feature = "combinators"))]
+#[cfg(feature = "rc")]
 pub use rc_conditional_stateful_mutator::RcConditionalStatefulMutator;
-#[cfg(feature = "combinators")]
 mod arc_conditional_stateful_mutator;
-#[cfg(feature = "combinators")]
 pub use arc_conditional_stateful_mutator::ArcConditionalStatefulMutator;
 
 // ============================================================================

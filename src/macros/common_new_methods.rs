@@ -44,7 +44,10 @@ macro_rules! impl_common_new_methods {
             F: $($semantic_bounds)+,
         {
             let $f = $adapter_expr;
-            Self { function: $wrapper_expr, name: None }
+            Self {
+                function: $wrapper_expr,
+                metadata: $crate::callback_metadata::CallbackMetadata::unnamed(),
+            }
         }
 
         #[doc = concat!("Creates a new named ", $type_desc, ".")]
@@ -54,7 +57,10 @@ macro_rules! impl_common_new_methods {
             F: $($semantic_bounds)+,
         {
             let $f = $adapter_expr;
-            Self { function: $wrapper_expr, name: Some(name.to_string()) }
+            Self {
+                function: $wrapper_expr,
+                metadata: $crate::callback_metadata::CallbackMetadata::named(name),
+            }
         }
 
         #[doc = concat!("Creates a new named ", $type_desc, " with an optional name.")]
@@ -64,7 +70,26 @@ macro_rules! impl_common_new_methods {
             F: $($semantic_bounds)+,
         {
             let $f = $adapter_expr;
-            Self { function: $wrapper_expr, name }
+            Self {
+                function: $wrapper_expr,
+                metadata: $crate::callback_metadata::CallbackMetadata::from_optional_name(name),
+            }
+        }
+
+        #[allow(
+            dead_code,
+            reason = "generated for metadata-preserving wrapper transformations"
+        )]
+        #[inline]
+        pub(crate) fn new_with_metadata<F>(
+            mut $source: F,
+            metadata: $crate::callback_metadata::CallbackMetadata,
+        ) -> Self
+        where
+            F: $($semantic_bounds)+,
+        {
+            let $f = $adapter_expr;
+            Self { function: $wrapper_expr, metadata }
         }
     };
 
@@ -86,7 +111,7 @@ macro_rules! impl_common_new_methods {
             let $f = $adapter_expr;
             Self {
                 function: $wrapper_expr,
-                name: None,
+                metadata: $crate::callback_metadata::CallbackMetadata::unnamed(),
             }
         }
 
@@ -102,7 +127,7 @@ macro_rules! impl_common_new_methods {
             let $f = $adapter_expr;
             Self {
                 function: $wrapper_expr,
-                name: Some(name.to_string()),
+                metadata: $crate::callback_metadata::CallbackMetadata::named(name),
             }
         }
 
@@ -121,7 +146,26 @@ macro_rules! impl_common_new_methods {
             let $f = $adapter_expr;
             Self {
                 function: $wrapper_expr,
-                name,
+                metadata: $crate::callback_metadata::CallbackMetadata::from_optional_name(name),
+            }
+        }
+
+        #[allow(
+            dead_code,
+            reason = "generated for metadata-preserving wrapper transformations"
+        )]
+        #[inline]
+        pub(crate) fn new_with_metadata<F>(
+            $source: F,
+            metadata: $crate::callback_metadata::CallbackMetadata,
+        ) -> Self
+        where
+            F: $($semantic_bounds)+,
+        {
+            let $f = $adapter_expr;
+            Self {
+                function: $wrapper_expr,
+                metadata,
             }
         }
     };
@@ -141,7 +185,7 @@ macro_rules! impl_common_new_methods {
         {
             Self {
                 function: $wrapper_expr,
-                name: None,
+                metadata: $crate::callback_metadata::CallbackMetadata::unnamed(),
             }
         }
 
@@ -156,7 +200,7 @@ macro_rules! impl_common_new_methods {
         {
             Self {
                 function: $wrapper_expr,
-                name: Some(name.to_string()),
+                metadata: $crate::callback_metadata::CallbackMetadata::named(name),
             }
         }
 
@@ -170,7 +214,25 @@ macro_rules! impl_common_new_methods {
         {
             Self {
                 function: $wrapper_expr,
-                name,
+                metadata: $crate::callback_metadata::CallbackMetadata::from_optional_name(name),
+            }
+        }
+
+        #[allow(
+            dead_code,
+            reason = "generated for metadata-preserving wrapper transformations"
+        )]
+        #[inline]
+        pub(crate) fn new_with_metadata<F>(
+            $f: F,
+            metadata: $crate::callback_metadata::CallbackMetadata,
+        ) -> Self
+        where
+            F: $($fn_trait_with_bounds)+,
+        {
+            Self {
+                function: $wrapper_expr,
+                metadata,
             }
         }
     };

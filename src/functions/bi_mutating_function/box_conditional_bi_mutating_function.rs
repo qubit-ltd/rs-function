@@ -5,16 +5,15 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxConditionalBiMutatingFunction` public type.
 
-use super::{
-    BiMutatingFunction,
-    BiPredicate,
-    BoxBiMutatingFunction,
-    BoxBiPredicate,
-    impl_box_conditional_function,
-    impl_conditional_function_debug_display,
+use {
+    crate::BiMutatingFunction,
+    crate::BiPredicate,
+    crate::BoxBiMutatingFunction,
+    crate::BoxBiPredicate,
+    crate::functions::macros::impl_box_conditional_function,
+    crate::functions::macros::impl_conditional_function_debug_display,
 };
 
 // ============================================================================

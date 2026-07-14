@@ -32,8 +32,8 @@
 //! # Three Implementations
 //!
 //! - **`BoxTester`** / **`BoxStatefulTester`**: Single ownership using `Box<dyn
-//!   Fn() -> bool>` or `Box<dyn FnMut() -> bool>`. Best for one-time use and
-//!   builder patterns.
+//!   Fn() -> bool>` or `Box<dyn FnMut() -> bool>`. It provides a stable,
+//!   single-owner callback-object type for fields and builder patterns.
 //!
 //! - **`ArcTester`** / **`ArcStatefulTester`**: Thread-safe shared ownership.
 //!   Stateless testers use `Arc<dyn Fn() -> bool + Send + Sync>`, while
@@ -81,10 +81,8 @@
 //!
 //! ## Logical Combination
 //!
-//! This example requires the `combinators` feature.
 //!
 //! ```rust
-//! # #[cfg(feature = "combinators")]
 //! # {
 //! use qubit_function::{BoxTester, Tester};
 //! use std::sync::{Arc, atomic::{AtomicUsize, AtomicBool, Ordering}};
@@ -158,9 +156,6 @@
 //!
 //! assert!(handle.join().expect("thread should not panic"));
 //! ```
-#[cfg(feature = "rc")]
-use std::rc::Rc;
-use std::sync::Arc;
 
 #[cfg(feature = "stateful")]
 pub mod stateful_tester;

@@ -5,23 +5,21 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `ArcBiTransformer` public type.
 
-use super::{
-    Arc,
-    BiTransformer,
-    impl_shared_transformer_methods,
-    impl_transformer_clone,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
-    impl_transformer_debug_display,
+use {
+    crate::ArcConditionalBiTransformer,
+    crate::BiPredicate,
+    crate::Transformer,
 };
-#[cfg(feature = "combinators")]
-use super::{
-    ArcConditionalBiTransformer,
-    BiPredicate,
-    Transformer,
+use {
+    crate::BiTransformer,
+    crate::transformers::macros::impl_shared_transformer_methods,
+    crate::transformers::macros::impl_transformer_clone,
+    crate::transformers::macros::impl_transformer_common_methods,
+    crate::transformers::macros::impl_transformer_constant_method,
+    crate::transformers::macros::impl_transformer_debug_display,
+    std::sync::Arc,
 };
 
 // ============================================================================
@@ -43,7 +41,7 @@ use super::{
 /// - **Clonable**: Cheap cloning via `Arc::clone`
 pub struct ArcBiTransformer<T, U, R> {
     pub(super) function: Arc<dyn Fn(T, U) -> R + Send + Sync>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, U, R> ArcBiTransformer<T, U, R> {

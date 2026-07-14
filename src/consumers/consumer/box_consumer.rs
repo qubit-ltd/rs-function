@@ -5,19 +5,17 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxConsumer` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    BoxConditionalConsumer,
-    Predicate,
+use {
+    crate::BoxConditionalConsumer,
+    crate::Predicate,
 };
-use super::{
-    Consumer,
-    impl_box_consumer_methods,
-    impl_consumer_common_methods,
-    impl_consumer_debug_display,
+use {
+    crate::Consumer,
+    crate::consumers::macros::impl_box_consumer_methods,
+    crate::consumers::macros::impl_consumer_common_methods,
+    crate::consumers::macros::impl_consumer_debug_display,
 };
 
 // ============================================================================
@@ -58,7 +56,7 @@ use super::{
 /// ```
 pub struct BoxConsumer<T> {
     pub(super) function: Box<dyn Fn(&T)>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T> BoxConsumer<T> {

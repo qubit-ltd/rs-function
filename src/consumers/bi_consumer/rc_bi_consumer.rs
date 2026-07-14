@@ -5,22 +5,20 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcBiConsumer` public type.
 
-use super::{
-    BiConsumer,
-    BiConsumerFn,
-    Rc,
-    impl_consumer_clone,
-    impl_consumer_common_methods,
-    impl_consumer_debug_display,
-    impl_shared_consumer_methods,
+use {
+    super::BiConsumerFn,
+    crate::BiConsumer,
+    crate::consumers::macros::impl_consumer_clone,
+    crate::consumers::macros::impl_consumer_common_methods,
+    crate::consumers::macros::impl_consumer_debug_display,
+    crate::consumers::macros::impl_shared_consumer_methods,
+    std::rc::Rc,
 };
-#[cfg(feature = "combinators")]
-use super::{
-    BiPredicate,
-    RcConditionalBiConsumer,
+use {
+    crate::BiPredicate,
+    crate::RcConditionalBiConsumer,
 };
 
 // =======================================================================
@@ -69,7 +67,7 @@ use super::{
 /// ```
 pub struct RcBiConsumer<T, U> {
     pub(super) function: Rc<BiConsumerFn<T, U>>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, U> RcBiConsumer<T, U> {

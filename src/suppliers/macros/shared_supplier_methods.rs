@@ -32,10 +32,10 @@
 //!
 //! # Examples
 //!
-//! The example requires the `rc` and `combinators` features.
+//! The example requires the `rc` feature.
 //!
 //! ```rust
-//! # #[cfg(all(feature = "rc", feature = "combinators"))]
+//! # #[cfg(feature = "rc")]
 //! # {
 //! use qubit_function::Supplier;
 //! use qubit_function::{ArcSupplier, RcSupplier};
@@ -83,10 +83,10 @@
 ///
 /// # Examples
 ///
-/// The example requires the `rc` and `combinators` features.
+/// The example requires the `rc` feature.
 ///
 /// ```rust
-/// # #[cfg(all(feature = "rc", feature = "combinators"))]
+/// # #[cfg(feature = "rc")]
 /// # {
 /// use qubit_function::Supplier;
 /// use qubit_function::{ArcSupplier, RcSupplier};
@@ -108,7 +108,6 @@
 /// assert_eq!(zipped.get(), ("hello".to_string(), 1));
 /// # }
 /// ```
-#[cfg(feature = "combinators")]
 macro_rules! impl_shared_supplier_methods {
     (@let_supplier Supplier, $name:ident, $value:expr) => {
         let $name = $value;
@@ -349,11 +348,6 @@ macro_rules! impl_shared_supplier_methods {
             })
         }
     };
-}
-
-#[cfg(not(feature = "combinators"))]
-macro_rules! impl_shared_supplier_methods {
-    ($($tokens:tt)*) => {};
 }
 
 pub(crate) use impl_shared_supplier_methods;

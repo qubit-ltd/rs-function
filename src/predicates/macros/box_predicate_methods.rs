@@ -57,7 +57,6 @@
 /// // Two-parameter predicate
 /// impl_box_predicate_methods!(BoxBiPredicate<T, U>);
 /// ```
-#[cfg(feature = "combinators")]
 macro_rules! impl_box_predicate_methods {
     // Internal macro for generating logical operations
     (@logical_ops $struct_name:ident < $t:ident >, $trait_name:ident) => {
@@ -306,11 +305,6 @@ macro_rules! impl_box_predicate_methods {
     ($struct_name:ident < $t:ident, $u:ident >) => {
         impl_box_predicate_methods!(@logical_ops $struct_name<$t, $u>, BiPredicate);
     };
-}
-
-#[cfg(not(feature = "combinators"))]
-macro_rules! impl_box_predicate_methods {
-    ($($tokens:tt)*) => {};
 }
 
 pub(crate) use impl_box_predicate_methods;

@@ -5,23 +5,21 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcFunction` public type.
 
-use super::{
-    Function,
-    Rc,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
-    impl_function_identity_method,
-    impl_shared_function_methods,
+use {
+    crate::Function,
+    crate::functions::macros::impl_function_clone,
+    crate::functions::macros::impl_function_common_methods,
+    crate::functions::macros::impl_function_constant_method,
+    crate::functions::macros::impl_function_debug_display,
+    crate::functions::macros::impl_function_identity_method,
+    crate::functions::macros::impl_shared_function_methods,
+    std::rc::Rc,
 };
-#[cfg(feature = "combinators")]
-use super::{
-    Predicate,
-    RcConditionalFunction,
+use {
+    crate::Predicate,
+    crate::RcConditionalFunction,
 };
 
 // ============================================================================
@@ -43,7 +41,7 @@ use super::{
 /// - **Clonable**: Cheap cloning via `Rc::clone`
 pub struct RcFunction<T, R> {
     pub(super) function: Rc<dyn Fn(&T) -> R>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, R> RcFunction<T, R> {

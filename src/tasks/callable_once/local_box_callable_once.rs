@@ -5,7 +5,6 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `LocalBoxCallableOnce` public type.
 
 use crate::{
@@ -37,7 +36,7 @@ pub struct LocalBoxCallableOnce<R, E> {
     /// The one-time closure executed by this callable.
     pub(super) function: Box<dyn FnOnce() -> Result<R, E>>,
     /// The optional name of this callable.
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<R, E> LocalBoxCallableOnce<R, E> {
@@ -79,7 +78,6 @@ impl<R, E> LocalBoxCallableOnce<R, E> {
     /// # Returns
     ///
     /// A new local callable that applies `mapper` when this callable succeeds.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn map<U, M>(self, mapper: M) -> LocalBoxCallableOnce<U, E>
     where
@@ -87,11 +85,11 @@ impl<R, E> LocalBoxCallableOnce<R, E> {
         R: 'static,
         E: 'static,
     {
-        let name = self.name;
+        let metadata = self.metadata;
         let function = self.function;
-        LocalBoxCallableOnce::new_with_optional_name(
+        LocalBoxCallableOnce::new_with_metadata(
             move || function().map(mapper),
-            name,
+            metadata,
         )
     }
 
@@ -104,7 +102,6 @@ impl<R, E> LocalBoxCallableOnce<R, E> {
     /// # Returns
     ///
     /// A new local callable that applies `mapper` when this callable fails.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn map_err<E2, M>(self, mapper: M) -> LocalBoxCallableOnce<R, E2>
     where
@@ -112,11 +109,11 @@ impl<R, E> LocalBoxCallableOnce<R, E> {
         R: 'static,
         E: 'static,
     {
-        let name = self.name;
+        let metadata = self.metadata;
         let function = self.function;
-        LocalBoxCallableOnce::new_with_optional_name(
+        LocalBoxCallableOnce::new_with_metadata(
             move || function().map_err(mapper),
-            name,
+            metadata,
         )
     }
 
@@ -130,7 +127,6 @@ impl<R, E> LocalBoxCallableOnce<R, E> {
     /// # Returns
     ///
     /// A new local callable that runs `next` only when this callable succeeds.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn and_then<U, N>(self, next: N) -> LocalBoxCallableOnce<U, E>
     where
@@ -138,11 +134,11 @@ impl<R, E> LocalBoxCallableOnce<R, E> {
         R: 'static,
         E: 'static,
     {
-        let name = self.name;
+        let metadata = self.metadata;
         let function = self.function;
-        LocalBoxCallableOnce::new_with_optional_name(
+        LocalBoxCallableOnce::new_with_metadata(
             move || function().and_then(next),
-            name,
+            metadata,
         )
     }
 }

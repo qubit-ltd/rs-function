@@ -57,16 +57,6 @@
 //! let value = once.get();
 //! assert_eq!(value, "data");
 //! ```
-use crate::macros::impl_closure_once_trait;
-#[cfg(feature = "combinators")]
-use crate::predicates::predicate::Predicate;
-use crate::suppliers::macros::{
-    impl_box_supplier_methods,
-    impl_supplier_common_methods,
-    impl_supplier_debug_display,
-};
-#[cfg(feature = "combinators")]
-use crate::transformers::transformer::Transformer;
 
 mod box_supplier_once;
 pub use box_supplier_once::BoxSupplierOnce;

@@ -5,7 +5,6 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxRunnable` public type.
 
 use crate::{
@@ -20,7 +19,6 @@ use crate::{
     tasks::runnable::Runnable,
 };
 
-#[cfg(feature = "combinators")]
 use crate::tasks::callable::BoxCallable;
 
 // ============================================================================
@@ -49,7 +47,7 @@ pub struct BoxRunnable<E> {
     /// The stateful closure executed by this runnable.
     pub(super) function: Box<dyn FnMut() -> Result<(), E>>,
     /// The optional name of this runnable.
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<E> BoxRunnable<E> {
@@ -93,22 +91,21 @@ impl<E> BoxRunnable<E> {
     /// # Returns
     ///
     /// A runnable executing both actions in sequence.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn and_then<N>(self, next: N) -> BoxRunnable<E>
     where
         N: Runnable<E> + 'static,
         E: 'static,
     {
-        let name = self.name;
+        let metadata = self.metadata;
         let mut function = self.function;
         let mut next = next;
-        BoxRunnable::new_with_optional_name(
+        BoxRunnable::new_with_metadata(
             move || {
                 function()?;
                 next.run()
             },
-            name,
+            metadata,
         )
     }
 
@@ -123,7 +120,6 @@ impl<E> BoxRunnable<E> {
     /// # Returns
     ///
     /// A callable producing the second computation's result.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn then_callable<R, C>(self, callable: C) -> BoxCallable<R, E>
     where
@@ -131,15 +127,15 @@ impl<E> BoxRunnable<E> {
         R: 'static,
         E: 'static,
     {
-        let name = self.name;
+        let metadata = self.metadata;
         let mut function = self.function;
         let mut callable = callable;
-        BoxCallable::new_with_optional_name(
+        BoxCallable::new_with_metadata(
             move || {
                 function()?;
                 callable.call()
             },
-            name,
+            metadata,
         )
     }
 }

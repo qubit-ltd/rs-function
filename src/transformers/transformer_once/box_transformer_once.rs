@@ -5,21 +5,19 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxTransformerOnce` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    BoxConditionalTransformerOnce,
-    Predicate,
+use {
+    crate::BoxConditionalTransformerOnce,
+    crate::Predicate,
 };
-use super::{
-    TransformerOnce,
-    impl_box_transformer_methods,
-    impl_closure_once_trait,
-    impl_transformer_common_methods,
-    impl_transformer_constant_method,
-    impl_transformer_debug_display,
+use {
+    crate::TransformerOnce,
+    crate::macros::impl_closure_once_trait,
+    crate::transformers::macros::impl_box_transformer_methods,
+    crate::transformers::macros::impl_transformer_common_methods,
+    crate::transformers::macros::impl_transformer_constant_method,
+    crate::transformers::macros::impl_transformer_debug_display,
 };
 
 // ============================================================================
@@ -40,7 +38,7 @@ use super::{
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
 pub struct BoxTransformerOnce<T, R> {
     pub(super) function: Box<dyn FnOnce(T) -> R>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 // Implement BoxTransformerOnce

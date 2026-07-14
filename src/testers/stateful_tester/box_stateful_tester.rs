@@ -7,7 +7,6 @@
 // =============================================================================
 //! Defines the `BoxStatefulTester` public type.
 
-#[cfg(feature = "combinators")]
 use std::ops::Not;
 
 use super::StatefulTester;
@@ -38,7 +37,6 @@ impl BoxStatefulTester {
     /// The second tester is evaluated only when the first tester returns
     /// `true`.
     #[inline]
-    #[cfg(feature = "combinators")]
     pub fn and<T>(mut self, mut next: T) -> BoxStatefulTester
     where
         T: StatefulTester + 'static,
@@ -51,7 +49,6 @@ impl BoxStatefulTester {
     /// The second tester is evaluated only when the first tester returns
     /// `false`.
     #[inline]
-    #[cfg(feature = "combinators")]
     pub fn or<T>(mut self, mut next: T) -> BoxStatefulTester
     where
         T: StatefulTester + 'static,
@@ -61,7 +58,6 @@ impl BoxStatefulTester {
 
     /// Combines this tester with another stateful tester using logical NAND.
     #[inline]
-    #[cfg(feature = "combinators")]
     pub fn nand<T>(mut self, mut next: T) -> BoxStatefulTester
     where
         T: StatefulTester + 'static,
@@ -71,7 +67,6 @@ impl BoxStatefulTester {
 
     /// Combines this tester with another stateful tester using logical XOR.
     #[inline]
-    #[cfg(feature = "combinators")]
     pub fn xor<T>(mut self, mut next: T) -> BoxStatefulTester
     where
         T: StatefulTester + 'static,
@@ -81,7 +76,6 @@ impl BoxStatefulTester {
 
     /// Combines this tester with another stateful tester using logical NOR.
     #[inline]
-    #[cfg(feature = "combinators")]
     pub fn nor<T>(mut self, mut next: T) -> BoxStatefulTester
     where
         T: StatefulTester + 'static,
@@ -90,7 +84,6 @@ impl BoxStatefulTester {
     }
 }
 
-#[cfg(feature = "combinators")]
 impl Not for BoxStatefulTester {
     type Output = BoxStatefulTester;
 

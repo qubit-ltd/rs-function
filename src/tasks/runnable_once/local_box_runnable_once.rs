@@ -5,7 +5,6 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `LocalBoxRunnableOnce` public type.
 
 use crate::{
@@ -20,7 +19,6 @@ use crate::{
     tasks::runnable_once::RunnableOnce,
 };
 
-#[cfg(feature = "combinators")]
 use crate::tasks::callable_once::{
     CallableOnce,
     LocalBoxCallableOnce,
@@ -44,7 +42,7 @@ pub struct LocalBoxRunnableOnce<E> {
     /// The one-time closure executed by this runnable.
     pub(super) function: Box<dyn FnOnce() -> Result<(), E>>,
     /// The optional name of this runnable.
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<E> LocalBoxRunnableOnce<E> {
@@ -88,21 +86,20 @@ impl<E> LocalBoxRunnableOnce<E> {
     /// # Returns
     ///
     /// A new local runnable executing both actions in sequence.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn and_then<N>(self, next: N) -> LocalBoxRunnableOnce<E>
     where
         N: RunnableOnce<E> + 'static,
         E: 'static,
     {
-        let name = self.name;
+        let metadata = self.metadata;
         let function = self.function;
-        LocalBoxRunnableOnce::new_with_optional_name(
+        LocalBoxRunnableOnce::new_with_metadata(
             move || {
                 function()?;
                 next.run()
             },
-            name,
+            metadata,
         )
     }
 
@@ -117,7 +114,6 @@ impl<E> LocalBoxRunnableOnce<E> {
     /// # Returns
     ///
     /// A local callable producing the second computation's result.
-    #[cfg(feature = "combinators")]
     #[inline]
     pub fn then_callable<R, C>(self, callable: C) -> LocalBoxCallableOnce<R, E>
     where
@@ -125,14 +121,14 @@ impl<E> LocalBoxRunnableOnce<E> {
         R: 'static,
         E: 'static,
     {
-        let name = self.name;
+        let metadata = self.metadata;
         let function = self.function;
-        LocalBoxCallableOnce::new_with_optional_name(
+        LocalBoxCallableOnce::new_with_metadata(
             move || {
                 function()?;
                 callable.call()
             },
-            name,
+            metadata,
         )
     }
 }

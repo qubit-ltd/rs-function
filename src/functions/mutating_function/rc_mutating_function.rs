@@ -5,23 +5,21 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `RcMutatingFunction` public type.
 
-#[cfg(feature = "combinators")]
-use super::{
-    Function,
-    Predicate,
-    RcConditionalMutatingFunction,
+use {
+    crate::Function,
+    crate::Predicate,
+    crate::RcConditionalMutatingFunction,
 };
-use super::{
-    MutatingFunction,
-    Rc,
-    impl_function_clone,
-    impl_function_common_methods,
-    impl_function_debug_display,
-    impl_function_identity_method,
-    impl_shared_function_methods,
+use {
+    crate::MutatingFunction,
+    crate::functions::macros::impl_function_clone,
+    crate::functions::macros::impl_function_common_methods,
+    crate::functions::macros::impl_function_debug_display,
+    crate::functions::macros::impl_function_identity_method,
+    crate::functions::macros::impl_shared_function_methods,
+    std::rc::Rc,
 };
 
 // =======================================================================
@@ -66,7 +64,7 @@ use super::{
 /// ```
 pub struct RcMutatingFunction<T, R> {
     pub(super) function: Rc<dyn Fn(&mut T) -> R>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T, R> RcMutatingFunction<T, R> {

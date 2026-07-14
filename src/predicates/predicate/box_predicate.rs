@@ -5,33 +5,29 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxPredicate` public type.
 
-#[cfg(feature = "combinators")]
 use std::ops::Not;
 
-use super::{
-    ALWAYS_FALSE_NAME,
-    ALWAYS_TRUE_NAME,
-    Predicate,
-    impl_box_predicate_methods,
-    impl_predicate_common_methods,
-    impl_predicate_debug_display,
+use {
+    super::ALWAYS_FALSE_NAME,
+    super::ALWAYS_TRUE_NAME,
+    crate::Predicate,
+    crate::predicates::macros::impl_box_predicate_methods,
+    crate::predicates::macros::impl_predicate_common_methods,
+    crate::predicates::macros::impl_predicate_debug_display,
 };
 
 /// A Box-based predicate with single ownership.
 ///
-/// This type is suitable for one-time use scenarios where the predicate does
-/// not need to be cloned or shared. Composition methods consume `self`,
-/// reflecting the single-ownership model.
+/// This type is suitable when the predicate needs a stable single-owner type
+/// but does not need to be cloned or shared. Composition methods consume
+/// `self`, reflecting the single-ownership model.
 ///
-/// Composition methods require the `combinators` feature.
 ///
 /// # Examples
 ///
 /// ```rust
-/// # #[cfg(feature = "combinators")]
 /// # {
 /// use qubit_function::{Predicate, BoxPredicate};
 ///
@@ -45,7 +41,7 @@ use super::{
 /// ```
 pub struct BoxPredicate<T> {
     pub(super) function: Box<dyn Fn(&T) -> bool>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<T> BoxPredicate<T> {
@@ -62,7 +58,6 @@ impl<T> BoxPredicate<T> {
     impl_box_predicate_methods!(BoxPredicate<T>);
 }
 
-#[cfg(feature = "combinators")]
 impl<T> Not for BoxPredicate<T>
 where
     T: 'static,

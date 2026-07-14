@@ -16,7 +16,7 @@
 //! implementations based on different ownership models:
 //!
 //! - **`BoxStatefulConsumer<T>`**: Box-based single ownership implementation
-//!   for one-time use scenarios
+//!   for stored, reusable stateful callbacks
 //! - **`ArcStatefulConsumer<T>`**: Thread-safe shared ownership implementation
 //!   based on Arc<Mutex<>>
 //! - **`RcStatefulConsumer<T>`**: Single-threaded shared ownership
@@ -28,37 +28,6 @@
 //! but not the input value.
 //!
 //! Suitable for statistics, accumulation, event handling, and other scenarios.
-#[cfg(feature = "rc")]
-use std::cell::RefCell;
-#[cfg(feature = "rc")]
-use std::rc::Rc;
-use std::sync::Arc;
-
-use parking_lot::Mutex;
-
-#[cfg(feature = "combinators")]
-use crate::consumers::macros::{
-    impl_box_conditional_consumer,
-    impl_conditional_consumer_clone,
-    impl_conditional_consumer_debug_display,
-    impl_shared_conditional_consumer,
-};
-use crate::consumers::macros::{
-    impl_box_consumer_methods,
-    impl_consumer_clone,
-    impl_consumer_common_methods,
-    impl_consumer_debug_display,
-    impl_shared_consumer_methods,
-};
-use crate::macros::impl_closure_trait;
-#[cfg(all(feature = "rc", feature = "combinators"))]
-use crate::predicates::predicate::RcPredicate;
-#[cfg(feature = "combinators")]
-use crate::predicates::predicate::{
-    ArcPredicate,
-    BoxPredicate,
-    Predicate,
-};
 
 mod box_stateful_consumer;
 pub use box_stateful_consumer::BoxStatefulConsumer;
@@ -68,21 +37,13 @@ mod rc_stateful_consumer;
 pub use rc_stateful_consumer::RcStatefulConsumer;
 mod arc_stateful_consumer;
 pub use arc_stateful_consumer::ArcStatefulConsumer;
-#[cfg(feature = "combinators")]
-mod fn_stateful_consumer_ops;
-#[cfg(feature = "combinators")]
-pub use fn_stateful_consumer_ops::FnStatefulConsumerOps;
-#[cfg(feature = "combinators")]
 mod box_conditional_stateful_consumer;
-#[cfg(feature = "combinators")]
 pub use box_conditional_stateful_consumer::BoxConditionalStatefulConsumer;
-#[cfg(feature = "combinators")]
 mod arc_conditional_stateful_consumer;
-#[cfg(feature = "combinators")]
 pub use arc_conditional_stateful_consumer::ArcConditionalStatefulConsumer;
-#[cfg(all(feature = "rc", feature = "combinators"))]
+#[cfg(feature = "rc")]
 mod rc_conditional_stateful_consumer;
-#[cfg(all(feature = "rc", feature = "combinators"))]
+#[cfg(feature = "rc")]
 pub use rc_conditional_stateful_consumer::RcConditionalStatefulConsumer;
 
 // ============================================================================

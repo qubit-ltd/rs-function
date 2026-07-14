@@ -5,15 +5,13 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `ArcTester` public type.
 
-#[cfg(feature = "combinators")]
 use std::ops::Not;
 
-use super::{
-    Arc,
-    Tester,
+use {
+    crate::Tester,
+    std::sync::Arc,
 };
 
 // ============================================================================
@@ -159,7 +157,6 @@ impl ArcTester {
     /// assert!(!pool_ready.test());
     /// ```
     #[inline]
-    #[cfg(feature = "combinators")]
     pub fn and(&self, next: &ArcTester) -> ArcTester {
         let self_fn = Arc::clone(&self.function);
         let next_fn = Arc::clone(&next.function);
@@ -243,7 +240,6 @@ impl ArcTester {
     /// assert!(!should_route_here.test());
     /// ```
     #[inline]
-    #[cfg(feature = "combinators")]
     pub fn or(&self, next: &ArcTester) -> ArcTester {
         let self_fn = Arc::clone(&self.function);
         let next_fn = Arc::clone(&next.function);
@@ -300,7 +296,6 @@ impl ArcTester {
     /// assert!(tester2.test());
     /// ```
     #[inline]
-    #[cfg(feature = "combinators")]
     pub fn nand(&self, next: &ArcTester) -> ArcTester {
         let self_fn = Arc::clone(&self.function);
         let next_fn = Arc::clone(&next.function);
@@ -362,7 +357,6 @@ impl ArcTester {
     /// assert!(!tester2.test());
     /// ```
     #[inline]
-    #[cfg(feature = "combinators")]
     pub fn xor(&self, next: &ArcTester) -> ArcTester {
         let self_fn = Arc::clone(&self.function);
         let next_fn = Arc::clone(&next.function);
@@ -419,7 +413,6 @@ impl ArcTester {
     /// assert!(!tester2.test());
     /// ```
     #[inline]
-    #[cfg(feature = "combinators")]
     pub fn nor(&self, next: &ArcTester) -> ArcTester {
         let self_fn = Arc::clone(&self.function);
         let next_fn = Arc::clone(&next.function);
@@ -429,7 +422,6 @@ impl ArcTester {
     }
 }
 
-#[cfg(feature = "combinators")]
 impl Not for ArcTester {
     type Output = ArcTester;
 
@@ -442,7 +434,6 @@ impl Not for ArcTester {
     }
 }
 
-#[cfg(feature = "combinators")]
 impl Not for &ArcTester {
     type Output = ArcTester;
 

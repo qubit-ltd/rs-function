@@ -5,21 +5,19 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Defines the `BoxBiFunction` public type.
 
-use super::{
-    BiFunction,
-    impl_box_function_methods,
-    impl_function_common_methods,
-    impl_function_constant_method,
-    impl_function_debug_display,
+use {
+    crate::BiFunction,
+    crate::functions::macros::impl_box_function_methods,
+    crate::functions::macros::impl_function_common_methods,
+    crate::functions::macros::impl_function_constant_method,
+    crate::functions::macros::impl_function_debug_display,
 };
-#[cfg(feature = "combinators")]
-use super::{
-    BiPredicate,
-    BoxConditionalBiFunction,
-    Function,
+use {
+    crate::BiPredicate,
+    crate::BoxConditionalBiFunction,
+    crate::Function,
 };
 
 type BoxBiFunctionFn<T, U, R> = Box<dyn Fn(&T, &U) -> R>;
@@ -41,7 +39,7 @@ type BoxBiFunctionFn<T, U, R> = Box<dyn Fn(&T, &U) -> R>;
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
 pub struct BoxBiFunction<T, U, R> {
     pub(super) function: BoxBiFunctionFn<T, U, R>,
-    pub(super) name: Option<String>,
+    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 // Implement BoxBiFunction
