@@ -7,11 +7,15 @@
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![English Document](https://img.shields.io/badge/Document-English-blue.svg)](README.md)
 
-为 Rust 提供全面的函数式编程抽象,提供与 Java 风格相近的函数式接口,并适配 Rust 的所有权模型。
+为 Rust 提供语义回调对象：用 trait 表达领域约束，用 Box、Rc 和 Arc
+包装器保存、命名、共享并组合回调。
 
 ## 概述
 
-本 crate 为 Rust 提供一套完整的函数式编程抽象,灵感来自 Java 的函数式接口,并精心适配 Rust 的所有权系统。它为每种抽象提供多种实现(Box/Arc/Rc),涵盖从简单的单线程场景到复杂的多线程应用的各种使用场景。
+本 crate 把闭包和自定义回调实现转换为显式的语义对象。`Consumer`、
+`Predicate`、`Runnable` 等 trait 表达调用契约，具体包装器分别表达单一所有权、
+单线程共享和线程安全共享。链式组合定义在包装器上，因此回调可以方便地保存在字段中，
+同时避免闭包扩展 trait 的方法歧义。
 
 ## 核心特性
 
@@ -20,13 +24,13 @@
 - **多种所有权模型**: 基于 Box 的单一所有权、基于 Arc 的线程安全共享、基于 Rc 的单线程共享
 - **灵活的 API 设计**: 基于 trait 的统一接口,针对不同场景优化的具体实现
 - **面向类型的模块布局**: 公开源码文件围绕单一导出类型组织,模块更短,更易阅读和定位
-- **方法链式调用**: `combinators` feature 提供流畅的函数组合 API
+- **显式方法链式调用**: 从具体的 Box、Rc 或 Arc 包装器开始流畅组合
 - **线程安全选项**: 在线程安全(Arc)和高效单线程(Rc)实现之间选择
 - **易用的回调抽象**: Box 包含动态分发成本，Rc/Arc 包含引用计数成本，有状态 Arc 适配器还包含加锁成本
 
 Cargo feature 明确划分可选 API 成本：`rc` 启用单线程共享包装器，`once`
-启用一次性调用家族，`stateful` 启用可变回调家族及 `parking_lot`，
-`combinators` 暴露条件组合与扩展 API。`full` 启用全部分层；默认 feature 为空。
+启用一次性调用家族，`stateful` 启用可变回调家族及 `parking_lot`。
+包装器组合属于基础 API。`full` 启用全部可选家族；默认 feature 为空。
 
 ## 安装
 
@@ -734,7 +738,6 @@ assert!(!tester.test());
 - `BoxStatefulTester` - 单一所有权
 - `ArcStatefulTester` - 线程安全(使用 parking_lot::Mutex)
 - `RcStatefulTester` - 单线程(使用 RefCell)
-- `FnStatefulTesterOps` - 面向 `FnMut() -> bool` 的逻辑组合辅助方法
 
 **示例**:
 ```rust
@@ -796,9 +799,6 @@ assert!(every_second_call.test());
 | `Tester` | `test(&self) -> bool` | `Fn() -> bool` |
 | `StatefulTester` | `test(&mut self) -> bool` | `FnMut() -> bool` |
 
-对于有状态 trait，闭包转换提供 `into_fn` / `to_fn`；返回可变闭包的类型
-还提供 `into_mut_fn` / `to_mut_fn`，用于在调用点显式表达可变闭包语义。
-
 ## 实现类型对比
 
 每个 trait 基于所有权模型都有多种实现:
@@ -853,7 +853,7 @@ assert!(every_second_call.test());
 | StatefulTester | BoxStatefulTester | ArcStatefulTester | RcStatefulTester |
 
 **图例**:
-- **Box**: 单一所有权,不可克隆,消耗 self
+- **Box**: 单一所有权和动态分发；组合方法通常消耗 `self`，可复用核心调用则遵循相应 trait 的 receiver
 - **Arc**: 共享所有权,线程安全,可克隆
 - **Rc**: 共享所有权,单线程,可克隆
 - **-**: 不适用(Once 类型不需要共享)
@@ -864,10 +864,15 @@ assert!(every_second_call.test());
 
 1. **统一接口**: 每个函数式类型都有一个定义核心行为的 trait
 2. **专门实现**: 针对不同场景优化的多个具体类型
-3. **类型保持**: 组合方法返回相同的具体类型
+3. **所有权感知的组合**: 适用的组合方法返回相同包装器家族
 4. **所有权灵活性**: 在单一所有权、线程安全共享或单线程共享之间选择
 5. **线程安全回调**: 有状态 Arc 适配器通过互斥锁串行调用；执行回调期间会持有锁
 6. **易用 API**: 自然的方法链式调用和函数组合
+
+有状态 Rc 包装器的克隆共享同一个基于 `RefCell` 的回调，并在用户代码执行期间持有
+可变借用；同步重入会 panic。有状态 Arc 包装器同样共享一个基于
+`parking_lot::Mutex` 的回调，并在用户代码执行期间持锁；同步重入会死锁。
+panic 不会回滚发生在 panic 前的状态修改，且 `parking_lot::Mutex` 不会中毒。
 
 ## 示例
 

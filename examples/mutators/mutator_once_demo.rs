@@ -11,7 +11,6 @@
 
 use qubit_function::{
     BoxMutatorOnce,
-    FnMutatorOnceOps,
     MutatorOnce,
 };
 
@@ -120,12 +119,12 @@ fn main() {
     builder.apply(&mut message);
     println!("   Final message: {}\n", message);
 
-    // 5. Direct closure usage
-    println!("5. Direct closure usage");
+    // 5. Explicitly wrapped closure usage
+    println!("5. Explicitly wrapped closure usage");
     let data1 = vec![10, 20];
     let data2 = vec![30, 40];
 
-    let chained_closure = (move |x: &mut Vec<i32>| {
+    let chained_closure = BoxMutatorOnce::new(move |x: &mut Vec<i32>| {
         println!("   Step 1: Adding {:?}", data1);
         x.extend(data1);
     })

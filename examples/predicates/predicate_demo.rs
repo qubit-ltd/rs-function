@@ -20,7 +20,6 @@
 use qubit_function::{
     ArcPredicate,
     BoxPredicate,
-    FnPredicateOps,
     Predicate,
     RcPredicate,
 };
@@ -64,9 +63,9 @@ fn basic_closure_predicates() {
     println!("Is 5 positive? {}", is_positive.test(&5));
     println!("Is -3 positive? {}", is_positive.test(&-3));
 
-    // Combining closures
+    // Combining explicitly wrapped closures
     let is_even = |x: &i32| x % 2 == 0;
-    let is_positive_and_even = is_positive.and(is_even);
+    let is_positive_and_even = BoxPredicate::new(is_positive).and(is_even);
     println!("Is 4 positive and even? {}", is_positive_and_even.test(&4));
     println!("Is 5 positive and even? {}", is_positive_and_even.test(&5));
 
