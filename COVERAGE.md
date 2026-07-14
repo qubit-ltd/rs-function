@@ -31,13 +31,13 @@ Use `coverage.sh` for normal checks:
 ./coverage.sh help         # Show all options
 ```
 
-`json` and `all` enforce the current CI gate for every source file:
+`json` and `all` enforce the default local thresholds for every source file:
 
 - Functions: `100%`
-- Lines: `> 98%`
-- Regions: `> 98%`
+- Lines: `> 95%`
+- Regions: `> 95%`
 
-The thresholds can be overridden for experiments:
+The thresholds can be overridden for stricter checks:
 
 ```bash
 MIN_FUNCTION_COVERAGE=100 MIN_LINE_COVERAGE=98 MIN_REGION_COVERAGE=98 ./coverage.sh json
@@ -57,8 +57,7 @@ Generated reports are written under `target/llvm-cov`:
 
 `./coverage.sh all` runs tests once with `cargo llvm-cov --no-report`, then
 uses `cargo llvm-cov report` to generate HTML, LCOV, JSON, Cobertura, and text
-reports from the same coverage data. This keeps local behavior aligned with
-CircleCI and avoids repeated test execution.
+reports from the same coverage data. This avoids repeated test execution.
 
 ## Direct `cargo llvm-cov` Usage
 
@@ -92,9 +91,11 @@ so reports only cover this crate's source files.
 
 ## CI
 
-CircleCI calls `./coverage.sh all`, stores JSON/LCOV/text artifacts, and uploads
-LCOV to Coveralls when `COVERALLS_REPO_TOKEN` is available. The same threshold
-check is also run by `./ci-check.sh` through `./coverage.sh json`.
+The reusable GitHub Actions workflow runs `./coverage.sh all` with
+`COVERAGE_ENFORCE_THRESHOLDS=0`, publishes coverage artifacts, and reports the
+aggregate result without applying per-source thresholds. The local
+`./ci-check.sh` command runs `./coverage.sh json` with threshold enforcement
+enabled by default.
 
 ## Common Issues
 
