@@ -20,7 +20,7 @@
 - **多种所有权模型**: 基于 Box 的单一所有权、基于 Arc 的线程安全共享、基于 Rc 的单线程共享
 - **灵活的 API 设计**: 基于 trait 的统一接口,针对不同场景优化的具体实现
 - **面向类型的模块布局**: 公开源码文件围绕单一导出类型组织,模块更短,更易阅读和定位
-- **方法链式调用**: 所有类型都支持流畅 API(链式调用)和函数组合
+- **方法链式调用**: `combinators` feature 提供流畅的函数组合 API
 - **线程安全选项**: 在线程安全(Arc)和高效单线程(Rc)实现之间选择
 - **易用的回调抽象**: Box 包含动态分发成本，Rc/Arc 包含引用计数成本，有状态 Arc 适配器还包含加锁成本
 
@@ -30,12 +30,21 @@ Cargo feature 明确划分可选 API 成本：`rc` 启用单线程共享包装�
 
 ## 安装
 
-在 `Cargo.toml` 中添加:
+只使用不含可选 feature 的核心 API 时，在 `Cargo.toml` 中添加：
 
 ```toml
 [dependencies]
 qubit-function = "0.16"
 ```
+
+如需启用下文示例使用的全部可选 API：
+
+```toml
+[dependencies]
+qubit-function = { version = "0.16", features = ["full"] }
+```
+
+除非特别说明，下文示例均假定已启用 `full` feature。
 
 ## 核心抽象
 
