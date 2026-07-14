@@ -27,14 +27,17 @@ extension traits.
 - **Flexible API Design**: Trait-based unified interface with concrete implementations optimized for different scenarios
 - **Type-Oriented Module Layout**: Public source files are organized around a single exported type, keeping modules shorter and easier to scan
 - **Explicit Method Chaining**: fluent composition starts from a concrete Box, Rc, or Arc wrapper
+- **Diagnostic Names**: callback wrappers support chainable `with_name` naming and expose names through `Debug` and `Display`
 - **Thread-Safety Options**: Choose between thread-safe (Arc) and efficient single-threaded (Rc) implementations
 - **Ergonomic callback abstractions**: Box uses dynamic dispatch, Rc/Arc add reference counting, and stateful Arc adapters add locking
 
-Cargo features keep optional API costs explicit: `rc` enables single-threaded
-shared wrappers, `once` enables one-shot families, and `stateful` enables
-mutable callback families and `parking_lot`. Wrapper composition is part of the
-baseline API. `full` enables all optional families; the default feature set is
-empty.
+Cargo features keep optional API and dependency costs explicit. `rc` enables
+single-threaded shared wrappers, including `RefCell`-backed task wrappers;
+`once` enables one-shot families; and `stateful` enables explicit `Stateful*`
+families plus `parking_lot::Mutex`-backed Arc task wrappers. Box task wrappers
+remain reusable `FnMut` objects in the baseline API. Wrapper composition is
+also part of the baseline API. `full` enables all optional families; the
+default feature set is empty.
 
 ## Installation
 

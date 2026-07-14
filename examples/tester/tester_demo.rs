@@ -80,7 +80,7 @@ fn demo_rc_tester() {
         let value = Rc::clone(&value);
         RcTester::new(move || value.get() % 2 == 0)
     };
-    let small_and_even = small_value.and(&even_value);
+    let small_and_even = small_value.and(even_value.clone());
 
     println!("0 is small and even: {}", small_and_even.test());
     value.set(2);
