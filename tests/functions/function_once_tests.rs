@@ -330,39 +330,8 @@ fn test_function_once_with_complex_closure_below_threshold() {
 }
 
 // ============================================================================
-// FnFunctionOnceOps Extension Trait Tests
+// Concrete wrapper composition tests
 // ============================================================================
-
-#[test]
-fn test_fn_function_once_ops_and_then() {
-    // Test FnFunctionOnceOps::and_then for closures
-    use qubit_function::FnFunctionOnceOps;
-
-    let parse = |s: &String| s.parse::<i32>().unwrap_or(0);
-    let double = |x: &i32| x * 2;
-    let composed = parse.and_then(double);
-    assert_eq!(composed.apply(&String::from("21")), 42);
-}
-
-#[test]
-fn test_fn_function_once_ops_when() {
-    // Test FnFunctionOnceOps::when for closures
-    use qubit_function::FnFunctionOnceOps;
-
-    let double = |x: &i32| x * 2;
-    let conditional = double.when(|x: &i32| *x > 0).or_else(|x: &i32| -(*x));
-    assert_eq!(conditional.apply(&5), 10);
-}
-
-#[test]
-fn test_fn_function_once_ops_when_negative() {
-    // Test FnFunctionOnceOps::when with negative value
-    use qubit_function::FnFunctionOnceOps;
-
-    let double = |x: &i32| x * 2;
-    let conditional = double.when(|x: &i32| *x > 0).or_else(|x: &i32| -(*x));
-    assert_eq!(conditional.apply(&-5), 5);
-}
 
 // ============================================================================
 // Resource Transfer Tests

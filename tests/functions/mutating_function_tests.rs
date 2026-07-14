@@ -6,13 +6,11 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-// qubit-style: allow explicit-imports
 //! Unit tests for MutatingFunction types (stateless Fn(&mut T) -> R)
 
 use qubit_function::{
     ArcMutatingFunction,
     BoxMutatingFunction,
-    FnMutatingFunctionOps,
     MutatingFunction,
     MutatingFunctionOnce,
     RcMutatingFunction,
@@ -266,7 +264,6 @@ mod test_arc_mutating_function {
 #[cfg(test)]
 mod test_closure {
     use super::{
-        FnMutatingFunctionOps,
         MutatingFunction,
         MutatingFunctionOnce,
     };
@@ -280,32 +277,6 @@ mod test_closure {
 
         let mut value = 5;
         assert_eq!(closure.apply(&mut value), 10);
-        assert_eq!(value, 10);
-    }
-
-    #[test]
-    fn test_closure_and_then() {
-        let chained = (|x: &mut i32| {
-            *x *= 2;
-            *x
-        })
-        .and_then(|x: &i32| *x + 10);
-
-        let mut value = 5;
-        assert_eq!(chained.apply(&mut value), 20);
-        assert_eq!(value, 10); // Input only modified by first function
-    }
-
-    #[test]
-    fn test_closure_map() {
-        let mapped = (|x: &mut i32| {
-            *x *= 2;
-            *x
-        })
-        .and_then(|result: &i32| result.to_string());
-
-        let mut value = 5;
-        assert_eq!(mapped.apply(&mut value), "10");
         assert_eq!(value, 10);
     }
 }

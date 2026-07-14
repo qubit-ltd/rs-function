@@ -10,6 +10,5 @@ mod arc_conditional_mutator_tests;
 mod arc_mutator_tests;
 mod box_conditional_mutator_tests;
 mod box_mutator_tests;
-mod fn_mutator_ops_tests;
 mod rc_conditional_mutator_tests;
 mod rc_mutator_tests;

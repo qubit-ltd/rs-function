@@ -10,6 +10,5 @@ mod arc_conditional_stateful_mutating_function_tests;
 mod arc_stateful_mutating_function_tests;
 mod box_conditional_stateful_mutating_function_tests;
 mod box_stateful_mutating_function_tests;
-mod fn_stateful_mutating_function_ops_tests;
 mod rc_conditional_stateful_mutating_function_tests;
 mod rc_stateful_mutating_function_tests;

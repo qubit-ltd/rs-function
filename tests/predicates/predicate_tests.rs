@@ -6,13 +6,11 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-// qubit-style: allow explicit-imports
 //! Unit tests for the predicate module.
 
 use qubit_function::predicates::{
     ArcPredicate,
     BoxPredicate,
-    FnPredicateOps,
     Predicate,
     RcPredicate,
 };
@@ -60,10 +58,7 @@ fn test_predicate_not_operator() {
 
 #[cfg(test)]
 mod closure_predicate_tests {
-    use super::{
-        FnPredicateOps,
-        Predicate,
-    };
+    use super::Predicate;
 
     #[test]
     fn test_closure_implements_predicate() {
@@ -71,38 +66,6 @@ mod closure_predicate_tests {
         assert!(is_positive.test(&5));
         assert!(!is_positive.test(&-3));
         assert!(!is_positive.test(&0));
-    }
-
-    #[test]
-    fn test_closure_and_composition() {
-        let is_positive = |x: &i32| *x > 0;
-        let is_even = |x: &i32| x % 2 == 0;
-
-        let combined = is_positive.and(is_even);
-        assert!(combined.test(&4));
-        assert!(!combined.test(&3));
-        assert!(!combined.test(&-2));
-    }
-
-    #[test]
-    fn test_closure_or_composition() {
-        let is_negative = |x: &i32| *x < 0;
-        let is_even = |x: &i32| x % 2 == 0;
-
-        let combined = is_negative.or(is_even);
-        assert!(combined.test(&-5));
-        assert!(combined.test(&4));
-        assert!(!combined.test(&3));
-    }
-
-    #[test]
-    fn test_closure_not_composition() {
-        let is_positive = |x: &i32| *x > 0;
-        let is_not_positive = is_positive.not();
-
-        assert!(!is_not_positive.test(&5));
-        assert!(is_not_positive.test(&-3));
-        assert!(is_not_positive.test(&0));
     }
 }
 
@@ -630,7 +593,6 @@ mod logical_operations_tests {
     use super::{
         ArcPredicate,
         BoxPredicate,
-        FnPredicateOps,
         Predicate,
         RcPredicate,
     };
@@ -790,81 +752,15 @@ mod logical_operations_tests {
         assert!(is_even.test(&6));
     }
 
-    // Closure NAND tests (via FnPredicateOps)
-    #[test]
-    fn test_closure_nand_basic() {
-        let is_positive = |x: &i32| *x > 0;
-        let is_even = |x: &i32| x % 2 == 0;
+    // Box wrapper NAND tests
 
-        let nand = is_positive.nand(is_even);
+    // Box wrapper XOR tests
 
-        assert!(nand.test(&3)); // positive but odd
-        assert!(nand.test(&-2)); // negative but even
-        assert!(nand.test(&-1)); // negative and odd
-        assert!(!nand.test(&4)); // positive and even
-    }
-
-    // Closure XOR tests (via FnPredicateOps)
-    #[test]
-    fn test_closure_xor_basic() {
-        let is_positive = |x: &i32| *x > 0;
-        let is_even = |x: &i32| x % 2 == 0;
-
-        let xor = is_positive.xor(is_even);
-
-        assert!(xor.test(&3)); // positive but odd
-        assert!(xor.test(&-2)); // negative but even
-        assert!(!xor.test(&-1)); // negative and odd
-        assert!(!xor.test(&4)); // positive and even
-    }
-
-    // Closure NOR tests (via FnPredicateOps)
-    #[test]
-    fn test_closure_nor_basic() {
-        let is_positive = |x: &i32| *x > 0;
-        let is_even = |x: &i32| x % 2 == 0;
-
-        let nor = is_positive.nor(is_even);
-
-        // NOR: true only when both are false
-        assert!(nor.test(&-3)); // negative and odd: !(false || false) = true
-        assert!(!nor.test(&3)); // positive but odd: !(true || false) = false
-        assert!(!nor.test(&-2)); // negative but even: !(false || true) = false
-        assert!(!nor.test(&4)); // positive and even: !(true || true) = false
-    }
+    // Box wrapper NOR tests
 
     // Complex composition with NAND
-    #[test]
-    fn test_complex_nand_composition() {
-        let is_positive = |x: &i32| *x > 0;
-        let is_even = |x: &i32| x % 2 == 0;
-        let is_small = |x: &i32| x.abs() < 10;
-
-        // (positive NAND even) AND small
-        let complex =
-            is_positive.nand(is_even).and(BoxPredicate::new(is_small));
-
-        assert!(complex.test(&3)); // !(true && false) && true = true && true = true
-        assert!(complex.test(&-2)); // !(false && true) && true = true && true = true
-        assert!(!complex.test(&4)); // !(true && true) && true = false && true = false
-        assert!(!complex.test(&15)); // !(true && false) && false = true && false = false
-    }
 
     // Complex composition with XOR
-    #[test]
-    fn test_complex_xor_composition() {
-        let is_positive = |x: &i32| *x > 0;
-        let is_even = |x: &i32| x % 2 == 0;
-        let is_small = |x: &i32| x.abs() < 10;
-
-        // (positive XOR even) AND small
-        let complex = is_positive.xor(is_even).and(BoxPredicate::new(is_small));
-
-        assert!(complex.test(&3)); // (true ^ false) && true = true && true = true
-        assert!(complex.test(&-2)); // (false ^ true) && true = true && true = true
-        assert!(!complex.test(&4)); // (true ^ true) && true = false && true = false
-        assert!(!complex.test(&-1)); // (false ^ false) && true = false && true = false
-    }
 
     // NAND with string predicates
     #[test]
@@ -917,7 +813,6 @@ mod parameter_types_tests {
     use super::{
         ArcPredicate,
         BoxPredicate,
-        FnPredicateOps,
         Predicate,
         RcPredicate,
     };
@@ -1493,166 +1388,8 @@ mod parameter_types_tests {
     }
 
     // ============================================================================
-    // FnPredicateOps (closure) parameter type tests
+    // Box wrapper parameter type tests
     // ============================================================================
-
-    #[test]
-    fn test_closure_and_with_closure() {
-        let is_pos = |x: &i32| *x > 0;
-        let is_even_closure = |x: &i32| x % 2 == 0;
-
-        let combined = is_pos.and(is_even_closure);
-
-        assert!(combined.test(&4));
-        assert!(!combined.test(&3));
-    }
-
-    #[test]
-    fn test_closure_and_with_function() {
-        let is_pos = |x: &i32| *x > 0;
-        let combined = is_pos.and(is_even);
-
-        assert!(combined.test(&4));
-        assert!(!combined.test(&3));
-    }
-
-    #[test]
-    fn test_closure_and_with_box_predicate() {
-        let is_pos = |x: &i32| *x > 0;
-        let pred = BoxPredicate::new(|x: &i32| x % 2 == 0);
-
-        let combined = is_pos.and(pred);
-
-        assert!(combined.test(&4));
-        assert!(!combined.test(&3));
-    }
-
-    #[test]
-    fn test_closure_or_with_closure() {
-        let is_neg = |x: &i32| *x < 0;
-        let is_large_closure = |x: &i32| *x > 100;
-
-        let combined = is_neg.or(is_large_closure);
-
-        assert!(combined.test(&-5));
-        assert!(combined.test(&150));
-        assert!(!combined.test(&50));
-    }
-
-    #[test]
-    fn test_closure_or_with_function() {
-        let is_neg = |x: &i32| *x < 0;
-        let combined = is_neg.or(is_large);
-
-        assert!(combined.test(&-5));
-        assert!(combined.test(&150));
-    }
-
-    #[test]
-    fn test_closure_or_with_box_predicate() {
-        let is_neg = |x: &i32| *x < 0;
-        let pred = BoxPredicate::new(|x: &i32| *x > 100);
-
-        let combined = is_neg.or(pred);
-
-        assert!(combined.test(&-5));
-        assert!(combined.test(&150));
-    }
-
-    #[test]
-    fn test_closure_nand_with_closure() {
-        let is_pos = |x: &i32| *x > 0;
-        let is_even_closure = |x: &i32| x % 2 == 0;
-
-        let nand = is_pos.nand(is_even_closure);
-
-        assert!(nand.test(&3));
-        assert!(!nand.test(&4));
-    }
-
-    #[test]
-    fn test_closure_nand_with_function() {
-        let is_pos = |x: &i32| *x > 0;
-        let nand = is_pos.nand(is_even);
-
-        assert!(nand.test(&3));
-        assert!(!nand.test(&4));
-    }
-
-    #[test]
-    fn test_closure_nand_with_box_predicate() {
-        let is_pos = |x: &i32| *x > 0;
-        let pred = BoxPredicate::new(|x: &i32| x % 2 == 0);
-
-        let nand = is_pos.nand(pred);
-
-        assert!(nand.test(&3));
-        assert!(!nand.test(&4));
-    }
-
-    #[test]
-    fn test_closure_xor_with_closure() {
-        let is_pos = |x: &i32| *x > 0;
-        let is_even_closure = |x: &i32| x % 2 == 0;
-
-        let xor = is_pos.xor(is_even_closure);
-
-        assert!(xor.test(&3));
-        assert!(!xor.test(&4));
-        assert!(!xor.test(&-1));
-    }
-
-    #[test]
-    fn test_closure_xor_with_function() {
-        let is_pos = |x: &i32| *x > 0;
-        let xor = is_pos.xor(is_even);
-
-        assert!(xor.test(&3));
-        assert!(!xor.test(&4));
-    }
-
-    #[test]
-    fn test_closure_xor_with_box_predicate() {
-        let is_pos = |x: &i32| *x > 0;
-        let pred = BoxPredicate::new(|x: &i32| x % 2 == 0);
-
-        let xor = is_pos.xor(pred);
-
-        assert!(xor.test(&3));
-        assert!(!xor.test(&4));
-    }
-
-    #[test]
-    fn test_closure_nor_with_closure() {
-        let is_pos = |x: &i32| *x > 0;
-        let is_even_closure = |x: &i32| x % 2 == 0;
-
-        let nor = is_pos.nor(is_even_closure);
-
-        assert!(nor.test(&-3));
-        assert!(!nor.test(&4));
-        assert!(!nor.test(&3));
-    }
-
-    #[test]
-    fn test_closure_nor_with_function() {
-        let is_pos = |x: &i32| *x > 0;
-        let nor = is_pos.nor(is_even);
-
-        assert!(nor.test(&-3));
-        assert!(!nor.test(&4));
-    }
-
-    #[test]
-    fn test_closure_nor_with_box_predicate() {
-        let is_pos = |x: &i32| *x > 0;
-        let pred = BoxPredicate::new(|x: &i32| x % 2 == 0);
-
-        let nor = is_pos.nor(pred);
-
-        assert!(nor.test(&-3));
-        assert!(!nor.test(&4));
-    }
 }
 
 #[cfg(test)]

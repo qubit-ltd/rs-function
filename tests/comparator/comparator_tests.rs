@@ -6,12 +6,10 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 #![cfg(feature = "full")]
-// qubit-style: allow explicit-imports
 use qubit_function::comparator::{
     ArcComparator,
     BoxComparator,
     Comparator,
-    FnComparatorOps,
     RcComparator,
 };
 use std::cmp::Ordering;
@@ -556,41 +554,6 @@ mod closure_tests {
         let cmp = |a: &i32, b: &i32| a.cmp(b);
         let func = move |first: &i32, second: &i32| cmp.compare(first, second);
         assert_eq!(func(&5, &3), Ordering::Greater);
-    }
-}
-
-#[cfg(test)]
-mod fn_ops_tests {
-    use super::{
-        Comparator,
-        FnComparatorOps,
-        Ordering,
-    };
-
-    #[test]
-    fn test_reversed() {
-        let rev = (|a: &i32, b: &i32| a.cmp(b)).reversed();
-        assert_eq!(rev.compare(&5, &3), Ordering::Less);
-    }
-
-    #[test]
-    fn test_then_comparing() {
-        let cmp = (|a: &i32, b: &i32| (a % 2).cmp(&(b % 2))).then_comparing(
-            qubit_function::comparator::BoxComparator::new(
-                |a: &i32, b: &i32| a.cmp(b),
-            ),
-        );
-        assert_eq!(cmp.compare(&4, &2), Ordering::Greater);
-    }
-
-    #[test]
-    fn test_chained_operations() {
-        let cmp = (|a: &i32, b: &i32| a.cmp(b)).reversed().then_comparing(
-            qubit_function::comparator::BoxComparator::new(
-                |a: &i32, b: &i32| b.cmp(a),
-            ),
-        );
-        assert_eq!(cmp.compare(&5, &3), Ordering::Less);
     }
 }
 

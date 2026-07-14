@@ -8,5 +8,4 @@
 
 mod arc_tester_tests;
 mod box_tester_tests;
-mod fn_tester_ops_tests;
 mod rc_tester_tests;

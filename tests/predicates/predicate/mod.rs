@@ -8,5 +8,4 @@
 
 mod arc_predicate_tests;
 mod box_predicate_tests;
-mod fn_predicate_ops_tests;
 mod rc_predicate_tests;

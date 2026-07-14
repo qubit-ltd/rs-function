@@ -10,6 +10,5 @@ mod arc_conditional_function_tests;
 mod arc_function_tests;
 mod box_conditional_function_tests;
 mod box_function_tests;
-mod fn_function_ops_tests;
 mod rc_conditional_function_tests;
 mod rc_function_tests;

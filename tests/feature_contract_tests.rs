@@ -5,6 +5,8 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
+// qubit-style: allow explicit-imports -- fixtures verify wildcard-import
+// behavior.
 
 use std::{
     fmt::{
@@ -144,7 +146,7 @@ fn test_arc_task_wrappers_implement_debug_and_display() {
 }
 
 #[test]
-fn test_without_combinators_rejects_box_consumer_when() {
+fn test_baseline_accepts_box_consumer_when() {
     let output = compile_consumer(
         &[],
         r#"
@@ -157,11 +159,11 @@ fn main() {
 "#,
     );
 
-    assert_compile_failure(&output, "no method named `when`");
+    assert!(output.status.success(), "{}", cargo_diagnostics(&output));
 }
 
 #[test]
-fn test_without_combinators_rejects_deep_tester_ops_path() {
+fn test_baseline_rejects_deep_tester_ops_path() {
     let output = compile_consumer(
         &[],
         r#"
@@ -177,7 +179,66 @@ fn main() {
 }
 
 #[test]
-fn test_without_combinators_rejects_box_runnable_then_callable() {
+fn test_baseline_rejects_root_tester_ops_import() {
+    let output = compile_consumer(
+        &[],
+        r#"
+use qubit_function::FnTesterOps;
+
+fn main() {}
+"#,
+    );
+
+    assert_compile_failure(&output, "FnTesterOps");
+}
+
+#[test]
+fn test_baseline_rejects_raw_closure_when_without_ambiguity() {
+    let output = compile_consumer(
+        &[],
+        r#"
+use qubit_function::*;
+
+fn main() {
+    let consumer = |_: &i32| {};
+    let _conditional = consumer.when(|value: &i32| *value > 0);
+}
+"#,
+    );
+
+    let diagnostics = cargo_diagnostics(&output);
+    assert!(!output.status.success(), "{diagnostics}");
+    assert!(
+        String::from_utf8_lossy(&output.stderr)
+            .contains("no method named `when`"),
+        "{diagnostics}",
+    );
+    assert!(
+        !String::from_utf8_lossy(&output.stderr)
+            .contains("multiple applicable items"),
+        "{diagnostics}",
+    );
+}
+
+#[test]
+fn test_baseline_accepts_box_consumer_when_with_glob_import() {
+    let output = compile_consumer(
+        &[],
+        r#"
+use qubit_function::*;
+
+fn main() {
+    let consumer = BoxConsumer::new(|_: &i32| {});
+    let _conditional = consumer.when(|value: &i32| *value > 0);
+}
+"#,
+    );
+
+    assert!(output.status.success(), "{}", cargo_diagnostics(&output));
+}
+
+#[test]
+fn test_baseline_accepts_box_runnable_then_callable() {
     let output = compile_consumer(
         &[],
         r#"
@@ -190,11 +251,11 @@ fn main() {
 "#,
     );
 
-    assert_compile_failure(&output, "no method named `then_callable`");
+    assert!(output.status.success(), "{}", cargo_diagnostics(&output));
 }
 
 #[test]
-fn test_without_combinators_rejects_box_runnable_with_then_callable() {
+fn test_baseline_accepts_box_runnable_with_then_callable() {
     let output = compile_consumer(
         &[],
         r#"
@@ -208,11 +269,11 @@ fn main() {
 "#,
     );
 
-    assert_compile_failure(&output, "no method named `then_callable_with`");
+    assert!(output.status.success(), "{}", cargo_diagnostics(&output));
 }
 
 #[test]
-fn test_without_combinators_rejects_box_runnable_once_then_callable() {
+fn test_once_accepts_box_runnable_once_then_callable() {
     let output = compile_consumer(
         &["once"],
         r#"
@@ -225,67 +286,17 @@ fn main() {
 "#,
     );
 
-    assert_compile_failure(&output, "no method named `then_callable`");
+    assert!(output.status.success(), "{}", cargo_diagnostics(&output));
 }
 
 #[test]
-fn test_without_combinators_rejects_local_box_runnable_once_then_callable() {
+fn test_once_accepts_local_box_runnable_once_then_callable() {
     let output = compile_consumer(
         &["once"],
         r#"
 use qubit_function::LocalBoxRunnableOnce;
 
 fn main() {
-    let runnable = LocalBoxRunnableOnce::new(|| Ok::<(), ()>(()));
-    let _callable = runnable.then_callable(|| Ok::<i32, ()>(42));
-}
-"#,
-    );
-
-    assert_compile_failure(&output, "no method named `then_callable`");
-}
-
-#[test]
-fn test_with_combinators_accepts_public_extension_apis() {
-    let output = compile_consumer(
-        &["combinators"],
-        r#"
-use qubit_function::{BoxConsumer, FnTesterOps};
-
-fn main() {
-    let consumer = BoxConsumer::new(|_: &i32| {});
-    let _conditional = consumer.when(|value: &i32| *value > 0);
-    let _tester = (|| true).and(|| true);
-}
-"#,
-    );
-
-    assert!(output.status.success(), "{}", cargo_diagnostics(&output));
-}
-
-#[test]
-fn test_with_combinators_accepts_task_chaining_apis() {
-    let output = compile_consumer(
-        &["once", "combinators"],
-        r#"
-use qubit_function::{
-    BoxRunnable,
-    BoxRunnableOnce,
-    BoxRunnableWith,
-    LocalBoxRunnableOnce,
-};
-
-fn main() {
-    let runnable = BoxRunnable::new(|| Ok::<(), ()>(()));
-    let _callable = runnable.then_callable(|| Ok::<i32, ()>(42));
-
-    let runnable = BoxRunnableWith::new(|_: &mut i32| Ok::<(), ()>(()));
-    let _callable =
-        runnable.then_callable_with(|value: &mut i32| Ok::<i32, ()>(*value));
-
-    let runnable = BoxRunnableOnce::new(|| Ok::<(), ()>(()));
-    let _callable = runnable.then_callable(|| Ok::<i32, ()>(42));
-
     let runnable = LocalBoxRunnableOnce::new(|| Ok::<(), ()>(()));
     let _callable = runnable.then_callable(|| Ok::<i32, ()>(42));
 }

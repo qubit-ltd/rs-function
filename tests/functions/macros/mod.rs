@@ -10,7 +10,6 @@ mod box_function_methods_tests;
 mod conditional_function_clone_macro_tests;
 mod conditional_function_clone_tests;
 mod conditional_function_debug_display_tests;
-mod fn_ops_trait_tests;
 mod function_clone_tests;
 mod function_common_methods_tests;
 mod function_constant_method_tests;

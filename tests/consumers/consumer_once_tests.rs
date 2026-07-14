@@ -5,7 +5,6 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 ///
 /// # ConsumerOnce Tests
 ///
@@ -13,7 +12,6 @@
 use qubit_function::{
     BoxConsumerOnce,
     ConsumerOnce,
-    FnConsumerOnceOps,
 };
 use std::sync::{
     Arc,
@@ -37,7 +35,7 @@ mod box_consumer_once_tests {
     fn test_new() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
-        let consumer = BoxConsumerOnce::new(move |x: &i32| {
+        let consumer = qubit_function::BoxConsumerOnce::new(move |x: &i32| {
             l.lock().expect("mutex should not be poisoned").push(*x);
         });
         consumer.accept(&5);
@@ -48,7 +46,7 @@ mod box_consumer_once_tests {
     fn test_accept() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
-        let consumer = BoxConsumerOnce::new(move |x: &i32| {
+        let consumer = qubit_function::BoxConsumerOnce::new(move |x: &i32| {
             l.lock().expect("mutex should not be poisoned").push(*x * 2);
         });
         consumer.accept(&5);
@@ -63,7 +61,7 @@ mod box_consumer_once_tests {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l1 = log.clone();
         let l2 = log.clone();
-        let chained = BoxConsumerOnce::new(move |x: &i32| {
+        let chained = qubit_function::BoxConsumerOnce::new(move |x: &i32| {
             l1.lock()
                 .expect("mutex should not be poisoned")
                 .push(*x * 2);
@@ -86,7 +84,7 @@ mod box_consumer_once_tests {
         let l1 = log.clone();
         let l2 = log.clone();
         let l3 = log.clone();
-        let chained = BoxConsumerOnce::new(move |x: &i32| {
+        let chained = qubit_function::BoxConsumerOnce::new(move |x: &i32| {
             l1.lock()
                 .expect("mutex should not be poisoned")
                 .push(*x * 2);
@@ -119,10 +117,12 @@ mod box_consumer_once_tests {
     fn test_new_with_name() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
-        let consumer =
-            BoxConsumerOnce::new_with_name("test_consumer", move |x: &i32| {
+        let consumer = qubit_function::BoxConsumerOnce::new_with_name(
+            "test_consumer",
+            move |x: &i32| {
                 l.lock().expect("mutex should not be poisoned").push(*x);
-            });
+            },
+        );
         assert_eq!(consumer.name(), Some("test_consumer"));
         consumer.accept(&5);
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
@@ -134,7 +134,7 @@ mod box_consumer_once_tests {
     fn test_if_then_true() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
-        let consumer = BoxConsumerOnce::new(move |x: &i32| {
+        let consumer = qubit_function::BoxConsumerOnce::new(move |x: &i32| {
             l.lock().expect("mutex should not be poisoned").push(*x + 1);
         });
         let conditional = consumer.when(|x: &i32| *x > 0);
@@ -146,7 +146,7 @@ mod box_consumer_once_tests {
     fn test_if_then_false() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
-        let consumer = BoxConsumerOnce::new(move |x: &i32| {
+        let consumer = qubit_function::BoxConsumerOnce::new(move |x: &i32| {
             l.lock().expect("mutex should not be poisoned").push(*x + 1);
         });
         let conditional = consumer.when(|x: &i32| *x > 0);
@@ -162,7 +162,7 @@ mod box_consumer_once_tests {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l1 = log.clone();
         let l2 = log.clone();
-        let consumer = BoxConsumerOnce::new(move |x: &i32| {
+        let consumer = qubit_function::BoxConsumerOnce::new(move |x: &i32| {
             l1.lock()
                 .expect("mutex should not be poisoned")
                 .push(*x + 1);
@@ -182,7 +182,7 @@ mod box_consumer_once_tests {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l1 = log.clone();
         let l2 = log.clone();
-        let consumer = BoxConsumerOnce::new(move |x: &i32| {
+        let consumer = qubit_function::BoxConsumerOnce::new(move |x: &i32| {
             l1.lock()
                 .expect("mutex should not be poisoned")
                 .push(*x + 1);
@@ -210,7 +210,6 @@ mod closure_tests {
     use super::{
         Arc,
         ConsumerOnce,
-        FnConsumerOnceOps,
         Mutex,
     };
 
@@ -233,7 +232,7 @@ mod closure_tests {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l1 = log.clone();
         let l2 = log.clone();
-        let chained = (move |x: &i32| {
+        let chained = qubit_function::BoxConsumerOnce::new(move |x: &i32| {
             l1.lock()
                 .expect("mutex should not be poisoned")
                 .push(*x * 2);
@@ -256,7 +255,7 @@ mod closure_tests {
         let l1 = log.clone();
         let l2 = log.clone();
         let l3 = log.clone();
-        let chained = (move |x: &i32| {
+        let chained = qubit_function::BoxConsumerOnce::new(move |x: &i32| {
             l1.lock()
                 .expect("mutex should not be poisoned")
                 .push(*x * 2);
@@ -290,21 +289,21 @@ mod debug_display_tests {
 
     #[test]
     fn test_debug() {
-        let consumer = BoxConsumerOnce::new(|_x: &i32| {});
+        let consumer = qubit_function::BoxConsumerOnce::new(|_x: &i32| {});
         let debug_str = format!("{:?}", consumer);
         assert!(debug_str.contains("BoxConsumerOnce"));
     }
 
     #[test]
     fn test_display() {
-        let consumer = BoxConsumerOnce::new(|_x: &i32| {});
+        let consumer = qubit_function::BoxConsumerOnce::new(|_x: &i32| {});
         let display_str = format!("{}", consumer);
         assert_eq!(display_str, "BoxConsumerOnce");
     }
 
     #[test]
     fn test_display_with_name() {
-        let mut consumer = BoxConsumerOnce::new(|_x: &i32| {});
+        let mut consumer = qubit_function::BoxConsumerOnce::new(|_x: &i32| {});
         consumer.set_name("my_consumer");
         let display_str = format!("{}", consumer);
         assert_eq!(display_str, "BoxConsumerOnce(my_consumer)");
@@ -312,7 +311,7 @@ mod debug_display_tests {
 
     #[test]
     fn test_name() {
-        let mut consumer = BoxConsumerOnce::new(|_x: &i32| {});
+        let mut consumer = qubit_function::BoxConsumerOnce::new(|_x: &i32| {});
         assert_eq!(consumer.name(), None);
         consumer.set_name("test");
         assert_eq!(consumer.name(), Some("test"));
@@ -323,7 +322,7 @@ mod debug_display_tests {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l1 = log.clone();
         let l2 = log.clone();
-        let consumer = BoxConsumerOnce::new(move |x: &i32| {
+        let consumer = qubit_function::BoxConsumerOnce::new(move |x: &i32| {
             l1.lock().expect("mutex should not be poisoned").push(*x);
         });
         let conditional = consumer.when(|x: &i32| *x > 0);
@@ -478,7 +477,7 @@ mod box_conditional_consumer_once_tests {
     fn test_accept_predicate_false() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
-        let consumer = BoxConsumerOnce::new(move |x: &i32| {
+        let consumer = qubit_function::BoxConsumerOnce::new(move |x: &i32| {
             l.lock().expect("mutex should not be poisoned").push(*x);
         });
         let conditional = consumer.when(|x: &i32| *x > 0);
@@ -493,7 +492,7 @@ mod box_conditional_consumer_once_tests {
     fn test_accept_predicate_true() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
-        let consumer = BoxConsumerOnce::new(move |x: &i32| {
+        let consumer = qubit_function::BoxConsumerOnce::new(move |x: &i32| {
             l.lock().expect("mutex should not be poisoned").push(*x);
         });
         let conditional = consumer.when(|x: &i32| *x > 0);
@@ -505,7 +504,7 @@ mod box_conditional_consumer_once_tests {
     fn test_accept_predicate_boundary() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
-        let consumer = BoxConsumerOnce::new(move |x: &i32| {
+        let consumer = qubit_function::BoxConsumerOnce::new(move |x: &i32| {
             l.lock().expect("mutex should not be poisoned").push(*x);
         });
         let conditional = consumer.when(|x: &i32| *x > 0);
@@ -529,7 +528,7 @@ mod box_conditional_consumer_once_tests {
     fn test_accept_with_always_true_predicate() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
-        let consumer = BoxConsumerOnce::new(move |x: &i32| {
+        let consumer = qubit_function::BoxConsumerOnce::new(move |x: &i32| {
             l.lock().expect("mutex should not be poisoned").push(*x);
         });
         let conditional = consumer.when(|_: &i32| true);
@@ -544,7 +543,7 @@ mod box_conditional_consumer_once_tests {
     fn test_accept_with_always_false_predicate() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
-        let consumer = BoxConsumerOnce::new(move |x: &i32| {
+        let consumer = qubit_function::BoxConsumerOnce::new(move |x: &i32| {
             l.lock().expect("mutex should not be poisoned").push(*x);
         });
         let conditional = consumer.when(|_: &i32| false);
@@ -559,7 +558,7 @@ mod box_conditional_consumer_once_tests {
     fn test_accept_with_complex_predicate_logic() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
-        let consumer = BoxConsumerOnce::new(move |x: &i32| {
+        let consumer = qubit_function::BoxConsumerOnce::new(move |x: &i32| {
             l.lock()
                 .expect("mutex should not be poisoned")
                 .push(*x * 10);
@@ -577,7 +576,7 @@ mod box_conditional_consumer_once_tests {
     fn test_accept_with_complex_predicate_logic_fails() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
-        let consumer = BoxConsumerOnce::new(move |x: &i32| {
+        let consumer = qubit_function::BoxConsumerOnce::new(move |x: &i32| {
             l.lock()
                 .expect("mutex should not be poisoned")
                 .push(*x * 10);
@@ -596,7 +595,7 @@ mod box_conditional_consumer_once_tests {
     fn test_accept_with_complex_predicate_logic_fails_negative() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
-        let consumer = BoxConsumerOnce::new(move |x: &i32| {
+        let consumer = qubit_function::BoxConsumerOnce::new(move |x: &i32| {
             l.lock()
                 .expect("mutex should not be poisoned")
                 .push(*x * 10);
@@ -618,10 +617,11 @@ mod box_conditional_consumer_once_tests {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l1 = log.clone();
         let l2 = log.clone();
-        let conditional = BoxConsumerOnce::new(move |x: &i32| {
-            l1.lock().expect("mutex should not be poisoned").push(*x);
-        })
-        .when(|x: &i32| *x > 0);
+        let conditional =
+            qubit_function::BoxConsumerOnce::new(move |x: &i32| {
+                l1.lock().expect("mutex should not be poisoned").push(*x);
+            })
+            .when(|x: &i32| *x > 0);
 
         let chained = conditional.and_then(move |x: &i32| {
             l2.lock()
@@ -642,10 +642,11 @@ mod box_conditional_consumer_once_tests {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l1 = log.clone();
         let l2 = log.clone();
-        let conditional = BoxConsumerOnce::new(move |x: &i32| {
-            l1.lock().expect("mutex should not be poisoned").push(*x);
-        })
-        .when(|x: &i32| *x > 0);
+        let conditional =
+            qubit_function::BoxConsumerOnce::new(move |x: &i32| {
+                l1.lock().expect("mutex should not be poisoned").push(*x);
+            })
+            .when(|x: &i32| *x > 0);
 
         let chained = conditional.and_then(move |x: &i32| {
             l2.lock()
@@ -669,17 +670,19 @@ mod box_conditional_consumer_once_tests {
         let l2 = log.clone();
         let l3 = log.clone();
 
-        let conditional1 = BoxConsumerOnce::new(move |x: &i32| {
-            l1.lock().expect("mutex should not be poisoned").push(*x);
-        })
-        .when(|x: &i32| *x > 0);
+        let conditional1 =
+            qubit_function::BoxConsumerOnce::new(move |x: &i32| {
+                l1.lock().expect("mutex should not be poisoned").push(*x);
+            })
+            .when(|x: &i32| *x > 0);
 
-        let conditional2 = BoxConsumerOnce::new(move |x: &i32| {
-            l2.lock()
-                .expect("mutex should not be poisoned")
-                .push(*x * 2);
-        })
-        .when(|x: &i32| *x % 2 == 0);
+        let conditional2 =
+            qubit_function::BoxConsumerOnce::new(move |x: &i32| {
+                l2.lock()
+                    .expect("mutex should not be poisoned")
+                    .push(*x * 2);
+            })
+            .when(|x: &i32| *x % 2 == 0);
 
         let chained =
             conditional1
@@ -708,18 +711,17 @@ mod closure_to_xxx_methods_tests {
     use super::{
         Arc,
         ConsumerOnce,
-        FnConsumerOnceOps,
         Mutex,
     };
 
-    /// Test closure with and_then() through FnConsumerOnceOps
+    /// Test a boxed closure with and_then().
     #[test]
     fn test_closure_fnonce_ops_and_then() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l1 = log.clone();
         let l2 = log.clone();
 
-        let chained = (move |x: &i32| {
+        let chained = qubit_function::BoxConsumerOnce::new(move |x: &i32| {
             l1.lock()
                 .expect("mutex should not be poisoned")
                 .push(*x * 2);
@@ -737,7 +739,7 @@ mod closure_to_xxx_methods_tests {
         );
     }
 
-    /// Test closure with multiple and_then() chains through FnConsumerOnceOps
+    /// Test a boxed closure with multiple and_then() chains.
     #[test]
     fn test_closure_fnonce_ops_multiple_and_then() {
         let log = Arc::new(Mutex::new(Vec::new()));
@@ -745,7 +747,7 @@ mod closure_to_xxx_methods_tests {
         let l2 = log.clone();
         let l3 = log.clone();
 
-        let chained = (move |x: &i32| {
+        let chained = qubit_function::BoxConsumerOnce::new(move |x: &i32| {
             l1.lock()
                 .expect("mutex should not be poisoned")
                 .push(*x * 2);
@@ -779,7 +781,7 @@ mod closure_to_xxx_methods_tests {
         let l1 = log.clone();
         let l2 = log.clone();
 
-        let chained = (move |x: &i32| {
+        let chained = qubit_function::BoxConsumerOnce::new(move |x: &i32| {
             l1.lock()
                 .expect("mutex should not be poisoned")
                 .push(*x * 2);

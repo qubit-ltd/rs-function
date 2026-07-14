@@ -10,6 +10,5 @@ mod arc_bi_function_tests;
 mod arc_conditional_bi_function_tests;
 mod box_bi_function_tests;
 mod box_conditional_bi_function_tests;
-mod fn_bi_function_ops_tests;
 mod rc_bi_function_tests;
 mod rc_conditional_bi_function_tests;

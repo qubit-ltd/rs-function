@@ -5,7 +5,6 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports
 //! Tests for BiTransformerOnce trait and implementations
 
 use qubit_function::{

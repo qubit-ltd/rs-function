@@ -14,7 +14,6 @@ use qubit_function::{
     BiFunction,
     BiFunctionOnce,
     BoxBiFunction,
-    FnBiFunctionOps,
     RcBiFunction,
     RcBiPredicate,
 };
@@ -96,6 +95,14 @@ fn test_box_bi_function_debug_display() {
     assert!(debug_str.contains("BoxBiFunction"));
     let display_str = format!("{}", func);
     assert!(display_str.starts_with("BoxBiFunction"));
+}
+
+#[test]
+fn test_box_bi_function_and_then() {
+    let add = BoxBiFunction::new(|x: &i32, y: &i32| *x + *y);
+    let chained = add.and_then(|value: &i32| value * 2);
+
+    assert_eq!(chained.apply(&2, &3), 10);
 }
 
 // ============================================================================
@@ -254,32 +261,6 @@ fn test_arc_bi_function_debug_display() {
 // ============================================================================
 // BiFunction Composition Tests
 // ============================================================================
-
-#[test]
-fn test_bi_function_and_then() {
-    use qubit_function::FnBiFunctionOps;
-
-    let add = |x: &i32, y: &i32| *x + *y;
-    let double = |x: &i32| *x * 2;
-
-    let composed = add.and_then(double);
-    assert_eq!(composed.apply(&10, &15), 50); // (10 + 15) * 2 = 50
-}
-
-#[test]
-fn test_bi_function_when_or_else() {
-    use qubit_function::FnBiFunctionOps;
-
-    let add = |x: &i32, y: &i32| *x + *y;
-    let multiply = |x: &i32, y: &i32| *x * *y;
-
-    let conditional = add
-        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-        .or_else(multiply);
-
-    assert_eq!(conditional.apply(&5, &3), 8); // add: 5 + 3 = 8
-    assert_eq!(conditional.apply(&-5, &3), -15); // multiply: -5 * 3 = -15
-}
 
 // ============================================================================
 // Integration Tests
@@ -587,33 +568,6 @@ fn test_impl_conditional_function_clone_three_params_macro_coverage() {
 // ============================================================================
 // Advanced Composition Tests
 // ============================================================================
-
-#[test]
-fn test_bi_function_complex_composition() {
-    let add = |x: &i32, y: &i32| *x + *y;
-    let multiply_by_two = |x: &i32| *x * 2;
-    let to_string = |x: &i32| x.to_string();
-
-    // Chain: add -> multiply_by_two -> to_string
-    let composed = add.and_then(multiply_by_two).and_then(to_string);
-    assert_eq!(composed.apply(&3, &4), "14"); // ((3 + 4) * 2).to_string()
-}
-
-#[test]
-fn test_bi_function_conditional_composition() {
-    let add = |x: &i32, y: &i32| *x + *y;
-    let multiply = |x: &i32, y: &i32| *x * *y;
-    let square = |x: &i32| *x * *x;
-
-    // If both positive, add then square; otherwise multiply then square
-    let conditional = add
-        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-        .or_else(multiply)
-        .and_then(square);
-
-    assert_eq!(conditional.apply(&3, &4), 49); // (3 + 4)^2 = 49
-    assert_eq!(conditional.apply(&-3, &4), 144); // (-3 * 4)^2 = 144
-}
 
 // ============================================================================
 // Thread Safety Tests for ArcBiFunction

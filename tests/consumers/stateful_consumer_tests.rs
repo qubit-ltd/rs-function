@@ -6,7 +6,6 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-// qubit-style: allow explicit-imports
 //! Unit tests for StatefulConsumer types
 
 use qubit_function::{
@@ -15,7 +14,6 @@ use qubit_function::{
     BoxConsumer,
     BoxStatefulConsumer,
     Consumer,
-    FnConsumerOps,
     RcConsumer,
     RcStatefulConsumer,
     StatefulConsumer,
@@ -964,15 +962,14 @@ mod test_unified_interface {
 }
 
 // ============================================================================
-// FnConsumerOps Tests
+// BoxConsumer chaining test
 // ============================================================================
 
 #[cfg(test)]
-mod test_fn_consumer_ops {
+mod test_box_consumer_chaining {
     use super::{
         Arc,
         Consumer,
-        FnConsumerOps,
         Mutex,
         StatefulConsumer,
     };
@@ -982,7 +979,7 @@ mod test_fn_consumer_ops {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l1 = log.clone();
         let l2 = log.clone();
-        let chained = (move |x: &i32| {
+        let chained = qubit_function::BoxConsumer::new(move |x: &i32| {
             l1.lock()
                 .expect("mutex should not be poisoned")
                 .push(*x * 2);
@@ -1572,11 +1569,11 @@ mod consumer_once_trait_tests {
 }
 
 // ============================================================================
-// FnStatefulConsumerOps and_then Tests
+// BoxStatefulConsumer and_then Tests
 // ============================================================================
 
 #[cfg(test)]
-mod test_fn_stateful_consumer_ops {
+mod test_box_stateful_consumer_chaining {
     use super::{
         Arc,
         ArcStatefulConsumer,
@@ -1584,7 +1581,6 @@ mod test_fn_stateful_consumer_ops {
         Mutex,
         StatefulConsumer,
     };
-    use qubit_function::FnStatefulConsumerOps;
 
     #[test]
     fn test_closure_and_then() {
@@ -1592,18 +1588,16 @@ mod test_fn_stateful_consumer_ops {
         let l1 = log.clone();
         let l2 = log.clone();
 
-        let mut chained = FnStatefulConsumerOps::and_then(
-            move |x: &i32| {
-                l1.lock()
-                    .expect("mutex should not be poisoned")
-                    .push(*x * 2);
-            },
-            move |x: &i32| {
-                l2.lock()
-                    .expect("mutex should not be poisoned")
-                    .push(*x + 10);
-            },
-        );
+        let mut chained = BoxStatefulConsumer::new(move |x: &i32| {
+            l1.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x * 2);
+        })
+        .and_then(move |x: &i32| {
+            l2.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x + 10);
+        });
 
         chained.accept(&5);
         assert_eq!(
@@ -1624,14 +1618,12 @@ mod test_fn_stateful_consumer_ops {
                 .push(*x + 10);
         });
 
-        let mut chained = FnStatefulConsumerOps::and_then(
-            move |x: &i32| {
-                l1.lock()
-                    .expect("mutex should not be poisoned")
-                    .push(*x * 2);
-            },
-            second,
-        );
+        let mut chained = BoxStatefulConsumer::new(move |x: &i32| {
+            l1.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x * 2);
+        })
+        .and_then(second);
 
         chained.accept(&5);
         assert_eq!(
@@ -1661,7 +1653,7 @@ mod test_fn_stateful_consumer_ops {
                 .push(*x + 100);
         });
 
-        let chained = FnStatefulConsumerOps::and_then(first, second);
+        let chained = BoxStatefulConsumer::new(first).and_then(second);
         let mut chained = chained.and_then(third);
 
         chained.accept(&5);
@@ -1683,14 +1675,12 @@ mod test_fn_stateful_consumer_ops {
                 .push(*x * 3);
         });
 
-        let mut chained = FnStatefulConsumerOps::and_then(
-            move |x: &i32| {
-                l1.lock()
-                    .expect("mutex should not be poisoned")
-                    .push(*x + 1);
-            },
-            second,
-        );
+        let mut chained = BoxStatefulConsumer::new(move |x: &i32| {
+            l1.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x + 1);
+        })
+        .and_then(second);
 
         chained.accept(&5);
         assert_eq!(
@@ -1712,14 +1702,12 @@ mod test_fn_stateful_consumer_ops {
         });
 
         // Clone second to preserve it
-        let mut chained = FnStatefulConsumerOps::and_then(
-            move |x: &i32| {
-                l1.lock()
-                    .expect("mutex should not be poisoned")
-                    .push(*x * 2);
-            },
-            second.clone(),
-        );
+        let mut chained = BoxStatefulConsumer::new(move |x: &i32| {
+            l1.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x * 2);
+        })
+        .and_then(second.clone());
 
         chained.accept(&5);
         assert_eq!(

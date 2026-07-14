@@ -13,7 +13,6 @@ use qubit_function::{
     BiFunctionOnce,
     BoxBiFunctionOnce,
     BoxBiPredicate,
-    FnBiFunctionOnceOps,
     RcBiPredicate,
 };
 
@@ -164,142 +163,8 @@ fn test_box_bi_function_once_apply() {
 }
 
 // ============================================================================
-// FnBiFunctionOnceOps Trait Tests - Extension Methods for Closures
+// Concrete wrapper composition tests
 // ============================================================================
-
-#[test]
-fn test_fn_bi_function_once_ops_and_then() {
-    // Test and_then method on closures
-    let add = |x: &i32, y: &i32| *x + *y;
-    let double = |x: &i32| *x * 2;
-
-    let composed = add.and_then(double);
-    assert_eq!(composed.apply(&3, &4), 14); // (3 + 4) * 2 = 14
-}
-
-#[test]
-fn test_fn_bi_function_once_ops_and_then_with_different_types() {
-    // Test and_then with type conversion
-    let concat = |x: &String, y: &String| format!("{} {}", x, y);
-    let length = |s: &String| s.len();
-
-    let composed = concat.and_then(length);
-    assert_eq!(
-        composed.apply(&String::from("hello"), &String::from("world")),
-        11
-    );
-}
-
-#[test]
-fn test_fn_bi_function_once_ops_when_or_else() {
-    // Test when().or_else() conditional execution
-    let add1 = |x: &i32, y: &i32| *x + *y;
-    let multiply1 = |x: &i32, y: &i32| *x * *y;
-    let conditional1 = add1
-        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-        .or_else(multiply1);
-    assert_eq!(conditional1.apply(&3, &4), 7); // when branch: 3 + 4 = 7
-
-    let add2 = |x: &i32, y: &i32| *x + *y;
-    let multiply2 = |x: &i32, y: &i32| *x * *y;
-    let conditional2 = add2
-        .when(|x: &i32, y: &i32| *x <= 0 || *y <= 0)
-        .or_else(multiply2);
-    assert_eq!(conditional2.apply(&-3, &4), 1); // when branch: -3 + 4 = 1
-}
-
-#[test]
-fn test_fn_bi_function_once_ops_when_with_box_predicate() {
-    // Test when() with BoxBiPredicate
-    let add1 = |x: &i32, y: &i32| *x + *y;
-    let multiply1 = |x: &i32, y: &i32| *x * *y;
-    let both_positive =
-        BoxBiPredicate::new(|x: &i32, y: &i32| *x > 0 && *y > 0);
-
-    let conditional1 = add1.when(both_positive).or_else(multiply1);
-    assert_eq!(conditional1.apply(&3, &4), 7); // when branch
-
-    let add2 = |x: &i32, y: &i32| *x + *y;
-    let multiply2 = |x: &i32, y: &i32| *x * *y;
-    let conditional2 = add2
-        .when(BoxBiPredicate::new(|x: &i32, y: &i32| *x <= 0 || *y <= 0))
-        .or_else(multiply2);
-    assert_eq!(conditional2.apply(&-3, &4), 1); // when branch
-}
-
-#[test]
-fn test_fn_bi_function_once_ops_when_with_rc_predicate() {
-    // Test when() with RcBiPredicate
-    let add1 = |x: &i32, y: &i32| *x + *y;
-    let multiply1 = |x: &i32, y: &i32| *x * *y;
-    let both_positive = RcBiPredicate::new(|x: &i32, y: &i32| *x > 0 && *y > 0);
-
-    let conditional1 = add1.when(both_positive.clone()).or_else(multiply1);
-    assert_eq!(conditional1.apply(&3, &4), 7); // when branch
-
-    let add2 = |x: &i32, y: &i32| *x + *y;
-    let multiply2 = |x: &i32, y: &i32| *x * *y;
-    let conditional2 = add2
-        .when(RcBiPredicate::new(|x: &i32, y: &i32| *x <= 0 || *y <= 0))
-        .or_else(multiply2);
-    assert_eq!(conditional2.apply(&-3, &4), 1); // when branch
-}
-
-#[test]
-fn test_fn_bi_function_once_ops_when_with_arc_predicate() {
-    // Test when() with ArcBiPredicate
-    let add1 = |x: &i32, y: &i32| *x + *y;
-    let multiply1 = |x: &i32, y: &i32| *x * *y;
-    let both_positive =
-        ArcBiPredicate::new(|x: &i32, y: &i32| *x > 0 && *y > 0);
-
-    let conditional1 = add1.when(both_positive.clone()).or_else(multiply1);
-    assert_eq!(conditional1.apply(&3, &4), 7); // when branch
-
-    let add2 = |x: &i32, y: &i32| *x + *y;
-    let multiply2 = |x: &i32, y: &i32| *x * *y;
-    let conditional2 = add2
-        .when(ArcBiPredicate::new(|x: &i32, y: &i32| *x <= 0 || *y <= 0))
-        .or_else(multiply2);
-    assert_eq!(conditional2.apply(&-3, &4), 1); // when branch
-}
-
-#[test]
-fn test_closure_bi_function_once_and_then() {
-    // Test closure's and_then method from FnBiFunctionOnceOps
-    let add = |x: &i32, y: &i32| *x + *y;
-    let double = |x: &i32| *x * 2;
-
-    let composed1 = add.and_then(double);
-    let composed2 = (|x: &i32, y: &i32| *x + *y).and_then(|x: &i32| *x * 2);
-    assert_eq!(composed1.apply(&3, &4), 14); // (3 + 4) * 2 = 14
-    assert_eq!(composed2.apply(&1, &2), 6); // (1 + 2) * 2 = 6
-}
-
-#[test]
-fn test_closure_bi_function_once_when() {
-    // Test closure's when method from FnBiFunctionOnceOps
-    let multiply1 = |x: &i32, y: &i32| *x * *y;
-    let add1 = |x: &i32, y: &i32| *x + *y;
-    let conditional1 = multiply1
-        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-        .or_else(add1);
-    assert_eq!(conditional1.apply(&3, &4), 12); // when branch: 3 * 4 = 12
-
-    let multiply2 = |x: &i32, y: &i32| *x * *y;
-    let add2 = |x: &i32, y: &i32| *x + *y;
-    let conditional2 = multiply2
-        .when(|x: &i32, y: &i32| *x <= 0 || *y <= 0)
-        .or_else(add2);
-    assert_eq!(conditional2.apply(&-3, &4), -12); // when branch: -3 * 4 = -12
-
-    let multiply3 = |x: &i32, y: &i32| *x * *y;
-    let add3 = |x: &i32, y: &i32| *x + *y;
-    let conditional3 = multiply3
-        .when(|x: &i32, y: &i32| *x > 0 && *y < 0)
-        .or_else(add3);
-    assert_eq!(conditional3.apply(&3, &-4), -12); // when branch: 3 * (-4) = -12
-}
 
 // ============================================================================
 // BoxConditionalBiFunctionOnce Tests - Conditional BiFunctions
@@ -374,39 +239,6 @@ fn test_box_conditional_bi_function_once_with_string_operations() {
 // ============================================================================
 
 #[test]
-fn test_bi_function_once_complex_composition() {
-    // Test complex composition with multiple operations
-    let add = |x: &i32, y: &i32| *x + *y;
-    let multiply_by_two = |x: &i32| *x * 2;
-    let to_string = |x: &i32| x.to_string();
-
-    // Chain: add -> multiply_by_two -> to_string
-    let composed = add.and_then(multiply_by_two).and_then(to_string);
-    assert_eq!(composed.apply(&3, &4), "14"); // ((3 + 4) * 2).to_string()
-}
-
-#[test]
-fn test_bi_function_once_conditional_composition() {
-    // Test conditional composition
-    let add = |x: &i32, y: &i32| *x + *y;
-    let multiply = |x: &i32, y: &i32| *x * *y;
-    let square = |x: &i32| *x * *x;
-
-    // If both positive, add then square; otherwise multiply then square
-    let conditional1 = add
-        .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-        .or_else(multiply)
-        .and_then(square);
-    let conditional2 = add
-        .when(|x: &i32, y: &i32| *x <= 0 || *y <= 0)
-        .or_else(multiply)
-        .and_then(square);
-
-    assert_eq!(conditional1.apply(&3, &4), 49); // (3 + 4)^2 = 49
-    assert_eq!(conditional2.apply(&-3, &4), 1); // (-3 + 4)^2 = 1
-}
-
-#[test]
 fn test_bi_function_once_with_custom_types() {
     // Test with custom types
     #[derive(Debug, PartialEq)]
@@ -425,61 +257,6 @@ fn test_bi_function_once_with_custom_types() {
     let result = add_points.apply(&p1, &p2);
 
     assert_eq!(result, Point { x: 4, y: 6 });
-}
-
-#[test]
-fn test_bi_function_once_with_result_types() {
-    // Test with Result types
-    let safe_divide = |x: &i32, y: &i32| {
-        if *y == 0 {
-            Err("Division by zero")
-        } else {
-            Ok(*x / *y)
-        }
-    };
-
-    let to_string = |result: &Result<i32, &str>| match result {
-        Ok(value) => format!("Result: {}", value),
-        Err(msg) => format!("Error: {}", msg),
-    };
-
-    let composed1 = safe_divide.and_then(to_string);
-    let composed2 = (|x: &i32, y: &i32| {
-        if *y == 0 {
-            Err("Division by zero")
-        } else {
-            Ok(*x / *y)
-        }
-    })
-    .and_then(to_string);
-    assert_eq!(composed1.apply(&10, &2), "Result: 5");
-    assert_eq!(composed2.apply(&10, &0), "Error: Division by zero");
-}
-
-#[test]
-fn test_bi_function_once_with_option_types() {
-    // Test with Option types
-    let add_options = |x: &Option<i32>, y: &Option<i32>| match (x, y) {
-        (Some(a), Some(b)) => Some(a + b),
-        _ => None,
-    };
-
-    let format_option = |opt: &Option<i32>| match opt {
-        Some(value) => format!("Value: {}", value),
-        None => "No value".to_string(),
-    };
-
-    let composed1 = add_options.and_then(format_option);
-    let composed2 = (|x: &Option<i32>, y: &Option<i32>| match (x, y) {
-        (Some(a), Some(b)) => Some(a + b),
-        _ => None,
-    })
-    .and_then(|opt: &Option<i32>| match opt {
-        Some(value) => format!("Value: {}", value),
-        None => "No value".to_string(),
-    });
-    assert_eq!(composed1.apply(&Some(3), &Some(4)), "Value: 7");
-    assert_eq!(composed2.apply(&Some(3), &None), "No value");
 }
 
 // ============================================================================
@@ -533,43 +310,6 @@ fn test_box_conditional_bi_function_once_debug() {
 // ============================================================================
 // Error Handling Tests
 // ============================================================================
-
-#[test]
-fn test_bi_function_once_with_error_propagation() {
-    // Test error propagation through composition
-    #[derive(Debug, PartialEq, Clone)]
-    enum MathError {
-        DivisionByZero,
-        Overflow,
-    }
-
-    let safe_divide = |x: &i32, y: &i32| -> Result<i32, MathError> {
-        if *y == 0 {
-            Err(MathError::DivisionByZero)
-        } else if *x == i32::MIN && *y == -1 {
-            Err(MathError::Overflow)
-        } else {
-            Ok(*x / *y)
-        }
-    };
-
-    let multiply_by_two =
-        |result: &Result<i32, MathError>| result.clone().map(|x| x * 2);
-
-    let composed1 = safe_divide.and_then(multiply_by_two);
-    let safe_divide2 = |x: &i32, y: &i32| -> Result<i32, MathError> {
-        if *y == 0 {
-            Err(MathError::DivisionByZero)
-        } else if *x == i32::MIN && *y == -1 {
-            Err(MathError::Overflow)
-        } else {
-            Ok(*x / *y)
-        }
-    };
-    let composed2 = safe_divide2.and_then(multiply_by_two);
-    assert_eq!(composed1.apply(&10, &2), Ok(10)); // 5 * 2 = 10
-    assert_eq!(composed2.apply(&10, &0), Err(MathError::DivisionByZero));
-}
 
 // ============================================================================
 // Custom BiFunctionOnce Implementation Tests - Test Trait Default Methods

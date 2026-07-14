@@ -13,7 +13,6 @@ mod tests {
         Tester,
         arc_tester::ArcTester,
         box_tester::BoxTester,
-        fn_tester_ops::FnTesterOps,
         rc_tester::RcTester,
     };
     use std::sync::{
@@ -341,7 +340,7 @@ mod tests {
     }
 
     // ========================================================================
-    // FnTesterOps tests
+    // Concrete wrapper composition tests
     // ========================================================================
 
     // ========================================================================
@@ -753,53 +752,6 @@ mod tests {
     // ========================================================================
     // Tester trait default implementation tests (for closures)
     // ========================================================================
-
-    #[test]
-    fn test_closure_and_operation() {
-        let first = || true;
-        let second = || true;
-        let combined = first.and(second);
-        assert!(combined.test());
-    }
-
-    #[test]
-    fn test_closure_or_operation() {
-        let first = || false;
-        let second = || true;
-        let combined = first.or(second);
-        assert!(combined.test());
-    }
-
-    #[test]
-    fn test_closure_not_operation() {
-        let closure = || true;
-        let negated = closure.not();
-        assert!(!negated.test());
-    }
-
-    #[test]
-    fn test_closure_nand_operation() {
-        let first = || true;
-        let second = || true;
-        let combined = first.nand(second);
-        assert!(!combined.test()); // NAND: !(true && true) = false
-    }
-
-    #[test]
-    fn test_closure_xor_operation() {
-        let first = || true;
-        let second = || false;
-        let combined = first.xor(second);
-        assert!(combined.test()); // XOR: true ^ false = true
-    }
-
-    #[test]
-    fn test_closure_nor_operation() {
-        let first = || false;
-        let second = || false;
-        let combined = first.nor(second);
-        assert!(combined.test()); // NOR: !(false || false) = true
-    }
 
     // ========================================================================
     // into_box tests for BoxTester

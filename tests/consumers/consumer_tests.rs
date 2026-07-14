@@ -6,14 +6,12 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-// qubit-style: allow explicit-imports
 //! Tests for Consumer types
 
 use qubit_function::{
     ArcConsumer,
     BoxConsumer,
     Consumer,
-    FnConsumerOps,
     RcConsumer,
 };
 use std::rc::Rc;
@@ -30,7 +28,7 @@ mod box_non_mutating_consumer_tests {
 
     #[test]
     fn test_new_and_accept() {
-        let consumer = BoxConsumer::new(|x: &i32| {
+        let consumer = qubit_function::BoxConsumer::new(|x: &i32| {
             std::hint::black_box(x);
         });
         consumer.accept(&5);
@@ -41,7 +39,7 @@ mod box_non_mutating_consumer_tests {
         let counter = Arc::new(std::sync::Mutex::new(0));
         let c1 = counter.clone();
         let c2 = counter.clone();
-        let chained = BoxConsumer::new(move |_x: &i32| {
+        let chained = qubit_function::BoxConsumer::new(move |_x: &i32| {
             *c1.lock().expect("mutex should not be poisoned") += 1;
         })
         .and_then(move |_x: &i32| {
@@ -58,11 +56,11 @@ mod box_non_mutating_consumer_tests {
         let c1 = counter.clone();
         let c2 = counter.clone();
 
-        let first = BoxConsumer::new(move |_x: &i32| {
+        let first = qubit_function::BoxConsumer::new(move |_x: &i32| {
             *c1.lock().expect("mutex should not be poisoned") += 1;
         });
 
-        let second = BoxConsumer::new(move |_x: &i32| {
+        let second = qubit_function::BoxConsumer::new(move |_x: &i32| {
             *c2.lock().expect("mutex should not be poisoned") += 1;
         });
 
@@ -78,7 +76,7 @@ mod box_non_mutating_consumer_tests {
         let c2 = counter.clone();
         let c3 = counter.clone();
 
-        let chained = BoxConsumer::new(move |_x: &i32| {
+        let chained = qubit_function::BoxConsumer::new(move |_x: &i32| {
             *c1.lock().expect("mutex should not be poisoned") += 1;
         })
         .and_then(move |_x: &i32| {
@@ -133,12 +131,12 @@ mod box_non_mutating_consumer_tests {
 
     #[test]
     fn test_with_different_types() {
-        let string_consumer = BoxConsumer::new(|s: &String| {
+        let string_consumer = qubit_function::BoxConsumer::new(|s: &String| {
             std::hint::black_box(s);
         });
         string_consumer.accept(&"Hello".to_string());
 
-        let vec_consumer = BoxConsumer::new(|v: &Vec<i32>| {
+        let vec_consumer = qubit_function::BoxConsumer::new(|v: &Vec<i32>| {
             std::hint::black_box(v.len());
         });
         vec_consumer.accept(&vec![1, 2, 3]);
@@ -345,7 +343,6 @@ mod closure_tests {
     use super::{
         Arc,
         Consumer,
-        FnConsumerOps,
     };
 
     #[test]
@@ -362,7 +359,7 @@ mod closure_tests {
         let c1 = counter.clone();
         let c2 = counter.clone();
 
-        let chained = (move |_x: &i32| {
+        let chained = qubit_function::BoxConsumer::new(move |_x: &i32| {
             *c1.lock().expect("mutex should not be poisoned") += 1;
         })
         .and_then(move |_x: &i32| {
@@ -380,7 +377,7 @@ mod closure_tests {
         let c2 = counter.clone();
         let c3 = counter.clone();
 
-        let chained = (move |_x: &i32| {
+        let chained = qubit_function::BoxConsumer::new(move |_x: &i32| {
             *c1.lock().expect("mutex should not be poisoned") += 1;
         })
         .and_then(move |_x: &i32| {
@@ -410,7 +407,7 @@ mod generic_tests {
 
     #[test]
     fn test_with_box_consumer() {
-        let box_consumer = BoxConsumer::new(|x: &i32| {
+        let box_consumer = qubit_function::BoxConsumer::new(|x: &i32| {
             std::hint::black_box(x);
         });
         apply_consumer(&box_consumer, &5);
@@ -456,7 +453,7 @@ mod name_tests {
 
     #[test]
     fn test_box_consumer_name() {
-        let mut consumer = BoxConsumer::new(|x: &i32| {
+        let mut consumer = qubit_function::BoxConsumer::new(|x: &i32| {
             std::hint::black_box(x);
         });
         assert_eq!(consumer.name(), None);
@@ -477,6 +474,22 @@ mod name_tests {
     }
 
     #[test]
+    fn test_arc_consumer_clone_names_mutate_independently() {
+        let consumer = ArcConsumer::new_with_name("original", |_x: &i32| {});
+        let mut cloned = consumer.clone();
+
+        assert_eq!(consumer.name(), Some("original"));
+        assert_eq!(cloned.name(), Some("original"));
+
+        cloned.set_name("clone");
+        assert_eq!(consumer.name(), Some("original"));
+        assert_eq!(cloned.name(), Some("clone"));
+
+        cloned.clear_name();
+        assert_eq!(cloned.name(), None);
+    }
+
+    #[test]
     fn test_rc_consumer_name() {
         let mut consumer = RcConsumer::new(|x: &i32| {
             std::hint::black_box(x);
@@ -489,7 +502,7 @@ mod name_tests {
 
     #[test]
     fn test_box_consumer_name_with_accept() {
-        let mut consumer = BoxConsumer::new(|_x: &i32| {});
+        let mut consumer = qubit_function::BoxConsumer::new(|_x: &i32| {});
         consumer.set_name("test_consumer");
         assert_eq!(consumer.name(), Some("test_consumer"));
         consumer.accept(&1);
@@ -529,7 +542,7 @@ mod display_debug_tests {
 
     #[test]
     fn test_box_consumer_debug() {
-        let consumer = BoxConsumer::new(|_x: &i32| {});
+        let consumer = qubit_function::BoxConsumer::new(|_x: &i32| {});
         let debug_str = format!("{:?}", consumer);
         assert!(debug_str.contains("BoxConsumer"));
         assert!(debug_str.contains("name"));
@@ -538,14 +551,14 @@ mod display_debug_tests {
 
     #[test]
     fn test_box_consumer_display_without_name() {
-        let consumer = BoxConsumer::new(|_x: &i32| {});
+        let consumer = qubit_function::BoxConsumer::new(|_x: &i32| {});
         let display_str = format!("{}", consumer);
         assert_eq!(display_str, "BoxConsumer");
     }
 
     #[test]
     fn test_box_consumer_display_with_name() {
-        let mut consumer = BoxConsumer::new(|_x: &i32| {});
+        let mut consumer = qubit_function::BoxConsumer::new(|_x: &i32| {});
         consumer.set_name("test_consumer");
         let display_str = format!("{}", consumer);
         assert_eq!(display_str, "BoxConsumer(test_consumer)");
@@ -626,7 +639,7 @@ mod box_conditional_consumer_tests {
         let l1 = log.clone();
         let l2 = log.clone();
 
-        let consumer = BoxConsumer::new(move |x: &i32| {
+        let consumer = qubit_function::BoxConsumer::new(move |x: &i32| {
             l1.lock().expect("mutex should not be poisoned").push(*x);
         });
 
@@ -656,7 +669,7 @@ mod box_conditional_consumer_tests {
         let l1 = log.clone();
         let l2 = log.clone();
 
-        let consumer = BoxConsumer::new(move |x: &i32| {
+        let consumer = qubit_function::BoxConsumer::new(move |x: &i32| {
             l1.lock().expect("mutex should not be poisoned").push(*x);
         });
 
@@ -682,7 +695,7 @@ mod box_conditional_consumer_tests {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
 
-        let consumer = BoxConsumer::new(move |x: &i32| {
+        let consumer = qubit_function::BoxConsumer::new(move |x: &i32| {
             l.lock().expect("mutex should not be poisoned").push(*x);
         });
 

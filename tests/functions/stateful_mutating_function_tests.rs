@@ -6,14 +6,12 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-// qubit-style: allow explicit-imports
 //! Unit tests for StatefulMutatingFunction types (stateful FnMut(&mut T) ->
 //! R)
 
 use qubit_function::{
     ArcStatefulMutatingFunction,
     BoxStatefulMutatingFunction,
-    FnStatefulMutatingFunctionOps,
     MutatingFunctionOnce,
     RcStatefulMutatingFunction,
     StatefulMutatingFunction,
@@ -310,7 +308,6 @@ mod test_arc_stateful_mutating_function {
 #[cfg(test)]
 mod test_closure {
     use super::{
-        FnStatefulMutatingFunctionOps,
         MutatingFunctionOnce,
         Rc,
         RefCell,
@@ -363,43 +360,6 @@ mod test_closure {
             StatefulMutatingFunction::apply(&mut closure2, &mut value2);
         assert_eq!(result2, 2);
         assert_eq!(value2, 20);
-    }
-
-    #[test]
-    fn test_closure_and_then() {
-        let mut count1 = 0;
-        let count2 = Rc::new(RefCell::new(0));
-        let count2_clone = Rc::clone(&count2);
-        let mut chained = (move |x: &mut i32| {
-            count1 += 1;
-            *x *= 2;
-            count1
-        })
-        .and_then::<i32, _>(move |x: &mut i32| {
-            *count2_clone.borrow_mut() += 1;
-            *x + 10
-        });
-
-        let mut value = 5;
-        let result = chained.apply(&mut value);
-        assert_eq!(result, 11); // First function returns 1, second function returns 1 + 10
-        assert_eq!(value, 10); // Input only modified by first function
-        assert_eq!(*count2.borrow(), 1); // Second function should be called once
-    }
-
-    #[test]
-    fn test_closure_map() {
-        let mut count = 0;
-        let mut mapped = (move |x: &mut i32| {
-            count += 1;
-            *x *= 2;
-            count
-        })
-        .and_then::<String, _>(|count: &mut i32| format!("Call #{}", *count));
-
-        let mut value = 5;
-        assert_eq!(mapped.apply(&mut value), "Call #1");
-        assert_eq!(value, 10);
     }
 }
 

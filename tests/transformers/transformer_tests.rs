@@ -6,8 +6,6 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-// qubit-style: allow explicit-imports
-
 // ============================================================================
 // BoxTransformer Tests - Immutable, single ownership
 // ============================================================================
@@ -276,14 +274,15 @@ mod rc_transformer_tests {
 #[cfg(test)]
 mod box_conditional_tests {
     use qubit_function::{
-        FnTransformerOps,
+        BoxTransformer,
         Transformer,
     };
 
     #[test]
     fn test_when_or_else_with_closure() {
         let double_fn = |x: i32| x * 2;
-        let result = FnTransformerOps::when(double_fn, |x: &i32| *x > 0)
+        let result = BoxTransformer::new(double_fn)
+            .when(|x: &i32| *x > 0)
             .or_else(|x: i32| -x);
 
         assert_eq!(result.apply(5), 10);
@@ -295,7 +294,7 @@ mod box_conditional_tests {
 #[cfg(test)]
 mod arc_conditional_tests {
     use qubit_function::{
-        FnTransformerOps,
+        ArcTransformer,
         Transformer,
     };
 
@@ -303,7 +302,8 @@ mod arc_conditional_tests {
     fn test_when_or_else() {
         let double_fn = |x: i32| x * 2;
         let negate_fn = |x: i32| -x;
-        let result = FnTransformerOps::when(double_fn, |x: &i32| *x > 0)
+        let result = ArcTransformer::new(double_fn)
+            .when(|x: &i32| *x > 0)
             .or_else(negate_fn);
 
         assert_eq!(result.apply(5), 10);
@@ -313,7 +313,8 @@ mod arc_conditional_tests {
     #[test]
     fn test_when_or_else_with_closure() {
         let double_fn = |x: i32| x * 2;
-        let result = FnTransformerOps::when(double_fn, |x: &i32| *x > 0)
+        let result = ArcTransformer::new(double_fn)
+            .when(|x: &i32| *x > 0)
             .or_else(|x: i32| -x);
 
         assert_eq!(result.apply(5), 10);
@@ -324,7 +325,8 @@ mod arc_conditional_tests {
     #[test]
     fn test_conditional_or_else() {
         let double_fn = |x: i32| x * 2;
-        let result = FnTransformerOps::when(double_fn, |x: &i32| *x > 0)
+        let result = ArcTransformer::new(double_fn)
+            .when(|x: &i32| *x > 0)
             .or_else(|x: i32| -x);
 
         assert_eq!(result.apply(5), 10);
@@ -335,7 +337,7 @@ mod arc_conditional_tests {
 #[cfg(test)]
 mod rc_conditional_tests {
     use qubit_function::{
-        FnTransformerOps,
+        RcTransformer,
         Transformer,
     };
 
@@ -343,7 +345,8 @@ mod rc_conditional_tests {
     fn test_when_or_else() {
         let double_fn = |x: i32| x * 2;
         let negate_fn = |x: i32| -x;
-        let result = FnTransformerOps::when(double_fn, |x: &i32| *x > 0)
+        let result = RcTransformer::new(double_fn)
+            .when(|x: &i32| *x > 0)
             .or_else(negate_fn);
 
         assert_eq!(result.apply(5), 10);
@@ -353,7 +356,8 @@ mod rc_conditional_tests {
     #[test]
     fn test_when_or_else_with_closure() {
         let double_fn = |x: i32| x * 2;
-        let result = FnTransformerOps::when(double_fn, |x: &i32| *x > 0)
+        let result = RcTransformer::new(double_fn)
+            .when(|x: &i32| *x > 0)
             .or_else(|x: i32| -x);
 
         assert_eq!(result.apply(5), 10);
@@ -364,7 +368,8 @@ mod rc_conditional_tests {
     #[test]
     fn test_conditional_or_else() {
         let double_fn = |x: i32| x * 2;
-        let result = FnTransformerOps::when(double_fn, |x: &i32| *x > 0)
+        let result = RcTransformer::new(double_fn)
+            .when(|x: &i32| *x > 0)
             .or_else(|x: i32| -x);
 
         assert_eq!(result.apply(5), 10);

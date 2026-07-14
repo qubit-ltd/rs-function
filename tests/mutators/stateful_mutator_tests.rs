@@ -6,13 +6,11 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-// qubit-style: allow explicit-imports
 //! Unit tests for StatefulMutator types
 
 use qubit_function::{
     ArcStatefulMutator,
     BoxStatefulMutator,
-    FnMutStatefulMutatorOps,
     MutatorOnce,
     RcStatefulMutator,
     StatefulMutator,
@@ -543,9 +541,8 @@ mod test_rc_mutator {
 // ============================================================================
 
 #[cfg(test)]
-mod test_fn_mutator_ops {
+mod wrapper_composition_tests {
     use super::{
-        FnMutStatefulMutatorOps,
         MutatorOnce,
         StatefulMutator,
     };
@@ -556,16 +553,6 @@ mod test_fn_mutator_ops {
         let mut value = 5;
         closure.apply(&mut value);
         assert_eq!(value, 10);
-    }
-
-    #[test]
-    fn test_closure_and_then() {
-        let mut chained =
-            (|x: &mut i32| *x *= 2).and_then(|x: &mut i32| *x += 10);
-
-        let mut value = 5;
-        chained.apply(&mut value);
-        assert_eq!(value, 20); // (5 * 2) + 10
     }
 }
 
@@ -1725,28 +1712,6 @@ mod test_conditional_execution {
         let mut zero = 0;
         mutator.apply(&mut zero);
         assert_eq!(zero, 0); // 0 * 3
-    }
-
-    #[test]
-    fn test_combined_predicate_types() {
-        use qubit_function::predicates::FnPredicateOps;
-
-        // Combine predicates: x > 0 AND x < 100
-        let pred = (|x: &i32| *x > 0).and(|x: &i32| *x < 100);
-        let mut mutator =
-            BoxStatefulMutator::new(|x: &mut i32| *x *= 2).when(pred);
-
-        let mut in_range = 50;
-        mutator.apply(&mut in_range);
-        assert_eq!(in_range, 100); // Doubled
-
-        let mut too_small = -10;
-        mutator.apply(&mut too_small);
-        assert_eq!(too_small, -10); // Not doubled
-
-        let mut too_large = 150;
-        mutator.apply(&mut too_large);
-        assert_eq!(too_large, 150); // Not doubled
     }
 }
 

@@ -8,4 +8,3 @@
 
 mod box_bi_mutating_function_once_tests;
 mod box_conditional_bi_mutating_function_once_tests;
-mod fn_bi_mutating_function_once_ops_tests;

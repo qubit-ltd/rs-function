@@ -10,6 +10,5 @@ mod arc_conditional_mutating_function_tests;
 mod arc_mutating_function_tests;
 mod box_conditional_mutating_function_tests;
 mod box_mutating_function_tests;
-mod fn_mutating_function_ops_tests;
 mod rc_conditional_mutating_function_tests;
 mod rc_mutating_function_tests;

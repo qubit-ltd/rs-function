@@ -8,4 +8,3 @@
 
 mod box_conditional_mutator_once_tests;
 mod box_mutator_once_tests;
-mod fn_mutator_once_ops_tests;

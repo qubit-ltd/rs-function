@@ -6,7 +6,6 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-// qubit-style: allow explicit-imports
 //! Dedicated test file for impl_conditional_function_clone macro coverage
 //!
 //! This test file is specifically created to ensure that the three-parameter

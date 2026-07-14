@@ -6,14 +6,12 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-// qubit-style: allow explicit-imports
 #[cfg(test)]
 mod tests {
     use qubit_function::predicates::{
         ArcBiPredicate,
         BiPredicate,
         BoxBiPredicate,
-        FnBiPredicateOps,
         RcBiPredicate,
     };
     use std::thread;
@@ -93,94 +91,11 @@ mod tests {
     }
 
     // ========================================================================
-    // FnBiPredicateOps Tests - Test extension methods for closures
+    // Concrete wrapper composition tests
     // ========================================================================
 
     mod bi_predicate_ext_tests {
-        use super::{
-            BiPredicate,
-            FnBiPredicateOps,
-        };
-
-        #[test]
-        fn test_closure_and() {
-            let sum_positive = |x: &i32, y: &i32| x + y > 0;
-            let first_positive = |x: &i32, _y: &i32| *x > 0;
-
-            let combined = sum_positive.and(first_positive);
-            assert!(combined.test(&5, &3)); // Both conditions met
-            assert!(!combined.test(&-5, &10)); // Sum positive but first not
-            assert!(!combined.test(&5, &-10)); // First positive but sum not
-        }
-
-        #[test]
-        fn test_closure_or() {
-            let sum_positive = |x: &i32, y: &i32| x + y > 0;
-            let first_positive = |x: &i32, _y: &i32| *x > 0;
-
-            let combined = sum_positive.or(first_positive);
-            assert!(combined.test(&5, &3)); // Both conditions met
-            assert!(combined.test(&-5, &10)); // Sum positive
-            assert!(combined.test(&5, &-10)); // First positive
-            assert!(!combined.test(&-5, &-10)); // Neither condition met
-        }
-
-        #[test]
-        fn test_closure_not() {
-            let sum_positive = |x: &i32, y: &i32| x + y > 0;
-            let sum_not_positive = sum_positive.not();
-
-            assert!(!sum_not_positive.test(&5, &3));
-            assert!(sum_not_positive.test(&-5, &-3));
-        }
-
-        #[test]
-        fn test_closure_xor() {
-            let first_positive = |x: &i32, _y: &i32| *x > 0;
-            let second_positive = |_x: &i32, y: &i32| *y > 0;
-
-            let combined = first_positive.xor(second_positive);
-            assert!(combined.test(&5, &-3)); // Only first positive
-            assert!(combined.test(&-5, &3)); // Only second positive
-            assert!(!combined.test(&5, &3)); // Both positive
-            assert!(!combined.test(&-5, &-3)); // Neither positive
-        }
-
-        #[test]
-        fn test_closure_nand() {
-            let first_positive = |x: &i32, _y: &i32| *x > 0;
-            let second_positive = |_x: &i32, y: &i32| *y > 0;
-
-            let combined = first_positive.nand(second_positive);
-            assert!(!combined.test(&5, &3)); // Both positive (NAND false)
-            assert!(combined.test(&5, &-3)); // Only first positive
-            assert!(combined.test(&-5, &3)); // Only second positive
-            assert!(combined.test(&-5, &-3)); // Neither positive
-        }
-
-        #[test]
-        fn test_closure_nor() {
-            let first_positive = |x: &i32, _y: &i32| *x > 0;
-            let second_positive = |_x: &i32, y: &i32| *y > 0;
-
-            let combined = first_positive.nor(second_positive);
-            assert!(!combined.test(&5, &3)); // Both positive
-            assert!(!combined.test(&5, &-3)); // First positive
-            assert!(!combined.test(&-5, &3)); // Second positive
-            assert!(combined.test(&-5, &-3)); // Neither positive (NOR true)
-        }
-
-        #[test]
-        fn test_closure_chain_combination() {
-            let x_positive = |x: &i32, _y: &i32| *x > 0;
-            let y_positive = |_x: &i32, y: &i32| *y > 0;
-            let sum_large = |x: &i32, y: &i32| x + y > 100;
-
-            let complex = x_positive.and(y_positive).or(sum_large);
-            assert!(complex.test(&5, &3)); // Both positive
-            assert!(complex.test(&50, &60)); // Sum large
-            assert!(!complex.test(&5, &-3)); // Only first positive, sum not large
-        }
+        use super::BiPredicate;
     }
 
     // ========================================================================
@@ -1343,17 +1258,8 @@ mod tests {
             ArcBiPredicate,
             BiPredicate,
             BoxBiPredicate,
-            FnBiPredicateOps,
             RcBiPredicate,
         };
-
-        #[test]
-        fn test_closure_to_box() {
-            let closure = |x: &i32, y: &i32| x + y > 0;
-            let box_pred = closure.and(|x: &i32, _y: &i32| *x > 0);
-            assert!(box_pred.test(&5, &3));
-            assert!(!box_pred.test(&-5, &10));
-        }
 
         #[test]
         fn test_box_with_closure() {

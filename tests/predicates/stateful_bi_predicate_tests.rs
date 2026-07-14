@@ -6,11 +6,9 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-// qubit-style: allow explicit-imports
 use qubit_function::predicates::{
     ArcStatefulBiPredicate,
     BoxStatefulBiPredicate,
-    FnStatefulBiPredicateOps,
     RcStatefulBiPredicate,
     StatefulBiPredicate,
 };
@@ -117,40 +115,6 @@ fn test_arc_stateful_bi_predicate_can_be_shared_across_threads() {
 }
 
 #[test]
-fn test_fn_stateful_bi_predicate_ops_compose_mutable_closures() {
-    let left_calls = Rc::new(Cell::new(0));
-    let right_calls = Rc::new(Cell::new(0));
-    let left_seen = left_calls.clone();
-    let right_seen = right_calls.clone();
-
-    let left = move |first: &i32, second: &i32| {
-        left_seen.set(left_seen.get() + 1);
-        first + second > 0
-    };
-    let right = move |first: &i32, second: &i32| {
-        right_seen.set(right_seen.get() + 1);
-        first > second
-    };
-
-    let mut combined = left.and(right);
-    assert!(combined.test(&5, &3));
-    assert!(!combined.test(&-5, &3));
-    assert_eq!(left_calls.get(), 2);
-    assert_eq!(right_calls.get(), 1);
-
-    let calls = Rc::new(Cell::new(0));
-    let seen = calls.clone();
-    let mut negated = (move |first: &i32, second: &i32| {
-        seen.set(seen.get() + 1);
-        first == second
-    })
-    .not();
-    assert!(negated.test(&1, &2));
-    assert!(!negated.test(&2, &2));
-    assert_eq!(calls.get(), 2);
-}
-
-#[test]
 fn test_box_stateful_bi_predicate_logical_methods() {
     let mut nand = BoxStatefulBiPredicate::new(|_: &i32, _: &i32| true)
         .nand(BoxStatefulBiPredicate::new(|_: &i32, _: &i32| true));
@@ -227,24 +191,4 @@ fn test_box_stateful_bi_predicate_logical_truth_tables() {
 
     let mut negated = !box_stateful_bi_predicate_returning(false);
     assert!(negated.test(&1, &2));
-}
-
-#[test]
-fn test_fn_stateful_bi_predicate_ops_cover_all_logical_methods() {
-    let mut or_predicate = (|_: &i32, _: &i32| false).or(
-        BoxStatefulBiPredicate::new(|first: &i32, second: &i32| first < second),
-    );
-    assert!(or_predicate.test(&1, &2));
-
-    let mut nand_predicate = (|_: &i32, _: &i32| true)
-        .nand(BoxStatefulBiPredicate::new(|_: &i32, _: &i32| true));
-    assert!(!nand_predicate.test(&1, &2));
-
-    let mut xor_predicate = (|_: &i32, _: &i32| true)
-        .xor(BoxStatefulBiPredicate::new(|_: &i32, _: &i32| false));
-    assert!(xor_predicate.test(&1, &2));
-
-    let mut nor_predicate = (|_: &i32, _: &i32| false)
-        .nor(BoxStatefulBiPredicate::new(|_: &i32, _: &i32| false));
-    assert!(nor_predicate.test(&1, &2));
 }
