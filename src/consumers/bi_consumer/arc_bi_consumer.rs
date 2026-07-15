@@ -85,7 +85,8 @@ impl<T, U> ArcBiConsumer<T, U> {
         ArcConditionalBiConsumer,
         ArcBiPredicate,
         BiConsumer,
-        Send + Sync + 'static
+        predicate_bounds = (Send + Sync + 'static),
+        chained_bounds = (Send + Sync + 'static)
     );
 }
 

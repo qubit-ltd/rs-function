@@ -84,7 +84,8 @@ impl<T, U> RcBiConsumer<T, U> {
         RcConditionalBiConsumer,
         RcBiPredicate,
         BiConsumer,
-        'static
+        predicate_bounds = ('static),
+        chained_bounds = ('static)
     );
 }
 

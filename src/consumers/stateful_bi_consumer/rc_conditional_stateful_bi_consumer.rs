@@ -69,8 +69,7 @@ impl_shared_conditional_consumer!(
     RcConditionalStatefulBiConsumer<T, U>,
     RcStatefulBiConsumer,
     StatefulBiConsumer,
-    into_rc,
-    'static
+    callback_bounds = ('static)
 );
 
 impl<T, U> StatefulBiConsumer<T, U> for RcConditionalStatefulBiConsumer<T, U> {

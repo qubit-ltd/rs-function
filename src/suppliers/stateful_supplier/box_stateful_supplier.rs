@@ -96,6 +96,7 @@ impl<T> BoxStatefulSupplier<T> {
     ///
     /// Returns a new supplier that caches the first value it
     /// produces. All subsequent calls return the cached value.
+    /// The cache is stored directly inside the returned callback.
     ///
     /// # Returns
     ///
@@ -115,20 +116,25 @@ impl<T> BoxStatefulSupplier<T> {
     /// assert_eq!(memoized.get(), 42); // Calls underlying function
     /// assert_eq!(memoized.get(), 42); // Returns cached value
     /// ```
-    pub fn memoize(mut self) -> BoxStatefulSupplier<T>
+    pub fn memoize(self) -> BoxStatefulSupplier<T>
     where
         T: Clone + 'static,
     {
+        let metadata = self.metadata;
+        let mut function = self.function;
         let mut cache: Option<T> = None;
-        BoxStatefulSupplier::new(move || {
-            if let Some(ref cached) = cache {
-                cached.clone()
-            } else {
-                let value = StatefulSupplier::get(&mut self);
-                cache = Some(value.clone());
-                value
-            }
-        })
+        BoxStatefulSupplier::new_with_metadata(
+            move || {
+                if let Some(ref cached) = cache {
+                    cached.clone()
+                } else {
+                    let value = function();
+                    cache = Some(value.clone());
+                    value
+                }
+            },
+            metadata,
+        )
     }
 }
 

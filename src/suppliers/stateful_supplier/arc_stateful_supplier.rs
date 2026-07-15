@@ -122,7 +122,7 @@ impl<T> ArcStatefulSupplier<T> {
     impl_shared_supplier_methods!(
         ArcStatefulSupplier<T>,
         StatefulSupplier,
-        (arc)
+        callback_bounds = (Send + 'static)
     );
 }
 
@@ -163,8 +163,9 @@ impl<T> ArcStatefulSupplier<T> {
 
     /// Creates a memoizing supplier.
     ///
-    /// **Note:** This method requires `T: Send` because the cached value
-    /// needs to be shared across threads via `Arc<Mutex<...>>`.
+    /// **Note:** This method requires `T: Send` because the cached value is
+    /// stored inside the returned callback. The callback's outer `Mutex`
+    /// protects both execution and cache access.
     ///
     /// # Returns
     ///
@@ -195,20 +196,20 @@ impl<T> ArcStatefulSupplier<T> {
         T: Clone + Send + 'static,
     {
         let self_fn = Arc::clone(&self.function);
-        let cache: Arc<Mutex<Option<T>>> = Arc::new(Mutex::new(None));
-        ArcStatefulSupplier {
-            function: Arc::new(Mutex::new(move || {
-                let mut cache_guard = cache.lock();
-                if let Some(ref cached) = *cache_guard {
+        let metadata = self.metadata.clone();
+        let mut cache: Option<T> = None;
+        ArcStatefulSupplier::new_with_metadata(
+            move || {
+                if let Some(ref cached) = cache {
                     cached.clone()
                 } else {
                     let value = self_fn.lock()();
-                    *cache_guard = Some(value.clone());
+                    cache = Some(value.clone());
                     value
                 }
-            })),
-            metadata: crate::callback_metadata::CallbackMetadata::unnamed(),
-        }
+            },
+            metadata,
+        )
     }
 }
 

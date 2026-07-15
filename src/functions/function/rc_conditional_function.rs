@@ -61,7 +61,7 @@ impl_shared_conditional_function!(
     RcConditionalFunction<T, R>,
     RcFunction,
     Function,
-    'static
+    callback_bounds = ('static)
 );
 
 // Use macro to generate conditional function clone implementations

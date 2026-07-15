@@ -83,7 +83,8 @@ impl<T> ArcConsumer<T> {
         ArcConditionalConsumer,
         ArcPredicate,
         Consumer,
-        Send + Sync + 'static
+        predicate_bounds = (Send + Sync + 'static),
+        chained_bounds = (Send + Sync + 'static)
     );
 }
 

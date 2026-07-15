@@ -7,93 +7,41 @@
 // =============================================================================
 //! # Shared Conditional Mutator Macro
 //!
-//! Generates Arc/Rc-based Conditional Mutator implementations
-//!
-//! For Arc/Rc-based conditional mutators, generates `and_then` and `or_else`
-//! methods, as well as complete Mutator trait implementations.
-//!
-//! Arc/Rc type characteristics:
-//! - `and_then` and `or_else` borrow &self (because Arc/Rc can Clone)
-//! - Returned wrappers preserve the original ownership family
+//! Generates `and_then` and `or_else` for shared Arc/Rc conditional mutators.
+//! Generated methods borrow `&self` and return a wrapper from the same
+//! ownership and statefulness family.
 //!
 //! # Parameters
 //!
-//! * `$struct_name<$generics>` - Struct name with generic parameters
-//! * `$mutator_type` - Mutator wrapper type name
-//! * `$mutator_trait` - Mutator trait name
-//! * `$predicate_conversion` - Predicate conversion method (into_arc or
-//!   into_rc)
-//! * `$extra_bounds` - Extra trait bounds
+//! * `$struct_name<$generics>` - Conditional wrapper type.
+//! * `$mutator_type` - Result wrapper type, such as `ArcMutator`.
+//! * `$mutator_trait` - Semantic trait accepted for the additional callback,
+//!   such as `Mutator`.
+//! * `$callback_bounds` - Storage capabilities required for the additional
+//!   callback.
 //!
-//! # Usage Examples
+//! # Capability policy
 //!
-//! ```ignore
-//! // Arc single-parameter Mutator
-//! impl_shared_conditional_mutator!(
-//!     ArcConditionalMutator<T>,
-//!     ArcMutator,
-//!     Mutator,
-//!     into_arc,
-//!     Send + Sync + 'static
-//! );
-//!
-//! // Rc single-parameter Mutator
-//! impl_shared_conditional_mutator!(
-//!     RcConditionalMutator<T>,
-//!     RcMutator,
-//!     Mutator,
-//!     into_rc,
-//!     'static
-//! );
-//! ```
+//! | Wrapper family | `callback_bounds` |
+//! |----------------|-------------------|
+//! | Arc stateless | `Send + Sync + 'static` |
+//! | Arc stateful | `Send + 'static` |
+//! | Rc stateless/stateful | `'static` |
 
-/// Generates Arc/Rc-based Conditional Mutator implementations
+/// Generates `and_then` and `or_else` for shared Arc/Rc conditional mutators.
 ///
-/// This macro should be used at the top level (outside of any impl block)
-/// to generate complete impl blocks for Arc/Rc-based conditional mutators.
-/// It generates `and_then` and `or_else` methods, as well as complete Mutator
-/// trait implementations.
+/// Invoke this macro at module scope. The selected callback bounds reflect
+/// how the result wrapper stores its callback: stateless Arc wrappers call
+/// through a shared reference and require `Sync`; stateful Arc wrappers call
+/// under an outer mutex and require only `Send`.
 ///
-/// Arc/Rc type characteristics:
-/// - `and_then` and `or_else` borrow &self (because Arc/Rc can Clone)
-/// - Returned wrappers preserve the original ownership family
+/// # Capability policy
 ///
-/// # Parameters
-///
-/// * `$struct_name<$generics>` - Struct name with generic parameters
-/// * `$mutator_type` - Mutator wrapper type name
-/// * `$mutator_trait` - Mutator trait name
-/// * `$predicate_conversion` - Predicate conversion method (into_arc or
-///   into_rc)
-/// * `$extra_bounds` - Extra trait bounds
-///
-/// # Usage Location
-///
-/// This macro should be used at the top level, outside of any impl block,
-/// typically in the same file as the struct definition. It generates a complete
-/// impl block internally.
-///
-/// # Usage Examples
-///
-/// ```ignore
-/// // At the top level, outside of any impl block
-/// impl_shared_conditional_mutator!(
-///     ArcConditionalMutator<T>,
-///     ArcMutator,
-///     Mutator,
-///     into_arc,
-///     Send + Sync + 'static
-/// );
-///
-/// // Rc single-parameter Mutator
-/// impl_shared_conditional_mutator!(
-///     RcConditionalMutator<T>,
-///     RcMutator,
-///     Mutator,
-///     into_rc,
-///     'static
-/// );
-/// ```
+/// | Wrapper family | `callback_bounds` |
+/// |----------------|-------------------|
+/// | Arc stateless | `Send + Sync + 'static` |
+/// | Arc stateful | `Send + 'static` |
+/// | Rc stateless/stateful | `'static` |
 macro_rules! impl_shared_conditional_mutator {
     (@let_mutator Mutator, $name:ident, $value:expr) => {
         let $name = $value;
@@ -108,8 +56,7 @@ macro_rules! impl_shared_conditional_mutator {
         $struct_name:ident < $t:ident >,
         $mutator_type:ident,
         $mutator_trait:ident,
-        $predicate_conversion:ident,
-        $($extra_bounds:tt)+
+        callback_bounds = ($($callback_bounds:tt)+)
     ) => {
         impl<$t> $struct_name<$t> {
             /// Chains another mutator in sequence
@@ -162,7 +109,7 @@ macro_rules! impl_shared_conditional_mutator {
             pub fn and_then<M>(&self, next: M) -> $mutator_type<$t>
             where
                 $t: 'static,
-                M: $mutator_trait<$t> + $($extra_bounds)+,
+                M: $mutator_trait<$t> + $($callback_bounds)+,
             {
                 let first_predicate = self.predicate.clone();
                 impl_shared_conditional_mutator!(@let_mutator $mutator_trait, first_mutator, self.mutator.clone());
@@ -190,7 +137,7 @@ macro_rules! impl_shared_conditional_mutator {
             pub fn or_else<M>(&self, else_mutator: M) -> $mutator_type<$t>
             where
                 $t: 'static,
-                M: $mutator_trait<$t> + $($extra_bounds)+,
+                M: $mutator_trait<$t> + $($callback_bounds)+,
             {
                 let predicate = self.predicate.clone();
                 impl_shared_conditional_mutator!(@let_mutator $mutator_trait, then_mutator, self.mutator.clone());

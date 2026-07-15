@@ -68,7 +68,7 @@ impl_shared_conditional_function!(
     RcConditionalStatefulMutatingFunction<T, R>,
     RcStatefulMutatingFunction,
     StatefulMutatingFunction,
-    'static
+    callback_bounds = ('static)
 );
 
 // Use macro to generate conditional function clone implementations

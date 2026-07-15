@@ -105,7 +105,8 @@ impl<T, U> ArcStatefulBiConsumer<T, U> {
         ArcConditionalStatefulBiConsumer,
         ArcBiPredicate,
         StatefulBiConsumer,
-        Send + Sync + 'static
+        predicate_bounds = (Send + Sync + 'static),
+        chained_bounds = (Send + 'static)
     );
 }
 

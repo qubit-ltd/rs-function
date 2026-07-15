@@ -7,125 +7,41 @@
 // =============================================================================
 //! # Shared Conditional Transformer Macro
 //!
-//! Generates Arc/Rc-based Conditional Transformer implementations
-//!
-//! For Arc/Rc-based conditional transformers, generates `and_then` and
-//! `or_else` methods, as well as complete Transformer/BiTransformer trait
-//! implementations.
-//!
-//! Arc/Rc type characteristics:
-//! - `and_then` and `or_else` borrow &self (because Arc/Rc can Clone)
-//! - Returned wrappers preserve the original ownership family
+//! Generates `or_else` for shared Arc/Rc conditional transformers.
+//! Generated methods borrow `&self` and return a wrapper from the same
+//! ownership and statefulness family.
 //!
 //! # Parameters
 //!
-//! * `$struct_name<$generics>` - Struct name with generic parameters
-//! * `$transformer_type` - Transformer wrapper type name
-//! * `$else_transformer_trait` - Transformer trait name
-//! * `$predicate_conversion` - Predicate conversion method (into_arc or
-//!   into_rc)
-//! * `$extra_bounds` - Extra trait bounds
+//! * `$struct_name<$generics>` - Conditional wrapper type.
+//! * `$transformer_type` - Result wrapper type, such as `ArcTransformer`.
+//! * `$else_transformer_trait` - Semantic trait accepted for the additional
+//!   callback, such as `Transformer`.
+//! * `$callback_bounds` - Storage capabilities required for the additional
+//!   callback.
 //!
-//! # Usage Examples
+//! # Capability policy
 //!
-//! ```ignore
-//! // Arc two-parameter Transformer
-//! impl_shared_conditional_transformer!(
-//!     ArcConditionalTransformer<T, U>,
-//!     ArcTransformer,
-//!     Transformer,
-//!     into_arc,
-//!     Send + Sync + 'static
-//! );
-//!
-//! // Rc two-parameter Transformer
-//! impl_shared_conditional_transformer!(
-//!     RcConditionalTransformer<T, U>,
-//!     RcTransformer,
-//!     Transformer,
-//!     into_rc,
-//!     'static
-//! );
-//!
-//! // Arc three-parameter BiTransformer
-//! impl_shared_conditional_transformer!(
-//!     ArcConditionalBiTransformer<T, U, V>,
-//!     ArcBiTransformer,
-//!     BiTransformer,
-//!     into_arc,
-//!     Send + Sync + 'static
-//! );
-//!
-//! // Rc three-parameter BiTransformer
-//! impl_shared_conditional_transformer!(
-//!     RcConditionalBiTransformer<T, U, V>,
-//!     RcBiTransformer,
-//!     BiTransformer,
-//!     into_rc,
-//!     'static
-//! );
-//! ```
+//! | Wrapper family | `callback_bounds` |
+//! |----------------|-------------------|
+//! | Arc stateless | `Send + Sync + 'static` |
+//! | Arc stateful | `Send + 'static` |
+//! | Rc stateless/stateful | `'static` |
 
-/// Generates Arc/Rc-based Conditional Transformer implementations
+/// Generates `or_else` for shared Arc/Rc conditional transformers.
 ///
-/// This macro should be used at the top level (outside of any impl block) as
-/// it generates a complete impl block with methods for the specified struct.
-/// For Arc/Rc-based conditional transformers, generates `and_then` and
-/// `or_else` methods, as well as complete Transformer/BiTransformer trait
-/// implementations.
+/// Invoke this macro at module scope. The selected callback bounds reflect
+/// how the result wrapper stores its callback: stateless Arc wrappers call
+/// through a shared reference and require `Sync`; stateful Arc wrappers call
+/// under an outer mutex and require only `Send`.
 ///
-/// Arc/Rc type characteristics:
-/// - `and_then` and `or_else` borrow &self (because Arc/Rc can Clone)
-/// - Returned wrappers preserve the original ownership family
+/// # Capability policy
 ///
-/// # Parameters
-///
-/// * `$struct_name<$generics>` - Struct name with generic parameters
-/// * `$transformer_type` - Transformer wrapper type name
-/// * `$else_transformer_trait` - Transformer trait name
-/// * `$predicate_conversion` - Predicate conversion method (into_arc or
-///   into_rc)
-/// * `$extra_bounds` - Extra trait bounds
-///
-/// # Usage Examples
-///
-/// ```ignore
-/// // Arc two-parameter Transformer
-/// impl_shared_conditional_transformer!(
-///     ArcConditionalTransformer<T, U>,
-///     ArcTransformer,
-///     Transformer,
-///     into_arc,
-///     Send + Sync + 'static
-/// );
-///
-/// // Rc two-parameter Transformer
-/// impl_shared_conditional_transformer!(
-///     RcConditionalTransformer<T, U>,
-///     RcTransformer,
-///     Transformer,
-///     into_rc,
-///     'static
-/// );
-///
-/// // Arc three-parameter BiTransformer
-/// impl_shared_conditional_transformer!(
-///     ArcConditionalBiTransformer<T, U, V>,
-///     ArcBiTransformer,
-///     BiTransformer,
-///     into_arc,
-///     Send + Sync + 'static
-/// );
-///
-/// // Rc three-parameter BiTransformer
-/// impl_shared_conditional_transformer!(
-///     RcConditionalBiTransformer<T, U, V>,
-///     RcBiTransformer,
-///     BiTransformer,
-///     into_rc,
-///     'static
-/// );
-/// ```
+/// | Wrapper family | `callback_bounds` |
+/// |----------------|-------------------|
+/// | Arc stateless | `Send + Sync + 'static` |
+/// | Arc stateful | `Send + 'static` |
+/// | Rc stateless/stateful | `'static` |
 macro_rules! impl_shared_conditional_transformer {
     (@let_transformer Transformer, $name:ident, $value:expr) => {
         let $name = $value;
@@ -148,8 +64,7 @@ macro_rules! impl_shared_conditional_transformer {
         $struct_name:ident < $t:ident, $r:ident >,
         $transformer_type:ident,
         $else_transformer_trait:ident,
-        $predicate_conversion:ident,
-        $($extra_bounds:tt)+
+        callback_bounds = ($($callback_bounds:tt)+)
     ) => {
         impl<$t, $r> $struct_name<$t, $r> {
             /// Adds an else branch
@@ -168,7 +83,7 @@ macro_rules! impl_shared_conditional_transformer {
             where
                 $t: 'static,
                 $r: 'static,
-                F: $else_transformer_trait<$t, $r> + $($extra_bounds)+,
+                F: $else_transformer_trait<$t, $r> + $($callback_bounds)+,
             {
                 let predicate = self.predicate.clone();
                 impl_shared_conditional_transformer!(@let_transformer $else_transformer_trait, then_transformer, self.transformer.clone());
@@ -189,8 +104,7 @@ macro_rules! impl_shared_conditional_transformer {
         $struct_name:ident < $t:ident, $u:ident, $r:ident >,
         $transformer_type:ident,
         $else_transformer_trait:ident,
-        $predicate_conversion:ident,
-        $($extra_bounds:tt)+
+        callback_bounds = ($($callback_bounds:tt)+)
     ) => {
         impl<$t, $u, $r> $struct_name<$t, $u, $r> {
             /// Adds an else branch
@@ -210,7 +124,7 @@ macro_rules! impl_shared_conditional_transformer {
                 $t: 'static,
                 $u: 'static,
                 $r: 'static,
-                F: $else_transformer_trait<$t, $u, $r> + $($extra_bounds)+,
+                F: $else_transformer_trait<$t, $u, $r> + $($callback_bounds)+,
             {
                 let predicate = self.predicate.clone();
                 impl_shared_conditional_transformer!(@let_transformer $else_transformer_trait, then_transformer, self.transformer.clone());

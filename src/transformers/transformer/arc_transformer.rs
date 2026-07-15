@@ -56,7 +56,8 @@ impl<T, R> ArcTransformer<T, R> {
         ArcConditionalTransformer,
         ArcPredicate,
         Transformer,
-        Send + Sync + 'static
+        predicate_bounds = (Send + Sync + 'static),
+        chained_bounds = (Send + Sync + 'static)
     );
 }
 

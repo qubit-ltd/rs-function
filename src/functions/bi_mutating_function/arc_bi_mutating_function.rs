@@ -63,7 +63,8 @@ impl<T, U, R> ArcBiMutatingFunction<T, U, R> {
         ArcConditionalBiMutatingFunction,
         ArcBiPredicate,
         MutatingFunction,
-        Send + Sync + 'static
+        predicate_bounds = (Send + Sync + 'static),
+        chained_bounds = (Send + Sync + 'static)
     );
 }
 

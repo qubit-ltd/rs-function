@@ -59,7 +59,8 @@ impl<T, R> ArcFunction<T, R> {
         ArcConditionalFunction,
         ArcPredicate,
         Function,
-        Send + Sync + 'static
+        predicate_bounds = (Send + Sync + 'static),
+        chained_bounds = (Send + Sync + 'static)
     );
 }
 

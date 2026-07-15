@@ -56,7 +56,8 @@ impl<T, U, R> ArcBiFunction<T, U, R> {
         ArcConditionalBiFunction,
         ArcBiPredicate,
         Function,
-        Send + Sync + 'static
+        predicate_bounds = (Send + Sync + 'static),
+        chained_bounds = (Send + Sync + 'static)
     );
 }
 

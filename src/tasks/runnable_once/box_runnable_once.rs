@@ -111,6 +111,8 @@ impl<E> BoxRunnableOnce<E> {
     /// Runs this runnable before a callable.
     ///
     /// The callable is not executed if this runnable returns `Err`.
+    /// Because this operation sequences two independent callbacks, the
+    /// returned callable is unnamed.
     ///
     /// # Parameters
     ///
@@ -126,15 +128,11 @@ impl<E> BoxRunnableOnce<E> {
         R: 'static,
         E: 'static,
     {
-        let metadata = self.metadata;
         let function = self.function;
-        BoxCallableOnce::new_with_metadata(
-            move || {
-                function()?;
-                callable.call()
-            },
-            metadata,
-        )
+        BoxCallableOnce::new(move || {
+            function()?;
+            callable.call()
+        })
     }
 }
 

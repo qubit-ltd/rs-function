@@ -70,7 +70,7 @@ impl_shared_conditional_function!(
     ArcConditionalStatefulFunction<T, R>,
     ArcStatefulFunction,
     StatefulFunction,
-    Send + Sync + 'static
+    callback_bounds = (Send + 'static)
 );
 
 // Use macro to generate conditional function clone implementations

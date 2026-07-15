@@ -56,7 +56,8 @@ impl<T, U, R> ArcBiTransformer<T, U, R> {
         ArcConditionalBiTransformer,
         ArcBiPredicate,
         Transformer,
-        Send + Sync + 'static
+        predicate_bounds = (Send + Sync + 'static),
+        chained_bounds = (Send + Sync + 'static)
     );
 }
 

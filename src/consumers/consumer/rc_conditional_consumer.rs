@@ -81,8 +81,7 @@ impl_shared_conditional_consumer!(
     RcConditionalConsumer<T>,
     RcConsumer,
     Consumer,
-    into_rc,
-    'static
+    callback_bounds = ('static)
 );
 
 // Hand-written Consumer trait implementation

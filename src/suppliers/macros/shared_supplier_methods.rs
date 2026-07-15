@@ -8,106 +8,40 @@
 
 //! # Shared Supplier Methods Macro
 //!
-//! Generates map, filter, zip method implementations for Arc/Rc-based Supplier
-//!
-//! Generates transformation methods for Arc/Rc-based suppliers that borrow
-//! &self (because Arc/Rc can be cloned).
-//!
-//! This macro supports single-parameter suppliers.
+//! Generates `map`, `filter`, and `zip` for shared Arc/Rc suppliers. Each
+//! method borrows `&self` and returns a wrapper from the same ownership and
+//! statefulness family.
 //!
 //! # Parameters
 //!
-//! * `$struct_name<$generics>` - The struct name with its generic parameters
-//!   - Single parameter: `ArcSupplier<T>`
-//! * `$supplier_trait` - Supplier trait name (e.g., Supplier, StatefulSupplier)
-//! * `($extra_bounds)` - Extra trait bounds in parentheses ('static for both Rc
-//!   and Arc)
+//! * `$struct_name<$generics>` - Supplier wrapper type.
+//! * `$supplier_trait` - `Supplier` or `StatefulSupplier`.
+//! * `$callback_bounds` - Explicit callback bounds for Arc invocations.
+//! * `$extra_bounds` - Local callback and output bounds for Rc invocations;
+//!   current Rc wrappers pass only `'static`.
 //!
-//! # All Macro Invocations
+//! # Capability policy
 //!
-//! | Supplier Type | Struct Signature | `$supplier_trait` | `($extra_bounds)` |
-//! |---------------|------------------|-------------------|------------------|
-//! | **ArcSupplier** | `ArcSupplier<T>` | Supplier | ('static) |
-//! | **RcSupplier** | `RcSupplier<T>` | Supplier | ('static) |
-//!
-//! # Examples
-//!
-//! The example requires the `rc` feature.
-//!
-//! ```rust
-//! # #[cfg(feature = "rc")]
-//! # {
-//! use qubit_function::Supplier;
-//! use qubit_function::{ArcSupplier, RcSupplier};
-//!
-//! let arc = ArcSupplier::new(|| 2i32);
-//! let mapped = arc.map(|v| v * 2);
-//! assert_eq!(mapped.get(), 4);
-//! let filtered = arc.filter(|v: &i32| *v % 2 == 0);
-//! assert_eq!(filtered.get(), Some(2));
-//! let zipped = arc.zip(ArcSupplier::new(|| "ok"));
-//! assert_eq!(zipped.get(), (2, "ok"));
-//!
-//! let rc = RcSupplier::new(|| "hello".to_string());
-//! let mapped = rc.map(|v: String| v.len());
-//! assert_eq!(mapped.get(), 5);
-//! let filtered = rc.filter(|v: &String| !v.is_empty());
-//! assert_eq!(filtered.get(), Some("hello".to_string()));
-//! let zipped = rc.zip(RcSupplier::new(|| 1));
-//! assert_eq!(zipped.get(), ("hello".to_string(), 1));
-//! # }
-//! ```
+//! | Wrapper family | Mapper/predicate/other supplier | Output |
+//! |----------------|---------------------------------|--------|
+//! | `ArcSupplier` | `Send + Sync + 'static` | `'static` |
+//! | `ArcStatefulSupplier` | `Send + 'static` | `'static` |
+//! | Rc stateless/stateful | `'static` | `'static` |
 
-/// Generates map, filter, zip method implementations for Arc/Rc-based Supplier
+/// Generates `map`, `filter`, and `zip` for shared Arc/Rc suppliers.
 ///
-/// This macro should be used inside an existing impl block for the target
-/// struct. It generates individual methods but does not create a complete
-/// impl block itself. Generates transformation methods for Arc/Rc-based
-/// suppliers that borrow &self (because Arc/Rc can be cloned).
+/// Invoke this macro inside the target wrapper's `impl` block. Stateless Arc
+/// callbacks require `Sync` because they are called through shared references.
+/// Stateful Arc callbacks are called under an outer mutex and require only
+/// `Send`. Rc callbacks remain local and require only `'static`.
 ///
-/// This macro supports single-parameter suppliers.
+/// # Capability policy
 ///
-/// # Parameters
-///
-/// * `$struct_name<$generics>` - The struct name with its generic parameters
-///   - Single parameter: `ArcSupplier<T>`
-/// * `$supplier_trait` - Supplier trait name (e.g., Supplier, StatefulSupplier)
-/// * `$extra_bounds` - Extra trait bounds ('static for both Rc and Arc)
-///
-/// # All Macro Invocations
-///
-/// | Supplier Type | Struct Signature | `$supplier_trait` | `$extra_bounds` |
-/// |---------------|------------------|-------------------|----------------|
-/// | **ArcSupplier** | `ArcSupplier<T>` | Supplier | 'static |
-/// | **RcSupplier** | `RcSupplier<T>` | Supplier | 'static |
-///
-/// # Examples
-///
-/// The example requires the `rc` feature.
-///
-/// ```rust
-/// # #[cfg(feature = "rc")]
-/// # {
-/// use qubit_function::Supplier;
-/// use qubit_function::{ArcSupplier, RcSupplier};
-///
-/// let arc = ArcSupplier::new(|| 2i32);
-/// let mapped = arc.map(|v| v * 2);
-/// assert_eq!(mapped.get(), 4);
-/// let filtered = arc.filter(|v: &i32| *v % 2 == 0);
-/// assert_eq!(filtered.get(), Some(2));
-/// let zipped = arc.zip(ArcSupplier::new(|| "ok"));
-/// assert_eq!(zipped.get(), (2, "ok"));
-///
-/// let rc = RcSupplier::new(|| "hello".to_string());
-/// let mapped = rc.map(|v: String| v.len());
-/// assert_eq!(mapped.get(), 5);
-/// let filtered = rc.filter(|v: &String| !v.is_empty());
-/// assert_eq!(filtered.get(), Some("hello".to_string()));
-/// let zipped = rc.zip(RcSupplier::new(|| 1));
-/// assert_eq!(zipped.get(), ("hello".to_string(), 1));
-/// # }
-/// ```
+/// | Wrapper family | Callback bounds |
+/// |----------------|-----------------|
+/// | `ArcSupplier` | `Send + Sync + 'static` |
+/// | `ArcStatefulSupplier` | `Send + 'static` |
+/// | Rc stateless/stateful | `'static` |
 macro_rules! impl_shared_supplier_methods {
     (@let_supplier Supplier, $name:ident, $value:expr) => {
         let $name = $value;
@@ -117,11 +51,12 @@ macro_rules! impl_shared_supplier_methods {
         let mut $name = $value;
     };
 
-    // Special case for Arc: T only needs 'static, but zip's S parameter needs Send + Sync
+    // Arc case: T only needs 'static; callback capabilities are selected by
+    // the wrapper family at the invocation site.
     (
         $struct_name:ident < $t:ident >,
         $supplier_trait:ident,
-        (arc)
+        callback_bounds = ($($callback_bounds:tt)+)
     ) => {
         /// Maps the output using a transformation function.
         ///
@@ -147,7 +82,7 @@ macro_rules! impl_shared_supplier_methods {
         pub fn map<U, M>(&self, mapper: M) -> $struct_name<U>
         where
             $t: 'static,
-            M: Transformer<$t, U> + Send + Sync + 'static,
+            M: Transformer<$t, U> + $($callback_bounds)+,
             U: 'static,
         {
             let metadata = self.metadata.clone();
@@ -185,7 +120,7 @@ macro_rules! impl_shared_supplier_methods {
         pub fn filter<P>(&self, predicate: P) -> $struct_name<Option<$t>>
         where
             $t: 'static,
-            P: Predicate<$t> + Send + Sync + 'static,
+            P: Predicate<$t> + $($callback_bounds)+,
         {
             impl_shared_supplier_methods!(@let_supplier $supplier_trait, self_cloned, self.clone());
             $struct_name::new(move || {
@@ -224,7 +159,7 @@ macro_rules! impl_shared_supplier_methods {
         pub fn zip<U, S>(&self, other: S) -> $struct_name<($t, U)>
         where
             $t: 'static,
-            S: $supplier_trait<U> + Send + Sync + 'static,
+            S: $supplier_trait<U> + $($callback_bounds)+,
             U: 'static,
         {
             impl_shared_supplier_methods!(@let_supplier $supplier_trait, self_cloned, self.clone());

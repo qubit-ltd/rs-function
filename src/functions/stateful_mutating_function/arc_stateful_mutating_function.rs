@@ -96,7 +96,8 @@ impl<T, R> ArcStatefulMutatingFunction<T, R> {
         ArcConditionalStatefulMutatingFunction,
         ArcPredicate,
         Function,  // chains a non-mutating function after this mutating function
-        Send + Sync + 'static
+        predicate_bounds = (Send + Sync + 'static),
+        chained_bounds = (Send + 'static)
     );
 }
 

@@ -62,8 +62,7 @@ impl_shared_conditional_transformer!(
     RcConditionalBiTransformer<T, U, R>,
     RcBiTransformer,
     BiTransformer,
-    into_rc,
-    'static
+    callback_bounds = ('static)
 );
 
 // Use macro to generate Debug and Display implementations

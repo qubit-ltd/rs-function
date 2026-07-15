@@ -71,8 +71,7 @@ impl_shared_conditional_transformer!(
     ArcConditionalStatefulBiTransformer<T, U, R>,
     ArcStatefulBiTransformer,
     StatefulBiTransformer,
-    into_arc,
-    Send + Sync + 'static
+    callback_bounds = (Send + 'static)
 );
 
 // Implement Debug and Display for ArcConditionalStatefulBiTransformer

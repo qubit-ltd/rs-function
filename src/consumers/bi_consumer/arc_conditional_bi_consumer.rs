@@ -44,8 +44,7 @@ impl_shared_conditional_consumer!(
     ArcConditionalBiConsumer<T, U>,
     ArcBiConsumer,
     BiConsumer,
-    into_arc,
-    Send + Sync + 'static
+    callback_bounds = (Send + Sync + 'static)
 );
 
 // Hand-written BiConsumer trait implementation

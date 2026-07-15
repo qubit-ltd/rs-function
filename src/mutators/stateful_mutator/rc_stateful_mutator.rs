@@ -90,7 +90,8 @@ impl<T> RcStatefulMutator<T> {
         RcConditionalStatefulMutator,
         RcPredicate,
         StatefulMutator,
-        'static
+        predicate_bounds = ('static),
+        chained_bounds = ('static)
     );
 }
 

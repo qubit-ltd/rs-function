@@ -61,7 +61,8 @@ impl<T, U, R> RcBiMutatingFunction<T, U, R> {
         RcConditionalBiMutatingFunction,
         RcBiPredicate,
         MutatingFunction,
-        'static
+        predicate_bounds = ('static),
+        chained_bounds = ('static)
     );
 }
 

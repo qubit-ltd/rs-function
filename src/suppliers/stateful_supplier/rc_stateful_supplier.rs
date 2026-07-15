@@ -116,6 +116,9 @@ impl<T> RcStatefulSupplier<T> {
 
     /// Creates a memoizing supplier.
     ///
+    /// The cache is stored directly inside the returned callback and is
+    /// protected by the same outer `RefCell` borrow as callback execution.
+    ///
     /// # Returns
     ///
     /// A new memoized `RcStatefulSupplier<T>`
@@ -146,20 +149,20 @@ impl<T> RcStatefulSupplier<T> {
         T: Clone + 'static,
     {
         let self_fn = Rc::clone(&self.function);
-        let cache: Rc<RefCell<Option<T>>> = Rc::new(RefCell::new(None));
-        RcStatefulSupplier {
-            function: Rc::new(RefCell::new(move || {
-                let mut cache_ref = cache.borrow_mut();
-                if let Some(ref cached) = *cache_ref {
+        let metadata = self.metadata.clone();
+        let mut cache: Option<T> = None;
+        RcStatefulSupplier::new_with_metadata(
+            move || {
+                if let Some(ref cached) = cache {
                     cached.clone()
                 } else {
                     let value = self_fn.borrow_mut()();
-                    *cache_ref = Some(value.clone());
+                    cache = Some(value.clone());
                     value
                 }
-            })),
-            metadata: crate::callback_metadata::CallbackMetadata::unnamed(),
-        }
+            },
+            metadata,
+        )
     }
 }
 

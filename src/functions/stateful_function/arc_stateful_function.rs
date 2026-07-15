@@ -71,12 +71,13 @@ impl<T, R> ArcStatefulFunction<T, R> {
         ArcConditionalStatefulFunction,
         ArcPredicate,
         StatefulFunction,
-        Send + Sync + 'static
+        predicate_bounds = (Send + Sync + 'static),
+        chained_bounds = (Send + 'static)
     );
 }
 
 // Generates: constant() method for ArcStatefulFunction<T, R>
-impl_function_constant_method!(ArcStatefulFunction<T, R>, Send + Sync + 'static);
+impl_function_constant_method!(ArcStatefulFunction<T, R>, Send + 'static);
 
 // Generates: identity() method for ArcStatefulFunction<T, T>
 impl_function_identity_method!(ArcStatefulFunction<T, T>);
