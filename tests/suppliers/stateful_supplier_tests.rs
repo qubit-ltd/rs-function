@@ -280,6 +280,11 @@ mod test_box_stateful_supplier {
     }
 
     mod test_memoize {
+        use std::{
+            cell::Cell,
+            rc::Rc,
+        };
+
         use super::{
             BoxStatefulSupplier,
             StatefulSupplier,
@@ -288,10 +293,10 @@ mod test_box_stateful_supplier {
         #[test]
         fn test_caches_first_value() {
             // Use a shared counter to verify memoization
-            use std::cell::Cell;
-            let call_count = Cell::new(0);
+            let call_count = Rc::new(Cell::new(0));
+            let call_count_capture = Rc::clone(&call_count);
             let mut memoized = BoxStatefulSupplier::new(move || {
-                call_count.set(call_count.get() + 1);
+                call_count_capture.set(call_count_capture.get() + 1);
                 42
             })
             .memoize();
@@ -299,6 +304,7 @@ mod test_box_stateful_supplier {
             assert_eq!(memoized.get(), 42);
             assert_eq!(memoized.get(), 42);
             assert_eq!(memoized.get(), 42);
+            assert_eq!(call_count.get(), 1);
         }
 
         #[test]
@@ -609,6 +615,12 @@ mod test_arc_stateful_supplier {
             assert_eq!(
                 *call_count.lock().expect("mutex should not be poisoned"),
                 1
+            );
+            let mut source = source;
+            assert_eq!(source.get(), 42);
+            assert_eq!(
+                *call_count.lock().expect("mutex should not be poisoned"),
+                2
             );
         }
     }
@@ -926,6 +938,9 @@ mod test_rc_stateful_supplier {
             assert_eq!(s.get(), 42);
             assert_eq!(s.get(), 42);
             assert_eq!(*call_count.borrow(), 1);
+            let mut source = source;
+            assert_eq!(source.get(), 42);
+            assert_eq!(*call_count.borrow(), 2);
         }
     }
 

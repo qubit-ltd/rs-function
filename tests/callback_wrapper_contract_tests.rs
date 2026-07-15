@@ -15,6 +15,7 @@ use qubit_function::{
     ArcPredicate,
     ArcStatefulBiPredicate,
     ArcStatefulPredicate,
+    ArcStatefulSupplier,
     ArcStatefulTester,
     ArcSupplier,
     ArcTester,
@@ -25,19 +26,25 @@ use qubit_function::{
     BoxFunction,
     BoxPredicate,
     BoxRunnable,
+    BoxRunnableOnce,
+    BoxRunnableWith,
     BoxStatefulBiPredicate,
     BoxStatefulPredicate,
+    BoxStatefulSupplier,
     BoxStatefulTester,
     BoxSupplier,
     BoxTester,
+    LocalBoxRunnableOnce,
     RcBiPredicate,
     RcFunction,
     RcPredicate,
     RcStatefulBiPredicate,
     RcStatefulPredicate,
+    RcStatefulSupplier,
     RcStatefulTester,
     RcSupplier,
     RcTester,
+    StatefulSupplier,
 };
 
 /// Verifies that owned and shared final wrappers support chainable naming.
@@ -165,6 +172,21 @@ fn test_supplier_name_propagation_contract() {
     let arc = ArcSupplier::new_with_name("source", || 1);
     assert_eq!(arc.map(|value| value + 1).name(), Some("source"));
     assert_eq!(arc.zip(|| 2).name(), None);
+
+    let mut boxed =
+        BoxStatefulSupplier::new_with_name("source", || 1).memoize();
+    assert_eq!(boxed.name(), Some("source"));
+    assert_eq!(boxed.get(), 1);
+
+    let rc_source = RcStatefulSupplier::new_with_name("source", || 1);
+    let mut rc_memoized = rc_source.memoize();
+    assert_eq!(rc_memoized.name(), Some("source"));
+    assert_eq!(rc_memoized.get(), 1);
+
+    let arc_source = ArcStatefulSupplier::new_with_name("source", || 1);
+    let mut arc_memoized = arc_source.memoize();
+    assert_eq!(arc_memoized.name(), Some("source"));
+    assert_eq!(arc_memoized.get(), 1);
 }
 
 /// Verifies task mapping preserves names and sequencing clears them.
@@ -188,4 +210,22 @@ fn test_task_name_propagation_contract() {
     let runnable = BoxRunnable::new_with_name("first", || Ok::<(), ()>(()))
         .and_then(|| Ok(()));
     assert_eq!(runnable.name(), None);
+
+    let callable = BoxRunnable::new_with_name("first", || Ok::<(), ()>(()))
+        .then_callable(|| Ok::<i32, ()>(1));
+    assert_eq!(callable.name(), None);
+
+    let callable = BoxRunnableOnce::new_with_name("first", || Ok::<(), ()>(()))
+        .then_callable(|| Ok::<i32, ()>(1));
+    assert_eq!(callable.name(), None);
+
+    let callable =
+        LocalBoxRunnableOnce::new_with_name("first", || Ok::<(), ()>(()))
+            .then_callable(|| Ok::<i32, ()>(1));
+    assert_eq!(callable.name(), None);
+
+    let callable =
+        BoxRunnableWith::new_with_name("first", |_: &mut i32| Ok::<(), ()>(()))
+            .then_callable_with(|value: &mut i32| Ok::<i32, ()>(*value));
+    assert_eq!(callable.name(), None);
 }
