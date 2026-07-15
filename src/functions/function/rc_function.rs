@@ -59,7 +59,8 @@ impl<T, R> RcFunction<T, R> {
         RcConditionalFunction,
         RcPredicate,
         Function,
-        'static
+        predicate_bounds = ('static),
+        chained_bounds = ('static)
     );
 }
 

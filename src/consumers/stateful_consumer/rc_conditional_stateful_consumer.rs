@@ -69,8 +69,7 @@ impl_shared_conditional_consumer!(
     RcConditionalStatefulConsumer<T>,
     RcStatefulConsumer,
     StatefulConsumer,
-    into_rc,
-    'static
+    callback_bounds = ('static)
 );
 
 impl<T> StatefulConsumer<T> for RcConditionalStatefulConsumer<T> {

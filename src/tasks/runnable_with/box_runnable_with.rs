@@ -68,6 +68,8 @@ impl<T, E> BoxRunnableWith<T, E> {
     /// Runs this runnable before a callable.
     ///
     /// The callable is not executed if this runnable returns `Err`.
+    /// Because this operation sequences two independent callbacks, the
+    /// returned callable is unnamed.
     ///
     /// # Parameters
     ///
@@ -87,16 +89,12 @@ impl<T, E> BoxRunnableWith<T, E> {
         R: 'static,
         E: 'static,
     {
-        let metadata = self.metadata;
         let mut function = self.function;
         let mut callable = callable;
-        BoxCallableWith::new_with_metadata(
-            move |input: &mut T| {
-                function(&mut *input)?;
-                callable.call_with(input)
-            },
-            metadata,
-        )
+        BoxCallableWith::new(move |input: &mut T| {
+            function(&mut *input)?;
+            callable.call_with(input)
+        })
     }
 }
 

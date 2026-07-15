@@ -62,7 +62,7 @@ impl_shared_conditional_function!(
     RcConditionalStatefulFunction<T, R>,
     RcStatefulFunction,
     StatefulFunction,
-    'static
+    callback_bounds = ('static)
 );
 
 // Use macro to generate conditional function clone implementations

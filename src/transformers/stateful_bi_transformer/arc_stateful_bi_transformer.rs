@@ -24,7 +24,7 @@ use {
 };
 
 // ============================================================================
-// ArcStatefulBiTransformer - Arc<dyn FnMut(T, U) -> R + Send + Sync>
+// ArcStatefulBiTransformer - Arc<Mutex<dyn FnMut(T, U) -> R + Send>>
 // ============================================================================
 
 /// ArcStatefulBiTransformer - thread-safe bi-transformer wrapper
@@ -38,7 +38,8 @@ use {
 /// - **Ownership**: Shared ownership via reference counting
 /// - **Reusability**: Can be called multiple times (each call consumes its
 ///   inputs)
-/// - **Thread Safety**: Thread-safe (`Send` required; calls are serialized)
+/// - **Thread Safety**: The callback itself requires only `Send`; the
+///   `Arc<Mutex<_>>` wrapper is both `Send` and `Sync`, and serializes calls
 /// - **Clonable**: Cheap cloning via `Arc::clone`
 ///
 /// # Locking and reentrancy
@@ -64,7 +65,8 @@ impl<T, U, R> ArcStatefulBiTransformer<T, U, R> {
         ArcConditionalStatefulBiTransformer,
         ArcBiPredicate,
         StatefulTransformer,
-        Send + Sync + 'static
+        predicate_bounds = (Send + Sync + 'static),
+        chained_bounds = (Send + 'static)
     );
 }
 

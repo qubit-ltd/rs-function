@@ -112,7 +112,8 @@ impl<T> RcStatefulConsumer<T> {
         RcConditionalStatefulConsumer,
         RcPredicate,
         StatefulConsumer,
-        'static
+        predicate_bounds = ('static),
+        chained_bounds = ('static)
     );
 }
 

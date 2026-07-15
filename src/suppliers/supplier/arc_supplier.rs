@@ -108,7 +108,11 @@ impl<T> ArcSupplier<T> {
     crate::macros::impl_common_name_methods!("supplier");
 
     // Generates: map(), filter(), zip()
-    impl_shared_supplier_methods!(ArcSupplier<T>, Supplier, (arc));
+    impl_shared_supplier_methods!(
+        ArcSupplier<T>,
+        Supplier,
+        callback_bounds = (Send + Sync + 'static)
+    );
 }
 
 // Separate impl block for constant() with stricter T: Sync bound

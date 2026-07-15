@@ -77,7 +77,8 @@ impl<T> RcMutator<T> {
         RcConditionalMutator,
         RcPredicate,
         Mutator,
-        'static
+        predicate_bounds = ('static),
+        chained_bounds = ('static)
     );
 }
 

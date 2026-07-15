@@ -47,8 +47,7 @@ impl_shared_conditional_function!(
     ArcConditionalBiMutatingFunction<T, U, R>,
     ArcBiMutatingFunction,
     BiMutatingFunction,
-    into_arc,
-    Send + Sync + 'static
+    callback_bounds = (Send + Sync + 'static)
 );
 
 // Use macro to generate Debug and Display implementations

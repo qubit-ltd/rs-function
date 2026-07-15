@@ -68,7 +68,8 @@ impl<T, R> RcStatefulFunction<T, R> {
         RcConditionalStatefulFunction,
         RcPredicate,
         StatefulFunction,
-        'static
+        predicate_bounds = ('static),
+        chained_bounds = ('static)
     );
 }
 

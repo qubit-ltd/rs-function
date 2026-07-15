@@ -7,121 +7,46 @@
 // =============================================================================
 //! # Shared Consumer Methods Macro
 //!
-//! Generates when and and_then method implementations for Arc/Rc-based Consumer
-//!
-//! Generates conditional execution when method and chaining and_then method
-//! for Arc/Rc-based consumers that borrow &self (because Arc/Rc can be cloned).
-//!
-//! This macro supports both single-parameter and two-parameter consumers
-//! through pattern matching on the struct signature.
+//! Generates `when` and `and_then` for shared Arc/Rc consumers.
+//! The generated methods borrow `&self`, clone the shared wrapper, and keep
+//! predicate-storage capabilities separate from chained-callback
+//! capabilities.
 //!
 //! # Parameters
 //!
-//! * `$struct_name<$generics>` - The struct name with its generic parameters
-//!   - Single parameter: `ArcConsumer<T>`
-//!   - Two parameters: `ArcBiConsumer<T, U>`
-//! * `$return_type` - The return type for when (e.g., ArcConditionalConsumer)
-//! * `$predicate_conversion` - Method to convert predicate (into_arc or
-//!   into_rc)
-//! * `$consumer_trait` - Consumer trait name (e.g., Consumer, BiConsumer)
-//! * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync +
-//!   'static for Arc)
+//! * `$struct_name<$generics>` - Consumer or BiConsumer wrapper type.
+//! * `$return_type` - Conditional wrapper returned by `when`, such as
+//!   `ArcConditionalConsumer`.
+//! * `$predicate_type` - Predicate wrapper used by the conditional result.
+//! * `$consumer_trait` - Semantic trait implemented by the chained callback,
+//!   such as `Consumer`.
+//! * `$predicate_bounds` - Bounds required to store the predicate wrapper.
+//! * `$chained_bounds` - Bounds required to store the callback produced by
+//!   `and_then`.
 //!
-//! # All Macro Invocations
+//! # Capability policy
 //!
-//! | Consumer Type | Struct Signature | `$return_type` | `$predicate_conversion` | `$consumer_trait` | `$extra_bounds` |
-//! |---------------|-----------------|----------------|------------------------|------------------|----------------|
-//! | **ArcConsumer** | `ArcConsumer<T>` | ArcConditionalConsumer | into_arc | Consumer | Send + Sync + 'static |
-//! | **RcConsumer** | `RcConsumer<T>` | RcConditionalConsumer | into_rc | Consumer | 'static |
-//! | **ArcStatefulConsumer** | `ArcStatefulConsumer<T>` | ArcConditionalStatefulConsumer | into_arc | StatefulConsumer | Send + Sync + 'static |
-//! | **RcStatefulConsumer** | `RcStatefulConsumer<T>` | RcConditionalStatefulConsumer | into_rc | StatefulConsumer | 'static |
-//! | **ArcBiConsumer** | `ArcBiConsumer<T, U>` | ArcConditionalBiConsumer | into_arc | BiConsumer | Send + Sync + 'static |
-//! | **RcBiConsumer** | `RcBiConsumer<T, U>` | RcConditionalBiConsumer | into_rc | BiConsumer | 'static |
-//! | **ArcStatefulBiConsumer** | `ArcStatefulBiConsumer<T, U>` | ArcConditionalStatefulBiConsumer | into_arc | StatefulBiConsumer | Send + Sync + 'static |
-//! | **RcStatefulBiConsumer** | `RcStatefulBiConsumer<T, U>` | RcConditionalStatefulBiConsumer | into_rc | StatefulBiConsumer | 'static |
-//!
-//! # Examples
-//!
-//! ```ignore
-//! // Single-parameter with Arc
-//! impl_shared_consumer_methods!(
-//!     ArcConsumer<T>,
-//!     ArcConditionalConsumer,
-//!     into_arc,
-//!     Consumer,
-//!     Send + Sync + 'static
-//! );
-//!
-//! // Two-parameter with Rc
-//! impl_shared_consumer_methods!(
-//!     RcBiConsumer<T, U>,
-//!     RcConditionalBiConsumer,
-//!     into_rc,
-//!     BiConsumer,
-//!     'static
-//! );
-//! ```
+//! | Wrapper family | `predicate_bounds` | `chained_bounds` |
+//! |----------------|--------------------|------------------|
+//! | Arc stateless | `Send + Sync + 'static` | `Send + Sync + 'static` |
+//! | Arc stateful | `Send + Sync + 'static` | `Send + 'static` |
+//! | Rc stateless/stateful | `'static` | `'static` |
 
-/// Generates when and and_then method implementations for Arc/Rc-based Consumer
+/// Generates `when` and `and_then` for shared Arc/Rc consumers.
 ///
-/// This macro should be used inside an existing impl block for the target
-/// struct. It generates individual methods but does not create a complete
-/// impl block itself. Generates conditional execution when method and chaining
-/// and_then method for Arc/Rc-based consumers that borrow &self (because Arc/Rc
-/// can be cloned).
+/// Invoke this macro inside the target wrapper's `impl` block. Predicate
+/// bounds describe the immutable predicate object stored by the conditional
+/// wrapper. Chained bounds describe the callback stored by the returned
+/// consumer; stateful Arc callbacks are serialized by their outer
+/// mutex and therefore require `Send`, but not `Sync`.
 ///
-/// This macro supports both single-parameter and two-parameter consumers
-/// through pattern matching on the struct signature.
+/// # Capability policy
 ///
-/// # Parameters
-///
-/// * `$struct_name<$generics>` - The struct name with its generic parameters
-///   - Single parameter: `ArcConsumer<T>`
-///   - Two parameters: `ArcBiConsumer<T, U>`
-/// * `$return_type` - The return type for when (e.g., ArcConditionalConsumer)
-/// * `$predicate_conversion` - Method to convert predicate (into_arc or
-///   into_rc)
-/// * `$consumer_trait` - Consumer trait name (e.g., Consumer, BiConsumer)
-/// * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync +
-///   'static for Arc)
-///
-/// # All Macro Invocations
-///
-/// | Consumer Type | Struct Signature | `$return_type` | `$predicate_conversion` | `$consumer_trait` | `$extra_bounds` |
-/// |---------------|-----------------|----------------|------------------------|------------------|----------------|
-/// | **ArcConsumer** | `ArcConsumer<T>` | ArcConditionalConsumer | into_arc | Consumer | Send + Sync + 'static |
-/// | **RcConsumer** | `RcConsumer<T>` | RcConditionalConsumer | into_rc | Consumer | 'static |
-/// | **ArcStatefulConsumer** | `ArcStatefulConsumer<T>` | ArcConditionalStatefulConsumer | into_arc | StatefulConsumer | Send + Sync + 'static |
-/// | **RcStatefulConsumer** | `RcStatefulConsumer<T>` | RcConditionalStatefulConsumer | into_rc | StatefulConsumer | 'static |
-/// | **ArcBiConsumer** | `ArcBiConsumer<T, U>` | ArcConditionalBiConsumer | into_arc | BiConsumer | Send + Sync + 'static |
-/// | **RcBiConsumer** | `RcBiConsumer<T, U>` | RcConditionalBiConsumer | into_rc | BiConsumer | 'static |
-/// | **ArcStatefulBiConsumer** | `ArcStatefulBiConsumer<T, U>` | ArcConditionalStatefulBiConsumer | into_arc | StatefulBiConsumer | Send + Sync + 'static |
-/// | **RcStatefulBiConsumer** | `RcStatefulBiConsumer<T, U>` | RcConditionalStatefulBiConsumer | into_rc | StatefulBiConsumer | 'static |
-///
-/// # Examples
-///
-/// This example requires the `rc` feature.
-///
-/// ```rust
-/// # #[cfg(feature = "rc")]
-/// # {
-/// // Single-parameter with Arc
-/// use qubit_function::{ArcConsumer, RcConsumer};
-///
-/// let _arc_conditional = ArcConsumer::new(|x: &i32| {
-///     let _ = x;
-/// }).when(|x: &i32| *x > 0);
-/// let _rc_conditional = RcConsumer::new(|x: &i32| {
-///     let _ = x;
-/// }).when(|x: &i32| *x > 0);
-///
-/// // Two-parameter with Rc
-/// use qubit_function::{RcBiConsumer};
-/// let _rc_bi_conditional = RcBiConsumer::new(|x: &i32, y: &i32| {
-///     let _ = (*x, *y);
-/// }).when(|x: &i32, y: &i32| *x > 0 && *y > 0);
-/// # }
-/// ```
+/// | Wrapper family | `predicate_bounds` | `chained_bounds` |
+/// |----------------|--------------------|------------------|
+/// | Arc stateless | `Send + Sync + 'static` | `Send + Sync + 'static` |
+/// | Arc stateful | `Send + Sync + 'static` | `Send + 'static` |
+/// | Rc stateless/stateful | `'static` | `'static` |
 macro_rules! impl_shared_consumer_methods {
     (@and_then Consumer, $struct_name:ident, $first:expr, $after:expr, $t:ident) => {{
         let first = $first;
@@ -165,7 +90,8 @@ macro_rules! impl_shared_consumer_methods {
         $return_type:ident,
         $predicate_type:ident,
         $consumer_trait:ident,
-        $($extra_bounds:tt)+
+        predicate_bounds = ($($predicate_bounds:tt)+),
+        chained_bounds = ($($chained_bounds:tt)+)
     ) => {
         /// Creates a conditional consumer
         ///
@@ -197,7 +123,7 @@ macro_rules! impl_shared_consumer_methods {
         pub fn when<P>(&self, predicate: P) -> $return_type<$t>
         where
             $t: 'static,
-            P: Predicate<$t> + $($extra_bounds)+,
+            P: Predicate<$t> + $($predicate_bounds)+,
         {
             $return_type {
                 consumer: self.clone(),
@@ -235,7 +161,7 @@ macro_rules! impl_shared_consumer_methods {
         pub fn and_then<C>(&self, after: C) -> $struct_name<$t>
         where
             $t: 'static,
-            C: $consumer_trait<$t> + $($extra_bounds)+,
+            C: $consumer_trait<$t> + $($chained_bounds)+,
         {
             impl_shared_consumer_methods!(@and_then $consumer_trait, $struct_name, self.clone(), after, $t)
         }
@@ -247,7 +173,8 @@ macro_rules! impl_shared_consumer_methods {
         $return_type:ident,
         $predicate_type:ident,
         $consumer_trait:ident,
-        $($extra_bounds:tt)+
+        predicate_bounds = ($($predicate_bounds:tt)+),
+        chained_bounds = ($($chained_bounds:tt)+)
     ) => {
         /// Creates a conditional bi-consumer
         ///
@@ -280,7 +207,7 @@ macro_rules! impl_shared_consumer_methods {
         where
             $t: 'static,
             $u: 'static,
-            P: BiPredicate<$t, $u> + $($extra_bounds)+,
+            P: BiPredicate<$t, $u> + $($predicate_bounds)+,
         {
             $return_type {
                 consumer: self.clone(),
@@ -319,7 +246,7 @@ macro_rules! impl_shared_consumer_methods {
         where
             $t: 'static,
             $u: 'static,
-            C: $consumer_trait<$t, $u> + $($extra_bounds)+,
+            C: $consumer_trait<$t, $u> + $($chained_bounds)+,
         {
             impl_shared_consumer_methods!(@and_then_bi $consumer_trait, $struct_name, self.clone(), after, $t, $u)
         }

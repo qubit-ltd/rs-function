@@ -81,8 +81,7 @@ impl_shared_conditional_consumer!(
     ArcConditionalConsumer<T>,
     ArcConsumer,
     Consumer,
-    into_arc,
-    Send + Sync + 'static
+    callback_bounds = (Send + Sync + 'static)
 );
 
 // Hand-written Consumer trait implementation

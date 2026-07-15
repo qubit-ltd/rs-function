@@ -78,7 +78,8 @@ impl<T> ArcMutator<T> {
         ArcConditionalMutator,
         ArcPredicate,
         Mutator,
-        Send + Sync + 'static
+        predicate_bounds = (Send + Sync + 'static),
+        chained_bounds = (Send + Sync + 'static)
     );
 }
 

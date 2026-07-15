@@ -91,7 +91,8 @@ impl<T> ArcStatefulMutator<T> {
         ArcConditionalStatefulMutator,
         ArcPredicate,
         StatefulMutator,
-        Send + Sync + 'static
+        predicate_bounds = (Send + Sync + 'static),
+        chained_bounds = (Send + 'static)
     );
 }
 

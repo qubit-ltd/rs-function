@@ -105,7 +105,8 @@ impl<T> ArcStatefulConsumer<T> {
         ArcConditionalStatefulConsumer,
         ArcPredicate,
         StatefulConsumer,
-        Send + Sync + 'static
+        predicate_bounds = (Send + Sync + 'static),
+        chained_bounds = (Send + 'static)
     );
 }
 

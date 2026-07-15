@@ -66,8 +66,7 @@ impl_shared_conditional_mutator!(
     RcConditionalStatefulMutator<T>,
     RcStatefulMutator,
     StatefulMutator,
-    into_rc,
-    'static
+    callback_bounds = ('static)
 );
 
 impl<T> StatefulMutator<T> for RcConditionalStatefulMutator<T> {

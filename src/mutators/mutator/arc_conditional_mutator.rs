@@ -62,8 +62,7 @@ impl_shared_conditional_mutator!(
     ArcConditionalMutator<T>,
     ArcMutator,
     Mutator,
-    into_arc,
-    Send + Sync + 'static
+    callback_bounds = (Send + Sync + 'static)
 );
 
 impl<T> Mutator<T> for ArcConditionalMutator<T> {

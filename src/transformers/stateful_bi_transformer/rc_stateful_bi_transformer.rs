@@ -62,7 +62,8 @@ impl<T, U, R> RcStatefulBiTransformer<T, U, R> {
         RcConditionalStatefulBiTransformer,
         RcBiPredicate,
         StatefulTransformer,
-        'static
+        predicate_bounds = ('static),
+        chained_bounds = ('static)
     );
 }
 

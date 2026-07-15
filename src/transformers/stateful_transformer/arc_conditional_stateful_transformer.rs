@@ -70,8 +70,7 @@ impl_shared_conditional_transformer!(
     ArcConditionalStatefulTransformer<T, R>,
     ArcStatefulTransformer,
     StatefulTransformer,
-    into_arc,
-    Send + Sync + 'static
+    callback_bounds = (Send + 'static)
 );
 
 // Use macro to generate Debug and Display implementations

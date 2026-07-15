@@ -7,136 +7,46 @@
 // =============================================================================
 //! # Shared Transformer Methods Macro
 //!
-//! Generates when and and_then method implementations for Arc/Rc-based
-//! Transformer
-//!
-//! Generates conditional execution when method and chaining and_then method
-//! for Arc/Rc-based transformers that borrow &self (because Arc/Rc can be
-//! cloned).
-//!
-//! This macro supports both two-parameter and three-parameter transformers
-//! through pattern matching on the struct signature.
+//! Generates `when` and `and_then` for shared Arc/Rc transformers.
+//! The generated methods borrow `&self`, clone the shared wrapper, and keep
+//! predicate-storage capabilities separate from chained-callback
+//! capabilities.
 //!
 //! # Parameters
 //!
-//! * `$struct_name<$generics>` - The struct name with its generic parameters
-//!   - Two parameters: `ArcTransformer<T, U>`
-//!   - Three parameters: `ArcBiTransformer<T, U, V>`
-//! * `$conditional_type` - The conditional transformer type returned by `when`
-//! * `$predicate_conversion` - Method to convert predicate (into_arc or
-//!   into_rc)
-//! * `$chained_transformer_trait` - The name of the transformer trait that is
-//!   chained after the execution of this transformer (e.g., Transformer,
-//!   BiTransformer)
-//! * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync +
-//!   'static for Arc)
+//! * `$struct_name<$generics>` - Transformer or BiTransformer wrapper type.
+//! * `$conditional_type` - Conditional wrapper returned by `when`, such as
+//!   `ArcConditionalTransformer`.
+//! * `$predicate_type` - Predicate wrapper used by the conditional result.
+//! * `$chained_transformer_trait` - Semantic trait implemented by the chained
+//!   callback, such as `Transformer`.
+//! * `$predicate_bounds` - Bounds required to store the predicate wrapper.
+//! * `$chained_bounds` - Bounds required to store the callback produced by
+//!   `and_then`.
 //!
-//! # All Macro Invocations
+//! # Capability policy
 //!
-//! | Transformer Type | Struct Signature | `$conditional_type` |
-//! |------------------|------------------|----------------|
-//! | **ArcTransformer** | `ArcTransformer<T, U>` | ArcConditionalTransformer |
-//! | **RcTransformer** | `RcTransformer<T, U>` | RcConditionalTransformer |
-//! | **ArcStatefulTransformer** | `ArcStatefulTransformer<T, U>` | ArcConditionalStatefulTransformer |
-//! | **RcStatefulTransformer** | `RcStatefulTransformer<T, U>` | RcConditionalStatefulTransformer |
-//! | **ArcBiTransformer** | `ArcBiTransformer<T, U, V>` | ArcConditionalBiTransformer |
-//! | **RcBiTransformer** | `RcBiTransformer<T, U, V>` | RcConditionalBiTransformer |
-//! | **ArcStatefulBiTransformer** | `ArcStatefulBiTransformer<T, U, V>` | ArcConditionalStatefulBiTransformer |
-//! | **RcStatefulBiTransformer** | `RcStatefulBiTransformer<T, U, V>` | RcConditionalStatefulBiTransformer |
-//!
-//! | `$predicate_conversion` | `$chained_transformer_trait` | `$extra_bounds` |
-//! |-------------------------|---------------------|----------------|
-//! | into_arc | Transformer | Send + Sync + 'static |
-//! | into_rc | Transformer | 'static |
-//! | into_arc | StatefulTransformer | Send + Sync + 'static |
-//! | into_rc | StatefulTransformer | 'static |
-//! | into_arc | BiTransformer | Send + Sync + 'static |
-//! | into_rc | BiTransformer | 'static |
-//! | into_arc | StatefulBiTransformer | Send + Sync + 'static |
-//! | into_rc | StatefulBiTransformer | 'static |
-//!
-//! # Examples
-//!
-//! ```ignore
-//! // Two-parameter with Arc
-//! impl_shared_transformer_methods!(
-//!     ArcTransformer<T, U>,
-//!     ArcConditionalTransformer,
-//!     into_arc,
-//!     Transformer,
-//!     Send + Sync + 'static
-//! );
-//!
-//! // Three-parameter with Rc
-//! impl_shared_transformer_methods!(
-//!     RcBiTransformer<T, U, V>,
-//!     RcConditionalBiTransformer,
-//!     into_rc,
-//!     BiTransformer,
-//!     'static
-//! );
-//! ```
+//! | Wrapper family | `predicate_bounds` | `chained_bounds` |
+//! |----------------|--------------------|------------------|
+//! | Arc stateless | `Send + Sync + 'static` | `Send + Sync + 'static` |
+//! | Arc stateful | `Send + Sync + 'static` | `Send + 'static` |
+//! | Rc stateless/stateful | `'static` | `'static` |
 
-/// Generates when and and_then method implementations for Arc/Rc-based
-/// Transformer
+/// Generates `when` and `and_then` for shared Arc/Rc transformers.
 ///
-/// This macro should be used inside an existing impl block for the target
-/// struct. It generates individual methods but does not create a complete
-/// impl block itself. Generates conditional execution when method and chaining
-/// and_then method for Arc/Rc-based transformers that borrow &self (because
-/// Arc/Rc can be cloned).
+/// Invoke this macro inside the target wrapper's `impl` block. Predicate
+/// bounds describe the immutable predicate object stored by the conditional
+/// wrapper. Chained bounds describe the callback stored by the returned
+/// transformer; stateful Arc callbacks are serialized by their outer
+/// mutex and therefore require `Send`, but not `Sync`.
 ///
-/// This macro supports both two-parameter and three-parameter transformers
-/// through pattern matching on the struct signature.
+/// # Capability policy
 ///
-/// # Parameters
-///
-/// * `$struct_name<$generics>` - The struct name with its generic parameters
-///   - Two parameters: `ArcTransformer<T, U>`
-///   - Three parameters: `ArcBiTransformer<T, U, V>`
-/// * `$conditional_type` - The conditional transformer type returned by `when`
-/// * `$predicate_conversion` - Method to convert predicate (into_arc or
-///   into_rc)
-/// * `$chained_transformer_trait` - The name of the transformer trait that is
-///   chained after the execution of this transformer (e.g., Transformer,
-///   BiTransformer)
-/// * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync +
-///   'static for Arc)
-///
-/// # All Macro Invocations
-///
-/// | Transformer Type | Struct Signature | `$conditional_type` | `$predicate_conversion` | `$chained_transformer_trait` | `$extra_bounds` |
-/// |------------------|------------------|----------------|-------------------------|---------------------|----------------|
-/// | **ArcTransformer** | `ArcTransformer<T, U>` | ArcConditionalTransformer | into_arc | Transformer | Send + Sync + 'static |
-/// | **RcTransformer** | `RcTransformer<T, U>` | RcConditionalTransformer | into_rc | Transformer | 'static |
-/// | **ArcStatefulTransformer** | `ArcStatefulTransformer<T, U>` | ArcConditionalStatefulTransformer | into_arc | StatefulTransformer | Send + Sync + 'static |
-/// | **RcStatefulTransformer** | `RcStatefulTransformer<T, U>` | RcConditionalStatefulTransformer | into_rc | StatefulTransformer | 'static |
-/// | **ArcBiTransformer** | `ArcBiTransformer<T, U, V>` | ArcConditionalBiTransformer | into_arc | BiTransformer | Send + Sync + 'static |
-/// | **RcBiTransformer** | `RcBiTransformer<T, U, V>` | RcConditionalBiTransformer | into_rc | BiTransformer | 'static |
-/// | **ArcStatefulBiTransformer** | `ArcStatefulBiTransformer<T, U, V>` | ArcConditionalStatefulBiTransformer | into_arc | StatefulBiTransformer | Send + Sync + 'static |
-/// | **RcStatefulBiTransformer** | `RcStatefulBiTransformer<T, U, V>` | RcConditionalStatefulBiTransformer | into_rc | StatefulBiTransformer | 'static |
-///
-/// # Examples
-///
-/// ```ignore
-/// // Two-parameter with Arc
-/// impl_shared_transformer_methods!(
-///     ArcTransformer<T, U>,
-///     ArcConditionalTransformer,
-///     into_arc,
-///     Transformer,
-///     Send + Sync + 'static
-/// );
-///
-/// // Three-parameter with Rc
-/// impl_shared_transformer_methods!(
-///     RcBiTransformer<T, U, V>,
-///     RcConditionalBiTransformer,
-///     into_rc,
-///     BiTransformer,
-///     'static
-/// );
-/// ```
+/// | Wrapper family | `predicate_bounds` | `chained_bounds` |
+/// |----------------|--------------------|------------------|
+/// | Arc stateless | `Send + Sync + 'static` | `Send + Sync + 'static` |
+/// | Arc stateful | `Send + Sync + 'static` | `Send + 'static` |
+/// | Rc stateless/stateful | `'static` | `'static` |
 macro_rules! impl_shared_transformer_methods {
     (@let_before ArcStatefulTransformer, $name:ident, $value:expr) => {
         let mut $name = $value;
@@ -172,14 +82,15 @@ macro_rules! impl_shared_transformer_methods {
         $conditional_type:ident,
         $predicate_type:ident,
         $chained_transformer_trait:ident,
-        $($extra_bounds:tt)+
+        predicate_bounds = ($($predicate_bounds:tt)+),
+        chained_bounds = ($($chained_bounds:tt)+)
     ) => {
         #[inline]
         pub fn when<P>(&self, predicate: P) -> $conditional_type<$t, $r>
         where
             $t: 'static,
             $r: 'static,
-            P: Predicate<$t> + $($extra_bounds)+,
+            P: Predicate<$t> + $($predicate_bounds)+,
         {
             $conditional_type {
                 transformer: self.clone(),
@@ -193,7 +104,7 @@ macro_rules! impl_shared_transformer_methods {
             $t: 'static,
             $r: 'static,
             S: 'static,
-            F: $chained_transformer_trait<$r, S> + $($extra_bounds)+,
+            F: $chained_transformer_trait<$r, S> + $($chained_bounds)+,
         {
             impl_shared_transformer_methods!(@let_before $struct_name, before, self.clone());
             impl_shared_transformer_methods!(@let_after $chained_transformer_trait, after, after);
@@ -210,7 +121,8 @@ macro_rules! impl_shared_transformer_methods {
         $conditional_type:ident,
         $predicate_type:ident,
         $chained_transformer_trait:ident,
-        $($extra_bounds:tt)+
+        predicate_bounds = ($($predicate_bounds:tt)+),
+        chained_bounds = ($($chained_bounds:tt)+)
     ) => {
         #[inline]
         pub fn when<P>(&self, predicate: P) -> $conditional_type<$t, $u, $r>
@@ -218,7 +130,7 @@ macro_rules! impl_shared_transformer_methods {
             $t: 'static,
             $u: 'static,
             $r: 'static,
-            P: BiPredicate<$t, $u> + $($extra_bounds)+,
+            P: BiPredicate<$t, $u> + $($predicate_bounds)+,
         {
             $conditional_type {
                 transformer: self.clone(),
@@ -233,7 +145,7 @@ macro_rules! impl_shared_transformer_methods {
             $u: 'static,
             $r: 'static,
             S: 'static,
-            F: $chained_transformer_trait<$r, S> + $($extra_bounds)+,
+            F: $chained_transformer_trait<$r, S> + $($chained_bounds)+,
         {
             impl_shared_transformer_methods!(@let_before $struct_name, before, self.clone());
             impl_shared_transformer_methods!(@let_after $chained_transformer_trait, after, after);

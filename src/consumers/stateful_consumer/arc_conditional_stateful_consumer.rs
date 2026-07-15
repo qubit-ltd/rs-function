@@ -76,8 +76,7 @@ impl_shared_conditional_consumer!(
     ArcConditionalStatefulConsumer<T>,
     ArcStatefulConsumer,
     StatefulConsumer,
-    into_arc,
-    Send + Sync + 'static
+    callback_bounds = (Send + 'static)
 );
 
 impl<T> StatefulConsumer<T> for ArcConditionalStatefulConsumer<T> {

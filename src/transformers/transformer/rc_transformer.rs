@@ -56,7 +56,8 @@ impl<T, R> RcTransformer<T, R> {
         RcConditionalTransformer,
         RcPredicate,
         Transformer,
-        'static
+        predicate_bounds = ('static),
+        chained_bounds = ('static)
     );
 }
 

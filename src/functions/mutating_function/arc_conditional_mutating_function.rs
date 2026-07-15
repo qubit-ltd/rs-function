@@ -64,7 +64,7 @@ impl_shared_conditional_function!(
     ArcConditionalMutatingFunction<T, R>,
     ArcMutatingFunction,
     MutatingFunction,
-    Send + Sync + 'static
+    callback_bounds = (Send + Sync + 'static)
 );
 
 // Use macro to generate conditional function clone implementations

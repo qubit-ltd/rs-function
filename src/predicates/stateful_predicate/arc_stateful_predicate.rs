@@ -238,16 +238,3 @@ impl<T> StatefulPredicate<T> for ArcStatefulPredicate<T> {
         function(value)
     }
 }
-
-/// Implements `StatefulPredicate<T>` for `FnMut(&T) -> bool` closures.
-///
-/// This blanket implementation lets mutable closures be used directly
-/// wherever a `StatefulPredicate` is expected.
-impl<F, T> StatefulPredicate<T> for F
-where
-    F: FnMut(&T) -> bool,
-{
-    fn test(&mut self, value: &T) -> bool {
-        self(value)
-    }
-}

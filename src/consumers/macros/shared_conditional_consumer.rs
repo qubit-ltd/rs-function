@@ -7,142 +7,41 @@
 // =============================================================================
 //! # Shared Conditional Consumer Macro
 //!
-//! Generates Arc/Rc-based Conditional Consumer implementations
-//!
-//! For Arc/Rc-based conditional consumers, generates `and_then` and `or_else`
-//! methods, as well as complete Consumer/BiConsumer trait implementations.
-//!
-//! Arc/Rc type characteristics:
-//! - `and_then` and `or_else` borrow &self (because Arc/Rc can Clone)
-//! - Returned wrappers preserve the original ownership family
+//! Generates `and_then` and `or_else` for shared Arc/Rc conditional consumers.
+//! Generated methods borrow `&self` and return a wrapper from the same
+//! ownership and statefulness family.
 //!
 //! # Parameters
 //!
-//! * `$struct_name<$generics>` - Struct name with generic parameters
-//! * `$consumer_type` - Consumer wrapper type name
-//! * `$consumer_trait` - Consumer trait name
-//! * `$predicate_conversion` - Predicate conversion method (into_arc or
-//!   into_rc)
-//! * `$extra_bounds` - Extra trait bounds
+//! * `$struct_name<$generics>` - Conditional wrapper type.
+//! * `$consumer_type` - Result wrapper type, such as `ArcConsumer`.
+//! * `$consumer_trait` - Semantic trait accepted for the additional callback,
+//!   such as `Consumer`.
+//! * `$callback_bounds` - Storage capabilities required for the additional
+//!   callback.
 //!
-//! # Usage Examples
+//! # Capability policy
 //!
-//! ```ignore
-//! // Arc single-parameter Consumer
-//! impl_shared_conditional_consumer!(
-//!     ArcConditionalConsumer<T>,
-//!     ArcConsumer,
-//!     Consumer,
-//!     into_arc,
-//!     Send + Sync + 'static
-//! );
-//!
-//! // Rc single-parameter Consumer
-//! impl_shared_conditional_consumer!(
-//!     RcConditionalConsumer<T>,
-//!     RcConsumer,
-//!     Consumer,
-//!     into_rc,
-//!     'static
-//! );
-//!
-//! // Arc two-parameter BiConsumer
-//! impl_shared_conditional_consumer!(
-//!     ArcConditionalBiConsumer<T, U>,
-//!     ArcBiConsumer,
-//!     BiConsumer,
-//!     into_arc,
-//!     Send + Sync + 'static
-//! );
-//!
-//! // Rc two-parameter BiConsumer
-//! impl_shared_conditional_consumer!(
-//!     RcConditionalBiConsumer<T, U>,
-//!     RcBiConsumer,
-//!     BiConsumer,
-//!     into_rc,
-//!     'static
-//! );
-//! ```
+//! | Wrapper family | `callback_bounds` |
+//! |----------------|-------------------|
+//! | Arc stateless | `Send + Sync + 'static` |
+//! | Arc stateful | `Send + 'static` |
+//! | Rc stateless/stateful | `'static` |
 
-/// Generates Arc/Rc-based Conditional Consumer implementations
+/// Generates `and_then` and `or_else` for shared Arc/Rc conditional consumers.
 ///
-/// This macro should be used at the top level (outside of any impl block) as
-/// it generates a complete impl block with methods for the specified struct.
-/// For Arc/Rc-based conditional consumers, generates `and_then` and `or_else`
-/// methods, as well as complete Consumer/BiConsumer trait implementations.
+/// Invoke this macro at module scope. The selected callback bounds reflect
+/// how the result wrapper stores its callback: stateless Arc wrappers call
+/// through a shared reference and require `Sync`; stateful Arc wrappers call
+/// under an outer mutex and require only `Send`.
 ///
-/// Arc/Rc type characteristics:
-/// - `and_then` and `or_else` borrow &self (because Arc/Rc can Clone)
-/// - Returned wrappers preserve the original ownership family
+/// # Capability policy
 ///
-/// # Parameters
-///
-/// * `$struct_name<$generics>` - Struct name with generic parameters
-/// * `$consumer_type` - Consumer wrapper type name
-/// * `$consumer_trait` - Consumer trait name
-/// * `$predicate_conversion` - Predicate conversion method (into_arc or
-///   into_rc)
-/// * `$extra_bounds` - Extra trait bounds
-///
-/// # Usage Examples
-///
-/// This example requires the `rc` feature.
-///
-/// ```rust
-/// # #[cfg(feature = "rc")]
-/// # {
-/// // Arc single-parameter Consumer
-/// use std::sync::atomic::{AtomicI32, Ordering};
-/// use std::sync::Arc;
-/// use qubit_function::{Consumer, ArcConsumer};
-///
-/// let result = Arc::new(AtomicI32::new(0));
-/// let result1 = std::sync::Arc::clone(&result);
-/// let consumer1 = ArcConsumer::new(move |x: &i32| {
-///     result1.fetch_add(*x, Ordering::SeqCst);
-/// });
-///
-/// let consumer2 = consumer1.when(|x: &i32| *x > 0);
-/// let result2 = std::sync::Arc::clone(&result);
-/// let chained = consumer2.and_then(ArcConsumer::new(move |x: &i32| {
-///     result2.fetch_add(*x * 2, Ordering::SeqCst);
-/// }));
-///
-/// chained.accept(&5);
-/// assert_eq!(result.load(Ordering::SeqCst), 15);
-/// chained.accept(&-5);
-/// assert_eq!(result.load(Ordering::SeqCst), 5);
-///
-/// // Rc single-parameter Consumer
-/// use qubit_function::{RcConsumer};
-///
-/// let base = RcConsumer::new(|x: &i32| {
-///     let _ = x;
-/// });
-/// let _ = base.when(|x: &i32| *x > 0);
-///
-/// // Arc two-parameter BiConsumer
-/// use qubit_function::{BiConsumer, ArcBiConsumer};
-/// let bi_base = ArcBiConsumer::new(|x: &i32, y: &i32| {
-///     let _ = (*x, *y);
-/// });
-/// let bi_conditional = bi_base.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
-/// let _ = bi_conditional.and_then(ArcBiConsumer::new(|x: &i32, y: &i32| {
-///     let _ = (*x, *y);
-/// }));
-///
-/// // Rc two-parameter BiConsumer
-/// use qubit_function::RcBiConsumer;
-/// let bi_base_rc = RcBiConsumer::new(|x: &i32, y: &i32| {
-///     let _ = (*x, *y);
-/// });
-/// let bi_conditional_rc = bi_base_rc.when(|x: &i32, y: &i32| *x > 0 || *y > 0);
-/// let _ = bi_conditional_rc.and_then(RcBiConsumer::new(|x: &i32, y: &i32| {
-///     let _ = (*x, *y);
-/// }));
-/// # }
-/// ```
+/// | Wrapper family | `callback_bounds` |
+/// |----------------|-------------------|
+/// | Arc stateless | `Send + Sync + 'static` |
+/// | Arc stateful | `Send + 'static` |
+/// | Rc stateless/stateful | `'static` |
 macro_rules! impl_shared_conditional_consumer {
     (@let_consumer Consumer, $name:ident, $value:expr) => {
         let $name = $value;
@@ -165,8 +64,7 @@ macro_rules! impl_shared_conditional_consumer {
         $struct_name:ident < $t:ident >,
         $consumer_type:ident,
         $consumer_trait:ident,
-        $predicate_conversion:ident,
-        $($extra_bounds:tt)+
+        callback_bounds = ($($callback_bounds:tt)+)
     ) => {
         impl<$t> $struct_name<$t> {
             /// Chains another consumer in sequence
@@ -220,7 +118,7 @@ macro_rules! impl_shared_conditional_consumer {
             pub fn and_then<C>(&self, next: C) -> $consumer_type<$t>
             where
                 $t: 'static,
-                C: $consumer_trait<$t> + $($extra_bounds)+,
+                C: $consumer_trait<$t> + $($callback_bounds)+,
             {
                 let first_predicate = self.predicate.clone();
                 impl_shared_conditional_consumer!(@let_consumer $consumer_trait, first_consumer, self.consumer.clone());
@@ -248,7 +146,7 @@ macro_rules! impl_shared_conditional_consumer {
             pub fn or_else<C>(&self, else_consumer: C) -> $consumer_type<$t>
             where
                 $t: 'static,
-                C: $consumer_trait<$t> + $($extra_bounds)+,
+                C: $consumer_trait<$t> + $($callback_bounds)+,
             {
                 let predicate = self.predicate.clone();
                 impl_shared_conditional_consumer!(@let_consumer $consumer_trait, then_consumer, self.consumer.clone());
@@ -269,8 +167,7 @@ macro_rules! impl_shared_conditional_consumer {
         $struct_name:ident < $t:ident, $u:ident >,
         $consumer_type:ident,
         $consumer_trait:ident,
-        $predicate_conversion:ident,
-        $($extra_bounds:tt)+
+        callback_bounds = ($($callback_bounds:tt)+)
     ) => {
         impl<$t, $u> $struct_name<$t, $u> {
             /// Chains another bi-consumer in sequence
@@ -328,7 +225,7 @@ macro_rules! impl_shared_conditional_consumer {
             where
                 $t: 'static,
                 $u: 'static,
-                C: $consumer_trait<$t, $u> + $($extra_bounds)+,
+                C: $consumer_trait<$t, $u> + $($callback_bounds)+,
             {
                 let first_predicate = self.predicate.clone();
                 impl_shared_conditional_consumer!(@let_consumer $consumer_trait, first_consumer, self.consumer.clone());
@@ -357,7 +254,7 @@ macro_rules! impl_shared_conditional_consumer {
             where
                 $t: 'static,
                 $u: 'static,
-                C: $consumer_trait<$t, $u> + $($extra_bounds)+,
+                C: $consumer_trait<$t, $u> + $($callback_bounds)+,
             {
                 let predicate = self.predicate.clone();
                 impl_shared_conditional_consumer!(@let_consumer $consumer_trait, then_consumer, self.consumer.clone());

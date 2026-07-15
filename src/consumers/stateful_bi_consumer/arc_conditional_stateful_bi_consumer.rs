@@ -75,8 +75,7 @@ impl_shared_conditional_consumer!(
     ArcConditionalStatefulBiConsumer<T, U>,
     ArcStatefulBiConsumer,
     StatefulBiConsumer,
-    into_arc,
-    Send + Sync + 'static
+    callback_bounds = (Send + 'static)
 );
 
 impl<T, U> StatefulBiConsumer<T, U> for ArcConditionalStatefulBiConsumer<T, U> {

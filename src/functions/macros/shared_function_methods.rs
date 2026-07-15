@@ -7,122 +7,46 @@
 // =============================================================================
 //! # Shared Function Methods Macro
 //!
-//! Generates when and and_then method implementations for Arc/Rc-based Function
-//!
-//! Generates conditional execution when method and chaining and_then method
-//! for Arc/Rc-based functions that borrow &self (because Arc/Rc can be cloned).
-//!
-//! This macro supports both single-parameter and two-parameter functions
-//! through pattern matching on the struct signature.
+//! Generates `when` and `and_then` for shared Arc/Rc functions.
+//! The generated methods borrow `&self`, clone the shared wrapper, and keep
+//! predicate-storage capabilities separate from chained-callback
+//! capabilities.
 //!
 //! # Parameters
 //!
-//! * `$struct_name<$generics>` - The struct name with its generic parameters
-//!   - Single parameter: `ArcFunction<T, R>`
-//!   - Two parameters: `ArcBiFunction<T, U, R>`
-//! * `$conditional_type` - The conditional function type for when (e.g.,
-//!   ArcConditionalFunction)
-//! * `$predicate_conversion` - Method to convert predicate (into_arc or
-//!   into_rc)
-//! * `$chained_function_trait` - The name of the function trait that is chained
-//!   after the execution of this function (e.g., Function, BiFunction)
-//! * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync +
-//!   'static for Arc)
+//! * `$struct_name<$generics>` - Function or BiFunction wrapper type.
+//! * `$conditional_type` - Conditional wrapper returned by `when`, such as
+//!   `ArcConditionalFunction`.
+//! * `$predicate_type` - Predicate wrapper used by the conditional result.
+//! * `$chained_function_trait` - Semantic trait implemented by the chained
+//!   callback, such as `Function`.
+//! * `$predicate_bounds` - Bounds required to store the predicate wrapper.
+//! * `$chained_bounds` - Bounds required to store the callback produced by
+//!   `and_then`.
 //!
-//! # All Macro Invocations
+//! # Capability policy
 //!
-//! | Function Type | Struct Signature | `$conditional_type` | `$predicate_conversion` | `$chained_function_trait` | `$extra_bounds` |
-//! |---------------|-----------------|----------------|------------------------|------------------|----------------|
-//! | **ArcFunction** | `ArcFunction<T, R>` | ArcConditionalFunction | into_arc | Function | Send + Sync + 'static |
-//! | **RcFunction** | `RcFunction<T, R>` | RcConditionalFunction | into_rc | Function | 'static |
-//! | **ArcStatefulFunction** | `ArcStatefulFunction<T, R>` | ArcConditionalStatefulFunction | into_arc | StatefulFunction | Send + Sync + 'static |
-//! | **RcStatefulFunction** | `RcStatefulFunction<T, R>` | RcConditionalStatefulFunction | into_rc | StatefulFunction | 'static |
-//! | **ArcBiFunction** | `ArcBiFunction<T, U, R>` | ArcConditionalBiFunction | into_arc | BiFunction | Send + Sync + 'static |
-//! | **RcBiFunction** | `RcBiFunction<T, U, R>` | RcConditionalBiFunction | into_rc | BiFunction | 'static |
-//! | **ArcStatefulBiFunction** | `ArcStatefulBiFunction<T, U, R>` | ArcConditionalStatefulBiFunction | into_arc | StatefulBiFunction | Send + Sync + 'static |
-//! | **RcStatefulBiFunction** | `RcStatefulBiFunction<T, U, R>` | RcConditionalStatefulBiFunction | into_rc | StatefulBiFunction | 'static |
-//!
-//! # Examples
-//!
-//! ```text
-//! // Single-parameter with Arc
-//! // impl_shared_function_methods!(
-//! //     ArcFunction<T, R>,
-//! //     ArcConditionalFunction,
-//! //     into_arc,
-//! //     Function,
-//! //     Send + Sync + 'static
-//! // );
-//!
-//! // Two-parameter with Rc
-//! // impl_shared_function_methods!(
-//! //     RcBiFunction<T, U, R>,
-//! //     RcConditionalBiFunction,
-//! //     into_rc,
-//! //     BiFunction,
-//! //     'static
-//! // );
-//! ```
+//! | Wrapper family | `predicate_bounds` | `chained_bounds` |
+//! |----------------|--------------------|------------------|
+//! | Arc stateless | `Send + Sync + 'static` | `Send + Sync + 'static` |
+//! | Arc stateful | `Send + Sync + 'static` | `Send + 'static` |
+//! | Rc stateless/stateful | `'static` | `'static` |
 
-/// Generates when and and_then method implementations for Arc/Rc-based Function
+/// Generates `when` and `and_then` for shared Arc/Rc functions.
 ///
-/// This macro should be used inside an existing impl block for the target
-/// struct. It generates individual methods but does not create a complete
-/// impl block itself. Generates conditional execution when method and chaining
-/// and_then method for Arc/Rc-based functions that borrow &self (because Arc/Rc
-/// can be cloned).
+/// Invoke this macro inside the target wrapper's `impl` block. Predicate
+/// bounds describe the immutable predicate object stored by the conditional
+/// wrapper. Chained bounds describe the callback stored by the returned
+/// function; stateful Arc callbacks are serialized by their outer
+/// mutex and therefore require `Send`, but not `Sync`.
 ///
-/// This macro supports both single-parameter and two-parameter functions
-/// through pattern matching on the struct signature.
+/// # Capability policy
 ///
-/// # Parameters
-///
-/// * `$struct_name<$generics>` - The struct name with its generic parameters
-///   - Single parameter: `ArcFunction<T, R>`
-///   - Two parameters: `ArcBiFunction<T, U, R>`
-/// * `$conditional_type` - The conditional function type for when (e.g.,
-///   ArcConditionalFunction)
-/// * `$predicate_conversion` - Method to convert predicate (into_arc or
-///   into_rc)
-/// * `$chained_function_trait` - The name of the function trait that is chained
-///   after the execution of this function (e.g., Function, BiFunction)
-/// * `$extra_bounds` - Extra trait bounds ('static for Rc, Send + Sync +
-///   'static for Arc)
-///
-/// # All Macro Invocations
-///
-/// | Function Type | Struct Signature | `$conditional_type` | `$predicate_conversion` | `$chained_function_trait` | `$extra_bounds` |
-/// |---------------|-----------------|----------------|------------------------|------------------|----------------|
-/// | **ArcFunction** | `ArcFunction<T, R>` | ArcConditionalFunction | into_arc | Function | Send + Sync + 'static |
-/// | **RcFunction** | `RcFunction<T, R>` | RcConditionalFunction | into_rc | Function | 'static |
-/// | **ArcStatefulFunction** | `ArcStatefulFunction<T, R>` | ArcConditionalStatefulFunction | into_arc | StatefulFunction | Send + Sync + 'static |
-/// | **RcStatefulFunction** | `RcStatefulFunction<T, R>` | RcConditionalStatefulFunction | into_rc | StatefulFunction | 'static |
-/// | **ArcBiFunction** | `ArcBiFunction<T, U, R>` | ArcConditionalBiFunction | into_arc | BiFunction | Send + Sync + 'static |
-/// | **RcBiFunction** | `RcBiFunction<T, U, R>` | RcConditionalBiFunction | into_rc | BiFunction | 'static |
-/// | **ArcStatefulBiFunction** | `ArcStatefulBiFunction<T, U, R>` | ArcConditionalStatefulBiFunction | into_arc | StatefulBiFunction | Send + Sync + 'static |
-/// | **RcStatefulBiFunction** | `RcStatefulBiFunction<T, U, R>` | RcConditionalStatefulBiFunction | into_rc | StatefulBiFunction | 'static |
-///
-/// # Examples
-///
-/// ```text
-/// // Single-parameter with Arc
-/// // impl_shared_function_methods!(
-/// //     ArcFunction<T, R>,
-/// //     ArcConditionalFunction,
-/// //     into_arc,
-/// //     Function,
-/// //     Send + Sync + 'static
-/// // );
-///
-/// // Two-parameter with Rc
-/// // impl_shared_function_methods!(
-/// //     RcBiFunction<T, U, R>,
-/// //     RcConditionalBiFunction,
-/// //     into_rc,
-/// //     BiFunction,
-/// //     'static
-/// // );
-/// ```
+/// | Wrapper family | `predicate_bounds` | `chained_bounds` |
+/// |----------------|--------------------|------------------|
+/// | Arc stateless | `Send + Sync + 'static` | `Send + Sync + 'static` |
+/// | Arc stateful | `Send + Sync + 'static` | `Send + 'static` |
+/// | Rc stateless/stateful | `'static` | `'static` |
 macro_rules! impl_shared_function_methods {
     (@let_before ArcStatefulFunction, $name:ident, $value:expr) => {
         let mut $name = $value;
@@ -190,7 +114,8 @@ macro_rules! impl_shared_function_methods {
         $conditional_type:ident,
         $predicate_type:ident,
         $chained_function_trait:ident,
-        $($extra_bounds:tt)+
+        predicate_bounds = ($($predicate_bounds:tt)+),
+        chained_bounds = ($($chained_bounds:tt)+)
     ) => {
         /// Creates a conditional function that executes based on predicate
         /// result.
@@ -221,7 +146,7 @@ macro_rules! impl_shared_function_methods {
         where
             $t: 'static,
             $r: 'static,
-            P: Predicate<$t> + $($extra_bounds)+,
+            P: Predicate<$t> + $($predicate_bounds)+,
         {
             $conditional_type {
                 function: self.clone(),
@@ -260,7 +185,7 @@ macro_rules! impl_shared_function_methods {
             $t: 'static,
             $r: 'static,
             S: 'static,
-            F: $chained_function_trait<$r, S> + $($extra_bounds)+,
+            F: $chained_function_trait<$r, S> + $($chained_bounds)+,
         {
             impl_shared_function_methods!(@let_before $struct_name, before, self.clone());
             impl_shared_function_methods!(@let_after $chained_function_trait, after, after);
@@ -276,7 +201,8 @@ macro_rules! impl_shared_function_methods {
         $conditional_type:ident,
         $predicate_type:ident,
         $chained_function_trait:ident,
-        $($extra_bounds:tt)+
+        predicate_bounds = ($($predicate_bounds:tt)+),
+        chained_bounds = ($($chained_bounds:tt)+)
     ) => {
         /// Creates a conditional two-parameter function that executes based
         /// on bi-predicate result.
@@ -308,7 +234,7 @@ macro_rules! impl_shared_function_methods {
             $t: 'static,
             $u: 'static,
             $r: 'static,
-            P: BiPredicate<$t, $u> + $($extra_bounds)+,
+            P: BiPredicate<$t, $u> + $($predicate_bounds)+,
         {
             $conditional_type {
                 function: self.clone(),
@@ -348,7 +274,7 @@ macro_rules! impl_shared_function_methods {
             $u: 'static,
             $r: 'static,
             S: 'static,
-            F: $chained_function_trait<$r, S> + $($extra_bounds)+,
+            F: $chained_function_trait<$r, S> + $($chained_bounds)+,
         {
             impl_shared_function_methods!(@let_before $struct_name, before, self.clone());
             impl_shared_function_methods!(@let_after $chained_function_trait, after, after);

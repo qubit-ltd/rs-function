@@ -56,7 +56,8 @@ impl<T, U, R> RcBiFunction<T, U, R> {
         RcConditionalBiFunction,
         RcBiPredicate,
         Function,
-        'static
+        predicate_bounds = ('static),
+        chained_bounds = ('static)
     );
 }
 

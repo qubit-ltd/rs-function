@@ -45,8 +45,7 @@ impl_shared_conditional_consumer!(
     RcConditionalBiConsumer<T, U>,
     RcBiConsumer,
     BiConsumer,
-    into_rc,
-    'static
+    callback_bounds = ('static)
 );
 
 // Hand-written BiConsumer trait implementation

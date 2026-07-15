@@ -74,8 +74,7 @@ impl_shared_conditional_mutator!(
     ArcConditionalStatefulMutator<T>,
     ArcStatefulMutator,
     StatefulMutator,
-    into_arc,
-    Send + Sync + 'static
+    callback_bounds = (Send + 'static)
 );
 
 impl<T> StatefulMutator<T> for ArcConditionalStatefulMutator<T> {

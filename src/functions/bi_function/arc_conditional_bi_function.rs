@@ -61,8 +61,7 @@ impl_shared_conditional_function!(
     ArcConditionalBiFunction<T, U, R>,
     ArcBiFunction,
     BiFunction,
-    into_arc,
-    Send + Sync + 'static
+    callback_bounds = (Send + Sync + 'static)
 );
 
 // Implement Debug and Display for ArcConditionalBiFunction

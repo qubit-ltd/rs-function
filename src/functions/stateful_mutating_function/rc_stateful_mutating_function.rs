@@ -96,7 +96,8 @@ impl<T, R> RcStatefulMutatingFunction<T, R> {
         RcConditionalStatefulMutatingFunction,
         RcPredicate,
         Function,  // chains a non-mutating function after this mutating function
-        'static
+        predicate_bounds = ('static),
+        chained_bounds = ('static)
     );
 }
 
