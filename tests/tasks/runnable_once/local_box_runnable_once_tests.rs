@@ -87,3 +87,14 @@ fn test_local_box_runnable_once_then_callable_supports_local_callable() {
         "value"
     );
 }
+
+#[test]
+fn test_local_box_runnable_once_then_callable_clears_name() {
+    let task = LocalBoxRunnableOnce::new_with_name("prepare", || {
+        Ok::<(), io::Error>(())
+    });
+    let chained = task.then_callable(|| Ok::<i32, io::Error>(42));
+
+    assert_eq!(chained.name(), None);
+    assert_eq!(chained.call().expect("callable should succeed"), 42);
+}

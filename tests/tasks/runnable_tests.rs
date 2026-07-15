@@ -236,7 +236,7 @@ fn test_box_runnable_then_callable_runs_callable_on_success() {
 
     let mut chained = task.then_callable(callable);
 
-    assert_eq!(chained.name(), Some("prepare"));
+    assert_eq!(chained.name(), None);
     assert_eq!(chained.call().expect("callable should succeed"), 42);
 }
 
@@ -259,4 +259,24 @@ fn test_box_runnable_then_callable_skips_callable_on_error() {
 
     assert_eq!(error.to_string(), "prepare failed");
     assert!(!callable_ran.get());
+}
+
+#[test]
+fn test_box_runnable_then_callable_covers_both_results_for_one_callable_type() {
+    let callable: fn() -> Result<i32, io::Error> = || Ok(42);
+    let mut success =
+        BoxRunnable::new(|| Ok::<(), io::Error>(())).then_callable(callable);
+    let mut failure = BoxRunnable::new(|| {
+        Err::<(), io::Error>(io::Error::other("prepare failed"))
+    })
+    .then_callable(callable);
+
+    assert_eq!(success.call().expect("callable should succeed"), 42);
+    assert_eq!(
+        failure
+            .call()
+            .expect_err("then_callable should preserve runnable error")
+            .to_string(),
+        "prepare failed"
+    );
 }

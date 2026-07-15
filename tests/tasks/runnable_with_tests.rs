@@ -121,7 +121,7 @@ fn test_box_runnable_with_then_callable_runs_after_success() {
     });
     let mut input = 5;
 
-    assert_eq!(callable.name(), Some("prepare"));
+    assert_eq!(callable.name(), None);
     assert_eq!(
         callable
             .call_with(&mut input)

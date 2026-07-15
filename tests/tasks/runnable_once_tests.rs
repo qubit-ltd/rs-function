@@ -273,7 +273,7 @@ fn test_box_runnable_once_then_callable_runs_callable_on_success() {
     let callable = || Ok::<i32, io::Error>(42);
 
     let chained = task.then_callable(callable);
-    assert_eq!(chained.name(), Some("prepare"));
+    assert_eq!(chained.name(), None);
     assert_eq!(chained.call().expect("callable should succeed"), 42);
 }
 
