@@ -18,3 +18,4 @@ mod runnable_once_tests;
 mod runnable_tests;
 mod runnable_with;
 mod runnable_with_tests;
+mod task_auto_trait_contract_tests;

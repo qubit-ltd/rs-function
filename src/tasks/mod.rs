@@ -18,6 +18,10 @@
 //!
 //! One-time equivalents are also provided as `CallableOnce` and `RunnableOnce`
 //! for move-only callable use cases.
+//!
+//! Semantic task traits remain thread-neutral. Choose `Box*` for movable
+//! executor tasks, `LocalBox*` for local callbacks with non-`Send` captures,
+//! and `Arc*` for shared synchronized tasks.
 
 pub mod callable;
 #[cfg(feature = "once")]
@@ -35,6 +39,7 @@ pub use callable::RcCallable;
 pub use callable::{
     BoxCallable,
     Callable,
+    LocalBoxCallable,
 };
 #[cfg(feature = "once")]
 pub use callable_once::{
@@ -49,6 +54,7 @@ pub use callable_with::RcCallableWith;
 pub use callable_with::{
     BoxCallableWith,
     CallableWith,
+    LocalBoxCallableWith,
 };
 #[cfg(feature = "stateful")]
 pub use runnable::ArcRunnable;
@@ -56,6 +62,7 @@ pub use runnable::ArcRunnable;
 pub use runnable::RcRunnable;
 pub use runnable::{
     BoxRunnable,
+    LocalBoxRunnable,
     Runnable,
 };
 #[cfg(feature = "once")]
@@ -70,5 +77,6 @@ pub use runnable_with::ArcRunnableWith;
 pub use runnable_with::RcRunnableWith;
 pub use runnable_with::{
     BoxRunnableWith,
+    LocalBoxRunnableWith,
     RunnableWith,
 };

@@ -15,6 +15,7 @@ use std::{
     sync::{
         Arc,
         atomic::{
+            AtomicBool,
             AtomicUsize,
             Ordering,
         },
@@ -218,15 +219,15 @@ fn test_box_callable_with_combinators_cover_error_branches() {
         0
     );
 
-    let next_ran = Rc::new(Cell::new(false));
-    let next_ran_capture = Rc::clone(&next_ran);
+    let next_ran = Arc::new(AtomicBool::new(false));
+    let next_ran_capture = Arc::clone(&next_ran);
     let mut chained =
         BoxCallableWith::<i32, i32, io::Error>::new(|_value: &mut i32| {
             Err(io::Error::other("first failed"))
         })
         .and_then(move |value, input| {
             *input += value;
-            next_ran_capture.set(true);
+            next_ran_capture.store(true, Ordering::SeqCst);
             Ok::<i32, io::Error>(*input)
         });
     let error = chained
@@ -234,6 +235,6 @@ fn test_box_callable_with_combinators_cover_error_branches() {
         .expect_err("and_then should short-circuit");
 
     assert_eq!(error.to_string(), "first failed");
-    assert!(!next_ran.get());
+    assert!(!next_ran.load(Ordering::SeqCst));
     assert_eq!(input, 0);
 }

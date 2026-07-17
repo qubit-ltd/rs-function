@@ -13,8 +13,9 @@
 //! task-oriented vocabulary. Use it when the operation's side effect matters
 //! and only success or failure should be reported.
 //!
-//! The trait itself does not require `Send`; concurrent executors should add
-//! `+ Send + 'static` at their API boundary.
+//! The semantic trait is thread-neutral. `Box*` task wrappers are `Send` for
+//! executor submission, while matching `LocalBox*` wrappers permit non-`Send`
+//! captures for local execution.
 
 mod box_runnable_once;
 pub use box_runnable_once::BoxRunnableOnce;

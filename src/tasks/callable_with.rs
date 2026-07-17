@@ -14,11 +14,14 @@
 //! when the operation needs access to protected or caller-provided state and
 //! returns a success value.
 //!
-//! The trait itself does not require `Send`; concurrent executors should add
-//! `+ Send + 'static` at their API boundary.
+//! The semantic trait is thread-neutral. `Box*` task wrappers are `Send` for
+//! executor submission, while matching `LocalBox*` wrappers permit non-`Send`
+//! captures for local execution.
 
 mod box_callable_with;
 pub use box_callable_with::BoxCallableWith;
+mod local_box_callable_with;
+pub use local_box_callable_with::LocalBoxCallableWith;
 #[cfg(feature = "rc")]
 mod rc_callable_with;
 #[cfg(feature = "rc")]

@@ -32,6 +32,7 @@ use crate::{
 ///
 /// * `R` - The success value returned by the computation.
 /// * `E` - The error value returned when the computation fails.
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct LocalBoxCallableOnce<R, E> {
     /// The one-time closure executed by this callable.
     pub(super) function: Box<dyn FnOnce() -> Result<R, E>>,

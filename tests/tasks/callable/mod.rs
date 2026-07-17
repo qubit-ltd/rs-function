@@ -8,4 +8,5 @@
 
 mod arc_callable_tests;
 mod box_callable_tests;
+mod local_box_callable_tests;
 mod rc_callable_tests;

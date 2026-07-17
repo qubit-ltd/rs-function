@@ -31,6 +31,7 @@ type RcCallableWithFn<T, R, E> = Rc<RefCell<dyn FnMut(&mut T) -> Result<R, E>>>;
 /// Each call holds a mutable `RefCell` borrow while the user callback runs.
 /// Synchronous re-entry through the same shared wrapper panics with a borrow
 /// error. Mutations completed before a panic are not rolled back.
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcCallableWith<T, R, E> {
     /// The stateful closure executed by this callable.
     pub(super) function: RcCallableWithFn<T, R, E>,
