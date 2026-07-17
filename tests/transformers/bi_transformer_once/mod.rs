@@ -8,4 +8,5 @@
 
 mod binary_operator_once_tests;
 mod box_bi_transformer_once_tests;
+mod box_binary_operator_once_tests;
 mod box_conditional_bi_transformer_once_tests;

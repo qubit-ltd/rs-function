@@ -6,6 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
+mod stateful_tester;
 mod stateful_tester_tests;
 mod tester;
+mod tester_2_tests;
 mod tester_tests;

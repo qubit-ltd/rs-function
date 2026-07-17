@@ -6,6 +6,7 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
+mod box_conditional_transformer_tests;
 mod box_transformer_methods_tests;
 mod conditional_transformer_clone_tests;
 mod conditional_transformer_debug_display_tests;

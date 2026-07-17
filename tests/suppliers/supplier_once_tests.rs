@@ -175,7 +175,8 @@ mod test_box_supplier_once {
         #[test]
         fn test_with_unit_type() {
             let once = BoxSupplierOnce::new(|| ());
-            once.get();
+            let _: () = once.get();
+            std::hint::black_box(());
             // Unit type always succeeds, no assertion needed
         }
 

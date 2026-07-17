@@ -103,13 +103,16 @@ fn test_task_box_once_compositions_remain_send() {
             .map(|value| value + 1)
             .and_then(|value| Ok(value * 2)),
     );
-    assert_eq!(callable.call().expect("callable-once should succeed"), 42);
+    assert_eq!(
+        callable.call_once().expect("callable-once should succeed"),
+        42,
+    );
 
     let runnable = require_send(
         BoxRunnableOnce::new(|| Ok::<(), io::Error>(()))
             .and_then(|| Ok::<(), io::Error>(())),
     );
-    runnable.run().expect("runnable-once should succeed");
+    runnable.run_once().expect("runnable-once should succeed");
 }
 
 #[test]
@@ -177,7 +180,9 @@ fn test_local_task_box_once_compositions_accept_rc_captures() {
     })
     .map(move |value| format!("{value}{callable_suffix}"));
     assert_eq!(
-        callable.call().expect("local callable-once should succeed"),
+        callable
+            .call_once()
+            .expect("local callable-once should succeed"),
         "callable-local"
     );
 
@@ -187,5 +192,7 @@ fn test_local_task_box_once_compositions_accept_rc_captures() {
         Ok::<(), io::Error>(())
     })
     .and_then(|| Ok::<(), io::Error>(()));
-    runnable.run().expect("local runnable-once should succeed");
+    runnable
+        .run_once()
+        .expect("local runnable-once should succeed");
 }

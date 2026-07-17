@@ -6,6 +6,7 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
+mod box_conditional_function_tests;
 mod box_function_methods_tests;
 mod conditional_function_clone_macro_tests;
 mod conditional_function_clone_tests;
