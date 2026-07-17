@@ -85,6 +85,17 @@ macro_rules! impl_shared_transformer_methods {
         predicate_bounds = ($($predicate_bounds:tt)+),
         chained_bounds = ($($chained_bounds:tt)+)
     ) => {
+        /// Creates a conditional transformer that applies this transformer
+        /// only when `predicate` accepts the input.
+        ///
+        /// # Parameters
+        ///
+        /// * `predicate` - The condition evaluated before transformation.
+        ///
+        /// # Returns
+        ///
+        /// A conditional wrapper containing a shared clone of this
+        /// transformer and the supplied predicate.
         #[inline]
         pub fn when<P>(&self, predicate: P) -> $conditional_type<$t, $r>
         where
@@ -98,6 +109,16 @@ macro_rules! impl_shared_transformer_methods {
             }
         }
 
+        /// Chains `after` to run on the value produced by this transformer.
+        ///
+        /// # Parameters
+        ///
+        /// * `after` - The transformer applied to this transformer's output.
+        ///
+        /// # Returns
+        ///
+        /// A shared transformer that applies the two transformations in
+        /// sequence.
         #[inline]
         pub fn and_then<S, F>(&self, after: F) -> $struct_name<$t, S>
         where
@@ -124,6 +145,17 @@ macro_rules! impl_shared_transformer_methods {
         predicate_bounds = ($($predicate_bounds:tt)+),
         chained_bounds = ($($chained_bounds:tt)+)
     ) => {
+        /// Creates a conditional transformer that applies this transformer
+        /// only when `predicate` accepts both inputs.
+        ///
+        /// # Parameters
+        ///
+        /// * `predicate` - The condition evaluated before transformation.
+        ///
+        /// # Returns
+        ///
+        /// A conditional wrapper containing a shared clone of this
+        /// transformer and the supplied predicate.
         #[inline]
         pub fn when<P>(&self, predicate: P) -> $conditional_type<$t, $u, $r>
         where
@@ -138,6 +170,16 @@ macro_rules! impl_shared_transformer_methods {
             }
         }
 
+        /// Chains `after` to run on the value produced from both inputs.
+        ///
+        /// # Parameters
+        ///
+        /// * `after` - The transformer applied to this transformer's output.
+        ///
+        /// # Returns
+        ///
+        /// A shared two-input transformer that applies the two
+        /// transformations in sequence.
         #[inline]
         pub fn and_then<S, F>(&self, after: F) -> $struct_name<$t, $u, S>
         where

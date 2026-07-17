@@ -9,7 +9,7 @@
 
 use super::RcStatefulBiTransformer;
 
-/// Type alias for `RcStatefulBiTransformer<T, T, T>`
+/// A locally shared stateful binary transformation over one type.
 ///
 /// Represents a single-threaded binary operator that takes two values of type
 /// `T` and produces a value of the same type `T`. Equivalent to Java's

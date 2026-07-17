@@ -13,7 +13,7 @@ use super::BoxTransformer;
 // Type Aliases for UnaryOperator (Transformer<T, T>)
 // ============================================================================
 
-/// Type alias for `BoxTransformer<T, T>`
+/// A singly owned unary transformation closed over one type.
 ///
 /// Represents a unary operator that transforms a value of type `T` to another
 /// value of the same type `T`, with single ownership semantics. Equivalent to

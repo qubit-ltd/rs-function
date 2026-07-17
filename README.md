@@ -23,7 +23,7 @@ extension traits.
 
 - **Complete Functional Interface Suite**: broad functional abstraction families with reusable, one-time, stateful, mutating, and fallible variants
 - **Thread-safe callback adapters**: Arc stateful adapters serialize callback execution with a `parking_lot::Mutex`
-- **Multiple Ownership Models**: Box-based single ownership, Arc-based thread-safe sharing, and Rc-based single-threaded sharing
+- **Multiple Ownership Models**: Box-based single ownership, LocalBox task wrappers for non-`Send` captures, Arc-based thread-safe sharing, and Rc-based single-threaded sharing
 - **Flexible API Design**: Trait-based unified interface with concrete implementations optimized for different scenarios
 - **Type-Oriented Module Layout**: Public source files are organized around a single exported type, keeping modules shorter and easier to scan
 - **Explicit Method Chaining**: fluent composition starts from a concrete Box, Rc, or Arc wrapper
@@ -34,10 +34,12 @@ extension traits.
 Cargo features keep optional API and dependency costs explicit. `rc` enables
 single-threaded shared wrappers, including `RefCell`-backed task wrappers;
 `once` enables one-shot families; and `stateful` enables explicit `Stateful*`
-families plus `parking_lot::Mutex`-backed Arc task wrappers. Box task wrappers
-remain reusable `FnMut` objects in the baseline API. Wrapper composition is
-also part of the baseline API. `full` enables all optional families; the
-default feature set is empty.
+families plus `parking_lot::Mutex`-backed Arc task wrappers. Task-oriented
+`BoxCallable` and `BoxRunnable` families erase `Send` callbacks so their
+composed values can cross executor boundaries; matching `LocalBox*` task
+wrappers retain support for non-`Send` captures. Wrapper composition is part
+of the baseline API. `full` enables all optional families; the default feature
+set is empty.
 
 ## Installation
 
@@ -56,6 +58,58 @@ qubit-function = { version = "0.16", features = ["full"] }
 ```
 
 Unless noted otherwise, examples below assume the `full` feature is enabled.
+
+## Quick Start
+
+Use a task `Box` wrapper when a composed callback will be submitted to an
+executor. The wrapper, including every returned composition, is `Send`:
+
+```rust
+use qubit_function::{BoxCallable, Callable};
+
+fn require_send<T: Send>(value: T) -> T {
+    value
+}
+
+let mut task = require_send(
+    BoxCallable::new(|| Ok::<i32, String>(20))
+        .map(|value| value + 1)
+        .and_then(|value| Ok(value * 2)),
+);
+assert_eq!(task.call(), Ok(42));
+```
+
+Choose `Arc*` for a callback shared by concurrent owners. Choose a task
+`LocalBox*` when a single-threaded hook or event loop must capture `Rc` data:
+
+```rust
+use std::rc::Rc;
+use qubit_function::{Callable, LocalBoxCallable};
+
+let suffix = Rc::new(String::from("!"));
+let mut callback = LocalBoxCallable::<String, String>::new(|| {
+    Ok(String::from("ready"))
+})
+.map(move |value| format!("{value}{suffix}"));
+
+assert_eq!(callback.call(), Ok(String::from("ready!")));
+```
+
+Stateful Arc wrappers place a `Send` callback behind a mutex. The callback
+itself need not be `Sync`; the wrapper provides synchronized shared access:
+
+```rust
+use std::cell::Cell;
+use qubit_function::{ArcStatefulSupplier, StatefulSupplier};
+
+let counter = Cell::new(0);
+let mut next = ArcStatefulSupplier::new(move || {
+    counter.set(counter.get() + 1);
+    counter.get()
+});
+
+assert_eq!(next.get(), 1);
+```
 
 ## Core Abstractions
 
@@ -331,7 +385,8 @@ or an error (equivalent to `FnMut() -> Result<R, E>`).
 **Closure Equivalent**: `FnMut() -> Result<R, E>`
 
 **Implementations**:
-- `BoxCallable<R, E>` - Reusable single ownership
+- `BoxCallable<R, E>` - Reusable `Send` single ownership for executor tasks
+- `LocalBoxCallable<R, E>` - Reusable local ownership for non-`Send` captures
 - `RcCallable<R, E>` - Reusable single-threaded shared ownership
 - `ArcCallable<R, E>` - Reusable thread-safe ownership
 
@@ -353,7 +408,8 @@ Executes a zero-argument action and reports success or failure
 **Closure Equivalent**: `FnMut() -> Result<(), E>`
 
 **Implementations**:
-- `BoxRunnable<E>` - Reusable single ownership
+- `BoxRunnable<E>` - Reusable `Send` single ownership for executor tasks
+- `LocalBoxRunnable<E>` - Reusable local ownership for non-`Send` captures
 - `RcRunnable<E>` - Reusable single-threaded shared ownership
 - `ArcRunnable<E>` - Reusable thread-safe ownership
 
@@ -375,7 +431,8 @@ success value or an error (equivalent to `FnMut(&mut T) -> Result<R, E>`).
 **Closure Equivalent**: `FnMut(&mut T) -> Result<R, E>`
 
 **Implementations**:
-- `BoxCallableWith<T, R, E>` - Reusable single ownership
+- `BoxCallableWith<T, R, E>` - Reusable `Send` ownership for executor tasks
+- `LocalBoxCallableWith<T, R, E>` - Reusable local ownership for non-`Send` captures
 - `RcCallableWith<T, R, E>` - Reusable single-threaded shared ownership
 - `ArcCallableWith<T, R, E>` - Reusable thread-safe ownership
 
@@ -401,7 +458,8 @@ failure (equivalent to `FnMut(&mut T) -> Result<(), E>`).
 **Closure Equivalent**: `FnMut(&mut T) -> Result<(), E>`
 
 **Implementations**:
-- `BoxRunnableWith<T, E>` - Reusable single ownership
+- `BoxRunnableWith<T, E>` - Reusable `Send` ownership for executor tasks
+- `LocalBoxRunnableWith<T, E>` - Reusable local ownership for non-`Send` captures
 - `RcRunnableWith<T, E>` - Reusable single-threaded shared ownership
 - `ArcRunnableWith<T, E>` - Reusable thread-safe ownership
 
@@ -836,11 +894,11 @@ Each trait has multiple implementations based on ownership model:
 | StatefulMutator | BoxStatefulMutator | ArcStatefulMutator | RcStatefulMutator |
 | Supplier | BoxSupplier | ArcSupplier | RcSupplier |
 | SupplierOnce | BoxSupplierOnce | - | - |
-| Callable | BoxCallable | ArcCallable | RcCallable |
-| CallableWith | BoxCallableWith | ArcCallableWith | RcCallableWith |
+| Callable | BoxCallable, LocalBoxCallable | ArcCallable | RcCallable |
+| CallableWith | BoxCallableWith, LocalBoxCallableWith | ArcCallableWith | RcCallableWith |
 | CallableOnce | BoxCallableOnce, LocalBoxCallableOnce | - | - |
-| Runnable | BoxRunnable | ArcRunnable | RcRunnable |
-| RunnableWith | BoxRunnableWith | ArcRunnableWith | RcRunnableWith |
+| Runnable | BoxRunnable, LocalBoxRunnable | ArcRunnable | RcRunnable |
+| RunnableWith | BoxRunnableWith, LocalBoxRunnableWith | ArcRunnableWith | RcRunnableWith |
 | RunnableOnce | BoxRunnableOnce, LocalBoxRunnableOnce | - | - |
 | StatefulSupplier | BoxStatefulSupplier | ArcStatefulSupplier | RcStatefulSupplier |
 | Function | BoxFunction | ArcFunction | RcFunction |
@@ -869,7 +927,8 @@ Each trait has multiple implementations based on ownership model:
 | StatefulTester | BoxStatefulTester | ArcStatefulTester | RcStatefulTester |
 
 **Legend**:
-- **Box**: Single ownership and dynamic dispatch; composition commonly consumes `self`, while reusable core calls follow their trait receiver
+- **Box**: Single ownership and dynamic dispatch; task Box wrappers are `Send`
+- **LocalBox**: Single ownership for task callbacks with non-`Send` captures
 - **Arc**: Shared ownership, thread-safe, cloneable
 - **Rc**: Shared ownership, single-threaded, cloneable
 - **-**: Not applicable (Once types don't need sharing)
@@ -898,23 +957,46 @@ The `examples/` directory contains demonstrations for every major abstraction
 family. Run examples with:
 
 ```bash
-cargo run --example predicate_demo
-cargo run --example consumer_demo
-cargo run --example function_family_demo
-cargo run --example transformer_demo
-cargo run --example task_demo
-cargo run --example comparator_demo
-cargo run --example tester_demo
+cargo run --features full --example predicate_demo
+cargo run --features full --example consumer_demo
+cargo run --features full --example function_family_demo
+cargo run --features full --example transformer_demo
+cargo run --features full --example task_demo
+cargo run --features full --example comparator_demo
+cargo run --features full --example tester_demo
 ```
 
-## Documentation
+## Testing
 
-The README and rustdoc are the authoritative user-facing API references.
+```bash
+# Core API with the default empty feature set
+cargo test --no-default-features
+
+# Core API plus regex validation
+cargo test --all-features
+
+# Project CI checks
+./ci-check.sh
+
+# Check code coverage
+./coverage.sh
+```
 
 ## License
 
-Licensed under Apache License, Version 2.0.
+Copyright (c) 2025 - 2026. Haixing Hu. All rights reserved.
+
+Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for the
+full license text.
+
+## Contributing
+
+Contributions are welcome. Please follow the Rust API guidelines, keep public
+API documentation and tests current, and run `./align-ci.sh` to format code and
+`./ci-check.sh` to satisfy CI requirements before submitting a pull request.
 
 ## Author
 
-Haixing Hu <starfish.hu@gmail.com>
+**Haixing Hu** - *Qubit Co. Ltd.*
+
+Repository: [https://github.com/qubit-ltd/rs-function](https://github.com/qubit-ltd/rs-function)

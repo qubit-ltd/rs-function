@@ -9,7 +9,7 @@
 
 use super::ArcTransformer;
 
-/// Type alias for `ArcTransformer<T, T>`
+/// A shared thread-safe unary transformation closed over one type.
 ///
 /// Represents a thread-safe unary operator that transforms a value of type `T`
 /// to another value of the same type `T`. Equivalent to Java's

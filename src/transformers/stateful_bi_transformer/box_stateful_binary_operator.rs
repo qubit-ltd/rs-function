@@ -13,7 +13,7 @@ use super::BoxStatefulBiTransformer;
 // Type Aliases for StatefulBinaryOperator (StatefulBiTransformer<T, T, T>)
 // ============================================================================
 
-/// Type alias for `BoxStatefulBiTransformer<T, T, T>`
+/// A singly owned stateful binary transformation over one type.
 ///
 /// Represents a binary operator that takes two values of type `T` and produces
 /// a value of the same type `T`, with single ownership semantics. Equivalent to

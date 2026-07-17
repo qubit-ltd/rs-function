@@ -13,7 +13,7 @@ use super::BoxBiTransformerOnce;
 // Type Aliases for BinaryOperatorOnce (BiTransformerOnce<T, T, T>)
 // ============================================================================
 
-/// Type alias for `BoxBiTransformerOnce<T, T, T>`
+/// A one-time binary transformation closed over one type.
 ///
 /// Represents a one-time use binary operator that takes two values of type `T`
 /// and produces a value of the same type `T`. Equivalent to Java's

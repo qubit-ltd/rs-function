@@ -9,7 +9,7 @@
 
 use super::RcBiMutatingFunction;
 
-/// Type alias for `RcBiMutatingFunction<T, T, R>`
+/// A locally shared mutating binary function with matching input types.
 ///
 /// Represents a single-threaded binary mutating function that takes two values
 /// of type `T` and produces a value of type `R`. Similar to Java's
