@@ -7,12 +7,12 @@
 // =============================================================================
 //! Defines the `StatefulTester` public trait.
 
-pub mod arc_stateful_tester;
+mod arc_stateful_tester;
 pub use arc_stateful_tester::ArcStatefulTester;
-pub mod box_stateful_tester;
+mod box_stateful_tester;
 pub use box_stateful_tester::BoxStatefulTester;
 #[cfg(feature = "rc")]
-pub mod rc_stateful_tester;
+mod rc_stateful_tester;
 #[cfg(feature = "rc")]
 pub use rc_stateful_tester::RcStatefulTester;
 

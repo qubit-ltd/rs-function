@@ -7,8 +7,8 @@
 // =============================================================================
 
 use qubit_function::testers::tester::{
+    ArcTester,
     Tester,
-    arc_tester::ArcTester,
 };
 
 struct ArcAlwaysTrue;

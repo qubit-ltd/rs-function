@@ -10,10 +10,10 @@
 #[cfg(test)]
 mod tests {
     use qubit_function::testers::tester::{
+        ArcTester,
+        BoxTester,
+        RcTester,
         Tester,
-        arc_tester::ArcTester,
-        box_tester::BoxTester,
-        rc_tester::RcTester,
     };
     use std::sync::{
         Arc,
