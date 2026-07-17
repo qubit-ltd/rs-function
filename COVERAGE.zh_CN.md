@@ -29,13 +29,13 @@ rustup component add llvm-tools-preview
 ./coverage.sh help         # 查看所有选项
 ```
 
-`json` 和 `all` 会对每个源码文件执行当前 CI 阈值：
+`json` 和 `all` 默认会对每个源码文件执行本地阈值：
 
 - 函数覆盖率：`100%`
-- 行覆盖率：`> 98%`
-- 区域覆盖率：`> 98%`
+- 行覆盖率：`> 95%`
+- 区域覆盖率：`> 95%`
 
-临时实验时可以通过环境变量覆盖阈值：
+可以通过环境变量覆盖为更严格的阈值，例如：
 
 ```bash
 MIN_FUNCTION_COVERAGE=100 MIN_LINE_COVERAGE=98 MIN_REGION_COVERAGE=98 ./coverage.sh json
@@ -55,7 +55,7 @@ MIN_FUNCTION_COVERAGE=100 MIN_LINE_COVERAGE=98 MIN_REGION_COVERAGE=98 ./coverage
 
 `./coverage.sh all` 先用 `cargo llvm-cov --no-report` 运行一次测试并收集覆盖率数据，
 再用 `cargo llvm-cov report` 基于同一份数据生成 HTML、LCOV、JSON、Cobertura 和
-文本报告。这样可以和 CircleCI 保持一致，并避免重复执行测试。
+文本报告，从而避免重复执行测试。
 
 ## 直接使用 `cargo llvm-cov`
 
@@ -88,9 +88,9 @@ cargo llvm-cov --html --open --test tester_tests -- test_always_true
 
 ## CI
 
-CircleCI 调用 `./coverage.sh all`，保存 JSON、LCOV 和文本报告，并在配置了
-`COVERALLS_REPO_TOKEN` 时把 LCOV 上传到 Coveralls。`./ci-check.sh` 也会通过
-`./coverage.sh json` 执行相同的阈值检查。
+可复用的 GitHub Actions 工作流使用 `COVERAGE_ENFORCE_THRESHOLDS=0` 运行
+`./coverage.sh all`，发布覆盖率产物并报告汇总结果，但不执行逐源码文件阈值检查。
+本地 `./ci-check.sh` 默认通过 `./coverage.sh json` 执行阈值检查。
 
 ## 常见问题
 
