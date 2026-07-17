@@ -37,7 +37,8 @@ use {
 ///
 /// - **Shared Ownership**: Cloneable via `Arc`, multiple owners allowed
 /// - **Thread-Safe**: Implements `Send + Sync`, safe for concurrent use
-/// - **Stateless**: Cannot modify captured environment (uses `Fn` not `FnMut`)
+/// - **Shared-receiver calls**: Uses `Fn`, so invocation does not require `&mut
+///   self`; interior mutability and external side effects remain possible
 /// - **Chainable**: Method chaining via `&self` (non-consuming)
 ///
 /// # Use Cases

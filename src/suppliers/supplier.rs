@@ -27,7 +27,7 @@
 //! |--------|---------------|----------------------|
 //! | self signature | `&self` | `&mut self` |
 //! | Closure type | `Fn() -> T` | `FnMut() -> T` |
-//! | Can modify internal state | No | Yes |
+//! | Receiver required to call | Shared (`&self`) | Mutable (`&mut self`) |
 //! | Arc implementation | `Arc<dyn Fn() -> T + Send + Sync>` | `Arc<Mutex<dyn FnMut() -> T + Send>>` |
 //! | Use cases | Factory, constant, high concurrency | Counter, sequence, generator |
 //!
@@ -128,17 +128,19 @@ pub use rc_supplier::RcSupplier;
 // Supplier Trait
 // ======================================================================
 
-/// Stateless supplier trait: generates values without modifying
-/// state.
+/// Shared-receiver supplier trait: generates values without input.
 ///
-/// The core abstraction for stateless value generation. Unlike
-/// `Supplier<T>`, it uses `&self` instead of `&mut self`, enabling
-/// usage in read-only contexts and lock-free concurrent access.
+/// The core abstraction for value generation through `&self`. Unlike
+/// `StatefulSupplier<T>`, it does not require `&mut self`, enabling usage in
+/// shared-reference contexts and wrapper-level lock-free concurrent access.
+/// The `Fn` shape does not imply purity: callbacks may use interior mutability
+/// or external side effects.
 ///
 /// # Key Characteristics
 ///
-/// - **No input parameters**: Pure value generation
-/// - **Read-only access**: Uses `&self`, doesn't modify state
+/// - **No input parameters**: The caller supplies no arguments
+/// - **Shared-receiver calls**: Uses `Fn`, so invocation does not require `&mut
+///   self`; interior mutability and external side effects remain possible
 /// - **Returns ownership**: Returns `T` (not `&T`) to avoid lifetime issues
 /// - **Lock-free concurrency**: `Arc` implementation doesn't need `Mutex`
 ///
@@ -193,9 +195,9 @@ pub use rc_supplier::RcSupplier;
 pub trait Supplier<T> {
     /// Generates and returns a value.
     ///
-    /// Executes the underlying function and returns the generated
-    /// value. Uses `&self` because the supplier doesn't modify its
-    /// own state.
+    /// Executes the underlying function and returns the generated value. Uses
+    /// `&self`, so invocation does not require direct mutable access to the
+    /// supplier; interior mutability and external side effects remain possible.
     ///
     /// # Returns
     ///

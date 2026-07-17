@@ -26,8 +26,9 @@
 //!    lifetime issues
 //! 2. **Uses `&mut self`**: Typical scenarios (counters, generators) require
 //!    state modification
-//! 3. **Separate stateless API**: `Supplier` covers lock-free stateless
-//!    factories, while `StatefulSupplier` covers stateful generation
+//! 3. **Separate shared-receiver API**: `Supplier` covers `Fn` factories that
+//!    do not require `&mut self`, while `StatefulSupplier` covers `FnMut`
+//!    generation
 //!
 //! # Three Implementations
 //!
@@ -135,7 +136,7 @@ pub use arc_stateful_supplier::ArcStatefulSupplier;
 ///
 /// # Key Characteristics
 ///
-/// - **No input parameters**: Pure value generation
+/// - **No input parameters**: The caller supplies no arguments
 /// - **Mutable access**: Uses `&mut self` to allow state changes
 /// - **Returns ownership**: Returns `T` (not `&T`) to avoid lifetime issues
 /// - **Can modify state**: Commonly used for counters, sequences, and

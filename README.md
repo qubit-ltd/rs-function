@@ -292,9 +292,12 @@ Accepts two value references and performs side effects once.
 **Implementations**:
 - `BoxBiConsumerOnce<T, U>` - Single ownership, one-time use
 
-### 7. Mutator - Stateless In-Place Mutator
+### 7. Mutator - Shared-Receiver In-Place Mutator
 
-Modifies the target value in place via `&mut T` with no return value. The mutator itself is **stateless** and is invoked with `&self` (equivalent to `Fn(&mut T)`).
+Modifies the target value in place via `&mut T` with no return value. It is
+invoked with `&self` (equivalent to `Fn(&mut T)`), so calling it does not
+require `&mut self`; interior mutability and external side effects remain
+possible.
 
 **Trait**: `Mutator<T>`
 **Core Method**: `apply(&self, value: &mut T)`
@@ -340,11 +343,11 @@ Modifies the target value in place while allowing mutable internal state
 - `ArcStatefulMutator<T>` - Thread-safe with parking_lot::Mutex
 - `RcStatefulMutator<T>` - Single-threaded with RefCell
 
-### 9. Supplier - Stateless Value Supplier
+### 9. Supplier - Shared-Receiver Value Supplier
 
 Returns a value of type `T` on each `get` call with no input. The
-supplier itself is **stateless** and uses `&self` (equivalent to
-`Fn() -> T`).
+supplier uses `&self` (equivalent to `Fn() -> T`). Calling it does not require
+`&mut self`; interior mutability and external side effects remain possible.
 
 **Trait**: `Supplier<T>`
 **Core Method**: `get(&self) -> T`

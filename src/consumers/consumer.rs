@@ -7,8 +7,10 @@
 // =============================================================================
 //! # Consumer Types
 //!
-//! Provides implementations of non-mutating consumer interfaces for executing
-//! operations that neither modify their own state nor modify input values.
+//! Provides consumer interfaces for operations invoked through `&self` with a
+//! shared input reference. The API does not grant direct mutable access to the
+//! wrapper or input, but callbacks may use interior mutability or external
+//! side effects.
 //!
 //! It is similar to the `Fn(&T)` trait in the standard library.
 //!
@@ -26,7 +28,7 @@
 //! Consumer uses `Fn(&T)` semantics: it is invoked through `&self` and receives
 //! shared references to input values.
 //!
-//! Suitable for pure observation, logging, notification and other scenarios.
+//! Suitable for observation, logging, notification and other scenarios.
 //! Compared to `StatefulConsumer`, `Consumer` does not require wrapper-level
 //! interior mutability (`Mutex`/`RefCell`), making it more efficient and easier
 //! to share.
@@ -94,8 +96,9 @@ pub trait Consumer<T> {
     /// Execute non-mutating consumption operation
     ///
     /// Performs an operation on the given reference. The operation typically
-    /// reads input values or produces side effects, but neither modifies the
-    /// input value nor the consumer's own state.
+    /// reads input values or produces side effects. It receives no direct
+    /// mutable access to the input or consumer, though interior mutability and
+    /// external state remain possible.
     ///
     /// # Parameters
     ///

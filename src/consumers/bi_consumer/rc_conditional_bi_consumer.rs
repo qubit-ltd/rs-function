@@ -30,11 +30,12 @@ use {
 /// # Features
 ///
 /// - **Shared Ownership**: Cloneable through `Rc`, allows multiple owners
-/// - **Single-Threaded**: Not thread-safe, more efficient than Arc in
-///   single-threaded contexts
+/// - **Single-Threaded**: Uses non-atomic `Rc`; choose `Arc` when thread-safe
+///   sharing is required, and benchmark the real workload when cost matters
 /// - **Conditional Execution**: Only consumes when predicate returns `true`
 /// - **Implements BiConsumer**: Can be used anywhere a `BiConsumer` is expected
-/// - **Non-mutating**: Neither modifies itself nor input values
+/// - **Shared access**: Receives shared references; interior mutability and
+///   external side effects remain possible
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcConditionalBiConsumer<T, U> {
     pub(super) consumer: RcBiConsumer<T, U>,

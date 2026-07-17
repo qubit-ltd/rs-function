@@ -43,14 +43,15 @@ use {
 ///
 /// Choose `RcConsumer` when:
 /// - Need to share non-mutating consumer within a single thread
-/// - Pure observation operations, performance critical
+/// - Observation operations requiring single-threaded shared ownership
 /// - Event handling in single-threaded UI frameworks
 ///
-/// # Performance Advantages
+/// # Ownership Cost
 ///
-/// `RcConsumer` has neither Arc's atomic operation overhead nor
-/// RefCell's runtime borrow checking overhead, making it the most performant of
-/// the three non-mutating consumers.
+/// `Rc` uses non-atomic reference counting and is single-threaded; `Arc` uses
+/// atomic reference counting and supports thread-safe sharing. Neither wrapper
+/// adds a mutex around callback invocation. Choose based on thread-safety
+/// requirements and benchmark the real workload when performance matters.
 ///
 /// # Examples
 ///

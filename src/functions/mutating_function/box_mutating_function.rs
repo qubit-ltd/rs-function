@@ -35,7 +35,8 @@ use {
 /// - **Single Ownership**: Not cloneable, ownership moves on use
 /// - **Runtime cost**: One heap allocation and dynamic dispatch; no reference
 ///   counting or locking
-/// - **Stateless**: Cannot modify captured environment (uses `Fn` not `FnMut`)
+/// - **Shared-receiver calls**: Uses `Fn`, so invocation does not require `&mut
+///   self`; interior mutability and external side effects remain possible
 /// - **Builder Pattern**: Method chaining consumes `self` naturally
 /// - **Factory Methods**: Convenient constructors for common patterns
 ///

@@ -35,7 +35,8 @@ use {
 /// - **Conditional Execution**: Only consumes when predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 /// - **Implements BiConsumer**: Can be used anywhere a `BiConsumer` is expected
-/// - **Non-mutating**: Neither modifies itself nor input values
+/// - **Shared access**: Receives shared references; interior mutability and
+///   external side effects remain possible
 ///
 /// # Examples
 ///

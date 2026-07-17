@@ -35,9 +35,11 @@ use {
 ///
 /// - **Shared Ownership**: Cloneable via `Rc`, multiple owners allowed
 /// - **Single-Threaded**: Not thread-safe, cannot be sent across threads
-/// - **Stateless**: Cannot modify captured environment (uses `Fn` not `FnMut`)
+/// - **Shared-receiver calls**: Uses `Fn`, so invocation does not require `&mut
+///   self`; interior mutability and external side effects remain possible
 /// - **Chainable**: Method chaining via `&self` (non-consuming)
-/// - **Performance**: More efficient than `ArcMutator` (no locking)
+/// - **Ownership Cost**: `Rc` uses non-atomic reference counting; `Arc` uses
+///   atomic reference counting, and neither wrapper locks callback invocation
 ///
 /// # Use Cases
 ///
@@ -45,7 +47,8 @@ use {
 /// - The mutator needs to be shared within a single thread for stateless
 ///   operations
 /// - Thread safety is not required
-/// - Performance is important (avoiding lock overhead)
+/// - Single-threaded shared ownership without atomic reference counting is
+///   preferred; benchmark the real workload when performance matters
 ///
 /// # Examples
 ///
