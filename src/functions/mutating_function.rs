@@ -23,6 +23,10 @@
 //!
 //! # Design Philosophy
 //!
+//! `MutatingFunction` uses the shared-receiver `Fn(&mut T) -> R` call shape:
+//! invocation does not require `&mut self`, while interior mutability and
+//! external side effects remain possible.
+//!
 //! `MutatingFunction` bridges the gap between `Function` and `Mutator`:
 //!
 //! - **Function**: `Fn(&T) -> R` - reads input, returns result

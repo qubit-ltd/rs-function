@@ -7,9 +7,10 @@
 // =============================================================================
 //! # BiConsumer Types
 //!
-//! Provides non-mutating bi-consumer interface implementations for operations
-//! that accept two input parameters without modifying their own state or
-//! the input values.
+//! Provides bi-consumer interfaces for operations invoked through `&self` with
+//! two shared input references. The API grants no direct mutable access to the
+//! wrapper or inputs, but callbacks may use interior mutability or external
+//! side effects.
 //!
 //! It is similar to the `Fn(&T, &U)` trait in the standard library.
 //!
@@ -25,7 +26,7 @@
 //! BiConsumer uses `Fn(&T, &U)` semantics: it is invoked through `&self` and
 //! receives shared references to both input values.
 //!
-//! Suitable for pure observation, logging, and notification scenarios with two
+//! Suitable for observation, logging, and notification scenarios with two
 //! parameters. Compared to `StatefulBiConsumer`, `BiConsumer` does not require
 //! wrapper-level interior mutability (`Mutex`/`RefCell`), making it more
 //! efficient and easier to share.
@@ -107,8 +108,9 @@ pub trait BiConsumer<T, U> {
     /// Performs the non-mutating consumption operation
     ///
     /// Executes an operation on the given two references. The operation
-    /// typically reads input values or produces side effects, but neither
-    /// modifies the input values nor the consumer's own state.
+    /// typically reads input values or produces side effects. It receives no
+    /// direct mutable access to the inputs or consumer, though interior
+    /// mutability and external state remain possible.
     ///
     /// # Parameters
     ///

@@ -43,14 +43,15 @@ use {
 ///
 /// Choose `RcBiConsumer` when:
 /// - Need to share non-mutating bi-consumer within a single thread
-/// - Pure observation operations, performance critical
+/// - Observation operations requiring single-threaded shared ownership
 /// - Single-threaded UI framework event handling
 ///
-/// # Performance Advantages
+/// # Ownership Cost
 ///
-/// `RcBiConsumer` has neither Arc's atomic operation overhead nor
-/// RefCell's runtime borrow checking overhead, making it the best
-/// performing among the three non-mutating bi-consumer types.
+/// `Rc` uses non-atomic reference counting and is single-threaded; `Arc` uses
+/// atomic reference counting and supports thread-safe sharing. Neither wrapper
+/// adds a mutex around callback invocation. Choose based on thread-safety
+/// requirements and benchmark the real workload when performance matters.
 ///
 /// # Examples
 ///

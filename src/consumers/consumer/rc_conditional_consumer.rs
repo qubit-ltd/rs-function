@@ -37,7 +37,8 @@ use {
 /// - **Conditional Execution**: Only consumes when predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 /// - **Implements Consumer**: Can be used anywhere a `Consumer` is expected
-/// - **Non-mutating**: Neither modifies itself nor input values
+/// - **Shared access**: Receives `&self` and `&T`; interior mutability and
+///   external side effects remain possible
 ///
 /// # Examples
 ///

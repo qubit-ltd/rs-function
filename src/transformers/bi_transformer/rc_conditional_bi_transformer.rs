@@ -36,7 +36,8 @@ use {
 /// - **Single-Threaded**: Not thread-safe, cannot be sent across threads
 /// - **Conditional Execution**: Only transforms when bi-predicate returns
 ///   `true`
-/// - **No Lock Overhead**: More efficient than `ArcConditionalBiTransformer`
+/// - **Ownership Cost**: `Rc` uses non-atomic reference counting; `Arc` uses
+///   atomic reference counting, and neither wrapper locks callback invocation
 ///
 /// # Examples
 ///

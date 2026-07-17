@@ -5,11 +5,11 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-//! # Mutator Types (Stateless)
+//! # Mutator Types (Shared Receiver)
 //!
 //! Provides Java-like `Mutator` interface implementations for performing
-//! **stateless** operations that accept a single mutable input parameter and
-//! return no result.
+//! operations that accept a single mutable input parameter, are invoked through
+//! `&self`, and return no result.
 //!
 //! This module provides a unified `Mutator` trait and three concrete
 //! implementations based on different ownership models:
@@ -25,7 +25,7 @@
 //!
 //! # Design Philosophy
 //!
-//! `Mutator` is designed for **stateless** operations using `Fn(&mut T)`.
+//! Here, **stateless** describes the `Fn(&mut T)` shared-receiver call shape.
 //! Unlike `StatefulMutator` which uses `FnMut(&mut T)` and can maintain
 //! internal state through `FnMut`, `Mutator` cannot mutate ordinary captured
 //! values through its `Fn` receiver. Implementations can still use interior
@@ -39,7 +39,7 @@
 //! | **Mutator** | `&mut T` | ✅ | Not through ordinary `Fn` captures | Transform, validate, normalize |
 //! | **StatefulMutator** | `&mut T` | ✅ | ✅ | Stateful transform, accumulate |
 //!
-//! **Key Insight**: Use `Mutator` for stateless transformations,
+//! **Key Insight**: Use `Mutator` for shared-receiver transformations,
 //! `StatefulMutator` for stateful operations, and `Consumer` for observation.
 //!
 //! # Comparison Table
@@ -248,11 +248,12 @@ pub use arc_conditional_mutator::ArcConditionalMutator;
 // 2. Mutator Trait - Unified Mutator Interface
 // ============================================================================
 
-/// Mutator trait - Unified stateless mutator interface
+/// Mutator trait - Unified shared-receiver mutator interface
 ///
 /// Defines the core behavior of all stateless mutator types. Performs
 /// operations that accept a mutable reference and modify the input value
-/// without maintaining internal state.
+/// without requiring `&mut self`. Interior mutability and external side effects
+/// remain possible.
 ///
 /// This trait is automatically implemented by:
 /// - All closures implementing `Fn(&mut T)` (stateless)
@@ -267,8 +268,8 @@ pub use arc_conditional_mutator::ArcConditionalMutator;
 ///
 /// # Features
 ///
-/// - **Stateless Operations**: No internal state modification (`&self` not
-///   `&mut self`)
+/// - **Shared-receiver calls**: Uses `Fn`, so invocation does not require `&mut
+///   self`; interior mutability and external side effects remain possible
 /// - **Unified Interface**: All mutator types share the same `mutate` method
 ///   signature
 /// - **Automatic Implementation**: Closures automatically implement this trait

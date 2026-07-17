@@ -284,10 +284,10 @@ sum_logger.accept(&10, &20);
 **实现类型**:
 - `BoxBiConsumerOnce<T, U>` - 单一所有权,一次性使用
 
-### 7. Mutator - 无状态原地修改器
+### 7. Mutator - 共享接收者原地修改器
 
-通过可变引用**原地**修改目标值,无返回值; 修改器自身无状态,
-以 `&self` 调用(对应 `Fn(&mut T)`)。
+通过可变引用**原地**修改目标值,无返回值; 以 `&self` 调用(对应
+`Fn(&mut T)`),因此调用不需要 `&mut self`; 仍可使用内部可变性或产生外部副作用。
 
 **Trait**: `Mutator<T>`
 **核心方法**: `apply(&self, value: &mut T)`
@@ -333,10 +333,10 @@ assert_eq!(value, 20);
 - `ArcStatefulMutator<T>` - 线程安全(使用 parking_lot::Mutex)
 - `RcStatefulMutator<T>` - 单线程(使用 RefCell)
 
-### 9. Supplier - 无状态值提供者
+### 9. Supplier - 共享接收者值提供者
 
-无参数,每次调用 `get` 都返回一个 `T`; 值提供者自身无状态,以
-`&self` 调用(对应 `Fn() -> T`)。
+无参数,每次调用 `get` 都返回一个 `T`; 以 `&self` 调用(对应
+`Fn() -> T`),因此调用不需要 `&mut self`; 仍可使用内部可变性或产生外部副作用。
 
 **Trait**: `Supplier<T>`
 **核心方法**: `get(&self) -> T`

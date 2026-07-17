@@ -35,7 +35,8 @@ use {
 /// - **Shared Ownership**: Cloneable via `Rc`, multiple owners allowed
 /// - **Single-Threaded**: Not thread-safe, cannot be sent across threads
 /// - **Conditional Execution**: Only mutates when predicate returns `true`
-/// - **No Lock Overhead**: More efficient than `ArcConditionalMutator`
+/// - **Ownership Cost**: `Rc` uses non-atomic reference counting; `Arc` uses
+///   atomic reference counting, and neither wrapper locks callback invocation
 ///
 /// # Examples
 ///

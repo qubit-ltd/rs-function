@@ -33,7 +33,8 @@ use {
 /// - **Thread Safe**: Implements `Send + Sync`, can be safely used concurrently
 /// - **Conditional Execution**: Only consumes when predicate returns `true`
 /// - **Implements BiConsumer**: Can be used anywhere a `BiConsumer` is expected
-/// - **Non-mutating**: Neither modifies itself nor input values
+/// - **Shared access**: Receives shared references; interior mutability and
+///   external side effects remain possible
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcConditionalBiConsumer<T, U> {
     pub(super) consumer: ArcBiConsumer<T, U>,
