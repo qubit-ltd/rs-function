@@ -9,7 +9,7 @@
 
 use super::RcBiFunction;
 
-/// Type alias for `RcBiFunction<T, T, R>`
+/// A locally shared binary function with matching input types.
 ///
 /// Represents a single-threaded binary function that takes two values of type
 /// `T` and produces a value of type `R`. Similar to Java's `BiFunction<T, T,

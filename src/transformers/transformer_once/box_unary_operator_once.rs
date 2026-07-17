@@ -13,7 +13,7 @@ use super::BoxTransformerOnce;
 // Type Aliases for UnaryOperatorOnce (TransformerOnce<T, T>)
 // ============================================================================
 
-/// Type alias for `BoxTransformerOnce<T, T>`
+/// A one-time unary transformation closed over one type.
 ///
 /// Represents a one-time use unary operator that transforms a value of type `T`
 /// to another value of the same type `T`. Equivalent to Java's

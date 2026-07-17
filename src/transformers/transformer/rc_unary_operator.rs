@@ -9,7 +9,7 @@
 
 use super::RcTransformer;
 
-/// Type alias for `RcTransformer<T, T>`
+/// A locally shared unary transformation closed over one type.
 ///
 /// Represents a single-threaded unary operator that transforms a value of type
 /// `T` to another value of the same type `T`. Equivalent to Java's

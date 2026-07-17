@@ -9,7 +9,7 @@
 
 use super::ArcBiTransformer;
 
-/// Type alias for `ArcBiTransformer<T, T, T>`
+/// A shared thread-safe binary transformation closed over one type.
 ///
 /// Represents a thread-safe binary operator that takes two values of type `T`
 /// and produces a value of the same type `T`. Equivalent to Java's

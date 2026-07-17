@@ -13,7 +13,7 @@ use super::BoxBiTransformer;
 // Type Aliases for BinaryOperator (BiTransformer<T, T, T>)
 // ============================================================================
 
-/// Type alias for `BoxBiTransformer<T, T, T>`
+/// A singly owned binary transformation closed over one type.
 ///
 /// Represents a binary operator that takes two values of type `T` and produces
 /// a value of the same type `T`, with single ownership semantics. Equivalent to

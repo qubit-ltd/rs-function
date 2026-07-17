@@ -9,7 +9,7 @@
 
 use super::ArcBiFunction;
 
-/// Type alias for `ArcBiFunction<T, T, R>`
+/// A shared thread-safe binary function with matching input types.
 ///
 /// Represents a thread-safe binary function that takes two values of type `T`
 /// and produces a value of type `R`. Similar to Java's `BiFunction<T, T, R>`

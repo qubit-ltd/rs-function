@@ -5,6 +5,7 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
+#![cfg_attr(docsrs, feature(doc_auto_cfg))]
 //! # Qubit Function
 //!
 //! Provides functional programming abstractions for Rust, including:

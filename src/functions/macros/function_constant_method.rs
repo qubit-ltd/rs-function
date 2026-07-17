@@ -143,6 +143,20 @@ macro_rules! impl_function_constant_method {
     // Three generic parameters - mutating BiFunction
     ($struct_name:ident < $t:ident, $u:ident, $r:ident >, mut $($extra_bounds:tt)+) => {
         impl<$t, $u, $r> $struct_name<$t, $u, $r> {
+            /// Creates a mutating function that ignores both inputs and
+            /// returns a clone of `value`.
+            ///
+            /// The returned function can be invoked repeatedly while `value`
+            /// remains cloneable and satisfies the wrapper's storage bounds.
+            ///
+            /// # Parameters
+            ///
+            /// * `value` - The value to clone for each invocation.
+            ///
+            /// # Returns
+            ///
+            /// A function that returns the cloned value without modifying
+            /// either input.
             #[inline]
             pub fn constant(value: $r) -> $struct_name<$t, $u, $r>
             where

@@ -21,7 +21,7 @@
 
 - **完整的函数式接口套件**: 覆盖可复用、一次性、有状态、可变输入和可失败任务等函数式抽象家族
 - **线程安全回调适配器**: Arc 有状态适配器通过 `parking_lot::Mutex` 串行执行回调
-- **多种所有权模型**: 基于 Box 的单一所有权、基于 Arc 的线程安全共享、基于 Rc 的单线程共享
+- **多种所有权模型**: 基于 Box 的单一所有权、支持非 `Send` 捕获的 LocalBox 任务包装器、基于 Arc 的线程安全共享、基于 Rc 的单线程共享
 - **灵活的 API 设计**: 基于 trait 的统一接口,针对不同场景优化的具体实现
 - **面向类型的模块布局**: 公开源码文件围绕单一导出类型组织,模块更短,更易阅读和定位
 - **显式方法链式调用**: 从具体的 Box、Rc 或 Arc 包装器开始流畅组合
@@ -32,8 +32,9 @@
 Cargo feature 明确划分可选 API 和依赖成本：`rc` 启用单线程共享包装器，
 包括基于 `RefCell` 的任务包装器；`once` 启用一次性调用家族；`stateful`
 启用显式的 `Stateful*` 家族，以及基于 `parking_lot::Mutex` 的 Arc 任务包装器。
-Box 任务包装器在基础 API 中仍是可重复调用的 `FnMut` 对象。包装器组合也属于
-基础 API。`full` 启用全部可选家族；默认 feature 为空。
+面向任务的 `BoxCallable` 和 `BoxRunnable` 家族擦除为 `Send` 回调，因此组合后的值
+可以跨越执行器边界；对应的 `LocalBox*` 任务包装器继续支持非 `Send` 捕获。
+包装器组合属于基础 API。`full` 启用全部可选家族；默认 feature 为空。
 
 ## 安装
 
@@ -52,6 +53,58 @@ qubit-function = { version = "0.16", features = ["full"] }
 ```
 
 除非特别说明，下文示例均假定已启用 `full` feature。
+
+## 快速开始
+
+组合后的回调需要提交给执行器时，使用任务 `Box` 包装器。包装器及其组合结果均为
+`Send`：
+
+```rust
+use qubit_function::{BoxCallable, Callable};
+
+fn require_send<T: Send>(value: T) -> T {
+    value
+}
+
+let mut task = require_send(
+    BoxCallable::new(|| Ok::<i32, String>(20))
+        .map(|value| value + 1)
+        .and_then(|value| Ok(value * 2)),
+);
+assert_eq!(task.call(), Ok(42));
+```
+
+并发所有者需要共享回调时选择 `Arc*`。单线程钩子或事件循环需要捕获 `Rc` 数据时，
+选择任务 `LocalBox*`：
+
+```rust
+use std::rc::Rc;
+use qubit_function::{Callable, LocalBoxCallable};
+
+let suffix = Rc::new(String::from("!"));
+let mut callback = LocalBoxCallable::<String, String>::new(|| {
+    Ok(String::from("ready"))
+})
+.map(move |value| format!("{value}{suffix}"));
+
+assert_eq!(callback.call(), Ok(String::from("ready!")));
+```
+
+有状态 Arc 包装器将 `Send` 回调放在互斥锁之后。回调自身无需实现 `Sync`，同步共享
+访问由包装器提供：
+
+```rust
+use std::cell::Cell;
+use qubit_function::{ArcStatefulSupplier, StatefulSupplier};
+
+let counter = Cell::new(0);
+let mut next = ArcStatefulSupplier::new(move || {
+    counter.set(counter.get() + 1);
+    counter.get()
+});
+
+assert_eq!(next.get(), 1);
+```
 
 ## 核心抽象
 
@@ -323,7 +376,8 @@ assert_eq!(factory.get(), "你好");
 **等价闭包**: `FnMut() -> Result<R, E>`
 
 **实现类型**:
-- `BoxCallable<R, E>` - 可复用单一所有权
+- `BoxCallable<R, E>` - 面向执行器任务的可复用 `Send` 单一所有权
+- `LocalBoxCallable<R, E>` - 支持非 `Send` 捕获的本地可复用所有权
 - `RcCallable<R, E>` - 可复用单线程共享所有权
 - `ArcCallable<R, E>` - 可复用线程安全共享所有权
 
@@ -345,7 +399,8 @@ assert_eq!(task.call(), Ok(42));
 **等价闭包**: `FnMut() -> Result<(), E>`
 
 **实现类型**:
-- `BoxRunnable<E>` - 可复用单一所有权
+- `BoxRunnable<E>` - 面向执行器任务的可复用 `Send` 单一所有权
+- `LocalBoxRunnable<E>` - 支持非 `Send` 捕获的本地可复用所有权
 - `RcRunnable<E>` - 可复用单线程共享所有权
 - `ArcRunnable<E>` - 可复用线程安全共享所有权
 
@@ -367,7 +422,8 @@ assert_eq!(task.run(), Ok(()));
 **等价闭包**: `FnMut(&mut T) -> Result<R, E>`
 
 **实现类型**:
-- `BoxCallableWith<T, R, E>` - 可复用单一所有权
+- `BoxCallableWith<T, R, E>` - 面向执行器任务的可复用 `Send` 所有权
+- `LocalBoxCallableWith<T, R, E>` - 支持非 `Send` 捕获的本地可复用所有权
 - `RcCallableWith<T, R, E>` - 可复用单线程共享所有权
 - `ArcCallableWith<T, R, E>` - 可复用线程安全共享所有权
 
@@ -393,7 +449,8 @@ assert_eq!(task.call_with(&mut value), Ok(42));
 **等价闭包**: `FnMut(&mut T) -> Result<(), E>`
 
 **实现类型**:
-- `BoxRunnableWith<T, E>` - 可复用单一所有权
+- `BoxRunnableWith<T, E>` - 面向执行器任务的可复用 `Send` 所有权
+- `LocalBoxRunnableWith<T, E>` - 支持非 `Send` 捕获的本地可复用所有权
 - `RcRunnableWith<T, E>` - 可复用单线程共享所有权
 - `ArcRunnableWith<T, E>` - 可复用线程安全共享所有权
 
@@ -823,11 +880,11 @@ assert!(every_second_call.test());
 | StatefulMutator | BoxStatefulMutator | ArcStatefulMutator | RcStatefulMutator |
 | Supplier | BoxSupplier | ArcSupplier | RcSupplier |
 | SupplierOnce | BoxSupplierOnce | - | - |
-| Callable | BoxCallable | ArcCallable | RcCallable |
-| CallableWith | BoxCallableWith | ArcCallableWith | RcCallableWith |
+| Callable | BoxCallable, LocalBoxCallable | ArcCallable | RcCallable |
+| CallableWith | BoxCallableWith, LocalBoxCallableWith | ArcCallableWith | RcCallableWith |
 | CallableOnce | BoxCallableOnce, LocalBoxCallableOnce | - | - |
-| Runnable | BoxRunnable | ArcRunnable | RcRunnable |
-| RunnableWith | BoxRunnableWith | ArcRunnableWith | RcRunnableWith |
+| Runnable | BoxRunnable, LocalBoxRunnable | ArcRunnable | RcRunnable |
+| RunnableWith | BoxRunnableWith, LocalBoxRunnableWith | ArcRunnableWith | RcRunnableWith |
 | RunnableOnce | BoxRunnableOnce, LocalBoxRunnableOnce | - | - |
 | StatefulSupplier | BoxStatefulSupplier | ArcStatefulSupplier | RcStatefulSupplier |
 | Function | BoxFunction | ArcFunction | RcFunction |
@@ -856,7 +913,8 @@ assert!(every_second_call.test());
 | StatefulTester | BoxStatefulTester | ArcStatefulTester | RcStatefulTester |
 
 **图例**:
-- **Box**: 单一所有权和动态分发；组合方法通常消耗 `self`，可复用核心调用则遵循相应 trait 的 receiver
+- **Box**: 单一所有权和动态分发；任务 Box 包装器实现 `Send`
+- **LocalBox**: 用于捕获非 `Send` 数据的单一所有权任务回调
 - **Arc**: 共享所有权,线程安全,可克隆
 - **Rc**: 共享所有权,单线程,可克隆
 - **-**: 不适用(Once 类型不需要共享)
@@ -882,23 +940,45 @@ panic 不会回滚发生在 panic 前的状态修改，且 `parking_lot::Mutex` 
 `examples/` 目录包含每个主要抽象家族的演示。运行示例:
 
 ```bash
-cargo run --example predicate_demo
-cargo run --example consumer_demo
-cargo run --example function_family_demo
-cargo run --example transformer_demo
-cargo run --example task_demo
-cargo run --example comparator_demo
-cargo run --example tester_demo
+cargo run --features full --example predicate_demo
+cargo run --features full --example consumer_demo
+cargo run --features full --example function_family_demo
+cargo run --features full --example transformer_demo
+cargo run --features full --example task_demo
+cargo run --features full --example comparator_demo
+cargo run --features full --example tester_demo
 ```
 
-## 文档
+## 测试
 
-面向用户的 API 参考以 README 和 rustdoc 为准。
+```bash
+# 使用默认的空 feature 集测试核心 API
+cargo test --no-default-features
+
+# 测试核心 API 和正则校验
+cargo test --all-features
+
+# 运行项目 CI 检查
+./ci-check.sh
+
+# 检查代码覆盖率
+./coverage.sh
+```
 
 ## 许可证
 
-采用 Apache License, Version 2.0 许可证。
+Copyright (c) 2025 - 2026. Haixing Hu. All rights reserved.
+
+本项目基于 Apache License 2.0 授权。完整许可证文本请参阅
+[LICENSE](LICENSE)。
+
+## 贡献
+
+欢迎贡献。请遵循 Rust API 指南，及时更新公共 API 文档与测试，并在提交
+Pull Request 前运行 `./align-ci.sh`格式化代码，运行`./ci-check.sh`对齐CI要求。
 
 ## 作者
 
-胡海星 <starfish.hu@gmail.com>
+**Haixing Hu** - *Qubit Co. Ltd.*
+
+仓库地址：[https://github.com/qubit-ltd/rs-function](https://github.com/qubit-ltd/rs-function)

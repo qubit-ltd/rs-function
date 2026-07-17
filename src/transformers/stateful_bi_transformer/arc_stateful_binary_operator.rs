@@ -9,7 +9,7 @@
 
 use super::ArcStatefulBiTransformer;
 
-/// Type alias for `ArcStatefulBiTransformer<T, T, T>`
+/// A shared thread-safe stateful binary transformation over one type.
 ///
 /// Represents a thread-safe binary operator that takes two values of type `T`
 /// and produces a value of the same type `T`. Equivalent to Java's

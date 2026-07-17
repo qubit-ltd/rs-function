@@ -9,7 +9,7 @@
 
 use super::ArcBiMutatingFunction;
 
-/// Type alias for `ArcBiMutatingFunction<T, T, R>`
+/// A shared thread-safe mutating binary function with matching input types.
 ///
 /// Represents a thread-safe binary mutating function that takes two values of
 /// type `T` and produces a value of type `R`. Similar to Java's `BiFunction<T,

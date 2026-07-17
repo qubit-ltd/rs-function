@@ -14,7 +14,7 @@ use super::BoxBiMutatingFunction;
 // == U)
 // ============================================================================
 
-/// Type alias for `BoxBiMutatingFunction<T, T, R>`
+/// A singly owned mutating binary function with matching input types.
 ///
 /// Represents a binary mutating function that takes two values of type `T` and
 /// produces a value of type `R`, with single ownership semantics. Similar to

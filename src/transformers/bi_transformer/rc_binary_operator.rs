@@ -9,7 +9,7 @@
 
 use super::RcBiTransformer;
 
-/// Type alias for `RcBiTransformer<T, T, T>`
+/// A locally shared binary transformation closed over one type.
 ///
 /// Represents a single-threaded binary operator that takes two values of type
 /// `T` and produces a value of the same type `T`. Equivalent to Java's

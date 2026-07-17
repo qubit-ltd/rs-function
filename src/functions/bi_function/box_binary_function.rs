@@ -13,7 +13,7 @@ use super::BoxBiFunction;
 // Type Aliases for BinaryOperator (BiFunction<T, T, R>)
 // ============================================================================
 
-/// Type alias for `BoxBiFunction<T, T, R>`
+/// A singly owned binary function with matching input types.
 ///
 /// Represents a binary function that takes two values of type `T` and produces
 /// a value of type `R`, with single ownership semantics. Similar to Java's
