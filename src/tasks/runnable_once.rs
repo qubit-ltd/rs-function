@@ -28,7 +28,8 @@ pub use local_box_runnable_once::LocalBoxRunnableOnce;
 
 /// A fallible one-time action.
 ///
-/// Conceptually this matches `FnOnce() -> Result<(), E>`: `run` consumes `self`
+/// Conceptually this matches `FnOnce() -> Result<(), E>`: `run_once` consumes
+/// `self`
 /// and returns `Result<(), E>`, but the surface uses task-oriented naming and
 /// helpers instead of closure types. It is a semantic specialization of
 /// `SupplierOnce<Result<(), E>>` for executable actions and deferred side
@@ -48,7 +49,7 @@ pub use local_box_runnable_once::LocalBoxRunnableOnce;
 /// use qubit_function::{RunnableOnce, BoxRunnableOnce};
 ///
 /// let task = || Ok::<(), String>(());
-/// assert_eq!(task.run(), Ok(()));
+/// assert_eq!(RunnableOnce::run_once(task), Ok(()));
 /// ```
 pub trait RunnableOnce<E> {
     /// Executes the action, consuming `self`.
@@ -57,14 +58,19 @@ pub trait RunnableOnce<E> {
     ///
     /// Returns `Ok(())` when the action succeeds, or `Err(E)` when it fails.
     /// The exact error meaning is defined by the concrete runnable.
-    fn run(self) -> Result<(), E>;
+    ///
+    /// # Errors
+    ///
+    /// Returns `Err(E)` when the underlying action fails.
+    fn run_once(self) -> Result<(), E>;
 }
 
 impl<E, F> RunnableOnce<E> for F
 where
     F: FnOnce() -> Result<(), E>,
 {
-    fn run(self) -> Result<(), E> {
+    #[inline(always)]
+    fn run_once(self) -> Result<(), E> {
         self()
     }
 }

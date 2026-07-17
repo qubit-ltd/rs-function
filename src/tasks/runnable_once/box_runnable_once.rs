@@ -45,20 +45,20 @@ use crate::tasks::callable_once::{
 /// use qubit_function::{BoxRunnableOnce, RunnableOnce};
 ///
 /// let task = BoxRunnableOnce::new(|| Ok::<(), String>(()));
-/// assert_eq!(task.run(), Ok(()));
+/// assert_eq!(task.run_once(), Ok(()));
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxRunnableOnce<E> {
     /// The one-time closure executed by this runnable.
     pub(super) function: Box<dyn FnOnce() -> Result<(), E> + Send>,
     /// The optional name of this runnable.
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<E> BoxRunnableOnce<E> {
     impl_common_new_methods!(
         semantic(RunnableOnce<E> + Send + 'static),
-        |source| move || source.run(),
+        |source| move || source.run_once(),
         |function| Box::new(function),
         "runnable"
     );
@@ -105,7 +105,7 @@ impl<E> BoxRunnableOnce<E> {
         let function = self.function;
         BoxRunnableOnce::new(move || {
             function()?;
-            next.run()
+            next.run_once()
         })
     }
 
@@ -132,7 +132,7 @@ impl<E> BoxRunnableOnce<E> {
         let function = self.function;
         BoxCallableOnce::new(move || {
             function()?;
-            callable.call()
+            callable.call_once()
         })
     }
 }
@@ -140,7 +140,7 @@ impl<E> BoxRunnableOnce<E> {
 impl<E> RunnableOnce<E> for BoxRunnableOnce<E> {
     /// Executes the boxed runnable.
     #[inline]
-    fn run(self) -> Result<(), E> {
+    fn run_once(self) -> Result<(), E> {
         (self.function)()
     }
 }
@@ -149,7 +149,7 @@ impl<E> SupplierOnce<Result<(), E>> for BoxRunnableOnce<E> {
     /// Executes the boxed runnable as a one-time supplier of `Result<(), E>`.
     #[inline]
     fn get(self) -> Result<(), E> {
-        self.run()
+        self.run_once()
     }
 }
 

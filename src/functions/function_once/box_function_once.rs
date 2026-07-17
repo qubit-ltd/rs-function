@@ -39,8 +39,10 @@ use {
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxFunctionOnce<T, R> {
+    /// The wrapped callback implementation.
     pub(super) function: Box<dyn FnOnce(&T) -> R>,
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    /// Diagnostic metadata associated with this callback.
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<T, R> BoxFunctionOnce<T, R> {

@@ -20,6 +20,7 @@ use crate::{
     tasks::callable_with::CallableWith,
 };
 
+/// The erased callback representation used by this implementation.
 type ArcCallableWithFn<T, R, E> =
     Arc<Mutex<dyn FnMut(&mut T) -> Result<R, E> + Send>>;
 
@@ -38,7 +39,7 @@ pub struct ArcCallableWith<T, R, E> {
     /// The stateful closure executed by this callable.
     pub(super) function: ArcCallableWithFn<T, R, E>,
     /// The optional name of this callable.
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<T, R, E> Clone for ArcCallableWith<T, R, E> {

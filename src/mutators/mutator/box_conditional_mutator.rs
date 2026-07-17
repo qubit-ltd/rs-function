@@ -73,7 +73,9 @@ use {
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConditionalMutator<T> {
+    /// The wrapped mutator callback.
     pub(super) mutator: BoxMutator<T>,
+    /// The predicate controlling conditional execution.
     pub(super) predicate: BoxPredicate<T>,
 }
 

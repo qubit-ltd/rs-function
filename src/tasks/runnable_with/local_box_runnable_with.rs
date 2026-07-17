@@ -22,6 +22,7 @@ use crate::{
     },
 };
 
+/// The erased callback representation used by this implementation.
 type LocalBoxRunnableWithFn<T, E> = Box<dyn FnMut(&mut T) -> Result<(), E>>;
 
 /// Local box-based runnable with mutable input.
@@ -35,7 +36,7 @@ pub struct LocalBoxRunnableWith<T, E> {
     /// The stateful closure executed by this runnable.
     pub(super) function: LocalBoxRunnableWithFn<T, E>,
     /// The optional name of this runnable.
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<T, E> LocalBoxRunnableWith<T, E> {

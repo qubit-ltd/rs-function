@@ -50,8 +50,10 @@ use {
 /// before a panic are not rolled back.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcStatefulBiTransformer<T, U, R> {
+    /// The wrapped callback implementation.
     pub(super) function: Arc<Mutex<dyn FnMut(T, U) -> R + Send>>,
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    /// Diagnostic metadata associated with this callback.
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<T, U, R> ArcStatefulBiTransformer<T, U, R> {

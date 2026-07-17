@@ -67,8 +67,10 @@ use {
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcBiConsumer<T, U> {
+    /// The wrapped callback implementation.
     pub(super) function: Arc<ThreadSafeBiConsumerFn<T, U>>,
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    /// Diagnostic metadata associated with this callback.
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<T, U> ArcBiConsumer<T, U> {

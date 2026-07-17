@@ -29,7 +29,8 @@ pub use local_box_callable_once::LocalBoxCallableOnce;
 
 /// A fallible one-time computation.
 ///
-/// Conceptually this matches `FnOnce() -> Result<R, E>`: `call` consumes `self`
+/// Conceptually this matches `FnOnce() -> Result<R, E>`: `call_once` consumes
+/// `self`
 /// and returns `Result<R, E>`, but the surface uses task-oriented naming and
 /// helpers instead of closure types. It is a semantic specialization of
 /// `SupplierOnce<Result<R, E>>` for executable computations and deferred tasks.
@@ -50,7 +51,7 @@ pub use local_box_callable_once::LocalBoxCallableOnce;
 /// use qubit_function::{CallableOnce, BoxCallableOnce};
 ///
 /// let task = || Ok::<i32, String>(21 * 2);
-/// assert_eq!(task.call(), Ok(42));
+/// assert_eq!(CallableOnce::call_once(task), Ok(42));
 /// ```
 pub trait CallableOnce<R, E> {
     /// Executes the computation, consuming `self`.
@@ -59,14 +60,19 @@ pub trait CallableOnce<R, E> {
     ///
     /// Returns `Ok(R)` when the computation succeeds, or `Err(E)` when it
     /// fails. The exact error meaning is defined by the concrete callable.
-    fn call(self) -> Result<R, E>;
+    ///
+    /// # Errors
+    ///
+    /// Returns `Err(E)` when the underlying computation fails.
+    fn call_once(self) -> Result<R, E>;
 }
 
 impl<R, E, F> CallableOnce<R, E> for F
 where
     F: FnOnce() -> Result<R, E>,
 {
-    fn call(self) -> Result<R, E> {
+    #[inline(always)]
+    fn call_once(self) -> Result<R, E> {
         self()
     }
 }

@@ -62,7 +62,9 @@ use {
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConditionalStatefulMutatingFunction<T, R> {
+    /// The wrapped callback implementation.
     pub(super) function: BoxStatefulMutatingFunction<T, R>,
+    /// The predicate controlling conditional execution.
     pub(super) predicate: BoxPredicate<T>,
 }
 

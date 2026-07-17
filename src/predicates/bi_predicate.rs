@@ -256,6 +256,7 @@ pub trait BiPredicate<T, U> {
     ///
     /// `true` if the values satisfy this bi-predicate, `false`
     /// otherwise.
+    #[must_use = "the predicate result should be used"]
     fn test(&self, first: &T, second: &U) -> bool;
 }
 

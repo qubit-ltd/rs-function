@@ -43,8 +43,10 @@ use {
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcPredicate<T> {
+    /// The wrapped callback implementation.
     pub(super) function: Rc<dyn Fn(&T) -> bool>,
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    /// Diagnostic metadata associated with this callback.
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<T> RcPredicate<T> {

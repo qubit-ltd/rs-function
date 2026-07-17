@@ -60,7 +60,9 @@ use {
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcConditionalStatefulMutatingFunction<T, R> {
+    /// The wrapped callback implementation.
     pub(super) function: RcStatefulMutatingFunction<T, R>,
+    /// The predicate controlling conditional execution.
     pub(super) predicate: RcPredicate<T>,
 }
 

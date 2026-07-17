@@ -21,6 +21,7 @@ use {
     std::rc::Rc,
 };
 
+/// The erased callback representation used by this implementation.
 type RcStatefulConsumerFn<T> = Rc<RefCell<dyn FnMut(&T)>>;
 
 // ============================================================================
@@ -95,8 +96,10 @@ type RcStatefulConsumerFn<T> = Rc<RefCell<dyn FnMut(&T)>>;
 /// error. Mutations completed before a panic are not rolled back.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcStatefulConsumer<T> {
+    /// The wrapped callback implementation.
     pub(super) function: RcStatefulConsumerFn<T>,
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    /// Diagnostic metadata associated with this callback.
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<T> RcStatefulConsumer<T> {

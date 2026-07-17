@@ -256,6 +256,7 @@ pub trait StatefulMutatingFunction<T, R> {
     /// assert_eq!(call_count, 1);
     /// assert_eq!(value, 6);
     /// ```
+    #[must_use = "the computed callback result should be used"]
     fn apply(&mut self, t: &mut T) -> R;
 }
 
@@ -278,4 +279,5 @@ type ArcStatefulMutatingFunctionFn<T, R> =
 
 /// Type alias for Rc-wrapped stateful mutating function
 #[cfg(feature = "rc")]
+/// The erased callback representation used by this implementation.
 type RcStatefulMutatingFunctionFn<T, R> = Rc<RefCell<dyn FnMut(&mut T) -> R>>;

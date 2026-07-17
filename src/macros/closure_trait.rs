@@ -84,7 +84,7 @@ macro_rules! impl_closure_trait {
         where
             F: Fn($($arg_ty),*) $(-> $ret)?,
         {
-            #[inline]
+            #[inline(always)]
             fn $method_name(&self, $($arg: $arg_ty),*) $(-> $ret)? {
                 self($($arg),*)
             }
@@ -111,7 +111,7 @@ macro_rules! impl_closure_trait {
         where
             F: FnMut($($arg_ty),*) $(-> $ret)?,
         {
-            #[inline]
+            #[inline(always)]
             fn $method_name(&mut self, $($arg: $arg_ty),*) $(-> $ret)? {
                 self($($arg),*)
             }

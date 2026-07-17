@@ -55,7 +55,9 @@ use {
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcConditionalStatefulTransformer<T, R> {
+    /// The wrapped transformer callback.
     pub(super) transformer: RcStatefulTransformer<T, R>,
+    /// The predicate controlling conditional execution.
     pub(super) predicate: RcPredicate<T>,
 }
 

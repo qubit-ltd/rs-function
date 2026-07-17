@@ -68,7 +68,9 @@ use {
 /// rolled back.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcConditionalStatefulConsumer<T> {
+    /// The wrapped consumer callback.
     pub(super) consumer: ArcStatefulConsumer<T>,
+    /// The predicate controlling conditional execution.
     pub(super) predicate: ArcPredicate<T>,
 }
 

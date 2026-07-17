@@ -18,6 +18,7 @@ use crate::{
 
 use crate::tasks::callable_with::BoxCallableWith;
 
+/// The erased callback representation used by this implementation.
 type BoxRunnableWithFn<T, E> = Box<dyn FnMut(&mut T) -> Result<(), E> + Send>;
 
 /// Box-based runnable with mutable input.
@@ -30,7 +31,7 @@ pub struct BoxRunnableWith<T, E> {
     /// The stateful closure executed by this runnable.
     pub(super) function: BoxRunnableWithFn<T, E>,
     /// The optional name of this runnable.
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<T, E> BoxRunnableWith<T, E> {

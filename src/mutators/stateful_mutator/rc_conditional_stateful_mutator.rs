@@ -58,7 +58,9 @@ use {
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcConditionalStatefulMutator<T> {
+    /// The wrapped mutator callback.
     pub(super) mutator: RcStatefulMutator<T>,
+    /// The predicate controlling conditional execution.
     pub(super) predicate: RcPredicate<T>,
 }
 

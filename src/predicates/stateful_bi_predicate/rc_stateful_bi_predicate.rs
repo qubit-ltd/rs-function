@@ -20,6 +20,7 @@ use {
     std::rc::Rc,
 };
 
+/// The erased callback representation used by this implementation.
 type RcStatefulBiPredicateFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U) -> bool>>;
 
 /// An Rc-based stateful bi-predicate with single-threaded shared ownership.
@@ -33,8 +34,10 @@ type RcStatefulBiPredicateFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U) -> bool>>;
 /// error. Mutations completed before a panic are not rolled back.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcStatefulBiPredicate<T, U> {
+    /// The wrapped callback implementation.
     pub(super) function: RcStatefulBiPredicateFn<T, U>,
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    /// Diagnostic metadata associated with this callback.
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<T, U> RcStatefulBiPredicate<T, U> {

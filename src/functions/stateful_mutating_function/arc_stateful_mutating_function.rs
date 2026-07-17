@@ -78,8 +78,10 @@ use {
 /// before a panic are not rolled back.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcStatefulMutatingFunction<T, R> {
+    /// The wrapped callback implementation.
     pub(super) function: ArcStatefulMutatingFunctionFn<T, R>,
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    /// Diagnostic metadata associated with this callback.
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<T, R> ArcStatefulMutatingFunction<T, R> {

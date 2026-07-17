@@ -65,8 +65,10 @@ use {
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcMutatingFunction<T, R> {
+    /// The wrapped callback implementation.
     pub(super) function: Arc<dyn Fn(&mut T) -> R + Send + Sync>,
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    /// Diagnostic metadata associated with this callback.
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<T, R> ArcMutatingFunction<T, R> {

@@ -38,7 +38,9 @@ use {
 ///   external side effects remain possible
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcConditionalBiConsumer<T, U> {
+    /// The wrapped consumer callback.
     pub(super) consumer: RcBiConsumer<T, U>,
+    /// The predicate controlling conditional execution.
     pub(super) predicate: RcBiPredicate<T, U>,
 }
 

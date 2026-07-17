@@ -17,6 +17,7 @@ use {
     crate::predicates::macros::impl_predicate_debug_display,
 };
 
+/// The erased callback representation used by this implementation.
 type BoxStatefulBiPredicateFn<T, U> = dyn FnMut(&T, &U) -> bool;
 
 /// A Box-based stateful bi-predicate with single ownership.
@@ -26,8 +27,10 @@ type BoxStatefulBiPredicateFn<T, U> = dyn FnMut(&T, &U) -> bool;
 /// matching the single-ownership model.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxStatefulBiPredicate<T, U> {
+    /// The wrapped callback implementation.
     pub(super) function: Box<BoxStatefulBiPredicateFn<T, U>>,
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    /// Diagnostic metadata associated with this callback.
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<T, U> BoxStatefulBiPredicate<T, U> {

@@ -53,6 +53,7 @@ pub trait Comparator<T> {
     /// assert_eq!(cmp.compare(&3, &5), Ordering::Less);
     /// assert_eq!(cmp.compare(&5, &5), Ordering::Equal);
     /// ```
+    #[must_use = "the ordering result should be used"]
     fn compare(&self, a: &T, b: &T) -> Ordering;
 }
 

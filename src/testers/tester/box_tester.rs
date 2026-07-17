@@ -15,7 +15,7 @@ use std::{
 use {
     super::Tester,
     crate::{
-        callback_metadata::CallbackMetadata,
+        internal::CallbackMetadata,
         macros::{
             impl_common_name_methods,
             impl_common_new_methods,
@@ -78,7 +78,9 @@ use {
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxTester {
+    /// The wrapped callback implementation.
     pub(super) function: Box<dyn Fn() -> bool>,
+    /// Diagnostic metadata associated with this callback.
     pub(super) metadata: CallbackMetadata,
 }
 
@@ -106,7 +108,7 @@ impl BoxTester {
     ///
     /// * `next` - The tester to combine with
     ///
-    /// # Return Value
+    /// # Returns
     ///
     /// A new `BoxTester` representing logical AND
     ///
@@ -171,7 +173,7 @@ impl BoxTester {
     ///
     /// * `next` - The tester to combine with
     ///
-    /// # Return Value
+    /// # Returns
     ///
     /// A new `BoxTester` representing logical OR
     ///
@@ -240,7 +242,7 @@ impl BoxTester {
     ///
     /// * `next` - The tester to combine with
     ///
-    /// # Return Value
+    /// # Returns
     ///
     /// A new `BoxTester` representing logical NAND
     ///
@@ -293,7 +295,7 @@ impl BoxTester {
     ///
     /// * `next` - The tester to combine with
     ///
-    /// # Return Value
+    /// # Returns
     ///
     /// A new `BoxTester` representing logical XOR
     ///
@@ -351,7 +353,7 @@ impl BoxTester {
     ///
     /// * `next` - The tester to combine with
     ///
-    /// # Return Value
+    /// # Returns
     ///
     /// A new `BoxTester` representing logical NOR
     ///

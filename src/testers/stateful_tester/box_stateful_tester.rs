@@ -15,7 +15,7 @@ use std::{
 use {
     super::StatefulTester,
     crate::{
-        callback_metadata::CallbackMetadata,
+        internal::CallbackMetadata,
         macros::{
             impl_common_name_methods,
             impl_common_new_methods,
@@ -30,7 +30,9 @@ use {
 /// mutate state captured by the wrapped closure.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxStatefulTester {
+    /// The wrapped callback implementation.
     pub(super) function: Box<dyn FnMut() -> bool>,
+    /// Diagnostic metadata associated with this callback.
     pub(super) metadata: CallbackMetadata,
 }
 

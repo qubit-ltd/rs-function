@@ -123,8 +123,6 @@ macro_rules! impl_predicate_common_methods {
             |$f| $wrapper_expr,
             "predicate"
         );
-        crate::macros::impl_common_name_methods!("predicate");
-
         /// Creates a predicate that always returns `true`.
         ///
         /// # Returns
@@ -144,6 +142,8 @@ macro_rules! impl_predicate_common_methods {
         pub fn always_false() -> Self {
             Self::new_with_name(ALWAYS_FALSE_NAME, |_: &$t| false)
         }
+
+        crate::macros::impl_common_name_methods!("predicate");
     };
 
     // Two generic parameters with a semantic BiPredicate adapter.
@@ -159,8 +159,6 @@ macro_rules! impl_predicate_common_methods {
             |$f| $wrapper_expr,
             "bi-predicate"
         );
-        crate::macros::impl_common_name_methods!("bi-predicate");
-
         /// Creates a bi-predicate that always returns `true`.
         ///
         /// # Returns
@@ -180,6 +178,8 @@ macro_rules! impl_predicate_common_methods {
         pub fn always_false() -> Self {
             Self::new_with_name(ALWAYS_FALSE_NAME, |_: &$t, _: &$u| false)
         }
+
+        crate::macros::impl_common_name_methods!("bi-predicate");
     };
 
     // Single generic parameter - Predicate types
@@ -189,8 +189,6 @@ macro_rules! impl_predicate_common_methods {
         |$f:ident| $wrapper_expr:expr
     ) => {
         $crate::predicates::macros::impl_stateful_predicate_new_methods!($struct_name<$t>, |$f| $wrapper_expr);
-        crate::macros::impl_common_name_methods!("predicate");
-
         /// Creates a predicate that always returns `true`.
         ///
         /// # Returns
@@ -210,6 +208,8 @@ macro_rules! impl_predicate_common_methods {
         pub fn always_false() -> Self {
             Self::new_with_name(ALWAYS_FALSE_NAME, |_: &$t| false)
         }
+
+        crate::macros::impl_common_name_methods!("predicate");
     };
 
     // Two generic parameters - BiPredicate types
@@ -219,8 +219,6 @@ macro_rules! impl_predicate_common_methods {
         |$f:ident| $wrapper_expr:expr
     ) => {
         $crate::predicates::macros::impl_stateful_predicate_new_methods!($struct_name<$t, $u>, |$f| $wrapper_expr);
-        crate::macros::impl_common_name_methods!("bi-predicate");
-
         /// Creates a bi-predicate that always returns `true`.
         ///
         /// # Returns
@@ -240,6 +238,8 @@ macro_rules! impl_predicate_common_methods {
         pub fn always_false() -> Self {
             Self::new_with_name(ALWAYS_FALSE_NAME, |_: &$t, _: &$u| false)
         }
+
+        crate::macros::impl_common_name_methods!("bi-predicate");
     };
 }
 

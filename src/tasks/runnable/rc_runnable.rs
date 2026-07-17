@@ -45,7 +45,7 @@ pub struct RcRunnable<E> {
     /// The stateful closure executed by this runnable.
     pub(super) function: Rc<RefCell<dyn FnMut() -> Result<(), E>>>,
     /// The optional name of this runnable.
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<E> Clone for RcRunnable<E> {

@@ -40,8 +40,10 @@ use {
 /// - **Statefulness**: Can modify internal state between calls
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxStatefulFunction<T, R> {
+    /// The wrapped callback implementation.
     pub(super) function: Box<dyn FnMut(&T) -> R>,
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    /// Diagnostic metadata associated with this callback.
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<T, R> BoxStatefulFunction<T, R> {

@@ -71,7 +71,7 @@ pub trait Tester {
     /// Implementations may still use interior mutability or external side
     /// effects.
     ///
-    /// # Return Value
+    /// # Returns
     ///
     /// Returns `true` if the condition holds, otherwise returns `false`
     ///
@@ -83,6 +83,7 @@ pub trait Tester {
     /// let tester = BoxTester::new(|| true);
     /// assert!(tester.test());
     /// ```
+    #[must_use = "the test result should be used"]
     fn test(&self) -> bool;
 }
 

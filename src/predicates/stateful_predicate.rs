@@ -54,6 +54,7 @@ pub trait StatefulPredicate<T> {
     /// # Returns
     ///
     /// `true` if the value satisfies this predicate, `false` otherwise.
+    #[must_use = "the predicate result should be used"]
     fn test(&mut self, value: &T) -> bool;
 }
 

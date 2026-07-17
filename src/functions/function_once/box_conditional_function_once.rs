@@ -56,7 +56,9 @@ use {
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConditionalFunctionOnce<T, R> {
+    /// The wrapped callback implementation.
     pub(super) function: BoxFunctionOnce<T, R>,
+    /// The predicate controlling conditional execution.
     pub(super) predicate: BoxPredicate<T>,
 }
 

@@ -122,8 +122,6 @@ macro_rules! impl_supplier_common_methods {
             |$f| $wrapper_expr
         );
 
-        crate::macros::impl_common_name_methods!("supplier");
-
         /// Creates a supplier that returns a constant value.
         ///
         /// Creates a supplier that always returns the same value. Useful for
@@ -143,6 +141,8 @@ macro_rules! impl_supplier_common_methods {
         {
             Self::new(move || value.clone())
         }
+
+        crate::macros::impl_common_name_methods!("supplier");
     };
 }
 

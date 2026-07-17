@@ -199,6 +199,7 @@ pub trait StatefulSupplier<T> {
     /// let mut supplier = BoxStatefulSupplier::new(|| 42);
     /// assert_eq!(supplier.get(), 42);
     /// ```
+    #[must_use = "the supplied value should be used"]
     fn get(&mut self) -> T;
 }
 

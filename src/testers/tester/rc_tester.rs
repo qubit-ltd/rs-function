@@ -15,7 +15,7 @@ use std::{
 use {
     crate::{
         Tester,
-        callback_metadata::CallbackMetadata,
+        internal::CallbackMetadata,
         macros::{
             impl_common_name_methods,
             impl_common_new_methods,
@@ -66,7 +66,9 @@ use {
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcTester {
+    /// The wrapped callback implementation.
     pub(super) function: Rc<dyn Fn() -> bool>,
+    /// Diagnostic metadata associated with this callback.
     pub(super) metadata: CallbackMetadata,
 }
 
@@ -90,7 +92,7 @@ impl RcTester {
     ///
     /// * `next` - The tester to combine with
     ///
-    /// # Return Value
+    /// # Returns
     ///
     /// A new `RcTester` representing logical AND
     ///
@@ -123,7 +125,7 @@ impl RcTester {
     ///
     /// * `next` - The tester to combine with
     ///
-    /// # Return Value
+    /// # Returns
     ///
     /// A new `RcTester` representing logical OR
     ///
@@ -156,7 +158,7 @@ impl RcTester {
     ///
     /// * `next` - The tester to combine with
     ///
-    /// # Return Value
+    /// # Returns
     ///
     /// A new `RcTester` representing logical NAND
     ///
@@ -195,7 +197,7 @@ impl RcTester {
     ///
     /// * `next` - The tester to combine with
     ///
-    /// # Return Value
+    /// # Returns
     ///
     /// A new `RcTester` representing logical XOR
     ///
@@ -234,7 +236,7 @@ impl RcTester {
     ///
     /// * `next` - The tester to combine with
     ///
-    /// # Return Value
+    /// # Returns
     ///
     /// A new `RcTester` representing logical NOR
     ///

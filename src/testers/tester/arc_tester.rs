@@ -15,7 +15,7 @@ use std::{
 use {
     crate::{
         Tester,
-        callback_metadata::CallbackMetadata,
+        internal::CallbackMetadata,
         macros::{
             impl_common_name_methods,
             impl_common_new_methods,
@@ -73,7 +73,9 @@ use {
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcTester {
+    /// The wrapped callback implementation.
     pub(super) function: Arc<dyn Fn() -> bool + Send + Sync>,
+    /// Diagnostic metadata associated with this callback.
     pub(super) metadata: CallbackMetadata,
 }
 
@@ -97,7 +99,7 @@ impl ArcTester {
     ///
     /// * `next` - The tester to combine with
     ///
-    /// # Return Value
+    /// # Returns
     ///
     /// A new `ArcTester` representing logical AND
     ///
@@ -166,7 +168,7 @@ impl ArcTester {
     ///
     /// * `next` - The tester to combine with
     ///
-    /// # Return Value
+    /// # Returns
     ///
     /// A new `ArcTester` representing logical OR
     ///
@@ -250,7 +252,7 @@ impl ArcTester {
     ///
     /// * `next` - The tester to combine with
     ///
-    /// # Return Value
+    /// # Returns
     ///
     /// A new `ArcTester` representing logical NAND
     ///
@@ -307,7 +309,7 @@ impl ArcTester {
     ///
     /// * `next` - The tester to combine with
     ///
-    /// # Return Value
+    /// # Returns
     ///
     /// A new `ArcTester` representing logical XOR
     ///
@@ -369,7 +371,7 @@ impl ArcTester {
     ///
     /// * `next` - The tester to combine with
     ///
-    /// # Return Value
+    /// # Returns
     ///
     /// A new `ArcTester` representing logical NOR
     ///

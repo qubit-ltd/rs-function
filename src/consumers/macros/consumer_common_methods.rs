@@ -180,8 +180,6 @@ macro_rules! impl_consumer_common_methods {
         |$f:ident| $wrapper_expr:expr
     ) => {
         $crate::consumers::macros::impl_consumer_new_methods!($struct_name<$t>, |$f| $wrapper_expr);
-        crate::macros::impl_common_name_methods!("consumer");
-
         /// Creates a no-operation consumer.
         ///
         /// Creates a consumer that does nothing when called. Useful for
@@ -194,6 +192,8 @@ macro_rules! impl_consumer_common_methods {
         pub fn noop() -> Self {
             Self::new(|_: &$t| {})
         }
+
+        crate::macros::impl_common_name_methods!("consumer");
     };
 
     // Two generic parameters - BiConsumer types
@@ -203,8 +203,6 @@ macro_rules! impl_consumer_common_methods {
         |$f:ident| $wrapper_expr:expr
     ) => {
         $crate::consumers::macros::impl_consumer_new_methods!($struct_name<$t, $u>, |$f| $wrapper_expr);
-        crate::macros::impl_common_name_methods!("bi-consumer");
-
         /// Creates a no-operation bi-consumer.
         ///
         /// Creates a bi-consumer that does nothing when called. Useful
@@ -217,6 +215,8 @@ macro_rules! impl_consumer_common_methods {
         pub fn noop() -> Self {
             Self::new(|_: &$t, _: &$u| {})
         }
+
+        crate::macros::impl_common_name_methods!("bi-consumer");
     };
 }
 

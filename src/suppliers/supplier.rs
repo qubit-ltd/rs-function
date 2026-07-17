@@ -212,6 +212,7 @@ pub trait Supplier<T> {
     /// assert_eq!(supplier.get(), 42);
     /// assert_eq!(supplier.get(), 42);
     /// ```
+    #[must_use = "the supplied value should be used"]
     fn get(&self) -> T;
 }
 

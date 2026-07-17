@@ -78,7 +78,9 @@ use {
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConditionalConsumerOnce<T> {
+    /// The wrapped consumer callback.
     pub(super) consumer: BoxConsumerOnce<T>,
+    /// The predicate controlling conditional execution.
     pub(super) predicate: BoxPredicate<T>,
 }
 

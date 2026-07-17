@@ -51,5 +51,6 @@ pub trait BiTransformerOnce<T, U, R> {
     /// # Returns
     ///
     /// The transformed output value
+    #[must_use = "the computed callback result should be used"]
     fn apply(self, first: T, second: U) -> R;
 }

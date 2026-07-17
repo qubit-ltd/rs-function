@@ -37,13 +37,13 @@ pub struct LocalBoxCallableOnce<R, E> {
     /// The one-time closure executed by this callable.
     pub(super) function: Box<dyn FnOnce() -> Result<R, E>>,
     /// The optional name of this callable.
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<R, E> LocalBoxCallableOnce<R, E> {
     impl_common_new_methods!(
         semantic(CallableOnce<R, E> + 'static),
-        |source| move || source.call(),
+        |source| move || source.call_once(),
         |function| Box::new(function),
         "local callable"
     );
@@ -143,7 +143,7 @@ impl<R, E> LocalBoxCallableOnce<R, E> {
 impl<R, E> CallableOnce<R, E> for LocalBoxCallableOnce<R, E> {
     /// Executes the local boxed callable.
     #[inline]
-    fn call(self) -> Result<R, E> {
+    fn call_once(self) -> Result<R, E> {
         (self.function)()
     }
 }
@@ -153,7 +153,7 @@ impl<R, E> SupplierOnce<Result<R, E>> for LocalBoxCallableOnce<R, E> {
     /// `Result<R, E>`.
     #[inline]
     fn get(self) -> Result<R, E> {
-        self.call()
+        self.call_once()
     }
 }
 

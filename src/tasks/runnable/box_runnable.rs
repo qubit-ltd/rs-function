@@ -48,7 +48,7 @@ pub struct BoxRunnable<E> {
     /// The stateful closure executed by this runnable.
     pub(super) function: Box<dyn FnMut() -> Result<(), E> + Send>,
     /// The optional name of this runnable.
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<E> BoxRunnable<E> {

@@ -17,12 +17,13 @@ use std::sync::Arc;
 /// clone's handle.
 #[derive(Clone, Debug, Default)]
 pub(crate) struct CallbackMetadata {
+    /// The optional diagnostic name.
     name: Option<Arc<str>>,
 }
 
 impl CallbackMetadata {
     /// Creates metadata without a diagnostic name.
-    #[inline]
+    #[inline(always)]
     pub(crate) const fn unnamed() -> Self {
         Self { name: None }
     }
@@ -44,13 +45,13 @@ impl CallbackMetadata {
     }
 
     /// Returns the diagnostic name, if present.
-    #[inline]
+    #[inline(always)]
     pub(crate) fn name(&self) -> Option<&str> {
         self.name.as_deref()
     }
 
     /// Replaces the diagnostic name when it differs from the current value.
-    #[inline]
+    #[inline(always)]
     pub(crate) fn set_name(&mut self, name: &str) {
         if self.name() != Some(name) {
             self.name = Some(Arc::from(name));
@@ -58,7 +59,7 @@ impl CallbackMetadata {
     }
 
     /// Removes the diagnostic name.
-    #[inline]
+    #[inline(always)]
     pub(crate) fn clear_name(&mut self) {
         self.name = None;
     }

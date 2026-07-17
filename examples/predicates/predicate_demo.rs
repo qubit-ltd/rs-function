@@ -273,11 +273,11 @@ fn interior_mutability_examples() {
     let counter_clone = Arc::clone(&counter);
 
     let handle = std::thread::spawn(move || {
-        pred_clone.test(&5);
-        pred_clone.test(&10);
+        let _ = pred_clone.test(&5);
+        let _ = pred_clone.test(&10);
     });
 
-    pred.test(&3);
+    let _ = pred.test(&3);
     handle.join().expect("thread should not panic");
 
     println!(
