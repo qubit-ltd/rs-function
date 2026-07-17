@@ -63,6 +63,7 @@ use {
 /// mutator.apply(&mut value);
 /// assert_eq!(value, 10);
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxMutator<T> {
     pub(super) function: Box<dyn Fn(&mut T)>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

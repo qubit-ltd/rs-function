@@ -64,6 +64,7 @@ use {
 /// Synchronous re-entry through the same shared state deadlocks. The mutex is
 /// not poisoned after a panic, and mutations completed before a panic are not
 /// rolled back.
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcConditionalStatefulMutator<T> {
     pub(super) mutator: ArcStatefulMutator<T>,
     pub(super) predicate: ArcPredicate<T>,

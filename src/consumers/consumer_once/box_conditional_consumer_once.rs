@@ -76,6 +76,7 @@ use {
 /// consumer.accept(&5);
 /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]); // when branch executed
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConditionalConsumerOnce<T> {
     pub(super) consumer: BoxConsumerOnce<T>,
     pub(super) predicate: BoxPredicate<T>,

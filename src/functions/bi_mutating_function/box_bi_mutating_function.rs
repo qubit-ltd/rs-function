@@ -38,6 +38,7 @@ type BoxBiMutatingFunctionFn<T, U, R> = Box<dyn Fn(&mut T, &mut U) -> R>;
 /// - **Reusability**: Can be called multiple times (borrows inputs mutably each
 ///   time)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxBiMutatingFunction<T, U, R> {
     pub(super) function: BoxBiMutatingFunctionFn<T, U, R>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

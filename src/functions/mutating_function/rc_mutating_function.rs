@@ -62,6 +62,7 @@ use {
 /// let mut value = 5;
 /// assert_eq!(func.apply(&mut value), 10);
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcMutatingFunction<T, R> {
     pub(super) function: Rc<dyn Fn(&mut T) -> R>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

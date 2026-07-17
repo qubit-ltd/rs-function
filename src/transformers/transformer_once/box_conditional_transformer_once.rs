@@ -54,6 +54,7 @@ use {
 /// let conditional2 = double2.when(|x: &i32| *x > 0).or_else(negate2);
 /// assert_eq!(conditional2.apply(-5), 5); // or_else branch executed
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConditionalTransformerOnce<T, R> {
     pub(super) transformer: BoxTransformerOnce<T, R>,
     pub(super) predicate: BoxPredicate<T>,

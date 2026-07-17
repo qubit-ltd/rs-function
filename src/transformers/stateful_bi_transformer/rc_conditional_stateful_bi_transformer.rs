@@ -55,6 +55,7 @@ use {
 /// assert_eq!(conditional.apply(5, 3), 8);
 /// assert_eq!(conditional_clone.apply(-5, 3), -15);
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcConditionalStatefulBiTransformer<T, U, R> {
     pub(super) transformer: RcStatefulBiTransformer<T, U, R>,
     pub(super) predicate: RcBiPredicate<T, U>,

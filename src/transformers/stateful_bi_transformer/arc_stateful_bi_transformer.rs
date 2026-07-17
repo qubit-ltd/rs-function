@@ -48,6 +48,7 @@ use {
 /// callback runs. Synchronous re-entry through the same shared state
 /// deadlocks. The mutex is not poisoned after a panic, and mutations completed
 /// before a panic are not rolled back.
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcStatefulBiTransformer<T, U, R> {
     pub(super) function: Arc<Mutex<dyn FnMut(T, U) -> R + Send>>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

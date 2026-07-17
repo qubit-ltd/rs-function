@@ -40,6 +40,7 @@ type ArcBiFunctionFn<T, U, R> = Arc<dyn Fn(&T, &U) -> R + Send + Sync>;
 /// - **Reusability**: Can be called multiple times (borrows inputs each time)
 /// - **Thread Safety**: Thread-safe (`Send + Sync` required)
 /// - **Clonable**: Cheap cloning via `Arc::clone`
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcBiFunction<T, U, R> {
     pub(super) function: ArcBiFunctionFn<T, U, R>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

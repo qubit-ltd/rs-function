@@ -71,6 +71,7 @@ use {
 /// counter.fetch_add(1, Ordering::Relaxed);
 /// assert!(shared.test());
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcTester {
     pub(super) function: Arc<dyn Fn() -> bool + Send + Sync>,
     pub(super) metadata: CallbackMetadata,

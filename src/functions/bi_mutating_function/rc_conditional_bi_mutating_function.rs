@@ -38,6 +38,7 @@ use {
 /// - **Conditional Execution**: Only computes when bi-predicate returns `true`
 /// - **No Lock Overhead**: More efficient than
 ///   `ArcConditionalBiMutatingFunction`
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcConditionalBiMutatingFunction<T, U, R> {
     pub(super) function: RcBiMutatingFunction<T, U, R>,
     pub(super) predicate: RcBiPredicate<T, U>,

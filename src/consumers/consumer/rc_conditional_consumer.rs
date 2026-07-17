@@ -71,6 +71,7 @@ use {
 /// consumer.accept(&5);  // Prints: Positive: 5
 /// consumer.accept(&-5); // Prints: Non-positive: -5
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcConditionalConsumer<T> {
     pub(super) consumer: RcConsumer<T>,
     pub(super) predicate: RcPredicate<T>,

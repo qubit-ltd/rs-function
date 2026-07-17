@@ -43,6 +43,7 @@ use {
 /// assert!(pred.test(&5, &3));  // Still works
 /// # }
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcBiPredicate<T, U> {
     pub(super) function: Rc<BiPredicateFn<T, U>>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

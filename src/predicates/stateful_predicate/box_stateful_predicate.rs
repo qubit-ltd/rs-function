@@ -22,6 +22,7 @@ use {
 /// This type stores a `Box<dyn FnMut(&T) -> bool>`, so each call may update
 /// the predicate's internal state. Composition methods consume `self`,
 /// matching the single-ownership model.
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxStatefulPredicate<T> {
     pub(super) function: Box<dyn FnMut(&T) -> bool>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

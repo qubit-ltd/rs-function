@@ -54,6 +54,7 @@ use {
 /// let conditional2 = add2.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(multiply2);
 /// assert_eq!(conditional2.apply(&-5, &3), -15); // or_else branch executed
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConditionalBiFunctionOnce<T, U, R> {
     pub(super) function: BoxBiFunctionOnce<T, U, R>,
     pub(super) predicate: BoxBiPredicate<T, U>,

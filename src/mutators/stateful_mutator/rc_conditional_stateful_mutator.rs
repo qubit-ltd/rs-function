@@ -56,6 +56,7 @@ use {
 /// m.apply(&mut value);
 /// assert_eq!(value, 6);
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcConditionalStatefulMutator<T> {
     pub(super) mutator: RcStatefulMutator<T>,
     pub(super) predicate: RcPredicate<T>,

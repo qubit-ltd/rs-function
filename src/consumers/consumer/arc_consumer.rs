@@ -63,6 +63,7 @@ use {
 /// consumer.accept(&5);
 /// clone.accept(&10);
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcConsumer<T> {
     pub(super) function: Arc<dyn Fn(&T) + Send + Sync>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

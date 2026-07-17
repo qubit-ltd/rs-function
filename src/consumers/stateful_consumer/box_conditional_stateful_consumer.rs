@@ -82,6 +82,7 @@ use {
 /// consumer.accept(&-5);
 /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5, 5]); // or_else branch executed
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConditionalStatefulConsumer<T> {
     pub(super) consumer: BoxStatefulConsumer<T>,
     pub(super) predicate: BoxPredicate<T>,

@@ -76,6 +76,7 @@ use {
 /// assert!(combined.test());
 /// # }
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxTester {
     pub(super) function: Box<dyn Fn() -> bool>,
     pub(super) metadata: CallbackMetadata,

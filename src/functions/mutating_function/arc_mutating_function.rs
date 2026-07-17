@@ -62,6 +62,7 @@ use {
 /// let mut value = 5;
 /// assert_eq!(func.apply(&mut value), 10);
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcMutatingFunction<T, R> {
     pub(super) function: Arc<dyn Fn(&mut T) -> R + Send + Sync>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

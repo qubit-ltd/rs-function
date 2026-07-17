@@ -90,6 +90,7 @@ use {
 /// assert_eq!(tripled.get(), 30);
 /// # }
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcSupplier<T> {
     pub(super) function: Arc<dyn Fn() -> T + Send + Sync>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

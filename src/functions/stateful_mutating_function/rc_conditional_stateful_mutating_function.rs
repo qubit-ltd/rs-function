@@ -58,6 +58,7 @@ use {
 /// assert_eq!(conditional.apply(&mut positive), 10);
 /// assert_eq!(conditional_clone.apply(&mut negative), -5);
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcConditionalStatefulMutatingFunction<T, R> {
     pub(super) function: RcStatefulMutatingFunction<T, R>,
     pub(super) predicate: RcPredicate<T>,

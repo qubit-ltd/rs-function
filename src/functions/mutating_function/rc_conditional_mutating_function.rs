@@ -54,6 +54,7 @@ use {
 /// let mut negative = -5;
 /// assert_eq!(conditional_clone.apply(&mut negative), -5);
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcConditionalMutatingFunction<T, R> {
     pub(super) function: RcMutatingFunction<T, R>,
     pub(super) predicate: RcPredicate<T>,

@@ -67,6 +67,7 @@ use {
 /// consumer.accept(&5);
 /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxStatefulConsumer<T> {
     pub(super) function: Box<dyn FnMut(&T)>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

@@ -7,7 +7,14 @@
 // =============================================================================
 #![cfg(feature = "full")]
 
-use std::cmp::Ordering;
+use std::{
+    cmp::Ordering,
+    fs,
+    path::{
+        Path,
+        PathBuf,
+    },
+};
 
 use qubit_function::{
     ArcCallable,
@@ -28,6 +35,57 @@ use qubit_function::{
     StatefulBiPredicate,
     StatefulTester,
 };
+
+/// Collects Rust source files below `directory` in deterministic order.
+fn collect_rust_source_files(directory: &Path, files: &mut Vec<PathBuf>) {
+    let entries = fs::read_dir(directory)
+        .expect("source directory should be readable for contract checks");
+    for entry in entries {
+        let path = entry
+            .expect("source directory entry should be readable")
+            .path();
+        if path.is_dir() {
+            collect_rust_source_files(&path, files);
+        } else if path.extension().is_some_and(|extension| extension == "rs") {
+            files.push(path);
+        }
+    }
+    files.sort();
+}
+
+#[test]
+fn all_concrete_callback_wrappers_have_must_use_contracts() {
+    let source_root = Path::new(env!("CARGO_MANIFEST_DIR")).join("src");
+    let mut files = Vec::new();
+    collect_rust_source_files(&source_root, &mut files);
+    let mut wrapper_count = 0;
+
+    for file in files {
+        let source = fs::read_to_string(&file)
+            .expect("Rust source file should be readable");
+        let lines = source.lines().collect::<Vec<_>>();
+        for (index, line) in lines.iter().enumerate() {
+            let declaration = line.trim_start();
+            if declaration.starts_with("pub struct Box")
+                || declaration.starts_with("pub struct LocalBox")
+                || declaration.starts_with("pub struct Arc")
+                || declaration.starts_with("pub struct Rc")
+            {
+                wrapper_count += 1;
+                assert!(index > 0, "wrapper declaration needs an attribute");
+                assert_eq!(
+                    lines[index - 1],
+                    "#[must_use = \"callback wrappers do nothing unless stored or invoked\"]",
+                    "missing must_use contract before {}:{}",
+                    file.display(),
+                    index + 1,
+                );
+            }
+        }
+    }
+
+    assert_eq!(wrapper_count, 162, "unexpected callback wrapper inventory");
+}
 
 #[test]
 fn comparator_into_fn_preserves_comparison() {

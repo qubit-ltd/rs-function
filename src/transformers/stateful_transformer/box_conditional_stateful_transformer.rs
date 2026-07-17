@@ -59,6 +59,7 @@ use {
 /// assert_eq!(transformer.apply(15), 30); // when branch executed
 /// assert_eq!(transformer.apply(5), 6);   // or_else branch executed
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConditionalStatefulTransformer<T, R> {
     pub(super) transformer: BoxStatefulTransformer<T, R>,
     pub(super) predicate: BoxPredicate<T>,

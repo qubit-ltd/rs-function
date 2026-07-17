@@ -37,6 +37,7 @@ use {
 /// - **Thread-Safe**: Implements `Send + Sync`, safe for concurrent use
 /// - **Conditional Execution**: Only computes when bi-predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcConditionalBiMutatingFunction<T, U, R> {
     pub(super) function: ArcBiMutatingFunction<T, U, R>,
     pub(super) predicate: ArcBiPredicate<T, U>,

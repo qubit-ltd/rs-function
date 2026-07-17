@@ -55,6 +55,7 @@ use {
 /// let value = once.get();
 /// assert_eq!(value, "data");
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxSupplierOnce<T> {
     pub(super) function: Box<dyn FnOnce() -> T>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

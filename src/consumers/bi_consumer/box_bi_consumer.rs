@@ -55,6 +55,7 @@ use {
 /// });
 /// consumer.accept(&5, &3);
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxBiConsumer<T, U> {
     pub(super) function: Box<BiConsumerFn<T, U>>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

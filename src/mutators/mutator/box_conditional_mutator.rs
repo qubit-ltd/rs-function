@@ -71,6 +71,7 @@ use {
 /// mutator.apply(&mut negative);
 /// assert_eq!(negative, -6); // or_else branch executed
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConditionalMutator<T> {
     pub(super) mutator: BoxMutator<T>,
     pub(super) predicate: BoxPredicate<T>,

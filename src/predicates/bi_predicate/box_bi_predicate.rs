@@ -40,6 +40,7 @@ use {
 /// assert!(combined.test(&10, &5));
 /// # }
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxBiPredicate<T, U> {
     pub(super) function: Box<BiPredicateFn<T, U>>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

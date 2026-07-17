@@ -68,6 +68,7 @@ use {
 /// let mut negative = -5;
 /// assert_eq!(conditional2.apply(&mut negative), 5); // or_else branch executed
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConditionalMutatingFunctionOnce<T, R> {
     pub(super) function: BoxMutatingFunctionOnce<T, R>,
     pub(super) predicate: BoxPredicate<T>,

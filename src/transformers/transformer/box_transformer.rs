@@ -36,6 +36,7 @@ use {
 /// - **Reusability**: Can be called multiple times (each call consumes its
 ///   input)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxTransformer<T, R> {
     pub(super) function: Box<dyn Fn(T) -> R>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

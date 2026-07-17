@@ -107,6 +107,7 @@ use {
 /// assert_eq!(target, vec![0, 1, 2]);
 /// # }
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxMutatingFunctionOnce<T, R> {
     pub(super) function: Box<dyn FnOnce(&mut T) -> R>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

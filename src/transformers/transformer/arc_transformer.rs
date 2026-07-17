@@ -38,6 +38,7 @@ use {
 ///   input)
 /// - **Thread Safety**: Thread-safe (`Send + Sync` required)
 /// - **Clonable**: Cheap cloning via `Arc::clone`
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcTransformer<T, R> {
     pub(super) function: Arc<dyn Fn(T) -> R + Send + Sync>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

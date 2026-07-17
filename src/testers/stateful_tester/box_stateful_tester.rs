@@ -28,6 +28,7 @@ use {
 /// `BoxStatefulTester` is the owned wrapper for zero-argument tests that need
 /// native `FnMut() -> bool` semantics. Calling [`StatefulTester::test`] may
 /// mutate state captured by the wrapped closure.
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxStatefulTester {
     pub(super) function: Box<dyn FnMut() -> bool>,
     pub(super) metadata: CallbackMetadata,

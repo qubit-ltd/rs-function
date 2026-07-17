@@ -34,6 +34,7 @@ use {
 /// - **Conditional Execution**: Only consumes when predicate returns `true`
 /// - **Implements BiConsumer**: Can be used anywhere a `BiConsumer` is expected
 /// - **Non-mutating**: Neither modifies itself nor input values
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcConditionalBiConsumer<T, U> {
     pub(super) consumer: ArcBiConsumer<T, U>,
     pub(super) predicate: ArcBiPredicate<T, U>,

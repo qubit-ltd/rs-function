@@ -42,6 +42,7 @@ type ArcComparatorFn<T> = Arc<dyn Fn(&T, &T) -> Ordering + Send + Sync>;
 /// assert_eq!(cloned.compare(&5, &3), Ordering::Greater);
 /// ```
 #[derive(Clone)]
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcComparator<T> {
     pub(super) function: ArcComparatorFn<T>,
     pub(super) metadata: CallbackMetadata,

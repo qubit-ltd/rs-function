@@ -43,6 +43,7 @@ type ArcBiMutatingFunctionFn<T, U, R> =
 ///   time)
 /// - **Thread Safety**: Thread-safe (`Send + Sync` required)
 /// - **Clonable**: Cheap cloning via `Arc::clone`
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcBiMutatingFunction<T, U, R> {
     pub(super) function: ArcBiMutatingFunctionFn<T, U, R>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

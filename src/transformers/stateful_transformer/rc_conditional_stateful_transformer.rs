@@ -53,6 +53,7 @@ use {
 /// assert_eq!(transformer.apply(5), 10);
 /// assert_eq!(transformer_clone.apply(-5), 5);
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcConditionalStatefulTransformer<T, R> {
     pub(super) transformer: RcStatefulTransformer<T, R>,
     pub(super) predicate: RcPredicate<T>,
