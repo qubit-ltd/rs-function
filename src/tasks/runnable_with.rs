@@ -52,6 +52,10 @@ pub trait RunnableWith<T, E> {
     ///
     /// Returns `Ok(())` when the action succeeds, or `Err(E)` when it fails.
     /// The exact error meaning is defined by the concrete runnable.
+    ///
+    /// # Errors
+    ///
+    /// Returns `Err(E)` when the underlying action fails.
     fn run_with(&mut self, input: &mut T) -> Result<(), E>;
 }
 
@@ -59,6 +63,7 @@ impl<T, E, F> RunnableWith<T, E> for F
 where
     F: FnMut(&mut T) -> Result<(), E>,
 {
+    #[inline(always)]
     fn run_with(&mut self, input: &mut T) -> Result<(), E> {
         self(input)
     }

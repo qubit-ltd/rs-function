@@ -473,7 +473,7 @@ assert_eq!(value, 42);
 `FnOnce() -> Result<R, E>`)。
 
 **Trait**: `CallableOnce<R, E>`
-**核心方法**: `call(self) -> Result<R, E>`
+**核心方法**: `call_once(self) -> Result<R, E>`
 **等价闭包**: `FnOnce() -> Result<R, E>`
 
 **实现类型**:
@@ -485,7 +485,7 @@ assert_eq!(value, 42);
 use qubit_function::{BoxCallableOnce, CallableOnce};
 
 let task = BoxCallableOnce::new(|| Ok::<i32, String>(42));
-assert_eq!(task.call(), Ok(42));
+assert_eq!(task.call_once(), Ok(42));
 ```
 
 ### 16. RunnableOnce - 一次性可失败动作
@@ -494,7 +494,7 @@ assert_eq!(task.call(), Ok(42));
 `FnOnce() -> Result<(), E>`)。
 
 **Trait**: `RunnableOnce<E>`
-**核心方法**: `run(self) -> Result<(), E>`
+**核心方法**: `run_once(self) -> Result<(), E>`
 **等价闭包**: `FnOnce() -> Result<(), E>`
 
 **实现类型**:
@@ -506,7 +506,7 @@ assert_eq!(task.call(), Ok(42));
 use qubit_function::{BoxRunnableOnce, RunnableOnce};
 
 let task = BoxRunnableOnce::new(|| Ok::<(), String>(()));
-assert_eq!(task.run(), Ok(()));
+assert_eq!(task.run_once(), Ok(()));
 ```
 
 ### 17. StatefulSupplier - 有状态值提供者
@@ -834,10 +834,10 @@ assert!(every_second_call.test());
 | `SupplierOnce<T>` | `get(self) -> T` | `FnOnce() -> T` |
 | `Callable<R, E>` | `call(&mut self) -> Result<R, E>` | `FnMut() -> Result<R, E>` |
 | `CallableWith<T, R, E>` | `call_with(&mut self, input: &mut T) -> Result<R, E>` | `FnMut(&mut T) -> Result<R, E>` |
-| `CallableOnce<R, E>` | `call(self) -> Result<R, E>` | `FnOnce() -> Result<R, E>` |
+| `CallableOnce<R, E>` | `call_once(self) -> Result<R, E>` | `FnOnce() -> Result<R, E>` |
 | `Runnable<E>` | `run(&mut self) -> Result<(), E>` | `FnMut() -> Result<(), E>` |
 | `RunnableWith<T, E>` | `run_with(&mut self, input: &mut T) -> Result<(), E>` | `FnMut(&mut T) -> Result<(), E>` |
-| `RunnableOnce<E>` | `run(self) -> Result<(), E>` | `FnOnce() -> Result<(), E>` |
+| `RunnableOnce<E>` | `run_once(self) -> Result<(), E>` | `FnOnce() -> Result<(), E>` |
 | `StatefulSupplier<T>` | `get(&mut self) -> T` | `FnMut() -> T` |
 | `Function<T, R>` | `apply(&self, input: &T) -> R` | `Fn(&T) -> R` |
 | `FunctionOnce<T, R>` | `apply(self, input: &T) -> R` | `FnOnce(&T) -> R` |

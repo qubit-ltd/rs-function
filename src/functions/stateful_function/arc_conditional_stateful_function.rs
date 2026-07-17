@@ -62,7 +62,9 @@ use {
 /// rolled back.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcConditionalStatefulFunction<T, R> {
+    /// The wrapped callback implementation.
     pub(super) function: ArcStatefulFunction<T, R>,
+    /// The predicate controlling conditional execution.
     pub(super) predicate: ArcPredicate<T>,
 }
 

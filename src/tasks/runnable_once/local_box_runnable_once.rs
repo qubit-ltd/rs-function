@@ -43,13 +43,13 @@ pub struct LocalBoxRunnableOnce<E> {
     /// The one-time closure executed by this runnable.
     pub(super) function: Box<dyn FnOnce() -> Result<(), E>>,
     /// The optional name of this runnable.
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<E> LocalBoxRunnableOnce<E> {
     impl_common_new_methods!(
         semantic(RunnableOnce<E> + 'static),
-        |source| move || source.run(),
+        |source| move || source.run_once(),
         |function| Box::new(function),
         "local runnable"
     );
@@ -96,7 +96,7 @@ impl<E> LocalBoxRunnableOnce<E> {
         let function = self.function;
         LocalBoxRunnableOnce::new(move || {
             function()?;
-            next.run()
+            next.run_once()
         })
     }
 
@@ -123,7 +123,7 @@ impl<E> LocalBoxRunnableOnce<E> {
         let function = self.function;
         LocalBoxCallableOnce::new(move || {
             function()?;
-            callable.call()
+            callable.call_once()
         })
     }
 }
@@ -131,7 +131,7 @@ impl<E> LocalBoxRunnableOnce<E> {
 impl<E> RunnableOnce<E> for LocalBoxRunnableOnce<E> {
     /// Executes the local boxed runnable.
     #[inline]
-    fn run(self) -> Result<(), E> {
+    fn run_once(self) -> Result<(), E> {
         (self.function)()
     }
 }
@@ -141,7 +141,7 @@ impl<E> SupplierOnce<Result<(), E>> for LocalBoxRunnableOnce<E> {
     /// `Result<(), E>`.
     #[inline]
     fn get(self) -> Result<(), E> {
-        self.run()
+        self.run_once()
     }
 }
 

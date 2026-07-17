@@ -16,6 +16,7 @@ use crate::{
     tasks::callable_with::CallableWith,
 };
 
+/// The erased callback representation used by this implementation.
 type LocalBoxCallableWithFn<T, R, E> = Box<dyn FnMut(&mut T) -> Result<R, E>>;
 
 /// Local box-based callable with mutable input.
@@ -29,7 +30,7 @@ pub struct LocalBoxCallableWith<T, R, E> {
     /// The stateful closure executed by this callable.
     pub(super) function: LocalBoxCallableWithFn<T, R, E>,
     /// The optional name of this callable.
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<T, R, E> LocalBoxCallableWith<T, R, E> {

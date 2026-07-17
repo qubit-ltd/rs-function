@@ -39,7 +39,9 @@ use {
 ///   `BiMutatingFunction` is expected
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConditionalBiMutatingFunction<T, U, R> {
+    /// The wrapped callback implementation.
     pub(super) function: BoxBiMutatingFunction<T, U, R>,
+    /// The predicate controlling conditional execution.
     pub(super) predicate: BoxBiPredicate<T, U>,
 }
 

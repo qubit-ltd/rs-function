@@ -74,6 +74,7 @@ pub trait BiFunction<T, U, R> {
     /// # Returns
     ///
     /// The computed output value
+    #[must_use = "the computed callback result should be used"]
     fn apply(&self, first: &T, second: &U) -> R;
 }
 

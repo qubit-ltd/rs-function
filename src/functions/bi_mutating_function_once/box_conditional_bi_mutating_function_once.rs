@@ -39,7 +39,9 @@ use {
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConditionalBiMutatingFunctionOnce<T, U, R> {
+    /// The wrapped callback implementation.
     pub(super) function: BoxBiMutatingFunctionOnce<T, U, R>,
+    /// The predicate controlling conditional execution.
     pub(super) predicate: BoxBiPredicate<T, U>,
 }
 

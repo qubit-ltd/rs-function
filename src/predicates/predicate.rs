@@ -277,6 +277,7 @@ pub trait Predicate<T> {
     /// # Returns
     ///
     /// `true` if the value satisfies this predicate, `false` otherwise.
+    #[must_use = "the predicate result should be used"]
     fn test(&self, value: &T) -> bool;
 }
 

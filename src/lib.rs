@@ -37,10 +37,10 @@
 //! - **Comparator types**: Functions that compare values and return ordering
 
 // Module declarations
-pub(crate) mod callback_metadata;
 pub mod comparator;
 pub mod consumers;
 pub mod functions;
+pub(crate) mod internal;
 pub(crate) mod macros;
 pub mod mutators;
 pub mod predicates;

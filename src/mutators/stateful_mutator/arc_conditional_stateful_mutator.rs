@@ -66,7 +66,9 @@ use {
 /// rolled back.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcConditionalStatefulMutator<T> {
+    /// The wrapped mutator callback.
     pub(super) mutator: ArcStatefulMutator<T>,
+    /// The predicate controlling conditional execution.
     pub(super) predicate: ArcPredicate<T>,
 }
 

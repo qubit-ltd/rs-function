@@ -54,7 +54,9 @@ use {
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcConditionalBiFunction<T, U, R> {
+    /// The wrapped callback implementation.
     pub(super) function: RcBiFunction<T, U, R>,
+    /// The predicate controlling conditional execution.
     pub(super) predicate: RcBiPredicate<T, U>,
 }
 

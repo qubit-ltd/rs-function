@@ -24,8 +24,10 @@ use {
 /// matching the single-ownership model.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxStatefulPredicate<T> {
+    /// The wrapped callback implementation.
     pub(super) function: Box<dyn FnMut(&T) -> bool>,
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    /// Diagnostic metadata associated with this callback.
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<T> BoxStatefulPredicate<T> {

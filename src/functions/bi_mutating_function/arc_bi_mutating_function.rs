@@ -22,6 +22,7 @@ use {
     std::sync::Arc,
 };
 
+/// The erased callback representation used by this implementation.
 type ArcBiMutatingFunctionFn<T, U, R> =
     Arc<dyn Fn(&mut T, &mut U) -> R + Send + Sync>;
 
@@ -45,8 +46,10 @@ type ArcBiMutatingFunctionFn<T, U, R> =
 /// - **Clonable**: Cheap cloning via `Arc::clone`
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcBiMutatingFunction<T, U, R> {
+    /// The wrapped callback implementation.
     pub(super) function: ArcBiMutatingFunctionFn<T, U, R>,
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    /// Diagnostic metadata associated with this callback.
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<T, U, R> ArcBiMutatingFunction<T, U, R> {

@@ -48,10 +48,13 @@ use {
 /// error. Mutations completed before a panic are not rolled back.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcStatefulFunction<T, R> {
+    /// The wrapped callback implementation.
     pub(super) function: RcStatefulFn<T, R>,
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    /// Diagnostic metadata associated with this callback.
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
+/// The erased callback representation used by this implementation.
 type RcStatefulFn<T, R> = Rc<RefCell<dyn FnMut(&T) -> R>>;
 
 impl<T, R> RcStatefulFunction<T, R> {

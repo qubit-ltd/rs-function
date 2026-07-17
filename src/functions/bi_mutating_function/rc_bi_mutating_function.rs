@@ -22,6 +22,7 @@ use {
     crate::RcConditionalBiMutatingFunction,
 };
 
+/// The erased callback representation used by this implementation.
 type RcBiMutatingFunctionFn<T, U, R> = Rc<dyn Fn(&mut T, &mut U) -> R>;
 
 // ============================================================================
@@ -43,8 +44,10 @@ type RcBiMutatingFunctionFn<T, U, R> = Rc<dyn Fn(&mut T, &mut U) -> R>;
 /// - **Clonable**: Cheap cloning via `Rc::clone`
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcBiMutatingFunction<T, U, R> {
+    /// The wrapped callback implementation.
     pub(super) function: RcBiMutatingFunctionFn<T, U, R>,
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    /// Diagnostic metadata associated with this callback.
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<T, U, R> RcBiMutatingFunction<T, U, R> {

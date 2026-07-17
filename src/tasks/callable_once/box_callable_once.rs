@@ -39,20 +39,20 @@ use crate::{
 /// use qubit_function::{BoxCallableOnce, CallableOnce};
 ///
 /// let task = BoxCallableOnce::new(|| Ok::<i32, String>(42));
-/// assert_eq!(task.call(), Ok(42));
+/// assert_eq!(task.call_once(), Ok(42));
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxCallableOnce<R, E> {
     /// The one-time closure executed by this callable.
     pub(super) function: Box<dyn FnOnce() -> Result<R, E> + Send>,
     /// The optional name of this callable.
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<R, E> BoxCallableOnce<R, E> {
     impl_common_new_methods!(
         semantic(CallableOnce<R, E> + Send + 'static),
-        |source| move || source.call(),
+        |source| move || source.call_once(),
         |function| Box::new(function),
         "callable"
     );
@@ -152,7 +152,7 @@ impl<R, E> BoxCallableOnce<R, E> {
 impl<R, E> CallableOnce<R, E> for BoxCallableOnce<R, E> {
     /// Executes the boxed callable.
     #[inline]
-    fn call(self) -> Result<R, E> {
+    fn call_once(self) -> Result<R, E> {
         (self.function)()
     }
 }
@@ -161,7 +161,7 @@ impl<R, E> SupplierOnce<Result<R, E>> for BoxCallableOnce<R, E> {
     /// Executes the boxed callable as a one-time supplier of `Result<R, E>`.
     #[inline]
     fn get(self) -> Result<R, E> {
-        self.call()
+        self.call_once()
     }
 }
 

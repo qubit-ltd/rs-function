@@ -63,6 +63,7 @@ pub trait StatefulTransformer<T, R> {
     /// # Returns
     ///
     /// The transformed output value
+    #[must_use = "the computed callback result should be used"]
     fn apply(&mut self, input: T) -> R;
 }
 

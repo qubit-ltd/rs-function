@@ -122,8 +122,6 @@ macro_rules! impl_mutator_common_methods {
             $struct_name<$t>,
             |$f| $wrapper_expr
         );
-        crate::macros::impl_common_name_methods!("mutator");
-
         /// Creates a no-operation mutator.
         ///
         /// Creates a mutator that does nothing when called. Useful for
@@ -136,6 +134,8 @@ macro_rules! impl_mutator_common_methods {
         pub fn noop() -> Self {
             Self::new(|_: &mut $t| {})
         }
+
+        crate::macros::impl_common_name_methods!("mutator");
     };
 }
 

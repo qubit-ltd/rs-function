@@ -70,6 +70,7 @@ pub trait Transformer<T, R> {
     /// # Returns
     ///
     /// The transformed output value
+    #[must_use = "the computed callback result should be used"]
     fn apply(&self, input: T) -> R;
 }
 

@@ -243,6 +243,7 @@ pub trait MutatingFunction<T, R> {
     /// assert_eq!(old_value, 5);
     /// assert_eq!(value, 6);
     /// ```
+    #[must_use = "the computed callback result should be used"]
     fn apply(&self, t: &mut T) -> R;
 }
 

@@ -21,6 +21,7 @@ use {
     std::rc::Rc,
 };
 
+/// The erased callback representation used by this implementation.
 type RcStatefulBiConsumerFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U)>>;
 
 // =======================================================================
@@ -95,8 +96,10 @@ type RcStatefulBiConsumerFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U)>>;
 /// error. Mutations completed before a panic are not rolled back.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcStatefulBiConsumer<T, U> {
+    /// The wrapped callback implementation.
     pub(super) function: RcStatefulBiConsumerFn<T, U>,
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    /// Diagnostic metadata associated with this callback.
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<T, U> RcStatefulBiConsumer<T, U> {

@@ -10,7 +10,7 @@
 use {
     crate::{
         Comparator,
-        callback_metadata::CallbackMetadata,
+        internal::CallbackMetadata,
         macros::impl_common_name_methods,
     },
     std::cmp::Ordering,
@@ -18,6 +18,7 @@ use {
     std::rc::Rc,
 };
 
+/// The erased callback representation used by this implementation.
 type RcComparatorFn<T> = Rc<dyn Fn(&T, &T) -> Ordering>;
 
 /// An Rc-based single-threaded comparator with shared ownership.
@@ -44,7 +45,9 @@ type RcComparatorFn<T> = Rc<dyn Fn(&T, &T) -> Ordering>;
 #[derive(Clone)]
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcComparator<T> {
+    /// The wrapped callback implementation.
     pub(super) function: RcComparatorFn<T>,
+    /// Diagnostic metadata associated with this callback.
     pub(super) metadata: CallbackMetadata,
 }
 
@@ -124,6 +127,43 @@ impl<T> RcComparator<T> {
         }
     }
 
+    /// Returns a comparator that compares values by a key extracted by the
+    /// given function.
+    ///
+    /// # Parameters
+    ///
+    /// * `key_fn` - A function that extracts a comparable key from values
+    ///
+    /// # Returns
+    ///
+    /// A new `RcComparator` that compares by the extracted key.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use qubit_function::comparator::{Comparator, RcComparator};
+    /// use std::cmp::Ordering;
+    ///
+    /// #[derive(Debug)]
+    /// struct Person {
+    ///     name: String,
+    ///     age: i32,
+    /// }
+    ///
+    /// let by_age = RcComparator::comparing(|p: &Person| &p.age);
+    /// let p1 = Person { name: "Alice".to_string(), age: 30 };
+    /// let p2 = Person { name: "Bob".to_string(), age: 25 };
+    /// assert_eq!(by_age.compare(&p1, &p2), Ordering::Greater);
+    /// ```
+    #[inline]
+    pub fn comparing<K, F>(key_fn: F) -> Self
+    where
+        K: Ord,
+        F: Fn(&T) -> &K + 'static,
+    {
+        RcComparator::new(move |a: &T, b: &T| key_fn(a).cmp(key_fn(b)))
+    }
+
     impl_common_name_methods!("comparator");
 
     /// Returns a comparator that imposes the reverse ordering.
@@ -193,43 +233,6 @@ impl<T> RcComparator<T> {
         })
     }
 
-    /// Returns a comparator that compares values by a key extracted by the
-    /// given function.
-    ///
-    /// # Parameters
-    ///
-    /// * `key_fn` - A function that extracts a comparable key from values
-    ///
-    /// # Returns
-    ///
-    /// A new `RcComparator` that compares by the extracted key.
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::comparator::{Comparator, RcComparator};
-    /// use std::cmp::Ordering;
-    ///
-    /// #[derive(Debug)]
-    /// struct Person {
-    ///     name: String,
-    ///     age: i32,
-    /// }
-    ///
-    /// let by_age = RcComparator::comparing(|p: &Person| &p.age);
-    /// let p1 = Person { name: "Alice".to_string(), age: 30 };
-    /// let p2 = Person { name: "Bob".to_string(), age: 25 };
-    /// assert_eq!(by_age.compare(&p1, &p2), Ordering::Greater);
-    /// ```
-    #[inline]
-    pub fn comparing<K, F>(key_fn: F) -> Self
-    where
-        K: Ord,
-        F: Fn(&T) -> &K + 'static,
-    {
-        RcComparator::new(move |a: &T, b: &T| key_fn(a).cmp(key_fn(b)))
-    }
-
     /// Converts this comparator into a closure.
     ///
     /// # Returns
@@ -246,6 +249,7 @@ impl<T> RcComparator<T> {
     /// let func = cmp.into_fn();
     /// assert_eq!(func(&5, &3), Ordering::Greater);
     /// ```
+    #[must_use = "the returned comparator closure should be stored or invoked"]
     #[inline]
     pub fn into_fn(self) -> impl Fn(&T, &T) -> Ordering {
         move |a: &T, b: &T| (self.function)(a, b)

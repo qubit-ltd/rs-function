@@ -20,6 +20,7 @@ use crate::{
     tasks::callable_with::CallableWith,
 };
 
+/// The erased callback representation used by this implementation.
 type RcCallableWithFn<T, R, E> = Rc<RefCell<dyn FnMut(&mut T) -> Result<R, E>>>;
 
 /// Single-threaded shared callable with mutable input.
@@ -36,7 +37,7 @@ pub struct RcCallableWith<T, R, E> {
     /// The stateful closure executed by this callable.
     pub(super) function: RcCallableWithFn<T, R, E>,
     /// The optional name of this callable.
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<T, R, E> Clone for RcCallableWith<T, R, E> {

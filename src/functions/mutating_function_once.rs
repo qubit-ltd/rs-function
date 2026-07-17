@@ -242,5 +242,6 @@ pub trait MutatingFunctionOnce<T, R> {
     /// assert_eq!(old_len, 1);
     /// assert_eq!(target, vec![0, 1, 2, 3]);
     /// ```
+    #[must_use = "the computed callback result should be used"]
     fn apply(self, t: &mut T) -> R;
 }

@@ -17,7 +17,7 @@ use parking_lot::Mutex;
 use {
     crate::{
         StatefulTester,
-        callback_metadata::CallbackMetadata,
+        internal::CallbackMetadata,
         macros::{
             impl_common_name_methods,
             impl_common_new_methods,
@@ -26,6 +26,7 @@ use {
     std::sync::Arc,
 };
 
+/// The erased callback representation used by this implementation.
 type ArcStatefulTesterFn = Arc<Mutex<dyn FnMut() -> bool + Send + 'static>>;
 
 /// A thread-safe shared stateful tester backed by `Arc<Mutex<_>>`.
@@ -40,7 +41,9 @@ type ArcStatefulTesterFn = Arc<Mutex<dyn FnMut() -> bool + Send + 'static>>;
 /// before a panic are not rolled back.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcStatefulTester {
+    /// The wrapped callback implementation.
     pub(super) function: ArcStatefulTesterFn,
+    /// Diagnostic metadata associated with this callback.
     pub(super) metadata: CallbackMetadata,
 }
 

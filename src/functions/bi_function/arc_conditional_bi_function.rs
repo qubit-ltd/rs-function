@@ -53,7 +53,9 @@ use {
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcConditionalBiFunction<T, U, R> {
+    /// The wrapped callback implementation.
     pub(super) function: ArcBiFunction<T, U, R>,
+    /// The predicate controlling conditional execution.
     pub(super) predicate: ArcBiPredicate<T, U>,
 }
 

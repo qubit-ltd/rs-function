@@ -51,8 +51,10 @@ use {
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcBiPredicate<T, U> {
+    /// The wrapped callback implementation.
     pub(super) function: Arc<SendSyncBiPredicateFn<T, U>>,
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    /// Diagnostic metadata associated with this callback.
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<T, U> ArcBiPredicate<T, U> {

@@ -21,6 +21,7 @@ use {
     crate::MutatingFunctionOnce,
 };
 
+/// The erased callback representation used by this implementation.
 type BoxBiMutatingFunctionOnceFn<T, U, R> =
     Box<dyn FnOnce(&mut T, &mut U) -> R>;
 
@@ -42,8 +43,10 @@ type BoxBiMutatingFunctionOnceFn<T, U, R> =
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxBiMutatingFunctionOnce<T, U, R> {
+    /// The wrapped callback implementation.
     pub(super) function: BoxBiMutatingFunctionOnceFn<T, U, R>,
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    /// Diagnostic metadata associated with this callback.
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 // Implement BoxBiMutatingFunctionOnce

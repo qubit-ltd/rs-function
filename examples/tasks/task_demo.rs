@@ -75,13 +75,13 @@ fn demo_once_tasks() {
 
     let callable_once =
         BoxCallableOnce::new(|| Ok::<String, String>(String::from("ready")));
-    println!("CallableOnce result: {:?}", callable_once.call());
+    println!("CallableOnce result: {:?}", callable_once.call_once());
 
     let runnable_once = BoxRunnableOnce::new(|| {
         println!("RunnableOnce side effect executed");
         Ok::<(), String>(())
     });
-    println!("RunnableOnce result: {:?}", runnable_once.run());
+    println!("RunnableOnce result: {:?}", runnable_once.run_once());
     println!();
 }
 

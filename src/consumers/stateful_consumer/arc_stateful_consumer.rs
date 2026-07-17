@@ -21,6 +21,7 @@ use {
     std::sync::Arc,
 };
 
+/// The erased callback representation used by this implementation.
 type ArcStatefulConsumerFn<T> = Arc<Mutex<dyn FnMut(&T) + Send>>;
 
 // ============================================================================
@@ -87,8 +88,10 @@ type ArcStatefulConsumerFn<T> = Arc<Mutex<dyn FnMut(&T) + Send>>;
 /// before a panic are not rolled back.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcStatefulConsumer<T> {
+    /// The wrapped callback implementation.
     pub(super) function: ArcStatefulConsumerFn<T>,
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    /// Diagnostic metadata associated with this callback.
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<T> ArcStatefulConsumer<T> {

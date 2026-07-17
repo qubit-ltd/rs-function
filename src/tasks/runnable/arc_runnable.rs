@@ -46,7 +46,7 @@ pub struct ArcRunnable<E> {
     /// The stateful closure executed by this runnable.
     pub(super) function: Arc<Mutex<dyn FnMut() -> Result<(), E> + Send>>,
     /// The optional name of this runnable.
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<E> Clone for ArcRunnable<E> {

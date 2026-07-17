@@ -44,9 +44,10 @@ pub trait StatefulTester {
     /// This method uses `&mut self` to match `FnMut() -> bool`, allowing each
     /// call to update internal state before producing the boolean result.
     ///
-    /// # Return Value
+    /// # Returns
     ///
     /// Returns `true` if the condition holds, otherwise returns `false`.
+    #[must_use = "the test result should be used"]
     fn test(&mut self) -> bool;
 }
 

@@ -18,6 +18,7 @@ use {
     crate::consumers::macros::impl_consumer_debug_display,
 };
 
+/// The erased callback representation used by this implementation.
 type BoxStatefulBiConsumerFn<T, U> = Box<dyn FnMut(&T, &U)>;
 
 // =======================================================================
@@ -71,8 +72,10 @@ type BoxStatefulBiConsumerFn<T, U> = Box<dyn FnMut(&T, &U)>;
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxStatefulBiConsumer<T, U> {
+    /// The wrapped callback implementation.
     pub(super) function: BoxStatefulBiConsumerFn<T, U>,
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    /// Diagnostic metadata associated with this callback.
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<T, U> BoxStatefulBiConsumer<T, U> {

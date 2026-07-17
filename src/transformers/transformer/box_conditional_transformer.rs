@@ -52,7 +52,9 @@ use {
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConditionalTransformer<T, R> {
+    /// The wrapped transformer callback.
     pub(super) transformer: BoxTransformer<T, R>,
+    /// The predicate controlling conditional execution.
     pub(super) predicate: BoxPredicate<T>,
 }
 

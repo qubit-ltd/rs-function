@@ -16,7 +16,7 @@ use std::{
 use {
     crate::{
         StatefulTester,
-        callback_metadata::CallbackMetadata,
+        internal::CallbackMetadata,
         macros::{
             impl_common_name_methods,
             impl_common_new_methods,
@@ -25,6 +25,7 @@ use {
     std::rc::Rc,
 };
 
+/// The erased callback representation used by this implementation.
 type RcStatefulTesterFn = Rc<RefCell<dyn FnMut() -> bool>>;
 
 /// A single-threaded shared stateful tester backed by `Rc<RefCell<_>>`.
@@ -37,7 +38,9 @@ type RcStatefulTesterFn = Rc<RefCell<dyn FnMut() -> bool>>;
 /// error. Mutations completed before a panic are not rolled back.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcStatefulTester {
+    /// The wrapped callback implementation.
     pub(super) function: RcStatefulTesterFn,
+    /// Diagnostic metadata associated with this callback.
     pub(super) metadata: CallbackMetadata,
 }
 

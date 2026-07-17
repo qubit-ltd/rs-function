@@ -56,6 +56,7 @@ pub trait StatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// `true` if the values satisfy this bi-predicate, `false` otherwise.
+    #[must_use = "the predicate result should be used"]
     fn test(&mut self, first: &T, second: &U) -> bool;
 }
 

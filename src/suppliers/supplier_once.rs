@@ -133,5 +133,6 @@ pub trait SupplierOnce<T> {
     /// assert_eq!(once.get(), 42);
     /// // once is consumed here
     /// ```
+    #[must_use = "the supplied value should be used"]
     fn get(self) -> T;
 }

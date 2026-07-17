@@ -69,6 +69,10 @@ pub trait Runnable<E> {
     ///
     /// Returns `Ok(())` when the action succeeds, or `Err(E)` when it fails.
     /// The exact error meaning is defined by the concrete runnable.
+    ///
+    /// # Errors
+    ///
+    /// Returns `Err(E)` when the underlying action fails.
     fn run(&mut self) -> Result<(), E>;
 }
 

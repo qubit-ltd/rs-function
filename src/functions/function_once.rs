@@ -44,5 +44,6 @@ pub trait FunctionOnce<T, R> {
     /// # Returns
     ///
     /// The computed output value
+    #[must_use = "the computed callback result should be used"]
     fn apply(self, t: &T) -> R;
 }

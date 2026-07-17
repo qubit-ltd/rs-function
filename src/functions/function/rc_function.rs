@@ -41,8 +41,10 @@ use {
 /// - **Clonable**: Cheap cloning via `Rc::clone`
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcFunction<T, R> {
+    /// The wrapped callback implementation.
     pub(super) function: Rc<dyn Fn(&T) -> R>,
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    /// Diagnostic metadata associated with this callback.
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<T, R> RcFunction<T, R> {

@@ -39,8 +39,10 @@ use {
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxBiTransformer<T, U, R> {
+    /// The wrapped callback implementation.
     pub(super) function: Box<dyn Fn(T, U) -> R>,
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    /// Diagnostic metadata associated with this callback.
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 // Implement BoxBiTransformer

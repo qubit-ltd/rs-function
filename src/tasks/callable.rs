@@ -68,6 +68,10 @@ pub trait Callable<R, E> {
     ///
     /// Returns `Ok(R)` when the computation succeeds, or `Err(E)` when it
     /// fails. The exact error meaning is defined by the concrete callable.
+    ///
+    /// # Errors
+    ///
+    /// Returns `Err(E)` when the underlying computation fails.
     fn call(&mut self) -> Result<R, E>;
 }
 
@@ -75,6 +79,7 @@ impl<R, E, F> Callable<R, E> for F
 where
     F: FnMut() -> Result<R, E>,
 {
+    #[inline(always)]
     fn call(&mut self) -> Result<R, E> {
         self()
     }

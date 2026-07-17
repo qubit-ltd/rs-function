@@ -20,6 +20,7 @@ use {
     std::sync::Arc,
 };
 
+/// The erased callback representation used by this implementation.
 type ArcStatefulBiPredicateFn<T, U> =
     Arc<Mutex<dyn FnMut(&T, &U) -> bool + Send + 'static>>;
 
@@ -36,8 +37,10 @@ type ArcStatefulBiPredicateFn<T, U> =
 /// before a panic are not rolled back.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcStatefulBiPredicate<T, U> {
+    /// The wrapped callback implementation.
     pub(super) function: ArcStatefulBiPredicateFn<T, U>,
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    /// Diagnostic metadata associated with this callback.
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<T, U> ArcStatefulBiPredicate<T, U> {

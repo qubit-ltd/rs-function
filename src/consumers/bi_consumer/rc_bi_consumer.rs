@@ -68,8 +68,10 @@ use {
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcBiConsumer<T, U> {
+    /// The wrapped callback implementation.
     pub(super) function: Rc<BiConsumerFn<T, U>>,
-    pub(super) metadata: crate::callback_metadata::CallbackMetadata,
+    /// Diagnostic metadata associated with this callback.
+    pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
 impl<T, U> RcBiConsumer<T, U> {

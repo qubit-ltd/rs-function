@@ -34,7 +34,7 @@ macro_rules! impl_common_name_methods {
         /// # Returns
         ///
         /// Returns `Some(&str)` if a name was set, `None` otherwise.
-        #[inline]
+        #[inline(always)]
         pub fn name(&self) -> Option<&str> {
             self.metadata.name()
         }
@@ -43,13 +43,13 @@ macro_rules! impl_common_name_methods {
         ///
         /// # Parameters
         #[doc = concat!("* `name` - The name to set for this ", $type_desc)]
-        #[inline]
+        #[inline(always)]
         pub fn set_name(&mut self, name: &str) {
             self.metadata.set_name(name);
         }
 
         #[doc = concat!("Clears the name of this ", $type_desc, ".")]
-        #[inline]
+        #[inline(always)]
         pub fn clear_name(&mut self) {
             self.metadata.clear_name();
         }
@@ -62,7 +62,7 @@ macro_rules! impl_common_name_methods {
         /// # Returns
         ///
         #[doc = concat!("This ", $type_desc, " with the supplied name.")]
-        #[inline]
+        #[inline(always)]
         pub fn with_name(mut self, name: &str) -> Self {
             self.metadata.set_name(name);
             self

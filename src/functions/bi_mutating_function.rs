@@ -74,6 +74,7 @@ pub trait BiMutatingFunction<T, U, R> {
     /// # Returns
     ///
     /// The computed output value
+    #[must_use = "the computed callback result should be used"]
     fn apply(&self, first: &mut T, second: &mut U) -> R;
 }
 

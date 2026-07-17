@@ -62,7 +62,9 @@ use {
 /// rolled back.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcConditionalStatefulTransformer<T, R> {
+    /// The wrapped transformer callback.
     pub(super) transformer: ArcStatefulTransformer<T, R>,
+    /// The predicate controlling conditional execution.
     pub(super) predicate: ArcPredicate<T>,
 }
 
