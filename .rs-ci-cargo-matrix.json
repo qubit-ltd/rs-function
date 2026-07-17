@@ -38,6 +38,12 @@
       "features": ["once", "stateful"]
     },
     {
+      "name": "rc-once",
+      "commands": ["test"],
+      "defaultFeatures": false,
+      "features": ["rc", "once"]
+    },
+    {
       "name": "full",
       "commands": ["test", "doc", "clippy"],
       "defaultFeatures": false,

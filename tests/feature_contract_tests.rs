@@ -326,3 +326,158 @@ fn main() {
 
     assert!(output.status.success(), "{}", cargo_diagnostics(&output));
 }
+
+#[test]
+fn test_task_box_rejects_non_send_constructor_capture() {
+    let output = compile_consumer(
+        &[],
+        r#"
+use std::rc::Rc;
+use qubit_function::BoxCallable;
+
+fn main() {
+    let value = Rc::new(42);
+    let _task = BoxCallable::<i32, ()>::new(move || Ok(*value));
+}
+"#,
+    );
+
+    assert_compile_failure(&output, "cannot be sent between threads safely");
+}
+
+#[test]
+fn test_task_box_rejects_non_send_composition_capture() {
+    let output = compile_consumer(
+        &[],
+        r#"
+use std::rc::Rc;
+use qubit_function::BoxCallable;
+
+fn main() {
+    let suffix = Rc::new(String::from("!"));
+    let _task = BoxCallable::<String, ()>::new(|| Ok(String::from("task")))
+        .map(move |value| format!("{value}{suffix}"));
+}
+"#,
+    );
+
+    assert_compile_failure(&output, "cannot be sent between threads safely");
+}
+
+#[test]
+fn test_local_task_box_accepts_non_send_composition_capture() {
+    let output = compile_consumer(
+        &[],
+        r#"
+use std::rc::Rc;
+use qubit_function::{Callable, LocalBoxCallable};
+
+fn main() {
+    let suffix = Rc::new(String::from("!"));
+    let mut task = LocalBoxCallable::<String, ()>::new(|| Ok(String::from("task")))
+        .map(move |value| format!("{value}{suffix}"));
+    assert_eq!(task.call(), Ok(String::from("task!")));
+}
+"#,
+    );
+
+    assert!(output.status.success(), "{}", cargo_diagnostics(&output));
+}
+
+#[test]
+fn test_stateless_arc_rejects_send_non_sync_capture() {
+    let output = compile_consumer(
+        &[],
+        r#"
+use std::cell::Cell;
+use qubit_function::ArcFunction;
+
+fn main() {
+    let value = Cell::new(1);
+    let _function = ArcFunction::<i32, i32>::new(move |input: &i32| {
+        value.set(*input);
+        value.get()
+    });
+}
+"#,
+    );
+
+    assert_compile_failure(&output, "cannot be shared between threads safely");
+}
+
+#[test]
+fn test_stateful_arc_accepts_send_non_sync_capture() {
+    let output = compile_consumer(
+        &["stateful"],
+        r#"
+use std::cell::Cell;
+use qubit_function::{ArcStatefulSupplier, StatefulSupplier};
+
+fn main() {
+    let value = Cell::new(1);
+    let mut supplier = ArcStatefulSupplier::new(move || {
+        value.set(value.get() + 1);
+        value.get()
+    });
+    assert_eq!(supplier.get(), 2);
+}
+"#,
+    );
+
+    assert!(output.status.success(), "{}", cargo_diagnostics(&output));
+}
+
+#[test]
+fn test_discarded_callback_wrappers_trigger_unused_must_use() {
+    let output = compile_consumer(
+        &["full"],
+        r#"
+#![deny(unused_must_use)]
+
+use qubit_function::{
+    ArcFunction,
+    BoxCallable,
+    LocalBoxCallable,
+    RcFunction,
+};
+
+fn main() {
+    BoxCallable::<i32, ()>::new(|| Ok(1));
+    LocalBoxCallable::<i32, ()>::new(|| Ok(1));
+    ArcFunction::<i32, i32>::new(|value: &i32| *value + 1);
+    RcFunction::<i32, i32>::new(|value: &i32| *value + 1);
+}
+"#,
+    );
+
+    assert_compile_failure(
+        &output,
+        "callback wrappers do nothing unless stored or invoked",
+    );
+}
+
+#[test]
+fn test_stored_callback_wrappers_satisfy_unused_must_use() {
+    let output = compile_consumer(
+        &["full"],
+        r#"
+#![deny(unused_must_use)]
+
+use qubit_function::{
+    ArcFunction,
+    BoxCallable,
+    LocalBoxCallable,
+    RcFunction,
+};
+
+fn main() {
+    let _boxed = BoxCallable::<i32, ()>::new(|| Ok(1));
+    let _local = LocalBoxCallable::<i32, ()>::new(|| Ok(1));
+    let _shared = ArcFunction::<i32, i32>::new(|value: &i32| *value + 1);
+    let _local_shared = RcFunction::<i32, i32>::new(|value: &i32| *value + 1);
+}
+"#,
+    );
+
+    assert!(output.status.success(), "{}", cargo_diagnostics(&output));
+}
