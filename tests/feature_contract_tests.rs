@@ -184,6 +184,38 @@ fn main() {
 }
 
 #[test]
+fn test_baseline_rejects_deep_arc_tester_path() {
+    let output = compile_consumer(
+        &[],
+        r#"
+use qubit_function::testers::tester::arc_tester::ArcTester;
+
+fn main() {
+    let _tester = ArcTester::new(|| true);
+}
+"#,
+    );
+
+    assert_compile_failure(&output, "module `arc_tester` is private");
+}
+
+#[test]
+fn test_stateful_rejects_deep_arc_stateful_tester_path() {
+    let output = compile_consumer(
+        &["stateful"],
+        r#"
+use qubit_function::testers::stateful_tester::arc_stateful_tester::ArcStatefulTester;
+
+fn main() {
+    let _tester = ArcStatefulTester::new(|| true);
+}
+"#,
+    );
+
+    assert_compile_failure(&output, "module `arc_stateful_tester` is private");
+}
+
+#[test]
 fn test_baseline_rejects_deep_tester_ops_path() {
     let output = compile_consumer(
         &[],

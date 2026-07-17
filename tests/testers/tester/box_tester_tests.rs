@@ -6,7 +6,7 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::testers::tester::box_tester::BoxTester;
+use qubit_function::testers::tester::BoxTester;
 
 #[test]
 fn test_box_tester_observable_behavior() {

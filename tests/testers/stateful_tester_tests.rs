@@ -7,10 +7,10 @@
 // =============================================================================
 
 use qubit_function::testers::stateful_tester::{
+    ArcStatefulTester,
+    BoxStatefulTester,
+    RcStatefulTester,
     StatefulTester,
-    arc_stateful_tester::ArcStatefulTester,
-    box_stateful_tester::BoxStatefulTester,
-    rc_stateful_tester::RcStatefulTester,
 };
 use std::{
     cell::RefCell,

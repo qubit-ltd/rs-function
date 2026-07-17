@@ -13,7 +13,8 @@
 //!
 //! **Tester** is the stateless zero-argument tester abstraction. It corresponds
 //! to Rust's `Fn() -> bool`: callers may execute it repeatedly through `&self`,
-//! and the implementation should not require mutable access to its own state.
+//! without requiring `&mut self`. This call shape does not imply purity;
+//! interior mutability and external side effects remain possible.
 //!
 //! **StatefulTester** is the stateful zero-argument tester abstraction. It
 //! corresponds to Rust's `FnMut() -> bool`: callers execute it through

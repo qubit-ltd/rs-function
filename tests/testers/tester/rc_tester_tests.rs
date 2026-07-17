@@ -7,8 +7,8 @@
 // =============================================================================
 
 use qubit_function::testers::tester::{
+    RcTester,
     Tester,
-    rc_tester::RcTester,
 };
 
 struct RcAlwaysTrue;

@@ -7,12 +7,12 @@
 // =============================================================================
 //! Defines the `Tester` public trait.
 
-pub mod arc_tester;
+mod arc_tester;
 pub use arc_tester::ArcTester;
-pub mod box_tester;
+mod box_tester;
 pub use box_tester::BoxTester;
 #[cfg(feature = "rc")]
-pub mod rc_tester;
+mod rc_tester;
 #[cfg(feature = "rc")]
 pub use rc_tester::RcTester;
 
@@ -26,8 +26,8 @@ pub use rc_tester::RcTester;
 ///
 /// - **No input parameters**: Captures context through closures
 /// - **Returns boolean**: Indicates test results
-/// - **Uses `&self`**: Matches `Fn() -> bool` and does not require mutable
-///   access to its own state
+/// - **Uses `&self`**: Matches `Fn() -> bool` and does not require `&mut self`;
+///   interior mutability and external side effects remain possible
 /// - **Repeatable calls**: The same Tester can call `test()` multiple times
 /// - **Stateless closure shape**: For `FnMut() -> bool`, use `StatefulTester`
 ///
@@ -40,9 +40,9 @@ pub use rc_tester::RcTester;
 ///
 /// # Design Philosophy
 ///
-/// Tester's responsibility is "test judgment", not "state management".
-/// State management is the caller's responsibility. Tester only reads state
-/// and returns judgment results.
+/// Tester's responsibility is "test judgment". The `Fn` call shape permits
+/// repeated invocation through `&self`; it does not guarantee purity or forbid
+/// interior mutability and external state changes.
 ///
 /// # Examples
 ///
@@ -67,8 +67,9 @@ pub use rc_tester::RcTester;
 pub trait Tester {
     /// Executes the test and returns the test result
     ///
-    /// This method can be called multiple times without modifying the Tester's
-    /// own state.
+    /// This method can be called multiple times through `&self`.
+    /// Implementations may still use interior mutability or external side
+    /// effects.
     ///
     /// # Return Value
     ///
