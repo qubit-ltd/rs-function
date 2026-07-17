@@ -14,8 +14,9 @@
 //! whose success value matters. Use `RunnableOnce<E>` when the operation only
 //! needs to report success or failure.
 //!
-//! The trait itself does not require `Send`; concurrent executors should add
-//! `+ Send + 'static` at their API boundary.
+//! The semantic trait is thread-neutral. `Box*` task wrappers are `Send` for
+//! executor submission, while matching `LocalBox*` wrappers permit non-`Send`
+//! captures for local execution.
 
 mod box_callable_once;
 pub use box_callable_once::BoxCallableOnce;

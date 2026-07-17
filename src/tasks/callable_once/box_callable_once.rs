@@ -41,6 +41,7 @@ use crate::{
 /// let task = BoxCallableOnce::new(|| Ok::<i32, String>(42));
 /// assert_eq!(task.call(), Ok(42));
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxCallableOnce<R, E> {
     /// The one-time closure executed by this callable.
     pub(super) function: Box<dyn FnOnce() -> Result<R, E> + Send>,

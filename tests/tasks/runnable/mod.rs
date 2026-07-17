@@ -8,4 +8,5 @@
 
 mod arc_runnable_tests;
 mod box_runnable_tests;
+mod local_box_runnable_tests;
 mod rc_runnable_tests;

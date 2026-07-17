@@ -38,6 +38,7 @@ use crate::tasks::callable_once::{
 /// # Type Parameters
 ///
 /// * `E` - The error value returned when the action fails.
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct LocalBoxRunnableOnce<E> {
     /// The one-time closure executed by this runnable.
     pub(super) function: Box<dyn FnOnce() -> Result<(), E>>,

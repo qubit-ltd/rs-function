@@ -5,7 +5,7 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-//! Defines the `BoxRunnableWith` public type.
+//! Defines the `LocalBoxRunnableWith` public type.
 
 use crate::{
     functions::macros::impl_function_debug_display,
@@ -13,35 +13,40 @@ use crate::{
         impl_common_name_methods,
         impl_common_new_methods,
     },
-    tasks::runnable_with::RunnableWith,
+    tasks::{
+        callable_with::{
+            CallableWith,
+            LocalBoxCallableWith,
+        },
+        runnable_with::RunnableWith,
+    },
 };
 
-use crate::tasks::callable_with::BoxCallableWith;
+type LocalBoxRunnableWithFn<T, E> = Box<dyn FnMut(&mut T) -> Result<(), E>>;
 
-type BoxRunnableWithFn<T, E> = Box<dyn FnMut(&mut T) -> Result<(), E> + Send>;
-
-/// Box-based runnable with mutable input.
+/// Local box-based runnable with mutable input.
 ///
-/// `BoxRunnableWith<T, E>` stores a
-/// `Box<dyn FnMut(&mut T) -> Result<(), E> + Send>` and can be called
-/// repeatedly on tasks that may be moved across threads.
+/// `LocalBoxRunnableWith<T, E>` can be called repeatedly on the local thread
+/// and permits non-`Send` captures. Use
+/// [`BoxRunnableWith`](crate::tasks::runnable_with::BoxRunnableWith) when the
+/// runnable must be movable across threads.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
-pub struct BoxRunnableWith<T, E> {
+pub struct LocalBoxRunnableWith<T, E> {
     /// The stateful closure executed by this runnable.
-    pub(super) function: BoxRunnableWithFn<T, E>,
+    pub(super) function: LocalBoxRunnableWithFn<T, E>,
     /// The optional name of this runnable.
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
-impl<T, E> BoxRunnableWith<T, E> {
+impl<T, E> LocalBoxRunnableWith<T, E> {
     impl_common_new_methods!(
-        semantic_mut(RunnableWith<T, E> + Send + 'static),
+        semantic_mut(RunnableWith<T, E> + 'static),
         |source| move |input: &mut T| source.run_with(input),
         |function| Box::new(function),
-        "runnable-with"
+        "local runnable-with"
     );
 
-    impl_common_name_methods!("runnable-with");
+    impl_common_name_methods!("local runnable-with");
 
     /// Chains another runnable after this runnable succeeds.
     ///
@@ -51,27 +56,22 @@ impl<T, E> BoxRunnableWith<T, E> {
     ///
     /// # Returns
     ///
-    /// A runnable executing both actions in sequence.
+    /// A local runnable executing both actions in sequence.
     #[inline]
-    pub fn and_then<N>(self, next: N) -> BoxRunnableWith<T, E>
+    pub fn and_then<N>(self, mut next: N) -> LocalBoxRunnableWith<T, E>
     where
-        N: RunnableWith<T, E> + Send + 'static,
+        N: RunnableWith<T, E> + 'static,
         T: 'static,
         E: 'static,
     {
         let mut function = self.function;
-        let mut next = next;
-        BoxRunnableWith::new(move |input: &mut T| {
+        LocalBoxRunnableWith::new(move |input: &mut T| {
             function(&mut *input)?;
             next.run_with(input)
         })
     }
 
-    /// Runs this runnable before a callable.
-    ///
-    /// The callable is not executed if this runnable returns `Err`.
-    /// Because this operation sequences two independent callbacks, the
-    /// returned callable is unnamed.
+    /// Runs this runnable before a local callable.
     ///
     /// # Parameters
     ///
@@ -79,33 +79,32 @@ impl<T, E> BoxRunnableWith<T, E> {
     ///
     /// # Returns
     ///
-    /// A callable producing the second computation's result.
+    /// A local callable producing the second computation's result.
     #[inline]
     pub fn then_callable_with<R, C>(
         self,
-        callable: C,
-    ) -> BoxCallableWith<T, R, E>
+        mut callable: C,
+    ) -> LocalBoxCallableWith<T, R, E>
     where
-        C: crate::tasks::callable_with::CallableWith<T, R, E> + Send + 'static,
+        C: CallableWith<T, R, E> + 'static,
         T: 'static,
         R: 'static,
         E: 'static,
     {
         let mut function = self.function;
-        let mut callable = callable;
-        BoxCallableWith::new(move |input: &mut T| {
+        LocalBoxCallableWith::new(move |input: &mut T| {
             function(&mut *input)?;
             callable.call_with(input)
         })
     }
 }
 
-impl<T, E> RunnableWith<T, E> for BoxRunnableWith<T, E> {
-    /// Executes the boxed runnable with mutable input.
+impl<T, E> RunnableWith<T, E> for LocalBoxRunnableWith<T, E> {
+    /// Executes the local boxed runnable with mutable input.
     #[inline]
     fn run_with(&mut self, input: &mut T) -> Result<(), E> {
         (self.function)(input)
     }
 }
 
-impl_function_debug_display!(BoxRunnableWith<T, E>);
+impl_function_debug_display!(LocalBoxRunnableWith<T, E>);

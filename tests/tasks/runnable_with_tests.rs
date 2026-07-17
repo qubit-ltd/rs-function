@@ -171,8 +171,8 @@ fn test_arc_runnable_with_shares_state_between_clones() {
 
 #[test]
 fn test_box_runnable_with_combinators_cover_error_branches() {
-    let next_runs = Rc::new(Cell::new(0));
-    let next_runs_capture = Rc::clone(&next_runs);
+    let next_runs = Arc::new(AtomicUsize::new(0));
+    let next_runs_capture = Arc::clone(&next_runs);
     let mut chained =
         BoxRunnableWith::<i32, io::Error>::new(|value: &mut i32| {
             if *value < 0 {
@@ -183,7 +183,7 @@ fn test_box_runnable_with_combinators_cover_error_branches() {
             }
         })
         .and_then(move |value: &mut i32| {
-            next_runs_capture.set(next_runs_capture.get() + 1);
+            next_runs_capture.fetch_add(1, Ordering::SeqCst);
             *value *= 2;
             Ok::<(), io::Error>(())
         });
@@ -193,7 +193,7 @@ fn test_box_runnable_with_combinators_cover_error_branches() {
         .run_with(&mut input)
         .expect("and_then should run after success");
     assert_eq!(input, 4);
-    assert_eq!(next_runs.get(), 1);
+    assert_eq!(next_runs.load(Ordering::SeqCst), 1);
 
     let mut input = -1;
     let error = chained
@@ -201,10 +201,10 @@ fn test_box_runnable_with_combinators_cover_error_branches() {
         .expect_err("and_then should short-circuit");
     assert_eq!(error.to_string(), "first failed");
     assert_eq!(input, -1);
-    assert_eq!(next_runs.get(), 1);
+    assert_eq!(next_runs.load(Ordering::SeqCst), 1);
 
-    let callable_runs = Rc::new(Cell::new(0));
-    let callable_runs_capture = Rc::clone(&callable_runs);
+    let callable_runs = Arc::new(AtomicUsize::new(0));
+    let callable_runs_capture = Arc::clone(&callable_runs);
     let mut callable =
         BoxRunnableWith::<i32, io::Error>::new(|value: &mut i32| {
             if *value < 0 {
@@ -215,7 +215,7 @@ fn test_box_runnable_with_combinators_cover_error_branches() {
             }
         })
         .then_callable_with(move |value: &mut i32| {
-            callable_runs_capture.set(callable_runs_capture.get() + 1);
+            callable_runs_capture.fetch_add(1, Ordering::SeqCst);
             Ok::<i32, io::Error>(*value * 2)
         });
 
@@ -227,7 +227,7 @@ fn test_box_runnable_with_combinators_cover_error_branches() {
         6,
     );
     assert_eq!(input, 3);
-    assert_eq!(callable_runs.get(), 1);
+    assert_eq!(callable_runs.load(Ordering::SeqCst), 1);
 
     let mut input = -1;
     let error = callable
@@ -235,5 +235,5 @@ fn test_box_runnable_with_combinators_cover_error_branches() {
         .expect_err("then_callable_with should short-circuit");
     assert_eq!(error.to_string(), "prepare failed");
     assert_eq!(input, -1);
-    assert_eq!(callable_runs.get(), 1);
+    assert_eq!(callable_runs.load(Ordering::SeqCst), 1);
 }

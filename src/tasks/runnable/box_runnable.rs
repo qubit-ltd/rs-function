@@ -27,9 +27,9 @@ use crate::tasks::callable::BoxCallable;
 
 /// Box-based reusable runnable.
 ///
-/// `BoxRunnable<E>` stores a `Box<dyn FnMut() -> Result<(), E>>` and can be
-/// executed repeatedly. It is the boxed concrete implementation of
-/// [`Runnable`].
+/// `BoxRunnable<E>` stores a `Box<dyn FnMut() -> Result<(), E> + Send>` and
+/// can be executed repeatedly. It is the boxed concrete implementation of
+/// [`Runnable`] for tasks that may be moved across threads.
 ///
 /// # Type Parameters
 ///
@@ -43,16 +43,17 @@ use crate::tasks::callable::BoxCallable;
 /// let mut task = BoxRunnable::new(|| Ok::<(), String>(()));
 /// assert_eq!(task.run(), Ok(()));
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxRunnable<E> {
     /// The stateful closure executed by this runnable.
-    pub(super) function: Box<dyn FnMut() -> Result<(), E>>,
+    pub(super) function: Box<dyn FnMut() -> Result<(), E> + Send>,
     /// The optional name of this runnable.
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
 impl<E> BoxRunnable<E> {
     impl_common_new_methods!(
-        semantic_mut(Runnable<E> + 'static),
+        semantic_mut(Runnable<E> + Send + 'static),
         |source| move || source.run(),
         |function| Box::new(function),
         "runnable"
@@ -73,7 +74,7 @@ impl<E> BoxRunnable<E> {
     #[inline]
     pub fn from_supplier<S>(supplier: S) -> Self
     where
-        S: Supplier<Result<(), E>> + 'static,
+        S: Supplier<Result<(), E>> + Send + 'static,
     {
         Self::new(move || supplier.get())
     }
@@ -94,7 +95,7 @@ impl<E> BoxRunnable<E> {
     #[inline]
     pub fn and_then<N>(self, next: N) -> BoxRunnable<E>
     where
-        N: Runnable<E> + 'static,
+        N: Runnable<E> + Send + 'static,
         E: 'static,
     {
         let mut function = self.function;
@@ -121,7 +122,7 @@ impl<E> BoxRunnable<E> {
     #[inline]
     pub fn then_callable<R, C>(self, callable: C) -> BoxCallable<R, E>
     where
-        C: crate::tasks::callable::Callable<R, E> + 'static,
+        C: crate::tasks::callable::Callable<R, E> + Send + 'static,
         R: 'static,
         E: 'static,
     {

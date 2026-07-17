@@ -15,6 +15,7 @@ use std::{
     sync::{
         Arc,
         atomic::{
+            AtomicBool,
             AtomicUsize,
             Ordering,
         },
@@ -118,15 +119,15 @@ fn test_arc_runnable_from_supplier() {
 
 #[test]
 fn test_box_runnable_new_and_run() {
-    let flag = Rc::new(Cell::new(false));
-    let captured = Rc::clone(&flag);
+    let flag = Arc::new(AtomicBool::new(false));
+    let captured = Arc::clone(&flag);
     let mut task = BoxRunnable::new(move || {
-        captured.set(true);
+        captured.store(true, Ordering::SeqCst);
         Ok::<(), io::Error>(())
     });
 
     task.run().expect("box runnable should succeed");
-    assert!(flag.get());
+    assert!(flag.load(Ordering::SeqCst));
 }
 
 #[test]
@@ -188,31 +189,31 @@ fn test_box_runnable_implements_supplier_once() {
 
 #[test]
 fn test_box_runnable_and_then_runs_next_on_success() {
-    let events = Rc::new(Cell::new(0));
-    let first_events = Rc::clone(&events);
-    let second_events = Rc::clone(&events);
+    let events = Arc::new(AtomicUsize::new(0));
+    let first_events = Arc::clone(&events);
+    let second_events = Arc::clone(&events);
     let first = BoxRunnable::new(move || {
-        first_events.set(1);
+        first_events.store(1, Ordering::SeqCst);
         Ok::<(), io::Error>(())
     });
     let second = move || {
-        second_events.set(2);
+        second_events.store(2, Ordering::SeqCst);
         Ok::<(), io::Error>(())
     };
 
     let mut chained = first.and_then(second);
 
     chained.run().expect("chained runnable should succeed");
-    assert_eq!(events.get(), 2);
+    assert_eq!(events.load(Ordering::SeqCst), 2);
 }
 
 #[test]
 fn test_box_runnable_and_then_skips_next_on_error() {
-    let events = Rc::new(Cell::new(0));
-    let second_events = Rc::clone(&events);
+    let events = Arc::new(AtomicUsize::new(0));
+    let second_events = Arc::clone(&events);
     let first = BoxRunnable::new(|| Err::<(), _>(io::Error::other("stop")));
     let second = move || {
-        second_events.set(2);
+        second_events.store(2, Ordering::SeqCst);
         Ok::<(), io::Error>(())
     };
 
@@ -225,7 +226,7 @@ fn test_box_runnable_and_then_skips_next_on_error() {
             .to_string(),
         "stop",
     );
-    assert_eq!(events.get(), 0);
+    assert_eq!(events.load(Ordering::SeqCst), 0);
 }
 
 #[test]
@@ -242,13 +243,13 @@ fn test_box_runnable_then_callable_runs_callable_on_success() {
 
 #[test]
 fn test_box_runnable_then_callable_skips_callable_on_error() {
-    let callable_ran = Rc::new(Cell::new(false));
-    let callable_ran_capture = Rc::clone(&callable_ran);
+    let callable_ran = Arc::new(AtomicBool::new(false));
+    let callable_ran_capture = Arc::clone(&callable_ran);
     let task = BoxRunnable::<io::Error>::new(|| {
         Err(io::Error::other("prepare failed"))
     });
     let callable = move || {
-        callable_ran_capture.set(true);
+        callable_ran_capture.store(true, Ordering::SeqCst);
         Ok::<i32, io::Error>(42)
     };
 
@@ -258,7 +259,7 @@ fn test_box_runnable_then_callable_skips_callable_on_error() {
         .expect_err("then_callable should preserve runnable error");
 
     assert_eq!(error.to_string(), "prepare failed");
-    assert!(!callable_ran.get());
+    assert!(!callable_ran.load(Ordering::SeqCst));
 }
 
 #[test]

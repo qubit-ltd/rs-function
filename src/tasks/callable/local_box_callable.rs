@@ -5,7 +5,7 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-//! Defines the `BoxCallable` public type.
+//! Defines the `LocalBoxCallable` public type.
 
 use crate::{
     functions::macros::impl_function_debug_display,
@@ -17,50 +17,37 @@ use crate::{
     tasks::callable::Callable,
 };
 
-// ============================================================================
-// BoxCallable
-// ============================================================================
-
-/// Box-based callable.
+/// Local box-based callable.
 ///
-/// `BoxCallable<R, E>` stores a
-/// `Box<dyn FnMut() -> Result<R, E> + Send>` and can be called repeatedly. It
-/// is the boxed concrete implementation of [`Callable`] for tasks that may be
-/// moved across threads.
+/// `LocalBoxCallable<R, E>` stores a `Box<dyn FnMut() -> Result<R, E>>` and
+/// can be called repeatedly on the local thread. Use
+/// [`BoxCallable`](crate::tasks::callable::BoxCallable) when the callable must
+/// be movable across threads.
 ///
 /// # Type Parameters
 ///
 /// * `R` - The success value returned by the computation.
 /// * `E` - The error value returned when the computation fails.
-///
-/// # Examples
-///
-/// ```rust
-/// use qubit_function::{BoxCallable, Callable};
-///
-/// let mut task = BoxCallable::new(|| Ok::<i32, String>(42));
-/// assert_eq!(task.call().expect("call should succeed"), 42);
-/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
-pub struct BoxCallable<R, E> {
+pub struct LocalBoxCallable<R, E> {
     /// The stateful closure executed by this callable.
-    pub(super) function: Box<dyn FnMut() -> Result<R, E> + Send>,
+    pub(super) function: Box<dyn FnMut() -> Result<R, E>>,
     /// The optional name of this callable.
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,
 }
 
-impl<R, E> BoxCallable<R, E> {
+impl<R, E> LocalBoxCallable<R, E> {
     impl_common_new_methods!(
-        semantic_mut(Callable<R, E> + Send + 'static),
+        semantic_mut(Callable<R, E> + 'static),
         |source| move || source.call(),
         |function| Box::new(function),
-        "callable"
+        "local callable"
     );
 
-    /// Creates a boxed callable from a reusable supplier.
+    /// Creates a local boxed callable from a reusable supplier.
     ///
     /// This is an explicit bridge from `Supplier<Result<R, E>>` to
-    /// `Callable<R, E>`.
+    /// `Callable<R, E>` without requiring `Send`.
     ///
     /// # Parameters
     ///
@@ -68,16 +55,16 @@ impl<R, E> BoxCallable<R, E> {
     ///
     /// # Returns
     ///
-    /// A new `BoxCallable<R, E>`.
+    /// A new `LocalBoxCallable<R, E>`.
     #[inline]
     pub fn from_supplier<S>(supplier: S) -> Self
     where
-        S: Supplier<Result<R, E>> + Send + 'static,
+        S: Supplier<Result<R, E>> + 'static,
     {
         Self::new(move || supplier.get())
     }
 
-    impl_common_name_methods!("callable");
+    impl_common_name_methods!("local callable");
 
     /// Maps the success value of this callable.
     ///
@@ -87,17 +74,17 @@ impl<R, E> BoxCallable<R, E> {
     ///
     /// # Returns
     ///
-    /// A new callable that applies `mapper` when this callable succeeds.
+    /// A new local callable that applies `mapper` on success.
     #[inline]
-    pub fn map<U, M>(self, mut mapper: M) -> BoxCallable<U, E>
+    pub fn map<U, M>(self, mut mapper: M) -> LocalBoxCallable<U, E>
     where
-        M: FnMut(R) -> U + Send + 'static,
+        M: FnMut(R) -> U + 'static,
         R: 'static,
         E: 'static,
     {
         let metadata = self.metadata;
         let mut function = self.function;
-        BoxCallable::new_with_metadata(
+        LocalBoxCallable::new_with_metadata(
             move || function().map(&mut mapper),
             metadata,
         )
@@ -111,17 +98,17 @@ impl<R, E> BoxCallable<R, E> {
     ///
     /// # Returns
     ///
-    /// A new callable that applies `mapper` when this callable fails.
+    /// A new local callable that applies `mapper` on failure.
     #[inline]
-    pub fn map_err<E2, M>(self, mut mapper: M) -> BoxCallable<R, E2>
+    pub fn map_err<E2, M>(self, mut mapper: M) -> LocalBoxCallable<R, E2>
     where
-        M: FnMut(E) -> E2 + Send + 'static,
+        M: FnMut(E) -> E2 + 'static,
         R: 'static,
         E: 'static,
     {
         let metadata = self.metadata;
         let mut function = self.function;
-        BoxCallable::new_with_metadata(
+        LocalBoxCallable::new_with_metadata(
             move || function().map_err(&mut mapper),
             metadata,
         )
@@ -136,29 +123,28 @@ impl<R, E> BoxCallable<R, E> {
     ///
     /// # Returns
     ///
-    /// A new callable that runs `next` only when this callable succeeds.
+    /// A new local callable that runs `next` only after success.
     #[inline]
-    pub fn and_then<U, N>(self, next: N) -> BoxCallable<U, E>
+    pub fn and_then<U, N>(self, mut next: N) -> LocalBoxCallable<U, E>
     where
-        N: FnMut(R) -> Result<U, E> + Send + 'static,
+        N: FnMut(R) -> Result<U, E> + 'static,
         R: 'static,
         E: 'static,
     {
         let mut function = self.function;
-        let mut next = next;
-        BoxCallable::new(move || {
+        LocalBoxCallable::new(move || {
             let value = function()?;
             next(value)
         })
     }
 }
 
-impl<R, E> Callable<R, E> for BoxCallable<R, E> {
-    /// Executes the boxed callable.
+impl<R, E> Callable<R, E> for LocalBoxCallable<R, E> {
+    /// Executes the local boxed callable.
     #[inline]
     fn call(&mut self) -> Result<R, E> {
         (self.function)()
     }
 }
 
-impl_function_debug_display!(BoxCallable<R, E>);
+impl_function_debug_display!(LocalBoxCallable<R, E>);

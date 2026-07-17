@@ -40,6 +40,7 @@ use crate::{
 /// callback runs. Synchronous re-entry through the same shared wrapper
 /// deadlocks. The mutex is not poisoned after a panic, and mutations completed
 /// before a panic are not rolled back.
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcCallable<R, E> {
     /// The stateful closure executed by this callable.
     pub(super) function: Arc<Mutex<dyn FnMut() -> Result<R, E> + Send>>,
