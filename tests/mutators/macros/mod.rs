@@ -6,6 +6,7 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
+mod box_conditional_mutator_tests;
 mod box_mutator_methods_tests;
 mod conditional_mutator_clone_tests;
 mod conditional_mutator_conversions_tests;

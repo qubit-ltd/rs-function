@@ -7,8 +7,11 @@
 // =============================================================================
 
 mod arc_bi_function_tests;
+mod arc_binary_function_tests;
 mod arc_conditional_bi_function_tests;
 mod box_bi_function_tests;
+mod box_binary_function_tests;
 mod box_conditional_bi_function_tests;
 mod rc_bi_function_tests;
+mod rc_binary_function_tests;
 mod rc_conditional_bi_function_tests;

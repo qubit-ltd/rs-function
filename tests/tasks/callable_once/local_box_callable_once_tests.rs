@@ -28,7 +28,7 @@ fn test_local_box_callable_once_new_allows_non_send_capture() {
     });
 
     assert_eq!(
-        task.call()
+        task.call_once()
             .expect("local callable-once should allow non-send capture"),
         "local"
     );
@@ -64,7 +64,7 @@ fn test_local_box_callable_once_map_and_then_support_local_captures() {
 
     assert_eq!(
         chained
-            .call()
+            .call_once()
             .expect("chained local callable should succeed"),
         "local-mapped-mapped"
     );
@@ -81,7 +81,7 @@ fn test_local_box_callable_once_map_err_transforms_local_error() {
 
     assert_eq!(
         mapped
-            .call()
+            .call_once()
             .expect_err("local map_err should transform error"),
         "local: raw"
     );

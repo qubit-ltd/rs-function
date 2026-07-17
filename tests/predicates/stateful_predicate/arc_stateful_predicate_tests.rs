@@ -1,0 +1,19 @@
+// =============================================================================
+//    Copyright (c) 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
+
+use qubit_function::{
+    ArcStatefulPredicate,
+    StatefulPredicate,
+};
+
+#[test]
+fn test_arc_stateful_predicate_observable_behavior() {
+    let mut predicate = ArcStatefulPredicate::new(|value: &i32| *value > 0);
+    assert!(predicate.test(&1));
+    assert!(!predicate.test(&-1));
+}

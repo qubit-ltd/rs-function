@@ -15,6 +15,7 @@
 mod comparator;
 mod consumers;
 mod functions;
+mod internal;
 mod macros;
 mod mutators;
 mod predicates;

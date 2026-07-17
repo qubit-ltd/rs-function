@@ -7,10 +7,13 @@
 // =============================================================================
 
 mod arc_bi_transformer_tests;
+mod arc_binary_operator_tests;
 mod arc_conditional_bi_transformer_tests;
 mod bi_transformer_and_then_tests;
 mod binary_operator_tests;
 mod box_bi_transformer_tests;
+mod box_binary_operator_tests;
 mod box_conditional_bi_transformer_tests;
 mod rc_bi_transformer_tests;
+mod rc_binary_operator_tests;
 mod rc_conditional_bi_transformer_tests;

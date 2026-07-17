@@ -6,6 +6,7 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
+mod box_conditional_consumer_tests;
 mod box_consumer_methods_tests;
 mod conditional_consumer_clone_tests;
 mod conditional_consumer_conversions_tests;

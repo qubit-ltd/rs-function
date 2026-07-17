@@ -1,0 +1,74 @@
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
+use qubit_function::{
+    ArcBiTransformer,
+    BiTransformer,
+    BoxBiTransformer,
+    RcBiTransformer,
+};
+use std::thread;
+
+// ============================================================================
+// BoxBiTransformer Tests - Immutable, single ownership
+// ============================================================================
+
+#[cfg(test)]
+mod rc_conditional_tests {
+    use super::{
+        BiTransformer,
+        RcBiTransformer,
+    };
+    use qubit_function::RcBiPredicate;
+
+    #[test]
+    fn test_when_or_else() {
+        let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
+        let both_positive =
+            RcBiPredicate::new(|x: &i32, y: &i32| *x > 0 && *y > 0);
+        let multiply = RcBiTransformer::new(|x: i32, y: i32| x * y);
+        let result = add.when(both_positive).or_else(multiply);
+
+        assert_eq!(result.apply(5, 3), 8);
+        assert_eq!(result.apply(-5, 3), -15);
+    }
+
+    #[test]
+    fn test_when_or_else_with_closure() {
+        let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
+        let result = add
+            .when(|x: &i32, y: &i32| *x > 0 && *y > 0)
+            .or_else(|x: i32, y: i32| x * y);
+
+        assert_eq!(result.apply(5, 3), 8);
+        assert_eq!(result.apply(-5, 3), -15);
+        assert_eq!(result.apply(0, 5), 0);
+    }
+
+    #[test]
+    fn test_conditional_clone() {
+        let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
+        let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+        let cloned = conditional.clone();
+
+        let result1 = conditional.or_else(|x: i32, y: i32| x * y);
+        let result2 = cloned.or_else(|x: i32, y: i32| x * y);
+
+        assert_eq!(result1.apply(5, 3), 8);
+        assert_eq!(result2.apply(5, 3), 8);
+        assert_eq!(result1.apply(-5, 3), -15);
+        assert_eq!(result2.apply(-5, 3), -15);
+    }
+}
+
+// ============================================================================
+// Conversion Tests
+// ============================================================================
+
+// ============================================================================
+// Trait Usage Tests
+// ============================================================================

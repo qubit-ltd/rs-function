@@ -1,0 +1,19 @@
+// =============================================================================
+//    Copyright (c) 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
+
+use qubit_function::{
+    BoxStatefulPredicate,
+    StatefulPredicate,
+};
+
+#[test]
+fn test_box_stateful_predicate_observable_behavior() {
+    let mut predicate = BoxStatefulPredicate::new(|value: &i32| *value > 0);
+    assert!(predicate.test(&1));
+    assert!(!predicate.test(&-1));
+}

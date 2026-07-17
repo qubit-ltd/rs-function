@@ -8,5 +8,12 @@
 
 mod arc_comparator_tests;
 mod box_comparator_tests;
+mod comparator_arc_comparator_tests;
+mod comparator_box_comparator_tests;
+mod comparator_closure_tests;
+mod comparator_conversion_tests;
+mod comparator_edge_cases_tests;
+mod comparator_generic_tests;
+mod comparator_rc_comparator_tests;
 mod comparator_tests;
 mod rc_comparator_tests;

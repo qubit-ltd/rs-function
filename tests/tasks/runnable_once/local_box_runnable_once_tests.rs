@@ -30,7 +30,7 @@ fn test_local_box_runnable_once_new_allows_non_send_capture() {
         Ok::<(), io::Error>(())
     });
 
-    task.run()
+    task.run_once()
         .expect("local runnable-once should allow non-send capture");
     assert!(flag.get());
 }
@@ -67,7 +67,9 @@ fn test_local_box_runnable_once_and_then_supports_local_next_task() {
 
     let chained = first.and_then(second);
 
-    chained.run().expect("chained local runnable should run");
+    chained
+        .run_once()
+        .expect("chained local runnable should run");
     assert_eq!(events.get(), 2);
 }
 
@@ -82,7 +84,7 @@ fn test_local_box_runnable_once_then_callable_supports_local_callable() {
 
     assert_eq!(
         chained
-            .call()
+            .call_once()
             .expect("local callable should run after runnable"),
         "value"
     );
@@ -96,5 +98,5 @@ fn test_local_box_runnable_once_then_callable_clears_name() {
     let chained = task.then_callable(|| Ok::<i32, io::Error>(42));
 
     assert_eq!(chained.name(), None);
-    assert_eq!(chained.call().expect("callable should succeed"), 42);
+    assert_eq!(chained.call_once().expect("callable should succeed"), 42);
 }
