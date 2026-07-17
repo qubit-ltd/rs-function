@@ -69,6 +69,7 @@ type BoxStatefulBiConsumerFn<T, U> = Box<dyn FnMut(&T, &U)>;
 /// consumer.accept(&5, &3);
 /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxStatefulBiConsumer<T, U> {
     pub(super) function: BoxStatefulBiConsumerFn<T, U>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

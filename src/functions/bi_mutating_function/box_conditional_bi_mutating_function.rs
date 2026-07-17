@@ -37,6 +37,7 @@ use {
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 /// - **Implements BiMutatingFunction**: Can be used anywhere a
 ///   `BiMutatingFunction` is expected
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConditionalBiMutatingFunction<T, U, R> {
     pub(super) function: BoxBiMutatingFunction<T, U, R>,
     pub(super) predicate: BoxBiPredicate<T, U>,

@@ -75,6 +75,7 @@ use {
 /// assert_eq!(counter.apply(&mut value), 1);
 /// assert_eq!(value, 10);
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxStatefulMutatingFunction<T, R> {
     pub(super) function: Box<dyn FnMut(&mut T) -> R>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

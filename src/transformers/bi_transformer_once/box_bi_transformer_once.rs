@@ -37,6 +37,7 @@ use {
 /// - **Ownership**: Single ownership, cannot be cloned
 /// - **Reusability**: Can only be called once (consumes self and inputs)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxBiTransformerOnce<T, U, R> {
     pub(super) function: Box<dyn FnOnce(T, U) -> R>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

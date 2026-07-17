@@ -65,6 +65,7 @@ use {
 /// consumer.accept(&5, &3);
 /// clone.accept(&10, &20);
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcBiConsumer<T, U> {
     pub(super) function: Arc<ThreadSafeBiConsumerFn<T, U>>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

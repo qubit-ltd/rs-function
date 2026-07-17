@@ -37,6 +37,7 @@ use {
 ///   input)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
 /// - **Statefulness**: Can modify internal state between calls
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxStatefulTransformer<T, R> {
     pub(super) function: Box<dyn FnMut(T) -> R>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

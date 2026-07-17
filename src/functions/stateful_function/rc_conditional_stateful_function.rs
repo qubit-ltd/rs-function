@@ -52,6 +52,7 @@ use {
 /// assert_eq!(function.apply(&5), 10);
 /// assert_eq!(function_clone.apply(&-5), 5);
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcConditionalStatefulFunction<T, R> {
     pub(super) function: RcStatefulFunction<T, R>,
     pub(super) predicate: RcPredicate<T>,

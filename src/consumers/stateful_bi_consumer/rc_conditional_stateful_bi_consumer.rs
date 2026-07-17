@@ -59,6 +59,7 @@ use {
 /// m.accept(&value, &3);
 /// assert_eq!(*log.borrow(), vec![8]);
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcConditionalStatefulBiConsumer<T, U> {
     pub(super) consumer: RcStatefulBiConsumer<T, U>,
     pub(super) predicate: RcBiPredicate<T, U>,

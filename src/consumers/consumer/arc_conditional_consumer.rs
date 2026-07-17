@@ -71,6 +71,7 @@ use {
 /// consumer.accept(&5);  // Prints: Positive: 5
 /// consumer.accept(&-5); // Prints: Non-positive: -5
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcConditionalConsumer<T> {
     pub(super) consumer: ArcConsumer<T>,
     pub(super) predicate: ArcPredicate<T>,

@@ -76,6 +76,7 @@ use {
 /// assert_eq!(tripled.get(), 30);
 /// # }
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcSupplier<T> {
     pub(super) function: Rc<dyn Fn() -> T>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

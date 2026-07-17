@@ -49,6 +49,7 @@ use {
 /// assert_eq!(conditional.apply(&5), 10); // when branch executed
 /// assert_eq!(conditional.apply(&-5), 5); // or_else branch executed
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConditionalFunction<T, R> {
     pub(super) function: BoxFunction<T, R>,
     pub(super) predicate: BoxPredicate<T>,

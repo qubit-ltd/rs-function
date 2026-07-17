@@ -35,6 +35,7 @@ type RcStatefulTesterFn = Rc<RefCell<dyn FnMut() -> bool>>;
 /// Each call holds a mutable `RefCell` borrow while the user callback runs.
 /// Synchronous re-entry through the same shared wrapper panics with a borrow
 /// error. Mutations completed before a panic are not rolled back.
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcStatefulTester {
     pub(super) function: RcStatefulTesterFn,
     pub(super) metadata: CallbackMetadata,

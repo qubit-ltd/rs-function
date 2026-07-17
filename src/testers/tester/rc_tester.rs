@@ -64,6 +64,7 @@ use {
 /// let combined = shared.and(clone1.clone());
 /// # }
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcTester {
     pub(super) function: Rc<dyn Fn() -> bool>,
     pub(super) metadata: CallbackMetadata,

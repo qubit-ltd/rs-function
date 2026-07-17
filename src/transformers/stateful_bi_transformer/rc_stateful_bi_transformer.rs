@@ -45,6 +45,7 @@ use {
 /// Each call holds a mutable `RefCell` borrow while the user callback runs.
 /// Synchronous re-entry through the same shared wrapper panics with a borrow
 /// error. Mutations completed before a panic are not rolled back.
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcStatefulBiTransformer<T, U, R> {
     pub(super) function: Rc<RefCell<dyn FnMut(T, U) -> R>>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

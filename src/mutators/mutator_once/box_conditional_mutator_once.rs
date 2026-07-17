@@ -97,6 +97,7 @@ use {
 /// mutator2.apply(&mut target2);
 /// assert_eq!(target2, vec![0, 99]); // or_else branch executed
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConditionalMutatorOnce<T> {
     pub(super) mutator: BoxMutatorOnce<T>,
     pub(super) predicate: BoxPredicate<T>,

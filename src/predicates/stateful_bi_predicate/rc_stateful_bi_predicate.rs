@@ -31,6 +31,7 @@ type RcStatefulBiPredicateFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U) -> bool>>;
 /// Each call holds a mutable `RefCell` borrow while the user callback runs.
 /// Synchronous re-entry through the same shared wrapper panics with a borrow
 /// error. Mutations completed before a panic are not rolled back.
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcStatefulBiPredicate<T, U> {
     pub(super) function: RcStatefulBiPredicateFn<T, U>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

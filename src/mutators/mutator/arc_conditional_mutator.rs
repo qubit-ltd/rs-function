@@ -52,6 +52,7 @@ use {
 /// m.apply(&mut value);
 /// assert_eq!(value, 10);
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcConditionalMutator<T> {
     pub(super) mutator: ArcMutator<T>,
     pub(super) predicate: ArcPredicate<T>,

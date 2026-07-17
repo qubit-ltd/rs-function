@@ -39,6 +39,7 @@ use {
 /// assert!(combined.test(&4));
 /// # }
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxPredicate<T> {
     pub(super) function: Box<dyn Fn(&T) -> bool>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

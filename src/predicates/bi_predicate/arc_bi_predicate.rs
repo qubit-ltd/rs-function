@@ -49,6 +49,7 @@ use {
 /// }).join().expect("thread should not panic");
 /// # }
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcBiPredicate<T, U> {
     pub(super) function: Arc<SendSyncBiPredicateFn<T, U>>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

@@ -69,6 +69,7 @@ use {
 /// consumer.accept(&5, &3);  // Prints: Both positive: 5 + 3 = 8
 /// consumer.accept(&-5, &3); // Prints: Not both positive: -5 and 3
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConditionalBiConsumer<T, U> {
     pub(super) consumer: BoxBiConsumer<T, U>,
     pub(super) predicate: BoxBiPredicate<T, U>,

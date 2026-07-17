@@ -63,6 +63,7 @@ use {
 /// });
 /// consumer.accept(&5);
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConsumerOnce<T> {
     pub(super) function: Box<dyn FnOnce(&T)>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

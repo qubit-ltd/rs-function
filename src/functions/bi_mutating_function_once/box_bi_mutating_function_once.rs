@@ -40,6 +40,7 @@ type BoxBiMutatingFunctionOnceFn<T, U, R> =
 /// - **Ownership**: Single ownership, cannot be cloned
 /// - **Reusability**: Can only be called once (consumes self)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxBiMutatingFunctionOnce<T, U, R> {
     pub(super) function: BoxBiMutatingFunctionOnceFn<T, U, R>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

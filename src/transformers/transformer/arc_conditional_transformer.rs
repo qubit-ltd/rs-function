@@ -51,6 +51,7 @@ use {
 /// assert_eq!(conditional.apply(5), 10);
 /// assert_eq!(conditional_clone.apply(-5), -5);
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcConditionalTransformer<T, R> {
     pub(super) transformer: ArcTransformer<T, R>,
     pub(super) predicate: ArcPredicate<T>,

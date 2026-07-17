@@ -85,6 +85,7 @@ type ArcStatefulConsumerFn<T> = Arc<Mutex<dyn FnMut(&T) + Send>>;
 /// callback runs. Synchronous re-entry through the same shared state
 /// deadlocks. The mutex is not poisoned after a panic, and mutations completed
 /// before a panic are not rolled back.
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcStatefulConsumer<T> {
     pub(super) function: ArcStatefulConsumerFn<T>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

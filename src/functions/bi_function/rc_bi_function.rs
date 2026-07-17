@@ -40,6 +40,7 @@ type RcBiFunctionFn<T, U, R> = Rc<dyn Fn(&T, &U) -> R>;
 /// - **Reusability**: Can be called multiple times (borrows inputs each time)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync`)
 /// - **Clonable**: Cheap cloning via `Rc::clone`
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcBiFunction<T, U, R> {
     pub(super) function: RcBiFunctionFn<T, U, R>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

@@ -65,6 +65,7 @@ use {
 /// consumer.accept(&5);
 /// clone.accept(&10);
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcConsumer<T> {
     pub(super) function: Rc<dyn Fn(&T)>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,

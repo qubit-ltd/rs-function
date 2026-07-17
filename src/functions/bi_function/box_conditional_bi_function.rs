@@ -50,6 +50,7 @@ use {
 /// assert_eq!(conditional.apply(&5, &3), 8);  // when branch executed
 /// assert_eq!(conditional.apply(&-5, &3), -15); // or_else branch executed
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConditionalBiFunction<T, U, R> {
     pub(super) function: BoxBiFunction<T, U, R>,
     pub(super) predicate: BoxBiPredicate<T, U>,

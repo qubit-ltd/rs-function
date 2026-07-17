@@ -37,6 +37,7 @@ use {
 /// - **One-time Use**: Can only be called once
 /// - **Conditional Execution**: Only computes when bi-predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConditionalBiMutatingFunctionOnce<T, U, R> {
     pub(super) function: BoxBiMutatingFunctionOnce<T, U, R>,
     pub(super) predicate: BoxBiPredicate<T, U>,

@@ -47,6 +47,7 @@ use {
 /// }).join().expect("thread should not panic");
 /// # }
 /// ```
+#[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcPredicate<T> {
     pub(super) function: Arc<dyn Fn(&T) -> bool + Send + Sync>,
     pub(super) metadata: crate::callback_metadata::CallbackMetadata,
