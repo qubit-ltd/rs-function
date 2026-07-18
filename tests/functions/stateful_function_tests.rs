@@ -36,10 +36,6 @@ struct CustomStatefulFunction {
     multiplier: i32,
 }
 
-// Implement Send and Sync for CustomStatefulFunction to support Arc
-unsafe impl Send for CustomStatefulFunction {}
-unsafe impl Sync for CustomStatefulFunction {}
-
 impl StatefulFunction<i32, i32> for CustomStatefulFunction {
     fn apply(&mut self, input: &i32) -> i32 {
         self.multiplier += 1;
