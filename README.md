@@ -972,10 +972,10 @@ cargo run --features full --example tester_demo
 ## Testing
 
 ```bash
-# Core API with the default empty feature set
-cargo test --no-default-features
+# Run tests with the default feature set
+cargo test
 
-# Core API plus regex validation
+# Run tests with all declared features
 cargo test --all-features
 
 # Project CI checks
