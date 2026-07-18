@@ -84,6 +84,7 @@ where
 impl_predicate_debug_display!(BoxBiPredicate<T, U>);
 
 impl<T, U> BiPredicate<T, U> for BoxBiPredicate<T, U> {
+    #[inline(always)]
     fn test(&self, first: &T, second: &U) -> bool {
         (self.function)(first, second)
     }

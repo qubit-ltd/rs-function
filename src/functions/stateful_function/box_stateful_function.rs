@@ -74,6 +74,7 @@ impl_function_debug_display!(BoxStatefulFunction<T, R>);
 
 // Implement StatefulFunction trait for BoxStatefulFunction<T, R>
 impl<T, R> StatefulFunction<T, R> for BoxStatefulFunction<T, R> {
+    #[inline(always)]
     fn apply(&mut self, t: &T) -> R {
         (self.function)(t)
     }

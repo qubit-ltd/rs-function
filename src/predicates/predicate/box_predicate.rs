@@ -83,6 +83,7 @@ impl_predicate_debug_display!(BoxPredicate<T>);
 
 // Implements Predicate trait for BoxPredicate<T>
 impl<T> Predicate<T> for BoxPredicate<T> {
+    #[inline(always)]
     fn test(&self, value: &T) -> bool {
         (self.function)(value)
     }

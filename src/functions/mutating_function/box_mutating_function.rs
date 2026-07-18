@@ -103,6 +103,7 @@ impl_function_identity_method!(BoxMutatingFunction<T, T>, mutating);
 
 // Implement MutatingFunction trait for BoxMutatingFunction<T, R>
 impl<T, R> MutatingFunction<T, R> for BoxMutatingFunction<T, R> {
+    #[inline(always)]
     fn apply(&self, t: &mut T) -> R {
         (self.function)(t)
     }

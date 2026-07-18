@@ -243,6 +243,7 @@ impl_predicate_clone!(ArcStatefulBiPredicate<T, U>);
 impl_predicate_debug_display!(ArcStatefulBiPredicate<T, U>);
 
 impl<T, U> StatefulBiPredicate<T, U> for ArcStatefulBiPredicate<T, U> {
+    #[inline]
     fn test(&mut self, first: &T, second: &U) -> bool {
         let mut function = self.function.lock();
         function(first, second)

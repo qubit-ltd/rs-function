@@ -116,6 +116,7 @@ impl_predicate_debug_display!(ArcBiPredicate<T, U>);
 
 // Implements BiPredicate trait for ArcBiPredicate<T, U>
 impl<T, U> BiPredicate<T, U> for ArcBiPredicate<T, U> {
+    #[inline(always)]
     fn test(&self, first: &T, second: &U) -> bool {
         (self.function)(first, second)
     }

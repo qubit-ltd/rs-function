@@ -68,6 +68,7 @@ impl_transformer_debug_display!(BoxStatefulBiTransformer<T, U, R>);
 impl<T, U, R> StatefulBiTransformer<T, U, R>
     for BoxStatefulBiTransformer<T, U, R>
 {
+    #[inline(always)]
     fn apply(&mut self, first: T, second: U) -> R {
         (self.function)(first, second)
     }

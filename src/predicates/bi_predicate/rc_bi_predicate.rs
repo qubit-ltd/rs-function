@@ -107,6 +107,7 @@ impl_predicate_debug_display!(RcBiPredicate<T, U>);
 
 // Implements BiPredicate trait for RcBiPredicate<T, U>
 impl<T, U> BiPredicate<T, U> for RcBiPredicate<T, U> {
+    #[inline(always)]
     fn test(&self, first: &T, second: &U) -> bool {
         (self.function)(first, second)
     }

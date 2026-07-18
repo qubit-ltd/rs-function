@@ -288,7 +288,7 @@ impl Not for &RcTester {
 }
 
 impl Tester for RcTester {
-    #[inline]
+    #[inline(always)]
     fn test(&self) -> bool {
         (self.function)()
     }

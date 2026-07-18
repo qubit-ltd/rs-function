@@ -223,6 +223,7 @@ impl_supplier_debug_display!(ArcStatefulSupplier<T>);
 impl_supplier_clone!(ArcStatefulSupplier<T>);
 
 impl<T> StatefulSupplier<T> for ArcStatefulSupplier<T> {
+    #[inline]
     fn get(&mut self) -> T {
         let mut function = self.function.lock();
         function()

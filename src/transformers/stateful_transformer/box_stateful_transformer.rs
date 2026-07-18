@@ -67,6 +67,7 @@ impl_transformer_debug_display!(BoxStatefulTransformer<T, R>);
 
 // Implement StatefulTransformer trait for BoxStatefulTransformer
 impl<T, R> StatefulTransformer<T, R> for BoxStatefulTransformer<T, R> {
+    #[inline(always)]
     fn apply(&mut self, input: T) -> R {
         (self.function)(input)
     }

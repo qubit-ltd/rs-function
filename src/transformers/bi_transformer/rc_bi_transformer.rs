@@ -75,6 +75,7 @@ impl_transformer_clone!(RcBiTransformer<T, U, R>);
 
 // Implement BiTransformer trait for RcBiTransformer
 impl<T, U, R> BiTransformer<T, U, R> for RcBiTransformer<T, U, R> {
+    #[inline(always)]
     fn apply(&self, first: T, second: U) -> R {
         (self.function)(first, second)
     }

@@ -76,6 +76,7 @@ impl_function_clone!(ArcBiFunction<T, U, R>);
 
 // Implement BiFunction trait for ArcBiFunction
 impl<T, U, R> BiFunction<T, U, R> for ArcBiFunction<T, U, R> {
+    #[inline(always)]
     fn apply(&self, first: &T, second: &U) -> R {
         (self.function)(first, second)
     }

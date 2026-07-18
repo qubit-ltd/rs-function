@@ -155,7 +155,7 @@ impl<R, E> BoxCallable<R, E> {
 
 impl<R, E> Callable<R, E> for BoxCallable<R, E> {
     /// Executes the boxed callable.
-    #[inline]
+    #[inline(always)]
     fn call(&mut self) -> Result<R, E> {
         (self.function)()
     }

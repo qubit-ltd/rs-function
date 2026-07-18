@@ -109,6 +109,7 @@ impl_predicate_debug_display!(ArcPredicate<T>);
 
 // Implements Predicate trait for ArcPredicate<T>
 impl<T> Predicate<T> for ArcPredicate<T> {
+    #[inline(always)]
     fn test(&self, value: &T) -> bool {
         (self.function)(value)
     }

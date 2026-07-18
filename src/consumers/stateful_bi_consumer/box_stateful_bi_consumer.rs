@@ -95,6 +95,7 @@ impl<T, U> BoxStatefulBiConsumer<T, U> {
 }
 
 impl<T, U> StatefulBiConsumer<T, U> for BoxStatefulBiConsumer<T, U> {
+    #[inline(always)]
     fn accept(&mut self, first: &T, second: &U) {
         (self.function)(first, second)
     }

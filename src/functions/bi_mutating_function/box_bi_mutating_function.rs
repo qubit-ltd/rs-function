@@ -67,6 +67,7 @@ impl<T, U, R> BoxBiMutatingFunction<T, U, R> {
 
 // Implement BiMutatingFunction trait for BoxBiMutatingFunction
 impl<T, U, R> BiMutatingFunction<T, U, R> for BoxBiMutatingFunction<T, U, R> {
+    #[inline(always)]
     fn apply(&self, first: &mut T, second: &mut U) -> R {
         (self.function)(first, second)
     }

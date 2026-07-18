@@ -82,6 +82,7 @@ impl_transformer_clone!(RcStatefulTransformer<T, R>);
 
 // Implement StatefulTransformer trait for RcStatefulTransformer
 impl<T, R> StatefulTransformer<T, R> for RcStatefulTransformer<T, R> {
+    #[inline]
     fn apply(&mut self, input: T) -> R {
         let mut self_fn = self.function.borrow_mut();
         self_fn(input)

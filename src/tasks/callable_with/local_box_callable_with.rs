@@ -120,7 +120,7 @@ impl<T, R, E> LocalBoxCallableWith<T, R, E> {
 
 impl<T, R, E> CallableWith<T, R, E> for LocalBoxCallableWith<T, R, E> {
     /// Executes the local boxed callable with mutable input.
-    #[inline]
+    #[inline(always)]
     fn call_with(&mut self, input: &mut T) -> Result<R, E> {
         (self.function)(input)
     }

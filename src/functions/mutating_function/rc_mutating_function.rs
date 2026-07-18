@@ -103,6 +103,7 @@ impl_function_debug_display!(RcMutatingFunction<T, R>);
 impl_function_identity_method!(RcMutatingFunction<T, T>, mutating);
 
 impl<T, R> MutatingFunction<T, R> for RcMutatingFunction<T, R> {
+    #[inline(always)]
     fn apply(&self, input: &mut T) -> R {
         (self.function)(input)
     }

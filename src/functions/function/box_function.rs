@@ -73,6 +73,7 @@ impl_function_debug_display!(BoxFunction<T, R>);
 
 // Implement Function trait for BoxFunction<T, R>
 impl<T, R> Function<T, R> for BoxFunction<T, R> {
+    #[inline(always)]
     fn apply(&self, t: &T) -> R {
         (self.function)(t)
     }

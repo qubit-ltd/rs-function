@@ -240,6 +240,7 @@ impl_predicate_clone!(RcStatefulBiPredicate<T, U>);
 impl_predicate_debug_display!(RcStatefulBiPredicate<T, U>);
 
 impl<T, U> StatefulBiPredicate<T, U> for RcStatefulBiPredicate<T, U> {
+    #[inline]
     fn test(&mut self, first: &T, second: &U) -> bool {
         let mut function = self.function.borrow_mut();
         function(first, second)

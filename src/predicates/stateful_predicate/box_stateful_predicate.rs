@@ -175,6 +175,7 @@ impl_predicate_debug_display!(BoxStatefulPredicate<T>);
 
 // Implements StatefulPredicate trait for BoxStatefulPredicate<T>
 impl<T> StatefulPredicate<T> for BoxStatefulPredicate<T> {
+    #[inline(always)]
     fn test(&mut self, value: &T) -> bool {
         (self.function)(value)
     }

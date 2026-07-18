@@ -103,7 +103,7 @@ impl<T, E> BoxRunnableWith<T, E> {
 
 impl<T, E> RunnableWith<T, E> for BoxRunnableWith<T, E> {
     /// Executes the boxed runnable with mutable input.
-    #[inline]
+    #[inline(always)]
     fn run_with(&mut self, input: &mut T) -> Result<(), E> {
         (self.function)(input)
     }

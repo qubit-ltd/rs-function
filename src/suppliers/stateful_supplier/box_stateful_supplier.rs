@@ -145,6 +145,7 @@ impl<T> BoxStatefulSupplier<T> {
 impl_supplier_debug_display!(BoxStatefulSupplier<T>);
 
 impl<T> StatefulSupplier<T> for BoxStatefulSupplier<T> {
+    #[inline(always)]
     fn get(&mut self) -> T {
         (self.function)()
     }

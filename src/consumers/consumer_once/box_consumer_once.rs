@@ -89,6 +89,7 @@ impl<T> BoxConsumerOnce<T> {
 }
 
 impl<T> ConsumerOnce<T> for BoxConsumerOnce<T> {
+    #[inline(always)]
     fn accept(self, value: &T) {
         (self.function)(value)
     }

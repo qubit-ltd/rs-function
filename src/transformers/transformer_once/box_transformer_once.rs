@@ -61,6 +61,7 @@ impl<T, R> BoxTransformerOnce<T, R> {
 
 // Implement TransformerOnce trait for BoxTransformerOnce
 impl<T, R> TransformerOnce<T, R> for BoxTransformerOnce<T, R> {
+    #[inline(always)]
     fn apply(self, input: T) -> R {
         (self.function)(input)
     }

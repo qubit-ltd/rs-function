@@ -234,6 +234,7 @@ impl_predicate_debug_display!(RcStatefulPredicate<T>);
 
 // Implements StatefulPredicate trait for RcStatefulPredicate<T>
 impl<T> StatefulPredicate<T> for RcStatefulPredicate<T> {
+    #[inline]
     fn test(&mut self, value: &T) -> bool {
         let mut function = self.function.borrow_mut();
         function(value)

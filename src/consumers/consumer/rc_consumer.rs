@@ -92,6 +92,7 @@ impl<T> RcConsumer<T> {
 }
 
 impl<T> Consumer<T> for RcConsumer<T> {
+    #[inline(always)]
     fn accept(&self, value: &T) {
         (self.function)(value)
     }

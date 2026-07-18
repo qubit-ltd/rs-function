@@ -115,6 +115,7 @@ impl<T> ArcStatefulConsumer<T> {
 }
 
 impl<T> StatefulConsumer<T> for ArcStatefulConsumer<T> {
+    #[inline]
     fn accept(&mut self, value: &T) {
         let mut function = self.function.lock();
         function(value)

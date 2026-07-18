@@ -74,6 +74,7 @@ impl<T, U, R> ArcBiMutatingFunction<T, U, R> {
 
 // Implement BiMutatingFunction trait for ArcBiMutatingFunction
 impl<T, U, R> BiMutatingFunction<T, U, R> for ArcBiMutatingFunction<T, U, R> {
+    #[inline(always)]
     fn apply(&self, first: &mut T, second: &mut U) -> R {
         (self.function)(first, second)
     }

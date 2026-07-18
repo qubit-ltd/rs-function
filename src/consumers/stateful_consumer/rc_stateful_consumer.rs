@@ -122,6 +122,7 @@ impl<T> RcStatefulConsumer<T> {
 }
 
 impl<T> StatefulConsumer<T> for RcStatefulConsumer<T> {
+    #[inline]
     fn accept(&mut self, value: &T) {
         let mut function = self.function.borrow_mut();
         function(value)

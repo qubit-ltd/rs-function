@@ -81,6 +81,7 @@ impl_function_debug_display!(ArcFunction<T, R>);
 
 // Implement Function trait for ArcFunction<T, R>
 impl<T, R> Function<T, R> for ArcFunction<T, R> {
+    #[inline(always)]
     fn apply(&self, t: &T) -> R {
         (self.function)(t)
     }

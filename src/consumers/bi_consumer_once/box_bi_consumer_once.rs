@@ -91,6 +91,7 @@ impl<T, U> BoxBiConsumerOnce<T, U> {
 }
 
 impl<T, U> BiConsumerOnce<T, U> for BoxBiConsumerOnce<T, U> {
+    #[inline(always)]
     fn accept(self, first: &T, second: &U) {
         (self.function)(first, second)
     }

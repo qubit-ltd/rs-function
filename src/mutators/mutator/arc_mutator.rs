@@ -88,6 +88,7 @@ impl<T> ArcMutator<T> {
 }
 
 impl<T> Mutator<T> for ArcMutator<T> {
+    #[inline(always)]
     fn apply(&self, value: &mut T) {
         (self.function)(value)
     }
