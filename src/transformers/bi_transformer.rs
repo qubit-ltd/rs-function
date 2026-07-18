@@ -79,6 +79,7 @@ impl<T, U, R, F> BiTransformer<T, U, R> for F
 where
     F: Fn(T, U) -> R,
 {
+    #[inline(always)]
     fn apply(&self, first: T, second: U) -> R {
         self(first, second)
     }

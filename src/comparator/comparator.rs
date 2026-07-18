@@ -76,7 +76,7 @@ impl<T, F> Comparator<T> for F
 where
     F: Fn(&T, &T) -> Ordering,
 {
-    #[inline]
+    #[inline(always)]
     fn compare(&self, a: &T, b: &T) -> Ordering {
         self(a, b)
     }

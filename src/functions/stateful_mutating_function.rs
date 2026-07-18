@@ -264,6 +264,7 @@ impl<T, R, F> StatefulMutatingFunction<T, R> for F
 where
     F: FnMut(&mut T) -> R,
 {
+    #[inline(always)]
     fn apply(&mut self, t: &mut T) -> R {
         self(t)
     }

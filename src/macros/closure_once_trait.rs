@@ -92,7 +92,7 @@ macro_rules! impl_closure_once_trait {
           F: FnOnce($($arg_ty),*) $(-> $ret)?,
       {
           // Core method: Direct closure call
-          #[inline]
+          #[inline(always)]
           fn $method_name(self, $($arg : $arg_ty),*) $(-> $ret)? {
               self($($arg),*)
           }

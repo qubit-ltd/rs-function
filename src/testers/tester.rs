@@ -91,6 +91,7 @@ impl<F> Tester for F
 where
     F: Fn() -> bool,
 {
+    #[inline(always)]
     fn test(&self) -> bool {
         self()
     }
