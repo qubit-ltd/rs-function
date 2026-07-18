@@ -265,14 +265,14 @@ impl<T> BoxComparator<T> {
     /// assert_eq!(func(&5, &3), Ordering::Greater);
     /// ```
     #[must_use = "the returned comparator closure should be stored or invoked"]
-    #[inline]
+    #[inline(always)]
     pub fn into_fn(self) -> impl Fn(&T, &T) -> Ordering {
         move |a: &T, b: &T| (self.function)(a, b)
     }
 }
 
 impl<T> Comparator<T> for BoxComparator<T> {
-    #[inline]
+    #[inline(always)]
     fn compare(&self, a: &T, b: &T) -> Ordering {
         (self.function)(a, b)
     }

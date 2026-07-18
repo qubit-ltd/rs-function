@@ -160,6 +160,7 @@ impl_supplier_debug_display!(ArcSupplier<T>);
 impl_supplier_clone!(ArcSupplier<T>);
 
 impl<T> Supplier<T> for ArcSupplier<T> {
+    #[inline(always)]
     fn get(&self) -> T {
         (self.function)()
     }

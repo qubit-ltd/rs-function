@@ -63,6 +63,7 @@ impl<T, U, R> BoxBiFunction<T, U, R> {
 
 // Implement BiFunction trait for BoxBiFunction
 impl<T, U, R> BiFunction<T, U, R> for BoxBiFunction<T, U, R> {
+    #[inline(always)]
     fn apply(&self, first: &T, second: &U) -> R {
         (self.function)(first, second)
     }

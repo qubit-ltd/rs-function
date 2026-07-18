@@ -183,6 +183,7 @@ where
 impl_predicate_debug_display!(BoxStatefulBiPredicate<T, U>);
 
 impl<T, U> StatefulBiPredicate<T, U> for BoxStatefulBiPredicate<T, U> {
+    #[inline(always)]
     fn test(&mut self, first: &T, second: &U) -> bool {
         (self.function)(first, second)
     }

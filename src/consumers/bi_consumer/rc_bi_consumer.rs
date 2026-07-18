@@ -94,6 +94,7 @@ impl<T, U> RcBiConsumer<T, U> {
 }
 
 impl<T, U> BiConsumer<T, U> for RcBiConsumer<T, U> {
+    #[inline(always)]
     fn accept(&self, first: &T, second: &U) {
         (self.function)(first, second)
     }

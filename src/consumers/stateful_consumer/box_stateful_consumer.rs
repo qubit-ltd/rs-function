@@ -92,6 +92,7 @@ impl<T> BoxStatefulConsumer<T> {
 }
 
 impl<T> StatefulConsumer<T> for BoxStatefulConsumer<T> {
+    #[inline(always)]
     fn accept(&mut self, value: &T) {
         (self.function)(value)
     }

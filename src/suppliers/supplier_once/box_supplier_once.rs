@@ -77,6 +77,7 @@ impl<T> BoxSupplierOnce<T> {
 
 // Generates: implement SupplierOnce for BoxSupplierOnce<T>
 impl<T> SupplierOnce<T> for BoxSupplierOnce<T> {
+    #[inline(always)]
     fn get(self) -> T {
         (self.function)()
     }

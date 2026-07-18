@@ -94,6 +94,7 @@ impl<T, U> ArcBiConsumer<T, U> {
 }
 
 impl<T, U> BiConsumer<T, U> for ArcBiConsumer<T, U> {
+    #[inline(always)]
     fn accept(&self, first: &T, second: &U) {
         (self.function)(first, second)
     }

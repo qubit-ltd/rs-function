@@ -71,6 +71,7 @@ impl<T, U, R> BoxBiMutatingFunctionOnce<T, U, R> {
 impl<T, U, R> BiMutatingFunctionOnce<T, U, R>
     for BoxBiMutatingFunctionOnce<T, U, R>
 {
+    #[inline(always)]
     fn apply(self, first: &mut T, second: &mut U) -> R {
         (self.function)(first, second)
     }

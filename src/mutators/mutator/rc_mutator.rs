@@ -89,6 +89,7 @@ impl<T> RcMutator<T> {
 }
 
 impl<T> Mutator<T> for RcMutator<T> {
+    #[inline(always)]
     fn apply(&self, value: &mut T) {
         (self.function)(value)
     }

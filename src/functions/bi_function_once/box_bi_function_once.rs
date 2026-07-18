@@ -68,6 +68,7 @@ impl<T, U, R> BoxBiFunctionOnce<T, U, R> {
 
 // Implement BiFunctionOnce trait for BoxBiFunctionOnce
 impl<T, U, R> BiFunctionOnce<T, U, R> for BoxBiFunctionOnce<T, U, R> {
+    #[inline(always)]
     fn apply(self, first: &T, second: &U) -> R {
         (self.function)(first, second)
     }

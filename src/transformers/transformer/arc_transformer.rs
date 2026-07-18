@@ -75,6 +75,7 @@ impl_transformer_clone!(ArcTransformer<T, R>);
 
 // Implement Transformer for ArcTransformer
 impl<T, R> Transformer<T, R> for ArcTransformer<T, R> {
+    #[inline(always)]
     fn apply(&self, input: T) -> R {
         (self.function)(input)
     }

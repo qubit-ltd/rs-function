@@ -63,6 +63,7 @@ impl<T, R> BoxFunctionOnce<T, R> {
 }
 
 impl<T, R> FunctionOnce<T, R> for BoxFunctionOnce<T, R> {
+    #[inline(always)]
     fn apply(self, input: &T) -> R {
         (self.function)(input)
     }

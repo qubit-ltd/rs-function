@@ -93,6 +93,7 @@ impl<T> BoxSupplier<T> {
 impl_supplier_debug_display!(BoxSupplier<T>);
 
 impl<T> Supplier<T> for BoxSupplier<T> {
+    #[inline(always)]
     fn get(&self) -> T {
         (self.function)()
     }

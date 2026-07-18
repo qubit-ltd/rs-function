@@ -101,6 +101,7 @@ impl_function_debug_display!(ArcMutatingFunction<T, R>);
 impl_function_identity_method!(ArcMutatingFunction<T, T>, mutating);
 
 impl<T, R> MutatingFunction<T, R> for ArcMutatingFunction<T, R> {
+    #[inline(always)]
     fn apply(&self, input: &mut T) -> R {
         (self.function)(input)
     }

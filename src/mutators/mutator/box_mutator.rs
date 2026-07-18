@@ -84,6 +84,7 @@ impl<T> BoxMutator<T> {
 }
 
 impl<T> Mutator<T> for BoxMutator<T> {
+    #[inline(always)]
     fn apply(&self, value: &mut T) {
         (self.function)(value)
     }

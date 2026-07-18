@@ -133,6 +133,7 @@ impl<T, R> BoxMutatingFunctionOnce<T, R> {
 }
 
 impl<T, R> MutatingFunctionOnce<T, R> for BoxMutatingFunctionOnce<T, R> {
+    #[inline(always)]
     fn apply(self, input: &mut T) -> R {
         (self.function)(input)
     }

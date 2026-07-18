@@ -81,6 +81,7 @@ impl_function_debug_display!(RcFunction<T, R>);
 
 // Implement Function trait for RcFunction<T, R>
 impl<T, R> Function<T, R> for RcFunction<T, R> {
+    #[inline(always)]
     fn apply(&self, t: &T) -> R {
         (self.function)(t)
     }

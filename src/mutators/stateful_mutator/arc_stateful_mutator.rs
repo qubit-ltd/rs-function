@@ -100,6 +100,7 @@ impl<T> ArcStatefulMutator<T> {
 }
 
 impl<T> StatefulMutator<T> for ArcStatefulMutator<T> {
+    #[inline]
     fn apply(&mut self, value: &mut T) {
         let mut function = self.function.lock();
         function(value)

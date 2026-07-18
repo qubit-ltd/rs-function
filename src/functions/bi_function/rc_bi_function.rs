@@ -67,6 +67,7 @@ impl<T, U, R> RcBiFunction<T, U, R> {
 
 // Implement BiFunction trait for RcBiFunction
 impl<T, U, R> BiFunction<T, U, R> for RcBiFunction<T, U, R> {
+    #[inline(always)]
     fn apply(&self, first: &T, second: &U) -> R {
         (self.function)(first, second)
     }

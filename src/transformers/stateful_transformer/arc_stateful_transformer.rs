@@ -83,6 +83,7 @@ impl_transformer_debug_display!(ArcStatefulTransformer<T, R>);
 impl_transformer_clone!(ArcStatefulTransformer<T, R>);
 
 impl<T, R> StatefulTransformer<T, R> for ArcStatefulTransformer<T, R> {
+    #[inline]
     fn apply(&mut self, input: T) -> R {
         let mut func = self.function.lock();
         func(input)

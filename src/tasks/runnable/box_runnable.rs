@@ -137,7 +137,7 @@ impl<E> BoxRunnable<E> {
 
 impl<E> Runnable<E> for BoxRunnable<E> {
     /// Executes the boxed runnable.
-    #[inline]
+    #[inline(always)]
     fn run(&mut self) -> Result<(), E> {
         (self.function)()
     }
@@ -148,7 +148,7 @@ impl<E> crate::suppliers::supplier_once::SupplierOnce<Result<(), E>>
     for BoxRunnable<E>
 {
     /// Executes the boxed runnable as a one-time supplier of `Result<(), E>`.
-    #[inline]
+    #[inline(always)]
     fn get(mut self) -> Result<(), E> {
         self.run()
     }

@@ -72,6 +72,7 @@ impl<T, U, R> RcBiMutatingFunction<T, U, R> {
 
 // Implement BiMutatingFunction trait for RcBiMutatingFunction
 impl<T, U, R> BiMutatingFunction<T, U, R> for RcBiMutatingFunction<T, U, R> {
+    #[inline(always)]
     fn apply(&self, first: &mut T, second: &mut U) -> R {
         (self.function)(first, second)
     }

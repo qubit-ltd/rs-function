@@ -105,6 +105,7 @@ impl_supplier_debug_display!(RcSupplier<T>);
 impl_supplier_clone!(RcSupplier<T>);
 
 impl<T> Supplier<T> for RcSupplier<T> {
+    #[inline(always)]
     fn get(&self) -> T {
         (self.function)()
     }

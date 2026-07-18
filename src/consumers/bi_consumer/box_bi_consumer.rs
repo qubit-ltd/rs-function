@@ -80,6 +80,7 @@ impl<T, U> BoxBiConsumer<T, U> {
 }
 
 impl<T, U> BiConsumer<T, U> for BoxBiConsumer<T, U> {
+    #[inline(always)]
     fn accept(&self, first: &T, second: &U) {
         (self.function)(first, second)
     }

@@ -141,7 +141,7 @@ impl<R, E> LocalBoxCallable<R, E> {
 
 impl<R, E> Callable<R, E> for LocalBoxCallable<R, E> {
     /// Executes the local boxed callable.
-    #[inline]
+    #[inline(always)]
     fn call(&mut self) -> Result<R, E> {
         (self.function)()
     }

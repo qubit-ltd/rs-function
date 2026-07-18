@@ -75,6 +75,7 @@ impl_transformer_clone!(ArcBiTransformer<T, U, R>);
 
 // Implement BiTransformer trait for ArcBiTransformer
 impl<T, U, R> BiTransformer<T, U, R> for ArcBiTransformer<T, U, R> {
+    #[inline(always)]
     fn apply(&self, first: T, second: U) -> R {
         (self.function)(first, second)
     }

@@ -62,6 +62,7 @@ impl<T, U, R> BoxBiTransformerOnce<T, U, R> {
 
 // Implement BiTransformerOnce trait for BoxBiTransformerOnce
 impl<T, U, R> BiTransformerOnce<T, U, R> for BoxBiTransformerOnce<T, U, R> {
+    #[inline(always)]
     fn apply(self, first: T, second: U) -> R {
         (self.function)(first, second)
     }

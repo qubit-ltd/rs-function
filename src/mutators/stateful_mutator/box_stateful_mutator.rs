@@ -94,6 +94,7 @@ impl<T> BoxStatefulMutator<T> {
 }
 
 impl<T> StatefulMutator<T> for BoxStatefulMutator<T> {
+    #[inline(always)]
     fn apply(&mut self, value: &mut T) {
         (self.function)(value)
     }

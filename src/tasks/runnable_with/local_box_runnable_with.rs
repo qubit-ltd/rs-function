@@ -102,7 +102,7 @@ impl<T, E> LocalBoxRunnableWith<T, E> {
 
 impl<T, E> RunnableWith<T, E> for LocalBoxRunnableWith<T, E> {
     /// Executes the local boxed runnable with mutable input.
-    #[inline]
+    #[inline(always)]
     fn run_with(&mut self, input: &mut T) -> Result<(), E> {
         (self.function)(input)
     }

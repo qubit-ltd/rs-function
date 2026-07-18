@@ -74,6 +74,7 @@ impl_transformer_clone!(RcTransformer<T, R>);
 
 // Implement Transformer for RcTransformer
 impl<T, R> Transformer<T, R> for RcTransformer<T, R> {
+    #[inline(always)]
     fn apply(&self, input: T) -> R {
         (self.function)(input)
     }

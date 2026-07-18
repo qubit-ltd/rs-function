@@ -125,6 +125,7 @@ impl<T> BoxMutatorOnce<T> {
 }
 
 impl<T> MutatorOnce<T> for BoxMutatorOnce<T> {
+    #[inline(always)]
     fn apply(self, value: &mut T) {
         (self.function)(value)
     }

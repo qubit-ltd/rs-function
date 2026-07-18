@@ -92,6 +92,7 @@ impl<T> ArcConsumer<T> {
 }
 
 impl<T> Consumer<T> for ArcConsumer<T> {
+    #[inline(always)]
     fn accept(&self, value: &T) {
         (self.function)(value)
     }

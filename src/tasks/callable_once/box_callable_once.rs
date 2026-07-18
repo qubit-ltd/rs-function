@@ -151,7 +151,7 @@ impl<R, E> BoxCallableOnce<R, E> {
 
 impl<R, E> CallableOnce<R, E> for BoxCallableOnce<R, E> {
     /// Executes the boxed callable.
-    #[inline]
+    #[inline(always)]
     fn call_once(self) -> Result<R, E> {
         (self.function)()
     }
@@ -159,7 +159,7 @@ impl<R, E> CallableOnce<R, E> for BoxCallableOnce<R, E> {
 
 impl<R, E> SupplierOnce<Result<R, E>> for BoxCallableOnce<R, E> {
     /// Executes the boxed callable as a one-time supplier of `Result<R, E>`.
-    #[inline]
+    #[inline(always)]
     fn get(self) -> Result<R, E> {
         self.call_once()
     }

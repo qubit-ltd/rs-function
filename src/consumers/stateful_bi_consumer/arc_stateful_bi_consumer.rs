@@ -115,6 +115,7 @@ impl<T, U> ArcStatefulBiConsumer<T, U> {
 }
 
 impl<T, U> StatefulBiConsumer<T, U> for ArcStatefulBiConsumer<T, U> {
+    #[inline]
     fn accept(&mut self, first: &T, second: &U) {
         let mut function = self.function.lock();
         function(first, second)

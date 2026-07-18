@@ -130,7 +130,7 @@ impl<E> LocalBoxRunnableOnce<E> {
 
 impl<E> RunnableOnce<E> for LocalBoxRunnableOnce<E> {
     /// Executes the local boxed runnable.
-    #[inline]
+    #[inline(always)]
     fn run_once(self) -> Result<(), E> {
         (self.function)()
     }
@@ -139,7 +139,7 @@ impl<E> RunnableOnce<E> for LocalBoxRunnableOnce<E> {
 impl<E> SupplierOnce<Result<(), E>> for LocalBoxRunnableOnce<E> {
     /// Executes the local boxed runnable as a one-time supplier of
     /// `Result<(), E>`.
-    #[inline]
+    #[inline(always)]
     fn get(self) -> Result<(), E> {
         self.run_once()
     }

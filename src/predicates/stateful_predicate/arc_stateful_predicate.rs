@@ -237,6 +237,7 @@ impl_predicate_debug_display!(ArcStatefulPredicate<T>);
 
 // Implements StatefulPredicate trait for ArcStatefulPredicate<T>
 impl<T> StatefulPredicate<T> for ArcStatefulPredicate<T> {
+    #[inline]
     fn test(&mut self, value: &T) -> bool {
         let mut function = self.function.lock();
         function(value)
