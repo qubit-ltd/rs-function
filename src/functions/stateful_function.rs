@@ -70,6 +70,7 @@ impl<T, R, F> StatefulFunction<T, R> for F
 where
     F: FnMut(&T) -> R,
 {
+    #[inline(always)]
     fn apply(&mut self, t: &T) -> R {
         self(t)
     }

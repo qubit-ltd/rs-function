@@ -220,6 +220,7 @@ impl<T, F> Supplier<T> for F
 where
     F: Fn() -> T,
 {
+    #[inline(always)]
     fn get(&self) -> T {
         self()
     }

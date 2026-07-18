@@ -264,7 +264,7 @@ impl<T, U, F> BiPredicate<T, U> for F
 where
     F: Fn(&T, &U) -> bool,
 {
-    #[inline]
+    #[inline(always)]
     fn test(&self, first: &T, second: &U) -> bool {
         self(first, second)
     }

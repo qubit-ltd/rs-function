@@ -66,6 +66,7 @@ impl<F, T> StatefulPredicate<T> for F
 where
     F: FnMut(&T) -> bool,
 {
+    #[inline(always)]
     fn test(&mut self, value: &T) -> bool {
         self(value)
     }

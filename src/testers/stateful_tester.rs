@@ -55,7 +55,7 @@ impl<F> StatefulTester for F
 where
     F: FnMut() -> bool,
 {
-    #[inline]
+    #[inline(always)]
     fn test(&mut self) -> bool {
         self()
     }
