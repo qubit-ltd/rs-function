@@ -23,12 +23,24 @@ pub(crate) struct CallbackMetadata {
 
 impl CallbackMetadata {
     /// Creates metadata without a diagnostic name.
+    ///
+    /// # Returns
+    ///
+    /// Metadata whose diagnostic name is `None`.
     #[inline(always)]
     pub(crate) const fn unnamed() -> Self {
         Self { name: None }
     }
 
     /// Creates metadata with a diagnostic name.
+    ///
+    /// # Parameters
+    ///
+    /// * `name` - The diagnostic name to store.
+    ///
+    /// # Returns
+    ///
+    /// Metadata whose diagnostic name is `Some(name)`.
     #[inline]
     pub(crate) fn named(name: &str) -> Self {
         Self {
@@ -37,6 +49,15 @@ impl CallbackMetadata {
     }
 
     /// Creates metadata from the public optional-name representation.
+    ///
+    /// # Parameters
+    ///
+    /// * `name` - The optional diagnostic name to store.
+    ///
+    /// # Returns
+    ///
+    /// Metadata containing the supplied name, or unnamed metadata when
+    /// `name` is `None`.
     #[inline]
     pub(crate) fn from_optional_name(name: Option<String>) -> Self {
         Self {
@@ -45,12 +66,20 @@ impl CallbackMetadata {
     }
 
     /// Returns the diagnostic name, if present.
+    ///
+    /// # Returns
+    ///
+    /// `Some(name)` when a diagnostic name is stored, or `None` otherwise.
     #[inline(always)]
     pub(crate) fn name(&self) -> Option<&str> {
         self.name.as_deref()
     }
 
     /// Replaces the diagnostic name when it differs from the current value.
+    ///
+    /// # Parameters
+    ///
+    /// * `name` - The diagnostic name to store.
     #[inline(always)]
     pub(crate) fn set_name(&mut self, name: &str) {
         if self.name() != Some(name) {

@@ -90,6 +90,15 @@ macro_rules! impl_transformer_constant_method {
         impl<$t, $r> $struct_name<$t, $r> {
             /// Creates a constant transformer
             ///
+            /// # Parameters
+            ///
+            /// * `value` - The value cloned for each invocation.
+            ///
+            /// # Returns
+            ///
+            /// A transformer that ignores its input and returns a clone of
+            /// `value`.
+            ///
             /// # Examples
             ///
             #[doc = concat!("/// ```rust\n/// use qubit_function::{", stringify!($struct_name), ", Transformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123), \"hello\");\n/// ```")]
@@ -106,6 +115,15 @@ macro_rules! impl_transformer_constant_method {
     (thread_safe $struct_name:ident < $t:ident, $r:ident >) => {
         impl<$t, $r> $struct_name<$t, $r> {
             /// Creates a constant transformer
+            ///
+            /// # Parameters
+            ///
+            /// * `value` - The value cloned for each invocation.
+            ///
+            /// # Returns
+            ///
+            /// A thread-safe transformer that ignores its input and returns a
+            /// clone of `value`.
             ///
             /// # Examples
             ///
@@ -124,6 +142,15 @@ macro_rules! impl_transformer_constant_method {
         impl<$t, $u, $r> $struct_name<$t, $u, $r> {
             /// Creates a constant bi-transformer
             ///
+            /// # Parameters
+            ///
+            /// * `value` - The value cloned for each invocation.
+            ///
+            /// # Returns
+            ///
+            /// A bi-transformer that ignores both inputs and returns a clone
+            /// of `value`.
+            ///
             /// # Examples
             ///
             #[doc = concat!("/// ```rust\n/// use qubit_function::{", stringify!($struct_name), ", BiTransformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123, 456), \"hello\");\n/// ```")]
@@ -140,6 +167,15 @@ macro_rules! impl_transformer_constant_method {
     (thread_safe $struct_name:ident < $t:ident, $u:ident, $r:ident >) => {
         impl<$t, $u, $r> $struct_name<$t, $u, $r> {
             /// Creates a constant bi-transformer
+            ///
+            /// # Parameters
+            ///
+            /// * `value` - The value cloned for each invocation.
+            ///
+            /// # Returns
+            ///
+            /// A thread-safe bi-transformer that ignores both inputs and
+            /// returns a clone of `value`.
             ///
             /// # Examples
             ///
@@ -158,6 +194,15 @@ macro_rules! impl_transformer_constant_method {
         impl<$t, $r> $struct_name<$t, $r> {
             /// Creates a constant transformer
             ///
+            /// # Parameters
+            ///
+            /// * `value` - The value cloned for each invocation.
+            ///
+            /// # Returns
+            ///
+            /// A stateful transformer that ignores its input and returns a
+            /// clone of `value`.
+            ///
             /// # Examples
             ///
             #[doc = concat!("/// ```rust\n/// use qubit_function::{", stringify!($struct_name), ", StatefulTransformer};\n///\n/// let mut constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123), \"hello\");\n/// ```")]
@@ -174,6 +219,15 @@ macro_rules! impl_transformer_constant_method {
     (stateful thread_safe $struct_name:ident < $t:ident, $r:ident >) => {
         impl<$t, $r> $struct_name<$t, $r> {
             /// Creates a constant transformer
+            ///
+            /// # Parameters
+            ///
+            /// * `value` - The value cloned for each invocation.
+            ///
+            /// # Returns
+            ///
+            /// A thread-safe stateful transformer that ignores its input and
+            /// returns a clone of `value`.
             ///
             /// # Examples
             ///
@@ -192,6 +246,15 @@ macro_rules! impl_transformer_constant_method {
         impl<$t, $u, $r> $struct_name<$t, $u, $r> {
             /// Creates a constant bi-transformer
             ///
+            /// # Parameters
+            ///
+            /// * `value` - The value cloned for each invocation.
+            ///
+            /// # Returns
+            ///
+            /// A stateful bi-transformer that ignores both inputs and returns
+            /// a clone of `value`.
+            ///
             /// # Examples
             ///
             #[doc = concat!("/// ```rust\n/// use qubit_function::{", stringify!($struct_name), ", StatefulBiTransformer};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123, 456), \"hello\");\n/// ```")]
@@ -208,6 +271,15 @@ macro_rules! impl_transformer_constant_method {
     (stateful thread_safe $struct_name:ident < $t:ident, $u:ident, $r:ident >) => {
         impl<$t, $u, $r> $struct_name<$t, $u, $r> {
             /// Creates a constant bi-transformer
+            ///
+            /// # Parameters
+            ///
+            /// * `value` - The value cloned for each invocation.
+            ///
+            /// # Returns
+            ///
+            /// A thread-safe stateful bi-transformer that ignores both inputs
+            /// and returns a clone of `value`.
             ///
             /// # Examples
             ///

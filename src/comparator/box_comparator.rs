@@ -79,6 +79,15 @@ impl<T> BoxComparator<T> {
     }
 
     /// Creates a named `BoxComparator` from a comparator implementation.
+    ///
+    /// # Parameters
+    ///
+    /// * `name` - The diagnostic name assigned to the comparator.
+    /// * `source` - The comparator implementation to wrap.
+    ///
+    /// # Returns
+    ///
+    /// A named `BoxComparator` wrapping `source`.
     #[inline]
     pub fn new_with_name<F>(name: &str, source: F) -> Self
     where
@@ -93,6 +102,15 @@ impl<T> BoxComparator<T> {
     }
 
     /// Creates a `BoxComparator` with an optional diagnostic name.
+    ///
+    /// # Parameters
+    ///
+    /// * `source` - The comparator implementation to wrap.
+    /// * `name` - The optional diagnostic name assigned to the comparator.
+    ///
+    /// # Returns
+    ///
+    /// A `BoxComparator` containing the supplied optional name.
     #[inline]
     pub fn new_with_optional_name<F>(source: F, name: Option<String>) -> Self
     where
@@ -107,6 +125,15 @@ impl<T> BoxComparator<T> {
     }
 
     /// Creates a comparator while preserving existing callback metadata.
+    ///
+    /// # Parameters
+    ///
+    /// * `source` - The comparator implementation to wrap.
+    /// * `metadata` - The callback metadata to preserve.
+    ///
+    /// # Returns
+    ///
+    /// A `BoxComparator` containing `metadata`.
     #[inline]
     pub(crate) fn new_with_metadata<F>(
         source: F,
