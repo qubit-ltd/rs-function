@@ -48,9 +48,6 @@ impl StatefulBiConsumer<i32, i32> for CustomStatefulBiConsumer {
     }
 }
 
-// Implement Send and Sync for CustomStatefulBiConsumer to support Arc
-unsafe impl Send for CustomStatefulBiConsumer {}
-unsafe impl Sync for CustomStatefulBiConsumer {}
 #[cfg(test)]
 mod edge_cases_tests {
     use super::{

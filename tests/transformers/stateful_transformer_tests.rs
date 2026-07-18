@@ -47,11 +47,6 @@ impl StatefulTransformer<i32, i32> for CustomSendStatefulTransformer {
     }
 }
 
-// Implement Send for CustomSendStatefulTransformer to allow conversion to
-// ArcStatefulTransformer
-unsafe impl Send for CustomSendStatefulTransformer {}
-unsafe impl Sync for CustomSendStatefulTransformer {}
-
 /// Test custom StatefulTransformer with string types
 #[derive(Clone)]
 struct StringLengthStatefulTransformer {
