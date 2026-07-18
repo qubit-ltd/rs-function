@@ -55,6 +55,16 @@ impl RcStatefulTester {
     impl_common_name_methods!("stateful tester");
 
     /// Combines this tester with another stateful tester using logical AND.
+    ///
+    /// The second tester is evaluated only when this tester returns `true`.
+    ///
+    /// # Parameters
+    ///
+    /// * `next` - The tester evaluated after this tester succeeds.
+    ///
+    /// # Returns
+    ///
+    /// A shared tester that evaluates the logical AND of both testers.
     #[inline]
     pub fn and<T>(&self, mut next: T) -> RcStatefulTester
     where
@@ -71,6 +81,16 @@ impl RcStatefulTester {
     }
 
     /// Combines this tester with another stateful tester using logical OR.
+    ///
+    /// The second tester is evaluated only when this tester returns `false`.
+    ///
+    /// # Parameters
+    ///
+    /// * `next` - The tester evaluated after this tester fails.
+    ///
+    /// # Returns
+    ///
+    /// A shared tester that evaluates the logical OR of both testers.
     #[inline]
     pub fn or<T>(&self, mut next: T) -> RcStatefulTester
     where
@@ -87,6 +107,14 @@ impl RcStatefulTester {
     }
 
     /// Combines this tester with another stateful tester using logical NAND.
+    ///
+    /// # Parameters
+    ///
+    /// * `next` - The tester combined with this tester.
+    ///
+    /// # Returns
+    ///
+    /// A shared tester that negates the logical AND of both testers.
     #[inline]
     pub fn nand<T>(&self, mut next: T) -> RcStatefulTester
     where
@@ -103,6 +131,14 @@ impl RcStatefulTester {
     }
 
     /// Combines this tester with another stateful tester using logical XOR.
+    ///
+    /// # Parameters
+    ///
+    /// * `next` - The tester combined with this tester.
+    ///
+    /// # Returns
+    ///
+    /// A shared tester that evaluates whether exactly one tester succeeds.
     #[inline]
     pub fn xor<T>(&self, mut next: T) -> RcStatefulTester
     where
@@ -119,6 +155,14 @@ impl RcStatefulTester {
     }
 
     /// Combines this tester with another stateful tester using logical NOR.
+    ///
+    /// # Parameters
+    ///
+    /// * `next` - The tester combined with this tester.
+    ///
+    /// # Returns
+    ///
+    /// A shared tester that negates the logical OR of both testers.
     #[inline]
     pub fn nor<T>(&self, mut next: T) -> RcStatefulTester
     where

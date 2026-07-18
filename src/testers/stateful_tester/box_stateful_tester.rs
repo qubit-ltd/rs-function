@@ -50,6 +50,14 @@ impl BoxStatefulTester {
     ///
     /// The second tester is evaluated only when the first tester returns
     /// `true`.
+    ///
+    /// # Parameters
+    ///
+    /// * `next` - The tester evaluated after this tester succeeds.
+    ///
+    /// # Returns
+    ///
+    /// A tester that evaluates the logical AND of both testers.
     #[inline]
     pub fn and<T>(mut self, mut next: T) -> BoxStatefulTester
     where
@@ -62,6 +70,14 @@ impl BoxStatefulTester {
     ///
     /// The second tester is evaluated only when the first tester returns
     /// `false`.
+    ///
+    /// # Parameters
+    ///
+    /// * `next` - The tester evaluated after this tester fails.
+    ///
+    /// # Returns
+    ///
+    /// A tester that evaluates the logical OR of both testers.
     #[inline]
     pub fn or<T>(mut self, mut next: T) -> BoxStatefulTester
     where
@@ -71,6 +87,14 @@ impl BoxStatefulTester {
     }
 
     /// Combines this tester with another stateful tester using logical NAND.
+    ///
+    /// # Parameters
+    ///
+    /// * `next` - The tester combined with this tester.
+    ///
+    /// # Returns
+    ///
+    /// A tester that negates the logical AND of both testers.
     #[inline]
     pub fn nand<T>(mut self, mut next: T) -> BoxStatefulTester
     where
@@ -80,6 +104,14 @@ impl BoxStatefulTester {
     }
 
     /// Combines this tester with another stateful tester using logical XOR.
+    ///
+    /// # Parameters
+    ///
+    /// * `next` - The tester combined with this tester.
+    ///
+    /// # Returns
+    ///
+    /// A tester that evaluates whether exactly one tester succeeds.
     #[inline]
     pub fn xor<T>(mut self, mut next: T) -> BoxStatefulTester
     where
@@ -89,6 +121,14 @@ impl BoxStatefulTester {
     }
 
     /// Combines this tester with another stateful tester using logical NOR.
+    ///
+    /// # Parameters
+    ///
+    /// * `next` - The tester combined with this tester.
+    ///
+    /// # Returns
+    ///
+    /// A tester that negates the logical OR of both testers.
     #[inline]
     pub fn nor<T>(mut self, mut next: T) -> BoxStatefulTester
     where
