@@ -24,11 +24,9 @@ use std::{
         Command,
         Output,
     },
-    sync::atomic::{
-        AtomicUsize,
-        Ordering,
-    },
 };
+
+use qubit_local_files::LocalTempDir;
 
 #[cfg(feature = "stateful")]
 use qubit_function::{
@@ -48,8 +46,6 @@ use qubit_function::{
     RcRunnableWith,
 };
 
-static NEXT_PROJECT_ID: AtomicUsize = AtomicUsize::new(0);
-
 /// Asserts at compile time that T supports both formatting traits.
 fn assert_debug_and_display<T: Debug + Display>() {}
 
@@ -59,11 +55,10 @@ fn assert_debug_and_display<T: Debug + Display>() {}
 /// the fixture crate's main.rs. The returned output contains Cargo's status and
 /// diagnostics.
 fn compile_consumer(features: &[&str], source: &str) -> Output {
-    let project_id = NEXT_PROJECT_ID.fetch_add(1, Ordering::Relaxed);
-    let project_root = std::env::temp_dir().join(format!(
-        "qubit-function-feature-contract-{}-{project_id}",
-        std::process::id(),
-    ));
+    let project_dir =
+        LocalTempDir::with_prefix("qubit-function-feature-contract-")
+            .expect("temporary consumer directory should be created");
+    let project_root = project_dir.path();
     let source_root = project_root.join("src");
     fs::create_dir_all(&source_root)
         .expect("temporary consumer source directory should be created");
@@ -104,16 +99,12 @@ fn compile_consumer(features: &[&str], source: &str) -> Output {
     fs::write(source_root.join("main.rs"), source)
         .expect("temporary consumer source should be written");
 
-    let output = Command::new("cargo")
+    Command::new("cargo")
         .args(["+1.94.0", "check", "--offline", "--quiet", "--target-dir"])
         .arg(project_root.join("target"))
-        .current_dir(&project_root)
+        .current_dir(project_root)
         .output()
-        .expect("temporary consumer should invoke Cargo");
-
-    fs::remove_dir_all(&project_root)
-        .expect("temporary consumer directory should be removed");
-    output
+        .expect("temporary consumer should invoke Cargo")
 }
 
 /// Formats Cargo diagnostics for an assertion failure.
