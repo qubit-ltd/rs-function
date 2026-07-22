@@ -51,6 +51,15 @@ fn test_rc_tester_name_and_diagnostics() {
     assert_eq!(format!("{original}"), "RcTester(ready)");
 }
 
+/// Verifies the direct trait method path and unnamed display diagnostics.
+#[test]
+fn test_rc_tester_trait_method_and_unnamed_display() {
+    let tester = RcTester::new(|| true);
+
+    assert!(Tester::test(&tester));
+    assert_eq!(format!("{tester}"), "RcTester");
+}
+
 /// Verifies that Rc logical composition accepts semantic Tester objects.
 #[test]
 fn test_rc_tester_and_semantic_trait() {
