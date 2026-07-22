@@ -42,14 +42,14 @@ Cargo feature 明确划分可选 API 和依赖成本：`rc` 启用单线程共�
 
 ```toml
 [dependencies]
-qubit-function = "0.16"
+qubit-function = "0.17"
 ```
 
 如需启用下文示例使用的全部可选 API：
 
 ```toml
 [dependencies]
-qubit-function = { version = "0.16", features = ["full"] }
+qubit-function = { version = "0.17", features = ["full"] }
 ```
 
 除非特别说明，下文示例均假定已启用 `full` feature。
