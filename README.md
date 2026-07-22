@@ -47,14 +47,14 @@ For the core API without optional features, add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-qubit-function = "0.16"
+qubit-function = "0.17"
 ```
 
 To enable every optional API used by the examples below:
 
 ```toml
 [dependencies]
-qubit-function = { version = "0.16", features = ["full"] }
+qubit-function = { version = "0.17", features = ["full"] }
 ```
 
 Unless noted otherwise, examples below assume the `full` feature is enabled.
