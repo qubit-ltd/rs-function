@@ -406,7 +406,7 @@ impl Not for BoxTester {
 }
 
 impl Tester for BoxTester {
-    #[inline(always)]
+    #[inline]
     fn test(&self) -> bool {
         (self.function)()
     }

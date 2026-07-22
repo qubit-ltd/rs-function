@@ -56,7 +56,7 @@ fn assert_debug_and_display<T: Debug + Display>() {}
 /// diagnostics.
 fn compile_consumer(features: &[&str], source: &str) -> Output {
     let project_dir =
-        LocalTempDir::with_prefix("qubit-function-feature-contract-")
+        LocalTempDir::with_prefix(Some("qubit-function-feature-contract-"))
             .expect("temporary consumer directory should be created");
     let project_root = project_dir.path();
     let source_root = project_root.join("src");
