@@ -50,7 +50,7 @@ full = ["rc", "once", "stateful"]
 parking_lot = { version = "0.12", optional = true }
 
 [dev-dependencies]
-qubit-local-files = { version = "0.2" }
+qubit-local-files = { path = "../rs-local-files", version = "0.7" }
 
 [[example]]
 name = "always_bi_predicate_demo"
