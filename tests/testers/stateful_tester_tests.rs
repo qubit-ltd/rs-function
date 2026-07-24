@@ -297,6 +297,8 @@ fn test_box_stateful_tester_name_and_diagnostics() {
     assert_eq!(format!("{tester}"), "BoxStatefulTester(threshold)");
     tester.clear_name();
     assert_eq!(tester.name(), None);
+    assert_eq!(format!("{tester}"), "BoxStatefulTester");
+    assert!(<BoxStatefulTester as StatefulTester>::test(&mut tester));
 }
 
 /// Verifies clone-independent metadata for a shared Rc stateful tester.

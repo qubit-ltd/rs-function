@@ -150,7 +150,7 @@ impl Not for BoxStatefulTester {
 }
 
 impl StatefulTester for BoxStatefulTester {
-    #[inline(always)]
+    #[inline]
     fn test(&mut self) -> bool {
         (self.function)()
     }
