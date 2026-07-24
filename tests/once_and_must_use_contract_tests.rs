@@ -21,7 +21,7 @@ use qubit_local_files::LocalTempDir;
 
 fn compile_consumer(features: &[&str], source: &str) -> Output {
     let project_dir =
-        LocalTempDir::with_prefix("qubit-function-once-contract-")
+        LocalTempDir::with_prefix(Some("qubit-function-once-contract-"))
             .expect("temporary consumer directory should be created");
     let project_root = project_dir.path();
     let source_root = project_root.join("src");
