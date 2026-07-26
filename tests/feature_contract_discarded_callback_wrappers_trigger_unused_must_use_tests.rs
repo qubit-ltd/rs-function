@@ -26,8 +26,6 @@ use std::{
     },
 };
 
-use qubit_local_files::LocalTempDir;
-
 #[cfg(feature = "stateful")]
 use qubit_function::{
     ArcCallable,
@@ -55,9 +53,10 @@ fn assert_debug_and_display<T: Debug + Display>() {}
 /// the fixture crate's main.rs. The returned output contains Cargo's status and
 /// diagnostics.
 fn compile_consumer(features: &[&str], source: &str) -> Output {
-    let project_dir =
-        LocalTempDir::with_prefix(Some("qubit-function-feature-contract-"))
-            .expect("temporary consumer directory should be created");
+    let project_dir = tempfile::Builder::new()
+        .prefix("qubit-function-feature-contract-")
+        .tempdir()
+        .expect("temporary consumer directory should be created");
     let project_root = project_dir.path();
     let source_root = project_root.join("src");
     fs::create_dir_all(&source_root)
