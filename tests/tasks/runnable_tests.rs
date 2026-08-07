@@ -8,28 +8,20 @@
 
 //! Unit tests for runnable task types.
 
-use std::{
-    cell::Cell,
-    io,
-    rc::Rc,
-    sync::{
-        Arc,
-        atomic::{
-            AtomicBool,
-            AtomicUsize,
-            Ordering,
-        },
-    },
-};
+use std::cell::Cell;
+use std::io;
+use std::rc::Rc;
+use std::sync::Arc;
+use std::sync::atomic::AtomicBool;
+use std::sync::atomic::AtomicUsize;
+use std::sync::atomic::Ordering;
 
-use qubit_function::{
-    ArcRunnable,
-    BoxRunnable,
-    Callable,
-    RcRunnable,
-    Runnable,
-    SupplierOnce,
-};
+use qubit_function::ArcRunnable;
+use qubit_function::BoxRunnable;
+use qubit_function::Callable;
+use qubit_function::RcRunnable;
+use qubit_function::Runnable;
+use qubit_function::SupplierOnce;
 
 #[derive(Clone)]
 struct ClonedRunnable {

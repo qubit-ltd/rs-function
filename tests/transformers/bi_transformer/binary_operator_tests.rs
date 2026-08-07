@@ -6,16 +6,15 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    ArcBinaryOperator,
-    BiTransformer,
-    BiTransformerOnce,
-    BinaryOperator,
-    BoxBinaryOperator,
-    BoxBinaryOperatorOnce,
-    RcBinaryOperator,
-};
 use std::thread;
+
+use qubit_function::ArcBinaryOperator;
+use qubit_function::BiTransformer;
+use qubit_function::BiTransformerOnce;
+use qubit_function::BinaryOperator;
+use qubit_function::BoxBinaryOperator;
+use qubit_function::BoxBinaryOperatorOnce;
+use qubit_function::RcBinaryOperator;
 
 // Test using BinaryOperator as a generic constraint
 fn reduce<T, O>(values: Vec<T>, initial: T, op: &O) -> T

@@ -7,22 +7,20 @@
 // =============================================================================
 //! Defines the `ArcStatefulMutatingFunction` public type.
 
-use {
-    super::ArcStatefulMutatingFunctionFn,
-    crate::StatefulMutatingFunction,
-    crate::functions::macros::impl_function_clone,
-    crate::functions::macros::impl_function_common_methods,
-    crate::functions::macros::impl_function_debug_display,
-    crate::functions::macros::impl_function_identity_method,
-    crate::functions::macros::impl_shared_function_methods,
-    parking_lot::Mutex,
-    std::sync::Arc,
-};
-use {
-    crate::ArcConditionalStatefulMutatingFunction,
-    crate::Function,
-    crate::Predicate,
-};
+use std::sync::Arc;
+
+use parking_lot::Mutex;
+
+use super::ArcStatefulMutatingFunctionFn;
+use crate::ArcConditionalStatefulMutatingFunction;
+use crate::Function;
+use crate::Predicate;
+use crate::StatefulMutatingFunction;
+use crate::functions::macros::impl_function_clone;
+use crate::functions::macros::impl_function_common_methods;
+use crate::functions::macros::impl_function_debug_display;
+use crate::functions::macros::impl_function_identity_method;
+use crate::functions::macros::impl_shared_function_methods;
 
 // =======================================================================
 // 5. ArcStatefulMutatingFunction - Thread-Safe Shared Ownership

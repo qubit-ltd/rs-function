@@ -6,16 +6,14 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    ArcPredicate,
-    ArcStatefulTransformer,
-    BoxPredicate,
-    BoxStatefulTransformer,
-    Predicate,
-    RcPredicate,
-    RcStatefulTransformer,
-    StatefulTransformer,
-};
+use qubit_function::ArcPredicate;
+use qubit_function::ArcStatefulTransformer;
+use qubit_function::BoxPredicate;
+use qubit_function::BoxStatefulTransformer;
+use qubit_function::Predicate;
+use qubit_function::RcPredicate;
+use qubit_function::RcStatefulTransformer;
+use qubit_function::StatefulTransformer;
 
 // ============================================================================
 // BoxStatefulTransformer Tests
@@ -92,11 +90,9 @@ impl StatefulTransformer<i32, (i32, i32, usize)>
 
 #[cfg(test)]
 mod conditional_stateful_transformer_display_debug_tests {
-    use super::{
-        ArcStatefulTransformer,
-        BoxStatefulTransformer,
-        RcStatefulTransformer,
-    };
+    use super::ArcStatefulTransformer;
+    use super::BoxStatefulTransformer;
+    use super::RcStatefulTransformer;
 
     #[test]
     fn test_box_conditional_stateful_transformer_display() {

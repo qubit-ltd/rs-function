@@ -224,8 +224,8 @@ use std::sync::Arc;
 type ArcMutatorFn<T> = Arc<dyn Fn(&mut T) + Send + Sync>;
 
 /// Type alias for Rc-wrapped stateless mutator function
-#[cfg(feature = "rc")]
 /// The erased callback representation used by this implementation.
+#[cfg(feature = "rc")]
 type RcMutatorFn<T> = Rc<dyn Fn(&mut T)>;
 
 mod box_mutator;

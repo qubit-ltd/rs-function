@@ -6,10 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    BoxUnaryOperatorOnce,
-    TransformerOnce,
-};
+use qubit_function::BoxUnaryOperatorOnce;
+use qubit_function::TransformerOnce;
 
 #[test]
 fn test_box_unary_operator_once_alias() {

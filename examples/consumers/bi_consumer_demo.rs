@@ -11,21 +11,18 @@
 //! This example demonstrates the usage of BiConsumer types after
 //! refactoring to use &T, &U semantics (not modifying input values).
 
-use qubit_function::{
-    ArcBiConsumer,
-    BiConsumer,
-    BoxBiConsumer,
-    BoxStatefulBiConsumer,
-    RcBiConsumer,
-    StatefulBiConsumer,
-};
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+use std::sync::Mutex;
 use std::thread;
+
+use qubit_function::ArcBiConsumer;
+use qubit_function::BiConsumer;
+use qubit_function::BoxBiConsumer;
+use qubit_function::BoxStatefulBiConsumer;
+use qubit_function::RcBiConsumer;
+use qubit_function::StatefulBiConsumer;
 
 fn main() {
     println!("=== BiConsumer Demo ===\n");

@@ -7,14 +7,12 @@
 // =============================================================================
 //! Defines the `BoxConditionalStatefulConsumer` public type.
 
-use {
-    crate::BoxPredicate,
-    crate::BoxStatefulConsumer,
-    crate::Predicate,
-    crate::StatefulConsumer,
-    crate::consumers::macros::impl_box_conditional_consumer,
-    crate::consumers::macros::impl_conditional_consumer_debug_display,
-};
+use crate::BoxPredicate;
+use crate::BoxStatefulConsumer;
+use crate::Predicate;
+use crate::StatefulConsumer;
+use crate::consumers::macros::impl_box_conditional_consumer;
+use crate::consumers::macros::impl_conditional_consumer_debug_display;
 
 // ============================================================================
 // 7. BoxConditionalStatefulConsumer - Box-based Conditional Consumer

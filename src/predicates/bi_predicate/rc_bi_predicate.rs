@@ -8,18 +8,16 @@
 //! Defines the `RcBiPredicate` public type.
 
 use std::ops::Not;
+use std::rc::Rc;
 
-use {
-    super::ALWAYS_FALSE_NAME,
-    super::ALWAYS_TRUE_NAME,
-    super::BiPredicateFn,
-    crate::BiPredicate,
-    crate::predicates::macros::impl_predicate_clone,
-    crate::predicates::macros::impl_predicate_common_methods,
-    crate::predicates::macros::impl_predicate_debug_display,
-    crate::predicates::macros::impl_shared_predicate_methods,
-    std::rc::Rc,
-};
+use super::ALWAYS_FALSE_NAME;
+use super::ALWAYS_TRUE_NAME;
+use super::BiPredicateFn;
+use crate::BiPredicate;
+use crate::predicates::macros::impl_predicate_clone;
+use crate::predicates::macros::impl_predicate_common_methods;
+use crate::predicates::macros::impl_predicate_debug_display;
+use crate::predicates::macros::impl_shared_predicate_methods;
 
 /// An Rc-based bi-predicate with single-threaded shared ownership.
 ///

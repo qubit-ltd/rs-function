@@ -13,36 +13,28 @@
 // qubit-style: allow explicit-imports -- fixtures verify wildcard-import
 // behavior.
 
-use std::{
-    fmt::{
-        Debug,
-        Display,
-    },
-    fs,
-    path::PathBuf,
-    process::{
-        Command,
-        Output,
-    },
-};
+use std::fmt::Debug;
+use std::fmt::Display;
+use std::fs;
+use std::path::PathBuf;
+use std::process::Command;
+use std::process::Output;
 
 #[cfg(feature = "stateful")]
-use qubit_function::{
-    ArcCallable,
-    ArcCallableWith,
-    ArcRunnableWith,
-};
-use qubit_function::{
-    BoxCallable,
-    BoxCallableWith,
-    BoxRunnableWith,
-};
+use qubit_function::ArcCallable;
+#[cfg(feature = "stateful")]
+use qubit_function::ArcCallableWith;
+#[cfg(feature = "stateful")]
+use qubit_function::ArcRunnableWith;
+use qubit_function::BoxCallable;
+use qubit_function::BoxCallableWith;
+use qubit_function::BoxRunnableWith;
 #[cfg(feature = "rc")]
-use qubit_function::{
-    RcCallable,
-    RcCallableWith,
-    RcRunnableWith,
-};
+use qubit_function::RcCallable;
+#[cfg(feature = "rc")]
+use qubit_function::RcCallableWith;
+#[cfg(feature = "rc")]
+use qubit_function::RcRunnableWith;
 
 /// Asserts at compile time that T supports both formatting traits.
 fn assert_debug_and_display<T: Debug + Display>() {}
@@ -138,12 +130,10 @@ fn test_discarded_callback_wrappers_trigger_unused_must_use() {
         r#"
 #![deny(unused_must_use)]
 
-use qubit_function::{
-    ArcFunction,
-    BoxCallable,
-    LocalBoxCallable,
-    RcFunction,
-};
+use qubit_function::ArcFunction;
+use qubit_function::BoxCallable;
+use qubit_function::LocalBoxCallable;
+use qubit_function::RcFunction;
 
 fn main() {
     BoxCallable::<i32, ()>::new(|| Ok(1));
@@ -167,12 +157,10 @@ fn test_stored_callback_wrappers_satisfy_unused_must_use() {
         r#"
 #![deny(unused_must_use)]
 
-use qubit_function::{
-    ArcFunction,
-    BoxCallable,
-    LocalBoxCallable,
-    RcFunction,
-};
+use qubit_function::ArcFunction;
+use qubit_function::BoxCallable;
+use qubit_function::LocalBoxCallable;
+use qubit_function::RcFunction;
 
 fn main() {
     let _boxed = BoxCallable::<i32, ()>::new(|| Ok(1));

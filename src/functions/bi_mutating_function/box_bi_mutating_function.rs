@@ -7,18 +7,14 @@
 // =============================================================================
 //! Defines the `BoxBiMutatingFunction` public type.
 
-use {
-    crate::BiMutatingFunction,
-    crate::functions::macros::impl_box_function_methods,
-    crate::functions::macros::impl_function_common_methods,
-    crate::functions::macros::impl_function_constant_method,
-    crate::functions::macros::impl_function_debug_display,
-};
-use {
-    crate::BiPredicate,
-    crate::BoxConditionalBiMutatingFunction,
-    crate::MutatingFunction,
-};
+use crate::BiMutatingFunction;
+use crate::BiPredicate;
+use crate::BoxConditionalBiMutatingFunction;
+use crate::MutatingFunction;
+use crate::functions::macros::impl_box_function_methods;
+use crate::functions::macros::impl_function_common_methods;
+use crate::functions::macros::impl_function_constant_method;
+use crate::functions::macros::impl_function_debug_display;
 
 /// The erased callback representation used by this implementation.
 type BoxBiMutatingFunctionFn<T, U, R> = Box<dyn Fn(&mut T, &mut U) -> R>;

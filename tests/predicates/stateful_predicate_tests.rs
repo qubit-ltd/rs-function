@@ -10,20 +10,14 @@
 
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::sync::{
-    Arc,
-    atomic::{
-        AtomicUsize,
-        Ordering,
-    },
-};
+use std::sync::Arc;
+use std::sync::atomic::AtomicUsize;
+use std::sync::atomic::Ordering;
 
-use qubit_function::predicates::{
-    ArcStatefulPredicate,
-    BoxStatefulPredicate,
-    RcStatefulPredicate,
-    StatefulPredicate,
-};
+use qubit_function::predicates::ArcStatefulPredicate;
+use qubit_function::predicates::BoxStatefulPredicate;
+use qubit_function::predicates::RcStatefulPredicate;
+use qubit_function::predicates::StatefulPredicate;
 
 #[test]
 fn test_closure_implements_stateful_predicate() {

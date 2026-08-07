@@ -6,17 +6,12 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    BoxConsumer,
-    Consumer,
-};
-use std::sync::{
-    Arc,
-    atomic::{
-        AtomicI32,
-        Ordering,
-    },
-};
+use std::sync::Arc;
+use std::sync::atomic::AtomicI32;
+use std::sync::atomic::Ordering;
+
+use qubit_function::BoxConsumer;
+use qubit_function::Consumer;
 
 #[test]
 fn test_shared_consumer_methods_observable_behavior() {

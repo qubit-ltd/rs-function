@@ -7,15 +7,13 @@
 // =============================================================================
 //! Defines the `RcConditionalMutatingFunction` public type.
 
-use {
-    crate::MutatingFunction,
-    crate::Predicate,
-    crate::RcMutatingFunction,
-    crate::RcPredicate,
-    crate::functions::macros::impl_conditional_function_clone,
-    crate::functions::macros::impl_conditional_function_debug_display,
-    crate::functions::macros::impl_shared_conditional_function,
-};
+use crate::MutatingFunction;
+use crate::Predicate;
+use crate::RcMutatingFunction;
+use crate::RcPredicate;
+use crate::functions::macros::impl_conditional_function_clone;
+use crate::functions::macros::impl_conditional_function_debug_display;
+use crate::functions::macros::impl_shared_conditional_function;
 
 // ============================================================================
 // RcConditionalMutatingFunction - Rc-based Conditional Mutating Function

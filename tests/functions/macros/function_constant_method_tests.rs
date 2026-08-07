@@ -6,10 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    BoxFunction,
-    Function,
-};
+use qubit_function::BoxFunction;
+use qubit_function::Function;
 
 #[test]
 fn test_function_constant_method_observable_behavior() {

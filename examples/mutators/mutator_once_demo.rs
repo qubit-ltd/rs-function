@@ -9,10 +9,8 @@
 //!
 //! Demonstrates various usage scenarios of MutatorOnce
 
-use qubit_function::{
-    BoxMutatorOnce,
-    MutatorOnce,
-};
+use qubit_function::BoxMutatorOnce;
+use qubit_function::MutatorOnce;
 
 fn main() {
     println!("=== MutatorOnce Examples ===\n");

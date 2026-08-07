@@ -5,18 +5,19 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
+use std::sync::Arc;
+use std::sync::Mutex;
+
 ///
 /// # ConsumerOnce Tests
 ///
 /// Unit tests for the ConsumerOnce trait and its implementations.
-use qubit_function::{
-    BoxConsumerOnce,
-    ConsumerOnce,
-};
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use qubit_function::BoxConsumerOnce;
+///
+/// # ConsumerOnce Tests
+///
+/// Unit tests for the ConsumerOnce trait and its implementations.
+use qubit_function::ConsumerOnce;
 
 // ============================================================================
 // BoxConsumerOnce Tests
@@ -24,30 +25,28 @@ use std::sync::{
 
 #[cfg(test)]
 mod debug_display_tests {
-    use super::{
-        Arc,
-        BoxConsumerOnce,
-        ConsumerOnce,
-        Mutex,
-    };
+    use super::Arc;
+    use super::BoxConsumerOnce;
+    use super::ConsumerOnce;
+    use super::Mutex;
 
     #[test]
     fn test_debug() {
-        let consumer = qubit_function::BoxConsumerOnce::new(|_x: &i32| {});
+        let consumer = BoxConsumerOnce::new(|_x: &i32| {});
         let debug_str = format!("{:?}", consumer);
         assert!(debug_str.contains("BoxConsumerOnce"));
     }
 
     #[test]
     fn test_display() {
-        let consumer = qubit_function::BoxConsumerOnce::new(|_x: &i32| {});
+        let consumer = BoxConsumerOnce::new(|_x: &i32| {});
         let display_str = format!("{}", consumer);
         assert_eq!(display_str, "BoxConsumerOnce");
     }
 
     #[test]
     fn test_display_with_name() {
-        let mut consumer = qubit_function::BoxConsumerOnce::new(|_x: &i32| {});
+        let mut consumer = BoxConsumerOnce::new(|_x: &i32| {});
         consumer.set_name("my_consumer");
         let display_str = format!("{}", consumer);
         assert_eq!(display_str, "BoxConsumerOnce(my_consumer)");
@@ -55,7 +54,7 @@ mod debug_display_tests {
 
     #[test]
     fn test_name() {
-        let mut consumer = qubit_function::BoxConsumerOnce::new(|_x: &i32| {});
+        let mut consumer = BoxConsumerOnce::new(|_x: &i32| {});
         assert_eq!(consumer.name(), None);
         consumer.set_name("test");
         assert_eq!(consumer.name(), Some("test"));
@@ -66,7 +65,7 @@ mod debug_display_tests {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l1 = log.clone();
         let l2 = log.clone();
-        let consumer = qubit_function::BoxConsumerOnce::new(move |x: &i32| {
+        let consumer = BoxConsumerOnce::new(move |x: &i32| {
             l1.lock().expect("mutex should not be poisoned").push(*x);
         });
         let conditional = consumer.when(|x: &i32| *x > 0);

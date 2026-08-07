@@ -8,28 +8,20 @@
 
 //! Unit tests for callable task types.
 
-use std::{
-    cell::Cell,
-    io,
-    rc::Rc,
-    sync::{
-        Arc,
-        atomic::{
-            AtomicUsize,
-            Ordering,
-        },
-    },
-};
+use std::cell::Cell;
+use std::io;
+use std::rc::Rc;
+use std::sync::Arc;
+use std::sync::atomic::AtomicUsize;
+use std::sync::atomic::Ordering;
 
-use qubit_function::{
-    ArcCallable,
-    BoxCallable,
-    BoxCallableOnce,
-    Callable,
-    CallableOnce,
-    RcCallable,
-    SupplierOnce,
-};
+use qubit_function::ArcCallable;
+use qubit_function::BoxCallable;
+use qubit_function::BoxCallableOnce;
+use qubit_function::Callable;
+use qubit_function::CallableOnce;
+use qubit_function::RcCallable;
+use qubit_function::SupplierOnce;
 
 #[derive(Clone)]
 struct ClonedCallable {

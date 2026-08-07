@@ -7,20 +7,17 @@
 // =============================================================================
 //! Defines the `RcBiMutatingFunction` public type.
 
-use {
-    crate::BiMutatingFunction,
-    crate::functions::macros::impl_function_clone,
-    crate::functions::macros::impl_function_common_methods,
-    crate::functions::macros::impl_function_constant_method,
-    crate::functions::macros::impl_function_debug_display,
-    crate::functions::macros::impl_shared_function_methods,
-    std::rc::Rc,
-};
-use {
-    crate::BiPredicate,
-    crate::MutatingFunction,
-    crate::RcConditionalBiMutatingFunction,
-};
+use std::rc::Rc;
+
+use crate::BiMutatingFunction;
+use crate::BiPredicate;
+use crate::MutatingFunction;
+use crate::RcConditionalBiMutatingFunction;
+use crate::functions::macros::impl_function_clone;
+use crate::functions::macros::impl_function_common_methods;
+use crate::functions::macros::impl_function_constant_method;
+use crate::functions::macros::impl_function_debug_display;
+use crate::functions::macros::impl_shared_function_methods;
 
 /// The erased callback representation used by this implementation.
 type RcBiMutatingFunctionFn<T, U, R> = Rc<dyn Fn(&mut T, &mut U) -> R>;

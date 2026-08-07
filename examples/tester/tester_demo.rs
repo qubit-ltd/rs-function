@@ -6,22 +6,17 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    ArcTester,
-    BoxTester,
-    RcTester,
-    Tester,
-};
 use std::cell::Cell;
 use std::rc::Rc;
-use std::sync::{
-    Arc,
-    atomic::{
-        AtomicBool,
-        AtomicUsize,
-        Ordering,
-    },
-};
+use std::sync::Arc;
+use std::sync::atomic::AtomicBool;
+use std::sync::atomic::AtomicUsize;
+use std::sync::atomic::Ordering;
+
+use qubit_function::ArcTester;
+use qubit_function::BoxTester;
+use qubit_function::RcTester;
+use qubit_function::Tester;
 
 fn main() {
     println!("=== Tester Demo ===\n");

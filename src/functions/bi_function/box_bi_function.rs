@@ -7,18 +7,14 @@
 // =============================================================================
 //! Defines the `BoxBiFunction` public type.
 
-use {
-    crate::BiFunction,
-    crate::functions::macros::impl_box_function_methods,
-    crate::functions::macros::impl_function_common_methods,
-    crate::functions::macros::impl_function_constant_method,
-    crate::functions::macros::impl_function_debug_display,
-};
-use {
-    crate::BiPredicate,
-    crate::BoxConditionalBiFunction,
-    crate::Function,
-};
+use crate::BiFunction;
+use crate::BiPredicate;
+use crate::BoxConditionalBiFunction;
+use crate::Function;
+use crate::functions::macros::impl_box_function_methods;
+use crate::functions::macros::impl_function_common_methods;
+use crate::functions::macros::impl_function_constant_method;
+use crate::functions::macros::impl_function_debug_display;
 
 /// The erased callback representation used by this implementation.
 type BoxBiFunctionFn<T, U, R> = Box<dyn Fn(&T, &U) -> R>;

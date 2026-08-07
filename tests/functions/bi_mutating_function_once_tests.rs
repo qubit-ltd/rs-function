@@ -8,10 +8,8 @@
 
 //! Comprehensive tests for BiMutatingFunctionOnce trait and its implementations
 
-use qubit_function::{
-    BiMutatingFunctionOnce,
-    BoxBiMutatingFunctionOnce,
-};
+use qubit_function::BiMutatingFunctionOnce;
+use qubit_function::BoxBiMutatingFunctionOnce;
 
 // ============================================================================
 // Helper Functions and Data Structures

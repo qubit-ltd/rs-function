@@ -7,14 +7,12 @@
 // =============================================================================
 //! Defines the `BoxConditionalBiTransformer` public type.
 
-use {
-    crate::BiPredicate,
-    crate::BiTransformer,
-    crate::BoxBiPredicate,
-    crate::BoxBiTransformer,
-    crate::transformers::macros::impl_box_conditional_transformer,
-    crate::transformers::macros::impl_conditional_transformer_debug_display,
-};
+use crate::BiPredicate;
+use crate::BiTransformer;
+use crate::BoxBiPredicate;
+use crate::BoxBiTransformer;
+use crate::transformers::macros::impl_box_conditional_transformer;
+use crate::transformers::macros::impl_conditional_transformer_debug_display;
 
 // ============================================================================
 // BoxConditionalBiTransformer - Box-based Conditional BiTransformer

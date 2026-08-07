@@ -7,14 +7,12 @@
 // =============================================================================
 //! Defines the `BoxConditionalMutatingFunctionOnce` public type.
 
-use {
-    crate::BoxMutatingFunctionOnce,
-    crate::BoxPredicate,
-    crate::MutatingFunctionOnce,
-    crate::Predicate,
-    crate::functions::macros::impl_box_conditional_function,
-    crate::functions::macros::impl_conditional_function_debug_display,
-};
+use crate::BoxMutatingFunctionOnce;
+use crate::BoxPredicate;
+use crate::MutatingFunctionOnce;
+use crate::Predicate;
+use crate::functions::macros::impl_box_conditional_function;
+use crate::functions::macros::impl_conditional_function_debug_display;
 
 // ============================================================================
 // BoxConditionalMutatingFunctionOnce - Box-based Conditional Mutating Function

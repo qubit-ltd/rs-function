@@ -6,13 +6,10 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use {
-    qubit_function::{
-        ArcComparator,
-        Comparator,
-    },
-    std::cmp::Ordering,
-};
+use std::cmp::Ordering;
+
+use qubit_function::ArcComparator;
+use qubit_function::Comparator;
 
 struct ArcNaturalComparator;
 

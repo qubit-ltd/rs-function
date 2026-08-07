@@ -7,16 +7,12 @@
 // =============================================================================
 //! Defines the `BoxStatefulSupplier` public type.
 
-use {
-    crate::Predicate,
-    crate::Transformer,
-};
-use {
-    crate::StatefulSupplier,
-    crate::suppliers::macros::impl_box_supplier_methods,
-    crate::suppliers::macros::impl_supplier_common_methods,
-    crate::suppliers::macros::impl_supplier_debug_display,
-};
+use crate::Predicate;
+use crate::StatefulSupplier;
+use crate::Transformer;
+use crate::suppliers::macros::impl_box_supplier_methods;
+use crate::suppliers::macros::impl_supplier_common_methods;
+use crate::suppliers::macros::impl_supplier_debug_display;
 
 // ==========================================================================
 // BoxStatefulSupplier - Single Ownership Implementation

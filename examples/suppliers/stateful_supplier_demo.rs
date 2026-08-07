@@ -8,25 +8,22 @@
 
 //! Demonstration of StatefulSupplier types usage
 
-use qubit_function::{
-    ArcStatefulSupplier,
-    ArcSupplier,
-    BoxStatefulSupplier,
-    BoxSupplier,
-    BoxSupplierOnce,
-    RcStatefulSupplier,
-    RcSupplier,
-    StatefulSupplier,
-    Supplier,
-    SupplierOnce,
-};
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+use std::sync::Mutex;
 use std::thread;
+
+use qubit_function::ArcStatefulSupplier;
+use qubit_function::ArcSupplier;
+use qubit_function::BoxStatefulSupplier;
+use qubit_function::BoxSupplier;
+use qubit_function::BoxSupplierOnce;
+use qubit_function::RcStatefulSupplier;
+use qubit_function::RcSupplier;
+use qubit_function::StatefulSupplier;
+use qubit_function::Supplier;
+use qubit_function::SupplierOnce;
 
 fn is_even_i32(value: &i32) -> bool {
     value % 2 == 0

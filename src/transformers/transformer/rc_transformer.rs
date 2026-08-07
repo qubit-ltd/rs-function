@@ -7,19 +7,16 @@
 // =============================================================================
 //! Defines the `RcTransformer` public type.
 
-use {
-    crate::Predicate,
-    crate::RcConditionalTransformer,
-};
-use {
-    crate::Transformer,
-    crate::transformers::macros::impl_shared_transformer_methods,
-    crate::transformers::macros::impl_transformer_clone,
-    crate::transformers::macros::impl_transformer_common_methods,
-    crate::transformers::macros::impl_transformer_constant_method,
-    crate::transformers::macros::impl_transformer_debug_display,
-    std::rc::Rc,
-};
+use std::rc::Rc;
+
+use crate::Predicate;
+use crate::RcConditionalTransformer;
+use crate::Transformer;
+use crate::transformers::macros::impl_shared_transformer_methods;
+use crate::transformers::macros::impl_transformer_clone;
+use crate::transformers::macros::impl_transformer_common_methods;
+use crate::transformers::macros::impl_transformer_constant_method;
+use crate::transformers::macros::impl_transformer_debug_display;
 
 // ============================================================================
 // RcTransformer - Rc<dyn Fn(T) -> R>

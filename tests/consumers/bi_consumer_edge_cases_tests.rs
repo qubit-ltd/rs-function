@@ -5,28 +5,28 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-/// Tests for BiConsumer types
-use qubit_function::{
-    ArcBiConsumer,
-    BiConsumer,
-    BoxBiConsumer,
-    RcBiConsumer,
-};
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
 
+/// Tests for BiConsumer types
+use qubit_function::ArcBiConsumer;
+/// Tests for BiConsumer types
+use qubit_function::BiConsumer;
+/// Tests for BiConsumer types
+use qubit_function::BoxBiConsumer;
+/// Tests for BiConsumer types
+use qubit_function::RcBiConsumer;
+
 #[cfg(test)]
 mod edge_cases_tests {
-    use super::{
-        Arc,
-        ArcBiConsumer,
-        BiConsumer,
-        BoxBiConsumer,
-        Rc,
-        RcBiConsumer,
-        RefCell,
-    };
+    use super::Arc;
+    use super::ArcBiConsumer;
+    use super::BiConsumer;
+    use super::BoxBiConsumer;
+    use super::Rc;
+    use super::RcBiConsumer;
+    use super::RefCell;
 
     #[test]
     fn test_noop_multiple_calls() {
@@ -41,11 +41,10 @@ mod edge_cases_tests {
     fn test_and_then_with_noop() {
         let counter = Arc::new(std::sync::Mutex::new(0));
         let c = counter.clone();
-        let consumer =
-            qubit_function::BoxBiConsumer::new(move |_x: &i32, _y: &i32| {
-                *c.lock().expect("mutex should not be poisoned") += 1;
-            })
-            .and_then(BoxBiConsumer::noop());
+        let consumer = BoxBiConsumer::new(move |_x: &i32, _y: &i32| {
+            *c.lock().expect("mutex should not be poisoned") += 1;
+        })
+        .and_then(BoxBiConsumer::noop());
         consumer.accept(&5, &3);
         assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 1);
     }
@@ -56,17 +55,16 @@ mod edge_cases_tests {
         let c1 = counter.clone();
         let c2 = counter.clone();
         let c3 = counter.clone();
-        let consumer =
-            qubit_function::BoxBiConsumer::new(move |_x: &i32, _y: &i32| {
-                *c1.lock().expect("mutex should not be poisoned") += 1;
-            })
-            .and_then(move |_x: &i32, _y: &i32| {
-                *c2.lock().expect("mutex should not be poisoned") += 1;
-            })
-            .and_then(BoxBiConsumer::noop())
-            .and_then(move |_x: &i32, _y: &i32| {
-                *c3.lock().expect("mutex should not be poisoned") += 1;
-            });
+        let consumer = BoxBiConsumer::new(move |_x: &i32, _y: &i32| {
+            *c1.lock().expect("mutex should not be poisoned") += 1;
+        })
+        .and_then(move |_x: &i32, _y: &i32| {
+            *c2.lock().expect("mutex should not be poisoned") += 1;
+        })
+        .and_then(BoxBiConsumer::noop())
+        .and_then(move |_x: &i32, _y: &i32| {
+            *c3.lock().expect("mutex should not be poisoned") += 1;
+        });
         consumer.accept(&5, &3);
         assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 3);
     }
@@ -75,11 +73,10 @@ mod edge_cases_tests {
     fn test_with_different_types() {
         let counter = Arc::new(std::sync::Mutex::new(String::new()));
         let c = counter.clone();
-        let consumer =
-            qubit_function::BoxBiConsumer::new(move |s: &String, n: &i32| {
-                *c.lock().expect("mutex should not be poisoned") =
-                    format!("{}: {}", s, n);
-            });
+        let consumer = BoxBiConsumer::new(move |s: &String, n: &i32| {
+            *c.lock().expect("mutex should not be poisoned") =
+                format!("{}: {}", s, n);
+        });
         consumer.accept(&"Count".to_string(), &42);
         assert_eq!(
             *counter.lock().expect("mutex should not be poisoned"),
@@ -133,11 +130,9 @@ mod edge_cases_tests {
 
     #[test]
     fn test_name_with_and_then() {
-        let mut consumer1 =
-            qubit_function::BoxBiConsumer::new(|_x: &i32, _y: &i32| {});
+        let mut consumer1 = BoxBiConsumer::new(|_x: &i32, _y: &i32| {});
         consumer1.set_name("first");
-        let consumer2 =
-            qubit_function::BoxBiConsumer::new(|_x: &i32, _y: &i32| {});
+        let consumer2 = BoxBiConsumer::new(|_x: &i32, _y: &i32| {});
         let chained = consumer1.and_then(consumer2);
         // Name is not preserved through and_then
         assert_eq!(chained.name(), None);

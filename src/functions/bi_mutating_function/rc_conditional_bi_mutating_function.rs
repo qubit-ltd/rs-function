@@ -7,15 +7,13 @@
 // =============================================================================
 //! Defines the `RcConditionalBiMutatingFunction` public type.
 
-use {
-    crate::BiMutatingFunction,
-    crate::BiPredicate,
-    crate::RcBiMutatingFunction,
-    crate::RcBiPredicate,
-    crate::functions::macros::impl_conditional_function_clone,
-    crate::functions::macros::impl_conditional_function_debug_display,
-    crate::functions::macros::impl_shared_conditional_function,
-};
+use crate::BiMutatingFunction;
+use crate::BiPredicate;
+use crate::RcBiMutatingFunction;
+use crate::RcBiPredicate;
+use crate::functions::macros::impl_conditional_function_clone;
+use crate::functions::macros::impl_conditional_function_debug_display;
+use crate::functions::macros::impl_shared_conditional_function;
 
 // ============================================================================
 // RcConditionalBiMutatingFunction - Rc-based Conditional BiMutatingFunction

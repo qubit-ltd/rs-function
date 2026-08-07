@@ -177,10 +177,8 @@
 //! # }
 //! ```
 
-use crate::predicates::macros::constants::{
-    ALWAYS_FALSE_NAME,
-    ALWAYS_TRUE_NAME,
-};
+use crate::predicates::macros::constants::ALWAYS_FALSE_NAME;
+use crate::predicates::macros::constants::ALWAYS_TRUE_NAME;
 
 mod box_predicate;
 pub use box_predicate::BoxPredicate;

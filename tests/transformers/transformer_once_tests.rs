@@ -6,10 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    BoxTransformerOnce,
-    TransformerOnce,
-};
+use qubit_function::BoxTransformerOnce;
+use qubit_function::TransformerOnce;
 
 // ============================================================================
 // BoxTransformerOnce Tests - Consuming, single ownership
@@ -17,10 +15,8 @@ use qubit_function::{
 
 #[cfg(test)]
 mod box_transformer_once_tests {
-    use super::{
-        BoxTransformerOnce,
-        TransformerOnce,
-    };
+    use super::BoxTransformerOnce;
+    use super::TransformerOnce;
 
     #[test]
     fn test_new_and_transform() {
@@ -104,11 +100,10 @@ mod box_transformer_once_tests {
 
 #[cfg(test)]
 mod conditional_tests {
-    use super::{
-        BoxTransformerOnce,
-        TransformerOnce,
-    };
     use qubit_function::BoxPredicate;
+
+    use super::BoxTransformerOnce;
+    use super::TransformerOnce;
 
     #[test]
     fn test_when_or_else() {
@@ -153,10 +148,8 @@ mod conditional_tests {
 
 #[cfg(test)]
 mod complex_composition_tests {
-    use super::{
-        BoxTransformerOnce,
-        TransformerOnce,
-    };
+    use super::BoxTransformerOnce;
+    use super::TransformerOnce;
 
     #[test]
     fn test_multiple_and_then() {
@@ -193,10 +186,8 @@ mod complex_composition_tests {
 
 #[cfg(test)]
 mod edge_cases_tests {
-    use super::{
-        BoxTransformerOnce,
-        TransformerOnce,
-    };
+    use super::BoxTransformerOnce;
+    use super::TransformerOnce;
 
     #[test]
     fn test_identity_composition() {
@@ -273,10 +264,8 @@ mod edge_cases_tests {
 
 #[cfg(test)]
 mod trait_usage_tests {
-    use super::{
-        BoxTransformerOnce,
-        TransformerOnce,
-    };
+    use super::BoxTransformerOnce;
+    use super::TransformerOnce;
 
     #[test]
     fn test_transformer_once_trait() {
@@ -323,10 +312,8 @@ mod trait_usage_tests {
 
 #[cfg(test)]
 mod box_transformer_transformer_once_tests {
-    use qubit_function::{
-        BoxTransformer,
-        Transformer,
-    };
+    use qubit_function::BoxTransformer;
+    use qubit_function::Transformer;
 
     #[test]
     fn test_box_transformer_apply() {
@@ -357,10 +344,8 @@ mod box_transformer_transformer_once_tests {
 
 #[cfg(test)]
 mod rc_transformer_transformer_once_tests {
-    use qubit_function::{
-        RcTransformer,
-        Transformer,
-    };
+    use qubit_function::RcTransformer;
+    use qubit_function::Transformer;
 
     #[test]
     fn test_rc_transformer_apply() {
@@ -401,12 +386,11 @@ mod rc_transformer_transformer_once_tests {
 
 #[cfg(test)]
 mod arc_transformer_transformer_once_tests {
-    use qubit_function::{
-        ArcTransformer,
-        Transformer,
-    };
     use std::sync::Arc;
     use std::thread;
+
+    use qubit_function::ArcTransformer;
+    use qubit_function::Transformer;
 
     #[test]
     fn test_arc_transformer_apply() {

@@ -7,15 +7,13 @@
 // =============================================================================
 //! Defines the `RcConditionalStatefulTransformer` public type.
 
-use {
-    crate::Predicate,
-    crate::RcPredicate,
-    crate::RcStatefulTransformer,
-    crate::StatefulTransformer,
-    crate::transformers::macros::impl_conditional_transformer_clone,
-    crate::transformers::macros::impl_conditional_transformer_debug_display,
-    crate::transformers::macros::impl_shared_conditional_transformer,
-};
+use crate::Predicate;
+use crate::RcPredicate;
+use crate::RcStatefulTransformer;
+use crate::StatefulTransformer;
+use crate::transformers::macros::impl_conditional_transformer_clone;
+use crate::transformers::macros::impl_conditional_transformer_debug_display;
+use crate::transformers::macros::impl_shared_conditional_transformer;
 
 // ============================================================================
 // RcConditionalStatefulTransformer - Rc-based Conditional StatefulTransformer

@@ -7,19 +7,15 @@
 // =============================================================================
 //! Defines the `BoxBiTransformerOnce` public type.
 
-use {
-    crate::BiPredicate,
-    crate::BoxConditionalBiTransformerOnce,
-    crate::TransformerOnce,
-};
-use {
-    crate::BiTransformerOnce,
-    crate::macros::impl_closure_once_trait,
-    crate::transformers::macros::impl_box_transformer_methods,
-    crate::transformers::macros::impl_transformer_common_methods,
-    crate::transformers::macros::impl_transformer_constant_method,
-    crate::transformers::macros::impl_transformer_debug_display,
-};
+use crate::BiPredicate;
+use crate::BiTransformerOnce;
+use crate::BoxConditionalBiTransformerOnce;
+use crate::TransformerOnce;
+use crate::macros::impl_closure_once_trait;
+use crate::transformers::macros::impl_box_transformer_methods;
+use crate::transformers::macros::impl_transformer_common_methods;
+use crate::transformers::macros::impl_transformer_constant_method;
+use crate::transformers::macros::impl_transformer_debug_display;
 
 // ============================================================================
 // BoxBiTransformerOnce - Box<dyn FnOnce(T, U) -> R>

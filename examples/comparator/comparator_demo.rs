@@ -6,12 +6,10 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    ArcComparator,
-    BoxComparator,
-    Comparator,
-    RcComparator,
-};
+use qubit_function::ArcComparator;
+use qubit_function::BoxComparator;
+use qubit_function::Comparator;
+use qubit_function::RcComparator;
 
 #[derive(Debug, Eq, PartialEq)]
 struct User {

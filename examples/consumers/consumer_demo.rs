@@ -14,19 +14,16 @@
 //! Consumer is used to consume (read) values without modifying the original
 //! value. If you need to modify values, please refer to mutator_demo.rs
 
-use qubit_function::{
-    ArcConsumer,
-    BoxConsumer,
-    BoxStatefulConsumer,
-    Consumer,
-    RcConsumer,
-    StatefulConsumer,
-};
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+use std::sync::Mutex;
 use std::thread;
+
+use qubit_function::ArcConsumer;
+use qubit_function::BoxConsumer;
+use qubit_function::BoxStatefulConsumer;
+use qubit_function::Consumer;
+use qubit_function::RcConsumer;
+use qubit_function::StatefulConsumer;
 
 fn main() {
     println!("=== Consumer Examples ===\n");

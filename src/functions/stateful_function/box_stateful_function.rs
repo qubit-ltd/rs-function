@@ -7,18 +7,14 @@
 // =============================================================================
 //! Defines the `BoxStatefulFunction` public type.
 
-use {
-    crate::BoxConditionalStatefulFunction,
-    crate::Predicate,
-};
-use {
-    crate::StatefulFunction,
-    crate::functions::macros::impl_box_function_methods,
-    crate::functions::macros::impl_function_common_methods,
-    crate::functions::macros::impl_function_constant_method,
-    crate::functions::macros::impl_function_debug_display,
-    crate::functions::macros::impl_function_identity_method,
-};
+use crate::BoxConditionalStatefulFunction;
+use crate::Predicate;
+use crate::StatefulFunction;
+use crate::functions::macros::impl_box_function_methods;
+use crate::functions::macros::impl_function_common_methods;
+use crate::functions::macros::impl_function_constant_method;
+use crate::functions::macros::impl_function_debug_display;
+use crate::functions::macros::impl_function_identity_method;
 
 // ============================================================================
 // BoxStatefulFunction - Box<dyn FnMut(&T) -> R>

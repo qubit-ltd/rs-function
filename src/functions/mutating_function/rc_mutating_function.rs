@@ -7,20 +7,17 @@
 // =============================================================================
 //! Defines the `RcMutatingFunction` public type.
 
-use {
-    crate::Function,
-    crate::Predicate,
-    crate::RcConditionalMutatingFunction,
-};
-use {
-    crate::MutatingFunction,
-    crate::functions::macros::impl_function_clone,
-    crate::functions::macros::impl_function_common_methods,
-    crate::functions::macros::impl_function_debug_display,
-    crate::functions::macros::impl_function_identity_method,
-    crate::functions::macros::impl_shared_function_methods,
-    std::rc::Rc,
-};
+use std::rc::Rc;
+
+use crate::Function;
+use crate::MutatingFunction;
+use crate::Predicate;
+use crate::RcConditionalMutatingFunction;
+use crate::functions::macros::impl_function_clone;
+use crate::functions::macros::impl_function_common_methods;
+use crate::functions::macros::impl_function_debug_display;
+use crate::functions::macros::impl_function_identity_method;
+use crate::functions::macros::impl_shared_function_methods;
 
 // =======================================================================
 // 4. RcMutatingFunction - Single-Threaded Shared Ownership

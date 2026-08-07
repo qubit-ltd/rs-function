@@ -6,10 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    RcStatefulBinaryOperator,
-    StatefulBiTransformer,
-};
+use qubit_function::RcStatefulBinaryOperator;
+use qubit_function::StatefulBiTransformer;
 
 #[test]
 fn test_rc_stateful_binary_operator_alias() {

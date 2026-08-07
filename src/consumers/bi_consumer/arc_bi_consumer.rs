@@ -7,19 +7,16 @@
 // =============================================================================
 //! Defines the `ArcBiConsumer` public type.
 
-use {
-    super::ThreadSafeBiConsumerFn,
-    crate::BiConsumer,
-    crate::consumers::macros::impl_consumer_clone,
-    crate::consumers::macros::impl_consumer_common_methods,
-    crate::consumers::macros::impl_consumer_debug_display,
-    crate::consumers::macros::impl_shared_consumer_methods,
-    std::sync::Arc,
-};
-use {
-    crate::ArcConditionalBiConsumer,
-    crate::BiPredicate,
-};
+use std::sync::Arc;
+
+use super::ThreadSafeBiConsumerFn;
+use crate::ArcConditionalBiConsumer;
+use crate::BiConsumer;
+use crate::BiPredicate;
+use crate::consumers::macros::impl_consumer_clone;
+use crate::consumers::macros::impl_consumer_common_methods;
+use crate::consumers::macros::impl_consumer_debug_display;
+use crate::consumers::macros::impl_shared_consumer_methods;
 
 // =======================================================================
 // 4. ArcBiConsumer - Thread-Safe Shared Ownership

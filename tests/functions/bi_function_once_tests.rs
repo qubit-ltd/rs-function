@@ -8,13 +8,11 @@
 
 //! Comprehensive tests for BiFunctionOnce trait and BoxBiFunctionOnce
 
-use qubit_function::{
-    ArcBiPredicate,
-    BiFunctionOnce,
-    BoxBiFunctionOnce,
-    BoxBiPredicate,
-    RcBiPredicate,
-};
+use qubit_function::ArcBiPredicate;
+use qubit_function::BiFunctionOnce;
+use qubit_function::BoxBiFunctionOnce;
+use qubit_function::BoxBiPredicate;
+use qubit_function::RcBiPredicate;
 
 // ============================================================================
 // BiFunctionOnce Trait Tests - Core Functionality

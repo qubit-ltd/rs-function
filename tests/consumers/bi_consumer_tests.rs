@@ -5,31 +5,30 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-/// Tests for BiConsumer types
-use qubit_function::{
-    ArcBiConsumer,
-    BiConsumer,
-    BoxBiConsumer,
-    RcBiConsumer,
-};
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
 
+/// Tests for BiConsumer types
+use qubit_function::ArcBiConsumer;
+/// Tests for BiConsumer types
+use qubit_function::BiConsumer;
+/// Tests for BiConsumer types
+use qubit_function::BoxBiConsumer;
+/// Tests for BiConsumer types
+use qubit_function::RcBiConsumer;
+
 #[cfg(test)]
 mod box_non_mutating_bi_consumer_tests {
-    use super::{
-        Arc,
-        BiConsumer,
-        BoxBiConsumer,
-    };
+    use super::Arc;
+    use super::BiConsumer;
+    use super::BoxBiConsumer;
 
     #[test]
     fn test_new_and_accept() {
-        let consumer =
-            qubit_function::BoxBiConsumer::new(|x: &i32, y: &i32| {
-                std::hint::black_box(x + y);
-            });
+        let consumer = BoxBiConsumer::new(|x: &i32, y: &i32| {
+            std::hint::black_box(x + y);
+        });
         consumer.accept(&5, &3);
     }
 
@@ -38,13 +37,12 @@ mod box_non_mutating_bi_consumer_tests {
         let counter = Arc::new(std::sync::Mutex::new(0));
         let c1 = counter.clone();
         let c2 = counter.clone();
-        let chained =
-            qubit_function::BoxBiConsumer::new(move |_x: &i32, _y: &i32| {
-                *c1.lock().expect("mutex should not be poisoned") += 1;
-            })
-            .and_then(move |_x: &i32, _y: &i32| {
-                *c2.lock().expect("mutex should not be poisoned") += 1;
-            });
+        let chained = BoxBiConsumer::new(move |_x: &i32, _y: &i32| {
+            *c1.lock().expect("mutex should not be poisoned") += 1;
+        })
+        .and_then(move |_x: &i32, _y: &i32| {
+            *c2.lock().expect("mutex should not be poisoned") += 1;
+        });
 
         chained.accept(&5, &3);
         assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 2);
@@ -68,24 +66,21 @@ mod box_non_mutating_bi_consumer_tests {
 
     #[test]
     fn test_debug() {
-        let consumer =
-            qubit_function::BoxBiConsumer::new(|_x: &i32, _y: &i32| {});
+        let consumer = BoxBiConsumer::new(|_x: &i32, _y: &i32| {});
         let debug_str = format!("{:?}", consumer);
         assert!(debug_str.contains("BoxBiConsumer"));
     }
 
     #[test]
     fn test_display() {
-        let consumer =
-            qubit_function::BoxBiConsumer::new(|_x: &i32, _y: &i32| {});
+        let consumer = BoxBiConsumer::new(|_x: &i32, _y: &i32| {});
         let display_str = format!("{}", consumer);
         assert_eq!(display_str, "BoxBiConsumer");
     }
 
     #[test]
     fn test_display_with_name() {
-        let mut consumer =
-            qubit_function::BoxBiConsumer::new(|_x: &i32, _y: &i32| {});
+        let mut consumer = BoxBiConsumer::new(|_x: &i32, _y: &i32| {});
         consumer.set_name("my_consumer");
         let display_str = format!("{}", consumer);
         assert_eq!(display_str, "BoxBiConsumer(my_consumer)");

@@ -7,18 +7,14 @@
 // =============================================================================
 //! Defines the `BoxStatefulBiTransformer` public type.
 
-use {
-    crate::BiPredicate,
-    crate::BoxConditionalStatefulBiTransformer,
-    crate::StatefulTransformer,
-};
-use {
-    crate::StatefulBiTransformer,
-    crate::transformers::macros::impl_box_transformer_methods,
-    crate::transformers::macros::impl_transformer_common_methods,
-    crate::transformers::macros::impl_transformer_constant_method,
-    crate::transformers::macros::impl_transformer_debug_display,
-};
+use crate::BiPredicate;
+use crate::BoxConditionalStatefulBiTransformer;
+use crate::StatefulBiTransformer;
+use crate::StatefulTransformer;
+use crate::transformers::macros::impl_box_transformer_methods;
+use crate::transformers::macros::impl_transformer_common_methods;
+use crate::transformers::macros::impl_transformer_constant_method;
+use crate::transformers::macros::impl_transformer_debug_display;
 
 // ============================================================================
 // BoxStatefulBiTransformer - Box<dyn FnMut(T, U) -> R>

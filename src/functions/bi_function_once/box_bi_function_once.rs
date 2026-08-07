@@ -7,19 +7,15 @@
 // =============================================================================
 //! Defines the `BoxBiFunctionOnce` public type.
 
-use {
-    crate::BiFunctionOnce,
-    crate::functions::macros::impl_box_function_methods,
-    crate::functions::macros::impl_function_common_methods,
-    crate::functions::macros::impl_function_constant_method,
-    crate::functions::macros::impl_function_debug_display,
-    crate::macros::impl_closure_once_trait,
-};
-use {
-    crate::BiPredicate,
-    crate::BoxConditionalBiFunctionOnce,
-    crate::FunctionOnce,
-};
+use crate::BiFunctionOnce;
+use crate::BiPredicate;
+use crate::BoxConditionalBiFunctionOnce;
+use crate::FunctionOnce;
+use crate::functions::macros::impl_box_function_methods;
+use crate::functions::macros::impl_function_common_methods;
+use crate::functions::macros::impl_function_constant_method;
+use crate::functions::macros::impl_function_debug_display;
+use crate::macros::impl_closure_once_trait;
 
 /// The erased callback representation used by this implementation.
 type BoxBiFunctionOnceFn<T, U, R> = Box<dyn FnOnce(&T, &U) -> R>;

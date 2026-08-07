@@ -9,13 +9,11 @@
 
 use std::ops::Not;
 
-use {
-    super::ALWAYS_FALSE_NAME,
-    super::ALWAYS_TRUE_NAME,
-    crate::StatefulBiPredicate,
-    crate::predicates::macros::impl_predicate_common_methods,
-    crate::predicates::macros::impl_predicate_debug_display,
-};
+use super::ALWAYS_FALSE_NAME;
+use super::ALWAYS_TRUE_NAME;
+use crate::StatefulBiPredicate;
+use crate::predicates::macros::impl_predicate_common_methods;
+use crate::predicates::macros::impl_predicate_debug_display;
 
 /// The erased callback representation used by this implementation.
 type BoxStatefulBiPredicateFn<T, U> = dyn FnMut(&T, &U) -> bool;

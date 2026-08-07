@@ -7,17 +7,13 @@
 // =============================================================================
 //! Defines the `BoxConsumerOnce` public type.
 
-use {
-    crate::BoxConditionalConsumerOnce,
-    crate::Predicate,
-};
-use {
-    crate::ConsumerOnce,
-    crate::consumers::macros::impl_box_consumer_methods,
-    crate::consumers::macros::impl_consumer_common_methods,
-    crate::consumers::macros::impl_consumer_debug_display,
-    crate::macros::impl_closure_once_trait,
-};
+use crate::BoxConditionalConsumerOnce;
+use crate::ConsumerOnce;
+use crate::Predicate;
+use crate::consumers::macros::impl_box_consumer_methods;
+use crate::consumers::macros::impl_consumer_common_methods;
+use crate::consumers::macros::impl_consumer_debug_display;
+use crate::macros::impl_closure_once_trait;
 
 // ============================================================================
 // 2. BoxConsumerOnce - Single Ownership Implementation

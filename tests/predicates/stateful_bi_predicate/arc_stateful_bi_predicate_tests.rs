@@ -6,10 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    ArcStatefulBiPredicate,
-    StatefulBiPredicate,
-};
+use qubit_function::ArcStatefulBiPredicate;
+use qubit_function::StatefulBiPredicate;
 
 #[test]
 fn test_arc_stateful_bi_predicate_observable_behavior() {

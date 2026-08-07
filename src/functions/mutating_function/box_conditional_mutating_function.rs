@@ -7,14 +7,12 @@
 // =============================================================================
 //! Defines the `BoxConditionalMutatingFunction` public type.
 
-use {
-    crate::BoxMutatingFunction,
-    crate::BoxPredicate,
-    crate::MutatingFunction,
-    crate::Predicate,
-    crate::functions::macros::impl_box_conditional_function,
-    crate::functions::macros::impl_conditional_function_debug_display,
-};
+use crate::BoxMutatingFunction;
+use crate::BoxPredicate;
+use crate::MutatingFunction;
+use crate::Predicate;
+use crate::functions::macros::impl_box_conditional_function;
+use crate::functions::macros::impl_conditional_function_debug_display;
 
 // ============================================================================
 // BoxConditionalMutatingFunction - Box-based Conditional Mutating Function

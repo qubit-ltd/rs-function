@@ -12,11 +12,9 @@
 
 #[cfg(test)]
 mod type_conversion_tests {
-    use qubit_function::{
-        ArcTransformer,
-        RcTransformer,
-        Transformer,
-    };
+    use qubit_function::ArcTransformer;
+    use qubit_function::RcTransformer;
+    use qubit_function::Transformer;
 
     #[test]
     fn test_arc_constant_with_clone() {

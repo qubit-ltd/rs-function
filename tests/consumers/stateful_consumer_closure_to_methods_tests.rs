@@ -8,22 +8,19 @@
 
 //! Unit tests for StatefulConsumer types
 
-use qubit_function::{
-    ArcConsumer,
-    ArcStatefulConsumer,
-    BoxConsumer,
-    BoxStatefulConsumer,
-    Consumer,
-    RcConsumer,
-    RcStatefulConsumer,
-    StatefulConsumer,
-};
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+use std::sync::Mutex;
+
+use qubit_function::ArcConsumer;
+use qubit_function::ArcStatefulConsumer;
+use qubit_function::BoxConsumer;
+use qubit_function::BoxStatefulConsumer;
+use qubit_function::Consumer;
+use qubit_function::RcConsumer;
+use qubit_function::RcStatefulConsumer;
+use qubit_function::StatefulConsumer;
 
 // ============================================================================
 // BoxConsumer Tests
@@ -31,12 +28,10 @@ use std::sync::{
 
 #[cfg(test)]
 mod test_closure_to_methods {
-    use super::{
-        Arc,
-        BoxStatefulConsumer,
-        Mutex,
-        StatefulConsumer,
-    };
+    use super::Arc;
+    use super::BoxStatefulConsumer;
+    use super::Mutex;
+    use super::StatefulConsumer;
 
     // Note: closures must implement Clone to use to_xxx methods
     // We need to use cloneable closures or wrapper types

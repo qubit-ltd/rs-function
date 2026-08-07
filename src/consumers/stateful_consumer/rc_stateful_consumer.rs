@@ -7,19 +7,16 @@
 // =============================================================================
 //! Defines the `RcStatefulConsumer` public type.
 
-use {
-    crate::Predicate,
-    crate::RcConditionalStatefulConsumer,
-};
-use {
-    crate::StatefulConsumer,
-    crate::consumers::macros::impl_consumer_clone,
-    crate::consumers::macros::impl_consumer_common_methods,
-    crate::consumers::macros::impl_consumer_debug_display,
-    crate::consumers::macros::impl_shared_consumer_methods,
-    std::cell::RefCell,
-    std::rc::Rc,
-};
+use std::cell::RefCell;
+use std::rc::Rc;
+
+use crate::Predicate;
+use crate::RcConditionalStatefulConsumer;
+use crate::StatefulConsumer;
+use crate::consumers::macros::impl_consumer_clone;
+use crate::consumers::macros::impl_consumer_common_methods;
+use crate::consumers::macros::impl_consumer_debug_display;
+use crate::consumers::macros::impl_shared_consumer_methods;
 
 /// The erased callback representation used by this implementation.
 type RcStatefulConsumerFn<T> = Rc<RefCell<dyn FnMut(&T)>>;

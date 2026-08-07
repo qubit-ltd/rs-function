@@ -8,18 +8,14 @@
 
 //! Unit tests for LocalBoxRunnableOnce.
 
-use std::{
-    cell::Cell,
-    io,
-    rc::Rc,
-};
+use std::cell::Cell;
+use std::io;
+use std::rc::Rc;
 
-use qubit_function::{
-    CallableOnce,
-    LocalBoxRunnableOnce,
-    RunnableOnce,
-    SupplierOnce,
-};
+use qubit_function::CallableOnce;
+use qubit_function::LocalBoxRunnableOnce;
+use qubit_function::RunnableOnce;
+use qubit_function::SupplierOnce;
 
 #[test]
 fn test_local_box_runnable_once_new_allows_non_send_capture() {

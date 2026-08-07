@@ -6,10 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    BoxPredicate,
-    Predicate,
-};
+use qubit_function::BoxPredicate;
+use qubit_function::Predicate;
 
 #[test]
 fn test_predicate_clone_observable_behavior() {

@@ -6,10 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    ArcBinaryOperator,
-    BiTransformer,
-};
+use qubit_function::ArcBinaryOperator;
+use qubit_function::BiTransformer;
 
 #[test]
 fn test_arc_binary_operator_alias() {

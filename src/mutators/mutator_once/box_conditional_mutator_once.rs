@@ -7,14 +7,12 @@
 // =============================================================================
 //! Defines the `BoxConditionalMutatorOnce` public type.
 
-use {
-    crate::BoxMutatorOnce,
-    crate::BoxPredicate,
-    crate::MutatorOnce,
-    crate::Predicate,
-    crate::mutators::macros::impl_box_conditional_mutator,
-    crate::mutators::macros::impl_conditional_mutator_debug_display,
-};
+use crate::BoxMutatorOnce;
+use crate::BoxPredicate;
+use crate::MutatorOnce;
+use crate::Predicate;
+use crate::mutators::macros::impl_box_conditional_mutator;
+use crate::mutators::macros::impl_conditional_mutator_debug_display;
 
 // ============================================================================
 // 5. BoxConditionalMutatorOnce - Box-based Conditional Mutator

@@ -279,6 +279,6 @@ type ArcStatefulMutatingFunctionFn<T, R> =
     Arc<Mutex<dyn FnMut(&mut T) -> R + Send + 'static>>;
 
 /// Type alias for Rc-wrapped stateful mutating function
-#[cfg(feature = "rc")]
 /// The erased callback representation used by this implementation.
+#[cfg(feature = "rc")]
 type RcStatefulMutatingFunctionFn<T, R> = Rc<RefCell<dyn FnMut(&mut T) -> R>>;

@@ -7,18 +7,15 @@
 // =============================================================================
 //! Defines the `ArcConsumer` public type.
 
-use {
-    crate::ArcConditionalConsumer,
-    crate::Predicate,
-};
-use {
-    crate::Consumer,
-    crate::consumers::macros::impl_consumer_clone,
-    crate::consumers::macros::impl_consumer_common_methods,
-    crate::consumers::macros::impl_consumer_debug_display,
-    crate::consumers::macros::impl_shared_consumer_methods,
-    std::sync::Arc,
-};
+use std::sync::Arc;
+
+use crate::ArcConditionalConsumer;
+use crate::Consumer;
+use crate::Predicate;
+use crate::consumers::macros::impl_consumer_clone;
+use crate::consumers::macros::impl_consumer_common_methods;
+use crate::consumers::macros::impl_consumer_debug_display;
+use crate::consumers::macros::impl_shared_consumer_methods;
 
 // ============================================================================
 // 4. ArcConsumer - Thread-safe Shared Ownership Implementation

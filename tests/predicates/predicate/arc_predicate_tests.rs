@@ -6,10 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    ArcPredicate,
-    Predicate,
-};
+use qubit_function::ArcPredicate;
+use qubit_function::Predicate;
 
 #[test]
 fn test_arc_predicate_observable_behavior() {

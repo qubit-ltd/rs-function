@@ -7,15 +7,13 @@
 // =============================================================================
 //! Defines the `ArcConditionalStatefulConsumer` public type.
 
-use {
-    crate::ArcPredicate,
-    crate::ArcStatefulConsumer,
-    crate::Predicate,
-    crate::StatefulConsumer,
-    crate::consumers::macros::impl_conditional_consumer_clone,
-    crate::consumers::macros::impl_conditional_consumer_debug_display,
-    crate::consumers::macros::impl_shared_conditional_consumer,
-};
+use crate::ArcPredicate;
+use crate::ArcStatefulConsumer;
+use crate::Predicate;
+use crate::StatefulConsumer;
+use crate::consumers::macros::impl_conditional_consumer_clone;
+use crate::consumers::macros::impl_conditional_consumer_debug_display;
+use crate::consumers::macros::impl_shared_conditional_consumer;
 
 // ============================================================================
 // 8. ArcConditionalStatefulConsumer - Arc-based Conditional Consumer

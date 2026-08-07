@@ -7,18 +7,14 @@
 // =============================================================================
 //! Defines the `BoxTransformerOnce` public type.
 
-use {
-    crate::BoxConditionalTransformerOnce,
-    crate::Predicate,
-};
-use {
-    crate::TransformerOnce,
-    crate::macros::impl_closure_once_trait,
-    crate::transformers::macros::impl_box_transformer_methods,
-    crate::transformers::macros::impl_transformer_common_methods,
-    crate::transformers::macros::impl_transformer_constant_method,
-    crate::transformers::macros::impl_transformer_debug_display,
-};
+use crate::BoxConditionalTransformerOnce;
+use crate::Predicate;
+use crate::TransformerOnce;
+use crate::macros::impl_closure_once_trait;
+use crate::transformers::macros::impl_box_transformer_methods;
+use crate::transformers::macros::impl_transformer_common_methods;
+use crate::transformers::macros::impl_transformer_constant_method;
+use crate::transformers::macros::impl_transformer_debug_display;
 
 // ============================================================================
 // BoxTransformerOnce - Box<dyn FnOnce(T) -> R>

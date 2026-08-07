@@ -6,24 +6,17 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::testers::stateful_tester::{
-    ArcStatefulTester,
-    BoxStatefulTester,
-    RcStatefulTester,
-    StatefulTester,
-};
-use std::{
-    cell::RefCell,
-    rc::Rc,
-    sync::{
-        Arc,
-        atomic::{
-            AtomicUsize,
-            Ordering,
-        },
-    },
-    thread,
-};
+use std::cell::RefCell;
+use std::rc::Rc;
+use std::sync::Arc;
+use std::sync::atomic::AtomicUsize;
+use std::sync::atomic::Ordering;
+use std::thread;
+
+use qubit_function::testers::stateful_tester::ArcStatefulTester;
+use qubit_function::testers::stateful_tester::BoxStatefulTester;
+use qubit_function::testers::stateful_tester::RcStatefulTester;
+use qubit_function::testers::stateful_tester::StatefulTester;
 
 #[derive(Clone)]
 struct ThresholdTester {

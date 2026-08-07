@@ -8,12 +8,10 @@
 
 //! Demonstrates blanket implementations for Fn -> Transformer
 
-use qubit_function::{
-    ArcTransformer,
-    BoxTransformer,
-    RcTransformer,
-    Transformer,
-};
+use qubit_function::ArcTransformer;
+use qubit_function::BoxTransformer;
+use qubit_function::RcTransformer;
+use qubit_function::Transformer;
 
 fn main() {
     println!("=== Testing Fn -> Transformer ===");

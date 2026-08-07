@@ -6,10 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    BoxSupplier,
-    Supplier,
-};
+use qubit_function::BoxSupplier;
+use qubit_function::Supplier;
 
 #[test]
 fn test_supplier_clone_observable_behavior() {

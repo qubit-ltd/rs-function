@@ -10,12 +10,10 @@
 //! Demonstrates the usage of and_then method for BoxBiTransformer,
 //! ArcBiTransformer, and RcBiTransformer
 
-use qubit_function::{
-    ArcBiTransformer,
-    BiTransformer,
-    BoxBiTransformer,
-    RcBiTransformer,
-};
+use qubit_function::ArcBiTransformer;
+use qubit_function::BiTransformer;
+use qubit_function::BoxBiTransformer;
+use qubit_function::RcBiTransformer;
 
 fn main() {
     println!("=== BiTransformer and_then Method Demo ===\n");

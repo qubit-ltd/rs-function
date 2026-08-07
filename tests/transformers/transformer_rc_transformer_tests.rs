@@ -12,10 +12,8 @@
 
 #[cfg(test)]
 mod rc_transformer_tests {
-    use qubit_function::{
-        RcTransformer,
-        Transformer,
-    };
+    use qubit_function::RcTransformer;
+    use qubit_function::Transformer;
 
     #[test]
     fn test_new_and_apply() {

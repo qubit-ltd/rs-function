@@ -7,15 +7,12 @@
 // =============================================================================
 //! Defines the `BoxComparator` public type.
 
-use {
-    crate::{
-        Comparator,
-        internal::CallbackMetadata,
-        macros::impl_common_name_methods,
-    },
-    std::cmp::Ordering,
-    std::fmt,
-};
+use std::cmp::Ordering;
+use std::fmt;
+
+use crate::Comparator;
+use crate::internal::CallbackMetadata;
+use crate::macros::impl_common_name_methods;
 
 /// The erased callback representation used by this implementation.
 type BoxComparatorFn<T> = Box<dyn Fn(&T, &T) -> Ordering>;

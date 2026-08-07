@@ -6,10 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    BiFunction,
-    BoxBinaryFunction,
-};
+use qubit_function::BiFunction;
+use qubit_function::BoxBinaryFunction;
 
 #[test]
 fn test_box_binary_function_alias() {

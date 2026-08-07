@@ -7,21 +7,13 @@
 // =============================================================================
 //! Defines the `BoxTester` public type.
 
-use std::{
-    fmt,
-    ops::Not,
-};
+use std::fmt;
+use std::ops::Not;
 
-use {
-    super::Tester,
-    crate::{
-        internal::CallbackMetadata,
-        macros::{
-            impl_common_name_methods,
-            impl_common_new_methods,
-        },
-    },
-};
+use super::Tester;
+use crate::internal::CallbackMetadata;
+use crate::macros::impl_common_name_methods;
+use crate::macros::impl_common_new_methods;
 
 // ============================================================================
 // BoxTester: Single Ownership Implementation

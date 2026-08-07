@@ -8,17 +8,16 @@
 
 //! Unit tests for Supplier types
 
-use qubit_function::{
-    ArcSupplier,
-    ArcTransformer,
-    BoxSupplier,
-    BoxTransformer,
-    RcSupplier,
-    RcTransformer,
-    Supplier,
-};
 use std::sync::Arc;
 use std::thread;
+
+use qubit_function::ArcSupplier;
+use qubit_function::ArcTransformer;
+use qubit_function::BoxSupplier;
+use qubit_function::BoxTransformer;
+use qubit_function::RcSupplier;
+use qubit_function::RcTransformer;
+use qubit_function::Supplier;
 
 // ======================================================================
 // Supplier Trait Tests (for closures)
@@ -26,16 +25,12 @@ use std::thread;
 
 #[cfg(test)]
 mod test_box_stateless_supplier {
-    use super::{
-        BoxSupplier,
-        Supplier,
-    };
+    use super::BoxSupplier;
+    use super::Supplier;
 
     mod test_new {
-        use super::{
-            BoxSupplier,
-            Supplier,
-        };
+        use super::BoxSupplier;
+        use super::Supplier;
 
         #[test]
         fn test_new_basic() {
@@ -63,10 +58,8 @@ mod test_box_stateless_supplier {
     }
 
     mod test_constant {
-        use super::{
-            BoxSupplier,
-            Supplier,
-        };
+        use super::BoxSupplier;
+        use super::Supplier;
 
         #[test]
         fn test_constant_basic() {
@@ -94,10 +87,8 @@ mod test_box_stateless_supplier {
     }
 
     mod test_map {
-        use super::{
-            BoxSupplier,
-            Supplier,
-        };
+        use super::BoxSupplier;
+        use super::Supplier;
 
         #[test]
         fn test_map_basic() {
@@ -123,10 +114,8 @@ mod test_box_stateless_supplier {
     }
 
     mod test_filter {
-        use super::{
-            BoxSupplier,
-            Supplier,
-        };
+        use super::BoxSupplier;
+        use super::Supplier;
 
         #[test]
         fn test_filter_passes() {
@@ -153,10 +142,8 @@ mod test_box_stateless_supplier {
     }
 
     mod test_zip {
-        use super::{
-            BoxSupplier,
-            Supplier,
-        };
+        use super::BoxSupplier;
+        use super::Supplier;
 
         #[test]
         fn test_zip_basic() {
@@ -178,10 +165,8 @@ mod test_box_stateless_supplier {
     }
 
     mod test_trait_methods {
-        use super::{
-            BoxSupplier,
-            Supplier,
-        };
+        use super::BoxSupplier;
+        use super::Supplier;
 
         #[test]
         fn test_get() {

@@ -7,19 +7,15 @@
 // =============================================================================
 //! Defines the `BoxBiMutatingFunctionOnce` public type.
 
-use {
-    crate::BiMutatingFunctionOnce,
-    crate::functions::macros::impl_box_function_methods,
-    crate::functions::macros::impl_function_common_methods,
-    crate::functions::macros::impl_function_constant_method,
-    crate::functions::macros::impl_function_debug_display,
-    crate::macros::impl_closure_once_trait,
-};
-use {
-    crate::BiPredicate,
-    crate::BoxConditionalBiMutatingFunctionOnce,
-    crate::MutatingFunctionOnce,
-};
+use crate::BiMutatingFunctionOnce;
+use crate::BiPredicate;
+use crate::BoxConditionalBiMutatingFunctionOnce;
+use crate::MutatingFunctionOnce;
+use crate::functions::macros::impl_box_function_methods;
+use crate::functions::macros::impl_function_common_methods;
+use crate::functions::macros::impl_function_constant_method;
+use crate::functions::macros::impl_function_debug_display;
+use crate::macros::impl_closure_once_trait;
 
 /// The erased callback representation used by this implementation.
 type BoxBiMutatingFunctionOnceFn<T, U, R> =

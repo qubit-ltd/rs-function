@@ -9,11 +9,9 @@
 //!
 //! Demonstrates conditional execution features of BoxMutatorOnce
 
-use qubit_function::{
-    BoxMutatorOnce,
-    BoxPredicate,
-    MutatorOnce,
-};
+use qubit_function::BoxMutatorOnce;
+use qubit_function::BoxPredicate;
+use qubit_function::MutatorOnce;
 
 fn main() {
     println!("=== MutatorOnce Conditional Execution Examples ===\n");

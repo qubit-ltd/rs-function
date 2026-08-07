@@ -7,17 +7,13 @@
 // =============================================================================
 //! Defines the `BoxSupplierOnce` public type.
 
-use {
-    crate::Predicate,
-    crate::Transformer,
-};
-use {
-    crate::SupplierOnce,
-    crate::macros::impl_closure_once_trait,
-    crate::suppliers::macros::impl_box_supplier_methods,
-    crate::suppliers::macros::impl_supplier_common_methods,
-    crate::suppliers::macros::impl_supplier_debug_display,
-};
+use crate::Predicate;
+use crate::SupplierOnce;
+use crate::Transformer;
+use crate::macros::impl_closure_once_trait;
+use crate::suppliers::macros::impl_box_supplier_methods;
+use crate::suppliers::macros::impl_supplier_common_methods;
+use crate::suppliers::macros::impl_supplier_debug_display;
 
 // ==========================================================================
 // BoxSupplierOnce - One-time Supplier Implementation

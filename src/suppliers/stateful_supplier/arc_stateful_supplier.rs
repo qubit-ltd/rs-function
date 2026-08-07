@@ -7,18 +7,16 @@
 // =============================================================================
 //! Defines the `ArcStatefulSupplier` public type.
 
-use {
-    crate::Predicate,
-    crate::Transformer,
-};
-use {
-    crate::StatefulSupplier,
-    crate::suppliers::macros::impl_shared_supplier_methods,
-    crate::suppliers::macros::impl_supplier_clone,
-    crate::suppliers::macros::impl_supplier_debug_display,
-    parking_lot::Mutex,
-    std::sync::Arc,
-};
+use std::sync::Arc;
+
+use parking_lot::Mutex;
+
+use crate::Predicate;
+use crate::StatefulSupplier;
+use crate::Transformer;
+use crate::suppliers::macros::impl_shared_supplier_methods;
+use crate::suppliers::macros::impl_supplier_clone;
+use crate::suppliers::macros::impl_supplier_debug_display;
 
 // ==========================================================================
 // ArcStatefulSupplier - Thread-safe Shared Ownership Implementation

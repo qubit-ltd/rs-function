@@ -7,16 +7,12 @@
 // =============================================================================
 //! Defines the `BoxStatefulMutator` public type.
 
-use {
-    crate::BoxConditionalStatefulMutator,
-    crate::Predicate,
-};
-use {
-    crate::StatefulMutator,
-    crate::mutators::macros::impl_box_mutator_methods,
-    crate::mutators::macros::impl_mutator_common_methods,
-    crate::mutators::macros::impl_mutator_debug_display,
-};
+use crate::BoxConditionalStatefulMutator;
+use crate::Predicate;
+use crate::StatefulMutator;
+use crate::mutators::macros::impl_box_mutator_methods;
+use crate::mutators::macros::impl_mutator_common_methods;
+use crate::mutators::macros::impl_mutator_debug_display;
 
 // ============================================================================
 // 3. BoxStatefulMutator - Single Ownership Implementation

@@ -7,14 +7,12 @@
 // =============================================================================
 //! Defines the `BoxConditionalFunction` public type.
 
-use {
-    crate::BoxFunction,
-    crate::BoxPredicate,
-    crate::Function,
-    crate::Predicate,
-    crate::functions::macros::impl_box_conditional_function,
-    crate::functions::macros::impl_conditional_function_debug_display,
-};
+use crate::BoxFunction;
+use crate::BoxPredicate;
+use crate::Function;
+use crate::Predicate;
+use crate::functions::macros::impl_box_conditional_function;
+use crate::functions::macros::impl_conditional_function_debug_display;
 
 // ============================================================================
 // BoxConditionalFunction - Box-based Conditional Function

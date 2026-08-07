@@ -7,20 +7,18 @@
 // =============================================================================
 //! Defines the `ArcStatefulTransformer` public type.
 
-use {
-    crate::ArcConditionalStatefulTransformer,
-    crate::Predicate,
-};
-use {
-    crate::StatefulTransformer,
-    crate::transformers::macros::impl_shared_transformer_methods,
-    crate::transformers::macros::impl_transformer_clone,
-    crate::transformers::macros::impl_transformer_common_methods,
-    crate::transformers::macros::impl_transformer_constant_method,
-    crate::transformers::macros::impl_transformer_debug_display,
-    parking_lot::Mutex,
-    std::sync::Arc,
-};
+use std::sync::Arc;
+
+use parking_lot::Mutex;
+
+use crate::ArcConditionalStatefulTransformer;
+use crate::Predicate;
+use crate::StatefulTransformer;
+use crate::transformers::macros::impl_shared_transformer_methods;
+use crate::transformers::macros::impl_transformer_clone;
+use crate::transformers::macros::impl_transformer_common_methods;
+use crate::transformers::macros::impl_transformer_constant_method;
+use crate::transformers::macros::impl_transformer_debug_display;
 
 // ============================================================================
 // ArcStatefulTransformer - Arc<Mutex<dyn FnMut(T) -> R + Send>>

@@ -8,13 +8,11 @@
 
 //! Unit tests for Mutator types (stateless Fn(&mut T))
 
-use qubit_function::{
-    ArcMutator,
-    BoxMutator,
-    Mutator,
-    MutatorOnce,
-    RcMutator,
-};
+use qubit_function::ArcMutator;
+use qubit_function::BoxMutator;
+use qubit_function::Mutator;
+use qubit_function::MutatorOnce;
+use qubit_function::RcMutator;
 
 // ============================================================================
 // Mutator Default Implementation Tests
@@ -51,10 +49,8 @@ impl Clone for TestMutator {
 
 #[cfg(test)]
 mod test_rc_mutator {
-    use super::{
-        Mutator,
-        RcMutator,
-    };
+    use super::Mutator;
+    use super::RcMutator;
 
     #[test]
     fn test_new() {

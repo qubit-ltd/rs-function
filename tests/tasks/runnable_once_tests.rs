@@ -8,27 +8,19 @@
 
 //! Unit tests for RunnableOnce and BoxRunnableOnce.
 
-use std::{
-    cell::Cell,
-    io,
-    rc::Rc,
-    sync::{
-        Arc,
-        atomic::{
-            AtomicBool,
-            AtomicUsize,
-            Ordering,
-        },
-    },
-};
+use std::cell::Cell;
+use std::io;
+use std::rc::Rc;
+use std::sync::Arc;
+use std::sync::atomic::AtomicBool;
+use std::sync::atomic::AtomicUsize;
+use std::sync::atomic::Ordering;
 
-use qubit_function::{
-    BoxRunnableOnce,
-    CallableOnce,
-    LocalBoxRunnableOnce,
-    RunnableOnce,
-    SupplierOnce,
-};
+use qubit_function::BoxRunnableOnce;
+use qubit_function::CallableOnce;
+use qubit_function::LocalBoxRunnableOnce;
+use qubit_function::RunnableOnce;
+use qubit_function::SupplierOnce;
 
 #[derive(Clone)]
 struct ClonedRunnableOnce {

@@ -8,10 +8,8 @@
 
 //! Unit tests for SupplierOnce types
 
-use qubit_function::{
-    BoxSupplierOnce,
-    SupplierOnce,
-};
+use qubit_function::BoxSupplierOnce;
+use qubit_function::SupplierOnce;
 
 // ==========================================================================
 // SupplierOnce Trait Tests (for closures)
@@ -47,16 +45,12 @@ mod test_supplier_once_trait {
 
 #[cfg(test)]
 mod test_box_supplier_once {
-    use super::{
-        BoxSupplierOnce,
-        SupplierOnce,
-    };
+    use super::BoxSupplierOnce;
+    use super::SupplierOnce;
 
     mod test_new {
-        use super::{
-            BoxSupplierOnce,
-            SupplierOnce,
-        };
+        use super::BoxSupplierOnce;
+        use super::SupplierOnce;
 
         #[test]
         fn test_creates_supplier() {
@@ -78,10 +72,8 @@ mod test_box_supplier_once {
     }
 
     mod test_get {
-        use super::{
-            BoxSupplierOnce,
-            SupplierOnce,
-        };
+        use super::BoxSupplierOnce;
+        use super::SupplierOnce;
 
         #[test]
         fn test_consumes_supplier() {
@@ -117,10 +109,8 @@ mod test_box_supplier_once {
     }
 
     mod test_use_cases {
-        use super::{
-            BoxSupplierOnce,
-            SupplierOnce,
-        };
+        use super::BoxSupplierOnce;
+        use super::SupplierOnce;
 
         #[test]
         fn test_lazy_initialization() {
@@ -167,10 +157,8 @@ mod test_box_supplier_once {
     }
 
     mod test_edge_cases {
-        use super::{
-            BoxSupplierOnce,
-            SupplierOnce,
-        };
+        use super::BoxSupplierOnce;
+        use super::SupplierOnce;
 
         #[test]
         fn test_with_unit_type() {

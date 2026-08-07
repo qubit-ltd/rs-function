@@ -5,12 +5,10 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-use qubit_function::{
-    ArcBiPredicate,
-    BiPredicate,
-    BoxBiPredicate,
-    RcBiPredicate,
-};
+use qubit_function::ArcBiPredicate;
+use qubit_function::BiPredicate;
+use qubit_function::BoxBiPredicate;
+use qubit_function::RcBiPredicate;
 
 fn main() {
     println!("=== BoxBiPredicate always_true/always_false Demo ===\n");

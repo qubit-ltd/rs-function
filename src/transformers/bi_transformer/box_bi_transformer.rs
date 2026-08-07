@@ -7,18 +7,14 @@
 // =============================================================================
 //! Defines the `BoxBiTransformer` public type.
 
-use {
-    crate::BiPredicate,
-    crate::BoxConditionalBiTransformer,
-    crate::Transformer,
-};
-use {
-    crate::BiTransformer,
-    crate::transformers::macros::impl_box_transformer_methods,
-    crate::transformers::macros::impl_transformer_common_methods,
-    crate::transformers::macros::impl_transformer_constant_method,
-    crate::transformers::macros::impl_transformer_debug_display,
-};
+use crate::BiPredicate;
+use crate::BiTransformer;
+use crate::BoxConditionalBiTransformer;
+use crate::Transformer;
+use crate::transformers::macros::impl_box_transformer_methods;
+use crate::transformers::macros::impl_transformer_common_methods;
+use crate::transformers::macros::impl_transformer_constant_method;
+use crate::transformers::macros::impl_transformer_debug_display;
 
 // ============================================================================
 // BoxBiTransformer - Box<dyn Fn(T, U) -> R>

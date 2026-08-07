@@ -5,28 +5,27 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-/// Tests for BiConsumer types
-use qubit_function::{
-    ArcBiConsumer,
-    BiConsumer,
-    BoxBiConsumer,
-    RcBiConsumer,
-};
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
 
+/// Tests for BiConsumer types
+use qubit_function::ArcBiConsumer;
+/// Tests for BiConsumer types
+use qubit_function::BiConsumer;
+/// Tests for BiConsumer types
+use qubit_function::BoxBiConsumer;
+/// Tests for BiConsumer types
+use qubit_function::RcBiConsumer;
+
 #[cfg(test)]
 mod arc_conditional_bi_consumer_tests {
-    use super::{
-        Arc,
-        ArcBiConsumer,
-        BiConsumer,
-    };
-    use std::sync::atomic::{
-        AtomicUsize,
-        Ordering,
-    };
+    use std::sync::atomic::AtomicUsize;
+    use std::sync::atomic::Ordering;
+
+    use super::Arc;
+    use super::ArcBiConsumer;
+    use super::BiConsumer;
 
     #[test]
     fn test_arc_conditional_and_then() {

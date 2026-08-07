@@ -11,14 +11,12 @@
 //! This example shows how to use BoxStatefulTransformer, RcStatefulTransformer,
 //! and ArcStatefulTransformer for stateful value transformation.
 
-use qubit_function::{
-    ArcStatefulTransformer,
-    BoxStatefulTransformer,
-    BoxTransformerOnce,
-    RcStatefulTransformer,
-    StatefulTransformer,
-    TransformerOnce,
-};
+use qubit_function::ArcStatefulTransformer;
+use qubit_function::BoxStatefulTransformer;
+use qubit_function::BoxTransformerOnce;
+use qubit_function::RcStatefulTransformer;
+use qubit_function::StatefulTransformer;
+use qubit_function::TransformerOnce;
 
 fn main() {
     println!("=== StatefulTransformer Demo ===\n");

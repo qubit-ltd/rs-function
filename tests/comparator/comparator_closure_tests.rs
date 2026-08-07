@@ -6,20 +6,20 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 #![cfg(feature = "full")]
-use qubit_function::comparator::{
-    ArcComparator,
-    BoxComparator,
-    Comparator,
-    RcComparator,
-};
 use std::cmp::Ordering;
+
+use qubit_function::comparator::ArcComparator;
+use qubit_function::comparator::BoxComparator;
+use qubit_function::comparator::Comparator;
+use qubit_function::comparator::RcComparator;
 
 #[cfg(test)]
 mod closure_tests {
-    use super::{
-        Comparator,
-        Ordering,
-    };
+    use super::ArcComparator;
+    use super::BoxComparator;
+    use super::Comparator;
+    use super::Ordering;
+    use super::RcComparator;
 
     #[test]
     fn test_closure_as_comparator() {
@@ -32,21 +32,21 @@ mod closure_tests {
     #[test]
     fn test_closure_into_box() {
         let cmp = |a: &i32, b: &i32| a.cmp(b);
-        let boxed = qubit_function::comparator::BoxComparator::new(cmp);
+        let boxed = BoxComparator::new(cmp);
         assert_eq!(boxed.compare(&5, &3), Ordering::Greater);
     }
 
     #[test]
     fn test_closure_into_rc() {
         let cmp = |a: &i32, b: &i32| a.cmp(b);
-        let rc = qubit_function::comparator::RcComparator::new(cmp);
+        let rc = RcComparator::new(cmp);
         assert_eq!(rc.compare(&5, &3), Ordering::Greater);
     }
 
     #[test]
     fn test_closure_into_arc() {
         let cmp = |a: &i32, b: &i32| a.cmp(b);
-        let arc = qubit_function::comparator::ArcComparator::new(cmp);
+        let arc = ArcComparator::new(cmp);
         assert_eq!(arc.compare(&5, &3), Ordering::Greater);
     }
 

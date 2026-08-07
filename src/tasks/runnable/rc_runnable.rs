@@ -11,17 +11,11 @@ use std::cell::RefCell;
 #[cfg(feature = "rc")]
 use std::rc::Rc;
 
-use crate::{
-    macros::{
-        impl_common_name_methods,
-        impl_common_new_methods,
-    },
-    suppliers::{
-        macros::impl_supplier_debug_display,
-        supplier::Supplier,
-    },
-    tasks::runnable::Runnable,
-};
+use crate::macros::impl_common_name_methods;
+use crate::macros::impl_common_new_methods;
+use crate::suppliers::macros::impl_supplier_debug_display;
+use crate::suppliers::supplier::Supplier;
+use crate::tasks::runnable::Runnable;
 
 // ============================================================================
 // RcRunnable

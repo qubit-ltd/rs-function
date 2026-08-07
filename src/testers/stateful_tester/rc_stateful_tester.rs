@@ -7,23 +7,15 @@
 // =============================================================================
 //! Defines the `RcStatefulTester` public type.
 
-use std::{
-    cell::RefCell,
-    fmt,
-    ops::Not,
-};
+use std::cell::RefCell;
+use std::fmt;
+use std::ops::Not;
+use std::rc::Rc;
 
-use {
-    crate::{
-        StatefulTester,
-        internal::CallbackMetadata,
-        macros::{
-            impl_common_name_methods,
-            impl_common_new_methods,
-        },
-    },
-    std::rc::Rc,
-};
+use crate::StatefulTester;
+use crate::internal::CallbackMetadata;
+use crate::macros::impl_common_name_methods;
+use crate::macros::impl_common_new_methods;
 
 /// The erased callback representation used by this implementation.
 type RcStatefulTesterFn = Rc<RefCell<dyn FnMut() -> bool>>;

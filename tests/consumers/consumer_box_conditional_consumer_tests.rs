@@ -8,23 +8,21 @@
 
 //! Tests for Consumer types
 
-use qubit_function::{
-    ArcConsumer,
-    BoxConsumer,
-    Consumer,
-    RcConsumer,
-};
 use std::rc::Rc;
 use std::sync::Arc;
 
+use qubit_function::ArcConsumer;
+use qubit_function::BoxConsumer;
+use qubit_function::Consumer;
+use qubit_function::RcConsumer;
+
 #[cfg(test)]
 mod box_conditional_consumer_tests {
-    use super::{
-        Arc,
-        BoxConsumer,
-        Consumer,
-    };
     use std::sync::Mutex;
+
+    use super::Arc;
+    use super::BoxConsumer;
+    use super::Consumer;
 
     #[test]
     fn test_box_conditional_and_then() {
@@ -32,7 +30,7 @@ mod box_conditional_consumer_tests {
         let l1 = log.clone();
         let l2 = log.clone();
 
-        let consumer = qubit_function::BoxConsumer::new(move |x: &i32| {
+        let consumer = BoxConsumer::new(move |x: &i32| {
             l1.lock().expect("mutex should not be poisoned").push(*x);
         });
 
@@ -62,7 +60,7 @@ mod box_conditional_consumer_tests {
         let l1 = log.clone();
         let l2 = log.clone();
 
-        let consumer = qubit_function::BoxConsumer::new(move |x: &i32| {
+        let consumer = BoxConsumer::new(move |x: &i32| {
             l1.lock().expect("mutex should not be poisoned").push(*x);
         });
 
@@ -88,7 +86,7 @@ mod box_conditional_consumer_tests {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
 
-        let consumer = qubit_function::BoxConsumer::new(move |x: &i32| {
+        let consumer = BoxConsumer::new(move |x: &i32| {
             l.lock().expect("mutex should not be poisoned").push(*x);
         });
 

@@ -8,17 +8,13 @@
 
 //! Unit tests for CallableOnce and BoxCallableOnce.
 
-use std::{
-    io,
-    rc::Rc,
-};
+use std::io;
+use std::rc::Rc;
 
-use qubit_function::{
-    BoxCallableOnce,
-    CallableOnce,
-    LocalBoxCallableOnce,
-    SupplierOnce,
-};
+use qubit_function::BoxCallableOnce;
+use qubit_function::CallableOnce;
+use qubit_function::LocalBoxCallableOnce;
+use qubit_function::SupplierOnce;
 
 #[derive(Clone)]
 struct ClonedCallableOnce {

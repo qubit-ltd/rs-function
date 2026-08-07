@@ -6,17 +6,19 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 #![cfg(feature = "full")]
-use qubit_function::comparator::{
-    ArcComparator,
-    BoxComparator,
-    Comparator,
-    RcComparator,
-};
 use std::cmp::Ordering;
+
+use qubit_function::comparator::ArcComparator;
+use qubit_function::comparator::BoxComparator;
+use qubit_function::comparator::Comparator;
+use qubit_function::comparator::RcComparator;
 
 #[cfg(test)]
 mod generic_tests {
+    use super::ArcComparator;
+    use super::BoxComparator;
     use super::Comparator;
+    use super::RcComparator;
 
     fn sort_with_comparator<C: Comparator<i32>>(
         cmp: &C,
@@ -28,27 +30,21 @@ mod generic_tests {
 
     #[test]
     fn test_with_box_comparator() {
-        let cmp = qubit_function::comparator::BoxComparator::new(
-            |a: &i32, b: &i32| a.cmp(b),
-        );
+        let cmp = BoxComparator::new(|a: &i32, b: &i32| a.cmp(b));
         let sorted = sort_with_comparator(&cmp, vec![3, 1, 4, 1, 5]);
         assert_eq!(sorted, vec![1, 1, 3, 4, 5]);
     }
 
     #[test]
     fn test_with_arc_comparator() {
-        let cmp = qubit_function::comparator::ArcComparator::new(
-            |a: &i32, b: &i32| a.cmp(b),
-        );
+        let cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
         let sorted = sort_with_comparator(&cmp, vec![3, 1, 4, 1, 5]);
         assert_eq!(sorted, vec![1, 1, 3, 4, 5]);
     }
 
     #[test]
     fn test_with_rc_comparator() {
-        let cmp = qubit_function::comparator::RcComparator::new(
-            |a: &i32, b: &i32| a.cmp(b),
-        );
+        let cmp = RcComparator::new(|a: &i32, b: &i32| a.cmp(b));
         let sorted = sort_with_comparator(&cmp, vec![3, 1, 4, 1, 5]);
         assert_eq!(sorted, vec![1, 1, 3, 4, 5]);
     }

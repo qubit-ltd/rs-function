@@ -18,11 +18,9 @@
 //!
 //! This file focuses on testing the three-parameter version (BiFunction types).
 
-use qubit_function::{
-    BiFunction,
-    RcBiFunction,
-    RcBiPredicate,
-};
+use qubit_function::BiFunction;
+use qubit_function::RcBiFunction;
+use qubit_function::RcBiPredicate;
 
 /// Test the three-parameter version of impl_conditional_function_clone macro
 ///

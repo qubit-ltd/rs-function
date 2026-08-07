@@ -6,13 +6,10 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use {
-    qubit_function::{
-        Comparator,
-        RcComparator,
-    },
-    std::cmp::Ordering,
-};
+use std::cmp::Ordering;
+
+use qubit_function::Comparator;
+use qubit_function::RcComparator;
 
 struct RcNaturalComparator;
 

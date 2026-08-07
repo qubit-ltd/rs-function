@@ -6,10 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    BiFunction,
-    RcBinaryFunction,
-};
+use qubit_function::BiFunction;
+use qubit_function::RcBinaryFunction;
 
 #[test]
 fn test_rc_binary_function_alias() {

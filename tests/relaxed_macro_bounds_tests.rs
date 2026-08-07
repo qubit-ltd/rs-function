@@ -6,42 +6,40 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 #![cfg(feature = "full")]
-use qubit_function::{
-    ArcBiFunction,
-    ArcBiTransformer,
-    ArcFunction,
-    ArcStatefulBiTransformer,
-    ArcStatefulTransformer,
-    ArcTransformer,
-    BiFunction,
-    BiFunctionOnce,
-    BiMutatingFunction,
-    BiMutatingFunctionOnce,
-    BiTransformer,
-    BiTransformerOnce,
-    BoxBiFunction,
-    BoxBiFunctionOnce,
-    BoxBiMutatingFunction,
-    BoxBiMutatingFunctionOnce,
-    BoxBiTransformer,
-    BoxBiTransformerOnce,
-    BoxFunction,
-    BoxFunctionOnce,
-    BoxMutatingFunction,
-    BoxMutatingFunctionOnce,
-    BoxStatefulBiTransformer,
-    BoxStatefulTransformer,
-    BoxTransformer,
-    BoxTransformerOnce,
-    Function,
-    FunctionOnce,
-    MutatingFunction,
-    MutatingFunctionOnce,
-    StatefulBiTransformer,
-    StatefulTransformer,
-    Transformer,
-    TransformerOnce,
-};
+use qubit_function::ArcBiFunction;
+use qubit_function::ArcBiTransformer;
+use qubit_function::ArcFunction;
+use qubit_function::ArcStatefulBiTransformer;
+use qubit_function::ArcStatefulTransformer;
+use qubit_function::ArcTransformer;
+use qubit_function::BiFunction;
+use qubit_function::BiFunctionOnce;
+use qubit_function::BiMutatingFunction;
+use qubit_function::BiMutatingFunctionOnce;
+use qubit_function::BiTransformer;
+use qubit_function::BiTransformerOnce;
+use qubit_function::BoxBiFunction;
+use qubit_function::BoxBiFunctionOnce;
+use qubit_function::BoxBiMutatingFunction;
+use qubit_function::BoxBiMutatingFunctionOnce;
+use qubit_function::BoxBiTransformer;
+use qubit_function::BoxBiTransformerOnce;
+use qubit_function::BoxFunction;
+use qubit_function::BoxFunctionOnce;
+use qubit_function::BoxMutatingFunction;
+use qubit_function::BoxMutatingFunctionOnce;
+use qubit_function::BoxStatefulBiTransformer;
+use qubit_function::BoxStatefulTransformer;
+use qubit_function::BoxTransformer;
+use qubit_function::BoxTransformerOnce;
+use qubit_function::Function;
+use qubit_function::FunctionOnce;
+use qubit_function::MutatingFunction;
+use qubit_function::MutatingFunctionOnce;
+use qubit_function::StatefulBiTransformer;
+use qubit_function::StatefulTransformer;
+use qubit_function::Transformer;
+use qubit_function::TransformerOnce;
 
 #[test]
 fn function_constant_and_identity_allow_non_static_input_types() {

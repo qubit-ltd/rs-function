@@ -6,10 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    ArcUnaryOperator,
-    Transformer,
-};
+use qubit_function::ArcUnaryOperator;
+use qubit_function::Transformer;
 
 #[test]
 fn test_arc_unary_operator_alias() {

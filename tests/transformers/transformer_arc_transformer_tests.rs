@@ -12,11 +12,10 @@
 
 #[cfg(test)]
 mod arc_transformer_tests {
-    use qubit_function::{
-        ArcTransformer,
-        Transformer,
-    };
     use std::thread;
+
+    use qubit_function::ArcTransformer;
+    use qubit_function::Transformer;
 
     #[test]
     fn test_new_and_apply() {

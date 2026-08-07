@@ -8,44 +8,42 @@
 
 #![cfg(feature = "full")]
 
-use qubit_function::{
-    ArcBiPredicate,
-    ArcComparator,
-    ArcFunction,
-    ArcPredicate,
-    ArcStatefulBiPredicate,
-    ArcStatefulPredicate,
-    ArcStatefulSupplier,
-    ArcStatefulTester,
-    ArcSupplier,
-    ArcTester,
-    BoxBiPredicate,
-    BoxCallable,
-    BoxCallableOnce,
-    BoxComparator,
-    BoxFunction,
-    BoxPredicate,
-    BoxRunnable,
-    BoxRunnableOnce,
-    BoxRunnableWith,
-    BoxStatefulBiPredicate,
-    BoxStatefulPredicate,
-    BoxStatefulSupplier,
-    BoxStatefulTester,
-    BoxSupplier,
-    BoxTester,
-    LocalBoxRunnableOnce,
-    RcBiPredicate,
-    RcFunction,
-    RcPredicate,
-    RcStatefulBiPredicate,
-    RcStatefulPredicate,
-    RcStatefulSupplier,
-    RcStatefulTester,
-    RcSupplier,
-    RcTester,
-    StatefulSupplier,
-};
+use qubit_function::ArcBiPredicate;
+use qubit_function::ArcComparator;
+use qubit_function::ArcFunction;
+use qubit_function::ArcPredicate;
+use qubit_function::ArcStatefulBiPredicate;
+use qubit_function::ArcStatefulPredicate;
+use qubit_function::ArcStatefulSupplier;
+use qubit_function::ArcStatefulTester;
+use qubit_function::ArcSupplier;
+use qubit_function::ArcTester;
+use qubit_function::BoxBiPredicate;
+use qubit_function::BoxCallable;
+use qubit_function::BoxCallableOnce;
+use qubit_function::BoxComparator;
+use qubit_function::BoxFunction;
+use qubit_function::BoxPredicate;
+use qubit_function::BoxRunnable;
+use qubit_function::BoxRunnableOnce;
+use qubit_function::BoxRunnableWith;
+use qubit_function::BoxStatefulBiPredicate;
+use qubit_function::BoxStatefulPredicate;
+use qubit_function::BoxStatefulSupplier;
+use qubit_function::BoxStatefulTester;
+use qubit_function::BoxSupplier;
+use qubit_function::BoxTester;
+use qubit_function::LocalBoxRunnableOnce;
+use qubit_function::RcBiPredicate;
+use qubit_function::RcFunction;
+use qubit_function::RcPredicate;
+use qubit_function::RcStatefulBiPredicate;
+use qubit_function::RcStatefulPredicate;
+use qubit_function::RcStatefulSupplier;
+use qubit_function::RcStatefulTester;
+use qubit_function::RcSupplier;
+use qubit_function::RcTester;
+use qubit_function::StatefulSupplier;
 
 /// Verifies that owned and shared final wrappers support chainable naming.
 #[test]

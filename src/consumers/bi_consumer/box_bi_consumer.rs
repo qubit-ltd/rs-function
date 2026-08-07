@@ -7,17 +7,13 @@
 // =============================================================================
 //! Defines the `BoxBiConsumer` public type.
 
-use {
-    super::BiConsumerFn,
-    crate::BiConsumer,
-    crate::consumers::macros::impl_box_consumer_methods,
-    crate::consumers::macros::impl_consumer_common_methods,
-    crate::consumers::macros::impl_consumer_debug_display,
-};
-use {
-    crate::BiPredicate,
-    crate::BoxConditionalBiConsumer,
-};
+use super::BiConsumerFn;
+use crate::BiConsumer;
+use crate::BiPredicate;
+use crate::BoxConditionalBiConsumer;
+use crate::consumers::macros::impl_box_consumer_methods;
+use crate::consumers::macros::impl_consumer_common_methods;
+use crate::consumers::macros::impl_consumer_debug_display;
 
 // =======================================================================
 // 2. BoxBiConsumer - Single Ownership Implementation

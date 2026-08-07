@@ -7,24 +7,16 @@
 // =============================================================================
 //! Defines the `ArcStatefulTester` public type.
 
-use std::{
-    fmt,
-    ops::Not,
-};
+use std::fmt;
+use std::ops::Not;
+use std::sync::Arc;
 
 use parking_lot::Mutex;
 
-use {
-    crate::{
-        StatefulTester,
-        internal::CallbackMetadata,
-        macros::{
-            impl_common_name_methods,
-            impl_common_new_methods,
-        },
-    },
-    std::sync::Arc,
-};
+use crate::StatefulTester;
+use crate::internal::CallbackMetadata;
+use crate::macros::impl_common_name_methods;
+use crate::macros::impl_common_new_methods;
 
 /// The erased callback representation used by this implementation.
 type ArcStatefulTesterFn = Arc<Mutex<dyn FnMut() -> bool + Send + 'static>>;

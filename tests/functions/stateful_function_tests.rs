@@ -10,21 +10,17 @@
 
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+use std::sync::Mutex;
 
-use qubit_function::{
-    ArcPredicate,
-    ArcStatefulFunction,
-    BoxPredicate,
-    BoxStatefulFunction,
-    FunctionOnce,
-    RcPredicate,
-    RcStatefulFunction,
-    StatefulFunction,
-};
+use qubit_function::ArcPredicate;
+use qubit_function::ArcStatefulFunction;
+use qubit_function::BoxPredicate;
+use qubit_function::BoxStatefulFunction;
+use qubit_function::FunctionOnce;
+use qubit_function::RcPredicate;
+use qubit_function::RcStatefulFunction;
+use qubit_function::StatefulFunction;
 
 // ============================================================================
 // StatefulFunction Trait Tests - Core Functionality

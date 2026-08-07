@@ -7,34 +7,28 @@
 // =============================================================================
 #![cfg(feature = "full")]
 
-use std::{
-    cmp::Ordering,
-    fs,
-    path::{
-        Path,
-        PathBuf,
-    },
-};
+use std::cmp::Ordering;
+use std::fs;
+use std::path::Path;
+use std::path::PathBuf;
 
-use qubit_function::{
-    ArcCallable,
-    ArcComparator,
-    ArcRunnable,
-    ArcStatefulBiPredicate,
-    ArcStatefulTester,
-    BoxComparator,
-    BoxStatefulBiPredicate,
-    BoxStatefulTester,
-    Callable,
-    RcCallable,
-    RcComparator,
-    RcRunnable,
-    RcStatefulBiPredicate,
-    RcStatefulTester,
-    Runnable,
-    StatefulBiPredicate,
-    StatefulTester,
-};
+use qubit_function::ArcCallable;
+use qubit_function::ArcComparator;
+use qubit_function::ArcRunnable;
+use qubit_function::ArcStatefulBiPredicate;
+use qubit_function::ArcStatefulTester;
+use qubit_function::BoxComparator;
+use qubit_function::BoxStatefulBiPredicate;
+use qubit_function::BoxStatefulTester;
+use qubit_function::Callable;
+use qubit_function::RcCallable;
+use qubit_function::RcComparator;
+use qubit_function::RcRunnable;
+use qubit_function::RcStatefulBiPredicate;
+use qubit_function::RcStatefulTester;
+use qubit_function::Runnable;
+use qubit_function::StatefulBiPredicate;
+use qubit_function::StatefulTester;
 
 /// Collects Rust source files below `directory` in deterministic order.
 fn collect_rust_source_files(directory: &Path, files: &mut Vec<PathBuf>) {

@@ -7,19 +7,15 @@
 // =============================================================================
 //! Defines the `BoxMutatingFunctionOnce` public type.
 
-use {
-    crate::BoxConditionalMutatingFunctionOnce,
-    crate::FunctionOnce,
-    crate::Predicate,
-};
-use {
-    crate::MutatingFunctionOnce,
-    crate::functions::macros::impl_box_function_methods,
-    crate::functions::macros::impl_function_common_methods,
-    crate::functions::macros::impl_function_debug_display,
-    crate::functions::macros::impl_function_identity_method,
-    crate::macros::impl_closure_once_trait,
-};
+use crate::BoxConditionalMutatingFunctionOnce;
+use crate::FunctionOnce;
+use crate::MutatingFunctionOnce;
+use crate::Predicate;
+use crate::functions::macros::impl_box_function_methods;
+use crate::functions::macros::impl_function_common_methods;
+use crate::functions::macros::impl_function_debug_display;
+use crate::functions::macros::impl_function_identity_method;
+use crate::macros::impl_closure_once_trait;
 
 // =======================================================================
 // 2. BoxMutatingFunctionOnce - Single Ownership Implementation

@@ -7,15 +7,13 @@
 // =============================================================================
 //! Defines the `ArcConditionalStatefulMutator` public type.
 
-use {
-    crate::ArcPredicate,
-    crate::ArcStatefulMutator,
-    crate::Predicate,
-    crate::StatefulMutator,
-    crate::mutators::macros::impl_conditional_mutator_clone,
-    crate::mutators::macros::impl_conditional_mutator_debug_display,
-    crate::mutators::macros::impl_shared_conditional_mutator,
-};
+use crate::ArcPredicate;
+use crate::ArcStatefulMutator;
+use crate::Predicate;
+use crate::StatefulMutator;
+use crate::mutators::macros::impl_conditional_mutator_clone;
+use crate::mutators::macros::impl_conditional_mutator_debug_display;
+use crate::mutators::macros::impl_shared_conditional_mutator;
 
 // ============================================================================
 // 9. ArcConditionalStatefulMutator - Arc-based Conditional Stateful Mutator

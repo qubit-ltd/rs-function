@@ -16,10 +16,8 @@
 //! `FnMut` semantics, such as counters, rolling windows, sampling, or
 //! stateful filters.
 
-use crate::predicates::macros::constants::{
-    ALWAYS_FALSE_NAME,
-    ALWAYS_TRUE_NAME,
-};
+use crate::predicates::macros::constants::ALWAYS_FALSE_NAME;
+use crate::predicates::macros::constants::ALWAYS_TRUE_NAME;
 
 mod arc_stateful_predicate;
 pub use arc_stateful_predicate::ArcStatefulPredicate;

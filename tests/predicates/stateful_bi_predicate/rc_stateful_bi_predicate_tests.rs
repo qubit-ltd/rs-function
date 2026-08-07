@@ -6,10 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    RcStatefulBiPredicate,
-    StatefulBiPredicate,
-};
+use qubit_function::RcStatefulBiPredicate;
+use qubit_function::StatefulBiPredicate;
 
 #[test]
 fn test_rc_stateful_bi_predicate_observable_behavior() {

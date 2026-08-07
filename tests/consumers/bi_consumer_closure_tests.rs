@@ -5,23 +5,24 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-/// Tests for BiConsumer types
-use qubit_function::{
-    ArcBiConsumer,
-    BiConsumer,
-    BoxBiConsumer,
-    RcBiConsumer,
-};
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
 
+/// Tests for BiConsumer types
+use qubit_function::ArcBiConsumer;
+/// Tests for BiConsumer types
+use qubit_function::BiConsumer;
+use qubit_function::BoxBiConsumer;
+/// Tests for BiConsumer types
+/// Tests for BiConsumer types
+use qubit_function::RcBiConsumer;
+
 #[cfg(test)]
 mod closure_tests {
-    use super::{
-        Arc,
-        BiConsumer,
-    };
+    use super::Arc;
+    use super::BiConsumer;
+    use super::BoxBiConsumer;
 
     #[test]
     fn test_closure_accept() {
@@ -36,13 +37,12 @@ mod closure_tests {
         let counter = Arc::new(std::sync::Mutex::new(0));
         let c1 = counter.clone();
         let c2 = counter.clone();
-        let chained =
-            qubit_function::BoxBiConsumer::new(move |_x: &i32, _y: &i32| {
-                *c1.lock().expect("mutex should not be poisoned") += 1;
-            })
-            .and_then(move |_x: &i32, _y: &i32| {
-                *c2.lock().expect("mutex should not be poisoned") += 1;
-            });
+        let chained = BoxBiConsumer::new(move |_x: &i32, _y: &i32| {
+            *c1.lock().expect("mutex should not be poisoned") += 1;
+        })
+        .and_then(move |_x: &i32, _y: &i32| {
+            *c2.lock().expect("mutex should not be poisoned") += 1;
+        });
 
         chained.accept(&5, &3);
         assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 2);

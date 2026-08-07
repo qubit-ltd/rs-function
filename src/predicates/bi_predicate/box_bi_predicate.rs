@@ -9,15 +9,13 @@
 
 use std::ops::Not;
 
-use {
-    super::ALWAYS_FALSE_NAME,
-    super::ALWAYS_TRUE_NAME,
-    super::BiPredicateFn,
-    crate::BiPredicate,
-    crate::predicates::macros::impl_box_predicate_methods,
-    crate::predicates::macros::impl_predicate_common_methods,
-    crate::predicates::macros::impl_predicate_debug_display,
-};
+use super::ALWAYS_FALSE_NAME;
+use super::ALWAYS_TRUE_NAME;
+use super::BiPredicateFn;
+use crate::BiPredicate;
+use crate::predicates::macros::impl_box_predicate_methods;
+use crate::predicates::macros::impl_predicate_common_methods;
+use crate::predicates::macros::impl_predicate_debug_display;
 
 /// A Box-based bi-predicate with single ownership.
 ///

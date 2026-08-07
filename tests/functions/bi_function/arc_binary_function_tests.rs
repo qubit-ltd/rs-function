@@ -6,10 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    ArcBinaryFunction,
-    BiFunction,
-};
+use qubit_function::ArcBinaryFunction;
+use qubit_function::BiFunction;
 
 #[test]
 fn test_arc_binary_function_alias() {

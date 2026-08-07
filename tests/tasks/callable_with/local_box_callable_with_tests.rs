@@ -6,16 +6,12 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use std::{
-    cell::Cell,
-    io,
-    rc::Rc,
-};
+use std::cell::Cell;
+use std::io;
+use std::rc::Rc;
 
-use qubit_function::{
-    CallableWith,
-    LocalBoxCallableWith,
-};
+use qubit_function::CallableWith;
+use qubit_function::LocalBoxCallableWith;
 
 #[test]
 fn test_local_box_callable_with_composition_accepts_rc_capture() {

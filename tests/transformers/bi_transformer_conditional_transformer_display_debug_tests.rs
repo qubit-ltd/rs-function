@@ -5,13 +5,12 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-use qubit_function::{
-    ArcBiTransformer,
-    BiTransformer,
-    BoxBiTransformer,
-    RcBiTransformer,
-};
 use std::thread;
+
+use qubit_function::ArcBiTransformer;
+use qubit_function::BiTransformer;
+use qubit_function::BoxBiTransformer;
+use qubit_function::RcBiTransformer;
 
 // ============================================================================
 // BoxBiTransformer Tests - Immutable, single ownership
@@ -19,11 +18,9 @@ use std::thread;
 
 #[cfg(test)]
 mod conditional_transformer_display_debug_tests {
-    use super::{
-        ArcBiTransformer,
-        BoxBiTransformer,
-        RcBiTransformer,
-    };
+    use super::ArcBiTransformer;
+    use super::BoxBiTransformer;
+    use super::RcBiTransformer;
 
     #[test]
     fn test_box_conditional_bi_transformer_display() {

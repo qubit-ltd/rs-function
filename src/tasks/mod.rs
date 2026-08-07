@@ -34,49 +34,41 @@ pub mod runnable_with;
 
 #[cfg(feature = "stateful")]
 pub use callable::ArcCallable;
+pub use callable::BoxCallable;
+pub use callable::Callable;
+pub use callable::LocalBoxCallable;
 #[cfg(feature = "rc")]
 pub use callable::RcCallable;
-pub use callable::{
-    BoxCallable,
-    Callable,
-    LocalBoxCallable,
-};
 #[cfg(feature = "once")]
-pub use callable_once::{
-    BoxCallableOnce,
-    CallableOnce,
-    LocalBoxCallableOnce,
-};
+pub use callable_once::BoxCallableOnce;
+#[cfg(feature = "once")]
+pub use callable_once::CallableOnce;
+#[cfg(feature = "once")]
+pub use callable_once::LocalBoxCallableOnce;
 #[cfg(feature = "stateful")]
 pub use callable_with::ArcCallableWith;
+pub use callable_with::BoxCallableWith;
+pub use callable_with::CallableWith;
+pub use callable_with::LocalBoxCallableWith;
 #[cfg(feature = "rc")]
 pub use callable_with::RcCallableWith;
-pub use callable_with::{
-    BoxCallableWith,
-    CallableWith,
-    LocalBoxCallableWith,
-};
 #[cfg(feature = "stateful")]
 pub use runnable::ArcRunnable;
+pub use runnable::BoxRunnable;
+pub use runnable::LocalBoxRunnable;
 #[cfg(feature = "rc")]
 pub use runnable::RcRunnable;
-pub use runnable::{
-    BoxRunnable,
-    LocalBoxRunnable,
-    Runnable,
-};
+pub use runnable::Runnable;
 #[cfg(feature = "once")]
-pub use runnable_once::{
-    BoxRunnableOnce,
-    LocalBoxRunnableOnce,
-    RunnableOnce,
-};
+pub use runnable_once::BoxRunnableOnce;
+#[cfg(feature = "once")]
+pub use runnable_once::LocalBoxRunnableOnce;
+#[cfg(feature = "once")]
+pub use runnable_once::RunnableOnce;
 #[cfg(feature = "stateful")]
 pub use runnable_with::ArcRunnableWith;
+pub use runnable_with::BoxRunnableWith;
+pub use runnable_with::LocalBoxRunnableWith;
 #[cfg(feature = "rc")]
 pub use runnable_with::RcRunnableWith;
-pub use runnable_with::{
-    BoxRunnableWith,
-    LocalBoxRunnableWith,
-    RunnableWith,
-};
+pub use runnable_with::RunnableWith;

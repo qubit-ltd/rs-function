@@ -7,19 +7,17 @@
 // =============================================================================
 //! Defines the `ArcStatefulBiConsumer` public type.
 
-use {
-    crate::ArcConditionalStatefulBiConsumer,
-    crate::BiPredicate,
-};
-use {
-    crate::StatefulBiConsumer,
-    crate::consumers::macros::impl_consumer_clone,
-    crate::consumers::macros::impl_consumer_common_methods,
-    crate::consumers::macros::impl_consumer_debug_display,
-    crate::consumers::macros::impl_shared_consumer_methods,
-    parking_lot::Mutex,
-    std::sync::Arc,
-};
+use std::sync::Arc;
+
+use parking_lot::Mutex;
+
+use crate::ArcConditionalStatefulBiConsumer;
+use crate::BiPredicate;
+use crate::StatefulBiConsumer;
+use crate::consumers::macros::impl_consumer_clone;
+use crate::consumers::macros::impl_consumer_common_methods;
+use crate::consumers::macros::impl_consumer_debug_display;
+use crate::consumers::macros::impl_shared_consumer_methods;
 
 /// The erased callback representation used by this implementation.
 type ArcStatefulBiConsumerFn<T, U> = Arc<Mutex<dyn FnMut(&T, &U) + Send>>;

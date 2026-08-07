@@ -8,12 +8,10 @@
 
 //! Demonstrates the set_name and new_with_name methods of Predicate
 
-use qubit_function::{
-    ArcPredicate,
-    BoxPredicate,
-    Predicate,
-    RcPredicate,
-};
+use qubit_function::ArcPredicate;
+use qubit_function::BoxPredicate;
+use qubit_function::Predicate;
+use qubit_function::RcPredicate;
 
 fn main() {
     println!("=== Predicate Naming Functionality Demo ===\n");

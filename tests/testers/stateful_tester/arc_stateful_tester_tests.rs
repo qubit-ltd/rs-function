@@ -6,10 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    ArcStatefulTester,
-    StatefulTester,
-};
+use qubit_function::ArcStatefulTester;
+use qubit_function::StatefulTester;
 
 #[test]
 fn test_arc_stateful_tester_observable_behavior() {

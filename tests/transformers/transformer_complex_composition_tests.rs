@@ -12,12 +12,10 @@
 
 #[cfg(test)]
 mod complex_composition_tests {
-    use qubit_function::{
-        ArcTransformer,
-        BoxTransformer,
-        RcTransformer,
-        Transformer,
-    };
+    use qubit_function::ArcTransformer;
+    use qubit_function::BoxTransformer;
+    use qubit_function::RcTransformer;
+    use qubit_function::Transformer;
 
     #[test]
     fn test_multiple_and_then() {

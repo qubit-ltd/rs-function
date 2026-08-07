@@ -7,17 +7,14 @@
 // =============================================================================
 //! Defines the `ArcSupplier` public type.
 
-use {
-    crate::Predicate,
-    crate::Transformer,
-};
-use {
-    crate::Supplier,
-    crate::suppliers::macros::impl_shared_supplier_methods,
-    crate::suppliers::macros::impl_supplier_clone,
-    crate::suppliers::macros::impl_supplier_debug_display,
-    std::sync::Arc,
-};
+use std::sync::Arc;
+
+use crate::Predicate;
+use crate::Supplier;
+use crate::Transformer;
+use crate::suppliers::macros::impl_shared_supplier_methods;
+use crate::suppliers::macros::impl_supplier_clone;
+use crate::suppliers::macros::impl_supplier_debug_display;
 
 // ======================================================================
 // ArcSupplier - Thread-safe Shared Ownership Implementation

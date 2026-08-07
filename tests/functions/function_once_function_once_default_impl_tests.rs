@@ -8,12 +8,10 @@
 
 //! Comprehensive tests for FunctionOnce trait and BoxFunctionOnce
 
-use qubit_function::{
-    BoxFunctionOnce,
-    FunctionOnce,
-    Predicate,
-    RcPredicate,
-};
+use qubit_function::BoxFunctionOnce;
+use qubit_function::FunctionOnce;
+use qubit_function::Predicate;
+use qubit_function::RcPredicate;
 
 // ============================================================================
 // FunctionOnce Trait Tests - Core Functionality
@@ -21,10 +19,8 @@ use qubit_function::{
 
 #[cfg(test)]
 mod function_once_default_impl_tests {
-    use qubit_function::{
-        BoxFunctionOnce,
-        FunctionOnce,
-    };
+    use qubit_function::BoxFunctionOnce;
+    use qubit_function::FunctionOnce;
 
     /// Custom struct that only implements the core apply method of FunctionOnce
     /// trait All to_xxx_once() methods use default implementation

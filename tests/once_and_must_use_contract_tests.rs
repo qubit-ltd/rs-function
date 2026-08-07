@@ -8,14 +8,10 @@
 // qubit-style: allow explicit-imports -- fixtures verify wildcard-import
 // behavior.
 
-use std::{
-    fs,
-    path::PathBuf,
-    process::{
-        Command,
-        Output,
-    },
-};
+use std::fs;
+use std::path::PathBuf;
+use std::process::Command;
+use std::process::Output;
 
 fn compile_consumer(features: &[&str], source: &str) -> Output {
     let project_dir = tempfile::Builder::new()
@@ -71,7 +67,8 @@ fn test_once_accepts_explicit_once_method_names() {
     let output = compile_consumer(
         &["once"],
         r#"
-use qubit_function::{CallableOnce, RunnableOnce};
+use qubit_function::CallableOnce;
+use qubit_function::RunnableOnce;
 
 fn main() {
     assert_eq!(CallableOnce::call_once(|| Ok::<i32, ()>(42)), Ok(42));
@@ -134,7 +131,11 @@ fn test_value_producing_methods_have_must_use_contracts() {
         &["full"],
         r#"
 #![deny(unused_must_use)]
-use qubit_function::{BoxComparator, Comparator, Function, Predicate, Supplier};
+use qubit_function::BoxComparator;
+use qubit_function::Comparator;
+use qubit_function::Function;
+use qubit_function::Predicate;
+use qubit_function::Supplier;
 fn main() {
     (|value: &i32| *value + 1).apply(&1);
     (|value: &i32| *value > 0).test(&1);

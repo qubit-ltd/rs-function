@@ -139,10 +139,8 @@
 //! assert!(!pred.test(&-8, &-3));
 //! ```
 
-use crate::predicates::macros::constants::{
-    ALWAYS_FALSE_NAME,
-    ALWAYS_TRUE_NAME,
-};
+use crate::predicates::macros::constants::ALWAYS_FALSE_NAME;
+use crate::predicates::macros::constants::ALWAYS_TRUE_NAME;
 
 /// Type alias for bi-predicate function to simplify complex types.
 ///

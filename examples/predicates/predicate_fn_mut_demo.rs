@@ -8,12 +8,10 @@
 
 //! Demonstrates adapting predicate objects to APIs that accept `FnMut`.
 
-use qubit_function::{
-    ArcPredicate,
-    BoxPredicate,
-    Predicate,
-    RcPredicate,
-};
+use qubit_function::ArcPredicate;
+use qubit_function::BoxPredicate;
+use qubit_function::Predicate;
+use qubit_function::RcPredicate;
 
 fn main() {
     println!("=== Demonstrating Predicate interop with FnMut ===\n");

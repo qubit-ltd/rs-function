@@ -7,19 +7,16 @@
 // =============================================================================
 //! Defines the `ArcTransformer` public type.
 
-use {
-    crate::ArcConditionalTransformer,
-    crate::Predicate,
-};
-use {
-    crate::Transformer,
-    crate::transformers::macros::impl_shared_transformer_methods,
-    crate::transformers::macros::impl_transformer_clone,
-    crate::transformers::macros::impl_transformer_common_methods,
-    crate::transformers::macros::impl_transformer_constant_method,
-    crate::transformers::macros::impl_transformer_debug_display,
-    std::sync::Arc,
-};
+use std::sync::Arc;
+
+use crate::ArcConditionalTransformer;
+use crate::Predicate;
+use crate::Transformer;
+use crate::transformers::macros::impl_shared_transformer_methods;
+use crate::transformers::macros::impl_transformer_clone;
+use crate::transformers::macros::impl_transformer_common_methods;
+use crate::transformers::macros::impl_transformer_constant_method;
+use crate::transformers::macros::impl_transformer_debug_display;
 
 // ============================================================================
 // ArcTransformer - Arc<dyn Fn(T) -> R + Send + Sync>

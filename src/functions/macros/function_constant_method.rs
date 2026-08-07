@@ -46,7 +46,7 @@
 //!     /// # Examples
 //!     ///
 //!     /// ```rust
-//!     /// use qubit_function::{BoxFunction, Function};
+//!     /// use crate::{BoxFunction, Function};
 //!     ///
 //!     /// let constant = BoxFunction::constant("hello");
 //!     /// assert_eq!(constant.apply(123), "hello");
@@ -69,7 +69,7 @@
 //!     /// # Examples
 //!     ///
 //!     /// ```rust
-//!     /// use qubit_function::{BoxBiFunction, BiFunction};
+//!     /// use crate::{BoxBiFunction, BiFunction};
 //!     ///
 //!     /// let constant = BoxBiFunction::constant("hello");
 //!     /// assert_eq!(constant.apply(123, "test"), "hello");
@@ -120,7 +120,7 @@ macro_rules! impl_function_constant_method {
             ///
             /// # Examples
             ///
-            #[doc = concat!("/// ```ignore\n/// use qubit_function::{", stringify!($struct_name), ", Function};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123), \"hello\");\n/// ```")]
+            #[doc = concat!("/// ```ignore\n/// use qubit_function as qf;\n/// use qf::{", stringify!($struct_name), ", Function};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123), \"hello\");\n/// ```")]
             #[inline]
             pub fn constant(value: $r) -> $struct_name<$t, $r>
             where
@@ -147,7 +147,7 @@ macro_rules! impl_function_constant_method {
             ///
             /// # Examples
             ///
-            #[doc = concat!("/// ```ignore\n/// use qubit_function::{", stringify!($struct_name), ", BiFunction};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123, \"test\"), \"hello\");\n/// ```")]
+            #[doc = concat!("/// ```ignore\n/// use qubit_function as qf;\n/// use qf::{", stringify!($struct_name), ", BiFunction};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123, \"test\"), \"hello\");\n/// ```")]
             #[inline]
             pub fn constant(value: $r) -> $struct_name<$t, $u, $r>
             where
@@ -201,7 +201,7 @@ macro_rules! impl_function_constant_method {
             ///
             /// # Examples
             ///
-            #[doc = concat!("/// ```ignore\n/// use qubit_function::{", stringify!($struct_name), ", BiFunction};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123, \"test\"), \"hello\");\n/// ```")]
+            #[doc = concat!("/// ```ignore\n/// use qubit_function as qf;\n/// use qf::{", stringify!($struct_name), ", BiFunction};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123, \"test\"), \"hello\");\n/// ```")]
             #[inline]
             pub fn constant(value: $r) -> $struct_name<$t, $u, $r>
             where

@@ -6,10 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    BoxStatefulBiPredicate,
-    StatefulBiPredicate,
-};
+use qubit_function::BoxStatefulBiPredicate;
+use qubit_function::StatefulBiPredicate;
 
 #[test]
 fn test_box_stateful_bi_predicate_observable_behavior() {
