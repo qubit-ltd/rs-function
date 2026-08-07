@@ -7,18 +7,15 @@
 // =============================================================================
 //! Demonstrates adapting consumer objects to APIs that accept closures.
 
-use qubit_function::{
-    ArcConsumer,
-    BoxConsumer,
-    Consumer,
-    RcConsumer,
-};
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+use std::sync::Mutex;
+
+use qubit_function::ArcConsumer;
+use qubit_function::BoxConsumer;
+use qubit_function::Consumer;
+use qubit_function::RcConsumer;
 
 fn main() {
     println!("=== Consumer Closure Interoperability Examples ===\n");

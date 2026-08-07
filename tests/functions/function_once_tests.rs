@@ -8,12 +8,10 @@
 
 //! Comprehensive tests for FunctionOnce trait and BoxFunctionOnce
 
-use qubit_function::{
-    BoxFunctionOnce,
-    FunctionOnce,
-    Predicate,
-    RcPredicate,
-};
+use qubit_function::BoxFunctionOnce;
+use qubit_function::FunctionOnce;
+use qubit_function::Predicate;
+use qubit_function::RcPredicate;
 
 // ============================================================================
 // FunctionOnce Trait Tests - Core Functionality

@@ -11,19 +11,16 @@
 //! This example demonstrates stateless BiConsumer types that observe two input
 //! values without mutating them.
 
-use qubit_function::{
-    ArcBiConsumer,
-    BiConsumer,
-    BoxBiConsumer,
-    RcBiConsumer,
-};
 use std::rc::Rc;
-use std::sync::{
-    Arc,
-    atomic::AtomicUsize,
-    atomic::Ordering,
-};
+use std::sync::Arc;
+use std::sync::atomic::AtomicUsize;
+use std::sync::atomic::Ordering;
 use std::thread;
+
+use qubit_function::ArcBiConsumer;
+use qubit_function::BiConsumer;
+use qubit_function::BoxBiConsumer;
+use qubit_function::RcBiConsumer;
 
 fn main() {
     println!("=== BiConsumer Observation Demo ===\n");

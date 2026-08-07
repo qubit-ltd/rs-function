@@ -12,10 +12,8 @@
 
 #[cfg(test)]
 mod box_transformer_tests {
-    use qubit_function::{
-        BoxTransformer,
-        Transformer,
-    };
+    use qubit_function::BoxTransformer;
+    use qubit_function::Transformer;
 
     #[test]
     fn test_new_and_apply() {

@@ -8,19 +8,16 @@
 
 //! Unit tests for StatefulSupplier types
 
-use qubit_function::{
-    ArcStatefulSupplier,
-    BoxStatefulSupplier,
-    RcStatefulSupplier,
-    StatefulSupplier,
-};
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+use std::sync::Mutex;
 use std::thread;
+
+use qubit_function::ArcStatefulSupplier;
+use qubit_function::BoxStatefulSupplier;
+use qubit_function::RcStatefulSupplier;
+use qubit_function::StatefulSupplier;
 
 // ==========================================================================
 // StatefulSupplier Trait Tests (for closures)
@@ -28,20 +25,16 @@ use std::thread;
 
 #[cfg(test)]
 mod test_rc_stateful_supplier_once {
-    use super::{
-        Rc,
-        RcStatefulSupplier,
-        RefCell,
-        StatefulSupplier,
-    };
+    use super::Rc;
+    use super::RcStatefulSupplier;
+    use super::RefCell;
+    use super::StatefulSupplier;
 
     mod test_get {
-        use super::{
-            Rc,
-            RcStatefulSupplier,
-            RefCell,
-            StatefulSupplier,
-        };
+        use super::Rc;
+        use super::RcStatefulSupplier;
+        use super::RefCell;
+        use super::StatefulSupplier;
 
         #[test]
         fn test_consumes_stateful_supplier() {

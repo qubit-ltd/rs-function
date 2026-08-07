@@ -7,18 +7,15 @@
 // =============================================================================
 //! Defines the `RcSupplier` public type.
 
-use {
-    crate::Predicate,
-    crate::Transformer,
-};
-use {
-    crate::Supplier,
-    crate::suppliers::macros::impl_shared_supplier_methods,
-    crate::suppliers::macros::impl_supplier_clone,
-    crate::suppliers::macros::impl_supplier_common_methods,
-    crate::suppliers::macros::impl_supplier_debug_display,
-    std::rc::Rc,
-};
+use std::rc::Rc;
+
+use crate::Predicate;
+use crate::Supplier;
+use crate::Transformer;
+use crate::suppliers::macros::impl_shared_supplier_methods;
+use crate::suppliers::macros::impl_supplier_clone;
+use crate::suppliers::macros::impl_supplier_common_methods;
+use crate::suppliers::macros::impl_supplier_debug_display;
 
 // ======================================================================
 // RcSupplier - Single-threaded Shared Ownership

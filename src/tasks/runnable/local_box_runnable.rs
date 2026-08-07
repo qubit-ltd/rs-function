@@ -7,23 +7,13 @@
 // =============================================================================
 //! Defines the `LocalBoxRunnable` public type.
 
-use crate::{
-    macros::{
-        impl_common_name_methods,
-        impl_common_new_methods,
-    },
-    suppliers::{
-        macros::impl_supplier_debug_display,
-        supplier::Supplier,
-    },
-    tasks::{
-        callable::{
-            Callable,
-            LocalBoxCallable,
-        },
-        runnable::Runnable,
-    },
-};
+use crate::macros::impl_common_name_methods;
+use crate::macros::impl_common_new_methods;
+use crate::suppliers::macros::impl_supplier_debug_display;
+use crate::suppliers::supplier::Supplier;
+use crate::tasks::callable::Callable;
+use crate::tasks::callable::LocalBoxCallable;
+use crate::tasks::runnable::Runnable;
 
 /// Local box-based reusable runnable.
 ///

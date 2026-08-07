@@ -7,20 +7,17 @@
 // =============================================================================
 //! Defines the `RcBiFunction` public type.
 
-use {
-    crate::BiFunction,
-    crate::functions::macros::impl_function_clone,
-    crate::functions::macros::impl_function_common_methods,
-    crate::functions::macros::impl_function_constant_method,
-    crate::functions::macros::impl_function_debug_display,
-    crate::functions::macros::impl_shared_function_methods,
-    std::rc::Rc,
-};
-use {
-    crate::BiPredicate,
-    crate::Function,
-    crate::RcConditionalBiFunction,
-};
+use std::rc::Rc;
+
+use crate::BiFunction;
+use crate::BiPredicate;
+use crate::Function;
+use crate::RcConditionalBiFunction;
+use crate::functions::macros::impl_function_clone;
+use crate::functions::macros::impl_function_common_methods;
+use crate::functions::macros::impl_function_constant_method;
+use crate::functions::macros::impl_function_debug_display;
+use crate::functions::macros::impl_shared_function_methods;
 
 /// The erased callback representation used by this implementation.
 type RcBiFunctionFn<T, U, R> = Rc<dyn Fn(&T, &U) -> R>;

@@ -8,26 +8,18 @@
 
 //! Unit tests for callable-with task types.
 
-use std::{
-    cell::Cell,
-    io,
-    rc::Rc,
-    sync::{
-        Arc,
-        atomic::{
-            AtomicBool,
-            AtomicUsize,
-            Ordering,
-        },
-    },
-};
+use std::cell::Cell;
+use std::io;
+use std::rc::Rc;
+use std::sync::Arc;
+use std::sync::atomic::AtomicBool;
+use std::sync::atomic::AtomicUsize;
+use std::sync::atomic::Ordering;
 
-use qubit_function::{
-    ArcCallableWith,
-    BoxCallableWith,
-    CallableWith,
-    RcCallableWith,
-};
+use qubit_function::ArcCallableWith;
+use qubit_function::BoxCallableWith;
+use qubit_function::CallableWith;
+use qubit_function::RcCallableWith;
 
 #[derive(Clone)]
 struct AddWith {

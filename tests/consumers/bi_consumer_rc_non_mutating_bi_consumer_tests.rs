@@ -5,24 +5,24 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-/// Tests for BiConsumer types
-use qubit_function::{
-    ArcBiConsumer,
-    BiConsumer,
-    BoxBiConsumer,
-    RcBiConsumer,
-};
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
 
+/// Tests for BiConsumer types
+use qubit_function::ArcBiConsumer;
+/// Tests for BiConsumer types
+use qubit_function::BiConsumer;
+/// Tests for BiConsumer types
+use qubit_function::BoxBiConsumer;
+/// Tests for BiConsumer types
+use qubit_function::RcBiConsumer;
+
 #[cfg(test)]
 mod rc_non_mutating_bi_consumer_tests {
-    use super::{
-        BiConsumer,
-        Rc,
-        RcBiConsumer,
-    };
+    use super::BiConsumer;
+    use super::Rc;
+    use super::RcBiConsumer;
 
     #[test]
     fn test_new_and_accept() {

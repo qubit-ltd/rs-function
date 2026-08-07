@@ -7,21 +7,18 @@
 // =============================================================================
 //! Defines the `RcStatefulBiTransformer` public type.
 
-use {
-    crate::BiPredicate,
-    crate::RcConditionalStatefulBiTransformer,
-    crate::StatefulTransformer,
-};
-use {
-    crate::StatefulBiTransformer,
-    crate::transformers::macros::impl_shared_transformer_methods,
-    crate::transformers::macros::impl_transformer_clone,
-    crate::transformers::macros::impl_transformer_common_methods,
-    crate::transformers::macros::impl_transformer_constant_method,
-    crate::transformers::macros::impl_transformer_debug_display,
-    std::cell::RefCell,
-    std::rc::Rc,
-};
+use std::cell::RefCell;
+use std::rc::Rc;
+
+use crate::BiPredicate;
+use crate::RcConditionalStatefulBiTransformer;
+use crate::StatefulBiTransformer;
+use crate::StatefulTransformer;
+use crate::transformers::macros::impl_shared_transformer_methods;
+use crate::transformers::macros::impl_transformer_clone;
+use crate::transformers::macros::impl_transformer_common_methods;
+use crate::transformers::macros::impl_transformer_constant_method;
+use crate::transformers::macros::impl_transformer_debug_display;
 
 // ============================================================================
 // RcStatefulBiTransformer - Rc<dyn FnMut(T, U) -> R>

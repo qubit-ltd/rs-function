@@ -6,10 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    BiMutatingFunction,
-    BoxBinaryMutatingFunction,
-};
+use qubit_function::BiMutatingFunction;
+use qubit_function::BoxBinaryMutatingFunction;
 
 #[test]
 fn test_box_binary_mutating_function_alias() {

@@ -7,18 +7,14 @@
 // =============================================================================
 //! Defines the `BoxFunction` public type.
 
-use {
-    crate::BoxConditionalFunction,
-    crate::Predicate,
-};
-use {
-    crate::Function,
-    crate::functions::macros::impl_box_function_methods,
-    crate::functions::macros::impl_function_common_methods,
-    crate::functions::macros::impl_function_constant_method,
-    crate::functions::macros::impl_function_debug_display,
-    crate::functions::macros::impl_function_identity_method,
-};
+use crate::BoxConditionalFunction;
+use crate::Function;
+use crate::Predicate;
+use crate::functions::macros::impl_box_function_methods;
+use crate::functions::macros::impl_function_common_methods;
+use crate::functions::macros::impl_function_constant_method;
+use crate::functions::macros::impl_function_debug_display;
+use crate::functions::macros::impl_function_identity_method;
 
 // ============================================================================
 // BoxFunction - Box<dyn Fn(&T) -> R>

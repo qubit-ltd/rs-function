@@ -7,18 +7,15 @@
 // =============================================================================
 //! Defines the `RcConsumer` public type.
 
-use {
-    crate::Consumer,
-    crate::consumers::macros::impl_consumer_clone,
-    crate::consumers::macros::impl_consumer_common_methods,
-    crate::consumers::macros::impl_consumer_debug_display,
-    crate::consumers::macros::impl_shared_consumer_methods,
-    std::rc::Rc,
-};
-use {
-    crate::Predicate,
-    crate::RcConditionalConsumer,
-};
+use std::rc::Rc;
+
+use crate::Consumer;
+use crate::Predicate;
+use crate::RcConditionalConsumer;
+use crate::consumers::macros::impl_consumer_clone;
+use crate::consumers::macros::impl_consumer_common_methods;
+use crate::consumers::macros::impl_consumer_debug_display;
+use crate::consumers::macros::impl_shared_consumer_methods;
 
 // ============================================================================
 // 3. RcConsumer - Single-threaded Shared Ownership Implementation

@@ -7,10 +7,8 @@
 // =============================================================================
 //! BiTransformerOnce usage examples
 
-use qubit_function::{
-    BiTransformerOnce,
-    BoxBiTransformerOnce,
-};
+use qubit_function::BiTransformerOnce;
+use qubit_function::BoxBiTransformerOnce;
 
 fn main() {
     println!("=== BiTransformerOnce Examples ===\n");

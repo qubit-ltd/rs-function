@@ -9,20 +9,15 @@
 
 #[cfg(test)]
 mod tests {
-    use qubit_function::testers::tester::{
-        ArcTester,
-        BoxTester,
-        RcTester,
-        Tester,
-    };
-    use std::sync::{
-        Arc,
-        atomic::{
-            AtomicBool,
-            AtomicUsize,
-            Ordering,
-        },
-    };
+    use std::sync::Arc;
+    use std::sync::atomic::AtomicBool;
+    use std::sync::atomic::AtomicUsize;
+    use std::sync::atomic::Ordering;
+
+    use qubit_function::testers::tester::ArcTester;
+    use qubit_function::testers::tester::BoxTester;
+    use qubit_function::testers::tester::RcTester;
+    use qubit_function::testers::tester::Tester;
 
     // ========================================================================
     // BoxTester tests

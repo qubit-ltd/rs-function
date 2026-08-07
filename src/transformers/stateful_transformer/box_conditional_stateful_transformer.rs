@@ -7,14 +7,12 @@
 // =============================================================================
 //! Defines the `BoxConditionalStatefulTransformer` public type.
 
-use {
-    crate::BoxPredicate,
-    crate::BoxStatefulTransformer,
-    crate::Predicate,
-    crate::StatefulTransformer,
-    crate::transformers::macros::impl_box_conditional_transformer,
-    crate::transformers::macros::impl_conditional_transformer_debug_display,
-};
+use crate::BoxPredicate;
+use crate::BoxStatefulTransformer;
+use crate::Predicate;
+use crate::StatefulTransformer;
+use crate::transformers::macros::impl_box_conditional_transformer;
+use crate::transformers::macros::impl_conditional_transformer_debug_display;
 
 // ============================================================================
 // BoxConditionalStatefulTransformer - Box-based Conditional StatefulTransformer

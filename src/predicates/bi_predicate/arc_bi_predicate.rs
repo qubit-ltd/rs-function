@@ -8,18 +8,16 @@
 //! Defines the `ArcBiPredicate` public type.
 
 use std::ops::Not;
+use std::sync::Arc;
 
-use {
-    super::ALWAYS_FALSE_NAME,
-    super::ALWAYS_TRUE_NAME,
-    super::SendSyncBiPredicateFn,
-    crate::BiPredicate,
-    crate::predicates::macros::impl_predicate_clone,
-    crate::predicates::macros::impl_predicate_common_methods,
-    crate::predicates::macros::impl_predicate_debug_display,
-    crate::predicates::macros::impl_shared_predicate_methods,
-    std::sync::Arc,
-};
+use super::ALWAYS_FALSE_NAME;
+use super::ALWAYS_TRUE_NAME;
+use super::SendSyncBiPredicateFn;
+use crate::BiPredicate;
+use crate::predicates::macros::impl_predicate_clone;
+use crate::predicates::macros::impl_predicate_common_methods;
+use crate::predicates::macros::impl_predicate_debug_display;
+use crate::predicates::macros::impl_shared_predicate_methods;
 
 /// An Arc-based bi-predicate with thread-safe shared ownership.
 ///

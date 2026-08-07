@@ -6,35 +6,33 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use std::{
-    io,
-    rc::Rc,
-};
+use std::io;
+use std::rc::Rc;
 
-use qubit_function::{
-    BoxCallable,
-    BoxCallableWith,
-    BoxRunnable,
-    BoxRunnableWith,
-    Callable,
-    CallableWith,
-    LocalBoxCallable,
-    LocalBoxCallableWith,
-    LocalBoxRunnable,
-    LocalBoxRunnableWith,
-    Runnable,
-    RunnableWith,
-};
-
+use qubit_function::BoxCallable;
 #[cfg(feature = "once")]
-use qubit_function::{
-    BoxCallableOnce,
-    BoxRunnableOnce,
-    CallableOnce,
-    LocalBoxCallableOnce,
-    LocalBoxRunnableOnce,
-    RunnableOnce,
-};
+use qubit_function::BoxCallableOnce;
+use qubit_function::BoxCallableWith;
+use qubit_function::BoxRunnable;
+#[cfg(feature = "once")]
+use qubit_function::BoxRunnableOnce;
+use qubit_function::BoxRunnableWith;
+use qubit_function::Callable;
+#[cfg(feature = "once")]
+use qubit_function::CallableOnce;
+use qubit_function::CallableWith;
+use qubit_function::LocalBoxCallable;
+#[cfg(feature = "once")]
+use qubit_function::LocalBoxCallableOnce;
+use qubit_function::LocalBoxCallableWith;
+use qubit_function::LocalBoxRunnable;
+#[cfg(feature = "once")]
+use qubit_function::LocalBoxRunnableOnce;
+use qubit_function::LocalBoxRunnableWith;
+use qubit_function::Runnable;
+#[cfg(feature = "once")]
+use qubit_function::RunnableOnce;
+use qubit_function::RunnableWith;
 
 /// Returns `value` after proving at compile time that it is transferable.
 fn require_send<T: Send>(value: T) -> T {

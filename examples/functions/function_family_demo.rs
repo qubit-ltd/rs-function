@@ -6,28 +6,26 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    BiFunction,
-    BiFunctionOnce,
-    BiMutatingFunction,
-    BiMutatingFunctionOnce,
-    BoxBiFunction,
-    BoxBiFunctionOnce,
-    BoxBiMutatingFunction,
-    BoxBiMutatingFunctionOnce,
-    BoxFunction,
-    BoxFunctionOnce,
-    BoxMutatingFunction,
-    BoxMutatingFunctionOnce,
-    BoxStatefulFunction,
-    BoxStatefulMutatingFunction,
-    Function,
-    FunctionOnce,
-    MutatingFunction,
-    MutatingFunctionOnce,
-    StatefulFunction,
-    StatefulMutatingFunction,
-};
+use qubit_function::BiFunction;
+use qubit_function::BiFunctionOnce;
+use qubit_function::BiMutatingFunction;
+use qubit_function::BiMutatingFunctionOnce;
+use qubit_function::BoxBiFunction;
+use qubit_function::BoxBiFunctionOnce;
+use qubit_function::BoxBiMutatingFunction;
+use qubit_function::BoxBiMutatingFunctionOnce;
+use qubit_function::BoxFunction;
+use qubit_function::BoxFunctionOnce;
+use qubit_function::BoxMutatingFunction;
+use qubit_function::BoxMutatingFunctionOnce;
+use qubit_function::BoxStatefulFunction;
+use qubit_function::BoxStatefulMutatingFunction;
+use qubit_function::Function;
+use qubit_function::FunctionOnce;
+use qubit_function::MutatingFunction;
+use qubit_function::MutatingFunctionOnce;
+use qubit_function::StatefulFunction;
+use qubit_function::StatefulMutatingFunction;
 
 fn main() {
     println!("=== Function Family Demo ===\n");

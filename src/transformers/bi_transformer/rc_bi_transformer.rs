@@ -7,20 +7,17 @@
 // =============================================================================
 //! Defines the `RcBiTransformer` public type.
 
-use {
-    crate::BiPredicate,
-    crate::RcConditionalBiTransformer,
-    crate::Transformer,
-};
-use {
-    crate::BiTransformer,
-    crate::transformers::macros::impl_shared_transformer_methods,
-    crate::transformers::macros::impl_transformer_clone,
-    crate::transformers::macros::impl_transformer_common_methods,
-    crate::transformers::macros::impl_transformer_constant_method,
-    crate::transformers::macros::impl_transformer_debug_display,
-    std::rc::Rc,
-};
+use std::rc::Rc;
+
+use crate::BiPredicate;
+use crate::BiTransformer;
+use crate::RcConditionalBiTransformer;
+use crate::Transformer;
+use crate::transformers::macros::impl_shared_transformer_methods;
+use crate::transformers::macros::impl_transformer_clone;
+use crate::transformers::macros::impl_transformer_common_methods;
+use crate::transformers::macros::impl_transformer_constant_method;
+use crate::transformers::macros::impl_transformer_debug_display;
 
 // ============================================================================
 // RcBiTransformer - Rc<dyn Fn(T, U) -> R>

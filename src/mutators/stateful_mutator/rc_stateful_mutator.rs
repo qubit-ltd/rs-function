@@ -7,20 +7,17 @@
 // =============================================================================
 //! Defines the `RcStatefulMutator` public type.
 
-use {
-    super::RcMutMutatorFn,
-    crate::StatefulMutator,
-    crate::mutators::macros::impl_mutator_clone,
-    crate::mutators::macros::impl_mutator_common_methods,
-    crate::mutators::macros::impl_mutator_debug_display,
-    crate::mutators::macros::impl_shared_mutator_methods,
-    std::cell::RefCell,
-    std::rc::Rc,
-};
-use {
-    crate::Predicate,
-    crate::RcConditionalStatefulMutator,
-};
+use std::cell::RefCell;
+use std::rc::Rc;
+
+use super::RcMutMutatorFn;
+use crate::Predicate;
+use crate::RcConditionalStatefulMutator;
+use crate::StatefulMutator;
+use crate::mutators::macros::impl_mutator_clone;
+use crate::mutators::macros::impl_mutator_common_methods;
+use crate::mutators::macros::impl_mutator_debug_display;
+use crate::mutators::macros::impl_shared_mutator_methods;
 
 // ============================================================================
 // 3. RcStatefulMutator - Single-Threaded Shared Ownership Implementation

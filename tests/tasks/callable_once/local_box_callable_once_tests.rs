@@ -8,16 +8,12 @@
 
 //! Unit tests for LocalBoxCallableOnce.
 
-use std::{
-    io,
-    rc::Rc,
-};
+use std::io;
+use std::rc::Rc;
 
-use qubit_function::{
-    CallableOnce,
-    LocalBoxCallableOnce,
-    SupplierOnce,
-};
+use qubit_function::CallableOnce;
+use qubit_function::LocalBoxCallableOnce;
+use qubit_function::SupplierOnce;
 
 #[test]
 fn test_local_box_callable_once_new_allows_non_send_capture() {

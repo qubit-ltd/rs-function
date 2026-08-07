@@ -8,10 +8,8 @@
 
 //! Unit tests for MutatingFunctionOnce types (one-time FnOnce(&mut T) -> R)
 
-use qubit_function::{
-    BoxMutatingFunctionOnce,
-    MutatingFunctionOnce,
-};
+use qubit_function::BoxMutatingFunctionOnce;
+use qubit_function::MutatingFunctionOnce;
 
 // ============================================================================
 // MutatingFunctionOnce Default Implementation Tests
@@ -43,10 +41,8 @@ impl MutatingFunctionOnce<i32, i32> for TestMutatingFunctionOnce {
 
 #[cfg(test)]
 mod test_box_mutating_function_once {
-    use super::{
-        BoxMutatingFunctionOnce,
-        MutatingFunctionOnce,
-    };
+    use super::BoxMutatingFunctionOnce;
+    use super::MutatingFunctionOnce;
 
     #[test]
     fn test_new() {

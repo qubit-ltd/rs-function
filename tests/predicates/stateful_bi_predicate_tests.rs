@@ -6,22 +6,17 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::predicates::{
-    ArcStatefulBiPredicate,
-    BoxStatefulBiPredicate,
-    RcStatefulBiPredicate,
-    StatefulBiPredicate,
-};
-use std::cell::{
-    Cell,
-    RefCell,
-};
+use std::cell::Cell;
+use std::cell::RefCell;
 use std::rc::Rc;
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+use std::sync::Mutex;
 use std::thread;
+
+use qubit_function::predicates::ArcStatefulBiPredicate;
+use qubit_function::predicates::BoxStatefulBiPredicate;
+use qubit_function::predicates::RcStatefulBiPredicate;
+use qubit_function::predicates::StatefulBiPredicate;
 
 fn box_stateful_bi_predicate_returning(
     value: bool,

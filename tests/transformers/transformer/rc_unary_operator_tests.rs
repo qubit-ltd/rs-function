@@ -6,10 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    RcUnaryOperator,
-    Transformer,
-};
+use qubit_function::RcUnaryOperator;
+use qubit_function::Transformer;
 
 #[test]
 fn test_rc_unary_operator_alias() {

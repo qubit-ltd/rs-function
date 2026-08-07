@@ -7,19 +7,16 @@
 // =============================================================================
 //! Defines the `RcMutator` public type.
 
-use {
-    super::RcMutatorFn,
-    crate::Mutator,
-    crate::mutators::macros::impl_mutator_clone,
-    crate::mutators::macros::impl_mutator_common_methods,
-    crate::mutators::macros::impl_mutator_debug_display,
-    crate::mutators::macros::impl_shared_mutator_methods,
-    std::rc::Rc,
-};
-use {
-    crate::Predicate,
-    crate::RcConditionalMutator,
-};
+use std::rc::Rc;
+
+use super::RcMutatorFn;
+use crate::Mutator;
+use crate::Predicate;
+use crate::RcConditionalMutator;
+use crate::mutators::macros::impl_mutator_clone;
+use crate::mutators::macros::impl_mutator_common_methods;
+use crate::mutators::macros::impl_mutator_debug_display;
+use crate::mutators::macros::impl_shared_mutator_methods;
 
 // ============================================================================
 // 4. RcMutator - Single-Threaded Shared Ownership Implementation

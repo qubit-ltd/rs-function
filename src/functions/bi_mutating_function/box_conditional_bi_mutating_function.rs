@@ -7,14 +7,12 @@
 // =============================================================================
 //! Defines the `BoxConditionalBiMutatingFunction` public type.
 
-use {
-    crate::BiMutatingFunction,
-    crate::BiPredicate,
-    crate::BoxBiMutatingFunction,
-    crate::BoxBiPredicate,
-    crate::functions::macros::impl_box_conditional_function,
-    crate::functions::macros::impl_conditional_function_debug_display,
-};
+use crate::BiMutatingFunction;
+use crate::BiPredicate;
+use crate::BoxBiMutatingFunction;
+use crate::BoxBiPredicate;
+use crate::functions::macros::impl_box_conditional_function;
+use crate::functions::macros::impl_conditional_function_debug_display;
 
 // ============================================================================
 // BoxConditionalBiMutatingFunction - Box-based Conditional BiMutatingFunction

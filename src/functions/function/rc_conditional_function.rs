@@ -7,15 +7,13 @@
 // =============================================================================
 //! Defines the `RcConditionalFunction` public type.
 
-use {
-    crate::Function,
-    crate::Predicate,
-    crate::RcFunction,
-    crate::RcPredicate,
-    crate::functions::macros::impl_conditional_function_clone,
-    crate::functions::macros::impl_conditional_function_debug_display,
-    crate::functions::macros::impl_shared_conditional_function,
-};
+use crate::Function;
+use crate::Predicate;
+use crate::RcFunction;
+use crate::RcPredicate;
+use crate::functions::macros::impl_conditional_function_clone;
+use crate::functions::macros::impl_conditional_function_debug_display;
+use crate::functions::macros::impl_shared_conditional_function;
 
 // ============================================================================
 // RcConditionalFunction - Rc-based Conditional Function

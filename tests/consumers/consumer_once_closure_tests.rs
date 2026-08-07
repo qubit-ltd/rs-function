@@ -5,18 +5,19 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
+use std::sync::Arc;
+use std::sync::Mutex;
+
+use qubit_function::BoxConsumerOnce;
 ///
 /// # ConsumerOnce Tests
 ///
 /// Unit tests for the ConsumerOnce trait and its implementations.
-use qubit_function::{
-    BoxConsumerOnce,
-    ConsumerOnce,
-};
-use std::sync::{
-    Arc,
-    Mutex,
-};
+///
+/// # ConsumerOnce Tests
+///
+/// Unit tests for the ConsumerOnce trait and its implementations.
+use qubit_function::ConsumerOnce;
 
 // ============================================================================
 // BoxConsumerOnce Tests
@@ -24,11 +25,10 @@ use std::sync::{
 
 #[cfg(test)]
 mod closure_tests {
-    use super::{
-        Arc,
-        ConsumerOnce,
-        Mutex,
-    };
+    use super::Arc;
+    use super::BoxConsumerOnce;
+    use super::ConsumerOnce;
+    use super::Mutex;
 
     #[test]
     fn test_closure_accept() {
@@ -49,7 +49,7 @@ mod closure_tests {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l1 = log.clone();
         let l2 = log.clone();
-        let chained = qubit_function::BoxConsumerOnce::new(move |x: &i32| {
+        let chained = BoxConsumerOnce::new(move |x: &i32| {
             l1.lock()
                 .expect("mutex should not be poisoned")
                 .push(*x * 2);
@@ -72,7 +72,7 @@ mod closure_tests {
         let l1 = log.clone();
         let l2 = log.clone();
         let l3 = log.clone();
-        let chained = qubit_function::BoxConsumerOnce::new(move |x: &i32| {
+        let chained = BoxConsumerOnce::new(move |x: &i32| {
             l1.lock()
                 .expect("mutex should not be poisoned")
                 .push(*x * 2);

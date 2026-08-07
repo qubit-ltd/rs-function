@@ -7,15 +7,13 @@
 // =============================================================================
 //! Defines the `ArcConditionalBiFunction` public type.
 
-use {
-    crate::ArcBiFunction,
-    crate::ArcBiPredicate,
-    crate::BiFunction,
-    crate::BiPredicate,
-    crate::functions::macros::impl_conditional_function_clone,
-    crate::functions::macros::impl_conditional_function_debug_display,
-    crate::functions::macros::impl_shared_conditional_function,
-};
+use crate::ArcBiFunction;
+use crate::ArcBiPredicate;
+use crate::BiFunction;
+use crate::BiPredicate;
+use crate::functions::macros::impl_conditional_function_clone;
+use crate::functions::macros::impl_conditional_function_debug_display;
+use crate::functions::macros::impl_shared_conditional_function;
 
 // ============================================================================
 // ArcConditionalBiFunction - Arc-based Conditional BiFunction

@@ -8,22 +8,19 @@
 
 //! Unit tests for StatefulConsumer types
 
-use qubit_function::{
-    ArcConsumer,
-    ArcStatefulConsumer,
-    BoxConsumer,
-    BoxStatefulConsumer,
-    Consumer,
-    RcConsumer,
-    RcStatefulConsumer,
-    StatefulConsumer,
-};
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+use std::sync::Mutex;
+
+use qubit_function::ArcConsumer;
+use qubit_function::ArcStatefulConsumer;
+use qubit_function::BoxConsumer;
+use qubit_function::BoxStatefulConsumer;
+use qubit_function::Consumer;
+use qubit_function::RcConsumer;
+use qubit_function::RcStatefulConsumer;
+use qubit_function::StatefulConsumer;
 
 // ============================================================================
 // BoxConsumer Tests
@@ -31,12 +28,10 @@ use std::sync::{
 
 #[cfg(test)]
 mod test_conversions {
-    use super::{
-        Rc,
-        RcStatefulConsumer,
-        RefCell,
-        StatefulConsumer,
-    };
+    use super::Rc;
+    use super::RcStatefulConsumer;
+    use super::RefCell;
+    use super::StatefulConsumer;
 
     // RcConsumer cannot be converted to ArcConsumer because Rc is not Send
 

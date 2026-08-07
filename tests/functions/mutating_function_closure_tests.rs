@@ -8,13 +8,11 @@
 
 //! Unit tests for MutatingFunction types (stateless Fn(&mut T) -> R)
 
-use qubit_function::{
-    ArcMutatingFunction,
-    BoxMutatingFunction,
-    MutatingFunction,
-    MutatingFunctionOnce,
-    RcMutatingFunction,
-};
+use qubit_function::ArcMutatingFunction;
+use qubit_function::BoxMutatingFunction;
+use qubit_function::MutatingFunction;
+use qubit_function::MutatingFunctionOnce;
+use qubit_function::RcMutatingFunction;
 
 // ============================================================================
 // BoxMutatingFunction Tests
@@ -53,10 +51,8 @@ impl Clone for TestMutatingFunction {
 
 #[cfg(test)]
 mod test_closure {
-    use super::{
-        MutatingFunction,
-        MutatingFunctionOnce,
-    };
+    use super::MutatingFunction;
+    use super::MutatingFunctionOnce;
 
     #[test]
     fn test_closure_implements_trait() {

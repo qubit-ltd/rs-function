@@ -7,15 +7,13 @@
 // =============================================================================
 //! Defines the `ArcConditionalMutatingFunction` public type.
 
-use {
-    crate::ArcMutatingFunction,
-    crate::ArcPredicate,
-    crate::MutatingFunction,
-    crate::Predicate,
-    crate::functions::macros::impl_conditional_function_clone,
-    crate::functions::macros::impl_conditional_function_debug_display,
-    crate::functions::macros::impl_shared_conditional_function,
-};
+use crate::ArcMutatingFunction;
+use crate::ArcPredicate;
+use crate::MutatingFunction;
+use crate::Predicate;
+use crate::functions::macros::impl_conditional_function_clone;
+use crate::functions::macros::impl_conditional_function_debug_display;
+use crate::functions::macros::impl_shared_conditional_function;
 
 // ============================================================================
 // ArcConditionalMutatingFunction - Arc-based Conditional Mutating Function

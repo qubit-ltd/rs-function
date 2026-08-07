@@ -8,17 +8,16 @@
 //! Defines the `ArcStatefulPredicate` public type.
 
 use std::ops::Not;
+use std::sync::Arc;
 
-use {
-    super::ALWAYS_FALSE_NAME,
-    super::ALWAYS_TRUE_NAME,
-    crate::StatefulPredicate,
-    crate::predicates::macros::impl_predicate_clone,
-    crate::predicates::macros::impl_predicate_common_methods,
-    crate::predicates::macros::impl_predicate_debug_display,
-    parking_lot::Mutex,
-    std::sync::Arc,
-};
+use parking_lot::Mutex;
+
+use super::ALWAYS_FALSE_NAME;
+use super::ALWAYS_TRUE_NAME;
+use crate::StatefulPredicate;
+use crate::predicates::macros::impl_predicate_clone;
+use crate::predicates::macros::impl_predicate_common_methods;
+use crate::predicates::macros::impl_predicate_debug_display;
 
 /// The erased callback representation used by this implementation.
 type ArcStatefulPredicateFn<T> =

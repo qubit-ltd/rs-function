@@ -12,11 +12,9 @@
 
 #[cfg(test)]
 mod edge_cases_tests {
-    use qubit_function::{
-        ArcTransformer,
-        BoxTransformer,
-        Transformer,
-    };
+    use qubit_function::ArcTransformer;
+    use qubit_function::BoxTransformer;
+    use qubit_function::Transformer;
 
     #[test]
     fn test_identity_composition() {

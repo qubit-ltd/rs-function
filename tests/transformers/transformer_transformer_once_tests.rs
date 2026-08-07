@@ -12,22 +12,19 @@
 
 #[cfg(test)]
 mod transformer_once_tests {
-    use qubit_function::{
-        ArcTransformer,
-        BoxTransformer,
-        RcTransformer,
-        Transformer,
-    };
     use std::sync::Arc;
     use std::thread;
+
+    use qubit_function::ArcTransformer;
+    use qubit_function::BoxTransformer;
+    use qubit_function::RcTransformer;
+    use qubit_function::Transformer;
 
     // BoxTransformer TransformerOnce Tests
     #[cfg(test)]
     mod box_transformer_once_tests {
-        use super::{
-            BoxTransformer,
-            Transformer,
-        };
+        use super::BoxTransformer;
+        use super::Transformer;
 
         #[test]
         fn test_box_transformer_apply() {
@@ -70,10 +67,8 @@ mod transformer_once_tests {
     // RcTransformer TransformerOnce Tests
     #[cfg(test)]
     mod rc_transformer_once_tests {
-        use super::{
-            RcTransformer,
-            Transformer,
-        };
+        use super::RcTransformer;
+        use super::Transformer;
 
         #[test]
         fn test_rc_transformer_apply() {
@@ -129,12 +124,10 @@ mod transformer_once_tests {
     // ArcTransformer TransformerOnce Tests
     #[cfg(test)]
     mod arc_transformer_once_tests {
-        use super::{
-            Arc,
-            ArcTransformer,
-            Transformer,
-            thread,
-        };
+        use super::Arc;
+        use super::ArcTransformer;
+        use super::Transformer;
+        use super::thread;
 
         #[test]
         fn test_arc_transformer_apply() {
@@ -207,12 +200,10 @@ mod transformer_once_tests {
     // Cross-type TransformerOnce Tests
     #[cfg(test)]
     mod cross_type_transformer_once_tests {
-        use super::{
-            ArcTransformer,
-            BoxTransformer,
-            RcTransformer,
-            Transformer,
-        };
+        use super::ArcTransformer;
+        use super::BoxTransformer;
+        use super::RcTransformer;
+        use super::Transformer;
 
         #[test]
         fn test_all_types_apply() {

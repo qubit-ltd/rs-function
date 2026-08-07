@@ -7,22 +7,14 @@
 // =============================================================================
 //! Defines the `RcTester` public type.
 
-use std::{
-    fmt,
-    ops::Not,
-};
+use std::fmt;
+use std::ops::Not;
+use std::rc::Rc;
 
-use {
-    crate::{
-        Tester,
-        internal::CallbackMetadata,
-        macros::{
-            impl_common_name_methods,
-            impl_common_new_methods,
-        },
-    },
-    std::rc::Rc,
-};
+use crate::Tester;
+use crate::internal::CallbackMetadata;
+use crate::macros::impl_common_name_methods;
+use crate::macros::impl_common_new_methods;
 
 // ============================================================================
 // RcTester: Single-Threaded Shared Ownership Implementation

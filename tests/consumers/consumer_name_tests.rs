@@ -8,27 +8,24 @@
 
 //! Tests for Consumer types
 
-use qubit_function::{
-    ArcConsumer,
-    BoxConsumer,
-    Consumer,
-    RcConsumer,
-};
 use std::rc::Rc;
 use std::sync::Arc;
 
+use qubit_function::ArcConsumer;
+use qubit_function::BoxConsumer;
+use qubit_function::Consumer;
+use qubit_function::RcConsumer;
+
 #[cfg(test)]
 mod name_tests {
-    use super::{
-        ArcConsumer,
-        BoxConsumer,
-        Consumer,
-        RcConsumer,
-    };
+    use super::ArcConsumer;
+    use super::BoxConsumer;
+    use super::Consumer;
+    use super::RcConsumer;
 
     #[test]
     fn test_box_consumer_name() {
-        let mut consumer = qubit_function::BoxConsumer::new(|x: &i32| {
+        let mut consumer = BoxConsumer::new(|x: &i32| {
             std::hint::black_box(x);
         });
         assert_eq!(consumer.name(), None);
@@ -77,7 +74,7 @@ mod name_tests {
 
     #[test]
     fn test_box_consumer_name_with_accept() {
-        let mut consumer = qubit_function::BoxConsumer::new(|_x: &i32| {});
+        let mut consumer = BoxConsumer::new(|_x: &i32| {});
         consumer.set_name("test_consumer");
         assert_eq!(consumer.name(), Some("test_consumer"));
         consumer.accept(&1);

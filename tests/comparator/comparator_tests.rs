@@ -6,13 +6,12 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 #![cfg(feature = "full")]
-use qubit_function::comparator::{
-    ArcComparator,
-    BoxComparator,
-    Comparator,
-    RcComparator,
-};
 use std::cmp::Ordering;
+
+use qubit_function::comparator::ArcComparator;
+use qubit_function::comparator::BoxComparator;
+use qubit_function::comparator::Comparator;
+use qubit_function::comparator::RcComparator;
 
 #[test]
 fn test_comparator_default_conversions_allow_relaxed_generic_types() {
@@ -45,18 +44,15 @@ fn test_comparator_default_conversions_allow_relaxed_generic_types() {
     let comparator = BorrowedRcComparator;
 
     assert_eq!(
-        qubit_function::comparator::BoxComparator::new(comparator.clone())
-            .compare(&left, &right),
+        BoxComparator::new(comparator.clone()).compare(&left, &right),
         Ordering::Less
     );
     assert_eq!(
-        qubit_function::comparator::RcComparator::new(comparator.clone())
-            .compare(&left, &right),
+        RcComparator::new(comparator.clone()).compare(&left, &right),
         Ordering::Less
     );
     assert_eq!(
-        qubit_function::comparator::ArcComparator::new(comparator)
-            .compare(&left, &right),
+        ArcComparator::new(comparator).compare(&left, &right),
         Ordering::Less
     );
 }

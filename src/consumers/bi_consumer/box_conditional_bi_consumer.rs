@@ -7,14 +7,12 @@
 // =============================================================================
 //! Defines the `BoxConditionalBiConsumer` public type.
 
-use {
-    crate::BiConsumer,
-    crate::BiPredicate,
-    crate::BoxBiConsumer,
-    crate::BoxBiPredicate,
-    crate::consumers::macros::impl_box_conditional_consumer,
-    crate::consumers::macros::impl_conditional_consumer_debug_display,
-};
+use crate::BiConsumer;
+use crate::BiPredicate;
+use crate::BoxBiConsumer;
+use crate::BoxBiPredicate;
+use crate::consumers::macros::impl_box_conditional_consumer;
+use crate::consumers::macros::impl_conditional_consumer_debug_display;
 
 // =======================================================================
 // 7. BoxConditionalBiConsumer - Box-based Conditional BiConsumer

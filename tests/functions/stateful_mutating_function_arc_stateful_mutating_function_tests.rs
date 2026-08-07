@@ -9,15 +9,14 @@
 //! Unit tests for StatefulMutatingFunction types (stateful FnMut(&mut T) ->
 //! R)
 
-use qubit_function::{
-    ArcStatefulMutatingFunction,
-    BoxStatefulMutatingFunction,
-    MutatingFunctionOnce,
-    RcStatefulMutatingFunction,
-    StatefulMutatingFunction,
-};
 use std::cell::RefCell;
 use std::rc::Rc;
+
+use qubit_function::ArcStatefulMutatingFunction;
+use qubit_function::BoxStatefulMutatingFunction;
+use qubit_function::MutatingFunctionOnce;
+use qubit_function::RcStatefulMutatingFunction;
+use qubit_function::StatefulMutatingFunction;
 
 // ============================================================================
 // StatefulMutatingFunction Default Implementation Tests
@@ -56,11 +55,10 @@ impl Clone for TestStatefulMutatingFunction {
 
 #[cfg(test)]
 mod test_arc_stateful_mutating_function {
-    use super::{
-        ArcStatefulMutatingFunction,
-        StatefulMutatingFunction,
-    };
     use std::thread;
+
+    use super::ArcStatefulMutatingFunction;
+    use super::StatefulMutatingFunction;
 
     #[test]
     fn test_new() {

@@ -7,21 +7,19 @@
 // =============================================================================
 //! Defines the `ArcStatefulBiTransformer` public type.
 
-use {
-    crate::ArcConditionalStatefulBiTransformer,
-    crate::BiPredicate,
-    crate::StatefulTransformer,
-};
-use {
-    crate::StatefulBiTransformer,
-    crate::transformers::macros::impl_shared_transformer_methods,
-    crate::transformers::macros::impl_transformer_clone,
-    crate::transformers::macros::impl_transformer_common_methods,
-    crate::transformers::macros::impl_transformer_constant_method,
-    crate::transformers::macros::impl_transformer_debug_display,
-    parking_lot::Mutex,
-    std::sync::Arc,
-};
+use std::sync::Arc;
+
+use parking_lot::Mutex;
+
+use crate::ArcConditionalStatefulBiTransformer;
+use crate::BiPredicate;
+use crate::StatefulBiTransformer;
+use crate::StatefulTransformer;
+use crate::transformers::macros::impl_shared_transformer_methods;
+use crate::transformers::macros::impl_transformer_clone;
+use crate::transformers::macros::impl_transformer_common_methods;
+use crate::transformers::macros::impl_transformer_constant_method;
+use crate::transformers::macros::impl_transformer_debug_display;
 
 // ============================================================================
 // ArcStatefulBiTransformer - Arc<Mutex<dyn FnMut(T, U) -> R + Send>>

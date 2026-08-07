@@ -10,10 +10,8 @@
 //! Tests the complete functionality of MutatorOnce trait and its
 //! implementations.
 
-use qubit_function::{
-    BoxMutatorOnce,
-    MutatorOnce,
-};
+use qubit_function::BoxMutatorOnce;
+use qubit_function::MutatorOnce;
 
 // Test closures specialization and default behaviors
 
@@ -199,10 +197,8 @@ fn test_box_conditional_mutator_once_or_else() {
 
 #[cfg(test)]
 mod test_box_conditional_mutator_once_debug_display {
-    use super::{
-        BoxMutatorOnce,
-        MutatorOnce,
-    };
+    use super::BoxMutatorOnce;
+    use super::MutatorOnce;
 
     #[test]
     fn test_box_conditional_mutator_once_debug() {

@@ -8,17 +8,15 @@
 
 //! Comprehensive tests for Function trait and its implementations
 
-use qubit_function::{
-    ArcFunction,
-    ArcPredicate,
-    BoxFunction,
-    BoxPredicate,
-    Function,
-    FunctionOnce,
-    Predicate,
-    RcFunction,
-    RcPredicate,
-};
+use qubit_function::ArcFunction;
+use qubit_function::ArcPredicate;
+use qubit_function::BoxFunction;
+use qubit_function::BoxPredicate;
+use qubit_function::Function;
+use qubit_function::FunctionOnce;
+use qubit_function::Predicate;
+use qubit_function::RcFunction;
+use qubit_function::RcPredicate;
 
 // ============================================================================
 // Function Trait Tests - Core Functionality

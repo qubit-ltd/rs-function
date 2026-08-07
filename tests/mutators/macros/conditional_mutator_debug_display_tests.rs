@@ -6,10 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    BoxMutator,
-    Mutator,
-};
+use qubit_function::BoxMutator;
+use qubit_function::Mutator;
 
 #[test]
 fn test_conditional_mutator_debug_display_observable_behavior() {

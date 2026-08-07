@@ -8,21 +8,19 @@
 
 //! Tests for Consumer types
 
-use qubit_function::{
-    ArcConsumer,
-    BoxConsumer,
-    Consumer,
-    RcConsumer,
-};
 use std::rc::Rc;
 use std::sync::Arc;
 
+use qubit_function::ArcConsumer;
+use qubit_function::BoxConsumer;
+use qubit_function::Consumer;
+use qubit_function::RcConsumer;
+
 #[cfg(test)]
 mod closure_tests {
-    use super::{
-        Arc,
-        Consumer,
-    };
+    use super::Arc;
+    use super::BoxConsumer;
+    use super::Consumer;
 
     #[test]
     fn test_closure_accept() {
@@ -38,7 +36,7 @@ mod closure_tests {
         let c1 = counter.clone();
         let c2 = counter.clone();
 
-        let chained = qubit_function::BoxConsumer::new(move |_x: &i32| {
+        let chained = BoxConsumer::new(move |_x: &i32| {
             *c1.lock().expect("mutex should not be poisoned") += 1;
         })
         .and_then(move |_x: &i32| {
@@ -56,7 +54,7 @@ mod closure_tests {
         let c2 = counter.clone();
         let c3 = counter.clone();
 
-        let chained = qubit_function::BoxConsumer::new(move |_x: &i32| {
+        let chained = BoxConsumer::new(move |_x: &i32| {
             *c1.lock().expect("mutex should not be poisoned") += 1;
         })
         .and_then(move |_x: &i32| {

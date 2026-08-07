@@ -7,15 +7,13 @@
 // =============================================================================
 //! Defines the `RcConditionalStatefulBiConsumer` public type.
 
-use {
-    crate::BiPredicate,
-    crate::RcBiPredicate,
-    crate::RcStatefulBiConsumer,
-    crate::StatefulBiConsumer,
-    crate::consumers::macros::impl_conditional_consumer_clone,
-    crate::consumers::macros::impl_conditional_consumer_debug_display,
-    crate::consumers::macros::impl_shared_conditional_consumer,
-};
+use crate::BiPredicate;
+use crate::RcBiPredicate;
+use crate::RcStatefulBiConsumer;
+use crate::StatefulBiConsumer;
+use crate::consumers::macros::impl_conditional_consumer_clone;
+use crate::consumers::macros::impl_conditional_consumer_debug_display;
+use crate::consumers::macros::impl_shared_conditional_consumer;
 
 // =======================================================================
 // 9. RcConditionalStatefulBiConsumer - Rc-based Conditional BiConsumer

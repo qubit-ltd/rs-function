@@ -7,16 +7,11 @@
 // =============================================================================
 //! Defines the `BoxRunnableWith` public type.
 
-use crate::{
-    functions::macros::impl_function_debug_display,
-    macros::{
-        impl_common_name_methods,
-        impl_common_new_methods,
-    },
-    tasks::runnable_with::RunnableWith,
-};
-
+use crate::functions::macros::impl_function_debug_display;
+use crate::macros::impl_common_name_methods;
+use crate::macros::impl_common_new_methods;
 use crate::tasks::callable_with::BoxCallableWith;
+use crate::tasks::runnable_with::RunnableWith;
 
 /// The erased callback representation used by this implementation.
 type BoxRunnableWithFn<T, E> = Box<dyn FnMut(&mut T) -> Result<(), E> + Send>;

@@ -17,18 +17,15 @@
 //! - Interior mutability patterns
 //! - Type conversions
 
-use qubit_function::{
-    ArcPredicate,
-    BoxPredicate,
-    Predicate,
-    RcPredicate,
-};
 use std::cell::RefCell;
 use std::collections::HashMap;
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+use std::sync::Mutex;
+
+use qubit_function::ArcPredicate;
+use qubit_function::BoxPredicate;
+use qubit_function::Predicate;
+use qubit_function::RcPredicate;
 
 fn main() {
     println!("=== Predicate Usage Examples ===\n");

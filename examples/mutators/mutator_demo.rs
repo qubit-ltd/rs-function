@@ -13,13 +13,12 @@
 //!
 //! Mutator is used to modify values, unlike the non-mutating Consumer.
 
-use qubit_function::{
-    ArcMutator,
-    BoxMutator,
-    Mutator,
-    RcMutator,
-};
 use std::thread;
+
+use qubit_function::ArcMutator;
+use qubit_function::BoxMutator;
+use qubit_function::Mutator;
+use qubit_function::RcMutator;
 
 fn main() {
     println!("=== Mutator Demo ===\n");

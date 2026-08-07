@@ -7,15 +7,13 @@
 // =============================================================================
 //! Defines the `RcConditionalBiTransformer` public type.
 
-use {
-    crate::BiPredicate,
-    crate::BiTransformer,
-    crate::RcBiPredicate,
-    crate::RcBiTransformer,
-    crate::transformers::macros::impl_conditional_transformer_clone,
-    crate::transformers::macros::impl_conditional_transformer_debug_display,
-    crate::transformers::macros::impl_shared_conditional_transformer,
-};
+use crate::BiPredicate;
+use crate::BiTransformer;
+use crate::RcBiPredicate;
+use crate::RcBiTransformer;
+use crate::transformers::macros::impl_conditional_transformer_clone;
+use crate::transformers::macros::impl_conditional_transformer_debug_display;
+use crate::transformers::macros::impl_shared_conditional_transformer;
 
 // ============================================================================
 // RcConditionalBiTransformer - Rc-based Conditional BiTransformer

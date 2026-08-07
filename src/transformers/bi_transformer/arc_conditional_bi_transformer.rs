@@ -7,15 +7,13 @@
 // =============================================================================
 //! Defines the `ArcConditionalBiTransformer` public type.
 
-use {
-    crate::ArcBiPredicate,
-    crate::ArcBiTransformer,
-    crate::BiPredicate,
-    crate::BiTransformer,
-    crate::transformers::macros::impl_conditional_transformer_clone,
-    crate::transformers::macros::impl_conditional_transformer_debug_display,
-    crate::transformers::macros::impl_shared_conditional_transformer,
-};
+use crate::ArcBiPredicate;
+use crate::ArcBiTransformer;
+use crate::BiPredicate;
+use crate::BiTransformer;
+use crate::transformers::macros::impl_conditional_transformer_clone;
+use crate::transformers::macros::impl_conditional_transformer_debug_display;
+use crate::transformers::macros::impl_shared_conditional_transformer;
 
 // ============================================================================
 // ArcConditionalBiTransformer - Arc-based Conditional BiTransformer

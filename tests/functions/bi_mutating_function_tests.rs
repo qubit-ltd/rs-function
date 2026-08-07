@@ -8,15 +8,13 @@
 
 //! Comprehensive tests for BiMutatingFunction trait and its implementations
 
-use qubit_function::{
-    ArcBiMutatingFunction,
-    ArcBiPredicate,
-    BiMutatingFunction,
-    BiMutatingFunctionOnce,
-    BoxBiMutatingFunction,
-    RcBiMutatingFunction,
-    RcBiPredicate,
-};
+use qubit_function::ArcBiMutatingFunction;
+use qubit_function::ArcBiPredicate;
+use qubit_function::BiMutatingFunction;
+use qubit_function::BiMutatingFunctionOnce;
+use qubit_function::BoxBiMutatingFunction;
+use qubit_function::RcBiMutatingFunction;
+use qubit_function::RcBiPredicate;
 
 // ============================================================================
 // Helper Functions and Data Structures

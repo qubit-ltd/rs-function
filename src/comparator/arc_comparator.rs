@@ -7,16 +7,13 @@
 // =============================================================================
 //! Defines the `ArcComparator` public type.
 
-use {
-    crate::{
-        Comparator,
-        internal::CallbackMetadata,
-        macros::impl_common_name_methods,
-    },
-    std::cmp::Ordering,
-    std::fmt,
-    std::sync::Arc,
-};
+use std::cmp::Ordering;
+use std::fmt;
+use std::sync::Arc;
+
+use crate::Comparator;
+use crate::internal::CallbackMetadata;
+use crate::macros::impl_common_name_methods;
 
 /// The erased callback representation used by this implementation.
 type ArcComparatorFn<T> = Arc<dyn Fn(&T, &T) -> Ordering + Send + Sync>;

@@ -7,15 +7,11 @@
 // =============================================================================
 //! Defines the `LocalBoxCallable` public type.
 
-use crate::{
-    functions::macros::impl_function_debug_display,
-    macros::{
-        impl_common_name_methods,
-        impl_common_new_methods,
-    },
-    suppliers::supplier::Supplier,
-    tasks::callable::Callable,
-};
+use crate::functions::macros::impl_function_debug_display;
+use crate::macros::impl_common_name_methods;
+use crate::macros::impl_common_new_methods;
+use crate::suppliers::supplier::Supplier;
+use crate::tasks::callable::Callable;
 
 /// Local box-based callable.
 ///

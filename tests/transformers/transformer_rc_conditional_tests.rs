@@ -12,10 +12,8 @@
 
 #[cfg(test)]
 mod rc_conditional_tests {
-    use qubit_function::{
-        RcTransformer,
-        Transformer,
-    };
+    use qubit_function::RcTransformer;
+    use qubit_function::Transformer;
 
     #[test]
     fn test_when_or_else() {

@@ -6,10 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    BoxStatefulPredicate,
-    StatefulPredicate,
-};
+use qubit_function::BoxStatefulPredicate;
+use qubit_function::StatefulPredicate;
 
 #[test]
 fn test_box_stateful_predicate_observable_behavior() {

@@ -6,14 +6,13 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    ArcTransformer,
-    BoxTransformer,
-    RcTransformer,
-    Transformer,
-};
 use std::collections::HashMap;
 use std::thread;
+
+use qubit_function::ArcTransformer;
+use qubit_function::BoxTransformer;
+use qubit_function::RcTransformer;
+use qubit_function::Transformer;
 
 fn main() {
     println!("=== Transformer Demo - Type Transformation (consumes T) ===\n");

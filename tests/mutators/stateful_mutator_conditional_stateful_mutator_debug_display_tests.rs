@@ -8,13 +8,11 @@
 
 //! Unit tests for StatefulMutator types
 
-use qubit_function::{
-    ArcStatefulMutator,
-    BoxStatefulMutator,
-    MutatorOnce,
-    RcStatefulMutator,
-    StatefulMutator,
-};
+use qubit_function::ArcStatefulMutator;
+use qubit_function::BoxStatefulMutator;
+use qubit_function::MutatorOnce;
+use qubit_function::RcStatefulMutator;
+use qubit_function::StatefulMutator;
 
 // ============================================================================
 // BoxStatefulMutator Tests
@@ -22,11 +20,9 @@ use qubit_function::{
 
 #[cfg(test)]
 mod test_conditional_stateful_mutator_debug_display {
-    use super::{
-        ArcStatefulMutator,
-        BoxStatefulMutator,
-        RcStatefulMutator,
-    };
+    use super::ArcStatefulMutator;
+    use super::BoxStatefulMutator;
+    use super::RcStatefulMutator;
 
     #[test]
     fn test_box_conditional_stateful_mutator_debug() {

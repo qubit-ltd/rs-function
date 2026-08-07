@@ -8,36 +8,28 @@
 // qubit-style: allow explicit-imports -- fixtures verify wildcard-import
 // behavior.
 
-use std::{
-    fmt::{
-        Debug,
-        Display,
-    },
-    fs,
-    path::PathBuf,
-    process::{
-        Command,
-        Output,
-    },
-};
+use std::fmt::Debug;
+use std::fmt::Display;
+use std::fs;
+use std::path::PathBuf;
+use std::process::Command;
+use std::process::Output;
 
 #[cfg(feature = "stateful")]
-use qubit_function::{
-    ArcCallable,
-    ArcCallableWith,
-    ArcRunnableWith,
-};
-use qubit_function::{
-    BoxCallable,
-    BoxCallableWith,
-    BoxRunnableWith,
-};
+use qubit_function::ArcCallable;
+#[cfg(feature = "stateful")]
+use qubit_function::ArcCallableWith;
+#[cfg(feature = "stateful")]
+use qubit_function::ArcRunnableWith;
+use qubit_function::BoxCallable;
+use qubit_function::BoxCallableWith;
+use qubit_function::BoxRunnableWith;
 #[cfg(feature = "rc")]
-use qubit_function::{
-    RcCallable,
-    RcCallableWith,
-    RcRunnableWith,
-};
+use qubit_function::RcCallable;
+#[cfg(feature = "rc")]
+use qubit_function::RcCallableWith;
+#[cfg(feature = "rc")]
+use qubit_function::RcRunnableWith;
 
 /// Asserts at compile time that T supports both formatting traits.
 fn assert_debug_and_display<T: Debug + Display>() {}
@@ -355,6 +347,7 @@ fn test_task_box_rejects_non_send_constructor_capture() {
         &[],
         r#"
 use std::rc::Rc;
+
 use qubit_function::BoxCallable;
 
 fn main() {
@@ -373,6 +366,7 @@ fn test_task_box_rejects_non_send_composition_capture() {
         &[],
         r#"
 use std::rc::Rc;
+
 use qubit_function::BoxCallable;
 
 fn main() {
@@ -392,7 +386,9 @@ fn test_local_task_box_accepts_non_send_composition_capture() {
         &[],
         r#"
 use std::rc::Rc;
-use qubit_function::{Callable, LocalBoxCallable};
+
+use qubit_function::Callable;
+use qubit_function::LocalBoxCallable;
 
 fn main() {
     let suffix = Rc::new(String::from("!"));
@@ -412,6 +408,7 @@ fn test_stateless_arc_rejects_send_non_sync_capture() {
         &[],
         r#"
 use std::cell::Cell;
+
 use qubit_function::ArcFunction;
 
 fn main() {
@@ -433,7 +430,9 @@ fn test_stateful_arc_accepts_send_non_sync_capture() {
         &["stateful"],
         r#"
 use std::cell::Cell;
-use qubit_function::{ArcStatefulSupplier, StatefulSupplier};
+
+use qubit_function::ArcStatefulSupplier;
+use qubit_function::StatefulSupplier;
 
 fn main() {
     let value = Cell::new(1);

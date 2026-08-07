@@ -7,20 +7,17 @@
 // =============================================================================
 //! Defines the `RcStatefulTransformer` public type.
 
-use {
-    crate::Predicate,
-    crate::RcConditionalStatefulTransformer,
-};
-use {
-    crate::StatefulTransformer,
-    crate::transformers::macros::impl_shared_transformer_methods,
-    crate::transformers::macros::impl_transformer_clone,
-    crate::transformers::macros::impl_transformer_common_methods,
-    crate::transformers::macros::impl_transformer_constant_method,
-    crate::transformers::macros::impl_transformer_debug_display,
-    std::cell::RefCell,
-    std::rc::Rc,
-};
+use std::cell::RefCell;
+use std::rc::Rc;
+
+use crate::Predicate;
+use crate::RcConditionalStatefulTransformer;
+use crate::StatefulTransformer;
+use crate::transformers::macros::impl_shared_transformer_methods;
+use crate::transformers::macros::impl_transformer_clone;
+use crate::transformers::macros::impl_transformer_common_methods;
+use crate::transformers::macros::impl_transformer_constant_method;
+use crate::transformers::macros::impl_transformer_debug_display;
 
 // ============================================================================
 // RcStatefulTransformer - Rc<RefCell<dyn FnMut(T) -> R>>

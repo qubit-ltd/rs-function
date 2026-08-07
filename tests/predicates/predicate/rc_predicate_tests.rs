@@ -6,10 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    Predicate,
-    RcPredicate,
-};
+use qubit_function::Predicate;
+use qubit_function::RcPredicate;
 
 #[test]
 fn test_rc_predicate_observable_behavior() {

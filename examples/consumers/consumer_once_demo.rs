@@ -9,14 +9,11 @@
 //!
 //! Demonstrates the usage of ConsumerOnce trait and its implementations.
 
-use qubit_function::{
-    BoxConsumerOnce,
-    ConsumerOnce,
-};
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+use std::sync::Mutex;
+
+use qubit_function::BoxConsumerOnce;
+use qubit_function::ConsumerOnce;
 
 fn main() {
     println!("=== ConsumerOnce Demo ===\n");

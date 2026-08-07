@@ -5,12 +5,10 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-use qubit_function::{
-    ArcPredicate,
-    BoxPredicate,
-    Predicate,
-    RcPredicate,
-};
+use qubit_function::ArcPredicate;
+use qubit_function::BoxPredicate;
+use qubit_function::Predicate;
+use qubit_function::RcPredicate;
 
 fn main() {
     println!("=== BoxPredicate always_true/always_false Demo ===\n");

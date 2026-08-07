@@ -7,16 +7,12 @@
 // =============================================================================
 //! Defines the `BoxStatefulConsumer` public type.
 
-use {
-    crate::BoxConditionalStatefulConsumer,
-    crate::Predicate,
-};
-use {
-    crate::StatefulConsumer,
-    crate::consumers::macros::impl_box_consumer_methods,
-    crate::consumers::macros::impl_consumer_common_methods,
-    crate::consumers::macros::impl_consumer_debug_display,
-};
+use crate::BoxConditionalStatefulConsumer;
+use crate::Predicate;
+use crate::StatefulConsumer;
+use crate::consumers::macros::impl_box_consumer_methods;
+use crate::consumers::macros::impl_consumer_common_methods;
+use crate::consumers::macros::impl_consumer_debug_display;
 
 // ============================================================================
 // 2. BoxStatefulConsumer - Single Ownership Implementation

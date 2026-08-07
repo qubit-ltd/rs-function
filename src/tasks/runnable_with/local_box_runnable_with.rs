@@ -7,20 +7,12 @@
 // =============================================================================
 //! Defines the `LocalBoxRunnableWith` public type.
 
-use crate::{
-    functions::macros::impl_function_debug_display,
-    macros::{
-        impl_common_name_methods,
-        impl_common_new_methods,
-    },
-    tasks::{
-        callable_with::{
-            CallableWith,
-            LocalBoxCallableWith,
-        },
-        runnable_with::RunnableWith,
-    },
-};
+use crate::functions::macros::impl_function_debug_display;
+use crate::macros::impl_common_name_methods;
+use crate::macros::impl_common_new_methods;
+use crate::tasks::callable_with::CallableWith;
+use crate::tasks::callable_with::LocalBoxCallableWith;
+use crate::tasks::runnable_with::RunnableWith;
 
 /// The erased callback representation used by this implementation.
 type LocalBoxRunnableWithFn<T, E> = Box<dyn FnMut(&mut T) -> Result<(), E>>;

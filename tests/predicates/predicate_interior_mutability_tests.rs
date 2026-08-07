@@ -8,17 +8,14 @@
 
 //! Unit tests for the predicate module.
 
-use qubit_function::predicates::{
-    ArcPredicate,
-    BoxPredicate,
-    Predicate,
-    RcPredicate,
-};
 use std::cell::RefCell;
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+use std::sync::Mutex;
+
+use qubit_function::predicates::ArcPredicate;
+use qubit_function::predicates::BoxPredicate;
+use qubit_function::predicates::Predicate;
+use qubit_function::predicates::RcPredicate;
 
 struct PositivePredicate;
 
@@ -30,15 +27,13 @@ impl Predicate<i32> for PositivePredicate {
 
 #[cfg(test)]
 mod interior_mutability_tests {
-    use super::{
-        Arc,
-        ArcPredicate,
-        BoxPredicate,
-        Mutex,
-        Predicate,
-        RcPredicate,
-        RefCell,
-    };
+    use super::Arc;
+    use super::ArcPredicate;
+    use super::BoxPredicate;
+    use super::Mutex;
+    use super::Predicate;
+    use super::RcPredicate;
+    use super::RefCell;
 
     #[test]
     fn test_box_predicate_with_refcell_counter() {

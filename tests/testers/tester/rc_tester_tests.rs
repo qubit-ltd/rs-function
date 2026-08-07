@@ -6,10 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::testers::tester::{
-    RcTester,
-    Tester,
-};
+use qubit_function::testers::tester::RcTester;
+use qubit_function::testers::tester::Tester;
 
 struct RcAlwaysTrue;
 

@@ -6,21 +6,19 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    ArcCallable,
-    BoxCallable,
-    BoxCallableOnce,
-    BoxCallableWith,
-    BoxRunnable,
-    BoxRunnableOnce,
-    BoxRunnableWith,
-    Callable,
-    CallableOnce,
-    CallableWith,
-    Runnable,
-    RunnableOnce,
-    RunnableWith,
-};
+use qubit_function::ArcCallable;
+use qubit_function::BoxCallable;
+use qubit_function::BoxCallableOnce;
+use qubit_function::BoxCallableWith;
+use qubit_function::BoxRunnable;
+use qubit_function::BoxRunnableOnce;
+use qubit_function::BoxRunnableWith;
+use qubit_function::Callable;
+use qubit_function::CallableOnce;
+use qubit_function::CallableWith;
+use qubit_function::Runnable;
+use qubit_function::RunnableOnce;
+use qubit_function::RunnableWith;
 
 fn main() {
     println!("=== Task Demo ===\n");

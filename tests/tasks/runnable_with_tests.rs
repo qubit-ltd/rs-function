@@ -8,26 +8,18 @@
 
 //! Unit tests for runnable-with task types.
 
-use std::{
-    cell::Cell,
-    io,
-    rc::Rc,
-    sync::{
-        Arc,
-        atomic::{
-            AtomicUsize,
-            Ordering,
-        },
-    },
-};
+use std::cell::Cell;
+use std::io;
+use std::rc::Rc;
+use std::sync::Arc;
+use std::sync::atomic::AtomicUsize;
+use std::sync::atomic::Ordering;
 
-use qubit_function::{
-    ArcRunnableWith,
-    BoxRunnableWith,
-    CallableWith,
-    RcRunnableWith,
-    RunnableWith,
-};
+use qubit_function::ArcRunnableWith;
+use qubit_function::BoxRunnableWith;
+use qubit_function::CallableWith;
+use qubit_function::RcRunnableWith;
+use qubit_function::RunnableWith;
 
 #[derive(Clone)]
 struct AddRunnableWith {

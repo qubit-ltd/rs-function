@@ -7,15 +7,13 @@
 // =============================================================================
 //! Defines the `ArcConditionalFunction` public type.
 
-use {
-    crate::ArcFunction,
-    crate::ArcPredicate,
-    crate::Function,
-    crate::Predicate,
-    crate::functions::macros::impl_conditional_function_clone,
-    crate::functions::macros::impl_conditional_function_debug_display,
-    crate::functions::macros::impl_shared_conditional_function,
-};
+use crate::ArcFunction;
+use crate::ArcPredicate;
+use crate::Function;
+use crate::Predicate;
+use crate::functions::macros::impl_conditional_function_clone;
+use crate::functions::macros::impl_conditional_function_debug_display;
+use crate::functions::macros::impl_shared_conditional_function;
 
 // ============================================================================
 // ArcConditionalFunction - Arc-based Conditional Function

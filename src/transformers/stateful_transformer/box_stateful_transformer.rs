@@ -7,17 +7,13 @@
 // =============================================================================
 //! Defines the `BoxStatefulTransformer` public type.
 
-use {
-    crate::BoxConditionalStatefulTransformer,
-    crate::Predicate,
-};
-use {
-    crate::StatefulTransformer,
-    crate::transformers::macros::impl_box_transformer_methods,
-    crate::transformers::macros::impl_transformer_common_methods,
-    crate::transformers::macros::impl_transformer_constant_method,
-    crate::transformers::macros::impl_transformer_debug_display,
-};
+use crate::BoxConditionalStatefulTransformer;
+use crate::Predicate;
+use crate::StatefulTransformer;
+use crate::transformers::macros::impl_box_transformer_methods;
+use crate::transformers::macros::impl_transformer_common_methods;
+use crate::transformers::macros::impl_transformer_constant_method;
+use crate::transformers::macros::impl_transformer_debug_display;
 
 // ============================================================================
 // BoxStatefulTransformer - Box<dyn FnMut(T) -> R>

@@ -7,16 +7,12 @@
 // =============================================================================
 //! Defines the `BoxStatefulBiConsumer` public type.
 
-use {
-    crate::BiPredicate,
-    crate::BoxConditionalStatefulBiConsumer,
-};
-use {
-    crate::StatefulBiConsumer,
-    crate::consumers::macros::impl_box_consumer_methods,
-    crate::consumers::macros::impl_consumer_common_methods,
-    crate::consumers::macros::impl_consumer_debug_display,
-};
+use crate::BiPredicate;
+use crate::BoxConditionalStatefulBiConsumer;
+use crate::StatefulBiConsumer;
+use crate::consumers::macros::impl_box_consumer_methods;
+use crate::consumers::macros::impl_consumer_common_methods;
+use crate::consumers::macros::impl_consumer_debug_display;
 
 /// The erased callback representation used by this implementation.
 type BoxStatefulBiConsumerFn<T, U> = Box<dyn FnMut(&T, &U)>;

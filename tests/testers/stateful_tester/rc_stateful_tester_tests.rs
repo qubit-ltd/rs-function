@@ -6,10 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    RcStatefulTester,
-    StatefulTester,
-};
+use qubit_function::RcStatefulTester;
+use qubit_function::StatefulTester;
 
 #[test]
 fn test_rc_stateful_tester_observable_behavior() {

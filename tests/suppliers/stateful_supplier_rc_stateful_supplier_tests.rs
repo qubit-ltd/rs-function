@@ -8,19 +8,16 @@
 
 //! Unit tests for StatefulSupplier types
 
-use qubit_function::{
-    ArcStatefulSupplier,
-    BoxStatefulSupplier,
-    RcStatefulSupplier,
-    StatefulSupplier,
-};
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+use std::sync::Mutex;
 use std::thread;
+
+use qubit_function::ArcStatefulSupplier;
+use qubit_function::BoxStatefulSupplier;
+use qubit_function::RcStatefulSupplier;
+use qubit_function::StatefulSupplier;
 
 // ==========================================================================
 // StatefulSupplier Trait Tests (for closures)
@@ -28,18 +25,14 @@ use std::thread;
 
 #[cfg(test)]
 mod test_rc_stateful_supplier {
-    use super::{
-        Rc,
-        RcStatefulSupplier,
-        RefCell,
-        StatefulSupplier,
-    };
+    use super::Rc;
+    use super::RcStatefulSupplier;
+    use super::RefCell;
+    use super::StatefulSupplier;
 
     mod test_new {
-        use super::{
-            RcStatefulSupplier,
-            StatefulSupplier,
-        };
+        use super::RcStatefulSupplier;
+        use super::StatefulSupplier;
 
         #[test]
         fn test_creates_stateful_supplier() {
@@ -64,10 +57,8 @@ mod test_rc_stateful_supplier {
     }
 
     mod test_constant {
-        use super::{
-            RcStatefulSupplier,
-            StatefulSupplier,
-        };
+        use super::RcStatefulSupplier;
+        use super::StatefulSupplier;
 
         #[test]
         fn test_returns_same_value() {
@@ -79,12 +70,10 @@ mod test_rc_stateful_supplier {
     }
 
     mod test_get {
-        use super::{
-            Rc,
-            RcStatefulSupplier,
-            RefCell,
-            StatefulSupplier,
-        };
+        use super::Rc;
+        use super::RcStatefulSupplier;
+        use super::RefCell;
+        use super::StatefulSupplier;
 
         #[test]
         fn test_can_be_called_multiple_times() {
@@ -112,12 +101,10 @@ mod test_rc_stateful_supplier {
     }
 
     mod test_clone {
-        use super::{
-            Rc,
-            RcStatefulSupplier,
-            RefCell,
-            StatefulSupplier,
-        };
+        use super::Rc;
+        use super::RcStatefulSupplier;
+        use super::RefCell;
+        use super::StatefulSupplier;
 
         #[test]
         fn test_can_be_cloned() {
@@ -150,12 +137,10 @@ mod test_rc_stateful_supplier {
     }
 
     mod test_map {
-        use super::{
-            Rc,
-            RcStatefulSupplier,
-            RefCell,
-            StatefulSupplier,
-        };
+        use super::Rc;
+        use super::RcStatefulSupplier;
+        use super::RefCell;
+        use super::StatefulSupplier;
 
         #[test]
         fn test_transforms_value() {
@@ -220,12 +205,10 @@ mod test_rc_stateful_supplier {
     }
 
     mod test_filter {
-        use super::{
-            Rc,
-            RcStatefulSupplier,
-            RefCell,
-            StatefulSupplier,
-        };
+        use super::Rc;
+        use super::RcStatefulSupplier;
+        use super::RefCell;
+        use super::StatefulSupplier;
 
         #[test]
         fn test_filters_even_numbers() {
@@ -245,10 +228,8 @@ mod test_rc_stateful_supplier {
     }
 
     mod test_zip {
-        use super::{
-            RcStatefulSupplier,
-            StatefulSupplier,
-        };
+        use super::RcStatefulSupplier;
+        use super::StatefulSupplier;
 
         #[test]
         fn test_combines_two_stateful_suppliers() {
@@ -275,12 +256,10 @@ mod test_rc_stateful_supplier {
     }
 
     mod test_memoize {
-        use super::{
-            Rc,
-            RcStatefulSupplier,
-            RefCell,
-            StatefulSupplier,
-        };
+        use super::Rc;
+        use super::RcStatefulSupplier;
+        use super::RefCell;
+        use super::StatefulSupplier;
 
         #[test]
         fn test_caches_first_value() {

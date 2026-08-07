@@ -8,13 +8,12 @@
 
 #[cfg(test)]
 mod tests {
-    use qubit_function::predicates::{
-        ArcBiPredicate,
-        BiPredicate,
-        BoxBiPredicate,
-        RcBiPredicate,
-    };
     use std::thread;
+
+    use qubit_function::predicates::ArcBiPredicate;
+    use qubit_function::predicates::BiPredicate;
+    use qubit_function::predicates::BoxBiPredicate;
+    use qubit_function::predicates::RcBiPredicate;
 
     // ========================================================================
     // BiPredicate Trait Tests - Test closure and function pointer
@@ -30,13 +29,11 @@ mod tests {
     // ========================================================================
 
     mod generic_constraint_tests {
-        use super::{
-            ArcBiPredicate,
-            BiPredicate,
-            BoxBiPredicate,
-            RcBiPredicate,
-            thread,
-        };
+        use super::ArcBiPredicate;
+        use super::BiPredicate;
+        use super::BoxBiPredicate;
+        use super::RcBiPredicate;
+        use super::thread;
 
         fn filter_pairs<P>(
             pairs: Vec<(i32, i32)>,
@@ -328,10 +325,8 @@ mod tests {
     // ========================================================================
 
     mod edge_case_tests {
-        use super::{
-            BiPredicate,
-            BoxBiPredicate,
-        };
+        use super::BiPredicate;
+        use super::BoxBiPredicate;
 
         #[test]
         fn test_with_zero() {
@@ -412,12 +407,10 @@ mod tests {
     // ========================================================================
 
     mod mixed_type_combination_tests {
-        use super::{
-            ArcBiPredicate,
-            BiPredicate,
-            BoxBiPredicate,
-            RcBiPredicate,
-        };
+        use super::ArcBiPredicate;
+        use super::BiPredicate;
+        use super::BoxBiPredicate;
+        use super::RcBiPredicate;
 
         #[test]
         fn test_box_with_closure() {

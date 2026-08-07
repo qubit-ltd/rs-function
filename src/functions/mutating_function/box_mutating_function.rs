@@ -7,18 +7,14 @@
 // =============================================================================
 //! Defines the `BoxMutatingFunction` public type.
 
-use {
-    crate::BoxConditionalMutatingFunction,
-    crate::Function,
-    crate::Predicate,
-};
-use {
-    crate::MutatingFunction,
-    crate::functions::macros::impl_box_function_methods,
-    crate::functions::macros::impl_function_common_methods,
-    crate::functions::macros::impl_function_debug_display,
-    crate::functions::macros::impl_function_identity_method,
-};
+use crate::BoxConditionalMutatingFunction;
+use crate::Function;
+use crate::MutatingFunction;
+use crate::Predicate;
+use crate::functions::macros::impl_box_function_methods;
+use crate::functions::macros::impl_function_common_methods;
+use crate::functions::macros::impl_function_debug_display;
+use crate::functions::macros::impl_function_identity_method;
 
 // =======================================================================
 // 3. BoxMutatingFunction - Single Ownership Implementation

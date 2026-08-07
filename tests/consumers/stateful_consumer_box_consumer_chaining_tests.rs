@@ -8,22 +8,19 @@
 
 //! Unit tests for StatefulConsumer types
 
-use qubit_function::{
-    ArcConsumer,
-    ArcStatefulConsumer,
-    BoxConsumer,
-    BoxStatefulConsumer,
-    Consumer,
-    RcConsumer,
-    RcStatefulConsumer,
-    StatefulConsumer,
-};
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+use std::sync::Mutex;
+
+use qubit_function::ArcConsumer;
+use qubit_function::ArcStatefulConsumer;
+use qubit_function::BoxConsumer;
+use qubit_function::BoxStatefulConsumer;
+use qubit_function::Consumer;
+use qubit_function::RcConsumer;
+use qubit_function::RcStatefulConsumer;
+use qubit_function::StatefulConsumer;
 
 // ============================================================================
 // BoxConsumer Tests
@@ -31,19 +28,18 @@ use std::sync::{
 
 #[cfg(test)]
 mod test_box_consumer_chaining {
-    use super::{
-        Arc,
-        Consumer,
-        Mutex,
-        StatefulConsumer,
-    };
+    use super::Arc;
+    use super::BoxConsumer;
+    use super::Consumer;
+    use super::Mutex;
+    use super::StatefulConsumer;
 
     #[test]
     fn test_and_then_with_closure() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l1 = log.clone();
         let l2 = log.clone();
-        let chained = qubit_function::BoxConsumer::new(move |x: &i32| {
+        let chained = BoxConsumer::new(move |x: &i32| {
             l1.lock()
                 .expect("mutex should not be poisoned")
                 .push(*x * 2);

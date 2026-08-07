@@ -12,15 +12,13 @@
 
 #[cfg(test)]
 mod tests {
-    use qubit_function::{
-        ArcBiTransformer,
-        ArcTransformer,
-        BiTransformer,
-        BoxBiTransformer,
-        BoxTransformer,
-        RcBiTransformer,
-        RcTransformer,
-    };
+    use qubit_function::ArcBiTransformer;
+    use qubit_function::ArcTransformer;
+    use qubit_function::BiTransformer;
+    use qubit_function::BoxBiTransformer;
+    use qubit_function::BoxTransformer;
+    use qubit_function::RcBiTransformer;
+    use qubit_function::RcTransformer;
 
     // ========================================================================
     // BoxBiTransformer::and_then tests

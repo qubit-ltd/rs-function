@@ -7,21 +7,18 @@
 // =============================================================================
 //! Defines the `RcStatefulFunction` public type.
 
-use {
-    crate::Predicate,
-    crate::RcConditionalStatefulFunction,
-};
-use {
-    crate::StatefulFunction,
-    crate::functions::macros::impl_function_clone,
-    crate::functions::macros::impl_function_common_methods,
-    crate::functions::macros::impl_function_constant_method,
-    crate::functions::macros::impl_function_debug_display,
-    crate::functions::macros::impl_function_identity_method,
-    crate::functions::macros::impl_shared_function_methods,
-    std::cell::RefCell,
-    std::rc::Rc,
-};
+use std::cell::RefCell;
+use std::rc::Rc;
+
+use crate::Predicate;
+use crate::RcConditionalStatefulFunction;
+use crate::StatefulFunction;
+use crate::functions::macros::impl_function_clone;
+use crate::functions::macros::impl_function_common_methods;
+use crate::functions::macros::impl_function_constant_method;
+use crate::functions::macros::impl_function_debug_display;
+use crate::functions::macros::impl_function_identity_method;
+use crate::functions::macros::impl_shared_function_methods;
 
 // ============================================================================
 // RcStatefulFunction - Rc<RefCell<dyn FnMut(&T) -> R>>

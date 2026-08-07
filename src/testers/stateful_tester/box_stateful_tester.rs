@@ -7,21 +7,13 @@
 // =============================================================================
 //! Defines the `BoxStatefulTester` public type.
 
-use std::{
-    fmt,
-    ops::Not,
-};
+use std::fmt;
+use std::ops::Not;
 
-use {
-    super::StatefulTester,
-    crate::{
-        internal::CallbackMetadata,
-        macros::{
-            impl_common_name_methods,
-            impl_common_new_methods,
-        },
-    },
-};
+use super::StatefulTester;
+use crate::internal::CallbackMetadata;
+use crate::macros::impl_common_name_methods;
+use crate::macros::impl_common_new_methods;
 
 /// A single-ownership stateful tester backed by `Box<dyn FnMut() -> bool>`.
 ///

@@ -7,15 +7,13 @@
 // =============================================================================
 //! Defines the `ArcConditionalBiConsumer` public type.
 
-use {
-    crate::ArcBiConsumer,
-    crate::ArcBiPredicate,
-    crate::BiConsumer,
-    crate::BiPredicate,
-    crate::consumers::macros::impl_conditional_consumer_clone,
-    crate::consumers::macros::impl_conditional_consumer_debug_display,
-    crate::consumers::macros::impl_shared_conditional_consumer,
-};
+use crate::ArcBiConsumer;
+use crate::ArcBiPredicate;
+use crate::BiConsumer;
+use crate::BiPredicate;
+use crate::consumers::macros::impl_conditional_consumer_clone;
+use crate::consumers::macros::impl_conditional_consumer_debug_display;
+use crate::consumers::macros::impl_shared_conditional_consumer;
 
 // =======================================================================
 // 8. ArcConditionalBiConsumer - Arc-based Conditional BiConsumer

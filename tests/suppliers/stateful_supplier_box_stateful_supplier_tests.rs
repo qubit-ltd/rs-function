@@ -8,19 +8,16 @@
 
 //! Unit tests for StatefulSupplier types
 
-use qubit_function::{
-    ArcStatefulSupplier,
-    BoxStatefulSupplier,
-    RcStatefulSupplier,
-    StatefulSupplier,
-};
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+use std::sync::Mutex;
 use std::thread;
+
+use qubit_function::ArcStatefulSupplier;
+use qubit_function::BoxStatefulSupplier;
+use qubit_function::RcStatefulSupplier;
+use qubit_function::StatefulSupplier;
 
 // ==========================================================================
 // StatefulSupplier Trait Tests (for closures)
@@ -28,16 +25,12 @@ use std::thread;
 
 #[cfg(test)]
 mod test_box_stateful_supplier {
-    use super::{
-        BoxStatefulSupplier,
-        StatefulSupplier,
-    };
+    use super::BoxStatefulSupplier;
+    use super::StatefulSupplier;
 
     mod test_new {
-        use super::{
-            BoxStatefulSupplier,
-            StatefulSupplier,
-        };
+        use super::BoxStatefulSupplier;
+        use super::StatefulSupplier;
 
         #[test]
         fn test_creates_stateful_supplier() {
@@ -72,10 +65,8 @@ mod test_box_stateful_supplier {
     }
 
     mod test_constant {
-        use super::{
-            BoxStatefulSupplier,
-            StatefulSupplier,
-        };
+        use super::BoxStatefulSupplier;
+        use super::StatefulSupplier;
 
         #[test]
         fn test_returns_same_value() {
@@ -95,10 +86,8 @@ mod test_box_stateful_supplier {
     }
 
     mod test_get {
-        use super::{
-            BoxStatefulSupplier,
-            StatefulSupplier,
-        };
+        use super::BoxStatefulSupplier;
+        use super::StatefulSupplier;
 
         #[test]
         fn test_can_be_called_multiple_times() {
@@ -123,10 +112,8 @@ mod test_box_stateful_supplier {
     }
 
     mod test_map {
-        use super::{
-            BoxStatefulSupplier,
-            StatefulSupplier,
-        };
+        use super::BoxStatefulSupplier;
+        use super::StatefulSupplier;
 
         #[test]
         fn test_transforms_value() {
@@ -174,10 +161,8 @@ mod test_box_stateful_supplier {
     }
 
     mod test_filter {
-        use super::{
-            BoxStatefulSupplier,
-            StatefulSupplier,
-        };
+        use super::BoxStatefulSupplier;
+        use super::StatefulSupplier;
 
         #[test]
         fn test_filters_even_numbers() {
@@ -204,10 +189,8 @@ mod test_box_stateful_supplier {
     }
 
     mod test_zip {
-        use super::{
-            BoxStatefulSupplier,
-            StatefulSupplier,
-        };
+        use super::BoxStatefulSupplier;
+        use super::StatefulSupplier;
 
         #[test]
         fn test_combines_two_stateful_suppliers() {
@@ -238,15 +221,11 @@ mod test_box_stateful_supplier {
     }
 
     mod test_memoize {
-        use std::{
-            cell::Cell,
-            rc::Rc,
-        };
+        use std::cell::Cell;
+        use std::rc::Rc;
 
-        use super::{
-            BoxStatefulSupplier,
-            StatefulSupplier,
-        };
+        use super::BoxStatefulSupplier;
+        use super::StatefulSupplier;
 
         #[test]
         fn test_caches_first_value() {

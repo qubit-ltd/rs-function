@@ -8,26 +8,22 @@
 
 //! Tests for Consumer types
 
-use qubit_function::{
-    ArcConsumer,
-    BoxConsumer,
-    Consumer,
-    RcConsumer,
-};
 use std::rc::Rc;
 use std::sync::Arc;
 
+use qubit_function::ArcConsumer;
+use qubit_function::BoxConsumer;
+use qubit_function::Consumer;
+use qubit_function::RcConsumer;
+
 #[cfg(test)]
 mod arc_conditional_consumer_tests {
-    use super::{
-        Arc,
-        ArcConsumer,
-        Consumer,
-    };
-    use std::sync::atomic::{
-        AtomicUsize,
-        Ordering,
-    };
+    use std::sync::atomic::AtomicUsize;
+    use std::sync::atomic::Ordering;
+
+    use super::Arc;
+    use super::ArcConsumer;
+    use super::Consumer;
 
     #[test]
     fn test_arc_conditional_and_then() {

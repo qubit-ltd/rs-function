@@ -7,21 +7,19 @@
 // =============================================================================
 //! Defines the `ArcStatefulFunction` public type.
 
-use {
-    crate::ArcConditionalStatefulFunction,
-    crate::Predicate,
-};
-use {
-    crate::StatefulFunction,
-    crate::functions::macros::impl_function_clone,
-    crate::functions::macros::impl_function_common_methods,
-    crate::functions::macros::impl_function_constant_method,
-    crate::functions::macros::impl_function_debug_display,
-    crate::functions::macros::impl_function_identity_method,
-    crate::functions::macros::impl_shared_function_methods,
-    parking_lot::Mutex,
-    std::sync::Arc,
-};
+use std::sync::Arc;
+
+use parking_lot::Mutex;
+
+use crate::ArcConditionalStatefulFunction;
+use crate::Predicate;
+use crate::StatefulFunction;
+use crate::functions::macros::impl_function_clone;
+use crate::functions::macros::impl_function_common_methods;
+use crate::functions::macros::impl_function_constant_method;
+use crate::functions::macros::impl_function_debug_display;
+use crate::functions::macros::impl_function_identity_method;
+use crate::functions::macros::impl_shared_function_methods;
 
 // ============================================================================
 // ArcStatefulFunction - Arc<Mutex<dyn FnMut(&T) -> R + Send>>

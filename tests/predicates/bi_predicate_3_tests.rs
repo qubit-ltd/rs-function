@@ -8,13 +8,12 @@
 
 #[cfg(test)]
 mod tests {
-    use qubit_function::predicates::{
-        ArcBiPredicate,
-        BiPredicate,
-        BoxBiPredicate,
-        RcBiPredicate,
-    };
     use std::thread;
+
+    use qubit_function::predicates::ArcBiPredicate;
+    use qubit_function::predicates::BiPredicate;
+    use qubit_function::predicates::BoxBiPredicate;
+    use qubit_function::predicates::RcBiPredicate;
 
     // ========================================================================
     // BiPredicate Trait Tests - Test closure and function pointer
@@ -30,10 +29,8 @@ mod tests {
     // ========================================================================
 
     mod rc_bi_predicate_tests {
-        use super::{
-            BiPredicate,
-            RcBiPredicate,
-        };
+        use super::BiPredicate;
+        use super::RcBiPredicate;
 
         #[test]
         fn test_new() {
@@ -262,11 +259,9 @@ mod tests {
     // ========================================================================
 
     mod conversion_tests {
-        use super::{
-            ArcBiPredicate,
-            BiPredicate,
-            BoxBiPredicate,
-        };
+        use super::ArcBiPredicate;
+        use super::BiPredicate;
+        use super::BoxBiPredicate;
 
         #[test]
         fn test_struct_storing_arc_bi_predicate() {

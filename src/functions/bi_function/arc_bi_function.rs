@@ -7,20 +7,17 @@
 // =============================================================================
 //! Defines the `ArcBiFunction` public type.
 
-use {
-    crate::ArcConditionalBiFunction,
-    crate::BiPredicate,
-    crate::Function,
-};
-use {
-    crate::BiFunction,
-    crate::functions::macros::impl_function_clone,
-    crate::functions::macros::impl_function_common_methods,
-    crate::functions::macros::impl_function_constant_method,
-    crate::functions::macros::impl_function_debug_display,
-    crate::functions::macros::impl_shared_function_methods,
-    std::sync::Arc,
-};
+use std::sync::Arc;
+
+use crate::ArcConditionalBiFunction;
+use crate::BiFunction;
+use crate::BiPredicate;
+use crate::Function;
+use crate::functions::macros::impl_function_clone;
+use crate::functions::macros::impl_function_common_methods;
+use crate::functions::macros::impl_function_constant_method;
+use crate::functions::macros::impl_function_debug_display;
+use crate::functions::macros::impl_shared_function_methods;
 
 /// The erased callback representation used by this implementation.
 type ArcBiFunctionFn<T, U, R> = Arc<dyn Fn(&T, &U) -> R + Send + Sync>;

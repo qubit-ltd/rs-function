@@ -6,16 +6,15 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    ArcUnaryOperator,
-    BoxUnaryOperator,
-    BoxUnaryOperatorOnce,
-    RcUnaryOperator,
-    Transformer,
-    TransformerOnce,
-    UnaryOperator,
-};
 use std::thread;
+
+use qubit_function::ArcUnaryOperator;
+use qubit_function::BoxUnaryOperator;
+use qubit_function::BoxUnaryOperatorOnce;
+use qubit_function::RcUnaryOperator;
+use qubit_function::Transformer;
+use qubit_function::TransformerOnce;
+use qubit_function::UnaryOperator;
 
 // Test using UnaryOperator as a generic constraint
 fn apply_twice<T, O>(value: T, op: &O) -> T

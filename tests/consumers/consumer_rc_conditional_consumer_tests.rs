@@ -8,23 +8,21 @@
 
 //! Tests for Consumer types
 
-use qubit_function::{
-    ArcConsumer,
-    BoxConsumer,
-    Consumer,
-    RcConsumer,
-};
 use std::rc::Rc;
 use std::sync::Arc;
 
+use qubit_function::ArcConsumer;
+use qubit_function::BoxConsumer;
+use qubit_function::Consumer;
+use qubit_function::RcConsumer;
+
 #[cfg(test)]
 mod rc_conditional_consumer_tests {
-    use super::{
-        Consumer,
-        Rc,
-        RcConsumer,
-    };
     use std::cell::RefCell;
+
+    use super::Consumer;
+    use super::Rc;
+    use super::RcConsumer;
 
     #[test]
     fn test_rc_conditional_and_then() {

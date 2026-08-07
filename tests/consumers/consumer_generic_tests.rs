@@ -8,23 +8,20 @@
 
 //! Tests for Consumer types
 
-use qubit_function::{
-    ArcConsumer,
-    BoxConsumer,
-    Consumer,
-    RcConsumer,
-};
 use std::rc::Rc;
 use std::sync::Arc;
 
+use qubit_function::ArcConsumer;
+use qubit_function::BoxConsumer;
+use qubit_function::Consumer;
+use qubit_function::RcConsumer;
+
 #[cfg(test)]
 mod generic_tests {
-    use super::{
-        ArcConsumer,
-        BoxConsumer,
-        Consumer,
-        RcConsumer,
-    };
+    use super::ArcConsumer;
+    use super::BoxConsumer;
+    use super::Consumer;
+    use super::RcConsumer;
 
     fn apply_consumer<C: Consumer<i32>>(consumer: &C, value: &i32) {
         consumer.accept(value);
@@ -32,7 +29,7 @@ mod generic_tests {
 
     #[test]
     fn test_with_box_consumer() {
-        let box_consumer = qubit_function::BoxConsumer::new(|x: &i32| {
+        let box_consumer = BoxConsumer::new(|x: &i32| {
             std::hint::black_box(x);
         });
         apply_consumer(&box_consumer, &5);

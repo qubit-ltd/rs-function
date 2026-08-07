@@ -11,14 +11,11 @@
 //! This example demonstrates the usage of BoxBiConsumerOnce type, which
 //! consumes itself on first call.
 
-use qubit_function::{
-    BiConsumerOnce,
-    BoxBiConsumerOnce,
-};
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+use std::sync::Mutex;
+
+use qubit_function::BiConsumerOnce;
+use qubit_function::BoxBiConsumerOnce;
 
 fn main() {
     println!("=== BiConsumerOnce Demo ===\n");

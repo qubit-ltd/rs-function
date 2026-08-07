@@ -7,17 +7,13 @@
 // =============================================================================
 //! Defines the `BoxTransformer` public type.
 
-use {
-    crate::BoxConditionalTransformer,
-    crate::Predicate,
-};
-use {
-    crate::Transformer,
-    crate::transformers::macros::impl_box_transformer_methods,
-    crate::transformers::macros::impl_transformer_common_methods,
-    crate::transformers::macros::impl_transformer_constant_method,
-    crate::transformers::macros::impl_transformer_debug_display,
-};
+use crate::BoxConditionalTransformer;
+use crate::Predicate;
+use crate::Transformer;
+use crate::transformers::macros::impl_box_transformer_methods;
+use crate::transformers::macros::impl_transformer_common_methods;
+use crate::transformers::macros::impl_transformer_constant_method;
+use crate::transformers::macros::impl_transformer_debug_display;
 
 // ============================================================================
 // BoxTransformer - Box<dyn Fn(T) -> R>

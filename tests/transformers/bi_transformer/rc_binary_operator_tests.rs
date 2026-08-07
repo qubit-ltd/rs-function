@@ -6,10 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    BiTransformer,
-    RcBinaryOperator,
-};
+use qubit_function::BiTransformer;
+use qubit_function::RcBinaryOperator;
 
 #[test]
 fn test_rc_binary_operator_alias() {

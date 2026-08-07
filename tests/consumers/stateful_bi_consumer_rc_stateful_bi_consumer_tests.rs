@@ -12,19 +12,16 @@
 //! implementations including BoxStatefulBiConsumer, ArcStatefulBiConsumer,
 //! RcStatefulBiConsumer, and their conditional variants.
 
-use qubit_function::{
-    ArcStatefulBiConsumer,
-    BiConsumerOnce,
-    BoxStatefulBiConsumer,
-    RcStatefulBiConsumer,
-    StatefulBiConsumer,
-};
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+use std::sync::Mutex;
+
+use qubit_function::ArcStatefulBiConsumer;
+use qubit_function::BiConsumerOnce;
+use qubit_function::BoxStatefulBiConsumer;
+use qubit_function::RcStatefulBiConsumer;
+use qubit_function::StatefulBiConsumer;
 
 // ============================================================================
 // BoxStatefulBiConsumer Tests
@@ -50,12 +47,10 @@ impl StatefulBiConsumer<i32, i32> for CustomStatefulBiConsumer {
 
 #[cfg(test)]
 mod rc_stateful_bi_consumer_tests {
-    use super::{
-        Rc,
-        RcStatefulBiConsumer,
-        RefCell,
-        StatefulBiConsumer,
-    };
+    use super::Rc;
+    use super::RcStatefulBiConsumer;
+    use super::RefCell;
+    use super::StatefulBiConsumer;
 
     // Test new() constructor
     #[test]

@@ -6,15 +6,11 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use std::{
-    cell::Cell,
-    rc::Rc,
-};
+use std::cell::Cell;
+use std::rc::Rc;
 
-use qubit_function::{
-    BoxConsumer,
-    Consumer,
-};
+use qubit_function::BoxConsumer;
+use qubit_function::Consumer;
 
 #[test]
 fn test_box_conditional_consumer_macro_behavior() {

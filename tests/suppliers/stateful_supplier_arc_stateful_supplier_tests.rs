@@ -8,19 +8,16 @@
 
 //! Unit tests for StatefulSupplier types
 
-use qubit_function::{
-    ArcStatefulSupplier,
-    BoxStatefulSupplier,
-    RcStatefulSupplier,
-    StatefulSupplier,
-};
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+use std::sync::Mutex;
 use std::thread;
+
+use qubit_function::ArcStatefulSupplier;
+use qubit_function::BoxStatefulSupplier;
+use qubit_function::RcStatefulSupplier;
+use qubit_function::StatefulSupplier;
 
 // ==========================================================================
 // StatefulSupplier Trait Tests (for closures)
@@ -28,19 +25,15 @@ use std::thread;
 
 #[cfg(test)]
 mod test_arc_stateful_supplier {
-    use super::{
-        Arc,
-        ArcStatefulSupplier,
-        Mutex,
-        StatefulSupplier,
-        thread,
-    };
+    use super::Arc;
+    use super::ArcStatefulSupplier;
+    use super::Mutex;
+    use super::StatefulSupplier;
+    use super::thread;
 
     mod test_new {
-        use super::{
-            ArcStatefulSupplier,
-            StatefulSupplier,
-        };
+        use super::ArcStatefulSupplier;
+        use super::StatefulSupplier;
 
         #[test]
         fn test_creates_stateful_supplier() {
@@ -65,10 +58,8 @@ mod test_arc_stateful_supplier {
     }
 
     mod test_constant {
-        use super::{
-            ArcStatefulSupplier,
-            StatefulSupplier,
-        };
+        use super::ArcStatefulSupplier;
+        use super::StatefulSupplier;
 
         #[test]
         fn test_returns_same_value() {
@@ -80,12 +71,10 @@ mod test_arc_stateful_supplier {
     }
 
     mod test_get {
-        use super::{
-            Arc,
-            ArcStatefulSupplier,
-            Mutex,
-            StatefulSupplier,
-        };
+        use super::Arc;
+        use super::ArcStatefulSupplier;
+        use super::Mutex;
+        use super::StatefulSupplier;
 
         #[test]
         fn test_can_be_called_multiple_times() {
@@ -114,12 +103,10 @@ mod test_arc_stateful_supplier {
     }
 
     mod test_clone {
-        use super::{
-            Arc,
-            ArcStatefulSupplier,
-            Mutex,
-            StatefulSupplier,
-        };
+        use super::Arc;
+        use super::ArcStatefulSupplier;
+        use super::Mutex;
+        use super::StatefulSupplier;
 
         #[test]
         fn test_can_be_cloned() {
@@ -153,13 +140,11 @@ mod test_arc_stateful_supplier {
     }
 
     mod test_map {
-        use super::{
-            Arc,
-            ArcStatefulSupplier,
-            Mutex,
-            StatefulSupplier,
-            thread,
-        };
+        use super::Arc;
+        use super::ArcStatefulSupplier;
+        use super::Mutex;
+        use super::StatefulSupplier;
+        use super::thread;
 
         #[test]
         fn test_transforms_value() {
@@ -232,12 +217,10 @@ mod test_arc_stateful_supplier {
     }
 
     mod test_filter {
-        use super::{
-            Arc,
-            ArcStatefulSupplier,
-            Mutex,
-            StatefulSupplier,
-        };
+        use super::Arc;
+        use super::ArcStatefulSupplier;
+        use super::Mutex;
+        use super::StatefulSupplier;
 
         #[test]
         fn test_filters_even_numbers() {
@@ -258,10 +241,8 @@ mod test_arc_stateful_supplier {
     }
 
     mod test_zip {
-        use super::{
-            ArcStatefulSupplier,
-            StatefulSupplier,
-        };
+        use super::ArcStatefulSupplier;
+        use super::StatefulSupplier;
 
         #[test]
         fn test_combines_two_stateful_suppliers() {
@@ -288,12 +269,10 @@ mod test_arc_stateful_supplier {
     }
 
     mod test_memoize {
-        use super::{
-            Arc,
-            ArcStatefulSupplier,
-            Mutex,
-            StatefulSupplier,
-        };
+        use super::Arc;
+        use super::ArcStatefulSupplier;
+        use super::Mutex;
+        use super::StatefulSupplier;
 
         #[test]
         fn test_caches_first_value() {
@@ -325,13 +304,11 @@ mod test_arc_stateful_supplier {
     }
 
     mod test_thread_safety {
-        use super::{
-            Arc,
-            ArcStatefulSupplier,
-            Mutex,
-            StatefulSupplier,
-            thread,
-        };
+        use super::Arc;
+        use super::ArcStatefulSupplier;
+        use super::Mutex;
+        use super::StatefulSupplier;
+        use super::thread;
 
         #[test]
         fn test_can_be_sent_across_threads() {

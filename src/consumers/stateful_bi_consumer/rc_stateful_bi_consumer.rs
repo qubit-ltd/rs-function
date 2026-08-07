@@ -7,19 +7,16 @@
 // =============================================================================
 //! Defines the `RcStatefulBiConsumer` public type.
 
-use {
-    crate::BiPredicate,
-    crate::RcConditionalStatefulBiConsumer,
-};
-use {
-    crate::StatefulBiConsumer,
-    crate::consumers::macros::impl_consumer_clone,
-    crate::consumers::macros::impl_consumer_common_methods,
-    crate::consumers::macros::impl_consumer_debug_display,
-    crate::consumers::macros::impl_shared_consumer_methods,
-    std::cell::RefCell,
-    std::rc::Rc,
-};
+use std::cell::RefCell;
+use std::rc::Rc;
+
+use crate::BiPredicate;
+use crate::RcConditionalStatefulBiConsumer;
+use crate::StatefulBiConsumer;
+use crate::consumers::macros::impl_consumer_clone;
+use crate::consumers::macros::impl_consumer_common_methods;
+use crate::consumers::macros::impl_consumer_debug_display;
+use crate::consumers::macros::impl_shared_consumer_methods;
 
 /// The erased callback representation used by this implementation.
 type RcStatefulBiConsumerFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U)>>;

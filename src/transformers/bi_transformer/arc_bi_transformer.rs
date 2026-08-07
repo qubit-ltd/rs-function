@@ -7,20 +7,17 @@
 // =============================================================================
 //! Defines the `ArcBiTransformer` public type.
 
-use {
-    crate::ArcConditionalBiTransformer,
-    crate::BiPredicate,
-    crate::Transformer,
-};
-use {
-    crate::BiTransformer,
-    crate::transformers::macros::impl_shared_transformer_methods,
-    crate::transformers::macros::impl_transformer_clone,
-    crate::transformers::macros::impl_transformer_common_methods,
-    crate::transformers::macros::impl_transformer_constant_method,
-    crate::transformers::macros::impl_transformer_debug_display,
-    std::sync::Arc,
-};
+use std::sync::Arc;
+
+use crate::ArcConditionalBiTransformer;
+use crate::BiPredicate;
+use crate::BiTransformer;
+use crate::Transformer;
+use crate::transformers::macros::impl_shared_transformer_methods;
+use crate::transformers::macros::impl_transformer_clone;
+use crate::transformers::macros::impl_transformer_common_methods;
+use crate::transformers::macros::impl_transformer_constant_method;
+use crate::transformers::macros::impl_transformer_debug_display;
 
 // ============================================================================
 // ArcBiTransformer - Arc<dyn Fn(T, U) -> R + Send + Sync>

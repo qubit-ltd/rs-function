@@ -5,27 +5,27 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-/// Tests for BiConsumer types
-use qubit_function::{
-    ArcBiConsumer,
-    BiConsumer,
-    BoxBiConsumer,
-    RcBiConsumer,
-};
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
 
+/// Tests for BiConsumer types
+use qubit_function::ArcBiConsumer;
+/// Tests for BiConsumer types
+use qubit_function::BiConsumer;
+/// Tests for BiConsumer types
+use qubit_function::BoxBiConsumer;
+/// Tests for BiConsumer types
+use qubit_function::RcBiConsumer;
+
 #[cfg(test)]
 mod noop_tests {
-    use super::{
-        Arc,
-        ArcBiConsumer,
-        BiConsumer,
-        BoxBiConsumer,
-        Rc,
-        RcBiConsumer,
-    };
+    use super::Arc;
+    use super::ArcBiConsumer;
+    use super::BiConsumer;
+    use super::BoxBiConsumer;
+    use super::Rc;
+    use super::RcBiConsumer;
 
     #[test]
     fn test_box_noop_multiple_accepts() {
@@ -58,10 +58,9 @@ mod noop_tests {
     fn test_box_noop_with_and_then() {
         let counter = Arc::new(std::sync::Mutex::new(0));
         let c = counter.clone();
-        let active =
-            qubit_function::BoxBiConsumer::new(move |_x: &i32, _y: &i32| {
-                *c.lock().expect("mutex should not be poisoned") += 1;
-            });
+        let active = BoxBiConsumer::new(move |_x: &i32, _y: &i32| {
+            *c.lock().expect("mutex should not be poisoned") += 1;
+        });
         let chained = active.and_then(BoxBiConsumer::noop());
         chained.accept(&1, &2);
         assert_eq!(*counter.lock().expect("mutex should not be poisoned"), 1);

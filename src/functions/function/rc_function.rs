@@ -7,20 +7,17 @@
 // =============================================================================
 //! Defines the `RcFunction` public type.
 
-use {
-    crate::Function,
-    crate::functions::macros::impl_function_clone,
-    crate::functions::macros::impl_function_common_methods,
-    crate::functions::macros::impl_function_constant_method,
-    crate::functions::macros::impl_function_debug_display,
-    crate::functions::macros::impl_function_identity_method,
-    crate::functions::macros::impl_shared_function_methods,
-    std::rc::Rc,
-};
-use {
-    crate::Predicate,
-    crate::RcConditionalFunction,
-};
+use std::rc::Rc;
+
+use crate::Function;
+use crate::Predicate;
+use crate::RcConditionalFunction;
+use crate::functions::macros::impl_function_clone;
+use crate::functions::macros::impl_function_common_methods;
+use crate::functions::macros::impl_function_constant_method;
+use crate::functions::macros::impl_function_debug_display;
+use crate::functions::macros::impl_function_identity_method;
+use crate::functions::macros::impl_shared_function_methods;
 
 // ============================================================================
 // RcFunction - Rc<dyn Fn(&T) -> R>

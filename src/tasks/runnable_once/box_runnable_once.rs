@@ -7,22 +7,13 @@
 // =============================================================================
 //! Defines the `BoxRunnableOnce` public type.
 
-use crate::{
-    macros::{
-        impl_common_name_methods,
-        impl_common_new_methods,
-    },
-    suppliers::{
-        macros::impl_supplier_debug_display,
-        supplier_once::SupplierOnce,
-    },
-    tasks::runnable_once::RunnableOnce,
-};
-
-use crate::tasks::callable_once::{
-    BoxCallableOnce,
-    CallableOnce,
-};
+use crate::macros::impl_common_name_methods;
+use crate::macros::impl_common_new_methods;
+use crate::suppliers::macros::impl_supplier_debug_display;
+use crate::suppliers::supplier_once::SupplierOnce;
+use crate::tasks::callable_once::BoxCallableOnce;
+use crate::tasks::callable_once::CallableOnce;
+use crate::tasks::runnable_once::RunnableOnce;
 
 // ============================================================================
 // BoxRunnableOnce

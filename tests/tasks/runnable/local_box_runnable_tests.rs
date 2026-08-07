@@ -6,18 +6,13 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use std::{
-    cell::Cell,
-    io,
-    rc::Rc,
-};
+use std::cell::Cell;
+use std::io;
+use std::rc::Rc;
 
-use qubit_function::{
-    Callable,
-    LocalBoxRunnable,
-    Runnable,
-};
-
+use qubit_function::Callable;
+use qubit_function::LocalBoxRunnable;
+use qubit_function::Runnable;
 #[cfg(feature = "once")]
 use qubit_function::SupplierOnce;
 

@@ -7,19 +7,16 @@
 // =============================================================================
 //! Defines the `ArcMutator` public type.
 
-use {
-    super::ArcMutatorFn,
-    crate::Mutator,
-    crate::mutators::macros::impl_mutator_clone,
-    crate::mutators::macros::impl_mutator_common_methods,
-    crate::mutators::macros::impl_mutator_debug_display,
-    crate::mutators::macros::impl_shared_mutator_methods,
-    std::sync::Arc,
-};
-use {
-    crate::ArcConditionalMutator,
-    crate::Predicate,
-};
+use std::sync::Arc;
+
+use super::ArcMutatorFn;
+use crate::ArcConditionalMutator;
+use crate::Mutator;
+use crate::Predicate;
+use crate::mutators::macros::impl_mutator_clone;
+use crate::mutators::macros::impl_mutator_common_methods;
+use crate::mutators::macros::impl_mutator_debug_display;
+use crate::mutators::macros::impl_shared_mutator_methods;
 
 // ============================================================================
 // 5. ArcMutator - Thread-Safe Shared Ownership Implementation

@@ -8,34 +8,28 @@
 
 //! Tests for BiConsumerOnce types
 
-use qubit_function::{
-    BiConsumerOnce,
-    BoxBiConsumerOnce,
-};
-use std::sync::{
-    Arc,
-    Mutex,
-};
+use std::sync::Arc;
+use std::sync::Mutex;
+
+use qubit_function::BiConsumerOnce;
+use qubit_function::BoxBiConsumerOnce;
 
 #[cfg(test)]
 mod box_bi_consumer_once_tests {
-    use super::{
-        Arc,
-        BiConsumerOnce,
-        BoxBiConsumerOnce,
-        Mutex,
-    };
+    use super::Arc;
+    use super::BiConsumerOnce;
+    use super::BoxBiConsumerOnce;
+    use super::Mutex;
 
     #[test]
     fn test_new_and_accept() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
-        let consumer =
-            qubit_function::BoxBiConsumerOnce::new(move |x: &i32, y: &i32| {
-                l.lock()
-                    .expect("mutex should not be poisoned")
-                    .push(*x + *y);
-            });
+        let consumer = BoxBiConsumerOnce::new(move |x: &i32, y: &i32| {
+            l.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x + *y);
+        });
         consumer.accept(&5, &3);
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
     }
@@ -45,17 +39,16 @@ mod box_bi_consumer_once_tests {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l1 = log.clone();
         let l2 = log.clone();
-        let chained =
-            qubit_function::BoxBiConsumerOnce::new(move |x: &i32, y: &i32| {
-                l1.lock()
-                    .expect("mutex should not be poisoned")
-                    .push(*x + *y);
-            })
-            .and_then(move |x: &i32, y: &i32| {
-                l2.lock()
-                    .expect("mutex should not be poisoned")
-                    .push(*x * *y);
-            });
+        let chained = BoxBiConsumerOnce::new(move |x: &i32, y: &i32| {
+            l1.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x + *y);
+        })
+        .and_then(move |x: &i32, y: &i32| {
+            l2.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x * *y);
+        });
 
         chained.accept(&5, &3);
         assert_eq!(
@@ -75,12 +68,11 @@ mod box_bi_consumer_once_tests {
     fn test_when_true() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
-        let consumer =
-            qubit_function::BoxBiConsumerOnce::new(move |x: &i32, y: &i32| {
-                l.lock()
-                    .expect("mutex should not be poisoned")
-                    .push(*x + *y);
-            });
+        let consumer = BoxBiConsumerOnce::new(move |x: &i32, y: &i32| {
+            l.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x + *y);
+        });
         let conditional = consumer.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
 
         conditional.accept(&5, &3);
@@ -91,12 +83,11 @@ mod box_bi_consumer_once_tests {
     fn test_when_false() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
-        let consumer =
-            qubit_function::BoxBiConsumerOnce::new(move |x: &i32, y: &i32| {
-                l.lock()
-                    .expect("mutex should not be poisoned")
-                    .push(*x + *y);
-            });
+        let consumer = BoxBiConsumerOnce::new(move |x: &i32, y: &i32| {
+            l.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x + *y);
+        });
         let conditional = consumer.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
 
         conditional.accept(&-5, &3);
@@ -108,10 +99,9 @@ mod box_bi_consumer_once_tests {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l1 = log.clone();
         let l2 = log.clone();
-        let consumer =
-            qubit_function::BoxBiConsumerOnce::new(move |x: &i32, _y: &i32| {
-                l1.lock().expect("mutex should not be poisoned").push(*x);
-            });
+        let consumer = BoxBiConsumerOnce::new(move |x: &i32, _y: &i32| {
+            l1.lock().expect("mutex should not be poisoned").push(*x);
+        });
         let conditional = consumer.when(|x: &i32, y: &i32| *x > *y).or_else(
             move |_x: &i32, y: &i32| {
                 l2.lock().expect("mutex should not be poisoned").push(*y);
@@ -127,10 +117,9 @@ mod box_bi_consumer_once_tests {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l1 = log.clone();
         let l2 = log.clone();
-        let consumer =
-            qubit_function::BoxBiConsumerOnce::new(move |x: &i32, _y: &i32| {
-                l1.lock().expect("mutex should not be poisoned").push(*x);
-            });
+        let consumer = BoxBiConsumerOnce::new(move |x: &i32, _y: &i32| {
+            l1.lock().expect("mutex should not be poisoned").push(*x);
+        });
         let conditional = consumer.when(|x: &i32, y: &i32| *x > *y).or_else(
             move |_x: &i32, y: &i32| {
                 l2.lock().expect("mutex should not be poisoned").push(*y);
@@ -154,12 +143,10 @@ mod box_bi_consumer_once_tests {
     #[test]
     fn test_moved_value() {
         let data = [1, 2, 3];
-        let consumer = qubit_function::BoxBiConsumerOnce::new(
-            move |_x: &i32, _y: &i32| {
-                // data is moved into the closure
-                std::hint::black_box(data.len());
-            },
-        );
+        let consumer = BoxBiConsumerOnce::new(move |_x: &i32, _y: &i32| {
+            // data is moved into the closure
+            std::hint::black_box(data.len());
+        });
         consumer.accept(&5, &3);
         // data is no longer available here
     }
@@ -168,7 +155,7 @@ mod box_bi_consumer_once_tests {
     fn test_new_with_name() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
-        let consumer = qubit_function::BoxBiConsumerOnce::new_with_name(
+        let consumer = BoxBiConsumerOnce::new_with_name(
             "test_consumer",
             move |x: &i32, y: &i32| {
                 l.lock()
@@ -186,12 +173,11 @@ mod box_bi_consumer_once_tests {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l1 = log.clone();
         let l2 = log.clone();
-        let consumer =
-            qubit_function::BoxBiConsumerOnce::new(move |x: &i32, y: &i32| {
-                l1.lock()
-                    .expect("mutex should not be poisoned")
-                    .push(*x + *y);
-            });
+        let consumer = BoxBiConsumerOnce::new(move |x: &i32, y: &i32| {
+            l1.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x + *y);
+        });
         let conditional = consumer.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
         let chained = conditional.and_then(move |x: &i32, y: &i32| {
             l2.lock()
@@ -208,11 +194,10 @@ mod box_bi_consumer_once_tests {
 
 #[cfg(test)]
 mod closure_tests {
-    use super::{
-        Arc,
-        BiConsumerOnce,
-        Mutex,
-    };
+    use super::Arc;
+    use super::BiConsumerOnce;
+    use super::BoxBiConsumerOnce;
+    use super::Mutex;
 
     #[test]
     fn test_closure_accept() {
@@ -232,17 +217,16 @@ mod closure_tests {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l1 = log.clone();
         let l2 = log.clone();
-        let chained =
-            qubit_function::BoxBiConsumerOnce::new(move |x: &i32, y: &i32| {
-                l1.lock()
-                    .expect("mutex should not be poisoned")
-                    .push(*x + *y);
-            })
-            .and_then(move |x: &i32, y: &i32| {
-                l2.lock()
-                    .expect("mutex should not be poisoned")
-                    .push(*x * *y);
-            });
+        let chained = BoxBiConsumerOnce::new(move |x: &i32, y: &i32| {
+            l1.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x + *y);
+        })
+        .and_then(move |x: &i32, y: &i32| {
+            l2.lock()
+                .expect("mutex should not be poisoned")
+                .push(*x * *y);
+        });
 
         chained.accept(&5, &3);
         assert_eq!(
@@ -258,16 +242,14 @@ mod debug_display_tests {
 
     #[test]
     fn test_debug() {
-        let consumer =
-            qubit_function::BoxBiConsumerOnce::new(|_x: &i32, _y: &i32| {});
+        let consumer = BoxBiConsumerOnce::new(|_x: &i32, _y: &i32| {});
         let debug_str = format!("{:?}", consumer);
         assert!(debug_str.contains("BoxBiConsumerOnce"));
     }
 
     #[test]
     fn test_debug_with_name() {
-        let mut consumer =
-            qubit_function::BoxBiConsumerOnce::new(|_x: &i32, _y: &i32| {});
+        let mut consumer = BoxBiConsumerOnce::new(|_x: &i32, _y: &i32| {});
         consumer.set_name("test_consumer");
         let debug_str = format!("{:?}", consumer);
         assert!(debug_str.contains("BoxBiConsumerOnce"));
@@ -276,16 +258,14 @@ mod debug_display_tests {
 
     #[test]
     fn test_display() {
-        let consumer =
-            qubit_function::BoxBiConsumerOnce::new(|_x: &i32, _y: &i32| {});
+        let consumer = BoxBiConsumerOnce::new(|_x: &i32, _y: &i32| {});
         let display_str = format!("{}", consumer);
         assert_eq!(display_str, "BoxBiConsumerOnce");
     }
 
     #[test]
     fn test_display_with_name() {
-        let mut consumer =
-            qubit_function::BoxBiConsumerOnce::new(|_x: &i32, _y: &i32| {});
+        let mut consumer = BoxBiConsumerOnce::new(|_x: &i32, _y: &i32| {});
         consumer.set_name("my_consumer");
         let display_str = format!("{}", consumer);
         assert_eq!(display_str, "BoxBiConsumerOnce(my_consumer)");
@@ -293,8 +273,7 @@ mod debug_display_tests {
 
     #[test]
     fn test_name_methods() {
-        let mut consumer =
-            qubit_function::BoxBiConsumerOnce::new(|_x: &i32, _y: &i32| {});
+        let mut consumer = BoxBiConsumerOnce::new(|_x: &i32, _y: &i32| {});
         assert_eq!(consumer.name(), None);
 
         consumer.set_name("test");
@@ -308,10 +287,8 @@ mod debug_display_tests {
 
 #[cfg(test)]
 mod type_conversion_tests {
-    use super::{
-        BiConsumerOnce,
-        BoxBiConsumerOnce,
-    };
+    use super::BiConsumerOnce;
+    use super::BoxBiConsumerOnce;
 
     #[test]
     fn test_when_or_else_conversion() {
@@ -322,16 +299,13 @@ mod type_conversion_tests {
         let result_clone1 = result.clone();
         let result_clone2 = result.clone();
 
-        let consumer =
-            qubit_function::BoxBiConsumerOnce::new(move |x: &i32, _y: &i32| {
-                *result_clone1.lock().expect("mutex should not be poisoned") =
-                    *x;
-            })
-            .when(|x: &i32, y: &i32| x > y)
-            .or_else(move |_x: &i32, y: &i32| {
-                *result_clone2.lock().expect("mutex should not be poisoned") =
-                    *y;
-            });
+        let consumer = BoxBiConsumerOnce::new(move |x: &i32, _y: &i32| {
+            *result_clone1.lock().expect("mutex should not be poisoned") = *x;
+        })
+        .when(|x: &i32, y: &i32| x > y)
+        .or_else(move |_x: &i32, y: &i32| {
+            *result_clone2.lock().expect("mutex should not be poisoned") = *y;
+        });
         consumer.accept(&5, &3);
         assert_eq!(*result.lock().expect("mutex should not be poisoned"), 5);
     }

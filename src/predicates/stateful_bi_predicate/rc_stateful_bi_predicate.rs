@@ -7,18 +7,16 @@
 // =============================================================================
 //! Defines the `RcStatefulBiPredicate` public type.
 
+use std::cell::RefCell;
 use std::ops::Not;
+use std::rc::Rc;
 
-use {
-    super::ALWAYS_FALSE_NAME,
-    super::ALWAYS_TRUE_NAME,
-    crate::StatefulBiPredicate,
-    crate::predicates::macros::impl_predicate_clone,
-    crate::predicates::macros::impl_predicate_common_methods,
-    crate::predicates::macros::impl_predicate_debug_display,
-    std::cell::RefCell,
-    std::rc::Rc,
-};
+use super::ALWAYS_FALSE_NAME;
+use super::ALWAYS_TRUE_NAME;
+use crate::StatefulBiPredicate;
+use crate::predicates::macros::impl_predicate_clone;
+use crate::predicates::macros::impl_predicate_common_methods;
+use crate::predicates::macros::impl_predicate_debug_display;
 
 /// The erased callback representation used by this implementation.
 type RcStatefulBiPredicateFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U) -> bool>>;

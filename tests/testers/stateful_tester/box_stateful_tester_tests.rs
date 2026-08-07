@@ -6,10 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::{
-    BoxStatefulTester,
-    StatefulTester,
-};
+use qubit_function::BoxStatefulTester;
+use qubit_function::StatefulTester;
 
 #[test]
 fn test_box_stateful_tester_observable_behavior() {

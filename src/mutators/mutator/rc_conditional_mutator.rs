@@ -7,15 +7,13 @@
 // =============================================================================
 //! Defines the `RcConditionalMutator` public type.
 
-use {
-    crate::Mutator,
-    crate::Predicate,
-    crate::RcMutator,
-    crate::RcPredicate,
-    crate::mutators::macros::impl_conditional_mutator_clone,
-    crate::mutators::macros::impl_conditional_mutator_debug_display,
-    crate::mutators::macros::impl_shared_conditional_mutator,
-};
+use crate::Mutator;
+use crate::Predicate;
+use crate::RcMutator;
+use crate::RcPredicate;
+use crate::mutators::macros::impl_conditional_mutator_clone;
+use crate::mutators::macros::impl_conditional_mutator_debug_display;
+use crate::mutators::macros::impl_shared_conditional_mutator;
 
 // ============================================================================
 // 9. RcConditionalMutator - Rc-based Conditional Mutator

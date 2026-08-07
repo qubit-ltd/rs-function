@@ -7,19 +7,16 @@
 // =============================================================================
 //! Defines the `RcBiConsumer` public type.
 
-use {
-    super::BiConsumerFn,
-    crate::BiConsumer,
-    crate::consumers::macros::impl_consumer_clone,
-    crate::consumers::macros::impl_consumer_common_methods,
-    crate::consumers::macros::impl_consumer_debug_display,
-    crate::consumers::macros::impl_shared_consumer_methods,
-    std::rc::Rc,
-};
-use {
-    crate::BiPredicate,
-    crate::RcConditionalBiConsumer,
-};
+use std::rc::Rc;
+
+use super::BiConsumerFn;
+use crate::BiConsumer;
+use crate::BiPredicate;
+use crate::RcConditionalBiConsumer;
+use crate::consumers::macros::impl_consumer_clone;
+use crate::consumers::macros::impl_consumer_common_methods;
+use crate::consumers::macros::impl_consumer_debug_display;
+use crate::consumers::macros::impl_shared_consumer_methods;
 
 // =======================================================================
 // 3. RcBiConsumer - Single-Threaded Shared Ownership

@@ -7,15 +7,13 @@
 // =============================================================================
 //! Defines the `ArcConditionalStatefulFunction` public type.
 
-use {
-    crate::ArcPredicate,
-    crate::ArcStatefulFunction,
-    crate::Predicate,
-    crate::StatefulFunction,
-    crate::functions::macros::impl_conditional_function_clone,
-    crate::functions::macros::impl_conditional_function_debug_display,
-    crate::functions::macros::impl_shared_conditional_function,
-};
+use crate::ArcPredicate;
+use crate::ArcStatefulFunction;
+use crate::Predicate;
+use crate::StatefulFunction;
+use crate::functions::macros::impl_conditional_function_clone;
+use crate::functions::macros::impl_conditional_function_debug_display;
+use crate::functions::macros::impl_shared_conditional_function;
 
 // ============================================================================
 // ArcConditionalStatefulFunction - Arc-based Conditional StatefulFunction

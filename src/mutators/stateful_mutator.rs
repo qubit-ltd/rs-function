@@ -198,8 +198,8 @@ use parking_lot::Mutex;
 type ArcMutMutatorFn<T> = Arc<Mutex<dyn FnMut(&mut T) + Send>>;
 
 /// Type alias for Rc-wrapped mutable mutator function
-#[cfg(feature = "rc")]
 /// The erased callback representation used by this implementation.
+#[cfg(feature = "rc")]
 type RcMutMutatorFn<T> = Rc<RefCell<dyn FnMut(&mut T)>>;
 
 mod box_stateful_mutator;
