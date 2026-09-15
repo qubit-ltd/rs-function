@@ -72,8 +72,22 @@ fn compile_consumer(features: &[&str], source: &str) -> Output {
     fs::write(project_root.join("Cargo.toml"), manifest).expect("temporary consumer manifest should be written");
     fs::write(source_root.join("main.rs"), source).expect("temporary consumer source should be written");
 
+    // Resolve and fetch this consumer's graph before asserting compiler
+    // diagnostics. Its feature selection can differ from the outer Cargo test
+    // invocation.
+    let preparation = Command::new("cargo")
+        .args(["+1.94.0", "fetch", "--quiet"])
+        .current_dir(project_root)
+        .output()
+        .expect("temporary consumer dependencies should be fetched");
+    assert!(
+        preparation.status.success(),
+        "temporary consumer dependency preparation failed: {}",
+        String::from_utf8_lossy(&preparation.stderr),
+    );
+
     Command::new("cargo")
-        .args(["+1.94.0", "check", "--offline", "--quiet", "--target-dir"])
+        .args(["+1.94.0", "check", "--offline", "--locked", "--quiet", "--target-dir"])
         .arg(project_root.join("target"))
         .current_dir(project_root)
         .output()
