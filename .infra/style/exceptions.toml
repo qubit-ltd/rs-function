@@ -1,0 +1,16 @@
+format = 1
+
+[[exceptions]]
+rule = "explicit-imports"
+path = "tests/feature_contract_discarded_callback_wrappers_trigger_unused_must_use_tests.rs"
+reason = "fixtures verify wildcard-import"
+
+[[exceptions]]
+rule = "explicit-imports"
+path = "tests/feature_contract_tests.rs"
+reason = "fixtures verify wildcard-import"
+
+[[exceptions]]
+rule = "explicit-imports"
+path = "tests/once_and_must_use_contract_tests.rs"
+reason = "fixtures verify wildcard-import"

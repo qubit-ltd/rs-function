@@ -25,3 +25,16 @@ lcov.info
 *~
 .DS_Store
 
+
+# Locally installed pinned rs-infra tools
+.infra/tools/bin/
+
+# Generated infrastructure reports and Pages output
+/ci-summary.json
+/coverage-badge.json
+/coverage-summary.md
+/coverage.json
+/coverage.txt
+/lcov.info
+/public/
+/pages-artifact.tar.gz

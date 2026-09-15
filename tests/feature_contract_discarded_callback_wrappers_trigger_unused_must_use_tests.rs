@@ -10,7 +10,6 @@
     unused_imports,
     reason = "split contract fixtures share support definitions"
 )]
-// qubit-style: allow explicit-imports -- fixtures verify wildcard-import
 // behavior.
 
 use std::fmt::Debug;
