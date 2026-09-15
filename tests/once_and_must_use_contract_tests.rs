@@ -5,7 +5,6 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// qubit-style: allow explicit-imports -- fixtures verify wildcard-import
 // behavior.
 
 use std::fs;
