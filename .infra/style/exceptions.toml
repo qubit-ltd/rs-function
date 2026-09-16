@@ -7,6 +7,46 @@ reason = "fixtures verify wildcard-import"
 
 [[exceptions]]
 rule = "explicit-imports"
+path = "src/lib.rs"
+reason = "public module re-exports preserve the crate API"
+
+[[exceptions]]
+rule = "explicit-imports"
+path = "src/consumers/mod.rs"
+reason = "public module re-exports preserve the crate API"
+
+[[exceptions]]
+rule = "explicit-imports"
+path = "src/functions/mod.rs"
+reason = "public module re-exports preserve the crate API"
+
+[[exceptions]]
+rule = "explicit-imports"
+path = "src/mutators/mod.rs"
+reason = "public module re-exports preserve the crate API"
+
+[[exceptions]]
+rule = "explicit-imports"
+path = "src/predicates/mod.rs"
+reason = "public module re-exports preserve the crate API"
+
+[[exceptions]]
+rule = "explicit-imports"
+path = "src/suppliers/mod.rs"
+reason = "public module re-exports preserve the crate API"
+
+[[exceptions]]
+rule = "explicit-imports"
+path = "src/testers/mod.rs"
+reason = "public module re-exports preserve the crate API"
+
+[[exceptions]]
+rule = "explicit-imports"
+path = "src/transformers/mod.rs"
+reason = "public module re-exports preserve the crate API"
+
+[[exceptions]]
+rule = "explicit-imports"
 path = "tests/feature_contract_tests.rs"
 reason = "fixtures verify wildcard-import"
 
