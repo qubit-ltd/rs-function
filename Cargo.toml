@@ -42,10 +42,10 @@ stateful = ["dep:parking_lot"]
 full = ["rc", "once", "stateful"]
 
 [dependencies]
-parking_lot = { version = "0.12", optional = true }
+parking_lot = { version = "^0.12", optional = true }
 
 [dev-dependencies]
-tempfile = "3.27"
+tempfile = "^3.27"
 
 [[example]]
 name = "always_bi_predicate_demo"
