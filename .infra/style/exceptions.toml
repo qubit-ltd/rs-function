@@ -2,22 +2,17 @@ format = 1
 
 [[exceptions]]
 rule = "explicit-imports"
-path = "tests/feature_contract_discarded_callback_wrappers_trigger_unused_must_use_tests.rs"
-reason = "fixtures verify wildcard-import"
-
-[[exceptions]]
-rule = "explicit-imports"
-path = "src/lib.rs"
-reason = "public module re-exports preserve the crate API"
-
-[[exceptions]]
-rule = "explicit-imports"
 path = "src/consumers/mod.rs"
 reason = "public module re-exports preserve the crate API"
 
 [[exceptions]]
 rule = "explicit-imports"
 path = "src/functions/mod.rs"
+reason = "public module re-exports preserve the crate API"
+
+[[exceptions]]
+rule = "explicit-imports"
+path = "src/lib.rs"
 reason = "public module re-exports preserve the crate API"
 
 [[exceptions]]
@@ -44,6 +39,11 @@ reason = "public module re-exports preserve the crate API"
 rule = "explicit-imports"
 path = "src/transformers/mod.rs"
 reason = "public module re-exports preserve the crate API"
+
+[[exceptions]]
+rule = "explicit-imports"
+path = "tests/feature_contract_discarded_callback_wrappers_trigger_unused_must_use_tests.rs"
+reason = "fixtures verify wildcard-import"
 
 [[exceptions]]
 rule = "explicit-imports"
