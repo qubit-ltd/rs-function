@@ -71,6 +71,9 @@ pids
 *.seed
 *.pid.lock
 coverage/
+!/.infra/coverage/
+/.infra/coverage/*
+!/.infra/coverage/tool.toml
 .nyc_output
 node_modules/
 .npm
