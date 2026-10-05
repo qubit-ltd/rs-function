@@ -18,17 +18,17 @@ per-file thresholds from the generated JSON report.
 
 ## Quick Start
 
-Use `coverage.sh` for normal checks:
+Use `.infra/bin/coverage.sh` for normal checks:
 
 ```bash
-./coverage.sh              # Generate HTML and open it in a browser
-./coverage.sh text         # Print a text report to the terminal
-./coverage.sh lcov         # Generate LCOV
-./coverage.sh json         # Generate JSON and enforce thresholds
-./coverage.sh cobertura    # Generate Cobertura XML
-./coverage.sh all          # Run tests once and generate all report formats
-./coverage.sh all --clean  # Clean old coverage data first
-./coverage.sh help         # Show all options
+./.infra/bin/coverage.sh              # Generate HTML and open it in a browser
+./.infra/bin/coverage.sh text         # Print a text report to the terminal
+./.infra/bin/coverage.sh lcov         # Generate LCOV
+./.infra/bin/coverage.sh json         # Generate JSON and enforce thresholds
+./.infra/bin/coverage.sh cobertura    # Generate Cobertura XML
+./.infra/bin/coverage.sh all          # Run tests once and generate all report formats
+./.infra/bin/coverage.sh all --clean  # Clean old coverage data first
+./.infra/bin/coverage.sh help         # Show all options
 ```
 
 `json` and `all` enforce the default local thresholds for every source file:
@@ -40,7 +40,7 @@ Use `coverage.sh` for normal checks:
 The thresholds can be overridden for stricter checks:
 
 ```bash
-MIN_FUNCTION_COVERAGE=100 MIN_LINE_COVERAGE=98 MIN_REGION_COVERAGE=98 ./coverage.sh json
+MIN_FUNCTION_COVERAGE=100 MIN_LINE_COVERAGE=98 MIN_REGION_COVERAGE=98 ./.infra/bin/coverage.sh json
 ```
 
 ## Report Locations
@@ -55,7 +55,7 @@ Generated reports are written under `target/llvm-cov`:
 
 ## How `all` Works
 
-`./coverage.sh all` runs tests once with `cargo llvm-cov --no-report`, then
+`./.infra/bin/coverage.sh all` runs tests once with `cargo llvm-cov --no-report`, then
 uses `cargo llvm-cov report` to generate HTML, LCOV, JSON, Cobertura, and text
 reports from the same coverage data. This avoids repeated test execution.
 
@@ -86,15 +86,15 @@ cargo llvm-cov --html --open --test tester_tests -- test_always_true
 - `benches/*`
 - `examples/*`
 
-`coverage.sh` also filters Cargo registry, rustup, and sibling workspace crates
+`.infra/bin/coverage.sh` also filters Cargo registry, rustup, and sibling workspace crates
 so reports only cover this crate's source files.
 
 ## CI
 
-The reusable GitHub Actions workflow runs `./coverage.sh all` with
+The reusable GitHub Actions workflow runs `./.infra/bin/coverage.sh all` with
 `COVERAGE_ENFORCE_THRESHOLDS=0`, publishes coverage artifacts, and reports the
 aggregate result without applying per-source thresholds. The local
-`./ci-check.sh` command runs `./coverage.sh json` with threshold enforcement
+`./.infra/bin/ci-check.sh` command runs `./.infra/bin/coverage.sh json` with threshold enforcement
 enabled by default.
 
 ## Common Issues
@@ -107,7 +107,7 @@ If `json` or `all` fails before threshold checking, install `jq`.
 If coverage data looks stale, run:
 
 ```bash
-./coverage.sh json --clean
+./.infra/bin/coverage.sh json --clean
 ```
 
 ## References

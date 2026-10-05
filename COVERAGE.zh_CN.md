@@ -16,17 +16,17 @@ rustup component add llvm-tools-preview
 
 ## 快速开始
 
-日常检查优先使用 `coverage.sh`：
+日常检查优先使用 `.infra/bin/coverage.sh`：
 
 ```bash
-./coverage.sh              # 生成 HTML 并在浏览器中打开
-./coverage.sh text         # 在终端输出文本报告
-./coverage.sh lcov         # 生成 LCOV
-./coverage.sh json         # 生成 JSON 并检查阈值
-./coverage.sh cobertura    # 生成 Cobertura XML
-./coverage.sh all          # 只运行一次测试并生成所有报告格式
-./coverage.sh all --clean  # 先清理旧覆盖率数据
-./coverage.sh help         # 查看所有选项
+./.infra/bin/coverage.sh              # 生成 HTML 并在浏览器中打开
+./.infra/bin/coverage.sh text         # 在终端输出文本报告
+./.infra/bin/coverage.sh lcov         # 生成 LCOV
+./.infra/bin/coverage.sh json         # 生成 JSON 并检查阈值
+./.infra/bin/coverage.sh cobertura    # 生成 Cobertura XML
+./.infra/bin/coverage.sh all          # 只运行一次测试并生成所有报告格式
+./.infra/bin/coverage.sh all --clean  # 先清理旧覆盖率数据
+./.infra/bin/coverage.sh help         # 查看所有选项
 ```
 
 `json` 和 `all` 默认会对每个源码文件执行本地阈值：
@@ -38,7 +38,7 @@ rustup component add llvm-tools-preview
 可以通过环境变量覆盖为更严格的阈值，例如：
 
 ```bash
-MIN_FUNCTION_COVERAGE=100 MIN_LINE_COVERAGE=98 MIN_REGION_COVERAGE=98 ./coverage.sh json
+MIN_FUNCTION_COVERAGE=100 MIN_LINE_COVERAGE=98 MIN_REGION_COVERAGE=98 ./.infra/bin/coverage.sh json
 ```
 
 ## 报告位置
@@ -53,7 +53,7 @@ MIN_FUNCTION_COVERAGE=100 MIN_LINE_COVERAGE=98 MIN_REGION_COVERAGE=98 ./coverage
 
 ## `all` 的工作方式
 
-`./coverage.sh all` 先用 `cargo llvm-cov --no-report` 运行一次测试并收集覆盖率数据，
+`./.infra/bin/coverage.sh all` 先用 `cargo llvm-cov --no-report` 运行一次测试并收集覆盖率数据，
 再用 `cargo llvm-cov report` 基于同一份数据生成 HTML、LCOV、JSON、Cobertura 和
 文本报告，从而避免重复执行测试。
 
@@ -83,14 +83,14 @@ cargo llvm-cov --html --open --test tester_tests -- test_always_true
 - `benches/*`
 - `examples/*`
 
-`coverage.sh` 还会过滤 Cargo registry、rustup 和同级 workspace crate，确保报告只覆盖
+`.infra/bin/coverage.sh` 还会过滤 Cargo registry、rustup 和同级 workspace crate，确保报告只覆盖
 当前 crate 的源码文件。
 
 ## CI
 
 可复用的 GitHub Actions 工作流使用 `COVERAGE_ENFORCE_THRESHOLDS=0` 运行
-`./coverage.sh all`，发布覆盖率产物并报告汇总结果，但不执行逐源码文件阈值检查。
-本地 `./ci-check.sh` 默认通过 `./coverage.sh json` 执行阈值检查。
+`./.infra/bin/coverage.sh all`，发布覆盖率产物并报告汇总结果，但不执行逐源码文件阈值检查。
+本地 `./.infra/bin/ci-check.sh` 默认通过 `./.infra/bin/coverage.sh json` 执行阈值检查。
 
 ## 常见问题
 
@@ -101,7 +101,7 @@ cargo llvm-cov --html --open --test tester_tests -- test_always_true
 如果覆盖率数据看起来过期，可以运行：
 
 ```bash
-./coverage.sh json --clean
+./.infra/bin/coverage.sh json --clean
 ```
 
 ## 参考资料
