@@ -23,7 +23,7 @@ use qubit_function::RcStatefulConsumer;
 use qubit_function::StatefulConsumer;
 
 // ============================================================================
-// BoxConsumer Tests
+// ArcStatefulConsumer Tests
 // ============================================================================
 
 #[cfg(test)]
@@ -196,7 +196,7 @@ mod test_arc_consumer {
     }
 
     // ============================================================================
-    // ArcConsumer ConsumerOnce Tests
+    // ArcStatefulConsumer Tests
     // ============================================================================
 
     #[test]
@@ -346,7 +346,3 @@ mod test_arc_consumer {
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![10, 15]); // 5*2=10, 5+10=15
     }
 }
-
-// ============================================================================
-// RcConsumer Tests
-// ============================================================================

@@ -60,6 +60,15 @@ pub use arc_conditional_transformer::ArcConditionalTransformer;
 ///
 /// * `T` - The type of the input value (consumed)
 /// * `R` - The type of the output value
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::Transformer;
+///
+/// let increment = |value: i32| value + 1;
+/// assert_eq!(increment.apply(41), 42);
+/// ```
 pub trait Transformer<T, R> {
     /// Applies the transformation to the input value to produce an output value
     ///

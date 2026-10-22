@@ -75,7 +75,3 @@ mod complex_transformation_tests {
         assert_eq!(conditional.apply(3, 4), 7); // (3 + 4) is odd, so multiply: 3 * 4 - 5 = 7
     }
 }
-
-// ============================================================================
-// Tests for ownership and consumption
-// ============================================================================

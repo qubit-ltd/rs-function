@@ -12,5 +12,11 @@ use qubit_function::Function;
 #[test]
 fn test_function_debug_display_observable_behavior() {
     let function = BoxFunction::new(|value: &i32| value + 1);
+
+    assert_eq!(
+        format!("{function:?}"),
+        "BoxFunction { name: None, function: \"<function>\" }"
+    );
+    assert_eq!(format!("{function}"), "BoxFunction");
     assert_eq!(function.apply(&41), 42);
 }

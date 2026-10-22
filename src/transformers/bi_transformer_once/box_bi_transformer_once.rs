@@ -27,12 +27,27 @@ use crate::transformers::macros::impl_transformer_debug_display;
 /// A bi-transformer wrapper that provides single ownership with one-time use
 /// semantics. Consumes self and both input values.
 ///
+/// # Type Parameters
+///
+/// - `T` - The type of the first input value.
+/// - `U` - The type of the second input value.
+/// - `R` - The type of the output value.
+///
 /// # Features
 ///
 /// - **Based on**: `Box<dyn FnOnce(T, U) -> R>`
 /// - **Ownership**: Single ownership, cannot be cloned
 /// - **Reusability**: Can only be called once (consumes self and inputs)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::{BiTransformerOnce, BoxBiTransformerOnce};
+///
+/// let add = BoxBiTransformerOnce::new(|first: i32, second: i32| first + second);
+/// assert_eq!(add.apply(20, 22), 42);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxBiTransformerOnce<T, U, R> {
     /// The wrapped callback implementation.

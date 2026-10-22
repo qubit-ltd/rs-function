@@ -8,12 +8,8 @@
 
 //! # Shared Predicate Methods Macro
 //!
-//! Generates when and and_then method implementations for Arc/Rc-based
-//! Predicate
-//!
-//! Generates conditional execution when method and logical combination and_then
-//! method for Arc/Rc-based predicates that borrow &self (because Arc/Rc can be
-//! cloned).
+//! Generates logical combination methods for shared predicates that borrow
+//! `self` and can clone their underlying predicate function.
 //!
 //! This macro supports both single-parameter and two-parameter predicates
 //! through pattern matching on the struct signature.
@@ -30,9 +26,8 @@
 //!
 //! # All Macro Invocations
 //!
-//! | Predicate Type | Struct Signature | `$predicate_trait_name` | `$predicate_extra_bounds` |
-//! |----------------|------------------|----------------|------------------------|-------------------|----------------|
-//! | **BoxPredicate** | `BoxPredicate<T>` | Predicate | 'static |
+//! | Predicate Type | Struct Signature | Trait | Extra bounds |
+//! |---------------|------------------|-------|--------------|
 //! | **ArcPredicate** | `ArcPredicate<T>` | Predicate | Send + Sync + 'static |
 //! | **RcPredicate** | `RcPredicate<T>` | Predicate | 'static |
 //! | **ArcBiPredicate** | `ArcBiPredicate<T, U>` | BiPredicate | Send + Sync + 'static |
@@ -41,8 +36,6 @@
 //! # Examples
 //!
 //! ```ignore
-//! // Single-parameter with Box
-//! impl_shared_predicate_methods!(BoxPredicate<T>, 'static);
 //! // Single-parameter with Arc
 //! impl_shared_predicate_methods!(ArcPredicate<T>, Send + Sync + 'static);
 //!
@@ -50,14 +43,12 @@
 //! impl_shared_predicate_methods!(RcBiPredicate<T, U>, 'static);
 //! ```
 
-/// Generates when and and_then method implementations for Arc/Rc-based
-/// Predicate
+/// Generates logical combination methods for a shared predicate type.
 ///
 /// This macro should be used inside an existing impl block for the target
 /// struct. It generates individual methods but does not create a complete
-/// impl block itself. Generates conditional execution when method and logical
-/// combination and_then method for Arc/Rc-based predicates that borrow &self
-/// (because Arc/Rc can be cloned).
+/// `impl` block. The generated methods borrow `self` and clone its predicate
+/// function so the original shared predicate remains usable.
 ///
 /// This macro supports both single-parameter and two-parameter predicates
 /// through pattern matching on the struct signature.
@@ -74,9 +65,8 @@
 ///
 /// # All Macro Invocations
 ///
-/// | Predicate Type | Struct Signature | `$predicate_trait_name` | `$predicate_extra_bounds` |
-/// |----------------|------------------|----------------|------------------------|-------------------|----------------|
-/// | **BoxPredicate** | `BoxPredicate<T>` | Predicate | 'static |
+/// | Predicate Type | Struct Signature | Trait | Extra bounds |
+/// |---------------|------------------|-------|--------------|
 /// | **ArcPredicate** | `ArcPredicate<T>` | Predicate | Send + Sync + 'static |
 /// | **RcPredicate** | `RcPredicate<T>` | Predicate | 'static |
 /// | **ArcBiPredicate** | `ArcBiPredicate<T, U>` | BiPredicate | Send + Sync + 'static |
@@ -87,8 +77,6 @@
 /// ```ignore
 /// // Single-parameter with Arc
 /// impl_shared_predicate_methods!(ArcPredicate<T>, Send + Sync + 'static);
-/// // Single-parameter with Box
-/// impl_shared_predicate_methods!(BoxPredicate<T>, 'static);
 ///
 /// // Two-parameter with Arc
 /// impl_shared_predicate_methods!(ArcBiPredicate<T, U>, Send + Sync + 'static);

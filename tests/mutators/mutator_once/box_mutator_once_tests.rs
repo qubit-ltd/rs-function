@@ -7,9 +7,15 @@
 // =============================================================================
 
 use qubit_function::BoxMutatorOnce;
+use qubit_function::MutatorOnce;
 
 #[test]
 fn test_box_mutator_once_observable_behavior() {
-    let type_name = std::any::type_name::<BoxMutatorOnce<i32>>();
-    assert!(type_name.contains("BoxMutatorOnce"), "{type_name}");
+    let increment = 3;
+    let mutator = BoxMutatorOnce::new(move |value: &mut i32| *value += increment);
+    let mut value = 4;
+
+    mutator.apply(&mut value);
+
+    assert_eq!(value, 7, "BoxMutatorOnce should apply its callback once");
 }

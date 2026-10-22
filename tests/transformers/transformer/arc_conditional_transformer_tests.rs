@@ -7,9 +7,44 @@
 // =============================================================================
 
 use qubit_function::ArcConditionalTransformer;
+use qubit_function::ArcTransformer;
+use qubit_function::Transformer;
 
 #[test]
 fn test_arc_conditional_transformer_observable_behavior() {
     let type_name = std::any::type_name::<ArcConditionalTransformer<i32, i32>>();
     assert!(type_name.contains("ArcConditionalTransformer"), "{type_name}");
+}
+
+#[test]
+fn test_arc_conditional_transformer_when_or_else() {
+    let double_fn = |x: i32| x * 2;
+    let negate_fn = |x: i32| -x;
+    let result = ArcTransformer::new(double_fn).when(|x: &i32| *x > 0).or_else(negate_fn);
+
+    assert_eq!(result.apply(5), 10);
+    assert_eq!(result.apply(-5), 5);
+}
+
+#[test]
+fn test_arc_conditional_transformer_when_or_else_with_closure() {
+    let double_fn = |x: i32| x * 2;
+    let result = ArcTransformer::new(double_fn)
+        .when(|x: &i32| *x > 0)
+        .or_else(|x: i32| -x);
+
+    assert_eq!(result.apply(5), 10);
+    assert_eq!(result.apply(-5), 5);
+    assert_eq!(result.apply(0), 0);
+}
+
+#[test]
+fn test_arc_conditional_transformer_or_else() {
+    let double_fn = |x: i32| x * 2;
+    let result = ArcTransformer::new(double_fn)
+        .when(|x: &i32| *x > 0)
+        .or_else(|x: i32| -x);
+
+    assert_eq!(result.apply(5), 10);
+    assert_eq!(result.apply(-5), 5);
 }

@@ -7,9 +7,11 @@
 // =============================================================================
 
 use qubit_function::BoxTransformer;
+use qubit_function::Transformer;
 
 #[test]
-fn test_box_transformer_observable_behavior() {
-    let type_name = std::any::type_name::<BoxTransformer<i32, i32>>();
-    assert!(type_name.contains("BoxTransformer"), "{type_name}");
+fn test_box_transformer_applies_transformation() {
+    let double = BoxTransformer::new(|value: i32| value * 2);
+
+    assert_eq!(double.apply(21), 42);
 }

@@ -6,10 +6,13 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
+use std::any::type_name;
+use std::io::Error;
+
 use qubit_function::ArcCallable;
 
 #[test]
 fn test_arc_callable_observable_behavior() {
-    let type_name = std::any::type_name::<ArcCallable<i32, std::io::Error>>();
-    assert!(type_name.contains("ArcCallable"), "{type_name}");
+    let callable_type_name = type_name::<ArcCallable<i32, Error>>();
+    assert!(callable_type_name.contains("ArcCallable"), "{callable_type_name}");
 }

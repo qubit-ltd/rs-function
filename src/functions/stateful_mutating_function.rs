@@ -153,6 +153,11 @@ pub use arc_conditional_stateful_mutating_function::ArcConditionalStatefulMutati
 /// Performs operations that accept a mutable reference, potentially modify
 /// both the function's internal state and the input, and return a result.
 ///
+/// # Type Parameters
+///
+/// * `T` - The type of the mutable input value.
+/// * `R` - The type of the result returned after applying the function.
+///
 /// This trait is automatically implemented by:
 /// - All closures implementing `FnMut(&mut T) -> R`
 /// - `BoxStatefulMutatingFunction<T, R>`, `ArcStatefulMutatingFunction<T, R>`,

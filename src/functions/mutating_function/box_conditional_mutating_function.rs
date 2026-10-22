@@ -18,11 +18,13 @@ use crate::functions::macros::impl_conditional_function_debug_display;
 // BoxConditionalMutatingFunction - Box-based Conditional Mutating Function
 // ============================================================================
 
-/// BoxConditionalMutatingFunction struct
+/// A single-owner wrapper that applies a mutating callback when its predicate
+/// accepts the input.
 ///
-/// A conditional function that only executes when a predicate is satisfied.
-/// Uses `BoxMutatingFunction` and `BoxPredicate` for single ownership
-/// semantics.
+/// The predicate and callback receive the same mutable input. The callback's
+/// result is returned to the caller, and [`or_else`](Self::or_else) can add an
+/// alternative callback for inputs the predicate rejects. The wrapper owns its
+/// callback and predicate through `BoxMutatingFunction` and `BoxPredicate`.
 ///
 /// This type is typically created by calling `BoxMutatingFunction::when()` and
 /// is designed to work with the `or_else()` method to create if-then-else
@@ -33,7 +35,8 @@ use crate::functions::macros::impl_conditional_function_debug_display;
 /// - **Single Ownership**: Not cloneable, consumes `self` on use
 /// - **Conditional Execution**: Only transforms when predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
-/// - **Implements Function**: Can be used anywhere a `Function` is expected
+/// - **Mutating Callback**: Operates on a mutable input and returns the
+///   callback's result
 ///
 /// # Examples
 ///
@@ -51,6 +54,11 @@ use crate::functions::macros::impl_conditional_function_debug_display;
 /// let mut negative = -5;
 /// assert_eq!(conditional.apply(&mut negative), 5); // or_else branch executed
 /// ```
+///
+/// # Type Parameters
+///
+/// * `T` - The input type mutably borrowed by the predicate and callbacks.
+/// * `R` - The result type returned by the selected callback.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConditionalMutatingFunction<T, R> {
     /// The wrapped callback implementation.

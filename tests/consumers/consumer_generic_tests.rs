@@ -8,9 +8,6 @@
 
 //! Tests for Consumer types
 
-use std::rc::Rc;
-use std::sync::Arc;
-
 use qubit_function::ArcConsumer;
 use qubit_function::BoxConsumer;
 use qubit_function::Consumer;
@@ -59,7 +56,3 @@ mod generic_tests {
         apply_consumer(&closure, &5);
     }
 }
-
-// ============================================================================
-// Name Tests - Testing name() and set_name() methods
-// ============================================================================

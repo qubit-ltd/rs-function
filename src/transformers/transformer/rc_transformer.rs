@@ -35,6 +35,20 @@ use crate::transformers::macros::impl_transformer_debug_display;
 ///   input)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync`)
 /// - **Clonable**: Cheap cloning via `Rc::clone`
+///
+/// # Type Parameters
+///
+/// * `T` - The input value type consumed by the transformer.
+/// * `R` - The output value type produced by the transformer.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::{RcTransformer, Transformer};
+///
+/// let double = RcTransformer::new(|value: i32| value * 2);
+/// assert_eq!(double.apply(21), 42);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcTransformer<T, R> {
     /// The wrapped callback implementation.

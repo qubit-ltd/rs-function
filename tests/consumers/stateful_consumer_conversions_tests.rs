@@ -8,39 +8,26 @@
 
 //! Unit tests for StatefulConsumer types
 
-use std::cell::RefCell;
-use std::rc::Rc;
-use std::sync::Arc;
-use std::sync::Mutex;
-
-use qubit_function::ArcConsumer;
-use qubit_function::ArcStatefulConsumer;
-use qubit_function::BoxConsumer;
-use qubit_function::BoxStatefulConsumer;
-use qubit_function::Consumer;
-use qubit_function::RcConsumer;
-use qubit_function::RcStatefulConsumer;
-use qubit_function::StatefulConsumer;
-
 // ============================================================================
-// BoxConsumer Tests
+// StatefulConsumer Conversion Tests
 // ============================================================================
 
 #[cfg(test)]
 mod test_conversions {
-    use super::Rc;
-    use super::RcStatefulConsumer;
-    use super::RefCell;
-    use super::StatefulConsumer;
+    use std::cell::RefCell;
+    use std::rc::Rc;
+
+    use qubit_function::RcStatefulConsumer;
+    use qubit_function::StatefulConsumer;
 
     // RcConsumer cannot be converted to ArcConsumer because Rc is not Send
 
     // ============================================================================
-    // RcConsumer ConsumerOnce Tests
+    // RcStatefulConsumer Tests
     // ============================================================================
 
     #[test]
-    fn test_accept_once() {
+    fn test_accept_updates_shared_state() {
         let log = Rc::new(RefCell::new(Vec::new()));
         let l = log.clone();
         let mut consumer = RcStatefulConsumer::new(move |x: &i32| {
@@ -51,7 +38,7 @@ mod test_conversions {
     }
 
     #[test]
-    fn test_accept_once_with_different_types() {
+    fn test_accept_handles_different_input_types() {
         // String
         let log = Rc::new(RefCell::new(String::new()));
         let l = log.clone();
@@ -84,7 +71,7 @@ mod test_conversions {
     }
 
     #[test]
-    fn test_consumer_once_with_state_modification() {
+    fn test_accept_applies_mutable_closure_state() {
         let log = Rc::new(RefCell::new(Vec::new()));
         let l = log.clone();
         let mut counter = 0;
@@ -97,7 +84,7 @@ mod test_conversions {
     }
 
     #[test]
-    fn test_consumer_once_consumes_self() {
+    fn test_accept_invokes_callback() {
         let log = Rc::new(RefCell::new(Vec::new()));
         let l = log.clone();
         let mut consumer = RcStatefulConsumer::new(move |x: &i32| {
@@ -109,6 +96,4 @@ mod test_conversions {
     }
 }
 
-// ============================================================================
-// Unified Interface Tests
 // ============================================================================

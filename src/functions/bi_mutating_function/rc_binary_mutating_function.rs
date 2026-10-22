@@ -16,17 +16,23 @@ use super::RcBiMutatingFunction;
 /// `BiFunction<T, T, R>` with shared, single-threaded ownership and mutable
 /// references.
 ///
+/// # Type Parameters
+///
+/// - `T` - The shared type of both mutable input references.
+/// - `R` - The value returned by the wrapped function.
+///
 /// # Examples
 ///
 /// ```rust
 /// use qubit_function::{RcBinaryMutatingFunction, BiMutatingFunction};
 ///
-/// let swap_and_sum: RcBinaryMutatingFunction<i32, i32> = RcBinaryMutatingFunction::new(|x: &mut i32, y: &mut i32| {
-///     let temp = *x;
-///     *x = *y;
-///     *y = temp;
-///     *x + *y
-/// });
+/// let swap_and_sum: RcBinaryMutatingFunction<i32, i32> =
+///     RcBinaryMutatingFunction::new(|x: &mut i32, y: &mut i32| {
+///         let temp = *x;
+///         *x = *y;
+///         *y = temp;
+///         *x + *y
+///     });
 /// let swap_clone = swap_and_sum.clone();
 /// let mut a = 5;
 /// let mut b = 10;

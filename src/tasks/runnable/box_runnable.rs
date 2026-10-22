@@ -11,7 +11,10 @@ use crate::macros::impl_common_name_methods;
 use crate::macros::impl_common_new_methods;
 use crate::suppliers::macros::impl_supplier_debug_display;
 use crate::suppliers::supplier::Supplier;
+#[cfg(feature = "once")]
+use crate::suppliers::supplier_once::SupplierOnce;
 use crate::tasks::callable::BoxCallable;
+use crate::tasks::callable::Callable;
 use crate::tasks::runnable::Runnable;
 
 // ============================================================================
@@ -115,7 +118,7 @@ impl<E> BoxRunnable<E> {
     #[inline]
     pub fn then_callable<R, C>(self, callable: C) -> BoxCallable<R, E>
     where
-        C: crate::tasks::callable::Callable<R, E> + Send + 'static,
+        C: Callable<R, E> + Send + 'static,
         R: 'static,
         E: 'static,
     {
@@ -137,7 +140,7 @@ impl<E> Runnable<E> for BoxRunnable<E> {
 }
 
 #[cfg(feature = "once")]
-impl<E> crate::suppliers::supplier_once::SupplierOnce<Result<(), E>> for BoxRunnable<E> {
+impl<E> SupplierOnce<Result<(), E>> for BoxRunnable<E> {
     /// Executes the boxed runnable as a one-time supplier of `Result<(), E>`.
     #[inline(always)]
     fn get(mut self) -> Result<(), E> {

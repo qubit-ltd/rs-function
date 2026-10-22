@@ -8,14 +8,11 @@
 
 //! Unit tests for StatefulMutator types
 
-use qubit_function::ArcStatefulMutator;
-use qubit_function::BoxStatefulMutator;
-use qubit_function::MutatorOnce;
 use qubit_function::RcStatefulMutator;
 use qubit_function::StatefulMutator;
 
 // ============================================================================
-// BoxStatefulMutator Tests
+// RcStatefulMutator Tests
 // ============================================================================
 
 #[cfg(test)]
@@ -106,9 +103,6 @@ mod test_rc_mutator {
         c.apply(&mut value);
         assert_eq!(value, 10);
     }
-
-    // Note: RcStatefulMutator cannot be converted to ArcStatefulMutator because
-    // Rc is not Send. This test has been removed.
 
     #[test]
     fn test_new_with_name() {

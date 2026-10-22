@@ -53,7 +53,8 @@ use crate::mutators::macros::impl_mutator_debug_display;
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{Mutator, BoxMutator};
+/// use qubit_function::BoxMutator;
+/// use qubit_function::Mutator;
 ///
 /// let mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
 /// let mut value = 5;

@@ -9,41 +9,13 @@
 //! Unit tests for MutatingFunction types (stateless Fn(&mut T) -> R)
 
 use qubit_function::ArcMutatingFunction;
-use qubit_function::BoxMutatingFunction;
 use qubit_function::MutatingFunction;
-use qubit_function::MutatingFunctionOnce;
+use qubit_function::BoxMutatingFunction;
 use qubit_function::RcMutatingFunction;
 
 // ============================================================================
 // BoxMutatingFunction Tests
 // ============================================================================
-
-/// Test struct that implements MutatingFunction to test default methods
-struct TestMutatingFunction {
-    multiplier: i32,
-}
-
-impl TestMutatingFunction {
-    fn new(multiplier: i32) -> Self {
-        TestMutatingFunction { multiplier }
-    }
-}
-
-impl MutatingFunction<i32, i32> for TestMutatingFunction {
-    fn apply(&self, input: &mut i32) -> i32 {
-        let old_value = *input;
-        *input *= self.multiplier;
-        old_value
-    }
-}
-
-impl Clone for TestMutatingFunction {
-    fn clone(&self) -> Self {
-        TestMutatingFunction {
-            multiplier: self.multiplier,
-        }
-    }
-}
 
 // ============================================================================
 // MutatingFunction Debug and Display Tests
@@ -307,7 +279,3 @@ fn test_arc_conditional_mutating_function_debug_display() {
     assert!(named_display_str.contains("ArcPredicate"));
     assert!(named_display_str.ends_with(")"));
 }
-
-// ============================================================================
-// MutatingFunction Trait Default Methods Tests - into_once, to_once
-// ============================================================================

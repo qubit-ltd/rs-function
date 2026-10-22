@@ -32,6 +32,21 @@ use crate::transformers::macros::impl_transformer_debug_display;
 /// - **Reusability**: Can be called multiple times (each call consumes its
 ///   input)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
+///
+/// # Type Parameters
+///
+/// * `T` - The input type consumed by each transformation.
+/// * `R` - The output type produced by each transformation.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::BoxTransformer;
+/// use qubit_function::Transformer;
+///
+/// let increment = BoxTransformer::new(|value: i32| value + 1);
+/// assert_eq!(increment.apply(41), 42);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxTransformer<T, R> {
     /// The wrapped callback implementation.

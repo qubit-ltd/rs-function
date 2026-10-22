@@ -20,6 +20,16 @@ use crate::macros::impl_common_new_methods;
 /// `BoxStatefulTester` is the owned wrapper for zero-argument tests that need
 /// native `FnMut() -> bool` semantics. Calling [`StatefulTester::test`] may
 /// mutate state captured by the wrapped closure.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::BoxStatefulTester;
+/// use qubit_function::StatefulTester;
+///
+/// let mut tester = BoxStatefulTester::new(|| true);
+/// assert!(tester.test());
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxStatefulTester {
     /// The wrapped callback implementation.
@@ -43,6 +53,10 @@ impl BoxStatefulTester {
     /// The second tester is evaluated only when the first tester returns
     /// `true`.
     ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The stateful tester evaluated after this tester succeeds.
+    ///
     /// # Parameters
     ///
     /// * `next` - The tester evaluated after this tester succeeds.
@@ -63,6 +77,10 @@ impl BoxStatefulTester {
     /// The second tester is evaluated only when the first tester returns
     /// `false`.
     ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The stateful tester evaluated after this tester fails.
+    ///
     /// # Parameters
     ///
     /// * `next` - The tester evaluated after this tester fails.
@@ -79,6 +97,10 @@ impl BoxStatefulTester {
     }
 
     /// Combines this tester with another stateful tester using logical NAND.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The stateful tester combined with this tester.
     ///
     /// # Parameters
     ///
@@ -97,6 +119,10 @@ impl BoxStatefulTester {
 
     /// Combines this tester with another stateful tester using logical XOR.
     ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The stateful tester combined with this tester.
+    ///
     /// # Parameters
     ///
     /// * `next` - The tester combined with this tester.
@@ -113,6 +139,10 @@ impl BoxStatefulTester {
     }
 
     /// Combines this tester with another stateful tester using logical NOR.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The stateful tester combined with this tester.
     ///
     /// # Parameters
     ///

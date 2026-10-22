@@ -8,43 +8,11 @@
 
 //! Unit tests for Mutator types (stateless Fn(&mut T))
 
-use qubit_function::ArcMutator;
-use qubit_function::BoxMutator;
-use qubit_function::Mutator;
-use qubit_function::MutatorOnce;
 use qubit_function::RcMutator;
+use qubit_function::Mutator;
 
 // ============================================================================
-// Mutator Default Implementation Tests
-// ============================================================================
-
-/// Test struct that implements Mutator to test default methods
-struct TestMutator {
-    multiplier: i32,
-}
-
-impl TestMutator {
-    fn new(multiplier: i32) -> Self {
-        TestMutator { multiplier }
-    }
-}
-
-impl Mutator<i32> for TestMutator {
-    fn apply(&self, input: &mut i32) {
-        *input *= self.multiplier;
-    }
-}
-
-impl Clone for TestMutator {
-    fn clone(&self) -> Self {
-        TestMutator {
-            multiplier: self.multiplier,
-        }
-    }
-}
-
-// ============================================================================
-// BoxMutator Tests
+// RcMutator Tests
 // ============================================================================
 
 #[cfg(test)]
@@ -216,7 +184,3 @@ mod test_rc_mutator {
         assert_eq!(value, 6);
     }
 }
-
-// ============================================================================
-// Closure Extension Methods Tests
-// ============================================================================

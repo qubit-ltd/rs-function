@@ -54,6 +54,7 @@ use crate::macros::impl_common_new_methods;
 ///
 /// // Non-consuming combination
 /// let combined = shared.and(clone1.clone());
+/// assert!(combined.test());
 /// # }
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]

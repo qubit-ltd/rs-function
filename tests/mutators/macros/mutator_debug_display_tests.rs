@@ -10,9 +10,18 @@ use qubit_function::BoxMutator;
 use qubit_function::Mutator;
 
 #[test]
-fn test_mutator_debug_display_observable_behavior() {
+fn test_mutator_debug_and_display_include_mutator_name() {
     let mutator = BoxMutator::new(|value: &mut i32| *value += 1);
-    let mut value = 41;
-    mutator.apply(&mut value);
-    assert_eq!(value, 42);
+    assert_eq!(
+        format!("{mutator:?}"),
+        "BoxMutator { name: None, function: \"<function>\" }"
+    );
+    assert_eq!(format!("{mutator}"), "BoxMutator");
+
+    let named_mutator = BoxMutator::new_with_name("increment", |value: &mut i32| *value += 1);
+    assert_eq!(
+        format!("{named_mutator:?}"),
+        "BoxMutator { name: Some(\"increment\"), function: \"<function>\" }"
+    );
+    assert_eq!(format!("{named_mutator}"), "BoxMutator(increment)");
 }

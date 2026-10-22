@@ -42,7 +42,7 @@ use qubit_function::Transformer;
 use qubit_function::TransformerOnce;
 
 #[test]
-fn function_constant_and_identity_allow_non_static_input_types() {
+fn test_function_constant_and_identity_allow_non_static_input_types() {
     let owned = String::from("input");
     let input = owned.as_str();
 
@@ -62,7 +62,7 @@ fn function_constant_and_identity_allow_non_static_input_types() {
 }
 
 #[test]
-fn transformer_constant_allow_non_static_input_types() {
+fn test_transformer_constant_allow_non_static_input_types() {
     let owned = String::from("transform");
     let input = owned.as_str();
 

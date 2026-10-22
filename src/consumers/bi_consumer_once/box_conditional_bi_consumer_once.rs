@@ -18,14 +18,13 @@ use crate::consumers::macros::impl_conditional_consumer_debug_display;
 // 5. BoxConditionalBiConsumerOnce - Box-based Conditional BiConsumerOnce
 // =======================================================================
 
-/// BoxConditionalBiConsumerOnce struct
+/// A one-time bi-consumer that invokes its callback only when its predicate
+/// accepts both input values.
 ///
-/// A conditional one-time bi-consumer that only executes when a predicate is
-/// satisfied. Uses `BoxBiConsumerOnce` and `BoxBiPredicate` for single
-/// ownership semantics.
-///
-/// This type is typically created by calling `BoxBiConsumerOnce::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
+/// The callback and predicate are owned by this value. Calling `accept`
+/// consumes the conditional consumer, whether or not the predicate matches.
+/// Construct it by calling [`BoxBiConsumerOnce::when`], and use `or_else` to
+/// add a fallback callback.
 ///
 /// # Features
 ///
@@ -34,6 +33,12 @@ use crate::consumers::macros::impl_conditional_consumer_debug_display;
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 /// - **Implements BiConsumerOnce**: Can be used anywhere a `BiConsumerOnce` is
 ///   expected
+///
+/// # Type Parameters
+///
+/// - `T` is the type of the first input borrowed by the predicate and callback.
+/// - `U` is the type of the second input borrowed by the predicate and
+///   callback.
 ///
 /// # Examples
 ///
@@ -89,6 +94,11 @@ impl_box_conditional_consumer!(
 );
 
 impl<T, U> BiConsumerOnce<T, U> for BoxConditionalBiConsumerOnce<T, U> {
+    /// Consumes this wrapper and invokes its callback when the predicate
+    /// matches.
+    ///
+    /// If the predicate returns `false`, the callback is dropped without being
+    /// invoked.
     fn accept(self, first: &T, second: &U) {
         if self.predicate.test(first, second) {
             self.consumer.accept(first, second);

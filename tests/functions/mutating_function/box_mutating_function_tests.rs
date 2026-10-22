@@ -7,9 +7,16 @@
 // =============================================================================
 
 use qubit_function::BoxMutatingFunction;
+use qubit_function::MutatingFunction;
 
 #[test]
-fn test_box_mutating_function_observable_behavior() {
-    let type_name = std::any::type_name::<BoxMutatingFunction<i32, i32>>();
-    assert!(type_name.contains("BoxMutatingFunction"), "{type_name}");
+fn test_box_mutating_function_updates_input_and_returns_result() {
+    let function = BoxMutatingFunction::new(|value: &mut i32| {
+        *value *= 2;
+        *value
+    });
+    let mut value = 5;
+
+    assert_eq!(function.apply(&mut value), 10);
+    assert_eq!(value, 10);
 }

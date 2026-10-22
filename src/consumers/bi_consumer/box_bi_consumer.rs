@@ -24,6 +24,11 @@ use crate::consumers::macros::impl_consumer_debug_display;
 /// A non-mutating bi-consumer implementation based on `Box<dyn Fn(&T, &U)>`
 /// for single ownership scenarios.
 ///
+/// # Type Parameters
+///
+/// * `T` - Type of the first value passed to the callback.
+/// * `U` - Type of the second value passed to the callback.
+///
 /// # Features
 ///
 /// - **Single Ownership**: Not cloneable, ownership moves on use

@@ -6,10 +6,13 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
+use std::any::type_name;
+use std::io::Error;
+
 use qubit_function::RcRunnable;
 
 #[test]
 fn test_rc_runnable_observable_behavior() {
-    let type_name = std::any::type_name::<RcRunnable<std::io::Error>>();
+    let type_name = type_name::<RcRunnable<Error>>();
     assert!(type_name.contains("RcRunnable"), "{type_name}");
 }

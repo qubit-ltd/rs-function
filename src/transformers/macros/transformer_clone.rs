@@ -7,17 +7,19 @@
 // =============================================================================
 //! # Transformer Clone Macro
 //!
-//! Generates Clone trait implementation for basic Transformer types
+//! Generates `Clone` implementations for Transformer types.
 //!
-//! Generates Clone implementation for Transformer structs that have `function`
-//! and `name` fields. The function field is cloned using its inherent `clone`
-//! method, which performs a shallow clone for smart pointers like `Arc` or
-//! `Rc`.
+//! The macro supports Transformer structs with two or three type parameters.
+//! It clones each struct's `function` and `metadata` fields using their
+//! respective `Clone` implementations. For smart pointers such as `Arc` and
+//! `Rc`, cloning the `function` field is a shallow clone.
 //!
 //! # Parameters
 //!
-//! * `$struct_name` - The struct name
-//! * `$generic` - Generic parameter list (two or three type parameters)
+//! * `$struct_name` - Transformer struct identifier
+//! * `$t`, `$r` - Type parameter identifiers for a two-parameter Transformer
+//! * `$t`, `$u`, `$r` - Type parameter identifiers for a three-parameter
+//!   Transformer
 //!
 //! # Examples
 //!
@@ -35,20 +37,20 @@
 //! impl_transformer_clone!(RcBiTransformer<T, U, V>);
 //! ```
 
-/// Generates Clone trait implementation for basic Transformer types
+/// Generates a `Clone` implementation for a Transformer type.
 ///
 /// This macro should be used at the top level (outside of any impl block) as
-/// it generates a complete `impl Clone for $struct_name` block. It generates
-/// Clone implementation for Transformer structs that have `function` and `name`
-/// fields. The function field is cloned using its inherent `clone` method,
-/// which performs a shallow clone for smart pointers like `Arc` or `Rc`.
+/// it expands to a complete `impl Clone for $struct_name` block. The target
+/// struct must have `function` and `metadata` fields that implement `Clone`.
+/// Cloning smart pointers such as `Arc` or `Rc` in the `function` field is
+/// shallow.
 ///
 /// # Parameters
 ///
-/// * `$struct_name` - The struct name
-/// * `$t` - Generic parameter list (two or three type parameters)
-/// * `$u` - Generic parameter list (two or three type parameters)
-/// * `$r` - Generic parameter list (two or three type parameters)
+/// * `$struct_name` - Transformer struct identifier
+/// * `$t`, `$r` - Type parameter identifiers for a two-parameter Transformer
+/// * `$t`, `$u`, `$r` - Type parameter identifiers for a three-parameter
+///   Transformer
 ///
 /// # Examples
 ///

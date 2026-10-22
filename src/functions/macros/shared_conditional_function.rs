@@ -83,29 +83,27 @@ macro_rules! impl_shared_conditional_function {
         callback_bounds = ($($callback_bounds:tt)+)
     ) => {
         impl<$t, $r> $struct_name<$t, $r> {
-            /// Provides an alternative function for when the predicate is not satisfied
+            /// Combines this conditional function with an alternative callback.
             ///
-            /// Combines the current conditional function with an alternative function
-            /// into a new function that implements the following semantics:
+            /// The returned function borrows neither callback. It clones the
+            /// existing callback from `self` and stores both callbacks in a
+            /// wrapper from the same shared ownership and statefulness family.
+            /// Both input and output types must be `'static` because the returned
+            /// wrapper owns the callbacks and may outlive this borrow.
             ///
-            /// When the returned function is called with an argument:
-            /// - If the predicate is satisfied, it executes the internal function
-            /// - If the predicate is NOT satisfied, it executes the alternative function
+            /// When called, the returned function invokes the existing callback
+            /// if the predicate succeeds, and the alternative callback otherwise.
             ///
             /// # Parameters
             ///
-            /// * `else_function` - The alternative function to execute when predicate fails
+            /// * `else_function` - Callback used when the predicate fails. It must
+            ///   implement the function trait accepted by this wrapper and satisfy
+            ///   the storage bounds selected for the wrapper family.
             ///
             /// # Returns
             ///
-            /// Returns a new function that handles both conditional branches
-            ///
-            /// # Examples
-            ///
-            /// ```text
-            /// // Macro internals are crate-private; usage example is documented at
-            /// // the macro expansion site.
-            /// ```
+            /// A new shared function wrapper that applies the predicate before
+            /// selecting which callback to invoke.
             pub fn or_else<F>(&self, else_function: F) -> $shared_function_type<$t, $r>
             where
                 $t: 'static,
@@ -134,29 +132,27 @@ macro_rules! impl_shared_conditional_function {
         callback_bounds = ($($callback_bounds:tt)+)
     ) => {
         impl<$t, $u, $r> $struct_name<$t, $u, $r> {
-            /// Provides an alternative bi-function for when the predicate is not satisfied
+            /// Combines this conditional bi-function with an alternative callback.
             ///
-            /// Combines the current conditional bi-function with an alternative bi-function
-            /// into a new bi-function that implements the following semantics:
+            /// The returned bi-function borrows neither callback. It clones the
+            /// existing callback from `self` and stores both callbacks in a
+            /// wrapper from the same shared ownership and statefulness family.
+            /// Both input types and the output type must be `'static` because the
+            /// returned wrapper owns the callbacks and may outlive this borrow.
             ///
-            /// When the returned bi-function is called with arguments:
-            /// - If the predicate is satisfied, it executes the internal bi-function
-            /// - If the predicate is NOT satisfied, it executes the alternative bi-function
+            /// When called, the returned bi-function invokes the existing callback
+            /// if the predicate succeeds, and the alternative callback otherwise.
             ///
             /// # Parameters
             ///
-            /// * `else_function` - The alternative bi-function to execute when predicate fails
+            /// * `else_function` - Callback used when the predicate fails. It must
+            ///   implement the bi-function trait accepted by this wrapper and
+            ///   satisfy the storage bounds selected for the wrapper family.
             ///
             /// # Returns
             ///
-            /// Returns a new bi-function that handles both conditional branches
-            ///
-            /// # Examples
-            ///
-            /// ```text
-            /// // Macro internals are crate-private; usage example is documented at
-            /// // the macro expansion site.
-            /// ```
+            /// A new shared bi-function wrapper that applies the predicate before
+            /// selecting which callback to invoke.
             pub fn or_else<F>(&self, else_function: F) -> $shared_function_type<$t, $u, $r>
             where
                 $t: 'static,

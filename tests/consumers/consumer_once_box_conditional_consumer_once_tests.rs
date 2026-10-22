@@ -5,30 +5,17 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-use std::sync::Arc;
-use std::sync::Mutex;
-
-///
-/// # ConsumerOnce Tests
-///
-/// Unit tests for the ConsumerOnce trait and its implementations.
-use qubit_function::BoxConsumerOnce;
-///
-/// # ConsumerOnce Tests
-///
-/// Unit tests for the ConsumerOnce trait and its implementations.
-use qubit_function::ConsumerOnce;
-
 // ============================================================================
 // BoxConsumerOnce Tests
 // ============================================================================
 
 #[cfg(test)]
 mod box_conditional_consumer_once_tests {
-    use super::Arc;
-    use super::BoxConsumerOnce;
-    use super::ConsumerOnce;
-    use super::Mutex;
+    use std::sync::Arc;
+    use std::sync::Mutex;
+
+    use qubit_function::BoxConsumerOnce;
+    use qubit_function::ConsumerOnce;
 
     // Tests for accept() method
 
@@ -68,14 +55,6 @@ mod box_conditional_consumer_once_tests {
         conditional.accept(&0);
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), Vec::<i32>::new());
     }
-
-    // Tests for into_box() method
-
-    // Tests for into_fn() method
-
-    // Additional tests for into_box() and into_fn() with complex predicates
-
-    // Additional comprehensive branch coverage tests for accept() method
 
     #[test]
     fn test_accept_with_always_true_predicate() {
@@ -210,6 +189,3 @@ mod box_conditional_consumer_once_tests {
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![6, 12, 106]);
     }
 }
-// ============================================================================
-// to_box() and to_fn() Tests - Closure Implementation
-// ============================================================================

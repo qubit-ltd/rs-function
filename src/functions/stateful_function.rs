@@ -7,9 +7,8 @@
 // =============================================================================
 //! # StatefulFunction Types
 //!
-//! Provides Rust implementations of stateful function traits for stateful value
-//! transformation. StatefulFunctions consume input values (taking ownership)
-//! and produce output values while allowing internal state modification.
+//! Provides Rust implementations of stateful function traits for transforming
+//! borrowed input values while allowing internal state modification.
 //!
 //! It is similar to the `FnMut(&T) -> R` trait in the standard library.
 //!
@@ -41,17 +40,31 @@ pub use arc_conditional_stateful_function::ArcConditionalStatefulFunction;
 // Core Trait
 // ============================================================================
 
-/// StatefulFunction trait - transforms values from type T to type R with state
+/// Transforms borrowed values from type `T` to type `R` while retaining state
 ///
-/// Defines the behavior of a stateful transformation: converting a borrowed
-/// value of type `T` to a value of type `R` while allowing modification of
-/// internal state. This is analogous to
-/// `FnMut(&T) -> R` in Rust's standard library.
+/// A stateful function receives each input by shared reference, so it does not
+/// take ownership of the input. Its mutable receiver allows it to update state
+/// between calls, similarly to the standard library's `FnMut(&T) -> R`.
 ///
 /// # Type Parameters
 ///
-/// * `T` - The type of the borrowed input value
-/// * `R` - The type of the output value
+/// * `T` - The type of each borrowed input value.
+/// * `R` - The type of each returned output value.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::{BoxStatefulFunction, StatefulFunction};
+///
+/// let mut call_count = 0;
+/// let mut counter = BoxStatefulFunction::new(move |value: &i32| {
+///     call_count += 1;
+///     value + call_count
+/// });
+///
+/// assert_eq!(counter.apply(&5), 6);
+/// assert_eq!(counter.apply(&5), 7);
+/// ```
 pub trait StatefulFunction<T, R> {
     /// Applies the mapping to the input value to produce an output value
     ///

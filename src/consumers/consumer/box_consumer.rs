@@ -18,7 +18,7 @@ use crate::consumers::macros::impl_consumer_debug_display;
 // 2. BoxConsumer - Single Ownership Implementation
 // ============================================================================
 
-/// BoxConsumer struct
+/// Owns a non-mutating callback with single ownership.
 ///
 /// Non-mutating consumer implementation based on `Box<dyn Fn(&T)>` for single
 /// ownership scenarios.
@@ -50,6 +50,10 @@ use crate::consumers::macros::impl_consumer_debug_display;
 /// });
 /// consumer.accept(&5);
 /// ```
+///
+/// # Type Parameters
+///
+/// * `T` - The input value type borrowed by the callback.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConsumer<T> {
     /// The wrapped callback implementation.

@@ -276,6 +276,10 @@ pub use arc_conditional_mutator::ArcConditionalMutator;
 /// - **Automatic Implementation**: Closures automatically implement this trait
 /// - **Generic Programming**: Write functions that work with any mutator type
 ///
+/// # Type Parameters
+///
+/// - `T` - The value type that the mutator receives and modifies.
+///
 /// # Examples
 ///
 /// ## Generic Mutator Function

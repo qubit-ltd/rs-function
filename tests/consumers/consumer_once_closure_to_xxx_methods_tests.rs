@@ -5,19 +5,7 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-use std::sync::Arc;
-use std::sync::Mutex;
-
-use qubit_function::BoxConsumerOnce;
-///
-/// # ConsumerOnce Tests
-///
-/// Unit tests for the ConsumerOnce trait and its implementations.
-///
-/// # ConsumerOnce Tests
-///
-/// Unit tests for the ConsumerOnce trait and its implementations.
-use qubit_function::ConsumerOnce;
+//! Tests for the closure adapters implemented by `ConsumerOnce`.
 
 // ============================================================================
 // BoxConsumerOnce Tests
@@ -25,10 +13,11 @@ use qubit_function::ConsumerOnce;
 
 #[cfg(test)]
 mod closure_to_xxx_methods_tests {
-    use super::Arc;
-    use super::BoxConsumerOnce;
-    use super::ConsumerOnce;
-    use super::Mutex;
+    use std::sync::Arc;
+    use std::sync::Mutex;
+
+    use qubit_function::BoxConsumerOnce;
+    use qubit_function::ConsumerOnce;
 
     /// Test a boxed closure with and_then().
     #[test]

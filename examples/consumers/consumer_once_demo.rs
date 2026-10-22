@@ -147,17 +147,15 @@ fn main() {
         );
     }
 
-    // 7. Using with iterators (BoxConsumerOnce)
-    println!("7. Using with iterators");
+    // 7. One-time consumption
+    println!("7. One-time consumption");
     {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
         let consumer = BoxConsumerOnce::new(move |x: &i32| {
             l.lock().expect("mutex should not be poisoned").push(*x * 2);
         });
-        // Note: This will panic because BoxConsumerOnce can only be called once
-        // Adapt the consumer with a forwarding closure when an iterator API
-        // needs one.
+        // `accept` consumes the consumer, so it cannot be called a second time.
         consumer.accept(&1);
         println!(
             "  BoxConsumerOnce with single value: {:?}\n",

@@ -12,6 +12,7 @@ use qubit_function::Predicate;
 #[test]
 fn test_predicate_clone_observable_behavior() {
     let predicate = BoxPredicate::new(|value: &i32| *value > 0);
-    assert!(predicate.test(&1));
-    assert!(!predicate.test(&0));
+    let cloned_predicate = predicate.clone();
+    assert!(cloned_predicate.test(&1));
+    assert!(!cloned_predicate.test(&0));
 }

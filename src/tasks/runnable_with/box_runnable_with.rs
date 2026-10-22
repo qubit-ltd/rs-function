@@ -16,11 +16,32 @@ use crate::tasks::runnable_with::RunnableWith;
 /// The erased callback representation used by this implementation.
 type BoxRunnableWithFn<T, E> = Box<dyn FnMut(&mut T) -> Result<(), E> + Send>;
 
-/// Box-based runnable with mutable input.
+/// A boxed, fallible action that can mutate its input and move across threads.
 ///
-/// `BoxRunnableWith<T, E>` stores a
-/// `Box<dyn FnMut(&mut T) -> Result<(), E> + Send>` and can be called
-/// repeatedly on tasks that may be moved across threads.
+/// The callback is stored as a `Send` trait object, so the wrapper can be
+/// transferred between threads when its input and error types satisfy the
+/// requirements of the surrounding operation. Calls may mutate the input and
+/// retain callback state between invocations.
+///
+/// # Type Parameters
+///
+/// * `T` - The mutable input type accepted by the callback.
+/// * `E` - The error type returned when the callback fails.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::tasks::runnable_with::BoxRunnableWith;
+/// use qubit_function::tasks::runnable_with::RunnableWith;
+///
+/// let mut increment = BoxRunnableWith::new(|value: &mut i32| {
+///     *value += 1;
+///     Ok::<(), ()>(())
+/// });
+/// let mut value = 1;
+/// increment.run_with(&mut value).unwrap();
+/// assert_eq!(value, 2);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxRunnableWith<T, E> {
     /// The stateful closure executed by this runnable.

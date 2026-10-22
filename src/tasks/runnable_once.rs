@@ -46,7 +46,7 @@ pub use local_box_runnable_once::LocalBoxRunnableOnce;
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{RunnableOnce, BoxRunnableOnce};
+/// use qubit_function::RunnableOnce;
 ///
 /// let task = || Ok::<(), String>(());
 /// assert_eq!(RunnableOnce::run_once(task), Ok(()));

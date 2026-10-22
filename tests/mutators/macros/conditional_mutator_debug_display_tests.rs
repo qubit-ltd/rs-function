@@ -10,7 +10,7 @@ use qubit_function::BoxMutator;
 use qubit_function::Mutator;
 
 #[test]
-fn test_conditional_mutator_debug_display_observable_behavior() {
+fn test_conditional_mutator_applies_mutation() {
     let mutator = BoxMutator::new(|value: &mut i32| *value += 1);
     let mut value = 41;
     mutator.apply(&mut value);

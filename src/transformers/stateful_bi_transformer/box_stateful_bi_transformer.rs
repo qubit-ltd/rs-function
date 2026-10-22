@@ -20,19 +20,38 @@ use crate::transformers::macros::impl_transformer_debug_display;
 // BoxStatefulBiTransformer - Box<dyn FnMut(T, U) -> R>
 // ============================================================================
 
-/// BoxStatefulBiTransformer - bi-transformer wrapper based on `Box<dyn Fn>`
+/// Owns a reusable two-input callback whose internal state can change between
+/// calls.
 ///
-/// A bi-transformer wrapper that provides single ownership with reusable
-/// transformation. The bi-transformer consumes both inputs and can be called
-/// multiple times.
+/// The callback is stored in a single-owner `Box` and must be `'static`. Each
+/// call consumes both inputs and mutably borrows the wrapper. The wrapper does
+/// not require the callback to be `Send` or `Sync` and cannot be cloned.
 ///
-/// # Features
+/// # Type Parameters
 ///
-/// - **Based on**: `Box<dyn FnMut(T, U) -> R>`
-/// - **Ownership**: Single ownership, cannot be cloned
-/// - **Reusability**: Can be called multiple times (each call consumes its
-///   inputs)
-/// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
+/// * `T` - Type of the first input consumed by the callback.
+/// * `U` - Type of the second input consumed by the callback.
+/// * `R` - Type of the value returned by the callback.
+///
+/// # Examples
+///
+/// The callback can retain mutable state between calls:
+///
+/// ```
+/// use qubit_function::BoxStatefulBiTransformer;
+/// use qubit_function::StatefulBiTransformer;
+///
+/// let mut total = 0;
+/// let mut sum_and_accumulate = BoxStatefulBiTransformer::new(
+///     move |first: i32, second: i32| {
+///         total += first + second;
+///         total
+///     },
+/// );
+///
+/// assert_eq!(sum_and_accumulate.apply(2, 3), 5);
+/// assert_eq!(sum_and_accumulate.apply(1, 4), 10);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxStatefulBiTransformer<T, U, R> {
     /// The wrapped callback implementation.

@@ -8,19 +8,12 @@
 
 //! Unit tests for StatefulSupplier types
 
-use std::cell::RefCell;
-use std::rc::Rc;
-use std::sync::Arc;
-use std::sync::Mutex;
-use std::thread;
-
 use qubit_function::ArcStatefulSupplier;
 use qubit_function::BoxStatefulSupplier;
 use qubit_function::RcStatefulSupplier;
-use qubit_function::StatefulSupplier;
 
 // ==========================================================================
-// StatefulSupplier Trait Tests (for closures)
+// StatefulSupplier Debug and Display Tests
 // ==========================================================================
 
 #[cfg(test)]
@@ -161,7 +154,3 @@ mod test_stateful_supplier_debug_display {
         }
     }
 }
-
-// ============================================================================
-// StatefulSupplier Trait Default Methods Tests - into_once, to_once
-// ============================================================================

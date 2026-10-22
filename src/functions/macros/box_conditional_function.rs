@@ -13,7 +13,7 @@
 //! as well as complete Function/BiFunction trait implementations.
 //!
 //! Box type characteristics:
-//! - `or_else` function self (because Box cannot Clone)
+//! - `or_else` consumes `self` because `Box` cannot be cloned
 //!
 //! # Parameters
 //!

@@ -15,25 +15,34 @@ use crate::consumers::macros::impl_box_conditional_consumer;
 use crate::consumers::macros::impl_conditional_consumer_debug_display;
 
 // =======================================================================
-// 7. BoxConditionalBiConsumer - Box-based Conditional BiConsumer
+// 7. BoxConditionalStatefulBiConsumer - Box-based Conditional Stateful
+//    BiConsumer
 // =======================================================================
 
-/// BoxConditionalBiConsumer struct
-///
-/// A conditional bi-consumer that only executes when a predicate is satisfied.
-/// Uses `BoxStatefulBiConsumer` and `BoxBiPredicate` for single ownership
-/// semantics.
+/// A single-owner stateful bi-consumer that invokes its callback only when its
+/// predicate accepts both borrowed inputs. The callback can update its own
+/// captured state, while the wrapper stores the callback and predicate in
+/// boxes without shared ownership.
 ///
 /// This type is typically created by calling `BoxStatefulBiConsumer::when()`
-/// and is designed to work with the `or_else()` method to create if-then-else
-/// logic.
+/// and can be chained with `or_else()` to create if-then-else logic.
+///
+/// # Type Parameters
+///
+/// * `T` - The type of the first borrowed input.
+/// * `U` - The type of the second borrowed input.
 ///
 /// # Features
 ///
-/// - **Single Ownership**: Not cloneable, consumes `self` on use
-/// - **Conditional Execution**: Only consumes when predicate returns `true`
+/// - **Single Ownership**: Owns its callback and predicate without shared
+///   ownership
+/// - **Conditional Execution**: Invokes the callback only when the predicate
+///   returns `true`
+/// - **Stateful Callback**: The callback may update its captured state between
+///   calls
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
-/// - **Implements BiConsumer**: Can be used anywhere a `BiConsumer` is expected
+/// - **Implements StatefulBiConsumer**: Can be used wherever that trait is
+///   expected
 ///
 /// # Examples
 ///

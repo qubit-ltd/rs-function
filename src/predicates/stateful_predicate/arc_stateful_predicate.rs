@@ -33,6 +33,21 @@ type ArcStatefulPredicateFn<T> = Arc<Mutex<dyn FnMut(&T) -> bool + Send + 'stati
 /// callback runs. Synchronous re-entry through the same shared state
 /// deadlocks. The mutex is not poisoned after a panic, and mutations completed
 /// before a panic are not rolled back.
+///
+/// # Type Parameters
+///
+/// * `T` - The type of the value borrowed by the callback.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::ArcStatefulPredicate;
+/// use qubit_function::StatefulPredicate;
+///
+/// let mut predicate = ArcStatefulPredicate::new(|value: &i32| *value > 0);
+/// assert!(predicate.test(&5));
+/// assert!(!predicate.test(&-3));
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcStatefulPredicate<T> {
     /// The wrapped callback implementation.
@@ -193,6 +208,8 @@ where
 {
     type Output = ArcStatefulPredicate<T>;
 
+    /// Returns a predicate that negates this callback while retaining its
+    /// metadata.
     fn not(self) -> Self::Output {
         let metadata = self.metadata;
         let function = self.function;
@@ -212,6 +229,8 @@ where
 {
     type Output = ArcStatefulPredicate<T>;
 
+    /// Returns a predicate that negates the shared callback without consuming
+    /// it.
     fn not(self) -> Self::Output {
         let function = self.function.clone();
         ArcStatefulPredicate::new_with_metadata(

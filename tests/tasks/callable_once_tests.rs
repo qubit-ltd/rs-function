@@ -6,6 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
+#![cfg(feature = "once")]
+
 //! Unit tests for CallableOnce and BoxCallableOnce.
 
 use std::io;

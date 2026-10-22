@@ -36,6 +36,21 @@ use crate::functions::macros::impl_shared_function_methods;
 ///   time)
 /// - **Thread Safety**: Thread-safe (`Send + Sync` required)
 /// - **Clonable**: Cheap cloning via `Arc::clone`
+///
+/// # Type Parameters
+///
+/// - `T` is the input type borrowed by each invocation.
+/// - `R` is the value produced by each invocation.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::ArcFunction;
+/// use qubit_function::Function;
+///
+/// let double = ArcFunction::new(|value: &i32| value * 2);
+/// assert_eq!(double.apply(&21), 42);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcFunction<T, R> {
     /// The wrapped callback implementation.

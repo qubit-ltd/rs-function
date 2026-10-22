@@ -20,6 +20,9 @@ use crate::functions::macros::impl_function_debug_display;
 use crate::functions::macros::impl_shared_function_methods;
 
 /// The erased callback representation used by this implementation.
+///
+/// The shared allocation permits cheap clones while requiring callbacks to be
+/// safe for concurrent calls.
 type ArcBiFunctionFn<T, U, R> = Arc<dyn Fn(&T, &U) -> R + Send + Sync>;
 
 // ============================================================================
@@ -38,6 +41,21 @@ type ArcBiFunctionFn<T, U, R> = Arc<dyn Fn(&T, &U) -> R + Send + Sync>;
 /// - **Reusability**: Can be called multiple times (borrows inputs each time)
 /// - **Thread Safety**: Thread-safe (`Send + Sync` required)
 /// - **Clonable**: Cheap cloning via `Arc::clone`
+///
+/// # Type Parameters
+///
+/// - `T` - The type of the first borrowed input.
+/// - `U` - The type of the second borrowed input.
+/// - `R` - The value produced by the callback.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::{ArcBiFunction, BiFunction};
+///
+/// let add = ArcBiFunction::new(|first: &i32, second: &i32| first + second);
+/// assert_eq!(add.apply(&2, &3), 5);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcBiFunction<T, U, R> {
     /// The wrapped callback implementation.
@@ -73,6 +91,7 @@ impl_function_clone!(ArcBiFunction<T, U, R>);
 
 // Implement BiFunction trait for ArcBiFunction
 impl<T, U, R> BiFunction<T, U, R> for ArcBiFunction<T, U, R> {
+    /// Invokes the stored callback with borrowed inputs and returns its result.
     #[inline(always)]
     fn apply(&self, first: &T, second: &U) -> R {
         (self.function)(first, second)

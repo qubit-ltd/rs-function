@@ -202,6 +202,11 @@ pub use arc_bi_predicate::ArcBiPredicate;
 /// this trait, providing seamless integration with Rust's closure
 /// system.
 ///
+/// # Type Parameters
+///
+/// * `T` - The type of the first value tested by the predicate.
+/// * `U` - The type of the second value tested by the predicate.
+///
 /// ## Examples
 ///
 /// ### Basic Usage
@@ -262,6 +267,7 @@ impl<T, U, F> BiPredicate<T, U> for F
 where
     F: Fn(&T, &U) -> bool,
 {
+    /// Invokes the closure with the two supplied values and returns its result.
     #[inline(always)]
     fn test(&self, first: &T, second: &U) -> bool {
         self(first, second)

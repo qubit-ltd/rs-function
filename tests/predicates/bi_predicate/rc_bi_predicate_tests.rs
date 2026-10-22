@@ -10,9 +10,11 @@ use qubit_function::BiPredicate;
 use qubit_function::RcBiPredicate;
 
 #[test]
-fn test_rc_bi_predicate_observable_behavior() {
-    let type_name = std::any::type_name::<RcBiPredicate<i32, i32>>();
-    assert!(type_name.contains("RcBiPredicate"), "{type_name}");
+fn test_rc_bi_predicate_evaluates_both_arguments() {
+    let predicate = RcBiPredicate::new(|first: &i32, second: &i32| first > second);
+
+    assert!(predicate.test(&5, &3));
+    assert!(!predicate.test(&3, &5));
 }
 
 #[test]

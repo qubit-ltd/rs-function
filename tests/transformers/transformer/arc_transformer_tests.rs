@@ -7,9 +7,11 @@
 // =============================================================================
 
 use qubit_function::ArcTransformer;
+use qubit_function::Transformer;
 
 #[test]
 fn test_arc_transformer_observable_behavior() {
-    let type_name = std::any::type_name::<ArcTransformer<i32, i32>>();
-    assert!(type_name.contains("ArcTransformer"), "{type_name}");
+    let double = ArcTransformer::new(|value: i32| value * 2);
+
+    assert_eq!(double.apply(21), 42);
 }

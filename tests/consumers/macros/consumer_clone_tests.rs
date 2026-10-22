@@ -10,16 +10,17 @@ use std::sync::Arc;
 use std::sync::atomic::AtomicI32;
 use std::sync::atomic::Ordering;
 
-use qubit_function::BoxConsumer;
+use qubit_function::ArcConsumer;
 use qubit_function::Consumer;
 
 #[test]
-fn test_consumer_clone_observable_behavior() {
+fn test_consumer_clone_preserves_callback_behavior() {
     let count = Arc::new(AtomicI32::new(0));
     let captured = Arc::clone(&count);
-    let consumer = BoxConsumer::new(move |value: &i32| {
+    let consumer = ArcConsumer::new(move |value: &i32| {
         captured.store(*value, Ordering::SeqCst);
     });
-    consumer.accept(&42);
+    let cloned_consumer = consumer.clone();
+    cloned_consumer.accept(&42);
     assert_eq!(count.load(Ordering::SeqCst), 42);
 }

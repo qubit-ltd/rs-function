@@ -15,6 +15,10 @@ use super::RcBiTransformer;
 /// `T` and produces a value of the same type `T`. Equivalent to Java's
 /// `BinaryOperator<T>` with shared, single-threaded ownership.
 ///
+/// # Type Parameters
+///
+/// - `T` - The input and output type consumed and produced by the operator.
+///
 /// # Examples
 ///
 /// ```rust

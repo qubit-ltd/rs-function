@@ -7,9 +7,16 @@
 // =============================================================================
 
 use qubit_function::BoxRunnableWith;
+use qubit_function::RunnableWith;
 
 #[test]
-fn test_box_runnable_with_observable_behavior() {
-    let type_name = std::any::type_name::<BoxRunnableWith<i32, std::io::Error>>();
-    assert!(type_name.contains("BoxRunnableWith"), "{type_name}");
+fn test_box_runnable_with_runs_callback_on_mutable_input() {
+    let mut runnable = BoxRunnableWith::new(|input: &mut i32| {
+        *input += 1;
+        Ok::<(), std::io::Error>(())
+    });
+    let mut input = 0;
+
+    assert_eq!(runnable.run_with(&mut input), Ok(()));
+    assert_eq!(input, 1);
 }

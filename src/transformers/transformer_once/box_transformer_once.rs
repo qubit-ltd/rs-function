@@ -32,6 +32,15 @@ use crate::transformers::macros::impl_transformer_debug_display;
 /// - **Ownership**: Single ownership, cannot be cloned
 /// - **Reusability**: Can only be called once (consumes self and input)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::{BoxTransformerOnce, TransformerOnce};
+///
+/// let double = BoxTransformerOnce::new(|value: i32| value * 2);
+/// assert_eq!(double.apply(21), 42);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxTransformerOnce<T, R> {
     /// The wrapped callback implementation.

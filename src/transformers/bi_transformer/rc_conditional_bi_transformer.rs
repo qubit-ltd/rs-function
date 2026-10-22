@@ -37,6 +37,12 @@ use crate::transformers::macros::impl_shared_conditional_transformer;
 /// - **Ownership Cost**: `Rc` uses non-atomic reference counting; `Arc` uses
 ///   atomic reference counting, and neither wrapper locks callback invocation
 ///
+/// # Type Parameters
+///
+/// - `T` - The type of the first input consumed by the transformer.
+/// - `U` - The type of the second input consumed by the transformer.
+/// - `R` - The type of the value returned by the transformer.
+///
 /// # Examples
 ///
 /// ```rust

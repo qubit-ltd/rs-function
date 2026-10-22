@@ -7,11 +7,13 @@
 // =============================================================================
 
 use qubit_function::BoxPredicate;
-use qubit_function::Predicate;
 
 #[test]
 fn test_predicate_debug_display_observable_behavior() {
     let predicate = BoxPredicate::new(|value: &i32| *value > 0);
-    assert!(predicate.test(&1));
-    assert!(!predicate.test(&0));
+    assert_eq!(
+        format!("{predicate:?}"),
+        "BoxPredicate { name: None, function: \"<function>\" }"
+    );
+    assert_eq!(format!("{predicate}"), "BoxPredicate(unnamed)");
 }

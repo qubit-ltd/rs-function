@@ -46,6 +46,33 @@ use crate::transformers::macros::impl_transformer_debug_display;
 /// callback runs. Synchronous re-entry through the same shared state
 /// deadlocks. The mutex is not poisoned after a panic, and mutations completed
 /// before a panic are not rolled back.
+///
+/// # Type Parameters
+///
+/// * `T` - Type of the first input consumed by the callback.
+/// * `U` - Type of the second input consumed by the callback.
+/// * `R` - Type of the value returned by the callback.
+///
+/// # Examples
+///
+/// Clones share the callback's mutable state, and calls are serialized:
+///
+/// ```
+/// use qubit_function::ArcStatefulBiTransformer;
+/// use qubit_function::StatefulBiTransformer;
+///
+/// let mut total = 0;
+/// let mut add_and_accumulate = ArcStatefulBiTransformer::new(
+///     move |first: i32, second: i32| {
+///         total += first + second;
+///         total
+///     },
+/// );
+/// let mut shared_clone = add_and_accumulate.clone();
+///
+/// assert_eq!(add_and_accumulate.apply(2, 3), 5);
+/// assert_eq!(shared_clone.apply(1, 4), 10);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcStatefulBiTransformer<T, U, R> {
     /// The wrapped callback implementation.

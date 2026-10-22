@@ -8,22 +8,16 @@
 
 //! Unit tests for StatefulMutator types
 
-use qubit_function::ArcStatefulMutator;
-use qubit_function::BoxStatefulMutator;
-use qubit_function::MutatorOnce;
-use qubit_function::RcStatefulMutator;
-use qubit_function::StatefulMutator;
-
 // ============================================================================
-// BoxStatefulMutator Tests
+// ArcStatefulMutator Tests
 // ============================================================================
 
 #[cfg(test)]
 mod test_arc_mutator {
     use std::thread;
 
-    use super::ArcStatefulMutator;
-    use super::StatefulMutator;
+    use qubit_function::ArcStatefulMutator;
+    use qubit_function::StatefulMutator;
 
     #[test]
     fn test_new() {
@@ -175,7 +169,3 @@ mod test_arc_mutator {
         assert_eq!(value, 6);
     }
 }
-
-// ============================================================================
-// RcStatefulMutator Tests
-// ============================================================================

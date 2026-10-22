@@ -47,7 +47,7 @@ fn modify_structs_once(a: &mut TestStruct, b: &mut TestStruct) -> i32 {
 // ============================================================================
 
 #[test]
-#[should_panic]
+#[should_panic(expected = "Negative value not allowed")]
 fn test_bi_mutating_function_once_panic_in_closure() {
     let panic_func = |x: &mut i32, y: &mut i32| {
         if *x < 0 {

@@ -10,7 +10,6 @@
 
 use qubit_function::ArcStatefulMutator;
 use qubit_function::BoxStatefulMutator;
-use qubit_function::MutatorOnce;
 use qubit_function::RcStatefulMutator;
 use qubit_function::StatefulMutator;
 
@@ -126,7 +125,3 @@ mod test_complex_scenarios {
         assert_eq!(value2, 30); // (5 + 10) * 2
     }
 }
-
-// ============================================================================
-// Custom Types Tests
-// ============================================================================

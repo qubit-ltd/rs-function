@@ -29,6 +29,16 @@ use crate::tasks::runnable_once::RunnableOnce;
 /// # Type Parameters
 ///
 /// * `E` - The error value returned when the action fails.
+///
+/// # Examples
+///
+/// ```rust
+/// use qubit_function::LocalBoxRunnableOnce;
+/// use qubit_function::RunnableOnce;
+///
+/// let task = LocalBoxRunnableOnce::new(|| Ok::<(), String>(()));
+/// assert_eq!(task.run_once(), Ok(()));
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct LocalBoxRunnableOnce<E> {
     /// The one-time closure executed by this runnable.

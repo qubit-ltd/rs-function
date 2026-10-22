@@ -160,6 +160,11 @@ pub use box_conditional_mutating_function_once::BoxConditionalMutatingFunctionOn
 /// - `MutatingFunction` uses `&self`, can be called multiple times
 /// - `MutatingFunctionOnce` uses `self`, can only be called once
 ///
+/// # Type Parameters
+///
+/// * `T` - The type of the value the operation may mutate.
+/// * `R` - The result type produced by the operation.
+///
 /// # Features
 ///
 /// - **Unified Interface**: All one-time mutating functions share the same
@@ -218,11 +223,11 @@ pub trait MutatingFunctionOnce<T, R> {
     ///
     /// # Parameters
     ///
-    /// * `t - A mutable reference to the input value
+    /// * `t` - The value the operation may inspect and modify.
     ///
     /// # Returns
     ///
-    /// The computed result value
+    /// The result produced by the one-time operation.
     ///
     /// # Examples
     ///

@@ -5,17 +5,12 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
 
-/// Tests for BiConsumer types
 use qubit_function::ArcBiConsumer;
-/// Tests for BiConsumer types
 use qubit_function::BiConsumer;
-/// Tests for BiConsumer types
 use qubit_function::BoxBiConsumer;
-/// Tests for BiConsumer types
 use qubit_function::RcBiConsumer;
 
 #[cfg(test)]
@@ -91,10 +86,3 @@ mod noop_tests {
         assert_eq!(counter.get(), 1);
     }
 }
-// ============================================================================
-// to_once Tests - Testing BiConsumer trait default to_once implementation
-// ============================================================================
-
-// ============================================================================
-// Conditional BiConsumer Tests
-// ============================================================================

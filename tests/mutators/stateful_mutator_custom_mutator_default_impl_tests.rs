@@ -8,10 +8,6 @@
 
 //! Unit tests for StatefulMutator types
 
-use qubit_function::ArcStatefulMutator;
-use qubit_function::BoxStatefulMutator;
-use qubit_function::MutatorOnce;
-use qubit_function::RcStatefulMutator;
 use qubit_function::StatefulMutator;
 
 // ============================================================================
@@ -20,7 +16,6 @@ use qubit_function::StatefulMutator;
 
 #[cfg(test)]
 mod test_custom_mutator_default_impl {
-    use super::MutatorOnce;
     use super::StatefulMutator;
 
     /// Custom mutator for testing default implementations

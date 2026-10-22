@@ -87,7 +87,3 @@ mod box_transformer_tests {
         assert_eq!(display_str, "BoxTransformer");
     }
 }
-
-// ============================================================================
-// ArcTransformer Tests - Immutable, thread-safe
-// ============================================================================

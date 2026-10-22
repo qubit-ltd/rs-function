@@ -8,13 +8,12 @@
 
 //! Comprehensive tests for BiMutatingFunction trait and its implementations
 
+use std::thread;
+
 use qubit_function::ArcBiMutatingFunction;
-use qubit_function::ArcBiPredicate;
 use qubit_function::BiMutatingFunction;
-use qubit_function::BiMutatingFunctionOnce;
 use qubit_function::BoxBiMutatingFunction;
 use qubit_function::RcBiMutatingFunction;
-use qubit_function::RcBiPredicate;
 
 // ============================================================================
 // Helper Functions and Data Structures
@@ -306,8 +305,6 @@ fn test_arc_bi_mutating_function_clone() {
 
 #[test]
 fn test_arc_bi_mutating_function_thread_safety() {
-    use std::thread;
-
     let function = ArcBiMutatingFunction::new(|x: &mut i32, y: &mut i32| {
         *x += 1;
         *y += 2;

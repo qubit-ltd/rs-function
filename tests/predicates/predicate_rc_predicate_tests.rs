@@ -8,119 +8,99 @@
 
 //! Unit tests for the predicate module.
 
-use std::cell::RefCell;
-use std::sync::Arc;
-use std::sync::Mutex;
-
-use qubit_function::predicates::ArcPredicate;
-use qubit_function::predicates::BoxPredicate;
 use qubit_function::predicates::Predicate;
 use qubit_function::predicates::RcPredicate;
 
-struct PositivePredicate;
-
-impl Predicate<i32> for PositivePredicate {
-    fn test(&self, value: &i32) -> bool {
-        *value > 0
-    }
+#[test]
+fn test_new() {
+    let pred = RcPredicate::new(|x: &i32| *x > 0);
+    assert!(pred.test(&5));
+    assert!(!pred.test(&-3));
 }
 
-#[cfg(test)]
-mod rc_predicate_tests {
-    use super::Predicate;
-    use super::RcPredicate;
+#[test]
+fn test_new_with_name() {
+    let pred = RcPredicate::new_with_name("is_positive", |x: &i32| *x > 0);
+    assert_eq!(pred.name(), Some("is_positive"));
+    assert!(pred.test(&5));
+}
 
-    #[test]
-    fn test_new() {
-        let pred = RcPredicate::new(|x: &i32| *x > 0);
-        assert!(pred.test(&5));
-        assert!(!pred.test(&-3));
-    }
+#[test]
+fn test_set_name() {
+    let mut pred = RcPredicate::new(|x: &i32| *x > 0);
+    assert_eq!(pred.name(), None);
+    pred.set_name("is_positive");
+    assert_eq!(pred.name(), Some("is_positive"));
+    assert!(pred.test(&5));
+}
 
-    #[test]
-    fn test_new_with_name() {
-        let pred = RcPredicate::new_with_name("is_positive", |x: &i32| *x > 0);
-        assert_eq!(pred.name(), Some("is_positive"));
-        assert!(pred.test(&5));
-    }
+#[test]
+fn test_clone() {
+    let pred = RcPredicate::new(|x: &i32| *x > 0);
+    let pred_clone = pred.clone();
 
-    #[test]
-    fn test_set_name() {
-        let mut pred = RcPredicate::new(|x: &i32| *x > 0);
-        assert_eq!(pred.name(), None);
-        pred.set_name("is_positive");
-        assert_eq!(pred.name(), Some("is_positive"));
-        assert!(pred.test(&5));
-    }
+    assert!(pred.test(&5));
+    assert!(pred_clone.test(&5));
+    assert!(!pred_clone.test(&-3));
+}
 
-    #[test]
-    fn test_clone() {
-        let pred = RcPredicate::new(|x: &i32| *x > 0);
-        let pred_clone = pred.clone();
+#[test]
+fn test_and_composition() {
+    let pred1 = RcPredicate::new(|x: &i32| *x > 0);
+    let pred2 = RcPredicate::new(|x: &i32| x % 2 == 0);
 
-        assert!(pred.test(&5));
-        assert!(pred_clone.test(&5));
-        assert!(!pred_clone.test(&-3));
-    }
+    let combined = pred1.and(pred2.clone());
 
-    #[test]
-    fn test_and_composition() {
-        let pred1 = RcPredicate::new(|x: &i32| *x > 0);
-        let pred2 = RcPredicate::new(|x: &i32| x % 2 == 0);
+    // Original predicates are still usable
+    assert!(pred1.test(&5));
+    assert!(pred2.test(&4));
 
-        let combined = pred1.and(pred2.clone());
+    // Combined predicate works correctly
+    assert!(combined.test(&4));
+    assert!(!combined.test(&3));
+}
 
-        // Original predicates are still usable
-        assert!(pred1.test(&5));
-        assert!(pred2.test(&4));
+#[test]
+fn test_or_composition() {
+    let pred1 = RcPredicate::new(|x: &i32| *x < 0);
+    let pred2 = RcPredicate::new(|x: &i32| x % 2 == 0);
 
-        // Combined predicate works correctly
-        assert!(combined.test(&4));
-        assert!(!combined.test(&3));
-    }
+    let combined = pred1.or(pred2.clone());
 
-    #[test]
-    fn test_or_composition() {
-        let pred1 = RcPredicate::new(|x: &i32| *x < 0);
-        let pred2 = RcPredicate::new(|x: &i32| x % 2 == 0);
+    // Original predicates are still usable
+    assert!(pred1.test(&-5));
+    assert!(pred2.test(&4));
 
-        let combined = pred1.or(pred2.clone());
+    // Combined predicate works correctly
+    assert!(combined.test(&-5));
+    assert!(combined.test(&4));
+    assert!(!combined.test(&3));
+}
 
-        // Original predicates are still usable
-        assert!(pred1.test(&-5));
-        assert!(pred2.test(&4));
+#[test]
+fn test_not_composition() {
+    let pred = RcPredicate::new(|x: &i32| *x > 0);
+    let negated = !&pred;
 
-        // Combined predicate works correctly
-        assert!(combined.test(&-5));
-        assert!(combined.test(&4));
-        assert!(!combined.test(&3));
-    }
+    // Original predicate is still usable
+    assert!(pred.test(&5));
 
-    #[test]
-    fn test_not_composition() {
-        let pred = RcPredicate::new(|x: &i32| *x > 0);
-        let negated = !&pred;
+    // Negated predicate works correctly
+    assert!(!negated.test(&5));
+    assert!(negated.test(&-3));
+}
 
-        // Original predicate is still usable
-        assert!(pred.test(&5));
+#[test]
+fn test_complex_reuse() {
+    let positive = RcPredicate::new(|x: &i32| *x > 0);
+    let even = RcPredicate::new(|x: &i32| x % 2 == 0);
 
-        // Negated predicate works correctly
-        assert!(!negated.test(&5));
-        assert!(negated.test(&-3));
-    }
+    let combined1 = positive.and(even.clone());
+    let combined2 = positive.or(even.clone());
 
-    #[test]
-    fn test_complex_reuse() {
-        let positive = RcPredicate::new(|x: &i32| *x > 0);
-        let even = RcPredicate::new(|x: &i32| x % 2 == 0);
-
-        let combined1 = positive.and(even.clone());
-        let combined2 = positive.or(even.clone());
-
-        // All predicates are still usable
-        assert!(positive.test(&5));
-        assert!(even.test(&4));
-        assert!(combined1.test(&4));
-        assert!(combined2.test(&5));
-    }
+    // All predicates are still usable
+    assert!(positive.test(&5));
+    assert!(even.test(&4));
+    assert!(combined1.test(&4));
+    assert!(combined2.test(&5));
 }

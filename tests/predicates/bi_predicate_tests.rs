@@ -8,8 +8,6 @@
 
 #[cfg(test)]
 mod tests {
-    use std::thread;
-
     use qubit_function::predicates::ArcBiPredicate;
     use qubit_function::predicates::BiPredicate;
     use qubit_function::predicates::BoxBiPredicate;
@@ -19,10 +17,6 @@ mod tests {
     // BiPredicate Trait Tests - Test closure and function pointer
     // implementations
     // ========================================================================
-
-    mod bi_predicate_ext_tests {
-        use super::BiPredicate;
-    }
 
     // ========================================================================
     // BoxBiPredicate Tests

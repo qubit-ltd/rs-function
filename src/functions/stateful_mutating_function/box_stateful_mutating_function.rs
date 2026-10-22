@@ -20,12 +20,18 @@ use crate::functions::macros::impl_function_identity_method;
 // 3. BoxStatefulMutatingFunction - Single Ownership Implementation
 // =======================================================================
 
-/// BoxStatefulMutatingFunction struct
+/// Owns a mutable callback that can update its input and retain state between
+/// calls.
 ///
 /// A stateful mutating function implementation based on
 /// `Box<dyn FnMut(&mut T) -> R>` for single ownership scenarios. This is the
 /// simplest and most efficient stateful mutating function type when sharing
 /// is not required.
+///
+/// # Type Parameters
+///
+/// - `T`: The mutable input type accepted by the callback.
+/// - `R`: The result type returned by each callback invocation.
 ///
 /// # Features
 ///

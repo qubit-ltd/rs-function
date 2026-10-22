@@ -10,5 +10,6 @@ mod arc_conditional_stateful_mutator_tests;
 mod arc_stateful_mutator_tests;
 mod box_conditional_stateful_mutator_tests;
 mod box_stateful_mutator_tests;
+mod conditional_stateful_mutator_debug_display_tests;
 mod rc_conditional_stateful_mutator_tests;
 mod rc_stateful_mutator_tests;

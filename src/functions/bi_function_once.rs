@@ -37,6 +37,17 @@ pub use box_conditional_bi_function_once::BoxConditionalBiFunctionOnce;
 /// * `T` - The type of the first input value (borrowed)
 /// * `U` - The type of the second input value (borrowed)
 /// * `R` - The type of the output value
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::{BiFunctionOnce, BoxBiFunctionOnce};
+///
+/// let append = BoxBiFunctionOnce::new(|first: &str, second: &str| {
+///     format!("{first}{second}")
+/// });
+/// assert_eq!(append.apply("hello", " world"), "hello world");
+/// ```
 pub trait BiFunctionOnce<T, U, R> {
     /// Computes output from two input references, consuming self
     ///

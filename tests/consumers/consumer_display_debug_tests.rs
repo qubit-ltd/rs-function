@@ -8,12 +8,8 @@
 
 //! Tests for Consumer types
 
-use std::rc::Rc;
-use std::sync::Arc;
-
 use qubit_function::ArcConsumer;
 use qubit_function::BoxConsumer;
-use qubit_function::Consumer;
 use qubit_function::RcConsumer;
 
 #[cfg(test)]
@@ -94,14 +90,3 @@ mod display_debug_tests {
         assert_eq!(display_str, "RcConsumer(test_consumer)");
     }
 }
-// ============================================================================
-// to_xxx Methods Tests - Testing non-consuming conversion methods
-// ============================================================================
-
-// ============================================================================
-// to_once Tests - Testing Consumer trait default to_once implementation
-// ============================================================================
-
-// ============================================================================
-// Conditional Consumer Tests
-// ============================================================================

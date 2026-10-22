@@ -7,69 +7,48 @@
 // =============================================================================
 //! # Box Conditional Consumer Macro
 //!
-//! Generates Box-based Conditional Consumer implementations
+//! Generates conditional chaining methods for Box-backed consumer types.
 //!
 //! For Box-based conditional consumers, generates `and_then` and `or_else`
-//! methods, as well as complete Consumer/BiConsumer trait implementations.
+//! methods for one-argument and two-argument consumer types.
 //!
 //! Box type characteristics:
 //! - `and_then` and `or_else` consume self (because Box cannot Clone)
 //!
-//! # Parameters
+//! # Macro Arguments
 //!
-//! * `$struct_name<$generics>` - Struct name with generic parameters
-//! * `$consumer_type` - Consumer wrapper type name
-//! * `$consumer_trait` - Consumer trait name
+//! * `$struct_name<$generics>` - Consumer struct and its type parameters
+//! * `$consumer_type` - Box-backed consumer wrapper type
+//! * `$consumer_trait` - Consumer trait implemented by the wrapper
 //!
-//! # Usage Examples
+//! # Invocation Forms
 //!
-//! ```rust
-//! macro_rules! impl_box_conditional_consumer {
-//!     ($struct_name:ty, $consumer_type:ty, $consumer_trait:path) => {
-//!         let _ = std::mem::size_of::<$struct_name>();
-//!         let _ = std::mem::size_of::<$consumer_type>();
-//!         let _ = std::stringify!($consumer_trait);
-//!     };
-//! }
-//!
-//! // Single-parameter Consumer
-//! impl_box_conditional_consumer!(i32, i32, i32);
-//!
-//! // Two-parameter BiConsumer
-//! impl_box_conditional_consumer!(i32, i32, i32);
+//! ```text
+//! impl_box_conditional_consumer!(ConsumerType<T>, BoxConsumer, Consumer);
+//! impl_box_conditional_consumer!(BiConsumerType<T, U>, BoxBiConsumer, BiConsumer);
 //! ```
 
-/// Generates Box-based Conditional Consumer implementations
+/// Generates conditional chaining methods for Box-backed consumer types.
 ///
 /// This macro should be used at the top level (outside of any impl block) as
 /// it generates a complete impl block with methods for the specified struct.
 /// For Box-based conditional consumers, generates `and_then` and `or_else`
-/// methods, as well as complete Consumer/BiConsumer trait implementations.
+/// methods for one-argument and two-argument consumer types.
 ///
 /// Box type characteristics:
 /// - `and_then` and `or_else` consume self (because Box cannot Clone)
 ///
-/// # Parameters
+/// # Macro Arguments
 ///
-/// * `$struct_name<$generics>` - Struct name with generic parameters
-/// * `$consumer_type` - Consumer wrapper type name
-/// * `$consumer_trait` - Consumer trait name
+/// * `$struct_name<$generics>` - Consumer struct and its type parameters
+/// * `$consumer_type` - Box-backed consumer wrapper type
+/// * `$consumer_trait` - Consumer trait implemented by the wrapper
 ///
-/// # Usage Examples
+/// # Invocation Forms
 ///
-/// ```rust
-/// macro_rules! impl_box_conditional_consumer {
-///     ($struct_name:ty, $consumer_type:ty, $consumer_trait:path) => {
-///         let _ = std::mem::size_of::<$struct_name>();
-///         let _ = std::mem::size_of::<$consumer_type>();
-///         let _ = std::stringify!($consumer_trait);
-///     };
-/// }
-/// // Single-parameter Consumer
-/// impl_box_conditional_consumer!(i32, i32, i32);
-///
-/// // Two-parameter BiConsumer
-/// impl_box_conditional_consumer!(i32, i32, i32);
+/// ```text
+/// impl_box_conditional_consumer!(ConsumerType<T>, BoxConsumer, Consumer);
+/// impl_box_conditional_consumer!(BiConsumerType<T, U>, BoxBiConsumer, BiConsumer);
 /// ```
 macro_rules! impl_box_conditional_consumer {
     (@let_consumer Consumer, $name:ident, $value:expr) => {

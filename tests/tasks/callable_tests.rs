@@ -19,7 +19,6 @@ use qubit_function::ArcCallable;
 use qubit_function::BoxCallable;
 use qubit_function::BoxCallableOnce;
 use qubit_function::Callable;
-use qubit_function::CallableOnce;
 use qubit_function::RcCallable;
 use qubit_function::SupplierOnce;
 

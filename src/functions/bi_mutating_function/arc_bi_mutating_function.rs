@@ -40,6 +40,29 @@ type ArcBiMutatingFunctionFn<T, U, R> = Arc<dyn Fn(&mut T, &mut U) -> R + Send +
 ///   time)
 /// - **Thread Safety**: Thread-safe (`Send + Sync` required)
 /// - **Clonable**: Cheap cloning via `Arc::clone`
+///
+/// # Type Parameters
+///
+/// - `T` - The type of the first mutably borrowed input.
+/// - `U` - The type of the second mutably borrowed input.
+/// - `R` - The value produced by the callback.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::{ArcBiMutatingFunction, BiMutatingFunction};
+///
+/// let add_second = ArcBiMutatingFunction::new(|first: &mut i32, second: &mut i32| {
+///     *first += *second;
+///     *first
+/// });
+/// let mut first = 2;
+/// let mut second = 3;
+///
+/// assert_eq!(add_second.apply(&mut first, &mut second), 5);
+/// assert_eq!(first, 5);
+/// assert_eq!(second, 3);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcBiMutatingFunction<T, U, R> {
     /// The wrapped callback implementation.
@@ -70,6 +93,8 @@ impl<T, U, R> ArcBiMutatingFunction<T, U, R> {
 
 // Implement BiMutatingFunction trait for ArcBiMutatingFunction
 impl<T, U, R> BiMutatingFunction<T, U, R> for ArcBiMutatingFunction<T, U, R> {
+    /// Calls the stored callback with mutable access to both inputs and returns
+    /// its result.
     #[inline(always)]
     fn apply(&self, first: &mut T, second: &mut U) -> R {
         (self.function)(first, second)

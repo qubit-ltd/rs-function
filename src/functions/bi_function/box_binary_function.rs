@@ -19,6 +19,11 @@ use super::BoxBiFunction;
 /// a value of type `R`, with single ownership semantics. Similar to Java's
 /// `BiFunction<T, T, R>` but with different type parameters.
 ///
+/// # Type Parameters
+///
+/// - `T` - The shared type of both borrowed inputs.
+/// - `R` - The value produced by the callback.
+///
 /// # Examples
 ///
 /// ```rust

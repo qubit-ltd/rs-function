@@ -42,6 +42,20 @@ pub use arc_callable_with::ArcCallableWith;
 /// * `T` - The mutable input type.
 /// * `R` - The success value returned by the computation.
 /// * `E` - The error value returned when the computation fails.
+///
+/// # Examples
+///
+/// ```rust
+/// use qubit_function::tasks::CallableWith;
+///
+/// let mut task = |value: &mut i32| {
+///     *value += 1;
+///     Ok::<i32, ()>(*value)
+/// };
+/// let mut value = 41;
+/// assert_eq!(task.call_with(&mut value), Ok(42));
+/// assert_eq!(value, 42);
+/// ```
 pub trait CallableWith<T, R, E> {
     /// Executes the computation with mutable input.
     ///

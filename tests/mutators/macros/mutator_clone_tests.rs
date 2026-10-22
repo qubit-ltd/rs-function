@@ -10,9 +10,10 @@ use qubit_function::BoxMutator;
 use qubit_function::Mutator;
 
 #[test]
-fn test_mutator_clone_observable_behavior() {
+fn test_mutator_clone_preserves_behavior() {
     let mutator = BoxMutator::new(|value: &mut i32| *value += 1);
+    let cloned_mutator = mutator.clone();
     let mut value = 41;
-    mutator.apply(&mut value);
+    cloned_mutator.apply(&mut value);
     assert_eq!(value, 42);
 }

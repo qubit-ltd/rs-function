@@ -8,18 +8,12 @@
 
 //! Unit tests for StatefulConsumer types
 
-use std::cell::RefCell;
-use std::rc::Rc;
 use std::sync::Arc;
 use std::sync::Mutex;
 
-use qubit_function::ArcConsumer;
-use qubit_function::ArcStatefulConsumer;
 use qubit_function::BoxConsumer;
 use qubit_function::BoxStatefulConsumer;
 use qubit_function::Consumer;
-use qubit_function::RcConsumer;
-use qubit_function::RcStatefulConsumer;
 use qubit_function::StatefulConsumer;
 
 // ============================================================================
@@ -156,8 +150,6 @@ mod test_box_consumer {
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
     }
 
-    // print and print_with methods have been removed
-
     #[test]
     fn test_if_then() {
         let log = Arc::new(Mutex::new(Vec::new()));
@@ -228,7 +220,3 @@ mod test_box_consumer {
         assert_eq!(display_str, "BoxStatefulConsumer(my_consumer)");
     }
 }
-
-// ============================================================================
-// ArcConsumer Tests
-// ============================================================================

@@ -11,40 +11,10 @@
 use qubit_function::ArcMutator;
 use qubit_function::BoxMutator;
 use qubit_function::Mutator;
-use qubit_function::MutatorOnce;
 use qubit_function::RcMutator;
 
 // ============================================================================
-// Mutator Default Implementation Tests
-// ============================================================================
-
-/// Test struct that implements Mutator to test default methods
-struct TestMutator {
-    multiplier: i32,
-}
-
-impl TestMutator {
-    fn new(multiplier: i32) -> Self {
-        TestMutator { multiplier }
-    }
-}
-
-impl Mutator<i32> for TestMutator {
-    fn apply(&self, input: &mut i32) {
-        *input *= self.multiplier;
-    }
-}
-
-impl Clone for TestMutator {
-    fn clone(&self) -> Self {
-        TestMutator {
-            multiplier: self.multiplier,
-        }
-    }
-}
-
-// ============================================================================
-// BoxMutator Tests
+// Mutator Unified Interface Tests
 // ============================================================================
 
 #[cfg(test)]
@@ -84,7 +54,3 @@ mod test_unified_interface {
         assert_eq!(apply_mutator(&closure, 5), 10);
     }
 }
-
-// ============================================================================
-// Conditional Mutator and_then Tests
-// ============================================================================

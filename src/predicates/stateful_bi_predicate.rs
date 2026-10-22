@@ -39,6 +39,21 @@ pub use rc_stateful_bi_predicate::RcStatefulBiPredicate;
 ///
 /// * `T` - The type of the first value being tested.
 /// * `U` - The type of the second value being tested.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::StatefulBiPredicate;
+///
+/// let mut calls = 0;
+/// let mut equals_sum = |first: &i32, second: &i32| {
+///     calls += 1;
+///     *first + *second == 10
+/// };
+///
+/// assert!(equals_sum.test(&4, &6));
+/// assert_eq!(calls, 1);
+/// ```
 pub trait StatefulBiPredicate<T, U> {
     /// Tests whether the given values satisfy this bi-predicate.
     ///

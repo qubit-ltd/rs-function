@@ -14,8 +14,8 @@
 //!
 //! It is similar to the `Fn(&T, &U) -> R` trait in the standard library.
 //!
-//! This module provides the `BiFunction<T, U, R>` trait and three
-//! implementations:
+//! This module provides the `BiFunction<T, U, R>` trait and boxed, shared,
+//! and conditional implementations:
 //!
 //! - [`BoxBiFunction`]: Single ownership, not cloneable
 //! - [`ArcBiFunction`]: Thread-safe shared ownership, cloneable
@@ -62,6 +62,15 @@ pub use arc_conditional_bi_function::ArcConditionalBiFunction;
 /// * `T` - The type of the first input value (borrowed)
 /// * `U` - The type of the second input value (borrowed)
 /// * `R` - The type of the output value
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::{BiFunction, BoxBiFunction};
+///
+/// let add = BoxBiFunction::new(|first: &i32, second: &i32| first + second);
+/// assert_eq!(add.apply(&2, &3), 5);
+/// ```
 pub trait BiFunction<T, U, R> {
     /// Applies the bi-function to two input references to produce an output
     /// value

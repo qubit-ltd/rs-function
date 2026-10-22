@@ -30,6 +30,27 @@ type RcStatefulBiPredicateFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U) -> bool>>;
 /// Each call holds a mutable `RefCell` borrow while the user callback runs.
 /// Synchronous re-entry through the same shared wrapper panics with a borrow
 /// error. Mutations completed before a panic are not rolled back.
+///
+/// # Type Parameters
+///
+/// * `T` - The type of the first value tested by the predicate.
+/// * `U` - The type of the second value tested by the predicate.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::RcStatefulBiPredicate;
+/// use qubit_function::StatefulBiPredicate;
+///
+/// let mut calls = 0;
+/// let mut predicate = RcStatefulBiPredicate::new(|first: &i32, second: &i32| {
+///     calls += 1;
+///     first + second == 10
+/// });
+///
+/// assert!(predicate.test(&4, &6));
+/// assert_eq!(calls, 1);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcStatefulBiPredicate<T, U> {
     /// The wrapped callback implementation.

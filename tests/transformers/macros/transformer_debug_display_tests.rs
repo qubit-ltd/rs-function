@@ -10,7 +10,12 @@ use qubit_function::BoxTransformer;
 use qubit_function::Transformer;
 
 #[test]
-fn test_transformer_debug_display_observable_behavior() {
+fn test_transformer_debug_display_formatting() {
     let transformer = BoxTransformer::new(|value: i32| value + 1);
-    assert_eq!(transformer.apply(41), 42);
+
+    assert_eq!(format!("{transformer}"), "BoxTransformer");
+    assert_eq!(
+        format!("{transformer:?}"),
+        "BoxTransformer { name: None, function: \"<function>\" }"
+    );
 }

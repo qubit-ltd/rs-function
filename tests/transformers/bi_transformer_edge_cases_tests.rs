@@ -5,12 +5,9 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-use std::thread;
-
 use qubit_function::ArcBiTransformer;
 use qubit_function::BiTransformer;
 use qubit_function::BoxBiTransformer;
-use qubit_function::RcBiTransformer;
 
 // ============================================================================
 // BoxBiTransformer Tests - Immutable, single ownership

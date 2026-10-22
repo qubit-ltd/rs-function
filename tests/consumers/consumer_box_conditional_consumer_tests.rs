@@ -8,21 +8,13 @@
 
 //! Tests for Consumer types
 
-use std::rc::Rc;
-use std::sync::Arc;
-
-use qubit_function::ArcConsumer;
-use qubit_function::BoxConsumer;
-use qubit_function::Consumer;
-use qubit_function::RcConsumer;
-
 #[cfg(test)]
 mod box_conditional_consumer_tests {
+    use std::sync::Arc;
     use std::sync::Mutex;
 
-    use super::Arc;
-    use super::BoxConsumer;
-    use super::Consumer;
+    use qubit_function::BoxConsumer;
+    use qubit_function::Consumer;
 
     #[test]
     fn test_box_conditional_and_then() {

@@ -8,10 +8,8 @@
 #![cfg(feature = "full")]
 use std::cmp::Ordering;
 
-use qubit_function::comparator::ArcComparator;
 use qubit_function::comparator::BoxComparator;
 use qubit_function::comparator::Comparator;
-use qubit_function::comparator::RcComparator;
 
 #[cfg(test)]
 mod edge_cases {

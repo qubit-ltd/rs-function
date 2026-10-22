@@ -36,6 +36,12 @@ use crate::transformers::macros::impl_conditional_transformer_debug_display;
 ///   `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 ///
+/// # Type Parameters
+///
+/// - `T` - The type of the first input consumed by the transformer.
+/// - `U` - The type of the second input consumed by the transformer.
+/// - `R` - The type of the transformed output.
+///
 /// # Examples
 ///
 /// ## With or_else Branch

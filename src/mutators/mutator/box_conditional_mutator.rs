@@ -18,10 +18,10 @@ use crate::mutators::macros::impl_conditional_mutator_debug_display;
 // 8. BoxConditionalMutator - Box-based Conditional Mutator
 // ============================================================================
 
-/// BoxConditionalMutator struct
+/// Owns a mutator and runs it only when its predicate accepts the value.
 ///
-/// A conditional mutator that only executes when a predicate is satisfied.
-/// Uses `BoxMutator` and `BoxPredicate` for single ownership semantics.
+/// This conditional mutator uses `BoxMutator` and `BoxPredicate`, so it has
+/// single ownership semantics and cannot be cloned.
 ///
 /// This type is typically created by calling `BoxMutator::when()` and is
 /// designed to work with the `or_else()` method to create if-then-else logic.
@@ -32,6 +32,11 @@ use crate::mutators::macros::impl_conditional_mutator_debug_display;
 /// - **Conditional Execution**: Only mutates when predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 /// - **Implements Mutator**: Can be used anywhere a `Mutator` is expected
+///
+/// # Type Parameters
+///
+/// - `T`: The type of value inspected by the predicate and modified by the
+///   mutator.
 ///
 /// # Examples
 ///

@@ -28,6 +28,15 @@ use crate::tasks::callable_once::CallableOnce;
 ///
 /// * `R` - The success value returned by the computation.
 /// * `E` - The error value returned when the computation fails.
+///
+/// # Examples
+///
+/// ```rust
+/// use qubit_function::{CallableOnce, LocalBoxCallableOnce};
+///
+/// let task = LocalBoxCallableOnce::new(|| Ok::<i32, String>(42));
+/// assert_eq!(task.call_once(), Ok(42));
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct LocalBoxCallableOnce<R, E> {
     /// The one-time closure executed by this callable.

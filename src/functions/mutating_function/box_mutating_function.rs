@@ -53,6 +53,11 @@ use crate::functions::macros::impl_function_identity_method;
 /// - Direct function call through vtable
 /// - Minimal memory footprint (single pointer)
 ///
+/// # Type Parameters
+///
+/// - `T`: The value type that the callback mutates by reference.
+/// - `R`: The value returned by each callback invocation.
+///
 /// # Examples
 ///
 /// ```rust
@@ -99,7 +104,7 @@ impl_function_identity_method!(BoxMutatingFunction<T, T>, mutating);
 
 // Implement MutatingFunction trait for BoxMutatingFunction<T, R>
 impl<T, R> MutatingFunction<T, R> for BoxMutatingFunction<T, R> {
-    #[inline(always)]
+    #[inline]
     fn apply(&self, t: &mut T) -> R {
         (self.function)(t)
     }

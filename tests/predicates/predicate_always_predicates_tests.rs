@@ -8,29 +8,12 @@
 
 //! Unit tests for the predicate module.
 
-use std::cell::RefCell;
-use std::sync::Arc;
-use std::sync::Mutex;
-
-use qubit_function::predicates::ArcPredicate;
-use qubit_function::predicates::BoxPredicate;
-use qubit_function::predicates::Predicate;
-use qubit_function::predicates::RcPredicate;
-
-struct PositivePredicate;
-
-impl Predicate<i32> for PositivePredicate {
-    fn test(&self, value: &i32) -> bool {
-        *value > 0
-    }
-}
-
+use qubit_function::Predicate;
 #[cfg(test)]
 mod always_predicates_tests {
-    use super::ArcPredicate;
-    use super::BoxPredicate;
-    use super::Predicate;
-    use super::RcPredicate;
+    use qubit_function::predicates::ArcPredicate;
+    use qubit_function::predicates::BoxPredicate;
+    use qubit_function::predicates::RcPredicate;
 
     #[test]
     fn test_box_always_true() {

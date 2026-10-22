@@ -29,6 +29,25 @@ type ArcRunnableWithFn<T, E> = Arc<Mutex<dyn FnMut(&mut T) -> Result<(), E> + Se
 /// callback runs. Synchronous re-entry through the same shared wrapper
 /// deadlocks. The mutex is not poisoned after a panic, and mutations completed
 /// before a panic are not rolled back.
+///
+/// # Type Parameters
+///
+/// * `T` - The mutable input type accepted by the callback.
+/// * `E` - The error type returned when the callback fails.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::tasks::runnable_with::{ArcRunnableWith, RunnableWith};
+///
+/// let mut runnable = ArcRunnableWith::new(|value: &mut i32| {
+///     *value += 1;
+///     Ok::<(), ()>(())
+/// });
+/// let mut value = 1;
+/// runnable.run_with(&mut value).unwrap();
+/// assert_eq!(value, 2);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcRunnableWith<T, E> {
     /// The stateful closure executed by this runnable.

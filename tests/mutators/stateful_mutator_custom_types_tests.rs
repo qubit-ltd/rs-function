@@ -8,10 +8,7 @@
 
 //! Unit tests for StatefulMutator types
 
-use qubit_function::ArcStatefulMutator;
 use qubit_function::BoxStatefulMutator;
-use qubit_function::MutatorOnce;
-use qubit_function::RcStatefulMutator;
 use qubit_function::StatefulMutator;
 
 // ============================================================================

@@ -60,6 +60,15 @@ pub use arc_conditional_bi_transformer::ArcConditionalBiTransformer;
 /// * `T` - The type of the first input value (consumed)
 /// * `U` - The type of the second input value (consumed)
 /// * `R` - The type of the output value
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::BiTransformer;
+///
+/// let add = |first, second| first + second;
+/// assert_eq!(add.apply(2, 3), 5);
+/// ```
 pub trait BiTransformer<T, U, R> {
     /// Transforms two input values to produce an output value
     ///

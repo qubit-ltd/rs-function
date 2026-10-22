@@ -9,12 +9,10 @@
 //! Comprehensive tests for BiFunction trait and its implementations
 
 use qubit_function::ArcBiFunction;
-use qubit_function::ArcBiPredicate;
 use qubit_function::BiFunction;
-use qubit_function::BiFunctionOnce;
 use qubit_function::BoxBiFunction;
 use qubit_function::RcBiFunction;
-use qubit_function::RcBiPredicate;
+use qubit_function::RcFunction;
 
 // ============================================================================
 // BiFunction Trait Tests - Core Functionality
@@ -170,8 +168,6 @@ fn test_rc_bi_function_debug_display() {
 
 #[test]
 fn test_rc_bi_function_and_then() {
-    use qubit_function::RcFunction;
-
     let add = RcBiFunction::new(|x: &i32, y: &i32| *x + *y);
     let multiply_by_two = RcFunction::new(|x: &i32| *x * 2);
 

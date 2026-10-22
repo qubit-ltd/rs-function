@@ -20,6 +20,11 @@ use super::BoxBiMutatingFunction;
 /// produces a value of type `R`, with single ownership semantics. Similar to
 /// Java's `BiFunction<T, T, R>` but with mutable references.
 ///
+/// # Type Parameters
+///
+/// * `T` - The type of both mutable input values.
+/// * `R` - The type of the value returned by the function.
+///
 /// # Examples
 ///
 /// ```rust

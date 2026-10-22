@@ -7,20 +7,15 @@
 // =============================================================================
 //! # Box Conditional Transformer Macro
 //!
-//! Generates Box-based Conditional Transformer implementations
+//! Generates `or_else` methods for conditional transformers backed by `Box`.
 //!
-//! For Box-based conditional transformers, generates `and_then` and `or_else`
-//! methods, as well as complete Transformer/BiTransformer trait
-//! implementations.
-//!
-//! Box type characteristics:
-//! - `and_then` and `or_else` consume self (because Box cannot Clone)
+//! The generated method consumes `self` because `Box` cannot be cloned.
 //!
 //! # Parameters
 //!
 //! * `$struct_name<$generics>` - Struct name with generic parameters
 //! * `$transformer_type` - Transformer wrapper type name
-//! * `$else_transformer_trait` - Transformer trait name
+//! * `$transformer_trait` - Trait implemented by the transformer wrapper
 //!
 //! # Usage Examples
 //!
@@ -40,22 +35,17 @@
 //! );
 //! ```
 
-/// Generates Box-based Conditional Transformer implementations
+/// Generates `or_else` methods for conditional transformers backed by `Box`.
 ///
-/// This macro should be used at the top level (outside of any impl block) as
-/// it generates a complete impl block with methods for the specified struct.
-/// For Box-based conditional transformers, generates `and_then` and `or_else`
-/// methods, as well as complete Transformer/BiTransformer trait
-/// implementations.
-///
-/// Box type characteristics:
-/// - `and_then` and `or_else` consume self (because Box cannot Clone)
+/// Use this macro at the top level, outside any `impl` block. It generates an
+/// inherent implementation containing `or_else` for the specified struct.
+/// The method consumes `self` because `Box` cannot be cloned.
 ///
 /// # Parameters
 ///
 /// * `$struct_name<$generics>` - Struct name with generic parameters
 /// * `$transformer_type` - Transformer wrapper type name
-/// * `$transformer_trait` - Transformer trait name
+/// * `$transformer_trait` - Trait implemented by the transformer wrapper
 ///
 /// # Usage Examples
 ///

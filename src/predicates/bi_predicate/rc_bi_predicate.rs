@@ -26,6 +26,10 @@ use crate::predicates::macros::impl_shared_predicate_methods;
 /// borrow `&self`, allowing the original bi-predicate to remain
 /// usable after composition.
 ///
+/// # Type Parameters
+///
+/// * `T` - The type of the first value tested by the predicate.
+/// * `U` - The type of the second value tested by the predicate.
 ///
 /// # Examples
 ///
@@ -38,6 +42,7 @@ use crate::predicates::macros::impl_shared_predicate_methods;
 ///
 /// // Original bi-predicate remains usable after composition
 /// let combined = pred.and(RcBiPredicate::new(|x: &i32, y: &i32| x > y));
+/// assert!(combined.test(&5, &3));
 /// assert!(pred.test(&5, &3));  // Still works
 /// # }
 /// ```

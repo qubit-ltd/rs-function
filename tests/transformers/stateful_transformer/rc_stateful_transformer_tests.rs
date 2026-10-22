@@ -7,9 +7,16 @@
 // =============================================================================
 
 use qubit_function::RcStatefulTransformer;
+use qubit_function::StatefulTransformer;
 
 #[test]
-fn test_rc_stateful_transformer_observable_behavior() {
-    let type_name = std::any::type_name::<RcStatefulTransformer<i32, i32>>();
-    assert!(type_name.contains("RcStatefulTransformer"), "{type_name}");
+fn test_rc_stateful_transformer_applies_stateful_callback() {
+    let mut call_count = 0;
+    let mut transformer = RcStatefulTransformer::new(move |value: i32| {
+        call_count += 1;
+        value + call_count
+    });
+
+    assert_eq!(transformer.apply(10), 11);
+    assert_eq!(transformer.apply(10), 12);
 }

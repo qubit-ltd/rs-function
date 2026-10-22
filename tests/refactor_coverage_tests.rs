@@ -45,7 +45,7 @@ fn collect_rust_source_files(directory: &Path, files: &mut Vec<PathBuf>) {
 }
 
 #[test]
-fn all_concrete_callback_wrappers_have_must_use_contracts() {
+fn test_all_concrete_callback_wrappers_have_must_use_contracts() {
     let source_root = Path::new(env!("CARGO_MANIFEST_DIR")).join("src");
     let mut files = Vec::new();
     collect_rust_source_files(&source_root, &mut files);
@@ -78,7 +78,7 @@ fn all_concrete_callback_wrappers_have_must_use_contracts() {
 }
 
 #[test]
-fn comparator_into_fn_preserves_comparison() {
+fn test_comparator_into_fn_preserves_comparison() {
     let arc = ArcComparator::new(|left: &i32, right: &i32| left.cmp(right));
     let boxed = BoxComparator::new(|left: &i32, right: &i32| left.cmp(right));
     let rc = RcComparator::new(|left: &i32, right: &i32| left.cmp(right));
@@ -103,7 +103,7 @@ fn assert_rc_truth_table(mut predicate: RcStatefulBiPredicate<bool, bool>, expec
 }
 
 #[test]
-fn arc_stateful_bi_predicate_covers_boolean_combinators() {
+fn test_arc_stateful_bi_predicate_covers_boolean_combinators() {
     assert_arc_truth_table(
         ArcStatefulBiPredicate::new(|left: &bool, _: &bool| *left).and(|_: &bool, right: &bool| *right),
         [false, false, false, true],
@@ -133,7 +133,7 @@ fn arc_stateful_bi_predicate_covers_boolean_combinators() {
 }
 
 #[test]
-fn rc_stateful_bi_predicate_covers_boolean_combinators() {
+fn test_rc_stateful_bi_predicate_covers_boolean_combinators() {
     assert_rc_truth_table(
         RcStatefulBiPredicate::new(|left: &bool, _: &bool| *left).and(|_: &bool, right: &bool| *right),
         [false, false, false, true],
@@ -163,7 +163,7 @@ fn rc_stateful_bi_predicate_covers_boolean_combinators() {
 }
 
 #[test]
-fn stateful_bi_predicate_constants_cover_all_owners() {
+fn test_stateful_bi_predicate_constants_cover_all_owners() {
     let mut arc_true = ArcStatefulBiPredicate::<i32, i32>::always_true();
     let mut arc_false = ArcStatefulBiPredicate::<i32, i32>::always_false();
     let mut box_true = BoxStatefulBiPredicate::<i32, i32>::always_true();
@@ -180,7 +180,7 @@ fn stateful_bi_predicate_constants_cover_all_owners() {
 }
 
 #[test]
-fn shared_tasks_clone_their_callback_state() {
+fn test_shared_tasks_clone_their_callback_state() {
     let arc_callable = ArcCallable::<i32, ()>::new(|| Ok(1));
     let rc_callable = RcCallable::<i32, ()>::new(|| Ok(2));
     let arc_runnable = ArcRunnable::<()>::new(|| Ok(()));
@@ -193,7 +193,7 @@ fn shared_tasks_clone_their_callback_state() {
 }
 
 #[test]
-fn stateful_tester_not_covers_owned_and_borrowed_wrappers() {
+fn test_stateful_tester_not_covers_owned_and_borrowed_wrappers() {
     let mut arc_owned = !ArcStatefulTester::new(|| true);
     let arc_source = ArcStatefulTester::new(|| false);
     let mut arc_borrowed = !&arc_source;

@@ -8,26 +8,15 @@
 
 //! Unit tests for Supplier types
 
-use std::sync::Arc;
-use std::thread;
-
-use qubit_function::ArcSupplier;
-use qubit_function::ArcTransformer;
-use qubit_function::BoxSupplier;
-use qubit_function::BoxTransformer;
-use qubit_function::RcSupplier;
-use qubit_function::RcTransformer;
-use qubit_function::Supplier;
-
 // ======================================================================
 // Supplier Trait Tests (for closures)
 // ======================================================================
 
 #[cfg(test)]
 mod test_rc_stateless_supplier_map_with_transformer {
-    use super::RcSupplier;
-    use super::RcTransformer;
-    use super::Supplier;
+    use qubit_function::RcSupplier;
+    use qubit_function::RcTransformer;
+    use qubit_function::Supplier;
 
     // Helper function pointers
     fn double(x: i32) -> i32 {

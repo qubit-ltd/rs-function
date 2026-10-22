@@ -5,25 +5,12 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-use std::cell::RefCell;
-use std::rc::Rc;
-use std::sync::Arc;
-
-/// Tests for BiConsumer types
-use qubit_function::ArcBiConsumer;
-/// Tests for BiConsumer types
-use qubit_function::BiConsumer;
-/// Tests for BiConsumer types
-use qubit_function::BoxBiConsumer;
-/// Tests for BiConsumer types
-use qubit_function::RcBiConsumer;
-
 #[cfg(test)]
 mod name_tests {
-    use super::ArcBiConsumer;
-    use super::BiConsumer;
-    use super::BoxBiConsumer;
-    use super::RcBiConsumer;
+    use qubit_function::ArcBiConsumer;
+    use qubit_function::BiConsumer;
+    use qubit_function::BoxBiConsumer;
+    use qubit_function::RcBiConsumer;
 
     #[test]
     fn test_box_consumer_name() {

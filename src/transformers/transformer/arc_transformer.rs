@@ -35,6 +35,22 @@ use crate::transformers::macros::impl_transformer_debug_display;
 ///   input)
 /// - **Thread Safety**: Thread-safe (`Send + Sync` required)
 /// - **Clonable**: Cheap cloning via `Arc::clone`
+///
+/// # Type Parameters
+///
+/// * `T` - The input type consumed by each transformation.
+/// * `R` - The output type produced by each transformation.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::ArcTransformer;
+/// use qubit_function::Transformer;
+///
+/// let increment = ArcTransformer::new(|value: i32| value + 1);
+/// let shared = increment.clone();
+/// assert_eq!(shared.apply(41), 42);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcTransformer<T, R> {
     /// The wrapped callback implementation.

@@ -11,6 +11,9 @@
 //!
 //! Generates standard Debug and Display trait implementations for Function
 //! structs that have a `name: Option<String>` field.
+//! The `Debug` output includes the optional name and an opaque `"<function>"`
+//! placeholder; `Display` writes the struct name, followed by the callback name
+//! in parentheses when one is present.
 //!
 //! # Parameters
 //!
@@ -33,6 +36,9 @@
 /// it generates complete `impl Debug` and `impl Display` blocks for the
 /// specified struct. Generates standard Debug and Display trait implementations
 /// for Function structs that have a `name: Option<String>` field.
+/// The `Debug` output includes the optional name and an opaque `"<function>"`
+/// placeholder; `Display` writes the struct name, followed by the callback name
+/// in parentheses when one is present.
 ///
 /// # Parameters
 ///

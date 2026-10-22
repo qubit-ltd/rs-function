@@ -8,7 +8,6 @@
 
 use qubit_function::ArcPredicate;
 use qubit_function::ArcStatefulTransformer;
-use qubit_function::BoxPredicate;
 use qubit_function::BoxStatefulTransformer;
 use qubit_function::Predicate;
 use qubit_function::RcPredicate;
@@ -18,61 +17,6 @@ use qubit_function::StatefulTransformer;
 // ============================================================================
 // BoxStatefulTransformer Tests
 // ============================================================================
-
-/// Custom StatefulTransformer struct for testing default into_xxx() methods
-#[derive(Clone)]
-struct CustomStatefulTransformer {
-    multiplier: i32,
-}
-
-impl StatefulTransformer<i32, i32> for CustomStatefulTransformer {
-    fn apply(&mut self, input: i32) -> i32 {
-        self.multiplier += 1;
-        input * self.multiplier
-    }
-}
-
-/// Custom thread-safe StatefulTransformer struct
-#[derive(Clone)]
-struct CustomSendStatefulTransformer {
-    multiplier: i32,
-}
-
-impl StatefulTransformer<i32, i32> for CustomSendStatefulTransformer {
-    fn apply(&mut self, input: i32) -> i32 {
-        self.multiplier += 1;
-        input * self.multiplier
-    }
-}
-
-/// Test custom StatefulTransformer with string types
-#[derive(Clone)]
-struct StringLengthStatefulTransformer {
-    total_length: usize,
-}
-
-impl StatefulTransformer<String, String> for StringLengthStatefulTransformer {
-    fn apply(&mut self, input: String) -> String {
-        self.total_length += input.len();
-        format!("[{}] {}", self.total_length, input)
-    }
-}
-
-/// Test custom StatefulTransformer with complex state
-struct StatefulStatefulTransformer {
-    count: i32,
-    sum: i32,
-    history: Vec<i32>,
-}
-
-impl StatefulTransformer<i32, (i32, i32, usize)> for StatefulStatefulTransformer {
-    fn apply(&mut self, input: i32) -> (i32, i32, usize) {
-        self.count += 1;
-        self.sum += input;
-        self.history.push(input);
-        (self.count, self.sum, self.history.len())
-    }
-}
 
 // ============================================================================
 // into_fn Tests

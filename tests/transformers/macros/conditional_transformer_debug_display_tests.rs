@@ -7,10 +7,17 @@
 // =============================================================================
 
 use qubit_function::BoxTransformer;
-use qubit_function::Transformer;
 
 #[test]
 fn test_conditional_transformer_debug_display_observable_behavior() {
-    let transformer = BoxTransformer::new(|value: i32| value + 1);
-    assert_eq!(transformer.apply(41), 42);
+    let conditional = BoxTransformer::new(|value: i32| value + 1).when(|value: &i32| *value > 0);
+
+    assert_eq!(
+        format!("{}", conditional),
+        "BoxConditionalTransformer(BoxTransformer, BoxPredicate(unnamed))"
+    );
+    assert_eq!(
+        format!("{:?}", conditional),
+        "BoxConditionalTransformer { transformer: BoxTransformer, predicate: BoxPredicate { name: None, function: \"<function>\" } }"
+    );
 }

@@ -8,6 +8,8 @@
 
 //! Comprehensive tests for FunctionOnce trait and BoxFunctionOnce
 
+use std::rc::Rc;
+
 use qubit_function::BoxFunctionOnce;
 use qubit_function::FunctionOnce;
 use qubit_function::Predicate;
@@ -346,7 +348,6 @@ fn test_function_once_with_box() {
 #[test]
 fn test_function_once_with_rc() {
     // Test function with Rc type
-    use std::rc::Rc;
     let data = Rc::new(vec![1, 2, 3]);
     let func = BoxFunctionOnce::new(move |x: &i32| data.len() + (*x as usize));
     assert_eq!(func.apply(&2), 5);

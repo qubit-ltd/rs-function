@@ -21,6 +21,21 @@ type LocalBoxCallableWithFn<T, R, E> = Box<dyn FnMut(&mut T) -> Result<R, E>>;
 /// thread and permits non-`Send` captures. Use
 /// [`BoxCallableWith`](crate::tasks::callable_with::BoxCallableWith) when the
 /// callable must be movable across threads.
+///
+/// # Examples
+///
+/// ```rust
+/// use qubit_function::tasks::callable_with::LocalBoxCallableWith;
+/// use qubit_function::tasks::CallableWith;
+///
+/// let mut task = LocalBoxCallableWith::new(|value: &mut i32| {
+///     *value += 1;
+///     Ok::<i32, ()>(*value)
+/// });
+/// let mut value = 41;
+/// assert_eq!(task.call_with(&mut value), Ok(42));
+/// assert_eq!(value, 42);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct LocalBoxCallableWith<T, R, E> {
     /// The stateful closure executed by this callable.
@@ -48,6 +63,11 @@ impl<T, R, E> LocalBoxCallableWith<T, R, E> {
     /// # Returns
     ///
     /// A new local callable with mutable input that maps successful results.
+    ///
+    /// # Errors
+    ///
+    /// When invoked, the returned callable propagates errors from this callable
+    /// without applying `mapper`.
     #[inline]
     pub fn map<U, M>(self, mut mapper: M) -> LocalBoxCallableWith<T, U, E>
     where
@@ -70,6 +90,11 @@ impl<T, R, E> LocalBoxCallableWith<T, R, E> {
     /// # Returns
     ///
     /// A new local callable with mutable input that maps failed results.
+    ///
+    /// # Errors
+    ///
+    /// When invoked, the returned callable maps errors from this callable using
+    /// `mapper`.
     #[inline]
     pub fn map_err<E2, M>(self, mut mapper: M) -> LocalBoxCallableWith<T, R, E2>
     where
@@ -92,6 +117,11 @@ impl<T, R, E> LocalBoxCallableWith<T, R, E> {
     /// # Returns
     ///
     /// A new local callable that runs `next` only after success.
+    ///
+    /// # Errors
+    ///
+    /// When invoked, the returned callable propagates errors from this callable
+    /// or from `next`.
     #[inline]
     pub fn and_then<U, N>(self, mut next: N) -> LocalBoxCallableWith<T, U, E>
     where

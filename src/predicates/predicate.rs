@@ -283,6 +283,7 @@ impl<T, F> Predicate<T> for F
 where
     F: Fn(&T) -> bool,
 {
+    /// Applies this closure to the borrowed value and returns its result.
     #[inline(always)]
     fn test(&self, value: &T) -> bool {
         self(value)

@@ -18,8 +18,6 @@ use crate::functions::macros::impl_conditional_function_debug_display;
 // BoxConditionalFunction - Box-based Conditional Function
 // ============================================================================
 
-/// BoxConditionalFunction struct
-///
 /// A conditional function that only executes when a predicate is satisfied.
 /// Uses `BoxFunction` and `BoxPredicate` for single ownership semantics.
 ///
@@ -32,6 +30,11 @@ use crate::functions::macros::impl_conditional_function_debug_display;
 /// - **Conditional Execution**: Only transforms when predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 /// - **Implements Function**: Can be used anywhere a `Function` is expected
+///
+/// # Type Parameters
+///
+/// - `T`: The input type borrowed by the predicate and wrapped function.
+/// - `R`: The output type produced by the wrapped function.
 ///
 /// # Examples
 ///

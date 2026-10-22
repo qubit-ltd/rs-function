@@ -133,8 +133,7 @@ macro_rules! impl_shared_function_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use qubit_function::{ArcBiFunction, BiFunction, ArcFunction, Function};
-        /// use std::sync::Arc;
+        /// use qubit_function::{ArcFunction, Function};
         ///
         /// let double = ArcFunction::new(|x: &i32| x * 2);
         /// let conditional = double.when(|value: &i32| *value > 0);
@@ -220,8 +219,7 @@ macro_rules! impl_shared_function_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use qubit_function::{ArcBiFunction, BiFunction, BiMutatingFunction};
-        /// use std::sync::Arc;
+        /// use qubit_function::{ArcBiFunction, BiFunction};
         ///
         /// let add = ArcBiFunction::new(|x: &i32, y: &i32| x + y);
         /// let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
@@ -258,8 +256,7 @@ macro_rules! impl_shared_function_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use qubit_function::{ArcBiFunction, ArcFunction, BiFunction, BiMutatingFunction, Function};
-        /// use std::sync::Arc;
+        /// use qubit_function::{ArcBiFunction, ArcFunction, BiFunction, Function};
         ///
         /// let add = ArcBiFunction::new(|x: &i32, y: &i32| x + y);
         /// let multiply_by_two = ArcFunction::new(|x: &i32| x * 2);

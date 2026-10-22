@@ -169,6 +169,11 @@ macro_rules! impl_box_function_methods {
         /// Creates a conditional function that executes based on predicate
         /// result.
         ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The predicate type that determines whether to execute the
+        ///   function.
+        ///
         /// # Parameters
         ///
         /// * `predicate` - The predicate to determine whether to execute
@@ -210,6 +215,11 @@ macro_rules! impl_box_function_methods {
 
         /// Chains execution with another function, executing the current
         /// function first, then the subsequent function.
+        ///
+        /// # Type Parameters
+        ///
+        /// * `S` - The result type produced by the subsequent function.
+        /// * `F` - The function to execute after the current function.
         ///
         /// # Parameters
         ///
@@ -257,6 +267,11 @@ macro_rules! impl_box_function_methods {
         /// Creates a conditional two-parameter function that executes based
         /// on bi-predicate result.
         ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The bi-predicate type that determines whether to execute
+        ///   the function.
+        ///
         /// # Parameters
         ///
         /// * `predicate` - The bi-predicate to determine whether to execute
@@ -299,6 +314,11 @@ macro_rules! impl_box_function_methods {
 
         /// Chains execution with another two-parameter function, executing
         /// the current function first, then the subsequent function.
+        ///
+        /// # Type Parameters
+        ///
+        /// * `S` - The result type produced by the subsequent function.
+        /// * `F` - The function to execute after the current function.
         ///
         /// # Parameters
         ///

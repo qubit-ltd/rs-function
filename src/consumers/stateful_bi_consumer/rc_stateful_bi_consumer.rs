@@ -41,6 +41,11 @@ type RcStatefulBiConsumerFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U)>>;
 ///   single-threaded use
 /// - **Non-Consuming API**: `and_then` borrows `&self`, original remains usable
 ///
+/// # Type Parameters
+///
+/// - `T` - Type of the first value passed to the callback.
+/// - `U` - Type of the second value passed to the callback.
+///
 /// # Use Cases
 ///
 /// Choose `RcStatefulBiConsumer` when:
@@ -72,9 +77,10 @@ type RcStatefulBiConsumerFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U)>>;
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{BiConsumer, RcStatefulBiConsumer, StatefulBiConsumer};
-/// use std::rc::Rc;
 /// use std::cell::RefCell;
+/// use std::rc::Rc;
+///
+/// use qubit_function::{RcStatefulBiConsumer, StatefulBiConsumer};
 ///
 /// let log = Rc::new(RefCell::new(Vec::new()));
 /// let l = log.clone();
@@ -84,7 +90,8 @@ type RcStatefulBiConsumerFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U)>>;
 /// let mut clone = consumer.clone();
 ///
 /// consumer.accept(&5, &3);
-/// assert_eq!(*log.borrow(), vec![8]);
+/// clone.accept(&5, &3);
+/// assert_eq!(*log.borrow(), vec![8, 8]);
 /// ```
 /// # Borrowing and reentrancy
 ///

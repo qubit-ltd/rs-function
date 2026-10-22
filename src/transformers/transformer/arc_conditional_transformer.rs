@@ -19,8 +19,6 @@ use crate::transformers::macros::impl_shared_conditional_transformer;
 // ArcConditionalTransformer - Arc-based Conditional Transformer
 // ============================================================================
 
-/// ArcConditionalTransformer struct
-///
 /// A thread-safe conditional transformer that only executes when a predicate is
 /// satisfied. Uses `ArcTransformer` and `ArcPredicate` for shared ownership
 /// across threads.
@@ -34,6 +32,11 @@ use crate::transformers::macros::impl_shared_conditional_transformer;
 /// - **Thread-Safe**: Implements `Send + Sync`, safe for concurrent use
 /// - **Conditional Execution**: Only transforms when predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
+///
+/// # Type Parameters
+///
+/// * `T` - The input value type consumed by the transformer.
+/// * `R` - The output value type produced by the transformer.
 ///
 /// # Examples
 ///

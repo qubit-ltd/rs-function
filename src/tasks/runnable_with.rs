@@ -41,6 +41,20 @@ pub use arc_runnable_with::ArcRunnableWith;
 ///
 /// * `T` - The mutable input type.
 /// * `E` - The error value returned when the action fails.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::tasks::runnable_with::RunnableWith;
+///
+/// let mut increment = |value: &mut i32| -> Result<(), ()> {
+///     *value += 1;
+///     Ok(())
+/// };
+/// let mut value = 1;
+/// increment.run_with(&mut value).unwrap();
+/// assert_eq!(value, 2);
+/// ```
 pub trait RunnableWith<T, E> {
     /// Executes the action with mutable input.
     ///

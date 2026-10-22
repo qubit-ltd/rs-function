@@ -34,6 +34,15 @@ pub use box_conditional_function_once::BoxConditionalFunctionOnce;
 ///
 /// * `T` - The type of the input value (borrowed)
 /// * `R` - The type of the output value
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::FunctionOnce;
+///
+/// let double = |value: &i32| value * 2;
+/// assert_eq!(double.apply(&21), 42);
+/// ```
 pub trait FunctionOnce<T, R> {
     /// Applies the function to the input reference, consuming self
     ///

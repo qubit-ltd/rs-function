@@ -10,9 +10,9 @@
 //! Generates Clone trait implementation for basic Consumer types
 //!
 //! Generates Clone implementation for Consumer structs that have `function`
-//! and `name` fields. The function field is cloned using its inherent `clone`
-//! method, which performs a shallow clone for smart pointers like `Arc` or
-//! `Rc`.
+//! and `metadata` fields. Both fields are cloned using their `Clone`
+//! implementations. For smart pointers like `Arc` and `Rc`, cloning the
+//! function field creates another shared reference to the callback.
 //!
 //! # Parameters
 //!
@@ -56,15 +56,16 @@
 ///
 /// This macro should be used at the top level (outside of any impl block) as
 /// it generates a complete `impl Clone for $struct_name` block. It generates
-/// Clone implementation for Consumer structs that have `function` and `name`
-/// fields. The function field is cloned using its inherent `clone` method,
-/// which performs a shallow clone for smart pointers like `Arc` or `Rc`.
+/// Clone implementation for Consumer structs that have `function` and
+/// `metadata` fields. Both fields are cloned using their `Clone`
+/// implementations. For smart pointers like `Arc` and `Rc`, cloning the
+/// function field creates another shared reference to the callback.
 ///
 /// # Parameters
 ///
 /// * `$struct_name` - The struct name
-/// * `$t` - Generic parameter list (one or two type parameters)
-/// * `$u` - Generic parameter list (one or two type parameters)
+/// * `$t` - The first type parameter identifier
+/// * `$u` - The second type parameter identifier for bi-consumer types
 ///
 /// # Examples
 ///

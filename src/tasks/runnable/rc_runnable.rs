@@ -29,11 +29,21 @@ use crate::tasks::runnable::Runnable;
 /// # Type Parameters
 ///
 /// * `E` - The error value returned when the action fails.
+///
 /// # Borrowing and reentrancy
 ///
 /// Each call holds a mutable `RefCell` borrow while the user callback runs.
 /// Synchronous re-entry through the same shared wrapper panics with a borrow
 /// error. Mutations completed before a panic are not rolled back.
+///
+/// # Examples
+///
+/// ```rust
+/// use qubit_function::{RcRunnable, Runnable};
+///
+/// let mut task = RcRunnable::new(|| Ok::<(), String>(()));
+/// assert_eq!(task.run(), Ok(()));
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcRunnable<E> {
     /// The stateful closure executed by this runnable.
@@ -43,6 +53,7 @@ pub struct RcRunnable<E> {
 }
 
 impl<E> Clone for RcRunnable<E> {
+    /// Clones the shared callback and its diagnostic metadata handle.
     #[inline]
     fn clone(&self) -> Self {
         Self {

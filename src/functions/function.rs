@@ -52,6 +52,15 @@ pub use arc_conditional_function::ArcConditionalFunction;
 ///
 /// * `T` - The type of the input value (borrowed)
 /// * `R` - The type of the output value
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::Function;
+///
+/// let double = |value: &i32| value * 2;
+/// assert_eq!(double.apply(&21), 42);
+/// ```
 pub trait Function<T, R> {
     /// Applies the function to the input reference to produce an output value
     ///

@@ -22,8 +22,6 @@ use crate::mutators::macros::impl_shared_mutator_methods;
 // 4. RcMutator - Single-Threaded Shared Ownership Implementation
 // ============================================================================
 
-/// RcMutator struct
-///
 /// A stateless mutator implementation based on `Rc<dyn Fn(&mut T)>` for
 /// single-threaded shared ownership scenarios. This type allows multiple
 /// references to the same mutator without the overhead of thread safety.
@@ -37,6 +35,10 @@ use crate::mutators::macros::impl_shared_mutator_methods;
 /// - **Chainable**: Method chaining via `&self` (non-consuming)
 /// - **Ownership Cost**: `Rc` uses non-atomic reference counting; `Arc` uses
 ///   atomic reference counting, and neither wrapper locks callback invocation
+///
+/// # Type Parameters
+///
+/// - `T`: The value mutated by the wrapped callback.
 ///
 /// # Use Cases
 ///

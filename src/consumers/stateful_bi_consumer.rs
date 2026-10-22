@@ -15,8 +15,7 @@
 //! This module provides a unified `BiConsumer` trait and three concrete
 //! implementations based on different ownership models:
 //!
-//! - **`BoxStatefulBiConsumer<T, U>`**: Box-based single ownership for one-time
-//!   use
+//! - **`BoxStatefulBiConsumer<T, U>`**: Box-based single ownership
 //! - **`ArcStatefulBiConsumer<T, U>`**: Arc<Mutex<>>-based thread-safe shared
 //!   ownership
 //! - **`RcStatefulBiConsumer<T, U>`**: Rc<RefCell<>>-based single-threaded
@@ -76,10 +75,15 @@ pub use rc_conditional_stateful_bi_consumer::RcConditionalStatefulBiConsumer;
 ///   without allocating an adapter
 /// - **Generic Programming**: Write functions accepting any bi-consumer type
 ///
+/// # Type Parameters
+///
+/// - `T` - Type of the first input value
+/// - `U` - Type of the second input value
+///
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{BiConsumer, BoxStatefulBiConsumer, StatefulBiConsumer};
+/// use qubit_function::{BoxStatefulBiConsumer, StatefulBiConsumer};
 /// use std::cell::RefCell;
 /// use std::rc::Rc;
 ///
@@ -116,7 +120,7 @@ pub trait StatefulBiConsumer<T, U> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_function::{BiConsumer, BoxStatefulBiConsumer, StatefulBiConsumer};
+    /// use qubit_function::{BoxStatefulBiConsumer, StatefulBiConsumer};
     /// use std::sync::{Arc, Mutex};
     ///
     /// let log = Arc::new(Mutex::new(Vec::new()));

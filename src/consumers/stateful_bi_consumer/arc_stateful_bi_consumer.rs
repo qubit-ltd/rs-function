@@ -61,10 +61,15 @@ type ArcStatefulBiConsumerFn<T, U> = Arc<Mutex<dyn FnMut(&T, &U) + Send>>;
 /// safety is not needed, consider using `RcStatefulBiConsumer` for lower
 /// overhead in single-threaded sharing.
 ///
+/// # Type Parameters
+///
+/// - `T` - Type of the first value passed to the callback.
+/// - `U` - Type of the second value passed to the callback.
+///
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{BiConsumer, ArcStatefulBiConsumer, StatefulBiConsumer};
+/// use qubit_function::{ArcStatefulBiConsumer, StatefulBiConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -72,7 +77,6 @@ type ArcStatefulBiConsumerFn<T, U> = Arc<Mutex<dyn FnMut(&T, &U) + Send>>;
 /// let mut consumer = ArcStatefulBiConsumer::new(move |x: &i32, y: &i32| {
 ///     l.lock().expect("mutex should not be poisoned").push(*x + *y);
 /// });
-/// let mut clone = consumer.clone();
 ///
 /// consumer.accept(&5, &3);
 /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);

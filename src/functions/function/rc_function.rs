@@ -36,6 +36,21 @@ use crate::functions::macros::impl_shared_function_methods;
 ///   time)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync`)
 /// - **Clonable**: Cheap cloning via `Rc::clone`
+///
+/// # Type Parameters
+///
+/// - `T` is the input type borrowed by each invocation.
+/// - `R` is the value produced by each invocation.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::Function;
+/// use qubit_function::RcFunction;
+///
+/// let double = RcFunction::new(|value: &i32| value * 2);
+/// assert_eq!(double.apply(&21), 42);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcFunction<T, R> {
     /// The wrapped callback implementation.

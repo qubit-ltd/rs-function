@@ -14,13 +14,9 @@ use std::sync::Arc;
 use std::sync::Mutex;
 
 use qubit_function::ArcConsumer;
-use qubit_function::ArcStatefulConsumer;
 use qubit_function::BoxConsumer;
-use qubit_function::BoxStatefulConsumer;
 use qubit_function::Consumer;
 use qubit_function::RcConsumer;
-use qubit_function::RcStatefulConsumer;
-use qubit_function::StatefulConsumer;
 
 // ============================================================================
 // BoxConsumer Tests

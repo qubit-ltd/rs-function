@@ -41,6 +41,27 @@ use crate::functions::macros::impl_shared_function_methods;
 /// - **Clonable**: Cheap cloning via `Arc::clone`
 /// - **Statefulness**: Can modify internal state between calls
 ///
+/// # Type Parameters
+///
+/// * `T` - The type of each borrowed input value.
+/// * `R` - The type of each returned output value.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::{ArcStatefulFunction, StatefulFunction};
+///
+/// let mut call_count = 0;
+/// let mut first = ArcStatefulFunction::new(move |_: &i32| {
+///     call_count += 1;
+///     call_count
+/// });
+/// let mut second = first.clone();
+///
+/// assert_eq!(first.apply(&0), 1);
+/// assert_eq!(second.apply(&0), 2);
+/// ```
+///
 /// # Locking and reentrancy
 ///
 /// Each call acquires a `parking_lot::Mutex` and holds it while the user

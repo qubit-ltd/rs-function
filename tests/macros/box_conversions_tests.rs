@@ -10,7 +10,7 @@ use qubit_function::BoxFunction;
 use qubit_function::Function;
 
 #[test]
-fn test_box_conversions_observable_behavior() {
+fn test_box_function_name_apply_and_display() {
     let mut function = BoxFunction::new_with_name("smoke", |value: &i32| value + 1);
     assert_eq!(function.name(), Some("smoke"));
     function.set_name("renamed");

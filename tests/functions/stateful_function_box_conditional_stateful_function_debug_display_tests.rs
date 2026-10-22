@@ -8,39 +8,13 @@
 
 //! Comprehensive tests for StatefulFunction trait and its implementations
 
-use std::cell::RefCell;
-use std::rc::Rc;
-use std::sync::Arc;
-use std::sync::Mutex;
-
-use qubit_function::ArcPredicate;
 use qubit_function::ArcStatefulFunction;
-use qubit_function::BoxPredicate;
-use qubit_function::BoxStatefulFunction;
-use qubit_function::FunctionOnce;
-use qubit_function::RcPredicate;
-use qubit_function::RcStatefulFunction;
 use qubit_function::StatefulFunction;
+use qubit_function::BoxStatefulFunction;
+use qubit_function::RcStatefulFunction;
 
 // ============================================================================
-// StatefulFunction Trait Tests - Core Functionality
-// ============================================================================
-
-/// Custom struct for testing StatefulFunction trait default implementations
-#[derive(Clone)]
-struct CustomStatefulFunction {
-    multiplier: i32,
-}
-
-impl StatefulFunction<i32, i32> for CustomStatefulFunction {
-    fn apply(&mut self, input: &i32) -> i32 {
-        self.multiplier += 1;
-        input * self.multiplier
-    }
-}
-
-// ============================================================================
-// ArcConditionalStatefulFunction Clone Tests
+// Conditional StatefulFunction Debug and Display Tests
 // ============================================================================
 
 #[test]
@@ -168,7 +142,3 @@ fn test_arc_conditional_stateful_function_debug_display() {
     assert!(named_display_str.contains("ArcPredicate"));
     assert!(named_display_str.ends_with(")"));
 }
-
-// ============================================================================
-// StatefulFunction Trait Default Methods Tests - into_once, to_once
-// ============================================================================

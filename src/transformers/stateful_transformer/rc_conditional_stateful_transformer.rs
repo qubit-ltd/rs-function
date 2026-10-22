@@ -19,7 +19,7 @@ use crate::transformers::macros::impl_shared_conditional_transformer;
 // RcConditionalStatefulTransformer - Rc-based Conditional StatefulTransformer
 // ============================================================================
 
-/// RcConditionalStatefulTransformer struct
+/// A shared, single-threaded transformer that selects a callback by predicate.
 ///
 /// A single-threaded conditional transformer that only executes when a
 /// predicate is satisfied. Uses `RcStatefulTransformer` and `RcPredicate` for
@@ -36,6 +36,12 @@ use crate::transformers::macros::impl_shared_conditional_transformer;
 /// - **Conditional Execution**: Only maps when predicate returns `true`
 /// - **No Lock Overhead**: More efficient than
 ///   `ArcConditionalStatefulTransformer`
+///
+/// # Type Parameters
+///
+/// * `T` - The input consumed by the selected transformer and borrowed by the
+///   predicate.
+/// * `R` - The output produced by the selected transformer.
 ///
 /// # Examples
 ///

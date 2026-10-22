@@ -8,11 +8,6 @@
 
 //! Comprehensive tests for FunctionOnce trait and BoxFunctionOnce
 
-use qubit_function::BoxFunctionOnce;
-use qubit_function::FunctionOnce;
-use qubit_function::Predicate;
-use qubit_function::RcPredicate;
-
 // ============================================================================
 // FunctionOnce Trait Tests - Core Functionality
 // ============================================================================
@@ -21,20 +16,6 @@ use qubit_function::RcPredicate;
 mod function_once_default_impl_tests {
     use qubit_function::BoxFunctionOnce;
     use qubit_function::FunctionOnce;
-
-    /// Custom struct that only implements the core apply method of FunctionOnce
-    /// trait All to_xxx_once() methods use default implementation
-    struct CustomFunctionOnce {
-        multiplier: i32,
-    }
-
-    impl FunctionOnce<i32, i32> for CustomFunctionOnce {
-        fn apply(self, input: &i32) -> i32 {
-            input * self.multiplier
-        }
-        // Does not override any to_xxx_once() methods, testing default
-        // implementations
-    }
 
     /// Cloneable custom one-time function for testing to_xxx_once() methods
     #[derive(Clone)]

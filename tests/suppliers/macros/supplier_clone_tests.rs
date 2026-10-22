@@ -6,11 +6,15 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::BoxSupplier;
+#[cfg(feature = "rc")]
+use qubit_function::RcSupplier;
 use qubit_function::Supplier;
 
+#[cfg(feature = "rc")]
 #[test]
-fn test_supplier_clone_observable_behavior() {
-    let supplier = BoxSupplier::new(|| 42);
-    assert_eq!(supplier.get(), 42);
+fn test_supplier_clone_preserves_observable_behavior() {
+    let supplier = RcSupplier::new(|| 42);
+    let cloned_supplier = supplier.clone();
+
+    assert_eq!(cloned_supplier.get(), 42);
 }

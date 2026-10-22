@@ -9,15 +9,15 @@
 //!
 //! Generates Clone trait implementation for basic Function types
 //!
-//! Generates Clone implementation for Function structs that have `function`
-//! and `name` fields. The function field is cloned using its inherent `clone`
-//! method, which performs a shallow clone for smart pointers like `Arc` or
-//! `Rc`.
+//! Generates Clone implementations for Function structs that have `function`
+//! and `metadata` fields. Both fields are cloned using their `Clone`
+//! implementations; cloning smart pointers like `Arc` or `Rc` is shallow.
 //!
 //! # Parameters
 //!
 //! * `$struct_name` - The struct name
-//! * `$generic` - Generic parameter list (two or three type parameters)
+//! * Generic identifiers - Two or three type parameters, depending on the
+//!   function type
 //!
 //! # Examples
 //!
@@ -39,14 +39,15 @@
 ///
 /// This macro should be used at the top level (outside of any impl block) as
 /// it generates a complete `impl Clone for $struct_name` block. It generates
-/// Clone implementation for Function structs that have `function` and `name`
-/// fields. The function field is cloned using its inherent `clone` method,
-/// which performs a shallow clone for smart pointers like `Arc` or `Rc`.
+/// Clone implementations for Function structs that have `function` and
+/// `metadata` fields. Both fields are cloned using their `Clone`
+/// implementations; cloning smart pointers like `Arc` or `Rc` is shallow.
 ///
 /// # Parameters
 ///
 /// * `$struct_name` - The struct name
-/// * `$generic` - Generic parameter list (two or three type parameters)
+/// * Generic identifiers - Two or three type parameters, depending on the
+///   function type
 ///
 /// # Examples
 ///

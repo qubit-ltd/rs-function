@@ -10,7 +10,6 @@
 
 use qubit_function::ArcStatefulMutator;
 use qubit_function::BoxStatefulMutator;
-use qubit_function::MutatorOnce;
 use qubit_function::RcStatefulMutator;
 use qubit_function::StatefulMutator;
 
@@ -21,8 +20,6 @@ use qubit_function::StatefulMutator;
 #[cfg(test)]
 mod test_conditional_execution {
     use qubit_function::predicates::ArcPredicate;
-    use qubit_function::predicates::BoxPredicate;
-    use qubit_function::predicates::RcPredicate;
 
     use super::ArcStatefulMutator;
     use super::BoxStatefulMutator;

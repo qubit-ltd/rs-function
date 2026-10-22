@@ -48,12 +48,6 @@ macro_rules! impl_common_name_methods {
             self.metadata.set_name(name);
         }
 
-        #[doc = concat!("Clears the name of this ", $type_desc, ".")]
-        #[inline(always)]
-        pub fn clear_name(&mut self) {
-            self.metadata.clear_name();
-        }
-
         #[doc = concat!("Sets the name of this ", $type_desc, " and returns it.")]
         ///
         /// # Parameters
@@ -65,6 +59,12 @@ macro_rules! impl_common_name_methods {
         pub fn with_name(mut self, name: &str) -> Self {
             self.metadata.set_name(name);
             self
+        }
+
+        #[doc = concat!("Clears the name of this ", $type_desc, ".")]
+        #[inline(always)]
+        pub fn clear_name(&mut self) {
+            self.metadata.clear_name();
         }
     };
 }

@@ -5,63 +5,14 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-//! # Box Consumer Methods Macro
-//!
-//! Generates when and and_then method implementations for Box-based Consumer
-//!
-//! Generates conditional execution when method and chaining and_then method
-//! for Box-based consumers that consume self (because Box cannot be cloned).
-//!
-//! This macro supports both single-parameter and two-parameter consumers
-//! through pattern matching on the struct signature.
-//!
-//! # Parameters
-//!
-//! * `$struct_name<$generics>` - The struct name with its generic parameters
-//!   - Single parameter: `BoxConsumer<T>`
-//!   - Two parameters: `BoxBiConsumer<T, U>`
-//! * `$conditional_type` - The conditional consumer type for when (e.g.,
-//!   BoxConditionalConsumer)
-//! * `$consumer_trait` - Consumer trait name (e.g., Consumer, BiConsumer)
-//!
-//! # Parameter Usage Comparison
-//!
-//! | Consumer Type | Struct Signature | `$conditional_type` | `$consumer_trait` |
-//! |---------------|-----------------|----------------|------------------|
-//! | **Consumer** | `BoxConsumer<T>` | BoxConditionalConsumer | Consumer |
-//! | **ConsumerOnce** | `BoxConsumerOnce<T>` | BoxConditionalConsumerOnce | ConsumerOnce |
-//! | **StatefulConsumer** | `BoxStatefulConsumer<T>` | BoxConditionalStatefulConsumer | StatefulConsumer |
-//! | **BiConsumer** | `BoxBiConsumer<T, U>` | BoxConditionalBiConsumer | BiConsumer |
-//! | **BiConsumerOnce** | `BoxBiConsumerOnce<T, U>` | BoxConditionalBiConsumerOnce | BiConsumerOnce |
-//! | **StatefulBiConsumer** | `BoxStatefulBiConsumer<T, U>` | BoxConditionalStatefulBiConsumer | StatefulBiConsumer |
-//!
-//! # Examples
-//!
-//!
-//! ```rust
-//! # {
-//! use qubit_function::{BiConsumer, Consumer};
-//! use qubit_function::consumers::BoxConditionalConsumer;
-//! use qubit_function::consumers::BoxConditionalBiConsumer;
-//! use qubit_function::consumers::{BoxBiConsumer, BoxConsumer};
-//! macro_rules! impl_box_consumer_methods {
-//!     ($struct_name:ty, $conditional_type:ty, $consumer_trait:ident) => {
-//!         let _ = std::mem::size_of::<$struct_name>();
-//!         let _ = stringify!($conditional_type);
-//!         let _ = std::stringify!($consumer_trait);
-//!     };
-//! }
-//! impl_box_consumer_methods!(BoxConsumer<i32>, BoxConditionalConsumer<i32>, Consumer);
-//! impl_box_consumer_methods!(BoxBiConsumer<i32, i32>, BoxConditionalBiConsumer<i32, i32>, BiConsumer);
-//! # }
-//! ```
+//! Macros used to implement methods for boxed consumer types.
 
-/// Generates when and and_then method implementations for Box-based Consumer
+/// Generates `when` and `and_then` method implementations for boxed consumers.
 ///
-/// This macro should be used at the top level (outside of any impl block) as
-/// it generates a complete impl block with methods for the specified struct.
-/// Generates conditional execution when method and chaining and_then method
-/// for Box-based consumers that consume self (because Box cannot be cloned).
+/// Invoke this macro inside the target type's `impl` block to generate its
+/// `when` and `and_then` methods.
+/// The generated methods consume `self`, which supports boxed consumers that
+/// cannot be cloned.
 ///
 /// This macro supports both single-parameter and two-parameter consumers
 /// through pattern matching on the struct signature.
@@ -89,15 +40,13 @@
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{BiConsumer, Consumer};
-/// use qubit_function::consumers::BoxConditionalConsumer;
-/// use qubit_function::consumers::BoxConditionalBiConsumer;
-/// use qubit_function::consumers::{BoxBiConsumer, BoxConsumer};
+/// use qubit_function::consumers::BoxBiConsumer;
+/// use qubit_function::consumers::BoxConsumer;
 /// macro_rules! impl_box_consumer_methods {
 ///     ($struct_name:ty, $conditional_type:ty, $consumer_trait:ident) => {
 ///         let _ = std::mem::size_of::<$struct_name>();
 ///         let _ = stringify!($conditional_type);
-///         let _ = std::stringify!($consumer_trait);
+///         let _ = stringify!($consumer_trait);
 ///     };
 /// }
 /// impl_box_consumer_methods!(BoxConsumer<i32>, BoxConditionalConsumer<i32>, Consumer);
@@ -181,8 +130,10 @@ macro_rules! impl_box_consumer_methods {
         ///
         /// ```rust
         /// use std::sync::Arc;
-        /// use std::sync::atomic::{AtomicI32, Ordering};
-        /// use qubit_function::consumers::*;
+        /// use std::sync::atomic::AtomicI32;
+        /// use std::sync::atomic::Ordering;
+        /// use qubit_function::Consumer;
+        /// use qubit_function::consumers::BoxConsumer;
         ///
         /// let counter = Arc::new(AtomicI32::new(0));
         /// let consumer = BoxConsumer::new({
@@ -224,8 +175,10 @@ macro_rules! impl_box_consumer_methods {
         ///
         /// ```rust
         /// use std::sync::Arc;
-        /// use std::sync::atomic::{AtomicI32, Ordering};
-        /// use qubit_function::consumers::*;
+        /// use std::sync::atomic::AtomicI32;
+        /// use std::sync::atomic::Ordering;
+        /// use qubit_function::Consumer;
+        /// use qubit_function::consumers::BoxConsumer;
         ///
         /// let counter1 = Arc::new(AtomicI32::new(0));
         /// let counter2 = Arc::new(AtomicI32::new(0));
@@ -281,8 +234,10 @@ macro_rules! impl_box_consumer_methods {
         ///
         /// ```rust
         /// use std::sync::Arc;
-        /// use std::sync::atomic::{AtomicI32, Ordering};
-        /// use qubit_function::consumers::*;
+        /// use std::sync::atomic::AtomicI32;
+        /// use std::sync::atomic::Ordering;
+        /// use qubit_function::BiConsumer;
+        /// use qubit_function::consumers::BoxBiConsumer;
         ///
         /// let counter = Arc::new(AtomicI32::new(0));
         /// let bi_consumer = BoxBiConsumer::new({
@@ -327,8 +282,10 @@ macro_rules! impl_box_consumer_methods {
         ///
         /// ```rust
         /// use std::sync::Arc;
-        /// use std::sync::atomic::{AtomicI32, Ordering};
-        /// use qubit_function::consumers::*;
+        /// use std::sync::atomic::AtomicI32;
+        /// use std::sync::atomic::Ordering;
+        /// use qubit_function::BiConsumer;
+        /// use qubit_function::consumers::BoxBiConsumer;
         ///
         /// let counter1 = Arc::new(AtomicI32::new(0));
         /// let counter2 = Arc::new(AtomicI32::new(0));

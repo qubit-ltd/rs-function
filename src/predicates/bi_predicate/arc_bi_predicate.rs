@@ -26,6 +26,10 @@ use crate::predicates::macros::impl_shared_predicate_methods;
 /// allowing the original bi-predicate to remain usable after
 /// composition.
 ///
+/// # Type Parameters
+///
+/// * `T` - The type of the first value tested by the predicate.
+/// * `U` - The type of the second value tested by the predicate.
 ///
 /// # Examples
 ///

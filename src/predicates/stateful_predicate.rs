@@ -38,6 +38,22 @@ pub use rc_stateful_predicate::RcStatefulPredicate;
 /// # Type Parameters
 ///
 /// * `T` - The type of the value being tested.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::StatefulPredicate;
+///
+/// let mut calls = 0;
+/// let mut is_positive = |value: &i32| {
+///     calls += 1;
+///     *value > 0
+/// };
+///
+/// assert!(is_positive.test(&5));
+/// assert!(!is_positive.test(&-3));
+/// assert_eq!(calls, 2);
+/// ```
 pub trait StatefulPredicate<T> {
     /// Tests whether the given value satisfies this predicate.
     ///
@@ -64,7 +80,6 @@ impl<F, T> StatefulPredicate<T> for F
 where
     F: FnMut(&T) -> bool,
 {
-    #[inline(always)]
     fn test(&mut self, value: &T) -> bool {
         self(value)
     }

@@ -40,7 +40,6 @@ mod consumer_rc_non_mutating_consumer_tests;
 mod consumer_tests;
 mod macros;
 mod stateful_bi_consumer;
-mod stateful_bi_consumer_arc_conditional_bi_consumer_tests;
 mod stateful_bi_consumer_arc_stateful_bi_consumer_tests;
 mod stateful_bi_consumer_box_conditional_bi_consumer_tests;
 mod stateful_bi_consumer_closure_stateful_bi_consumer_tests;

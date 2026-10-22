@@ -16,7 +16,7 @@ struct ExampleEntry {
 }
 
 #[test]
-fn all_manifest_examples_point_to_existing_files() {
+fn test_all_manifest_examples_point_to_existing_files() {
     let manifest_dir = manifest_dir();
 
     for example in manifest_examples() {
@@ -43,7 +43,7 @@ fn all_manifest_examples_point_to_existing_files() {
 }
 
 #[test]
-fn all_example_files_are_listed_in_manifest() {
+fn test_all_example_files_are_listed_in_manifest() {
     let manifest_dir = manifest_dir();
     let mut actual = collect_example_files(&manifest_dir);
     let mut expected = manifest_examples()

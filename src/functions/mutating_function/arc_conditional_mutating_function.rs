@@ -19,11 +19,15 @@ use crate::functions::macros::impl_shared_conditional_function;
 // ArcConditionalMutatingFunction - Arc-based Conditional Mutating Function
 // ============================================================================
 
-/// ArcConditionalMutatingFunction struct
+/// A thread-safe shared wrapper that conditionally mutates an input and returns
+/// a result.
 ///
-/// A thread-safe conditional function that only executes when a predicate is
-/// satisfied. Uses `ArcMutatingFunction` and `ArcPredicate` for shared
-/// ownership across threads.
+/// The predicate is evaluated against the input before the wrapped callback is
+/// invoked. If it returns `false`, the alternative callback supplied to
+/// [`or_else`](Self::or_else) is used instead. The callbacks and predicate use
+/// `Arc` ownership, which permits sharing when their input and output types
+/// satisfy the required thread-safety bounds; callback invocation itself is
+/// not protected by a lock.
 ///
 /// This type is typically created by calling `ArcMutatingFunction::when()` and
 /// is designed to work with the `or_else()` method to create if-then-else
@@ -32,8 +36,11 @@ use crate::functions::macros::impl_shared_conditional_function;
 /// # Features
 ///
 /// - **Shared Ownership**: Cloneable via `Arc`, multiple owners allowed
-/// - **Thread-Safe**: Implements `Send + Sync`, safe for concurrent use
-/// - **Conditional Execution**: Only transforms when predicate returns `true`
+/// - **Thread-Safe Sharing**: Uses `Arc` for shared callback and predicate
+///   ownership
+/// - **Conditional Execution**: Mutates the input through the selected callback
+/// - **Shared Receiver**: Calls through `&self`; callback side effects still
+///   depend on the callback implementation
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 ///
 /// # Examples
@@ -41,7 +48,10 @@ use crate::functions::macros::impl_shared_conditional_function;
 /// ```rust
 /// use qubit_function::{MutatingFunction, ArcMutatingFunction};
 ///
-/// let double = ArcMutatingFunction::new(|x: &mut i32| *x * 2);
+/// let double = ArcMutatingFunction::new(|x: &mut i32| {
+///     *x *= 2;
+///     *x
+/// });
 /// let identity = ArcMutatingFunction::<i32, i32>::identity();
 /// let conditional = double.when(|x: &i32| *x > 0).or_else(identity);
 ///
@@ -52,6 +62,12 @@ use crate::functions::macros::impl_shared_conditional_function;
 /// let mut negative = -5;
 /// assert_eq!(conditional_clone.apply(&mut negative), -5);
 /// ```
+///
+/// # Type Parameters
+///
+/// * `T` - The input value type, mutably borrowed by the predicate and
+///   callback.
+/// * `R` - The result type returned by whichever callback is selected.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcConditionalMutatingFunction<T, R> {
     /// The wrapped callback implementation.

@@ -17,6 +17,9 @@ use crate::functions::macros::impl_function_constant_method;
 use crate::functions::macros::impl_function_debug_display;
 
 /// The erased callback representation used by this implementation.
+///
+/// The callback mutably borrows both inputs for each invocation and may be
+/// called repeatedly.
 type BoxBiMutatingFunctionFn<T, U, R> = Box<dyn Fn(&mut T, &mut U) -> R>;
 
 // ============================================================================
@@ -35,6 +38,29 @@ type BoxBiMutatingFunctionFn<T, U, R> = Box<dyn Fn(&mut T, &mut U) -> R>;
 /// - **Reusability**: Can be called multiple times (borrows inputs mutably each
 ///   time)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
+///
+/// # Type Parameters
+///
+/// - `T` - The type of the first mutably borrowed input.
+/// - `U` - The type of the second mutably borrowed input.
+/// - `R` - The value produced by the callback.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::{BiMutatingFunction, BoxBiMutatingFunction};
+///
+/// let add_second = BoxBiMutatingFunction::new(|first: &mut i32, second: &mut i32| {
+///     *first += *second;
+///     *first
+/// });
+/// let mut first = 2;
+/// let mut second = 3;
+///
+/// assert_eq!(add_second.apply(&mut first, &mut second), 5);
+/// assert_eq!(first, 5);
+/// assert_eq!(second, 3);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxBiMutatingFunction<T, U, R> {
     /// The wrapped callback implementation.

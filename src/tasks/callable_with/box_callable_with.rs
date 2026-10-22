@@ -20,6 +20,26 @@ type BoxCallableWithFn<T, R, E> = Box<dyn FnMut(&mut T) -> Result<R, E> + Send>;
 /// `BoxCallableWith<T, R, E>` stores a
 /// `Box<dyn FnMut(&mut T) -> Result<R, E> + Send>` and can be called
 /// repeatedly on tasks that may be moved across threads.
+///
+/// # Type Parameters
+///
+/// * `T` - The mutable input type passed to the callback.
+/// * `R` - The success value returned by the callback.
+/// * `E` - The error value returned when the callback fails.
+///
+/// # Examples
+///
+/// ```rust
+/// use qubit_function::tasks::{BoxCallableWith, CallableWith};
+///
+/// let mut callable = BoxCallableWith::new(|value: &mut i32| {
+///     *value += 1;
+///     Ok::<i32, ()>(*value)
+/// });
+/// let mut value = 41;
+/// assert_eq!(callable.call_with(&mut value), Ok(42));
+/// assert_eq!(value, 42);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxCallableWith<T, R, E> {
     /// The stateful closure executed by this callable.

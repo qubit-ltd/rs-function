@@ -35,6 +35,34 @@ use crate::functions::macros::impl_conditional_function_debug_display;
 /// - **One-time Use**: Can only be called once
 /// - **Conditional Execution**: Only computes when bi-predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::{BiMutatingFunctionOnce, BoxBiMutatingFunctionOnce};
+///
+/// let add = BoxBiMutatingFunctionOnce::new(
+///     |first: &mut i32, second: &mut i32| {
+///         *first += *second;
+///         *first
+///     },
+/// );
+/// let multiply = BoxBiMutatingFunctionOnce::new(
+///     |first: &mut i32, second: &mut i32| {
+///         *first *= *second;
+///         *first
+///     },
+/// );
+/// let conditional = add
+///     .when(|first: &i32, second: &i32| *first > 0 && *second > 0)
+///     .or_else(multiply);
+/// let mut first = 2;
+/// let mut second = 3;
+///
+/// assert_eq!(conditional.apply(&mut first, &mut second), 5);
+/// assert_eq!(first, 5);
+/// assert_eq!(second, 3);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConditionalBiMutatingFunctionOnce<T, U, R> {
     /// The wrapped callback implementation.

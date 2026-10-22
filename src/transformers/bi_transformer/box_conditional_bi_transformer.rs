@@ -36,6 +36,12 @@ use crate::transformers::macros::impl_conditional_transformer_debug_display;
 /// - **Implements BiTransformer**: Can be used anywhere a `BiTransformer` is
 ///   expected
 ///
+/// # Type Parameters
+///
+/// - `T` - The type of the first input consumed by the transformer.
+/// - `U` - The type of the second input consumed by the transformer.
+/// - `R` - The type of the transformed output.
+///
 /// # Examples
 ///
 /// ## With or_else Branch

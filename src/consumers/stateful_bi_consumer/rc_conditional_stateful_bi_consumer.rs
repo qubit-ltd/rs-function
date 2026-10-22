@@ -37,12 +37,18 @@ use crate::consumers::macros::impl_shared_conditional_consumer;
 /// - **No Lock Overhead**: More efficient than
 ///   `ArcConditionalStatefulBiConsumer`
 ///
+/// # Type Parameters
+///
+/// - `T` - Type of the first value passed to the predicate and consumer.
+/// - `U` - Type of the second value passed to the predicate and consumer.
+///
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{BiConsumer, RcStatefulBiConsumer, StatefulBiConsumer};
-/// use std::rc::Rc;
 /// use std::cell::RefCell;
+/// use std::rc::Rc;
+///
+/// use qubit_function::{RcStatefulBiConsumer, StatefulBiConsumer};
 ///
 /// let log = Rc::new(RefCell::new(Vec::new()));
 /// let l = log.clone();
@@ -50,9 +56,7 @@ use crate::consumers::macros::impl_shared_conditional_consumer;
 ///     l.borrow_mut().push(*x + *y);
 /// }).when(|x: &i32, y: &i32| *x > 0 && *y > 0);
 ///
-/// let conditional_clone = conditional.clone();
-///
-/// let mut value = 5;
+/// let value = 5;
 /// let mut m = conditional;
 /// m.accept(&value, &3);
 /// assert_eq!(*log.borrow(), vec![8]);

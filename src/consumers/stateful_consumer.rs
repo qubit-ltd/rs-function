@@ -12,7 +12,7 @@
 //!
 //! It is similar to the `FnMut(&T)` trait in the standard library.
 //!
-//! This module provides a unified `Consumer` trait and three concrete
+//! This module provides a unified `StatefulConsumer` trait and three concrete
 //! implementations based on different ownership models:
 //!
 //! - **`BoxStatefulConsumer<T>`**: Box-based single ownership implementation
@@ -50,16 +50,16 @@ pub use rc_conditional_stateful_consumer::RcConditionalStatefulConsumer;
 // 1. Consumer Trait - Unified Consumer Interface
 // ============================================================================
 
-/// Consumer trait - Unified consumer interface
+/// Stateful consumer trait - unified stateful consumer interface
 ///
-/// Defines the core behavior of all consumer types. Similar to Java's
-/// `Consumer<T>` interface, executes operations that accept a value but return
-/// no result (side effects only).
+/// Defines the core behavior of all stateful consumer types. Similar to Java's
+/// `Consumer<T>` interface, it executes operations that accept a value but
+/// return no result (side effects only).
 ///
 /// It is similar to the `FnMut(&T)` trait in the standard library.
 ///
-/// Consumer can modify its own state (such as accumulation, counting), but
-/// should not modify the consumed value itself.
+/// A stateful consumer can modify its own state (such as an accumulator or
+/// counter), but should not modify the consumed value itself.
 ///
 /// # Automatic Implementation
 ///
@@ -75,10 +75,14 @@ pub use rc_conditional_stateful_consumer::RcConditionalStatefulConsumer;
 ///   without allocating an adapter
 /// - **Generic Programming**: Write functions that work with any consumer type
 ///
+/// # Type Parameters
+///
+/// * `T` - The input value type passed to the consumer by shared reference.
+///
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{Consumer, StatefulConsumer, BoxStatefulConsumer, ArcStatefulConsumer};
+/// use qubit_function::{StatefulConsumer, BoxStatefulConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
 /// fn apply_consumer<C: StatefulConsumer<i32>>(consumer: &mut C, value: &i32) {
@@ -108,7 +112,7 @@ pub trait StatefulConsumer<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_function::{Consumer, StatefulConsumer, BoxStatefulConsumer};
+    /// use qubit_function::{StatefulConsumer, BoxStatefulConsumer};
     ///
     /// let mut consumer = BoxStatefulConsumer::new(|x: &i32| println!("{}", x));
     /// let value = 5;

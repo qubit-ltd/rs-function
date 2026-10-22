@@ -23,19 +23,30 @@ use crate::tasks::callable::Callable;
 
 /// Thread-safe callable.
 ///
-/// `ArcCallable<R, E>` stores a `Arc<Mutex<dyn FnMut() -> Result<R, E> +
+/// `ArcCallable<R, E>` stores an `Arc<Mutex<dyn FnMut() -> Result<R, E> +
 /// Send>>` and can be called repeatedly across threads.
+/// Clones share the same callback and its mutable state.
 ///
 /// # Type Parameters
 ///
 /// * `R` - The success value returned by the computation.
 /// * `E` - The error value returned when the computation fails.
+///
 /// # Locking and reentrancy
 ///
 /// Each call acquires a `parking_lot::Mutex` and holds it while the user
 /// callback runs. Synchronous re-entry through the same shared wrapper
 /// deadlocks. The mutex is not poisoned after a panic, and mutations completed
 /// before a panic are not rolled back.
+///
+/// # Examples
+///
+/// ```rust
+/// use qubit_function::{ArcCallable, Callable};
+///
+/// let mut task = ArcCallable::new(|| Ok::<i32, String>(42));
+/// assert_eq!(task.call().expect("call should succeed"), 42);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcCallable<R, E> {
     /// The stateful closure executed by this callable.

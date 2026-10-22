@@ -32,6 +32,10 @@ use crate::consumers::macros::impl_consumer_debug_display;
 /// - **Mutable State**: Can modify captured environment through `FnMut`
 /// - **Builder Pattern**: Method chaining naturally consumes `self`
 ///
+/// # Type Parameters
+///
+/// * `T` - The type of values borrowed by the callback when it is invoked.
+///
 /// # Use Cases
 ///
 /// Choose `BoxStatefulConsumer` when:

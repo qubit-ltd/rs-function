@@ -23,20 +23,22 @@ use crate::functions::macros::impl_shared_function_methods;
 // 5. ArcMutatingFunction - Thread-Safe Shared Ownership
 // =======================================================================
 
-/// ArcMutatingFunction struct
+/// A cloneable wrapper around a callback that can mutate an input and return a
+/// result.
 ///
-/// A mutating function implementation based on
-/// `Arc<dyn Fn(&mut T) -> R + Send + Sync>` for thread-safe shared ownership
-/// scenarios. This type allows the function to be safely shared and used
-/// across multiple threads.
+/// The callback is stored in an `Arc` and must implement `Send + Sync`, so the
+/// wrapper can be shared across threads. Calls borrow the wrapper immutably
+/// and require exclusive access to each input for the duration of the call;
+/// any shared state or side effects inside the callback remain the callback's
+/// responsibility.
 ///
 /// # Features
 ///
 /// - **Shared Ownership**: Cloneable via `Arc`, multiple owners allowed
-/// - **Thread-Safe**: Implements `Send + Sync`, safe for concurrent use
-/// - **Shared-receiver calls**: Uses `Fn`, so invocation does not require `&mut
-///   self`; interior mutability and external side effects remain possible
-/// - **Chainable**: Method chaining via `&self` (non-consuming)
+/// - **Thread-Safe Sharing**: The stored callback must implement `Send + Sync`
+/// - **Shared-Receiver Calls**: Uses `Fn`, so invocation borrows the wrapper
+///   immutably; callback side effects still depend on its implementation
+/// - **Chainable**: Method chaining borrows the wrapper with `&self`
 ///
 /// # Use Cases
 ///
@@ -59,7 +61,13 @@ use crate::functions::macros::impl_shared_function_methods;
 ///
 /// let mut value = 5;
 /// assert_eq!(func.apply(&mut value), 10);
+/// assert_eq!(value, 10);
 /// ```
+///
+/// # Type Parameters
+///
+/// * `T` - The input type, mutably borrowed by the callback.
+/// * `R` - The value returned by the callback after it processes the input.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcMutatingFunction<T, R> {
     /// The wrapped callback implementation.

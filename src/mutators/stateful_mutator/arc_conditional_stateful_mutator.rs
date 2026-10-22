@@ -35,6 +35,11 @@ use crate::mutators::macros::impl_shared_conditional_mutator;
 /// - **Conditional Execution**: Only mutates when predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 ///
+/// # Type Parameters
+///
+/// * `T` - The input value mutated by the wrapped callback and inspected by the
+///   predicate.
+///
 /// # Examples
 ///
 /// ```rust

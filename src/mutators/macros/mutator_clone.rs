@@ -10,9 +10,9 @@
 //! Generates Clone trait implementation for basic Mutator types
 //!
 //! Generates Clone implementation for Mutator structs that have `function`
-//! and `name` fields. The function field is cloned using its inherent `clone`
-//! method, which performs a shallow clone for smart pointers like `Arc` or
-//! `Rc`.
+//! and `metadata` fields. Both fields are cloned using their inherent `clone`
+//! methods; the function field performs a shallow clone for smart pointers
+//! like `Arc` or `Rc`.
 //!
 //! # Parameters
 //!
@@ -33,9 +33,10 @@
 ///
 /// This macro should be used at the top level (outside of any impl block)
 /// to generate Clone trait implementations for Mutator structs. It generates
-/// Clone implementation for Mutator structs that have `function` and `name`
-/// fields. The function field is cloned using its inherent `clone` method,
-/// which performs a shallow clone for smart pointers like `Arc` or `Rc`.
+/// Clone implementation for Mutator structs that have `function` and
+/// `metadata` fields. Both fields are cloned using their inherent `clone`
+/// methods; the function field performs a shallow clone for smart pointers
+/// like `Arc` or `Rc`.
 ///
 /// # Parameters
 ///

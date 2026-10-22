@@ -36,25 +36,32 @@ use crate::consumers::macros::impl_shared_conditional_consumer;
 /// - **Conditional Execution**: Only consumes when predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 ///
+/// # Type Parameters
+///
+/// * `T` - The input type borrowed by the predicate and consumer callback.
+///
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{Consumer, StatefulConsumer, ArcStatefulConsumer};
+/// use qubit_function::{
+///     ArcConditionalStatefulConsumer, ArcStatefulConsumer, StatefulConsumer,
+/// };
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
 /// let l = log.clone();
-/// let conditional = ArcStatefulConsumer::new(move |x: &i32| {
+/// let conditional: ArcConditionalStatefulConsumer<i32> = ArcStatefulConsumer::new(move |x: &i32| {
 ///     l.lock().expect("mutex should not be poisoned").push(*x);
 /// })
 /// .when(|x: &i32| *x > 0);
 ///
 /// let conditional_clone = conditional.clone();
 ///
-/// let mut value = 5;
 /// let mut m = conditional;
-/// m.accept(&value);
-/// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
+/// m.accept(&5);
+/// let mut cloned = conditional_clone;
+/// cloned.accept(&5);
+/// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5, 5]);
 /// ```
 ///
 /// # Locking and reentrancy

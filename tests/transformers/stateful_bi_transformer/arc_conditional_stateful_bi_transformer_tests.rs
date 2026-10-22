@@ -6,10 +6,15 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::ArcConditionalStatefulBiTransformer;
+use qubit_function::ArcStatefulBiTransformer;
+use qubit_function::StatefulBiTransformer;
 
 #[test]
-fn test_arc_conditional_stateful_bi_transformer_observable_behavior() {
-    let type_name = std::any::type_name::<ArcConditionalStatefulBiTransformer<i32, i32, i32>>();
-    assert!(type_name.contains("ArcConditionalStatefulBiTransformer"), "{type_name}");
+fn test_arc_conditional_stateful_bi_transformer_selects_matching_branch() {
+    let add = ArcStatefulBiTransformer::new(|first: i32, second: i32| first + second);
+    let multiply = ArcStatefulBiTransformer::new(|first: i32, second: i32| first * second);
+    let mut conditional = add.when(|first: &i32, _second: &i32| *first > 0).or_else(multiply);
+
+    assert_eq!(conditional.apply(5, 3), 8);
+    assert_eq!(conditional.apply(-5, 3), -15);
 }

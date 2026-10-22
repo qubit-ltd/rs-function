@@ -8,7 +8,6 @@
 //! Tests for BiTransformerOnce trait and implementations
 
 use qubit_function::BiTransformerOnce;
-use qubit_function::BoxBiTransformerOnce;
 
 // ============================================================================
 // Tests for BiTransformerOnce trait
@@ -40,6 +39,3 @@ mod trait_tests {
         assert_eq!(concat.apply(owned_x, owned_y), "hello world");
     }
 }
-// ============================================================================
-// Tests for BoxBiTransformerOnce
-// ============================================================================

@@ -19,7 +19,7 @@ use crate::macros::impl_closure_once_trait;
 // 2. BoxConsumerOnce - Single Ownership Implementation
 // ============================================================================
 
-/// BoxConsumerOnce struct
+/// Owns a callback that consumes itself when invoked once.
 ///
 /// One-time consumer implementation based on `Box<dyn FnOnce(&T)>` for single
 /// ownership scenarios. This is the simplest consumer type for truly one-time
@@ -49,6 +49,10 @@ use crate::macros::impl_closure_once_trait;
 /// - Direct function call through vtable
 /// - Minimal memory footprint (single pointer)
 ///
+/// # Type Parameters
+///
+/// * `T` - The input type borrowed by the callback when it is invoked.
+///
 /// # Examples
 ///
 /// ```rust
@@ -77,6 +81,7 @@ impl<T> BoxConsumerOnce<T> {
 }
 
 impl<T> ConsumerOnce<T> for BoxConsumerOnce<T> {
+    /// Consumes this wrapper and invokes its callback with `value`.
     #[inline(always)]
     fn accept(self, value: &T) {
         (self.function)(value)

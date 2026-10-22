@@ -9,11 +9,11 @@
 //! # Predicate Common Methods Macro
 //!
 //! Generates common Predicate methods (new, new_with_name, name,
-//! set_name, always_true)
+//! set_name, always_true, always_false)
 //!
-//! Generates constructor methods, name management methods and always_true
-//! constructor for Predicate structs. This macro should be called inside
-//! an impl block.
+//! Generates constructor methods, name management methods, and constructors
+//! for predicates that always return `true` or `false`. This macro should be
+//! called inside an impl block.
 //!
 //! The macro automatically detects the number of generic parameters and
 //! generates the appropriate implementations for single-parameter or
@@ -51,6 +51,7 @@
 //! * `name()` - Gets the name of the predicate
 //! * `set_name()` - Sets the name of the predicate
 //! * `always_true()` - Creates a predicate that always returns true
+//! * `always_false()` - Creates a predicate that always returns false
 
 /// Generates common Predicate methods (new, new_with_name, name,
 /// set_name, always_true, always_false)

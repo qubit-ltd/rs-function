@@ -7,111 +7,19 @@
 // =============================================================================
 //! # Transformer Common Methods Macro
 //!
-//! Generates common Transformer methods using shared implementations
-//! (new, new_with_name, new_with_optional_name, name, set_name, identity)
-//!
-//! This macro uses `impl_common_new_methods` and `impl_common_name_methods`
-//! to generate constructor and name management methods, plus a specialized
-//! identity constructor for Transformer structs. This macro should be called
-//! inside an impl block.
-//!
-//! The macro automatically detects the number of generic parameters and
-//! generates the appropriate implementations for single-parameter or
-//! two-parameter transformers.
-//!
-//! # Parameters
-//!
-//! * `$struct_name<$generics>` - Struct name with generic parameters
-//! * `$fn_trait_with_bounds` - Closure trait with complete bounds (e.g.,
-//!   `Fn(&T) -> U + 'static`)
-//! * `$wrapper_expr` - Wrapper expression (uses `f` for the closure)
-//!
-//! # Usage
-//!
-//! ```ignore
-//! // Single generic parameter - Transformer
-//! impl_transformer_common_methods!(
-//!     BoxTransformer<T, U>,
-//!     (Fn(&T) -> U + 'static),
-//!     |f| Box::new(f)
-//! );
-//!
-//! // Single generic parameter - StatefulTransformer
-//! impl_transformer_common_methods!(
-//!     ArcStatefulTransformer<T, U>,
-//!     (FnMut(&T) -> U + Send + 'static),
-//!     |f| Arc::new(Mutex::new(f))
-//! );
-//!
-//! // Two generic parameters - BiTransformer
-//! impl_transformer_common_methods!(
-//!     BoxBiTransformer<T, U, V>,
-//!     (Fn(&T, &U) -> V + 'static),
-//!     |f| Box::new(f)
-//! );
-//! ```
-//!
-//! # Generated Methods
-//!
-//! * `new()` - Creates a new transformer
-//! * `new_with_name()` - Creates a named transformer
-//! * `new_with_optional_name()` - Creates a transformer with optional name
-//! * `name()` - Gets the name of the transformer
-//! * `set_name()` - Sets the name of the transformer
-//! * `identity()` - Creates a transformer that returns the input unchanged
+//! Provides macros that generate common constructor and name-management
+//! methods for one-input and two-input transformers. One-input transformers
+//! also receive an `identity` constructor.
 
-/// Generates common Transformer methods using shared implementations
-/// (new, new_with_name, new_with_optional_name, name, set_name, identity)
+/// Generates constructor methods for supported transformer types.
 ///
-/// This macro uses `impl_common_new_methods` and `impl_common_name_methods`
-/// to generate constructor and name management methods, plus a specialized
-/// identity constructor for Transformer structs. This macro should be used
-/// inside an existing impl block for the target struct.
+/// The target type selects the underlying transformer trait and its bounds;
+/// the wrapper expression adapts the supplied closure to the target's storage.
+/// This helper is invoked inside the target type's `impl` block by
+/// [`impl_transformer_common_methods`].
 ///
-/// The macro automatically detects the number of generic parameters and
-/// generates the appropriate implementations for single-parameter or
-/// two-parameter transformers.
-///
-/// # Parameters
-///
-/// * `$struct_name<$generics>` - Struct name with generic parameters
-/// * `$fn_trait_with_bounds` - Closure trait with complete bounds (e.g.,
-///   `Fn(&T) -> U + 'static`)
-/// * `$wrapper_expr` - Wrapper expression (uses `f` for the closure)
-///
-/// # Usage
-///
-/// ```ignore
-/// // Single generic parameter - Transformer
-/// impl_transformer_common_methods!(
-///     BoxTransformer<T, U>,
-///     (Fn(&T) -> U + 'static),
-///     |f| Box::new(f)
-/// );
-///
-/// // Single generic parameter - StatefulTransformer
-/// impl_transformer_common_methods!(
-///     ArcStatefulTransformer<T, U>,
-///     (FnMut(&T) -> U + Send + 'static),
-///     |f| Arc::new(Mutex::new(f))
-/// );
-///
-/// // Two generic parameters - BiTransformer
-/// impl_transformer_common_methods!(
-///     BoxBiTransformer<T, U, V>,
-///     (Fn(&T, &U) -> V + 'static),
-///     |f| Box::new(f)
-/// );
-/// ```
-///
-/// # Generated Methods
-///
-/// * `new()` - Creates a new transformer
-/// * `new_with_name()` - Creates a named transformer
-/// * `new_with_optional_name()` - Creates a transformer with optional name
-/// * `name()` - Gets the name of the transformer
-/// * `set_name()` - Sets the name of the transformer
-/// * `identity()` - Creates a transformer that returns the input unchanged
+/// The closure-trait token group is retained in the invocation syntax, while
+/// this macro selects bounds from the target type.
 macro_rules! impl_transformer_new_methods {
     (BoxTransformer<$t:ident, $r:ident>, |$f:ident| $w:expr) => { $crate::transformers::macros::impl_transformer_new_methods!(@one Transformer, $t, $r, ('static), |$f| $w); };
     (RcTransformer<$t:ident, $r:ident>, |$f:ident| $w:expr) => { $crate::transformers::macros::impl_transformer_new_methods!(@one Transformer, $t, $r, ('static), |$f| $w); };
@@ -133,6 +41,32 @@ macro_rules! impl_transformer_new_methods {
     (@two_mut $tr:ident, $t:ident, $u:ident, $r:ident, ($($b:tt)+), |$f:ident| $w:expr) => { crate::macros::impl_common_new_methods!(semantic_mut ($tr<$t, $u, $r> + $($b)+), |source| move |first: $t, second: $u| source.apply(first, second), |$f| $w, "bi-transformer"); };
 }
 
+/// Generates constructor and name-management methods for a transformer type.
+///
+/// The macro selects an implementation based on whether the target transforms
+/// one input or two. Single-input transformers also receive an `identity`
+/// constructor; two-input transformers do not. Invoke it inside the target
+/// type's `impl` block.
+///
+/// # Parameters
+///
+/// * `$struct_name<$generics>` - Transformer type and its generic parameters
+/// * `$fn_trait_with_bounds` - Closure-trait bounds associated with the type
+/// * `$wrapper_expr` - Expression that wraps the closure (using `f`)
+///
+/// # Usage
+///
+/// ```ignore
+/// impl_transformer_common_methods!(
+///     BoxTransformer<T, U>,
+///     (Fn(&T) -> U + 'static),
+///     |f| Box::new(f)
+/// );
+/// ```
+///
+/// The generated methods include `new`, `new_with_name`,
+/// `new_with_optional_name`, `name`, and `set_name`. For single-input
+/// transformers, the macro also generates `identity`.
 macro_rules! impl_transformer_common_methods {
     // Single generic parameter - Transformer types
     (
@@ -141,8 +75,6 @@ macro_rules! impl_transformer_common_methods {
         |$f:ident| $wrapper_expr:expr
     ) => {
         $crate::transformers::macros::impl_transformer_new_methods!($struct_name<$t, $u>, |$f| $wrapper_expr);
-
-        crate::macros::impl_common_name_methods!("transformer");
 
         /// Creates an identity transformer.
         ///
@@ -156,6 +88,8 @@ macro_rules! impl_transformer_common_methods {
         pub fn identity() -> $struct_name<$t, $t> {
             $struct_name::<$t, $t>::new(|t: $t| t)
         }
+
+        crate::macros::impl_common_name_methods!("transformer");
     };
 
     // Two generic parameters - BiTransformer types

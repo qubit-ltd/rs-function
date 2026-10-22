@@ -147,9 +147,8 @@ macro_rules! impl_box_transformer_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use std::sync::Arc;
-        /// use std::sync::atomic::{AtomicI32, Ordering};
-        /// use qubit_function::transformers::*;
+        /// use qubit_function::transformers::BoxTransformer;
+        /// use qubit_function::transformers::Transformer;
         ///
         /// let transformer = BoxTransformer::new({
         ///     |value: i32| value * 2
@@ -188,7 +187,8 @@ macro_rules! impl_box_transformer_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use qubit_function::transformers::*;
+        /// use qubit_function::transformers::BoxTransformer;
+        /// use qubit_function::transformers::Transformer;
         ///
         /// let transformer1 = BoxTransformer::new({
         ///     |value: i32| value + 1
@@ -240,7 +240,8 @@ macro_rules! impl_box_transformer_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use qubit_function::transformers::*;
+        /// use qubit_function::transformers::BiTransformer;
+        /// use qubit_function::transformers::BoxBiTransformer;
         ///
         /// let bi_transformer = BoxBiTransformer::new({
         ///     |key: String, value: i32| format!("{}: {}", key, value)
@@ -282,14 +283,16 @@ macro_rules! impl_box_transformer_methods {
         /// # Examples
         ///
         /// ```rust
-        /// use qubit_function::transformers::*;
+        /// use qubit_function::transformers::BiTransformer;
+        /// use qubit_function::transformers::BoxBiTransformer;
+        /// use qubit_function::transformers::BoxTransformer;
         ///
         /// let bi_transformer1 = BoxBiTransformer::new({
         ///     |key: String, value: i32| (key, value + 1)
         /// });
         ///
         /// let bi_transformer2 = BoxTransformer::new({
-        ///     |value: (String, i32)| format!("{}: {}", value.0, value.1)
+        ///     |(key, number): (String, i32)| format!("{}: {}", key, number)
         /// });
         ///
         /// let chained = bi_transformer1.and_then(bi_transformer2);

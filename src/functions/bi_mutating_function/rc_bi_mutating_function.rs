@@ -39,6 +39,23 @@ type RcBiMutatingFunctionFn<T, U, R> = Rc<dyn Fn(&mut T, &mut U) -> R>;
 ///   time)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync`)
 /// - **Clonable**: Cheap cloning via `Rc::clone`
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::{BiMutatingFunction, RcBiMutatingFunction};
+///
+/// let add_second = RcBiMutatingFunction::new(|first: &mut i32, second: &mut i32| {
+///     *first += *second;
+///     *first
+/// });
+/// let mut first = 2;
+/// let mut second = 3;
+///
+/// assert_eq!(add_second.apply(&mut first, &mut second), 5);
+/// assert_eq!(first, 5);
+/// assert_eq!(second, 3);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcBiMutatingFunction<T, U, R> {
     /// The wrapped callback implementation.

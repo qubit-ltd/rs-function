@@ -39,6 +39,15 @@ pub use box_conditional_transformer_once::BoxConditionalTransformerOnce;
 ///
 /// * `T` - The type of the input value (consumed)
 /// * `R` - The type of the output value
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::TransformerOnce;
+///
+/// let double_once = |value: i32| value * 2;
+/// assert_eq!(double_once.apply(21), 42);
+/// ```
 pub trait TransformerOnce<T, R> {
     /// Transforms the input value, consuming both self and input
     ///

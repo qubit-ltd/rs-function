@@ -10,7 +10,8 @@ use qubit_function::BoxFunction;
 use qubit_function::Function;
 
 #[test]
-fn test_function_constant_method_observable_behavior() {
-    let function = BoxFunction::new(|value: &i32| value + 1);
-    assert_eq!(function.apply(&41), 42);
+fn test_function_constant_method_returns_constant_value() {
+    let function = BoxFunction::constant(42);
+    assert_eq!(function.apply(&0), 42);
+    assert_eq!(function.apply(&100), 42);
 }

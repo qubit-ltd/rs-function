@@ -5,26 +5,13 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-use std::cell::RefCell;
-use std::rc::Rc;
-use std::sync::Arc;
-
-/// Tests for BiConsumer types
-use qubit_function::ArcBiConsumer;
-/// Tests for BiConsumer types
-use qubit_function::BiConsumer;
-/// Tests for BiConsumer types
-use qubit_function::BoxBiConsumer;
-/// Tests for BiConsumer types
-use qubit_function::RcBiConsumer;
-
 #[cfg(test)]
 mod rc_conditional_bi_consumer_tests {
     use std::cell::RefCell;
+    use std::rc::Rc;
 
-    use super::BiConsumer;
-    use super::Rc;
-    use super::RcBiConsumer;
+    use qubit_function::BiConsumer;
+    use qubit_function::RcBiConsumer;
 
     #[test]
     fn test_rc_conditional_and_then() {

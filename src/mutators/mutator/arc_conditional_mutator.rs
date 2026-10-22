@@ -19,7 +19,7 @@ use crate::mutators::macros::impl_shared_conditional_mutator;
 // 10. ArcConditionalMutator - Arc-based Conditional Mutator
 // ============================================================================
 
-/// ArcConditionalMutator struct
+/// Shares a mutator and runs it only when its predicate accepts the value.
 ///
 /// A thread-safe conditional mutator that only executes when a predicate is
 /// satisfied. Uses `ArcMutator` and `ArcPredicate` for shared ownership across

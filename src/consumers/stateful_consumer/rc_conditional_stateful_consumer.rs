@@ -36,6 +36,10 @@ use crate::consumers::macros::impl_shared_conditional_consumer;
 /// - **Conditional Execution**: Only consumes when predicate returns `true`
 /// - **No Lock Overhead**: More efficient than `ArcConditionalStatefulConsumer`
 ///
+/// # Type Parameters
+///
+/// * `T` - The input type borrowed by the predicate and consumer callback.
+///
 /// # Examples
 ///
 /// ```rust

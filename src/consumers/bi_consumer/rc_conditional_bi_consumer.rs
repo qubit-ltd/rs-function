@@ -19,11 +19,15 @@ use crate::consumers::macros::impl_shared_conditional_consumer;
 // 9. RcConditionalBiConsumer - Rc-based Conditional BiConsumer
 // =======================================================================
 
-/// RcConditionalBiConsumer struct
+/// A conditional bi-consumer that shares its callback and predicate through
+/// `Rc`, invoking the callback only when the predicate accepts both inputs.
+/// The callback and predicate must be `'static`; this single-threaded wrapper
+/// is not thread-safe.
 ///
-/// A conditional bi-consumer that wraps an `RcBiConsumer` and only executes
-/// when a predicate is satisfied. Based on `Rc` for single-threaded shared
-/// ownership.
+/// # Type Parameters
+///
+/// * `T` - The type of the first borrowed input.
+/// * `U` - The type of the second borrowed input.
 ///
 /// # Features
 ///
@@ -34,6 +38,27 @@ use crate::consumers::macros::impl_shared_conditional_consumer;
 /// - **Implements BiConsumer**: Can be used anywhere a `BiConsumer` is expected
 /// - **Shared access**: Receives shared references; interior mutability and
 ///   external side effects remain possible
+///
+/// # Examples
+///
+/// ```rust
+/// use std::cell::Cell;
+/// use std::rc::Rc;
+///
+/// use qubit_function::BiConsumer;
+/// use qubit_function::RcBiConsumer;
+///
+/// let total = Rc::new(Cell::new(0));
+/// let callback_total = Rc::clone(&total);
+/// let consumer = RcBiConsumer::new(move |first: &i32, second: &i32| {
+///     callback_total.set(callback_total.get() + first + second);
+/// })
+/// .when(|first: &i32, second: &i32| *first > 0 && *second > 0);
+///
+/// consumer.accept(&2, &3);
+/// consumer.accept(&-1, &5);
+/// assert_eq!(total.get(), 5);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcConditionalBiConsumer<T, U> {
     /// The wrapped consumer callback.
@@ -52,6 +77,7 @@ impl_shared_conditional_consumer!(
 
 // Hand-written BiConsumer trait implementation
 impl<T, U> BiConsumer<T, U> for RcConditionalBiConsumer<T, U> {
+    /// Invokes the wrapped callback when the predicate accepts both inputs.
     fn accept(&self, first: &T, second: &U) {
         if self.predicate.test(first, second) {
             self.consumer.accept(first, second);

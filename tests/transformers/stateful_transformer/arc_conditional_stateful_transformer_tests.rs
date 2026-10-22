@@ -10,6 +10,10 @@ use qubit_function::ArcConditionalStatefulTransformer;
 
 #[test]
 fn test_arc_conditional_stateful_transformer_observable_behavior() {
-    let type_name = std::any::type_name::<ArcConditionalStatefulTransformer<i32, i32>>();
-    assert!(type_name.contains("ArcConditionalStatefulTransformer"), "{type_name}");
+    let mut transformer = ArcConditionalStatefulTransformer::new(|value: i32| value * 2)
+        .when(|value: &i32| *value > 0)
+        .or_else(|value: i32| -value);
+
+    assert_eq!(transformer.apply(5), 10);
+    assert_eq!(transformer.apply(-5), 5);
 }

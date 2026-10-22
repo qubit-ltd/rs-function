@@ -40,6 +40,15 @@ pub use box_conditional_bi_transformer_once::BoxConditionalBiTransformerOnce;
 /// * `T` - The type of the first input value (consumed)
 /// * `U` - The type of the second input value (consumed)
 /// * `R` - The type of the output value
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::BiTransformerOnce;
+///
+/// let add_once = |first, second| first + second;
+/// assert_eq!(add_once.apply(2, 3), 5);
+/// ```
 pub trait BiTransformerOnce<T, U, R> {
     /// Transforms two input values, consuming self and both inputs
     ///

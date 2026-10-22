@@ -19,7 +19,7 @@ use crate::mutators::macros::impl_shared_conditional_mutator;
 // 9. RcConditionalMutator - Rc-based Conditional Mutator
 // ============================================================================
 
-/// RcConditionalMutator struct
+/// Shares a mutator and runs it only when its predicate accepts the value.
 ///
 /// A single-threaded conditional mutator that only executes when a predicate is
 /// satisfied. Uses `RcMutator` and `RcPredicate` for shared ownership within a
@@ -27,6 +27,9 @@ use crate::mutators::macros::impl_shared_conditional_mutator;
 ///
 /// This type is typically created by calling `RcMutator::when()` and is
 /// designed to work with the `or_else()` method to create if-then-else logic.
+/// The predicate inspects the value before the wrapped mutator can modify it.
+/// Its `Rc`-based callbacks can be shared among owners on one thread, but this
+/// type cannot be sent across threads.
 ///
 /// # Features
 ///
@@ -35,6 +38,11 @@ use crate::mutators::macros::impl_shared_conditional_mutator;
 /// - **Conditional Execution**: Only mutates when predicate returns `true`
 /// - **Ownership Cost**: `Rc` uses non-atomic reference counting; `Arc` uses
 ///   atomic reference counting, and neither wrapper locks callback invocation
+///
+/// # Type Parameters
+///
+/// - `T`: The value inspected by the predicate and potentially modified by the
+///   wrapped mutator.
 ///
 /// # Examples
 ///

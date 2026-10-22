@@ -8,34 +8,21 @@
 
 //! Unit tests for StatefulConsumer types
 
-use std::cell::RefCell;
-use std::rc::Rc;
-use std::sync::Arc;
-use std::sync::Mutex;
-
-use qubit_function::ArcConsumer;
-use qubit_function::ArcStatefulConsumer;
-use qubit_function::BoxConsumer;
-use qubit_function::BoxStatefulConsumer;
-use qubit_function::Consumer;
-use qubit_function::RcConsumer;
-use qubit_function::RcStatefulConsumer;
-use qubit_function::StatefulConsumer;
-
 // ============================================================================
 // BoxConsumer Tests
 // ============================================================================
 
 #[cfg(test)]
 mod test_unified_interface {
-    use super::Arc;
-    use super::ArcConsumer;
-    use super::BoxConsumer;
-    use super::Consumer;
-    use super::Mutex;
-    use super::Rc;
-    use super::RcConsumer;
-    use super::RefCell;
+    use std::cell::RefCell;
+    use std::rc::Rc;
+    use std::sync::Arc;
+    use std::sync::Mutex;
+
+    use qubit_function::ArcConsumer;
+    use qubit_function::BoxConsumer;
+    use qubit_function::Consumer;
+    use qubit_function::RcConsumer;
 
     fn apply_consumer<C: Consumer<i32>>(consumer: &mut C, value: &i32) -> i32 {
         consumer.accept(value);

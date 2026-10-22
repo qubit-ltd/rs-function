@@ -6,8 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::BiTransformer;
 use qubit_function::BoxBinaryOperator;
+use qubit_function::BiTransformer;
 
 #[test]
 fn test_box_binary_operator_alias() {

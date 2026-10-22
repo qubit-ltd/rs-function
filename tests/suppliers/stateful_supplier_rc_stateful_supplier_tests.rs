@@ -10,12 +10,7 @@
 
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::sync::Arc;
-use std::sync::Mutex;
-use std::thread;
 
-use qubit_function::ArcStatefulSupplier;
-use qubit_function::BoxStatefulSupplier;
 use qubit_function::RcStatefulSupplier;
 use qubit_function::StatefulSupplier;
 

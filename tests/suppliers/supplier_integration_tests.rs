@@ -6,17 +6,13 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-//! Unit tests for Supplier types
+//! Integration tests for Supplier types
 
 use std::sync::Arc;
 use std::thread;
 
 use qubit_function::ArcSupplier;
-use qubit_function::ArcTransformer;
 use qubit_function::BoxSupplier;
-use qubit_function::BoxTransformer;
-use qubit_function::RcSupplier;
-use qubit_function::RcTransformer;
 use qubit_function::Supplier;
 
 // ======================================================================
@@ -97,7 +93,3 @@ mod test_integration {
         assert_eq!(pipeline.get(), Some(String::from("20")));
     }
 }
-
-// ======================================================================
-// Map with Transformer Tests - BoxSupplier
-// ======================================================================

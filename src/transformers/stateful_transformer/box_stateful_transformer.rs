@@ -33,6 +33,20 @@ use crate::transformers::macros::impl_transformer_debug_display;
 ///   input)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
 /// - **Statefulness**: Can modify internal state between calls
+///
+/// # Type Parameters
+///
+/// * `T` - The input type consumed by the wrapped callback.
+/// * `R` - The output type produced by the wrapped callback.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::{BoxStatefulTransformer, StatefulTransformer};
+///
+/// let mut transformer = BoxStatefulTransformer::new(|value: i32| value * 2);
+/// assert_eq!(transformer.apply(3), 6);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxStatefulTransformer<T, R> {
     /// The wrapped callback implementation.

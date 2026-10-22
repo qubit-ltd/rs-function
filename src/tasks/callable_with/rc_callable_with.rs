@@ -28,6 +28,26 @@ type RcCallableWithFn<T, R, E> = Rc<RefCell<dyn FnMut(&mut T) -> Result<R, E>>>;
 /// Each call holds a mutable `RefCell` borrow while the user callback runs.
 /// Synchronous re-entry through the same shared wrapper panics with a borrow
 /// error. Mutations completed before a panic are not rolled back.
+///
+/// # Type Parameters
+///
+/// * `T` - The mutable input type passed to the callback.
+/// * `R` - The success value returned by the callback.
+/// * `E` - The error value returned when the callback fails.
+///
+/// # Examples
+///
+/// ```rust
+/// use qubit_function::tasks::{CallableWith, RcCallableWith};
+///
+/// let mut callable = RcCallableWith::new(|value: &mut i32| {
+///     *value += 1;
+///     Ok::<i32, ()>(*value)
+/// });
+/// let mut value = 41;
+/// assert_eq!(callable.call_with(&mut value), Ok(42));
+/// assert_eq!(value, 42);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcCallableWith<T, R, E> {
     /// The stateful closure executed by this callable.
@@ -59,6 +79,14 @@ impl<T, R, E> RcCallableWith<T, R, E> {
 
 impl<T, R, E> CallableWith<T, R, E> for RcCallableWith<T, R, E> {
     /// Executes the shared callable with mutable input.
+    ///
+    /// # Returns
+    ///
+    /// Returns the callback's success value or error unchanged.
+    ///
+    /// # Errors
+    ///
+    /// Returns the error produced by the callback.
     #[inline]
     fn call_with(&mut self, input: &mut T) -> Result<R, E> {
         let mut function = self.function.borrow_mut();

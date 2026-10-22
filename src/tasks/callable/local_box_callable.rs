@@ -24,6 +24,15 @@ use crate::tasks::callable::Callable;
 ///
 /// * `R` - The success value returned by the computation.
 /// * `E` - The error value returned when the computation fails.
+///
+/// # Examples
+///
+/// ```rust
+/// use qubit_function::{Callable, LocalBoxCallable};
+///
+/// let mut task = LocalBoxCallable::new(|| Ok::<i32, String>(42));
+/// assert_eq!(task.call().expect("call should succeed"), 42);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct LocalBoxCallable<R, E> {
     /// The stateful closure executed by this callable.

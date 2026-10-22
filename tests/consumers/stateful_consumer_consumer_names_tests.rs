@@ -23,7 +23,7 @@ use qubit_function::RcStatefulConsumer;
 use qubit_function::StatefulConsumer;
 
 // ============================================================================
-// BoxConsumer Tests
+// Consumer Name Tests
 // ============================================================================
 
 #[cfg(test)]
@@ -115,7 +115,3 @@ mod test_consumer_names {
         assert_eq!(consumer.name(), Some("my_consumer"));
     }
 }
-
-// ============================================================================
-// Edge Cases Tests
-// ============================================================================

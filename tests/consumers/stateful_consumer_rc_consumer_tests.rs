@@ -10,36 +10,26 @@
 
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::sync::Arc;
-use std::sync::Mutex;
-
-use qubit_function::ArcConsumer;
-use qubit_function::ArcStatefulConsumer;
-use qubit_function::BoxConsumer;
-use qubit_function::BoxStatefulConsumer;
-use qubit_function::Consumer;
-use qubit_function::RcConsumer;
-use qubit_function::RcStatefulConsumer;
-use qubit_function::StatefulConsumer;
 
 // ============================================================================
-// BoxConsumer Tests
+// RcStatefulConsumer Tests
 // ============================================================================
 
 #[cfg(test)]
-mod test_rc_consumer {
+mod rc_stateful_consumer_tests {
     use std::panic::AssertUnwindSafe;
     use std::panic::catch_unwind;
 
-    use super::Consumer;
+    use qubit_function::Consumer;
+    use qubit_function::RcConsumer;
+    use qubit_function::RcStatefulConsumer;
+    use qubit_function::StatefulConsumer;
+
     use super::Rc;
-    use super::RcConsumer;
-    use super::RcStatefulConsumer;
     use super::RefCell;
-    use super::StatefulConsumer;
 
     #[test]
-    fn test_new() {
+    fn test_rc_stateful_consumer_accepts_values() {
         let log = Rc::new(RefCell::new(Vec::new()));
         let l = log.clone();
         let mut consumer = RcStatefulConsumer::new(move |x: &i32| {
@@ -51,7 +41,7 @@ mod test_rc_consumer {
     }
 
     #[test]
-    fn test_clone() {
+    fn test_cloned_rc_stateful_consumers_share_state() {
         let log = Rc::new(RefCell::new(Vec::new()));
         let l = log.clone();
         let mut consumer = RcStatefulConsumer::new(move |x: &i32| {
@@ -107,7 +97,7 @@ mod test_rc_consumer {
     }
 
     #[test]
-    fn test_and_then() {
+    fn test_and_then_runs_both_consumers_in_order() {
         let log = Rc::new(RefCell::new(Vec::new()));
         let l1 = log.clone();
         let l2 = log.clone();
@@ -125,14 +115,14 @@ mod test_rc_consumer {
     }
 
     #[test]
-    fn test_noop() {
+    fn test_rc_consumer_noop_accepts_without_panicking() {
         let noop = RcConsumer::<i32>::noop();
         noop.accept(&42);
         // No assertion needed, just ensure it doesn't panic
     }
 
     #[test]
-    fn test_new_with_name() {
+    fn test_named_rc_stateful_consumer_accepts_values() {
         let log = Rc::new(RefCell::new(Vec::new()));
         let l = log.clone();
         let mut consumer = RcStatefulConsumer::new_with_name("test_consumer", move |x: &i32| {
@@ -144,21 +134,21 @@ mod test_rc_consumer {
     }
 
     #[test]
-    fn test_noop_stateful() {
+    fn test_rc_stateful_consumer_noop_accepts_without_panicking() {
         let mut noop = RcStatefulConsumer::<i32>::noop();
         noop.accept(&42);
         // No assertion needed, just ensure it doesn't panic
     }
 
     #[test]
-    fn test_debug() {
+    fn test_rc_stateful_consumer_debug_includes_type_name() {
         let consumer = RcStatefulConsumer::new(|_x: &i32| {});
         let debug_str = format!("{:?}", consumer);
         assert!(debug_str.contains("RcStatefulConsumer"));
     }
 
     #[test]
-    fn test_debug_with_name() {
+    fn test_rc_stateful_consumer_debug_includes_configured_name() {
         let mut consumer = RcStatefulConsumer::new(|_x: &i32| {});
         consumer.set_name("test_consumer");
         let debug_str = format!("{:?}", consumer);
@@ -167,14 +157,14 @@ mod test_rc_consumer {
     }
 
     #[test]
-    fn test_display() {
+    fn test_rc_stateful_consumer_display_shows_type_name() {
         let consumer = RcStatefulConsumer::new(|_x: &i32| {});
         let display_str = format!("{}", consumer);
         assert_eq!(display_str, "RcStatefulConsumer");
     }
 
     #[test]
-    fn test_display_with_name() {
+    fn test_rc_stateful_consumer_display_includes_configured_name() {
         let mut consumer = RcStatefulConsumer::new(|_x: &i32| {});
         consumer.set_name("my_consumer");
         let display_str = format!("{}", consumer);

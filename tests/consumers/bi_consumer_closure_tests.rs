@@ -5,24 +5,12 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-use std::cell::RefCell;
-use std::rc::Rc;
-use std::sync::Arc;
-
-/// Tests for BiConsumer types
-use qubit_function::ArcBiConsumer;
-/// Tests for BiConsumer types
-use qubit_function::BiConsumer;
-use qubit_function::BoxBiConsumer;
-/// Tests for BiConsumer types
-/// Tests for BiConsumer types
-use qubit_function::RcBiConsumer;
-
 #[cfg(test)]
 mod closure_tests {
-    use super::Arc;
-    use super::BiConsumer;
-    use super::BoxBiConsumer;
+    use std::sync::Arc;
+
+    use qubit_function::BiConsumer;
+    use qubit_function::BoxBiConsumer;
 
     #[test]
     fn test_closure_accept() {

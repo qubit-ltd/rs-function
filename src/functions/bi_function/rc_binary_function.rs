@@ -12,8 +12,13 @@ use super::RcBiFunction;
 /// A locally shared binary function with matching input types.
 ///
 /// Represents a single-threaded binary function that takes two values of type
-/// `T` and produces a value of type `R`. Similar to Java's `BiFunction<T, T,
-/// R>` with shared, single-threaded ownership.
+/// `T` and produces a value of type `R`. Similar to Java's
+/// `BiFunction<T, T, R>` with shared, single-threaded ownership.
+///
+/// # Type Parameters
+///
+/// - `T` - The type of both borrowed inputs.
+/// - `R` - The value produced by the callback.
 ///
 /// # Examples
 ///

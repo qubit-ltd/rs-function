@@ -38,6 +38,12 @@ use crate::transformers::macros::impl_conditional_transformer_debug_display;
 /// - **Implements StatefulBiTransformer**: Can be used anywhere a
 ///   `StatefulBiTransformer` is expected
 ///
+/// # Type Parameters
+///
+/// * `T` - Type of the first input consumed by the callback.
+/// * `U` - Type of the second input consumed by the callback.
+/// * `R` - Type of the value returned by the callback.
+///
 /// # Examples
 ///
 /// ## With or_else Branch

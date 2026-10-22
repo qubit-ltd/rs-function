@@ -35,6 +35,11 @@ use crate::mutators::macros::impl_shared_conditional_mutator;
 /// - **Conditional Execution**: Only mutates when predicate returns `true`
 /// - **No Lock Overhead**: More efficient than `ArcConditionalStatefulMutator`
 ///
+/// # Type Parameters
+///
+/// * `T` - The value mutated by the wrapped callback and inspected by the
+///   predicate.
+///
 /// # Examples
 ///
 /// ```rust

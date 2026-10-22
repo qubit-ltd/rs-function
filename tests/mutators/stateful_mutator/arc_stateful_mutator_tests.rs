@@ -7,9 +7,21 @@
 // =============================================================================
 
 use qubit_function::ArcStatefulMutator;
+use qubit_function::StatefulMutator;
 
 #[test]
-fn test_arc_stateful_mutator_observable_behavior() {
-    let type_name = std::any::type_name::<ArcStatefulMutator<i32>>();
-    assert!(type_name.contains("ArcStatefulMutator"), "{type_name}");
+fn test_arc_stateful_mutator_clones_share_callback_state() {
+    let mut calls = 0;
+    let mut mutator = ArcStatefulMutator::new(move |value: &mut i32| {
+        calls += 1;
+        *value += calls;
+    });
+    let mut cloned_mutator = mutator.clone();
+
+    let mut value = 10;
+    mutator.apply(&mut value);
+    assert_eq!(value, 11, "the original mutator should apply the first call");
+
+    cloned_mutator.apply(&mut value);
+    assert_eq!(value, 13, "the clone should continue the shared call state");
 }

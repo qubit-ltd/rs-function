@@ -23,6 +23,26 @@ type LocalBoxRunnableWithFn<T, E> = Box<dyn FnMut(&mut T) -> Result<(), E>>;
 /// and permits non-`Send` captures. Use
 /// [`BoxRunnableWith`](crate::tasks::runnable_with::BoxRunnableWith) when the
 /// runnable must be movable across threads.
+///
+/// # Type Parameters
+///
+/// * `T` - The mutable input type accepted by the callback.
+/// * `E` - The error type returned when the callback fails.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::tasks::runnable_with::LocalBoxRunnableWith;
+/// use qubit_function::tasks::runnable_with::RunnableWith;
+///
+/// let mut increment = LocalBoxRunnableWith::new(|value: &mut i32| {
+///     *value += 1;
+///     Ok::<(), ()>(())
+/// });
+/// let mut value = 1;
+/// increment.run_with(&mut value).unwrap();
+/// assert_eq!(value, 2);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct LocalBoxRunnableWith<T, E> {
     /// The stateful closure executed by this runnable.
@@ -50,6 +70,11 @@ impl<T, E> LocalBoxRunnableWith<T, E> {
     /// # Returns
     ///
     /// A local runnable executing both actions in sequence.
+    ///
+    /// # Errors
+    ///
+    /// When invoked, the returned runnable propagates an error from this
+    /// runnable and skips `next` in that case.
     #[inline]
     pub fn and_then<N>(self, mut next: N) -> LocalBoxRunnableWith<T, E>
     where
@@ -73,6 +98,12 @@ impl<T, E> LocalBoxRunnableWith<T, E> {
     /// # Returns
     ///
     /// A local callable producing the second computation's result.
+    ///
+    /// # Errors
+    ///
+    /// When invoked, the returned callable propagates an error from this
+    /// runnable and skips `callable` in that case; otherwise it propagates the
+    /// callable's result.
     #[inline]
     pub fn then_callable_with<R, C>(self, mut callable: C) -> LocalBoxCallableWith<T, R, E>
     where

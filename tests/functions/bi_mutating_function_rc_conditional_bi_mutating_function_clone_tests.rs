@@ -11,7 +11,6 @@
 use qubit_function::ArcBiMutatingFunction;
 use qubit_function::ArcBiPredicate;
 use qubit_function::BiMutatingFunction;
-use qubit_function::BiMutatingFunctionOnce;
 use qubit_function::BoxBiMutatingFunction;
 use qubit_function::RcBiMutatingFunction;
 use qubit_function::RcBiPredicate;
@@ -19,12 +18,6 @@ use qubit_function::RcBiPredicate;
 // ============================================================================
 // Helper Functions and Data Structures
 // ============================================================================
-
-fn append_strings(x: &mut String, y: &mut String) -> usize {
-    x.push_str("_modified");
-    y.push_str("_changed");
-    x.len() + y.len()
-}
 
 #[derive(Clone, Debug, PartialEq)]
 struct TestStruct {

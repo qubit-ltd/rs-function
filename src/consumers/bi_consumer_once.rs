@@ -12,10 +12,12 @@
 //!
 //! It is similar to the `FnOnce(&T, &U)` trait in the standard library.
 //!
-//! This module provides a unified `BiConsumerOnce` trait and one concrete
-//! implementation:
+//! This module provides a unified `BiConsumerOnce` trait and two concrete
+//! implementations:
 //!
 //! - **`BoxBiConsumerOnce<T, U>`**: Box-based single ownership implementation
+//! - **`BoxConditionalBiConsumerOnce<T, U>`**: conditional single ownership
+//!   implementation
 //!
 //! # Why No Arc/Rc Variants?
 //!
@@ -37,7 +39,7 @@
 // Type Aliases
 // ==========================================================================
 
-/// Type alias for bi-consumer once function signature.
+/// Callable once with references to both input values and no return value.
 type BiConsumerOnceFn<T, U> = dyn FnOnce(&T, &U);
 
 mod box_bi_consumer_once;
@@ -58,10 +60,11 @@ pub use box_conditional_bi_consumer_once::BoxConditionalBiConsumerOnce;
 /// accepting two value references but returning no result (side effects
 /// only), consuming itself in the process.
 ///
-/// # Automatic Implementations
+/// # Implementations
 ///
 /// - All closures implementing `FnOnce(&T, &U)`
 /// - `BoxBiConsumerOnce<T, U>`
+/// - `BoxConditionalBiConsumerOnce<T, U>`
 ///
 /// # Features
 ///
@@ -71,6 +74,11 @@ pub use box_conditional_bi_consumer_once::BoxConditionalBiConsumerOnce;
 ///   without allocating an adapter
 /// - **Generic Programming**: Write functions accepting any one-time
 ///   bi-consumer type
+///
+/// # Type Parameters
+///
+/// - `T` is the type of the first value passed to the consumer.
+/// - `U` is the type of the second value passed to the consumer.
 ///
 /// # Examples
 ///

@@ -15,6 +15,10 @@ use super::ArcBiTransformer;
 /// and produces a value of the same type `T`. Equivalent to Java's
 /// `BinaryOperator<T>` with shared, thread-safe ownership.
 ///
+/// # Type Parameters
+///
+/// - `T` - The input and output type consumed and produced by the operator.
+///
 /// # Examples
 ///
 /// ```rust

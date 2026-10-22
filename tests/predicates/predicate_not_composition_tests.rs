@@ -8,24 +8,11 @@
 
 //! Unit tests for the predicate module.
 
-use std::cell::RefCell;
-use std::sync::Arc;
-use std::sync::Mutex;
-
 use qubit_function::predicates::ArcPredicate;
 use qubit_function::predicates::BoxPredicate;
 use qubit_function::predicates::Predicate;
 use qubit_function::predicates::RcPredicate;
 
-struct PositivePredicate;
-
-impl Predicate<i32> for PositivePredicate {
-    fn test(&self, value: &i32) -> bool {
-        *value > 0
-    }
-}
-
-#[cfg(test)]
 mod not_composition_tests {
     use super::ArcPredicate;
     use super::BoxPredicate;
@@ -161,11 +148,3 @@ mod not_composition_tests {
         assert!(!combined.test(&-2));
     }
 }
-
-// ============================================================================
-// Additional Type Conversion Tests
-// ============================================================================
-
-// ============================================================================
-// Custom Predicate Type Tests (Default Implementation)
-// ============================================================================

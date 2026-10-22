@@ -36,6 +36,12 @@ use crate::functions::macros::impl_shared_conditional_function;
 /// - **Ownership Cost**: `Rc` uses non-atomic reference counting; `Arc` uses
 ///   atomic reference counting, and neither wrapper locks callback invocation
 ///
+/// # Type Parameters
+///
+/// - `T` - The type of the first borrowed input.
+/// - `U` - The type of the second borrowed input.
+/// - `R` - The value produced by the selected bi-function.
+///
 /// # Examples
 ///
 /// ```rust

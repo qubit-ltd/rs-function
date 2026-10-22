@@ -10,9 +10,11 @@ use qubit_function::ArcBiPredicate;
 use qubit_function::BiPredicate;
 
 #[test]
-fn test_arc_bi_predicate_observable_behavior() {
-    let type_name = std::any::type_name::<ArcBiPredicate<i32, i32>>();
-    assert!(type_name.contains("ArcBiPredicate"), "{type_name}");
+fn test_arc_bi_predicate_evaluates_both_arguments() {
+    let predicate = ArcBiPredicate::new(|first: &i32, second: &i32| first > second);
+
+    assert!(predicate.test(&5, &3));
+    assert!(!predicate.test(&3, &5));
 }
 
 #[test]

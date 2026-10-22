@@ -8,3 +8,4 @@
 
 mod box_bi_mutating_function_once_tests;
 mod box_conditional_bi_mutating_function_once_tests;
+mod panic_in_closure_tests;

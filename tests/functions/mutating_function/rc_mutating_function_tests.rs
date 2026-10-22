@@ -6,10 +6,17 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
+use qubit_function::MutatingFunction;
 use qubit_function::RcMutatingFunction;
 
 #[test]
-fn test_rc_mutating_function_observable_behavior() {
-    let type_name = std::any::type_name::<RcMutatingFunction<i32, i32>>();
-    assert!(type_name.contains("RcMutatingFunction"), "{type_name}");
+fn test_rc_mutating_function_updates_input_and_returns_result() {
+    let function = RcMutatingFunction::new(|value: &mut i32| {
+        *value *= 2;
+        *value
+    });
+    let mut value = 5;
+
+    assert_eq!(function.apply(&mut value), 10);
+    assert_eq!(value, 10);
 }

@@ -20,6 +20,21 @@ use crate::predicates::macros::impl_predicate_debug_display;
 /// This type stores a `Box<dyn FnMut(&T) -> bool>`, so each call may update
 /// the predicate's internal state. Composition methods consume `self`,
 /// matching the single-ownership model.
+///
+/// # Type Parameters
+///
+/// * `T` - The type of the value borrowed by the callback.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::BoxStatefulPredicate;
+/// use qubit_function::StatefulPredicate;
+///
+/// let mut predicate = BoxStatefulPredicate::new(|value: &i32| *value > 0);
+/// assert!(predicate.test(&5));
+/// assert!(!predicate.test(&-3));
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxStatefulPredicate<T> {
     /// The wrapped callback implementation.

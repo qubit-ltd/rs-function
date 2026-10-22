@@ -83,6 +83,10 @@ pub use box_supplier_once::BoxSupplierOnce;
 /// 2. **One-time resource consumption**: Generate value by consuming a resource
 /// 3. **Move-only closures**: Hold closures that capture moved values
 ///
+/// # Type Parameters
+///
+/// - `T`: The type of value generated when the supplier is consumed.
+///
 /// # Examples
 ///
 /// ## Lazy Initialization

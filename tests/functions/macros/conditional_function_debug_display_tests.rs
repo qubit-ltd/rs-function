@@ -11,6 +11,14 @@ use qubit_function::Function;
 
 #[test]
 fn test_conditional_function_debug_display_observable_behavior() {
-    let function = BoxFunction::new(|value: &i32| value + 1);
-    assert_eq!(function.apply(&41), 42);
+    let function = BoxFunction::new(|value: &i32| value + 1).when(|value: &i32| *value > 0);
+
+    assert_eq!(
+        format!("{function:?}"),
+        "BoxConditionalFunction { function: BoxFunction { name: None, function: \"<function>\" }, predicate: BoxPredicate { name: None, function: \"<function>\" } }"
+    );
+    assert_eq!(
+        format!("{function}"),
+        "BoxConditionalFunction(BoxFunction, BoxPredicate(unnamed))"
+    );
 }

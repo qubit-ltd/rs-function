@@ -6,20 +6,19 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use std::sync::Arc;
-use std::sync::atomic::AtomicI32;
-use std::sync::atomic::Ordering;
-
 use qubit_function::BoxConsumer;
 use qubit_function::Consumer;
 
 #[test]
-fn test_conditional_consumer_debug_display_observable_behavior() {
-    let count = Arc::new(AtomicI32::new(0));
-    let captured = Arc::clone(&count);
-    let consumer = BoxConsumer::new(move |value: &i32| {
-        captured.store(*value, Ordering::SeqCst);
-    });
-    consumer.accept(&42);
-    assert_eq!(count.load(Ordering::SeqCst), 42);
+fn test_conditional_consumer_debug_display_formatting() {
+    let consumer = BoxConsumer::new(|_value: &i32| {});
+    let conditional_consumer = consumer.when(|value: &i32| *value > 0);
+
+    let debug_output = format!("{conditional_consumer:?}");
+    assert!(debug_output.contains("BoxConditionalConsumer"));
+    assert!(debug_output.contains("consumer"));
+    assert!(debug_output.contains("predicate"));
+
+    let display_output = format!("{conditional_consumer}");
+    assert!(display_output.starts_with("BoxConditionalConsumer("));
 }

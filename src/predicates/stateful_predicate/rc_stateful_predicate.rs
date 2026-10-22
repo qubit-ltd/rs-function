@@ -30,6 +30,21 @@ type RcStatefulPredicateFn<T> = Rc<RefCell<dyn FnMut(&T) -> bool>>;
 /// Each call holds a mutable `RefCell` borrow while the user callback runs.
 /// Synchronous re-entry through the same shared wrapper panics with a borrow
 /// error. Mutations completed before a panic are not rolled back.
+///
+/// # Type Parameters
+///
+/// * `T` - The type of the value borrowed by the callback.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::RcStatefulPredicate;
+/// use qubit_function::StatefulPredicate;
+///
+/// let mut predicate = RcStatefulPredicate::new(|value: &i32| *value > 0);
+/// assert!(predicate.test(&5));
+/// assert!(!predicate.test(&-3));
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcStatefulPredicate<T> {
     /// The wrapped callback implementation.

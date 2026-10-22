@@ -28,6 +28,12 @@ use crate::transformers::macros::impl_shared_conditional_transformer;
 /// This type is typically created by calling `ArcBiTransformer::when()` and is
 /// designed to work with the `or_else()` method to create if-then-else logic.
 ///
+/// # Type Parameters
+///
+/// - `T` - The type of the first input consumed by the wrapped transformer.
+/// - `U` - The type of the second input consumed by the wrapped transformer.
+/// - `R` - The output type produced by the wrapped transformer.
+///
 /// # Features
 ///
 /// - **Shared Ownership**: Cloneable via `Arc`, multiple owners allowed

@@ -75,14 +75,20 @@ macro_rules! impl_function_identity_method {
     ($struct_name:ident < $t:ident , $r:ident >) => {
         // Note: The caller must ensure $t and $r are the same identifier
         impl<$t> $struct_name<$t, $t> {
-            /// Creates an identity function
+            /// Creates a function that clones its input and returns the clone.
+            ///
+            /// The function requires `T: Clone` and does not modify the input.
+            ///
+            /// # Type Parameters
+            ///
+            /// - `T`: The input and output type, which must be cloneable.
             ///
             /// # Returns
             ///
             /// A function that clones and returns its borrowed input.
             ///
             /// # Examples
-            #[doc = concat!("/// ```rust\n/// use qubit_function as qf;\n/// use qf::", stringify!($struct_name), ";\n///\n/// let identity = ", stringify!($struct_name), "::<i32, i32>::identity();\n/// assert_eq!(identity.apply(&42), 42);\n/// ```")]
+            #[doc = concat!("```rust\nuse qubit_function as qf;\nuse qf::", stringify!($struct_name), ";\n\nlet identity = ", stringify!($struct_name), "::<i32, i32>::identity();\nassert_eq!(identity.apply(&42), 42);\n```")]
             #[inline]
             pub fn identity() -> $struct_name<$t, $t>
             where
@@ -97,7 +103,13 @@ macro_rules! impl_function_identity_method {
     ($struct_name:ident < $t:ident , $r:ident >, mutating) => {
         // Note: The caller must ensure $t and $r are the same identifier
         impl<$t> $struct_name<$t, $t> {
-            /// Creates an identity function
+            /// Creates a function that clones its input and returns the clone.
+            ///
+            /// The function requires `T: Clone` and leaves the mutable input unchanged.
+            ///
+            /// # Type Parameters
+            ///
+            /// - `T`: The input and output type, which must be cloneable.
             ///
             /// # Returns
             ///
@@ -105,7 +117,7 @@ macro_rules! impl_function_identity_method {
             /// without modifying it.
             ///
             /// # Examples
-            #[doc = concat!("/// ```rust\n/// use qubit_function as qf;\n/// use qf::", stringify!($struct_name), ";\n///\n/// let mut identity = ", stringify!($struct_name), "::<i32, i32>::identity();\n/// let mut value = 42;\n/// assert_eq!(identity.apply(&mut value), 42);\n/// ```")]
+            #[doc = concat!("```rust\nuse qubit_function as qf;\nuse qf::", stringify!($struct_name), ";\n\nlet mut identity = ", stringify!($struct_name), "::<i32, i32>::identity();\nlet mut value = 42;\nassert_eq!(identity.apply(&mut value), 42);\n```")]
             #[inline]
             pub fn identity() -> $struct_name<$t, $t>
             where

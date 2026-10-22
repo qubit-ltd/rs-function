@@ -34,6 +34,21 @@ use crate::functions::macros::impl_function_identity_method;
 ///   time)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
 /// - **Statefulness**: Can modify internal state between calls
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::{BoxStatefulFunction, StatefulFunction};
+///
+/// let mut call_count = 0;
+/// let mut function = BoxStatefulFunction::new(move |value: &i32| {
+///     call_count += 1;
+///     value + call_count
+/// });
+///
+/// assert_eq!(function.apply(&5), 6);
+/// assert_eq!(function.apply(&5), 7);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxStatefulFunction<T, R> {
     /// The wrapped callback implementation.

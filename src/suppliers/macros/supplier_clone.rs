@@ -10,10 +10,10 @@
 //!
 //! Generates Clone trait implementation for basic Supplier types
 //!
-//! Generates Clone implementation for Supplier structs that have `function`
-//! and `name` fields. The function field is cloned using its inherent `clone`
-//! method, which performs a shallow clone for smart pointers like `Arc` or
-//! `Rc`.
+//! Generates Clone implementations for Supplier structs that have `function`
+//! and `metadata` fields. Both fields are cloned using their inherent `clone`
+//! methods; the function field performs a shallow clone for smart pointers like
+//! `Arc` or `Rc`.
 //!
 //! # Parameters
 //!
@@ -49,9 +49,10 @@
 ///
 /// This macro should be used at the top level (outside of any impl block) as
 /// it generates a complete `impl Clone for $struct_name` block. It generates
-/// Clone implementation for Supplier structs that have `function` and `name`
-/// fields. The function field is cloned using its inherent `clone` method,
-/// which performs a shallow clone for smart pointers like `Arc` or `Rc`.
+/// Clone implementation for Supplier structs that have `function` and
+/// `metadata` fields. Both fields are cloned using their inherent `clone`
+/// methods; the function field performs a shallow clone for smart pointers
+/// like `Arc` or `Rc`.
 ///
 /// # Parameters
 ///

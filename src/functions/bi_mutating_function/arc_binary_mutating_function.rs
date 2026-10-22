@@ -15,17 +15,23 @@ use super::ArcBiMutatingFunction;
 /// type `T` and produces a value of type `R`. Similar to Java's `BiFunction<T,
 /// T, R>` with shared, thread-safe ownership and mutable references.
 ///
+/// # Type Parameters
+///
+/// - `T` - The shared type of both mutable input references.
+/// - `R` - The value returned by the wrapped function.
+///
 /// # Examples
 ///
 /// ```rust
 /// use qubit_function::{ArcBinaryMutatingFunction, BiMutatingFunction};
 ///
-/// let swap_and_sum: ArcBinaryMutatingFunction<i32, i32> = ArcBinaryMutatingFunction::new(|x: &mut i32, y: &mut i32| {
-///     let temp = *x;
-///     *x = *y;
-///     *y = temp;
-///     *x + *y
-/// });
+/// let swap_and_sum: ArcBinaryMutatingFunction<i32, i32> =
+///     ArcBinaryMutatingFunction::new(|x: &mut i32, y: &mut i32| {
+///         let temp = *x;
+///         *x = *y;
+///         *y = temp;
+///         *x + *y
+///     });
 /// let swap_clone = swap_and_sum.clone();
 /// let mut a = 5;
 /// let mut b = 10;

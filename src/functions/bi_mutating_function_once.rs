@@ -39,6 +39,23 @@ pub use box_conditional_bi_mutating_function_once::BoxConditionalBiMutatingFunct
 /// * `T` - The type of the first input value (mutable reference)
 /// * `U` - The type of the second input value (mutable reference)
 /// * `R` - The type of the output value
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::BiMutatingFunctionOnce;
+///
+/// let add_second = |first: &mut i32, second: &mut i32| {
+///     *first += *second;
+///     *first
+/// };
+/// let mut first = 2;
+/// let mut second = 3;
+///
+/// assert_eq!(add_second.apply(&mut first, &mut second), 5);
+/// assert_eq!(first, 5);
+/// assert_eq!(second, 3);
+/// ```
 pub trait BiMutatingFunctionOnce<T, U, R> {
     /// Computes output from two mutable references, consuming self
     ///

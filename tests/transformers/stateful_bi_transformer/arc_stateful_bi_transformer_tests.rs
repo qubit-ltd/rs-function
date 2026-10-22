@@ -7,9 +7,16 @@
 // =============================================================================
 
 use qubit_function::ArcStatefulBiTransformer;
+use qubit_function::StatefulBiTransformer;
 
 #[test]
-fn test_arc_stateful_bi_transformer_observable_behavior() {
-    let type_name = std::any::type_name::<ArcStatefulBiTransformer<i32, i32, i32>>();
-    assert!(type_name.contains("ArcStatefulBiTransformer"), "{type_name}");
+fn test_arc_stateful_bi_transformer_applies_stateful_function() {
+    let mut total = 0;
+    let mut transformer = ArcStatefulBiTransformer::new(|first: i32, second: i32| {
+        total += first + second;
+        total
+    });
+
+    assert_eq!(transformer.apply(2, 3), 5);
+    assert_eq!(transformer.apply(4, 1), 10);
 }

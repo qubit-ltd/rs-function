@@ -17,7 +17,6 @@ use qubit_function::ArcPredicate;
 use qubit_function::ArcStatefulFunction;
 use qubit_function::BoxPredicate;
 use qubit_function::BoxStatefulFunction;
-use qubit_function::FunctionOnce;
 use qubit_function::RcPredicate;
 use qubit_function::RcStatefulFunction;
 use qubit_function::StatefulFunction;
@@ -25,19 +24,6 @@ use qubit_function::StatefulFunction;
 // ============================================================================
 // StatefulFunction Trait Tests - Core Functionality
 // ============================================================================
-
-/// Custom struct for testing StatefulFunction trait default implementations
-#[derive(Clone)]
-struct CustomStatefulFunction {
-    multiplier: i32,
-}
-
-impl StatefulFunction<i32, i32> for CustomStatefulFunction {
-    fn apply(&mut self, input: &i32) -> i32 {
-        self.multiplier += 1;
-        input * self.multiplier
-    }
-}
 
 // ============================================================================
 // ArcConditionalStatefulFunction Clone Tests

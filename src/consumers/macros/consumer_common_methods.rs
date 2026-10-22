@@ -78,77 +78,9 @@
 //! * `set_name()` - Sets the name of the consumer
 //! * `noop()` - Creates a consumer that performs no operation
 
-/// Generates common Consumer methods (new, new_with_name, name,
-/// set_name, noop)
-///
-/// This macro should be used inside an existing impl block for the target
-/// struct. It generates individual methods but does not create a complete
-/// impl block itself. Generates constructor methods, name management methods
-/// and noop constructor for Consumer structs.
-///
-/// The macro automatically detects the number of generic parameters and
-/// generates the appropriate implementations for single-parameter or
-/// two-parameter consumers.
-///
-/// # Parameters
-///
-/// * `$struct_name<$generics>` - Struct name with generic parameters
-/// * `$fn_trait_with_bounds` - Closure trait with complete bounds (e.g.,
-///   `Fn(&T) + 'static`)
-/// * `$wrapper_expr` - Wrapper expression (uses `f` for the closure)
-///
-/// # Usage
-///
-/// The example requires the `stateful` feature.
-///
-/// ```rust
-/// # #[cfg(feature = "stateful")]
-/// # {
-/// // Single generic parameter - Consumer
-/// use qubit_function::{ArcStatefulConsumer, BoxBiConsumer, BoxConsumer};
-/// use std::sync::Arc;
-/// use std::sync::Mutex;
-/// macro_rules! impl_consumer_common_methods {
-///     ($struct_name:ident < $t:ident >, ($($fn_trait_with_bounds:tt)+), |$f:ident| $wrapper_expr:expr) => {
-///         let _ = stringify!($struct_name);
-///         let _ = stringify!($($fn_trait_with_bounds)+);
-///         let _ = stringify!($wrapper_expr);
-///     };
-///     ($struct_name:ident < $t:ident, $u:ident >, ($($fn_trait_with_bounds:tt)+), |$f:ident| $wrapper_expr:expr) => {
-///         let _ = stringify!($struct_name);
-///         let _ = stringify!($($fn_trait_with_bounds)+);
-///         let _ = stringify!($wrapper_expr);
-///     };
-/// }
-/// impl_consumer_common_methods!(
-///     BoxConsumer<i32>,
-///     (Fn(&i32) + 'static),
-///     |f| Box::new(f)
-/// );
-///
-/// // Single generic parameter - StatefulConsumer
-/// impl_consumer_common_methods!(
-///     ArcStatefulConsumer<i32>,
-///     (FnMut(&i32) + Send + 'static),
-///     |f| Arc::new(Mutex::new(f))
-/// );
-///
-/// // Two generic parameters - BiConsumer
-/// impl_consumer_common_methods!(
-///     BoxBiConsumer<i32, i32>,
-///     (Fn(&i32, &i32) + 'static),
-///     |f| Box::new(f)
-/// );
-/// # }
-/// ```
-///
-/// # Generated Methods
-///
-/// * `new()` - Creates a new consumer
-/// * `new_with_name()` - Creates a named consumer
-/// * `name()` - Gets the name of the consumer
-/// * `set_name()` - Sets the name of the consumer
-/// * `noop()` - Creates a consumer that performs no operation
+/// Expands a consumer type into constructor methods used by the common-methods
+/// macro. This implementation macro is invoked internally and is not the
+/// public entry point for defining consumer methods.
 macro_rules! impl_consumer_new_methods {
     (BoxConsumer<$t:ident>, |$f:ident| $wrapper:expr) => { $crate::consumers::macros::impl_consumer_new_methods!(@one Consumer, $t, ('static), |$f| $wrapper); };
     (RcConsumer<$t:ident>, |$f:ident| $wrapper:expr) => { $crate::consumers::macros::impl_consumer_new_methods!(@one Consumer, $t, ('static), |$f| $wrapper); };
@@ -172,6 +104,33 @@ macro_rules! impl_consumer_new_methods {
     (@two_once $trait:ident, $t:ident, $u:ident, ($($bounds:tt)+), |$f:ident| $wrapper:expr) => { crate::macros::impl_common_new_methods!(semantic ($trait<$t, $u> + $($bounds)+), |source| move |first: &$t, second: &$u| source.accept(first, second), |$f| $wrapper, "bi-consumer"); };
 }
 
+/// Generates constructors, name management methods, and a no-operation
+/// constructor inside an existing consumer `impl` block.
+///
+/// The macro supports consumer types with one or two generic parameters and
+/// accepts the closure bounds and wrapper expression used by the concrete
+/// consumer type.
+///
+/// # Parameters
+///
+/// * `$struct_name<$generics>` - Consumer type with one or two type parameters.
+/// * `$fn_trait_with_bounds` - Closure trait and its bounds, such as `Fn(&T) +
+///   'static`.
+/// * `$wrapper_expr` - Expression that wraps the supplied closure, using `f`.
+///
+/// # Usage
+///
+/// ```ignore
+/// impl_consumer_common_methods!(
+///     BoxConsumer<T>,
+///     (Fn(&T) + 'static),
+///     |f| Box::new(f)
+/// );
+/// ```
+///
+/// The expansion provides `new`, `new_with_name`, `name`, `set_name`, and
+/// `noop` methods. The macro must be invoked within the target type's `impl`
+/// block.
 macro_rules! impl_consumer_common_methods {
     // Single generic parameter - Consumer types
     (

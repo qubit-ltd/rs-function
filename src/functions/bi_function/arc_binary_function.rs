@@ -15,6 +15,11 @@ use super::ArcBiFunction;
 /// and produces a value of type `R`. Similar to Java's `BiFunction<T, T, R>`
 /// with shared, thread-safe ownership.
 ///
+/// # Type Parameters
+///
+/// - `T` - The type of both borrowed inputs.
+/// - `R` - The value produced by the callback.
+///
 /// # Examples
 ///
 /// ```rust

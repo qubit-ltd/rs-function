@@ -11,7 +11,6 @@
 use qubit_function::BoxFunctionOnce;
 use qubit_function::FunctionOnce;
 use qubit_function::Predicate;
-use qubit_function::RcPredicate;
 
 // ============================================================================
 // FunctionOnce Trait Tests - Core Functionality

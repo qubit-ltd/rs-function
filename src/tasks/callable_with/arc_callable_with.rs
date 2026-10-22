@@ -29,6 +29,20 @@ type ArcCallableWithFn<T, R, E> = Arc<Mutex<dyn FnMut(&mut T) -> Result<R, E> + 
 /// callback runs. Synchronous re-entry through the same shared wrapper
 /// deadlocks. The mutex is not poisoned after a panic, and mutations completed
 /// before a panic are not rolled back.
+///
+/// # Examples
+///
+/// ```rust
+/// use qubit_function::tasks::{ArcCallableWith, CallableWith};
+///
+/// let mut callable = ArcCallableWith::new(|value: &mut i32| {
+///     *value += 1;
+///     Ok::<i32, ()>(*value)
+/// });
+/// let mut value = 41;
+/// assert_eq!(callable.call_with(&mut value), Ok(42));
+/// assert_eq!(value, 42);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcCallableWith<T, R, E> {
     /// The stateful closure executed by this callable.

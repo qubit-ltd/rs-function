@@ -36,6 +36,11 @@ use crate::consumers::macros::impl_shared_conditional_consumer;
 /// - **Conditional Execution**: Only consumes when predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 ///
+/// # Type Parameters
+///
+/// - `T` - Type of the first value passed to the predicate and consumer.
+/// - `U` - Type of the second value passed to the predicate and consumer.
+///
 /// # Examples
 ///
 /// ```rust

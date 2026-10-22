@@ -14,14 +14,14 @@
 //! constructor for Mutator structs. This macro should be called inside
 //! an impl block.
 //!
-//! The macro automatically detects the number of generic parameters and
-//! generates the appropriate implementations for single-parameter mutators.
+//! The macro supports mutator types with one generic parameter and generates
+//! the corresponding constructors and name-management methods.
 //!
 //! # Parameters
 //!
 //! * `$struct_name<$generics>` - Struct name with generic parameters
-//! * `$fn_trait_with_bounds` - Closure trait with complete bounds (e.g.,
-//!   `FnMut(&mut T) + 'static`)
+//! * `$fn_trait_with_bounds` - Closure trait bounds accepted by the invocation
+//!   syntax; generated constructor bounds come from the mutator type
 //! * `$wrapper_expr` - Wrapper expression (uses `f` for the closure)
 //!
 //! # Usage
@@ -55,14 +55,14 @@
 ///
 /// This macro should be used inside an impl block to generate constructor
 /// methods, name management methods and noop constructor for Mutator structs.
-/// The macro automatically detects the number of generic parameters and
-/// generates the appropriate implementations for single-parameter mutators.
+/// The macro supports mutator types with one generic parameter and generates
+/// the corresponding constructors and name-management methods.
 ///
 /// # Parameters
 ///
 /// * `$struct_name<$generics>` - Struct name with generic parameters
-/// * `$fn_trait_with_bounds` - Closure trait with complete bounds (e.g.,
-///   `FnMut(&mut T) + 'static`)
+/// * `$fn_trait_with_bounds` - Closure trait bounds accepted by the invocation
+///   syntax; generated constructor bounds come from the mutator type
 /// * `$wrapper_expr` - Wrapper expression (uses `f` for the closure)
 ///
 /// # Usage Location
@@ -98,6 +98,18 @@
 /// * `name()` - Gets the name of the mutator
 /// * `set_name()` - Sets the name of the mutator
 /// * `noop()` - Creates a mutator that performs no operation
+///
+/// # Internal Dispatch Macro
+///
+/// Generates constructor methods for the supported mutator wrapper types.
+///
+/// The wrapper type selects the semantic mutator trait and its required bounds;
+/// the generated constructors adapt that trait implementation to the wrapper's
+/// callable representation.
+///
+/// Supported wrappers are `BoxMutator`, `RcMutator`, `ArcMutator`,
+/// `BoxStatefulMutator`, `RcStatefulMutator`, `ArcStatefulMutator`, and
+/// `BoxMutatorOnce`, each with one type parameter.
 macro_rules! impl_mutator_new_methods {
     (BoxMutator<$t:ident>, |$f:ident| $wrapper:expr) => { $crate::mutators::macros::impl_mutator_new_methods!(@shared Mutator, $t, ('static), |$f| $wrapper); };
     (RcMutator<$t:ident>, |$f:ident| $wrapper:expr) => { $crate::mutators::macros::impl_mutator_new_methods!(@shared Mutator, $t, ('static), |$f| $wrapper); };

@@ -13,7 +13,6 @@ mod bi_function_rc_conditional_bi_function_clone_tests;
 mod bi_function_tests;
 mod bi_mutating_function;
 mod bi_mutating_function_once;
-mod bi_mutating_function_once_bi_mutating_function_once_panic_in_closure_tests;
 mod bi_mutating_function_once_tests;
 mod bi_mutating_function_rc_conditional_bi_mutating_function_clone_tests;
 mod bi_mutating_function_tests;

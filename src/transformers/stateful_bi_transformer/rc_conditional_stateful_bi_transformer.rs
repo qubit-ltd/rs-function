@@ -20,7 +20,7 @@ use crate::transformers::macros::impl_shared_conditional_transformer;
 // StatefulBiTransformer
 // ============================================================================
 
-/// RcConditionalStatefulBiTransformer struct
+/// A single-threaded conditional bi-transformer with shared callback ownership.
 ///
 /// A single-threaded conditional bi-transformer that only executes when a
 /// bi-predicate is satisfied. Uses `RcStatefulBiTransformer` and
@@ -38,6 +38,12 @@ use crate::transformers::macros::impl_shared_conditional_transformer;
 ///   `true`
 /// - **No Lock Overhead**: More efficient than
 ///   `ArcConditionalStatefulBiTransformer`
+///
+/// # Type Parameters
+///
+/// * `T` - The type of the first input consumed by the wrapped transformer.
+/// * `U` - The type of the second input consumed by the wrapped transformer.
+/// * `R` - The output type produced by the wrapped transformer.
 ///
 /// # Examples
 ///

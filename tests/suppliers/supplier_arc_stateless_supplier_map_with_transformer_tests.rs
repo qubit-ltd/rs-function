@@ -8,15 +8,10 @@
 
 //! Unit tests for Supplier types
 
-use std::sync::Arc;
 use std::thread;
 
 use qubit_function::ArcSupplier;
 use qubit_function::ArcTransformer;
-use qubit_function::BoxSupplier;
-use qubit_function::BoxTransformer;
-use qubit_function::RcSupplier;
-use qubit_function::RcTransformer;
 use qubit_function::Supplier;
 
 // ======================================================================
@@ -143,7 +138,3 @@ mod test_arc_stateless_supplier_map_with_transformer {
         assert_eq!(mapped2.get(), 40);
     }
 }
-
-// ======================================================================
-// Map with Transformer Tests - RcSupplier
-// ======================================================================

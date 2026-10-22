@@ -7,9 +7,12 @@
 // =============================================================================
 
 use qubit_function::ArcFunction;
+use qubit_function::Function;
 
 #[test]
-fn test_arc_function_observable_behavior() {
-    let type_name = std::any::type_name::<ArcFunction<i32, i32>>();
-    assert!(type_name.contains("ArcFunction"), "{type_name}");
+fn test_arc_function_applies_callback_after_clone() {
+    let double = ArcFunction::new(|value: &i32| value * 2);
+    let cloned = double.clone();
+
+    assert_eq!(cloned.apply(&21), 42);
 }

@@ -13,10 +13,11 @@
 //!
 //! It is similar to the `FnOnce(&T)` trait in the standard library.
 //!
-//! This module provides a unified `ConsumerOnce` trait and one concrete
-//! implementation:
+//! This module provides a unified `ConsumerOnce` trait and two concrete
+//! implementations:
 //!
 //! - **`BoxConsumerOnce<T>`**: Box-based single ownership implementation
+//! - **`BoxConditionalConsumerOnce<T>`**: conditional single ownership
 //!
 //! # Why No Arc/Rc Variants?
 //!
@@ -38,70 +39,6 @@ mod box_consumer_once;
 pub use box_consumer_once::BoxConsumerOnce;
 mod box_conditional_consumer_once;
 pub use box_conditional_consumer_once::BoxConditionalConsumerOnce;
-
-// ============================================================================
-// 1. ConsumerOnce Trait - Unified ConsumerOnce Interface
-// ============================================================================
-
-/// ConsumerOnce trait - Unified one-time consumer interface
-///
-/// It is similar to the `FnOnce(&T)` trait in the standard library.
-///
-/// Defines the core behavior of all one-time consumer types. Similar to
-/// consumers implementing `FnOnce(&T)`, executes operations that accept a value
-/// reference but return no result (only side effects), consuming itself in the
-/// process.
-///
-/// # Automatic Implementation
-///
-/// - All closures implementing `FnOnce(&T)`
-/// - `BoxConsumerOnce<T>`
-///
-/// # Features
-///
-/// - **Unified Interface**: All consumer types share the same `accept` method
-///   signature
-/// - **Automatic Implementation**: Closures implement this trait directly,
-///   without allocating an adapter
-/// - **Generic Programming**: Write functions that work with any one-time
-///   consumer type
-///
-/// # Examples
-///
-/// ```rust
-/// use qubit_function::{ConsumerOnce, BoxConsumerOnce};
-/// use std::sync::{Arc, Mutex};
-///
-/// fn apply_consumer<C: ConsumerOnce<i32>>(consumer: C, value: &i32) {
-///     consumer.accept(value);
-/// }
-///
-/// let log = Arc::new(Mutex::new(Vec::new()));
-/// let l = log.clone();
-/// let box_con = BoxConsumerOnce::new(move |x: &i32| {
-///     l.lock().expect("mutex should not be poisoned").push(*x);
-/// });
-/// apply_consumer(box_con, &5);
-/// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
-/// ```
-pub trait ConsumerOnce<T> {
-    /// Execute one-time consumption operation
-    ///
-    /// Executes an operation on the given reference. The operation typically
-    /// reads the input value or produces side effects, but does not modify
-    /// the input value itself. Consumes self.
-    ///
-    /// # Parameters
-    ///
-    /// * `value` - Reference to the value to be consumed
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::{ConsumerOnce, BoxConsumerOnce};
-    ///
-    /// let consumer = BoxConsumerOnce::new(|x: &i32| println!("{}", x));
-    /// consumer.accept(&5);
-    /// ```
-    fn accept(self, value: &T);
-}
+#[path = "consumer_once/consumer_once.rs"]
+mod consumer_once_trait;
+pub use consumer_once_trait::ConsumerOnce;

@@ -6,11 +6,18 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::BoxTransformer;
+use qubit_function::ArcTransformer;
 use qubit_function::Transformer;
 
 #[test]
 fn test_conditional_transformer_clone_observable_behavior() {
-    let transformer = BoxTransformer::new(|value: i32| value + 1);
-    assert_eq!(transformer.apply(41), 42);
+    let conditional = ArcTransformer::new(|value: i32| value + 1)
+        .when(|value: &i32| *value > 0)
+        .or_else(|value: i32| value - 1);
+    let cloned = conditional.clone();
+
+    assert_eq!(conditional.apply(41), 42);
+    assert_eq!(conditional.apply(-41), -42);
+    assert_eq!(cloned.apply(41), 42);
+    assert_eq!(cloned.apply(-41), -42);
 }

@@ -23,6 +23,26 @@ type BoxStatefulBiPredicateFn<T, U> = dyn FnMut(&T, &U) -> bool;
 /// This type stores a `Box<dyn FnMut(&T, &U) -> bool>`, so each call may
 /// update the predicate's internal state. Composition methods consume `self`,
 /// matching the single-ownership model.
+///
+/// # Type Parameters
+///
+/// * `T` - The type of the first value tested by the callback.
+/// * `U` - The type of the second value tested by the callback.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::BoxStatefulBiPredicate;
+///
+/// let mut calls = 0;
+/// let mut predicate = BoxStatefulBiPredicate::new(|first: &i32, second: &i32| {
+///     calls += 1;
+///     *first + *second == 10
+/// });
+///
+/// assert!(predicate.test(&4, &6));
+/// assert_eq!(calls, 1);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxStatefulBiPredicate<T, U> {
     /// The wrapped callback implementation.

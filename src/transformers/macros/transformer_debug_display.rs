@@ -15,7 +15,9 @@
 //! # Parameters
 //!
 //! * `$struct_name` - The struct name
-//! * `$generic` - Generic parameter list (two or three type parameters)
+//! * `$t`, `$r` - Type parameters for a transformer with two generic parameters
+//! * `$t`, `$u`, `$r` - Type parameters for a transformer with three generic
+//!   parameters
 //!
 //! # Examples
 //!
@@ -37,9 +39,10 @@
 /// # Parameters
 ///
 /// * `$struct_name` - The struct name
-/// * `$t` - Generic parameter list (two or three type parameters)
-/// * `$u` - Generic parameter list (two or three type parameters)
-/// * `$r` - Generic parameter list (two or three type parameters)
+/// * `$t` and `$r` - Type parameters for a transformer with two generic
+///   parameters
+/// * `$t`, `$u`, and `$r` - Type parameters for a transformer with three
+///   generic parameters
 ///
 /// # Examples
 ///

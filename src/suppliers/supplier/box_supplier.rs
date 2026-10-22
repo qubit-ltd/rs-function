@@ -24,6 +24,10 @@ use crate::suppliers::macros::impl_supplier_debug_display;
 /// is the most lightweight stateless supplier with zero reference
 /// counting overhead.
 ///
+/// # Type Parameters
+///
+/// - `T`: The value produced by each callback invocation.
+///
 /// # Ownership Model
 ///
 /// Methods consume `self` (move semantics) or borrow `&self` for

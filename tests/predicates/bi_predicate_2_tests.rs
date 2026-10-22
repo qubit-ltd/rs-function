@@ -12,20 +12,14 @@ mod tests {
 
     use qubit_function::predicates::ArcBiPredicate;
     use qubit_function::predicates::BiPredicate;
-    use qubit_function::predicates::BoxBiPredicate;
-    use qubit_function::predicates::RcBiPredicate;
 
     // ========================================================================
     // BiPredicate Trait Tests - Test closure and function pointer
     // implementations
     // ========================================================================
 
-    mod bi_predicate_ext_tests {
-        use super::BiPredicate;
-    }
-
     // ========================================================================
-    // BoxBiPredicate Tests
+    // ArcBiPredicate Tests
     // ========================================================================
 
     mod arc_bi_predicate_tests {
@@ -270,8 +264,4 @@ mod tests {
             }
         }
     }
-
-    // ========================================================================
-    // RcBiPredicate Tests
-    // ========================================================================
 }

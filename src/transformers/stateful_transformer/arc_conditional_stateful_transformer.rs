@@ -36,6 +36,12 @@ use crate::transformers::macros::impl_shared_conditional_transformer;
 /// - **Conditional Execution**: Only maps when predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 ///
+/// # Type Parameters
+///
+/// * `T` - The input type consumed by the wrapped stateful transformer and
+///   borrowed by the predicate.
+/// * `R` - The output type produced when the predicate accepts the input.
+///
 /// # Examples
 ///
 /// ```rust

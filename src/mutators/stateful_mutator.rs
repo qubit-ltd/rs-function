@@ -194,11 +194,17 @@ use parking_lot::Mutex;
 // 1. Type Aliases
 // ============================================================================
 
-/// Type alias for Arc-wrapped mutable mutator function
+/// Stores a mutable callback behind a thread-safe shared pointer and mutex.
+///
+/// The callback must be `Send` so the shared mutator can cross thread
+/// boundaries; the mutex provides exclusive access when it is invoked.
 type ArcMutMutatorFn<T> = Arc<Mutex<dyn FnMut(&mut T) + Send>>;
 
-/// Type alias for Rc-wrapped mutable mutator function
-/// The erased callback representation used by this implementation.
+/// Stores a mutable callback behind single-threaded shared ownership and
+/// interior mutability.
+///
+/// The callback is not required to be `Send` because `Rc` cannot cross thread
+/// boundaries. `RefCell` provides exclusive access when it is invoked.
 #[cfg(feature = "rc")]
 type RcMutMutatorFn<T> = Rc<RefCell<dyn FnMut(&mut T)>>;
 
@@ -236,6 +242,10 @@ pub use arc_conditional_stateful_mutator::ArcConditionalStatefulMutator;
 ///
 /// The trait provides a unified abstraction over different ownership models,
 /// allowing generic code to work with any stateful mutator type.
+///
+/// # Type Parameters
+///
+/// * `T` - The input value that an implementation can mutate.
 ///
 /// # Features
 ///

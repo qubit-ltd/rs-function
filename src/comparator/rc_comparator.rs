@@ -51,6 +51,9 @@ pub struct RcComparator<T> {
 impl<T> RcComparator<T> {
     /// Creates a new `RcComparator` from a comparator implementation.
     ///
+    /// The comparator is stored in an `Rc`-owned closure, so its captured
+    /// values must be `'static` and cannot borrow local data.
+    ///
     /// # Parameters
     ///
     /// * `source` - The comparator implementation to wrap
@@ -79,6 +82,9 @@ impl<T> RcComparator<T> {
 
     /// Creates a named `RcComparator` from a comparator implementation.
     ///
+    /// The comparator is stored in an `Rc`-owned closure, so its captured
+    /// values must be `'static` and cannot borrow local data.
+    ///
     /// # Parameters
     ///
     /// * `name` - The diagnostic name assigned to the comparator.
@@ -100,6 +106,9 @@ impl<T> RcComparator<T> {
 
     /// Creates an `RcComparator` with an optional diagnostic name.
     ///
+    /// The comparator is stored in an `Rc`-owned closure, so its captured
+    /// values must be `'static` and cannot borrow local data.
+    ///
     /// # Parameters
     ///
     /// * `source` - The comparator implementation to wrap.
@@ -107,7 +116,8 @@ impl<T> RcComparator<T> {
     ///
     /// # Returns
     ///
-    /// An `RcComparator` containing the supplied optional name.
+    /// An `RcComparator` containing the supplied name, or no name when `name`
+    /// is `None`.
     #[inline]
     pub fn new_with_optional_name<F>(source: F, name: Option<String>) -> Self
     where
@@ -120,6 +130,9 @@ impl<T> RcComparator<T> {
     }
 
     /// Creates a comparator while preserving existing callback metadata.
+    ///
+    /// The comparator is stored in an `Rc`-owned closure, so its captured
+    /// values must be `'static` and cannot borrow local data.
     ///
     /// # Parameters
     ///
@@ -142,6 +155,9 @@ impl<T> RcComparator<T> {
 
     /// Returns a comparator that compares values by a key extracted by the
     /// given function.
+    ///
+    /// The key extractor is stored in an `Rc`-owned closure, so its captured
+    /// values must be `'static` and cannot borrow local data.
     ///
     /// # Parameters
     ///
@@ -181,6 +197,9 @@ impl<T> RcComparator<T> {
 
     /// Returns a comparator that imposes the reverse ordering.
     ///
+    /// This clones the shared callback and metadata handles; `T` must be
+    /// `'static` so the reversed callback can be stored in the result.
+    ///
     /// # Returns
     ///
     /// A new `RcComparator` that reverses the comparison order.
@@ -207,6 +226,9 @@ impl<T> RcComparator<T> {
 
     /// Returns a comparator that uses this comparator first, then another
     /// comparator if this one considers the values equal.
+    ///
+    /// The right comparator is moved into an `Rc`-owned closure, so it and its
+    /// captured values must be `'static` and cannot borrow local data.
     ///
     /// # Parameters
     ///
@@ -243,7 +265,7 @@ impl<T> RcComparator<T> {
         })
     }
 
-    /// Converts this comparator into a closure.
+    /// Consumes this comparator and returns a closure that owns it.
     ///
     /// # Returns
     ///

@@ -13,11 +13,8 @@ use std::rc::Rc;
 use std::sync::Arc;
 use std::sync::Mutex;
 
-use qubit_function::ArcPredicate;
 use qubit_function::ArcStatefulFunction;
-use qubit_function::BoxPredicate;
 use qubit_function::BoxStatefulFunction;
-use qubit_function::FunctionOnce;
 use qubit_function::RcPredicate;
 use qubit_function::RcStatefulFunction;
 use qubit_function::StatefulFunction;

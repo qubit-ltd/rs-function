@@ -19,6 +19,10 @@ use super::BoxBiTransformer;
 /// a value of the same type `T`, with single ownership semantics. Equivalent to
 /// Java's `BinaryOperator<T>`.
 ///
+/// # Type Parameters
+///
+/// - `T` - The input and output type shared by both operands and the result.
+///
 /// # Examples
 ///
 /// ```rust

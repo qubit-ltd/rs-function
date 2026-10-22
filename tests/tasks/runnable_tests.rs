@@ -23,18 +23,6 @@ use qubit_function::RcRunnable;
 use qubit_function::Runnable;
 use qubit_function::SupplierOnce;
 
-#[derive(Clone)]
-struct ClonedRunnable {
-    flag: Rc<Cell<bool>>,
-}
-
-impl Runnable<io::Error> for ClonedRunnable {
-    fn run(&mut self) -> Result<(), io::Error> {
-        self.flag.set(true);
-        Ok(())
-    }
-}
-
 #[test]
 fn test_runnable_closure_run_returns_success() {
     let flag = Rc::new(Cell::new(false));
@@ -55,30 +43,6 @@ fn test_runnable_closure_run_returns_error() {
     let error = task.run().expect_err("runnable closure should fail");
     assert_eq!(error.kind(), io::ErrorKind::Other);
     assert_eq!(error.to_string(), "failed");
-}
-
-#[derive(Clone)]
-struct SharedCounterRunnable {
-    count: Rc<Cell<u32>>,
-}
-
-impl Runnable<io::Error> for SharedCounterRunnable {
-    fn run(&mut self) -> Result<(), io::Error> {
-        self.count.set(self.count.get() + 1);
-        Ok(())
-    }
-}
-
-#[derive(Clone)]
-struct SharedAtomicRunnable {
-    count: Arc<AtomicUsize>,
-}
-
-impl Runnable<io::Error> for SharedAtomicRunnable {
-    fn run(&mut self) -> Result<(), io::Error> {
-        self.count.fetch_add(1, Ordering::SeqCst);
-        Ok(())
-    }
 }
 
 #[test]

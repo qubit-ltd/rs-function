@@ -7,9 +7,19 @@
 // =============================================================================
 
 use qubit_function::BoxBiMutatingFunction;
+use qubit_function::BiMutatingFunction;
 
 #[test]
 fn test_box_bi_mutating_function_observable_behavior() {
-    let type_name = std::any::type_name::<BoxBiMutatingFunction<i32, i32, i32>>();
-    assert!(type_name.contains("BoxBiMutatingFunction"), "{type_name}");
+    let function = BoxBiMutatingFunction::new(|first: &mut i32, second: &mut i32| {
+        *first += *second;
+        *second *= 2;
+        *first + *second
+    });
+    let mut first = 3;
+    let mut second = 4;
+
+    assert_eq!(function.apply(&mut first, &mut second), 15);
+    assert_eq!(first, 7);
+    assert_eq!(second, 8);
 }

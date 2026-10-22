@@ -30,6 +30,12 @@ use crate::functions::macros::impl_shared_conditional_function;
 /// `ArcStatefulMutatingFunction::when()` and is designed to work with the
 /// `or_else()` method to create if-then-else logic.
 ///
+/// # Type Parameters
+///
+/// * `T` - The mutable input type accepted by the wrapped callback and
+///   predicate.
+/// * `R` - The result type returned by the wrapped callback.
+///
 /// # Features
 ///
 /// - **Shared Ownership**: Cloneable via `Arc`, multiple owners allowed

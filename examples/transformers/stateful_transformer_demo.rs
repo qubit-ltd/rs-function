@@ -135,8 +135,8 @@ fn main() {
     println!("  {}", pipeline.apply(100));
     println!("  {}", pipeline.apply(200));
 
-    // 7. TransformerOnce implementation - consuming transformers
-    println!("\n7. TransformerOnce implementation - consuming StatefulTransformers:");
+    // 8. TransformerOnce implementation - consuming transformers
+    println!("\n8. TransformerOnce implementation - consuming StatefulTransformers:");
 
     // BoxStatefulTransformer can be consumed as TransformerOnce
     let mut counter = 0;
@@ -172,8 +172,8 @@ fn main() {
         arc_clone_for_call.apply(10)
     }); // 10 * 2 = 20
 
-    // 8. Converting to BoxTransformerOnce
-    println!("\n8. Converting StatefulTransformers to BoxTransformerOnce:");
+    // 9. Converting to BoxTransformerOnce
+    println!("\n9. Converting StatefulTransformers to BoxTransformerOnce:");
 
     let mut counter = 0;
     let mapper = BoxStatefulTransformer::new(move |x: i32| {

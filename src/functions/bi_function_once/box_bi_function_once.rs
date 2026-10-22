@@ -36,6 +36,23 @@ type BoxBiFunctionOnceFn<T, U, R> = Box<dyn FnOnce(&T, &U) -> R>;
 /// - **Ownership**: Single ownership, cannot be cloned
 /// - **Reusability**: Can only be called once (consumes self)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
+///
+/// # Type Parameters
+///
+/// * `T` - The type of the first borrowed input.
+/// * `U` - The type of the second borrowed input.
+/// * `R` - The output type produced by the callback.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::{BiFunctionOnce, BoxBiFunctionOnce};
+///
+/// let concatenate = BoxBiFunctionOnce::new(|first: &str, second: &str| {
+///     format!("{first}{second}")
+/// });
+/// assert_eq!(concatenate.apply("hello", " world"), "hello world");
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxBiFunctionOnce<T, U, R> {
     /// The wrapped callback implementation.

@@ -33,6 +33,22 @@ type ArcStatefulBiPredicateFn<T, U> = Arc<Mutex<dyn FnMut(&T, &U) -> bool + Send
 /// callback runs. Synchronous re-entry through the same shared state
 /// deadlocks. The mutex is not poisoned after a panic, and mutations completed
 /// before a panic are not rolled back.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::ArcStatefulBiPredicate;
+/// use qubit_function::StatefulBiPredicate;
+///
+/// let mut calls = 0;
+/// let mut predicate = ArcStatefulBiPredicate::new(|first: &i32, second: &i32| {
+///     calls += 1;
+///     first + second == 10
+/// });
+///
+/// assert!(predicate.test(&4, &6));
+/// assert_eq!(calls, 1);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcStatefulBiPredicate<T, U> {
     /// The wrapped callback implementation.

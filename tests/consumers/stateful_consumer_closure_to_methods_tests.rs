@@ -6,42 +6,26 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-//! Unit tests for StatefulConsumer types
-
-use std::cell::RefCell;
-use std::rc::Rc;
-use std::sync::Arc;
-use std::sync::Mutex;
-
-use qubit_function::ArcConsumer;
-use qubit_function::ArcStatefulConsumer;
-use qubit_function::BoxConsumer;
-use qubit_function::BoxStatefulConsumer;
-use qubit_function::Consumer;
-use qubit_function::RcConsumer;
-use qubit_function::RcStatefulConsumer;
-use qubit_function::StatefulConsumer;
+//! Tests closure-backed `StatefulConsumer` behavior.
 
 // ============================================================================
-// BoxConsumer Tests
+// BoxStatefulConsumer Closure Tests
 // ============================================================================
 
 #[cfg(test)]
-mod test_closure_to_methods {
-    use super::Arc;
-    use super::BoxStatefulConsumer;
-    use super::Mutex;
-    use super::StatefulConsumer;
+mod test_closure_accept {
+    use std::sync::Arc;
+    use std::sync::Mutex;
 
-    // Note: closures must implement Clone to use to_xxx methods
-    // We need to use cloneable closures or wrapper types
+    use qubit_function::BoxStatefulConsumer;
+    use qubit_function::StatefulConsumer;
 
     // ============================================================================
-    // BoxConsumer ConsumerOnce Tests
+    // BoxStatefulConsumer accept Tests
     // ============================================================================
 
     #[test]
-    fn test_accept_once() {
+    fn test_accept_records_input() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
         let mut consumer = BoxStatefulConsumer::new(move |x: &i32| {
@@ -52,7 +36,7 @@ mod test_closure_to_methods {
     }
 
     #[test]
-    fn test_accept_once_with_different_types() {
+    fn test_accept_handles_different_input_types() {
         // String
         let log = Arc::new(Mutex::new(String::new()));
         let l = log.clone();
@@ -85,7 +69,7 @@ mod test_closure_to_methods {
     }
 
     #[test]
-    fn test_consumer_once_with_state_modification() {
+    fn test_accept_observes_closure_state() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
         let mut counter = 0;
@@ -98,7 +82,7 @@ mod test_closure_to_methods {
     }
 
     #[test]
-    fn test_consumer_once_consumes_self() {
+    fn test_accept_records_input_from_owned_consumer() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
         let mut consumer = BoxStatefulConsumer::new(move |x: &i32| {
@@ -111,5 +95,5 @@ mod test_closure_to_methods {
 }
 
 // ============================================================================
-// ConsumerOnce Implementation Tests
+// End of BoxStatefulConsumer Closure Tests
 // ============================================================================

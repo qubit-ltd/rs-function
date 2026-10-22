@@ -36,6 +36,31 @@ type BoxBiMutatingFunctionOnceFn<T, U, R> = Box<dyn FnOnce(&mut T, &mut U) -> R>
 /// - **Ownership**: Single ownership, cannot be cloned
 /// - **Reusability**: Can only be called once (consumes self)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
+///
+/// # Type Parameters
+///
+/// * `T` - The type of the first mutable input.
+/// * `U` - The type of the second mutable input.
+/// * `R` - The output type produced by the callback.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::{BiMutatingFunctionOnce, BoxBiMutatingFunctionOnce};
+///
+/// let add_second = BoxBiMutatingFunctionOnce::new(
+///     |first: &mut i32, second: &mut i32| {
+///         *first += *second;
+///         *first
+///     },
+/// );
+/// let mut first = 2;
+/// let mut second = 3;
+///
+/// assert_eq!(add_second.apply(&mut first, &mut second), 5);
+/// assert_eq!(first, 5);
+/// assert_eq!(second, 3);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxBiMutatingFunctionOnce<T, U, R> {
     /// The wrapped callback implementation.

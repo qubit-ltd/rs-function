@@ -18,23 +18,41 @@ use crate::functions::macros::impl_conditional_function_debug_display;
 // BoxConditionalBiMutatingFunction - Box-based Conditional BiMutatingFunction
 // ============================================================================
 
-/// BoxConditionalBiMutatingFunction struct
+/// A single-owner conditional callback that may mutate two inputs.
 ///
-/// A conditional bi-mutating-function that only executes when a bi-predicate is
-/// satisfied. Uses `BoxBiMutatingFunction` and `BoxBiPredicate` for single
-/// ownership semantics.
+/// The wrapped [`BoxBiMutatingFunction`] runs only when the [`BoxBiPredicate`]
+/// accepts both inputs. The callback and predicate are owned by this wrapper,
+/// which cannot be cloned.
 ///
-/// This type is typically created by calling `BoxBiMutatingFunction::when()`
-/// and is designed to work with the `or_else()` method to create if-then-else
-/// logic.
+/// Create this type with [`BoxBiMutatingFunction::when`]. Use [`Self::or_else`]
+/// to provide a callback for the predicate-false branch.
 ///
-/// # Features
+/// # Type Parameters
 ///
-/// - **Single Ownership**: Not cloneable, ownership moves on use
-/// - **Conditional Execution**: Only computes when bi-predicate returns `true`
-/// - **Chainable**: Can add `or_else` branch to create if-then-else logic
-/// - **Implements BiMutatingFunction**: Can be used anywhere a
-///   `BiMutatingFunction` is expected
+/// - `T` - Type of the first mutable input.
+/// - `U` - Type of the second mutable input.
+/// - `R` - Type of the callback result.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::{BiMutatingFunction, BoxBiMutatingFunction};
+///
+/// let add_if_positive = BoxBiMutatingFunction::new(
+///     |first: &mut i32, second: &mut i32| {
+///         *first += *second;
+///         *first
+///     },
+/// )
+/// .when(|first: &i32, second: &i32| *first > 0 && *second > 0);
+/// let callback = add_if_positive.or_else(|_: &mut i32, _: &mut i32| 0);
+/// let mut first = 2;
+/// let mut second = 3;
+///
+/// assert_eq!(callback.apply(&mut first, &mut second), 5);
+/// assert_eq!(first, 5);
+/// assert_eq!(second, 3);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConditionalBiMutatingFunction<T, U, R> {
     /// The wrapped callback implementation.

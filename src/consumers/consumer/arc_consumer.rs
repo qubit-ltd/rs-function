@@ -35,6 +35,10 @@ use crate::consumers::macros::impl_shared_consumer_methods;
 /// - **Non-consuming API**: `and_then` borrows `&self`, original object remains
 ///   usable
 ///
+/// # Type Parameters
+///
+/// * `T` - The input type observed through a shared reference by the callback.
+///
 /// # Use Cases
 ///
 /// Choose `ArcConsumer` when:

@@ -26,6 +26,10 @@ use crate::suppliers::macros::impl_supplier_debug_display;
 /// ownership. **Lock-free** - no `Mutex` needed! Can be cloned and
 /// sent across threads with excellent concurrent performance.
 ///
+/// # Type Parameters
+///
+/// - `T`: The value produced by each callback invocation.
+///
 /// # Ownership Model
 ///
 /// Methods borrow `&self` instead of consuming `self`. The

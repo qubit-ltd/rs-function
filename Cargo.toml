@@ -41,6 +41,11 @@ once = []
 stateful = ["dep:parking_lot"]
 full = ["rc", "once", "stateful"]
 
+[[test]]
+name = "integration_tests"
+path = "tests/mod.rs"
+required-features = ["full"]
+
 [dependencies]
 parking_lot = { version = "^0.12", optional = true }
 

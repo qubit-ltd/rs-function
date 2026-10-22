@@ -7,18 +7,18 @@
 // =============================================================================
 //! # Box Mutator Methods Macro
 //!
-//! Generates when and and_then method implementations for Box-based Mutator
+//! Generates `when` and `and_then` methods for Box-based mutators.
 //!
-//! Generates conditional execution when method and chaining and_then method
-//! for Box-based mutators that consume self (because Box cannot be cloned).
+//! Generates `when` and `and_then` methods for Box-based mutators that consume
+//! `self` because the boxed mutator cannot be cloned.
 //!
 //! This macro supports single-parameter mutators through
 //! pattern matching on the struct signature.
 //!
 //! # Parameters
 //!
-//! * `$struct_name<$generics>` - The struct name with its generic parameters
-//!   - Single parameter: `BoxMutator<T>`
+//! * `$struct_name<$t>` - The mutator wrapper type with one type parameter,
+//!   such as `BoxMutator<T>`
 //! * `$conditional_type` - The conditional mutator type for when (e.g.,
 //!   BoxConditionalMutator)
 //! * `$mutator_trait` - Mutator trait name (e.g., Mutator, MutatorOnce)
@@ -42,19 +42,20 @@
 //! // );
 //! ```
 
-/// Generates when and and_then method implementations for Box-based Mutator
+/// Generates `when` and `and_then` methods for Box-based mutators.
 ///
-/// This macro should be used inside an impl block to generate conditional
-/// execution when method and chaining and_then method for Box-based mutators
-/// that consume self (because Box cannot be cloned).
+/// Invoke this macro inside the target wrapper's `impl` block. The `when`
+/// method creates a conditional mutator, and `and_then` chains a subsequent
+/// mutator after the current one. Both methods consume `self` because the
+/// boxed mutator cannot be cloned.
 ///
 /// This macro supports single-parameter mutators through
 /// pattern matching on the struct signature.
 ///
 /// # Parameters
 ///
-/// * `$struct_name<$generics>` - The struct name with its generic parameters
-///   - Single parameter: `BoxMutator<T>`
+/// * `$struct_name<$t>` - The mutator wrapper type with one type parameter,
+///   such as `BoxMutator<T>`
 /// * `$conditional_type` - The conditional mutator type for when (e.g.,
 ///   BoxConditionalMutator)
 /// * `$mutator_trait` - Mutator trait name (e.g., Mutator, MutatorOnce)

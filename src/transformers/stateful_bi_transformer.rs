@@ -60,6 +60,24 @@ pub use arc_conditional_stateful_bi_transformer::ArcConditionalStatefulBiTransfo
 /// * `T` - The type of the first input value (consumed)
 /// * `U` - The type of the second input value (consumed)
 /// * `R` - The type of the output value
+///
+/// # Examples
+///
+/// A mutable closure implements `StatefulBiTransformer` and can retain state
+/// between calls:
+///
+/// ```
+/// use qubit_function::StatefulBiTransformer;
+///
+/// let mut total = 0;
+/// let mut add_and_accumulate = |first, second| {
+///     total += first + second;
+///     total
+/// };
+///
+/// assert_eq!(add_and_accumulate.apply(2, 3), 5);
+/// assert_eq!(add_and_accumulate.apply(1, 4), 10);
+/// ```
 pub trait StatefulBiTransformer<T, U, R> {
     /// Transforms two input values to produce an output value
     ///

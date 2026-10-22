@@ -62,6 +62,23 @@ pub use arc_conditional_bi_mutating_function::ArcConditionalBiMutatingFunction;
 /// * `T` - The type of the first input value (mutable reference)
 /// * `U` - The type of the second input value (mutable reference)
 /// * `R` - The type of the output value
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::BiMutatingFunction;
+///
+/// let add_second = |first: &mut i32, second: &mut i32| {
+///     *first += *second;
+///     *first
+/// };
+/// let mut first = 2;
+/// let mut second = 3;
+///
+/// assert_eq!(add_second.apply(&mut first, &mut second), 5);
+/// assert_eq!(first, 5);
+/// assert_eq!(second, 3);
+/// ```
 pub trait BiMutatingFunction<T, U, R> {
     /// Applies the bi-mutating-function to two mutable references and returns a
     /// result

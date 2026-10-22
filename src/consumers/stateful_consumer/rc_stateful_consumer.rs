@@ -25,7 +25,7 @@ type RcStatefulConsumerFn<T> = Rc<RefCell<dyn FnMut(&T)>>;
 // 3. RcStatefulConsumer - Single-Threaded Shared Ownership Implementation
 // ============================================================================
 
-/// RcStatefulConsumer struct
+/// Shares a mutable callback among single-threaded owners.
 ///
 /// Consumer implementation based on `Rc<RefCell<dyn FnMut(&T)>>` for
 /// single-threaded shared ownership scenarios. This consumer provides the
@@ -69,6 +69,10 @@ type RcStatefulConsumerFn<T> = Rc<RefCell<dyn FnMut(&T)>>;
 /// `Sync`. Attempting to send it to another thread will result in a compilation
 /// error. For thread-safe sharing, use `ArcStatefulConsumer` instead.
 ///
+/// # Type Parameters
+///
+/// * `T` - The input value type borrowed by the callback.
+///
 /// # Examples
 ///
 /// ```rust
@@ -84,9 +88,10 @@ type RcStatefulConsumerFn<T> = Rc<RefCell<dyn FnMut(&T)>>;
 /// let mut clone = consumer.clone();
 ///
 /// consumer.accept(&5);
-/// assert_eq!(*log.borrow(), vec![10]);
+/// clone.accept(&7);
+/// assert_eq!(*log.borrow(), vec![10, 14]);
 /// ```
-/// # Borrowing and reentrancy
+/// # Panics
 ///
 /// Each call holds a mutable `RefCell` borrow while the user callback runs.
 /// Synchronous re-entry through the same shared wrapper panics with a borrow

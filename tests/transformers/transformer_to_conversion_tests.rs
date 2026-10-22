@@ -7,29 +7,15 @@
 // =============================================================================
 
 // ============================================================================
-// BoxTransformer Tests - Immutable, single ownership
+// Transformer Display Tests
 // ============================================================================
 
 #[cfg(test)]
 mod to_conversion_tests {
     use qubit_function::ArcTransformer;
 
-    // ArcTransformer to_xxx tests
-
-    // RcTransformer to_xxx tests
-
-    // Test to_xxx with composition
-
-    // Test multiple conversions
-
-    // Test with different types
-
-    // Test thread safety with Arc - clone first to get owned values
-
-    // Test that to_xxx creates independent copies
-
     // ========================================================================
-    // Closure / function-pointer Transformer to_xxx Tests
+    // Transformer Display Tests
     // ========================================================================
 
     #[test]

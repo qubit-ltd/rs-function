@@ -5,18 +5,12 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
+//! Tests for the `ConsumerOnce` trait and its implementations.
+
 use std::sync::Arc;
 use std::sync::Mutex;
 
-///
-/// # ConsumerOnce Tests
-///
-/// Unit tests for the ConsumerOnce trait and its implementations.
 use qubit_function::BoxConsumerOnce;
-///
-/// # ConsumerOnce Tests
-///
-/// Unit tests for the ConsumerOnce trait and its implementations.
 use qubit_function::ConsumerOnce;
 
 // ============================================================================
@@ -31,7 +25,7 @@ mod box_consumer_once_tests {
     use super::Mutex;
 
     #[test]
-    fn test_new() {
+    fn test_box_consumer_once_new_invokes_callback() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
         let consumer = BoxConsumerOnce::new(move |x: &i32| {
@@ -42,7 +36,7 @@ mod box_consumer_once_tests {
     }
 
     #[test]
-    fn test_accept() {
+    fn test_box_consumer_once_accept_passes_input_to_callback() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
         let consumer = BoxConsumerOnce::new(move |x: &i32| {
@@ -53,7 +47,7 @@ mod box_consumer_once_tests {
     }
 
     #[test]
-    fn test_and_then() {
+    fn test_box_consumer_once_and_then_invokes_callbacks_in_order() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l1 = log.clone();
         let l2 = log.clone();
@@ -68,7 +62,7 @@ mod box_consumer_once_tests {
     }
 
     #[test]
-    fn test_and_then_multiple() {
+    fn test_box_consumer_once_and_then_multiple_invokes_callbacks_in_order() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l1 = log.clone();
         let l2 = log.clone();
@@ -87,14 +81,14 @@ mod box_consumer_once_tests {
     }
 
     #[test]
-    fn test_noop() {
+    fn test_box_consumer_once_noop_accepts_input_without_panicking() {
         let noop = BoxConsumerOnce::<i32>::noop();
         noop.accept(&42);
         // Should not panic
     }
 
     #[test]
-    fn test_new_with_name() {
+    fn test_box_consumer_once_new_with_name_exposes_name_and_invokes_callback() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
         let consumer = BoxConsumerOnce::new_with_name("test_consumer", move |x: &i32| {
@@ -108,7 +102,7 @@ mod box_consumer_once_tests {
     // print and print_with methods have been removed
 
     #[test]
-    fn test_if_then_true() {
+    fn test_box_consumer_once_when_invokes_callback_when_condition_is_true() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
         let consumer = BoxConsumerOnce::new(move |x: &i32| {
@@ -120,7 +114,7 @@ mod box_consumer_once_tests {
     }
 
     #[test]
-    fn test_if_then_false() {
+    fn test_box_consumer_once_when_skips_callback_when_condition_is_false() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
         let consumer = BoxConsumerOnce::new(move |x: &i32| {
@@ -132,7 +126,7 @@ mod box_consumer_once_tests {
     }
 
     #[test]
-    fn test_if_then_else_true() {
+    fn test_box_consumer_once_when_or_else_invokes_first_callback_when_true() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l1 = log.clone();
         let l2 = log.clone();
@@ -147,7 +141,7 @@ mod box_consumer_once_tests {
     }
 
     #[test]
-    fn test_if_then_else_false() {
+    fn test_box_consumer_once_when_or_else_invokes_fallback_when_false() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l1 = log.clone();
         let l2 = log.clone();

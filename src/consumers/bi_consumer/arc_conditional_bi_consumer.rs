@@ -19,11 +19,14 @@ use crate::consumers::macros::impl_shared_conditional_consumer;
 // 8. ArcConditionalBiConsumer - Arc-based Conditional BiConsumer
 // =======================================================================
 
-/// ArcConditionalBiConsumer struct
+/// A conditional bi-consumer that shares its callback and predicate through
+/// `Arc`, and invokes the callback only when the predicate accepts both inputs.
+/// The callback and predicate must be thread-safe and `'static`.
 ///
-/// A conditional bi-consumer that wraps an `ArcBiConsumer` and only executes
-/// when a predicate is satisfied. Based on `Arc` for thread-safe shared
-/// ownership.
+/// # Type Parameters
+///
+/// * `T` - The type of the first borrowed input.
+/// * `U` - The type of the second borrowed input.
 ///
 /// # Features
 ///
@@ -33,6 +36,28 @@ use crate::consumers::macros::impl_shared_conditional_consumer;
 /// - **Implements BiConsumer**: Can be used anywhere a `BiConsumer` is expected
 /// - **Shared access**: Receives shared references; interior mutability and
 ///   external side effects remain possible
+///
+/// # Examples
+///
+/// ```rust
+/// use std::sync::Arc;
+/// use std::sync::atomic::AtomicI32;
+/// use std::sync::atomic::Ordering;
+///
+/// use qubit_function::ArcBiConsumer;
+/// use qubit_function::BiConsumer;
+///
+/// let total = Arc::new(AtomicI32::new(0));
+/// let callback_total = Arc::clone(&total);
+/// let consumer = ArcBiConsumer::new(move |first: &i32, second: &i32| {
+///     callback_total.fetch_add(first + second, Ordering::SeqCst);
+/// })
+/// .when(|first: &i32, second: &i32| *first > 0 && *second > 0);
+///
+/// consumer.accept(&2, &3);
+/// consumer.accept(&-1, &5);
+/// assert_eq!(total.load(Ordering::SeqCst), 5);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcConditionalBiConsumer<T, U> {
     /// The wrapped consumer callback.
@@ -51,6 +76,7 @@ impl_shared_conditional_consumer!(
 
 // Hand-written BiConsumer trait implementation
 impl<T, U> BiConsumer<T, U> for ArcConditionalBiConsumer<T, U> {
+    /// Invokes the wrapped consumer when the predicate accepts both inputs.
     fn accept(&self, first: &T, second: &U) {
         if self.predicate.test(first, second) {
             self.consumer.accept(first, second);

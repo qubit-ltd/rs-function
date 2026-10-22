@@ -6,10 +6,15 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::BoxConditionalFunction;
+use qubit_function::BoxFunction;
+use qubit_function::Function;
 
 #[test]
-fn test_box_conditional_function_observable_behavior() {
-    let type_name = std::any::type_name::<BoxConditionalFunction<i32, i32>>();
-    assert!(type_name.contains("BoxConditionalFunction"), "{type_name}");
+fn test_box_conditional_function_applies_matching_branch() {
+    let double = BoxFunction::new(|value: &i32| value * 2);
+    let identity = BoxFunction::<i32, i32>::identity();
+    let conditional = double.when(|value: &i32| *value > 0).or_else(identity);
+
+    assert_eq!(conditional.apply(&5), 10);
+    assert_eq!(conditional.apply(&-5), -5);
 }

@@ -9,45 +9,8 @@
 //! Unit tests for StatefulMutatingFunction types (stateful FnMut(&mut T) ->
 //! R)
 
-use std::cell::RefCell;
-use std::rc::Rc;
-
-use qubit_function::ArcStatefulMutatingFunction;
 use qubit_function::BoxStatefulMutatingFunction;
-use qubit_function::MutatingFunctionOnce;
-use qubit_function::RcStatefulMutatingFunction;
 use qubit_function::StatefulMutatingFunction;
-
-// ============================================================================
-// StatefulMutatingFunction Default Implementation Tests
-// ============================================================================
-
-/// Test struct that implements StatefulMutatingFunction to test default methods
-struct TestStatefulMutatingFunction {
-    multiplier: i32,
-}
-
-impl TestStatefulMutatingFunction {
-    fn new(multiplier: i32) -> Self {
-        TestStatefulMutatingFunction { multiplier }
-    }
-}
-
-impl StatefulMutatingFunction<i32, i32> for TestStatefulMutatingFunction {
-    fn apply(&mut self, input: &mut i32) -> i32 {
-        let old_value = *input;
-        *input *= self.multiplier;
-        old_value
-    }
-}
-
-impl Clone for TestStatefulMutatingFunction {
-    fn clone(&self) -> Self {
-        TestStatefulMutatingFunction {
-            multiplier: self.multiplier,
-        }
-    }
-}
 
 // ============================================================================
 // BoxStatefulMutatingFunction Tests

@@ -176,6 +176,12 @@ pub use arc_conditional_mutating_function::ArcConditionalMutatingFunction;
 /// - **Generic Programming**: Write functions that work with any mutating
 ///   function type
 ///
+/// # Type Parameters
+///
+/// * `T` - The input type that the function may modify through a mutable
+///   reference.
+/// * `R` - The value returned after the function processes the input.
+///
 /// # Examples
 ///
 /// ## Generic Function

@@ -24,6 +24,10 @@ use crate::suppliers::macros::impl_supplier_debug_display;
 /// Uses `Box<dyn FnOnce() -> T>` for one-time value generation.
 /// Can only call `get()` once, consuming the supplier.
 ///
+/// # Type Parameters
+///
+/// - `T`: The value produced when the supplier is consumed.
+///
 /// # Examples
 ///
 /// ## Lazy Initialization

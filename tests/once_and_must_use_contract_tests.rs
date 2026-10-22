@@ -5,7 +5,6 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-// behavior.
 
 use std::fs;
 use std::path::PathBuf;

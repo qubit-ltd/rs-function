@@ -33,6 +33,21 @@ use crate::functions::macros::impl_function_identity_method;
 /// - **Reusability**: Can be called multiple times (borrows its input each
 ///   time)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
+///
+/// # Type Parameters
+///
+/// - `T` is the input type borrowed by each invocation.
+/// - `R` is the value produced by each invocation.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::BoxFunction;
+/// use qubit_function::Function;
+///
+/// let double = BoxFunction::new(|value: &i32| value * 2);
+/// assert_eq!(double.apply(&21), 42);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxFunction<T, R> {
     /// The wrapped callback implementation.

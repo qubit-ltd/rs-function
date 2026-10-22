@@ -55,7 +55,3 @@ mod edge_case_tests {
         assert_eq!(concat.apply("Hello".to_string(), "World".to_string()), "HelloWorld");
     }
 }
-
-// ============================================================================
-// Tests for complex transformations
-// ============================================================================

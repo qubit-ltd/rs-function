@@ -23,11 +23,12 @@ use crate::functions::macros::impl_shared_function_methods;
 // 4. RcMutatingFunction - Single-Threaded Shared Ownership
 // =======================================================================
 
-/// RcMutatingFunction struct
+/// Shares a callback that mutates an input and returns a result.
 ///
-/// A mutating function implementation based on `Rc<dyn Fn(&mut T) -> R>` for
-/// single-threaded shared ownership scenarios. This type allows multiple
-/// references to the same function without the overhead of thread safety.
+/// The callback is stored in an `Rc`, so clones share the same callback
+/// allocation without thread-safe reference-counting overhead. Calls borrow
+/// this wrapper immutably, while the callback receives exclusive access to
+/// each input for the duration of that call. The wrapper is not thread-safe.
 ///
 /// # Features
 ///
@@ -61,7 +62,13 @@ use crate::functions::macros::impl_shared_function_methods;
 ///
 /// let mut value = 5;
 /// assert_eq!(func.apply(&mut value), 10);
+/// assert_eq!(value, 10);
 /// ```
+///
+/// # Type Parameters
+///
+/// * `T` - The input type, mutably borrowed by the callback.
+/// * `R` - The value returned after the callback processes the input.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcMutatingFunction<T, R> {
     /// The wrapped callback implementation.

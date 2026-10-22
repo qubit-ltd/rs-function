@@ -35,6 +35,10 @@ use crate::consumers::macros::impl_conditional_consumer_debug_display;
 /// - **Implements ConsumerOnce**: Can be used anywhere a `ConsumerOnce` is
 ///   expected
 ///
+/// # Type Parameters
+///
+/// - `T` is the type of the input borrowed by the predicate and callback.
+///
 /// # Examples
 ///
 /// ## Basic Conditional Execution
@@ -86,6 +90,11 @@ pub struct BoxConditionalConsumerOnce<T> {
 impl_box_conditional_consumer!(BoxConditionalConsumerOnce<T>, BoxConsumerOnce, ConsumerOnce);
 
 impl<T> ConsumerOnce<T> for BoxConditionalConsumerOnce<T> {
+    /// Consumes this wrapper and invokes its callback when the predicate
+    /// matches.
+    ///
+    /// If the predicate returns `false`, the callback is dropped without being
+    /// invoked.
     fn accept(self, value: &T) {
         if self.predicate.test(value) {
             self.consumer.accept(value);

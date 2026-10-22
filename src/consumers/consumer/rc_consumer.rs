@@ -36,6 +36,10 @@ use crate::consumers::macros::impl_shared_consumer_methods;
 /// - **Non-consuming API**: `and_then` borrows `&self`, original object remains
 ///   usable
 ///
+/// # Type Parameters
+///
+/// * `T` - The input type borrowed by the callback.
+///
 /// # Use Cases
 ///
 /// Choose `RcConsumer` when:
@@ -87,7 +91,7 @@ impl<T> RcConsumer<T> {
 }
 
 impl<T> Consumer<T> for RcConsumer<T> {
-    #[inline(always)]
+    #[inline]
     fn accept(&self, value: &T) {
         (self.function)(value)
     }

@@ -37,6 +37,20 @@ use crate::transformers::macros::impl_transformer_debug_display;
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync`)
 /// - **Clonable**: Cheap cloning via `Rc::clone`
 /// - **Statefulness**: Can modify internal state between calls
+///
+/// # Type Parameters
+///
+/// * `T` - The input type consumed by the wrapped callback.
+/// * `R` - The output type produced by the wrapped callback.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::{RcStatefulTransformer, StatefulTransformer};
+///
+/// let mut transformer = RcStatefulTransformer::new(|value: i32| value * 2);
+/// assert_eq!(transformer.apply(3), 6);
+/// ```
 /// # Borrowing and reentrancy
 ///
 /// Each call holds a mutable `RefCell` borrow while the user callback runs.

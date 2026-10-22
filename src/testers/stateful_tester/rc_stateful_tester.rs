@@ -28,6 +28,16 @@ type RcStatefulTesterFn = Rc<RefCell<dyn FnMut() -> bool>>;
 /// Each call holds a mutable `RefCell` borrow while the user callback runs.
 /// Synchronous re-entry through the same shared wrapper panics with a borrow
 /// error. Mutations completed before a panic are not rolled back.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::RcStatefulTester;
+/// use qubit_function::StatefulTester;
+///
+/// let mut tester = RcStatefulTester::new(|| true);
+/// assert!(tester.test());
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcStatefulTester {
     /// The wrapped callback implementation.
@@ -49,6 +59,10 @@ impl RcStatefulTester {
     /// Combines this tester with another stateful tester using logical AND.
     ///
     /// The second tester is evaluated only when this tester returns `true`.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The stateful tester evaluated after this tester succeeds.
     ///
     /// # Parameters
     ///
@@ -76,6 +90,10 @@ impl RcStatefulTester {
     ///
     /// The second tester is evaluated only when this tester returns `false`.
     ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The stateful tester evaluated after this tester fails.
+    ///
     /// # Parameters
     ///
     /// * `next` - The tester evaluated after this tester fails.
@@ -99,6 +117,10 @@ impl RcStatefulTester {
     }
 
     /// Combines this tester with another stateful tester using logical NAND.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The stateful tester combined with this tester.
     ///
     /// # Parameters
     ///
@@ -124,6 +146,10 @@ impl RcStatefulTester {
 
     /// Combines this tester with another stateful tester using logical XOR.
     ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The stateful tester combined with this tester.
+    ///
     /// # Parameters
     ///
     /// * `next` - The tester combined with this tester.
@@ -147,6 +173,10 @@ impl RcStatefulTester {
     }
 
     /// Combines this tester with another stateful tester using logical NOR.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The stateful tester combined with this tester.
     ///
     /// # Parameters
     ///
@@ -172,6 +202,7 @@ impl RcStatefulTester {
 }
 
 impl Clone for RcStatefulTester {
+    /// Clones the wrapper while sharing its callback state with the original.
     #[inline]
     fn clone(&self) -> Self {
         RcStatefulTester {
@@ -184,6 +215,7 @@ impl Clone for RcStatefulTester {
 impl Not for RcStatefulTester {
     type Output = RcStatefulTester;
 
+    /// Creates a tester that negates this tester and takes ownership of it.
     #[inline]
     fn not(self) -> Self::Output {
         let metadata = self.metadata;
@@ -201,6 +233,7 @@ impl Not for RcStatefulTester {
 impl Not for &RcStatefulTester {
     type Output = RcStatefulTester;
 
+    /// Creates a negated tester while retaining the original wrapper.
     #[inline]
     fn not(self) -> Self::Output {
         let function = Rc::clone(&self.function);
@@ -215,6 +248,7 @@ impl Not for &RcStatefulTester {
 }
 
 impl StatefulTester for RcStatefulTester {
+    /// Invokes the wrapped callback while holding its mutable borrow.
     #[inline]
     fn test(&mut self) -> bool {
         let mut function = self.function.borrow_mut();
@@ -223,6 +257,7 @@ impl StatefulTester for RcStatefulTester {
 }
 
 impl fmt::Debug for RcStatefulTester {
+    /// Formats the tester using its optional diagnostic name.
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         formatter
             .debug_struct("RcStatefulTester")
@@ -232,6 +267,7 @@ impl fmt::Debug for RcStatefulTester {
 }
 
 impl fmt::Display for RcStatefulTester {
+    /// Displays the tester type and its optional diagnostic name.
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.metadata.name() {
             Some(name) => write!(formatter, "RcStatefulTester({name})"),

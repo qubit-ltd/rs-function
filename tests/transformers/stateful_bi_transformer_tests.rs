@@ -6,6 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
+use std::thread;
+
 use qubit_function::ArcStatefulBiTransformer;
 use qubit_function::ArcStatefulBinaryOperator;
 use qubit_function::ArcStatefulTransformer;
@@ -318,8 +320,6 @@ fn test_arc_stateful_bi_transformer_when_preserves_original() {
 #[test]
 fn test_arc_stateful_bi_transformer_thread_safe() {
     // Test thread safety
-    use std::thread;
-
     let mut counter = 0;
     let transformer = ArcStatefulBiTransformer::new(move |x: i32, y: i32| {
         counter += 1;

@@ -164,10 +164,14 @@ pub use box_conditional_mutator_once::BoxConditionalMutatorOnce;
 /// - `Mutator` uses `&mut self`, can be called multiple times
 /// - `MutatorOnce` uses `self`, can only be called once
 ///
+/// # Type Parameters
+///
+/// * `T` - The value type passed mutably to the one-time operation.
+///
 /// # Features
 ///
-/// - **Unified Interface**: All one-time mutators share the same `mutate`
-///   method signature
+/// - **Unified Interface**: All one-time mutators share the same `apply` method
+///   signature
 /// - **Automatic Implementation**: Closures implement this trait directly,
 ///   without allocating an adapter
 /// - **Generic Programming**: Write functions that work with any one-time

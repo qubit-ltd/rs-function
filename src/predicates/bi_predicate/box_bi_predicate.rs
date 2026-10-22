@@ -23,6 +23,10 @@ use crate::predicates::macros::impl_predicate_debug_display;
 /// type but does not need to be cloned or shared. Composition
 /// methods consume `self`, reflecting the single-ownership model.
 ///
+/// # Type Parameters
+///
+/// * `T` - The type of the first value tested by the predicate.
+/// * `U` - The type of the second value tested by the predicate.
 ///
 /// # Examples
 ///

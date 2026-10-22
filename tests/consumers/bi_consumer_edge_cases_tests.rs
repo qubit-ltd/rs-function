@@ -5,28 +5,17 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-use std::cell::RefCell;
-use std::rc::Rc;
-use std::sync::Arc;
-
-/// Tests for BiConsumer types
-use qubit_function::ArcBiConsumer;
-/// Tests for BiConsumer types
-use qubit_function::BiConsumer;
-/// Tests for BiConsumer types
-use qubit_function::BoxBiConsumer;
-/// Tests for BiConsumer types
-use qubit_function::RcBiConsumer;
-
 #[cfg(test)]
 mod edge_cases_tests {
-    use super::Arc;
-    use super::ArcBiConsumer;
-    use super::BiConsumer;
-    use super::BoxBiConsumer;
-    use super::Rc;
-    use super::RcBiConsumer;
-    use super::RefCell;
+    use std::cell::RefCell;
+    use std::rc::Rc;
+    use std::sync::Arc;
+    use std::sync::Mutex;
+
+    use qubit_function::ArcBiConsumer;
+    use qubit_function::BiConsumer;
+    use qubit_function::BoxBiConsumer;
+    use qubit_function::RcBiConsumer;
 
     #[test]
     fn test_noop_multiple_calls() {
@@ -39,7 +28,7 @@ mod edge_cases_tests {
 
     #[test]
     fn test_and_then_with_noop() {
-        let counter = Arc::new(std::sync::Mutex::new(0));
+        let counter = Arc::new(Mutex::new(0));
         let c = counter.clone();
         let consumer = BoxBiConsumer::new(move |_x: &i32, _y: &i32| {
             *c.lock().expect("mutex should not be poisoned") += 1;
@@ -51,7 +40,7 @@ mod edge_cases_tests {
 
     #[test]
     fn test_complex_chain() {
-        let counter = Arc::new(std::sync::Mutex::new(0));
+        let counter = Arc::new(Mutex::new(0));
         let c1 = counter.clone();
         let c2 = counter.clone();
         let c3 = counter.clone();
@@ -71,7 +60,7 @@ mod edge_cases_tests {
 
     #[test]
     fn test_with_different_types() {
-        let counter = Arc::new(std::sync::Mutex::new(String::new()));
+        let counter = Arc::new(Mutex::new(String::new()));
         let c = counter.clone();
         let consumer = BoxBiConsumer::new(move |s: &String, n: &i32| {
             *c.lock().expect("mutex should not be poisoned") = format!("{}: {}", s, n);
@@ -82,7 +71,7 @@ mod edge_cases_tests {
 
     #[test]
     fn test_arc_consumer_multiple_threads() {
-        let counter = Arc::new(std::sync::Mutex::new(0));
+        let counter = Arc::new(Mutex::new(0));
         let c = counter.clone();
         let consumer = ArcBiConsumer::new(move |x: &i32, y: &i32| {
             *c.lock().expect("mutex should not be poisoned") += x + y;
@@ -134,11 +123,3 @@ mod edge_cases_tests {
         assert_eq!(chained.name(), None);
     }
 }
-
-// ============================================================================
-// Conversion Tests
-// ============================================================================
-
-// ============================================================================
-// Name Tests - Testing name() and set_name() methods
-// ============================================================================

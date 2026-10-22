@@ -7,9 +7,14 @@
 // =============================================================================
 
 use qubit_function::BoxMutator;
+use qubit_function::Mutator;
 
 #[test]
 fn test_box_mutator_observable_behavior() {
-    let type_name = std::any::type_name::<BoxMutator<i32>>();
-    assert!(type_name.contains("BoxMutator"), "{type_name}");
+    let mutator = BoxMutator::new(|value: &mut i32| *value *= 2);
+    let mut value = 5;
+
+    mutator.apply(&mut value);
+
+    assert_eq!(value, 10, "BoxMutator should apply its callback to the value");
 }

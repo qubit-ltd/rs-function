@@ -38,6 +38,10 @@ use crate::mutators::macros::impl_shared_mutator_methods;
 /// - **Mutable State**: Can modify captured environment via `FnMut`
 /// - **Chainable**: Method chaining via `&self` (non-consuming)
 ///
+/// # Type Parameters
+///
+/// * `T` - The value mutated by the wrapped callback.
+///
 /// # Use Cases
 ///
 /// Choose `ArcStatefulMutator` when:

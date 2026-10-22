@@ -8,11 +8,8 @@
 
 //! Comprehensive tests for BiFunctionOnce trait and BoxBiFunctionOnce
 
-use qubit_function::ArcBiPredicate;
 use qubit_function::BiFunctionOnce;
 use qubit_function::BoxBiFunctionOnce;
-use qubit_function::BoxBiPredicate;
-use qubit_function::RcBiPredicate;
 
 // ============================================================================
 // BiFunctionOnce Trait Tests - Core Functionality
@@ -149,10 +146,6 @@ fn test_box_bi_function_once_apply() {
 }
 
 // ============================================================================
-// Concrete wrapper composition tests
-// ============================================================================
-
-// ============================================================================
 // BoxConditionalBiFunctionOnce Tests - Conditional BiFunctions
 // ============================================================================
 
@@ -284,14 +277,6 @@ fn test_box_conditional_bi_function_once_debug() {
 }
 
 // ============================================================================
-// Error Handling Tests
-// ============================================================================
-
-// ============================================================================
-// Custom BiFunctionOnce Implementation Tests - Test Trait Default Methods
-// ============================================================================
-
-// ============================================================================
 // Performance and Edge Cases
 // ============================================================================
 
@@ -299,8 +284,8 @@ fn test_box_conditional_bi_function_once_debug() {
 fn test_bi_function_once_with_large_data() {
     // Test with large data structures
     let large_vec = vec![1; 10000];
-    let combine = |v1: &Vec<i32>, v2: &Vec<i32>| {
-        let mut result = v1.clone();
+    let combine = |v1: &[i32], v2: &[i32]| {
+        let mut result = v1.to_vec();
         result.extend(v2);
         result
     };
@@ -342,8 +327,3 @@ fn test_bi_function_once_with_references() {
     assert_eq!(func(&data, &2), 3);
     assert_eq!(func(&data, &10), 0); // out of bounds
 }
-
-// ============================================================================
-// Custom BiFunctionOnce Implementation Tests - Comprehensive Default Methods
-// Testing
-// ============================================================================

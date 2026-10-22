@@ -11,8 +11,6 @@
 use qubit_function::ArcBiFunction;
 use qubit_function::ArcBiPredicate;
 use qubit_function::BiFunction;
-use qubit_function::BiFunctionOnce;
-use qubit_function::BoxBiFunction;
 use qubit_function::RcBiFunction;
 use qubit_function::RcBiPredicate;
 
@@ -98,10 +96,6 @@ fn test_impl_conditional_function_clone_three_params_macro_coverage() {
         assert_eq!(func.apply(&3, &5), -8); // or_else branch: -(3 + 5) = -8
     }
 }
-
-// ============================================================================
-// Advanced Composition Tests
-// ============================================================================
 
 // ============================================================================
 // Thread Safety Tests for ArcBiFunction

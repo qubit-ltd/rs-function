@@ -6,52 +6,13 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-//! Unit tests for Mutator types (stateless Fn(&mut T))
-
-use qubit_function::ArcMutator;
-use qubit_function::BoxMutator;
-use qubit_function::Mutator;
-use qubit_function::MutatorOnce;
-use qubit_function::RcMutator;
-
-// ============================================================================
-// Mutator Default Implementation Tests
-// ============================================================================
-
-/// Test struct that implements Mutator to test default methods
-struct TestMutator {
-    multiplier: i32,
-}
-
-impl TestMutator {
-    fn new(multiplier: i32) -> Self {
-        TestMutator { multiplier }
-    }
-}
-
-impl Mutator<i32> for TestMutator {
-    fn apply(&self, input: &mut i32) {
-        *input *= self.multiplier;
-    }
-}
-
-impl Clone for TestMutator {
-    fn clone(&self) -> Self {
-        TestMutator {
-            multiplier: self.multiplier,
-        }
-    }
-}
-
-// ============================================================================
-// BoxMutator Tests
-// ============================================================================
+//! Debug and display tests for conditional mutator types.
 
 #[cfg(test)]
 mod test_conditional_mutator_debug_display {
-    use super::ArcMutator;
-    use super::BoxMutator;
-    use super::RcMutator;
+    use qubit_function::ArcMutator;
+    use qubit_function::BoxMutator;
+    use qubit_function::RcMutator;
 
     #[test]
     fn test_box_conditional_mutator_debug() {
@@ -113,7 +74,3 @@ mod test_conditional_mutator_debug_display {
         assert!(display_str.contains("ArcConditionalMutator"));
     }
 }
-
-// ============================================================================
-// Name Preservation Tests for into_xxx and to_xxx Methods
-// ============================================================================

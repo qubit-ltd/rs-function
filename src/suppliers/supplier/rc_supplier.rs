@@ -26,6 +26,10 @@ use crate::suppliers::macros::impl_supplier_debug_display;
 /// Uses `Rc<dyn Fn() -> T>` for single-threaded shared ownership.
 /// Can be cloned but not sent across threads.
 ///
+/// # Type Parameters
+///
+/// - `T`: The value produced by each callback invocation.
+///
 /// # Ownership Model
 ///
 /// Like `ArcSupplier`, methods borrow `&self` instead of

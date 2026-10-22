@@ -25,14 +25,28 @@ use crate::macros::impl_closure_once_trait;
 /// `Box<dyn FnOnce>`
 ///
 /// A transformer wrapper that provides single ownership with one-time use
-/// semantics. Consumes both self and the input value.
+/// semantics. Calling it consumes the wrapper and borrows the input value.
+///
+/// # Type Parameters
+///
+/// - `T`: The input type borrowed by the callback.
+/// - `R`: The output type returned by the callback.
 ///
 /// # Features
 ///
 /// - **Based on**: `Box<dyn FnOnce(&T) -> R>`
 /// - **Ownership**: Single ownership, cannot be cloned
-/// - **Reusability**: Can only be called once (consumes self and input)
+/// - **Reusability**: Can only be called once (consumes self)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::{BoxFunctionOnce, FunctionOnce};
+///
+/// let double = BoxFunctionOnce::new(|value: &i32| value * 2);
+/// assert_eq!(double.apply(&21), 42);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxFunctionOnce<T, R> {
     /// The wrapped callback implementation.

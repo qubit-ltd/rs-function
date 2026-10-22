@@ -42,7 +42,10 @@ use crate::functions::macros::impl_shared_conditional_function;
 /// ```rust
 /// use qubit_function::{MutatingFunction, RcMutatingFunction};
 ///
-/// let double = RcMutatingFunction::new(|x: &mut i32| *x * 2);
+/// let double = RcMutatingFunction::new(|x: &mut i32| {
+///     *x *= 2;
+///     *x
+/// });
 /// let identity = RcMutatingFunction::<i32, i32>::identity();
 /// let conditional = double.when(|x: &i32| *x > 0).or_else(identity);
 ///
@@ -50,6 +53,7 @@ use crate::functions::macros::impl_shared_conditional_function;
 ///
 /// let mut positive = 5;
 /// assert_eq!(conditional.apply(&mut positive), 10);
+/// assert_eq!(positive, 10);
 /// let mut negative = -5;
 /// assert_eq!(conditional_clone.apply(&mut negative), -5);
 /// ```

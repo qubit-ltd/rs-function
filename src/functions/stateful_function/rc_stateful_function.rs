@@ -38,6 +38,26 @@ use crate::functions::macros::impl_shared_function_methods;
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync`)
 /// - **Clonable**: Cheap cloning via `Rc::clone`
 /// - **Statefulness**: Can modify internal state between calls
+///
+/// # Type Parameters
+///
+/// * `T` - The type of each borrowed input value.
+/// * `R` - The type of each returned output value.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::{RcStatefulFunction, StatefulFunction};
+///
+/// let mut call_count = 0;
+/// let mut function = RcStatefulFunction::new(move |value: &i32| {
+///     call_count += 1;
+///     value + call_count
+/// });
+///
+/// assert_eq!(function.apply(&5), 6);
+/// assert_eq!(function.apply(&5), 7);
+/// ```
 /// # Borrowing and reentrancy
 ///
 /// Each call holds a mutable `RefCell` borrow while the user callback runs.

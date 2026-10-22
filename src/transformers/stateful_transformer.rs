@@ -49,6 +49,15 @@ pub use arc_conditional_stateful_transformer::ArcConditionalStatefulTransformer;
 /// allowing modification of internal state. This is analogous to
 /// `FnMut(T) -> R` in Rust's standard library.
 ///
+/// # Examples
+///
+/// ```
+/// use qubit_function::StatefulTransformer;
+///
+/// let mut double = |value| value * 2;
+/// assert_eq!(double.apply(3), 6);
+/// ```
+///
 /// # Type Parameters
 ///
 /// * `T` - The type of the input value (consumed)

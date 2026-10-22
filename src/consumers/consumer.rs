@@ -78,6 +78,10 @@ pub use arc_conditional_consumer::ArcConditionalConsumer;
 /// - **No Wrapper Interior Mutability**: No need for Mutex or RefCell in the
 ///   wrapper, making shared ownership more efficient
 ///
+/// # Type Parameters
+///
+/// * `T` - The input value type passed to the consumer by shared reference.
+///
 /// # Examples
 ///
 /// ```rust

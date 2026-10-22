@@ -29,6 +29,12 @@ use crate::functions::macros::impl_conditional_function_debug_display;
 /// `BoxStatefulMutatingFunction::when()` and is designed to work with the
 /// `or_else()` method to create if-then-else logic.
 ///
+/// # Type Parameters
+///
+/// * `T` - The mutable input type accepted by the wrapped callback and
+///   predicate.
+/// * `R` - The result type returned by the wrapped callback.
+///
 /// # Features
 ///
 /// - **Single Ownership**: Not cloneable, consumes `self` on use

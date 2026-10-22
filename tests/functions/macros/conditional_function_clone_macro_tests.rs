@@ -6,47 +6,24 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-//! Dedicated test file for impl_conditional_function_clone macro coverage
-//!
-//! This test file is specifically created to ensure that the three-parameter
-//! version of the impl_conditional_function_clone macro is properly tested.
-//!
-//! The macro has two branches:
-//! 1. Two generic parameters: `$struct_name:ident < $t:ident, $r:ident >`
-//! 2. Three generic parameters: `$struct_name:ident < $t:ident, $u:ident,
-//!    $r:ident >`
-//!
-//! This file focuses on testing the three-parameter version (BiFunction types).
+//! Verifies cloning and using a conditional two-argument function.
 
-use qubit_function::BiFunction;
 use qubit_function::RcBiFunction;
+use qubit_function::BiFunction;
 use qubit_function::RcBiPredicate;
 
-/// Test the three-parameter version of impl_conditional_function_clone macro
-///
-/// This test verifies that the macro's three-parameter branch (for BiFunction
-/// types) generates correct Clone implementations.
-///
-/// NOTE: The existing conditional structs (RcConditionalBiFunction, etc.) have
-/// fields that all implement Clone, so Rust automatically provides Clone
-/// implementations that take precedence over macro-generated ones. This test
-/// simulates the macro's behavior with a custom struct to ensure the
-/// three-parameter branch logic is correct.
+/// Confirms a cloned conditional function retains its selected behavior.
 #[test]
 fn test_three_param_conditional_clone_macro_coverage() {
-    // Test the custom struct with macro-generated Clone
-    {
-        let add = RcBiFunction::new(|x: &i32, y: &i32| *x + *y);
-        let multiply = RcBiFunction::new(|x: &i32, y: &i32| *x * *y);
-        let pred = RcBiPredicate::new(|x: &i32, y: &i32| *x > 0 && *y > 0);
+    let add = RcBiFunction::new(|x: &i32, y: &i32| *x + *y);
+    let multiply = RcBiFunction::new(|x: &i32, y: &i32| *x * *y);
+    let pred = RcBiPredicate::new(|x: &i32, y: &i32| *x > 0 && *y > 0);
 
-        let conditional = add.when(pred);
+    let conditional = add.when(pred);
 
-        let cloned = conditional.clone();
+    let cloned = conditional.clone();
 
-        let func = cloned.or_else(multiply);
+    let func = cloned.or_else(multiply);
 
-        // Verify functionality
-        assert_eq!(func.apply(&3, &4), 7);
-    }
+    assert_eq!(func.apply(&3, &4), 7);
 }

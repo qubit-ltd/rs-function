@@ -25,6 +25,15 @@ use crate::tasks::runnable::Runnable;
 /// # Type Parameters
 ///
 /// * `E` - The error value returned when the action fails.
+///
+/// # Examples
+///
+/// ```rust
+/// use qubit_function::{LocalBoxRunnable, Runnable};
+///
+/// let mut task = LocalBoxRunnable::new(|| Ok::<(), String>(()));
+/// assert_eq!(task.run(), Ok(()));
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct LocalBoxRunnable<E> {
     /// The stateful closure executed by this runnable.

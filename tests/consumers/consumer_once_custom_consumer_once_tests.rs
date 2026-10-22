@@ -5,29 +5,12 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-use std::sync::Arc;
-use std::sync::Mutex;
-
-///
-/// # ConsumerOnce Tests
-///
-/// Unit tests for the ConsumerOnce trait and its implementations.
-use qubit_function::BoxConsumerOnce;
-///
-/// # ConsumerOnce Tests
-///
-/// Unit tests for the ConsumerOnce trait and its implementations.
-use qubit_function::ConsumerOnce;
-
-// ============================================================================
-// BoxConsumerOnce Tests
-// ============================================================================
-
 #[cfg(test)]
 mod custom_consumer_once_tests {
-    use super::Arc;
-    use super::ConsumerOnce;
-    use super::Mutex;
+    use std::sync::Arc;
+    use std::sync::Mutex;
+
+    use qubit_function::ConsumerOnce;
 
     /// Custom consumer that increments a counter
     struct CustomConsumer {
@@ -123,7 +106,3 @@ mod custom_consumer_once_tests {
         }
     }
 }
-
-// ============================================================================
-// BoxConditionalConsumerOnce Focused Tests
-// ============================================================================

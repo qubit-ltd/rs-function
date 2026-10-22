@@ -94,7 +94,7 @@ impl_predicate_debug_display!(RcPredicate<T>);
 
 // Implements Predicate trait for RcPredicate<T>
 impl<T> Predicate<T> for RcPredicate<T> {
-    #[inline(always)]
+    #[inline]
     fn test(&self, value: &T) -> bool {
         (self.function)(value)
     }

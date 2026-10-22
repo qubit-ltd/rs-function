@@ -7,17 +7,14 @@
 // =============================================================================
 //! Tests for BiTransformerOnce trait and implementations
 
-use qubit_function::BiTransformerOnce;
-use qubit_function::BoxBiTransformerOnce;
-
 // ============================================================================
 // Tests for BiTransformerOnce trait
 // ============================================================================
 
 #[cfg(test)]
 mod conditional_tests {
-    use super::BiTransformerOnce;
-    use super::BoxBiTransformerOnce;
+    use qubit_function::BiTransformerOnce;
+    use qubit_function::BoxBiTransformerOnce;
 
     #[test]
     fn test_when_with_or_else_condition_true() {
@@ -91,7 +88,3 @@ mod conditional_tests {
         assert_eq!(conditional.apply(5, 0), 5); // add
     }
 }
-
-// ============================================================================
-// Tests for different data types
-// ============================================================================

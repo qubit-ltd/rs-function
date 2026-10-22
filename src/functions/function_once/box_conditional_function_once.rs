@@ -18,22 +18,24 @@ use crate::functions::macros::impl_conditional_function_debug_display;
 // BoxConditionalFunctionOnce - Box-based Conditional Function
 // ============================================================================
 
-/// BoxConditionalFunctionOnce struct
+/// A boxed, one-shot conditional transformer that owns its predicate and
+/// callback and consumes them when applied.
 ///
-/// A conditional consuming transformer that only executes when a predicate is
-/// satisfied. Uses `BoxFunctionOnce` and `BoxPredicate` for single
-/// ownership semantics.
-///
-/// This type is typically created by calling `BoxFunctionOnce::when()` and
-/// is designed to work with the `or_else()` method to create if-then-else
-/// logic.
+/// The wrapped callback runs when the predicate matches. Use [`or_else`] to
+/// provide a second one-shot callback for inputs that do not match. This type
+/// is typically created with [`BoxFunctionOnce::when`].
 ///
 /// # Features
 ///
-/// - **Single Ownership**: Not cloneable, consumes `self` on use
+/// - **Single Ownership**: Not cloneable; applying it consumes the callback
 /// - **One-time Use**: Can only be called once
-/// - **Conditional Execution**: Only transforms when predicate returns `true`
+/// - **Conditional Execution**: Chooses a callback based on the predicate
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
+///
+/// # Type Parameters
+///
+/// - `T`: The input type borrowed by the predicate and callback.
+/// - `R`: The output type produced by the selected callback.
 ///
 /// # Examples
 ///

@@ -6,10 +6,21 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::RcConditionalBiConsumer;
+use std::cell::Cell;
+
+use qubit_function::BiConsumer;
+use qubit_function::RcBiConsumer;
 
 #[test]
 fn test_rc_conditional_bi_consumer_observable_behavior() {
-    let type_name = std::any::type_name::<RcConditionalBiConsumer<i32, i32>>();
-    assert!(type_name.contains("RcConditionalBiConsumer"), "{type_name}");
+    let total = Cell::new(0);
+    let consumer = RcBiConsumer::new(|first: &usize, second: &usize| {
+        total.set(total.get() + first + second);
+    });
+    let conditional_consumer = consumer.when(|first: &usize, second: &usize| first + second > 10);
+
+    conditional_consumer.accept(&2, &3);
+    conditional_consumer.accept(&5, &7);
+
+    assert_eq!(total.get(), 12, "only matching input should be consumed");
 }

@@ -37,11 +37,39 @@ use crate::transformers::macros::impl_transformer_debug_display;
 ///   inputs)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync`)
 /// - **Clonable**: Cheap cloning via `Rc::clone`
+///
 /// # Borrowing and reentrancy
 ///
 /// Each call holds a mutable `RefCell` borrow while the user callback runs.
 /// Synchronous re-entry through the same shared wrapper panics with a borrow
 /// error. Mutations completed before a panic are not rolled back.
+///
+/// # Type Parameters
+///
+/// * `T` - Type of the first input consumed by the callback.
+/// * `U` - Type of the second input consumed by the callback.
+/// * `R` - Type of the value returned by the callback.
+///
+/// # Examples
+///
+/// Clones share the callback's mutable state:
+///
+/// ```
+/// use qubit_function::RcStatefulBiTransformer;
+/// use qubit_function::StatefulBiTransformer;
+///
+/// let mut total = 0;
+/// let mut add_and_accumulate = RcStatefulBiTransformer::new(
+///     move |first: i32, second: i32| {
+///         total += first + second;
+///         total
+///     },
+/// );
+/// let mut shared_clone = add_and_accumulate.clone();
+///
+/// assert_eq!(add_and_accumulate.apply(2, 3), 5);
+/// assert_eq!(shared_clone.apply(1, 4), 10);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcStatefulBiTransformer<T, U, R> {
     /// The wrapped callback implementation.

@@ -7,9 +7,11 @@
 // =============================================================================
 
 use qubit_function::ArcBiTransformer;
+use qubit_function::BiTransformer;
 
 #[test]
 fn test_arc_bi_transformer_observable_behavior() {
-    let type_name = std::any::type_name::<ArcBiTransformer<i32, i32, i32>>();
-    assert!(type_name.contains("ArcBiTransformer"), "{type_name}");
+    let add = ArcBiTransformer::new(|first: i32, second: i32| first + second);
+
+    assert_eq!(add.apply(20, 22), 42);
 }

@@ -9,18 +9,25 @@
 
 use super::RcStatefulBiTransformer;
 
-/// A locally shared stateful binary transformation over one type.
+/// A single-threaded, cloneable binary operator whose calls share mutable
+/// callback state.
 ///
-/// Represents a single-threaded binary operator that takes two values of type
-/// `T` and produces a value of the same type `T`. Equivalent to Java's
-/// `BinaryOperator<T>` with shared, single-threaded ownership.
+/// This alias specializes [`RcStatefulBiTransformer`] so both consumed inputs
+/// and the output have type `T`. Clones share the same callback through
+/// reference counting; the operator is not thread-safe.
+///
+/// # Type Parameters
+///
+/// * `T` - The type consumed for both inputs and returned as the result.
 ///
 /// # Examples
 ///
 /// ```rust
 /// use qubit_function::{RcStatefulBinaryOperator, StatefulBiTransformer};
 ///
-/// let max: RcStatefulBinaryOperator<i32> = RcStatefulBinaryOperator::new(|x, y| if x > y { x } else { y });
+/// let max: RcStatefulBinaryOperator<i32> = RcStatefulBinaryOperator::new(
+///     |x, y| if x > y { x } else { y },
+/// );
 /// let mut max_clone = max.clone();
 /// let mut max = max;
 /// assert_eq!(max.apply(30, 42), 42);

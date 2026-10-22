@@ -38,6 +38,10 @@ use crate::mutators::macros::impl_shared_mutator_methods;
 /// - **Chainable**: Method chaining via `&self` (non-consuming)
 /// - **Performance**: More efficient than `ArcStatefulMutator` (no locking)
 ///
+/// # Type Parameters
+///
+/// * `T` - The value mutated by the wrapped callback.
+///
 /// # Use Cases
 ///
 /// Choose `RcStatefulMutator` when:

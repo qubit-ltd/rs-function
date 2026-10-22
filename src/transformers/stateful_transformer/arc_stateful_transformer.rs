@@ -40,6 +40,20 @@ use crate::transformers::macros::impl_transformer_debug_display;
 /// - **Clonable**: Cheap cloning via `Arc::clone`
 /// - **Statefulness**: Can modify internal state between calls
 ///
+/// # Type Parameters
+///
+/// * `T` - The input type consumed by the wrapped callback.
+/// * `R` - The output type produced by the wrapped callback.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::{ArcStatefulTransformer, StatefulTransformer};
+///
+/// let mut transformer = ArcStatefulTransformer::new(|value: i32| value * 2);
+/// assert_eq!(transformer.apply(3), 6);
+/// ```
+///
 /// # Locking and reentrancy
 ///
 /// Each call acquires a `parking_lot::Mutex` and holds it while the user

@@ -5,23 +5,15 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-use std::thread;
-
-use qubit_function::ArcBiTransformer;
-use qubit_function::BiTransformer;
-use qubit_function::BoxBiTransformer;
-use qubit_function::RcBiTransformer;
-
 // ============================================================================
-// BoxBiTransformer Tests - Immutable, single ownership
+// ArcBiTransformer Tests - Immutable, thread-safe shared ownership
 // ============================================================================
 
 #[cfg(test)]
 mod arc_conditional_tests {
     use qubit_function::ArcBiPredicate;
-
-    use super::ArcBiTransformer;
-    use super::BiTransformer;
+    use qubit_function::ArcBiTransformer;
+    use qubit_function::BiTransformer;
 
     #[test]
     fn test_when_or_else() {

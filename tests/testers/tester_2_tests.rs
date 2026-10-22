@@ -11,7 +11,6 @@
 mod tests {
     use std::sync::Arc;
     use std::sync::atomic::AtomicBool;
-    use std::sync::atomic::AtomicUsize;
     use std::sync::atomic::Ordering;
 
     use qubit_function::testers::tester::ArcTester;
@@ -19,69 +18,6 @@ mod tests {
     use qubit_function::testers::tester::RcTester;
     use qubit_function::testers::tester::Tester;
 
-    // ========================================================================
-    // BoxTester tests
-    // ========================================================================
-
-    /// Custom tester type that only implements the core test() method
-    /// to verify that default implementations of into_xxx() methods
-    /// work correctly.
-    struct AlwaysTrueTester;
-
-    impl Tester for AlwaysTrueTester {
-        fn test(&self) -> bool {
-            true
-        }
-    }
-
-    /// Custom tester type that only implements the core test() method
-    /// for thread-safe scenarios to test into_arc() default impl.
-    #[derive(Clone)]
-    struct ThreadSafeTester {
-        value: Arc<AtomicBool>,
-    }
-
-    impl ThreadSafeTester {
-        fn new(value: bool) -> Self {
-            Self {
-                value: Arc::new(AtomicBool::new(value)),
-            }
-        }
-    }
-
-    impl Tester for ThreadSafeTester {
-        fn test(&self) -> bool {
-            self.value.load(Ordering::Relaxed)
-        }
-    }
-
-    // ========================================================================
-    // Custom Tester implementation tests for default into_xxx/to_xxx methods
-    // ========================================================================
-
-    // Define a custom Tester that implements Clone and is Send + Sync
-    #[derive(Clone)]
-    struct CustomTester {
-        value: Arc<AtomicBool>,
-    }
-
-    impl Tester for CustomTester {
-        fn test(&self) -> bool {
-            self.value.load(Ordering::Relaxed)
-        }
-    }
-
-    // Test with a non-Clone custom tester to ensure into_xxx works
-    // but to_xxx would fail at compile time
-    struct NonCloneTester {
-        value: Arc<AtomicBool>,
-    }
-
-    impl Tester for NonCloneTester {
-        fn test(&self) -> bool {
-            self.value.load(Ordering::Relaxed)
-        }
-    }
     #[test]
     fn test_precondition_check_scenario() {
         struct Operation {

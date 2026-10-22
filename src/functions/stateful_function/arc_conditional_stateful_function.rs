@@ -36,6 +36,11 @@ use crate::functions::macros::impl_shared_conditional_function;
 /// - **Conditional Execution**: Only maps when predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 ///
+/// # Type Parameters
+///
+/// * `T` - Input type borrowed by the predicate and callbacks.
+/// * `R` - Value returned by the selected callback.
+///
 /// # Examples
 ///
 /// ```rust

@@ -102,10 +102,6 @@ macro_rules! impl_common_new_methods {
             }
         }
 
-        #[allow(
-            dead_code,
-            reason = "generated for metadata-preserving wrapper transformations"
-        )]
         /// Creates a wrapper while preserving existing metadata.
         ///
         /// # Parameters
@@ -116,6 +112,10 @@ macro_rules! impl_common_new_methods {
         /// # Returns
         ///
         #[doc = concat!("A new ", $type_desc, " wrapper.")]
+        #[allow(
+            dead_code,
+            reason = "generated for metadata-preserving wrapper transformations"
+        )]
         #[inline]
         pub(crate) fn new_with_metadata<F>(
             mut $source: F,
@@ -212,10 +212,6 @@ macro_rules! impl_common_new_methods {
             }
         }
 
-        #[allow(
-            dead_code,
-            reason = "generated for metadata-preserving wrapper transformations"
-        )]
         /// Creates a wrapper while preserving existing metadata.
         ///
         /// # Parameters
@@ -226,6 +222,10 @@ macro_rules! impl_common_new_methods {
         /// # Returns
         ///
         #[doc = concat!("A new ", $type_desc, " wrapper.")]
+        #[allow(
+            dead_code,
+            reason = "generated for metadata-preserving wrapper transformations"
+        )]
         #[inline]
         pub(crate) fn new_with_metadata<F>(
             $source: F,
@@ -316,10 +316,6 @@ macro_rules! impl_common_new_methods {
             }
         }
 
-        #[allow(
-            dead_code,
-            reason = "generated for metadata-preserving wrapper transformations"
-        )]
         /// Creates a wrapper while preserving existing metadata.
         ///
         /// # Parameters
@@ -330,6 +326,10 @@ macro_rules! impl_common_new_methods {
         /// # Returns
         ///
         #[doc = concat!("A new ", $type_desc, " wrapper.")]
+        #[allow(
+            dead_code,
+            reason = "generated for metadata-preserving wrapper transformations"
+        )]
         #[inline]
         pub(crate) fn new_with_metadata<F>(
             $f: F,

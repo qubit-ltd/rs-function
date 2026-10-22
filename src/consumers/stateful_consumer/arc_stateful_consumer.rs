@@ -61,10 +61,14 @@ type ArcStatefulConsumerFn<T> = Arc<Mutex<dyn FnMut(&T) + Send>>;
 /// is not needed, consider using `RcStatefulConsumer` for less single-threaded
 /// sharing overhead.
 ///
+/// # Type Parameters
+///
+/// * `T` - The input type borrowed by the callback.
+///
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{Consumer, StatefulConsumer, ArcStatefulConsumer};
+/// use qubit_function::{ArcStatefulConsumer, StatefulConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -75,7 +79,8 @@ type ArcStatefulConsumerFn<T> = Arc<Mutex<dyn FnMut(&T) + Send>>;
 /// let mut clone = consumer.clone();
 ///
 /// consumer.accept(&5);
-/// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![10]);
+/// clone.accept(&6);
+/// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![10, 12]);
 /// ```
 ///
 /// # Locking and reentrancy

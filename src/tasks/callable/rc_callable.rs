@@ -35,6 +35,15 @@ use crate::tasks::callable::Callable;
 /// Each call holds a mutable `RefCell` borrow while the user callback runs.
 /// Synchronous re-entry through the same shared wrapper panics with a borrow
 /// error. Mutations completed before a panic are not rolled back.
+///
+/// # Examples
+///
+/// ```rust
+/// use qubit_function::{Callable, RcCallable};
+///
+/// let mut task = RcCallable::new(|| Ok::<i32, String>(42));
+/// assert_eq!(task.call().expect("call should succeed"), 42);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcCallable<R, E> {
     /// The stateful closure executed by this callable.

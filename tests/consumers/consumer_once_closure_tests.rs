@@ -5,18 +5,12 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
+//! Tests closure implementations of the `ConsumerOnce` trait.
+
 use std::sync::Arc;
 use std::sync::Mutex;
 
 use qubit_function::BoxConsumerOnce;
-///
-/// # ConsumerOnce Tests
-///
-/// Unit tests for the ConsumerOnce trait and its implementations.
-///
-/// # ConsumerOnce Tests
-///
-/// Unit tests for the ConsumerOnce trait and its implementations.
 use qubit_function::ConsumerOnce;
 
 // ============================================================================

@@ -11,6 +11,7 @@ use std::sync::Arc;
 
 use parking_lot::Mutex;
 
+use crate::internal::CallbackMetadata;
 use crate::macros::impl_common_name_methods;
 use crate::macros::impl_common_new_methods;
 use crate::suppliers::macros::impl_supplier_debug_display;
@@ -29,21 +30,32 @@ use crate::tasks::runnable::Runnable;
 /// # Type Parameters
 ///
 /// * `E` - The error value returned when the action fails.
+///
 /// # Locking and reentrancy
 ///
 /// Each call acquires a `parking_lot::Mutex` and holds it while the user
 /// callback runs. Synchronous re-entry through the same shared wrapper
 /// deadlocks. The mutex is not poisoned after a panic, and mutations completed
 /// before a panic are not rolled back.
+///
+/// # Examples
+///
+/// ```rust
+/// use qubit_function::{ArcRunnable, Runnable};
+///
+/// let mut task = ArcRunnable::new(|| Ok::<(), String>(()));
+/// assert_eq!(task.run(), Ok(()));
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcRunnable<E> {
     /// The stateful closure executed by this runnable.
     pub(super) function: Arc<Mutex<dyn FnMut() -> Result<(), E> + Send>>,
     /// The optional name of this runnable.
-    pub(super) metadata: crate::internal::CallbackMetadata,
+    pub(super) metadata: CallbackMetadata,
 }
 
 impl<E> Clone for ArcRunnable<E> {
+    /// Clones the shared callback and its diagnostic metadata handle.
     #[inline]
     fn clone(&self) -> Self {
         Self {

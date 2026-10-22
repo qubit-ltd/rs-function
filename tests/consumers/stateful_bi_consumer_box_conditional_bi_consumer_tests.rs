@@ -6,48 +6,19 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-//! Comprehensive tests for StatefulBiConsumer types
-//!
-//! This module provides exhaustive test coverage for all StatefulBiConsumer
-//! implementations including BoxStatefulBiConsumer, ArcStatefulBiConsumer,
-//! RcStatefulBiConsumer, and their conditional variants.
-
-use std::cell::RefCell;
-use std::rc::Rc;
-use std::sync::Arc;
-use std::sync::Mutex;
-
-use qubit_function::ArcStatefulBiConsumer;
-use qubit_function::BiConsumerOnce;
-use qubit_function::BoxStatefulBiConsumer;
-use qubit_function::RcStatefulBiConsumer;
-use qubit_function::StatefulBiConsumer;
+//! Tests conditional behavior for `BoxStatefulBiConsumer`.
 
 // ============================================================================
 // BoxStatefulBiConsumer Tests
 // ============================================================================
 
-/// Custom struct for testing StatefulBiConsumer trait default implementations
-#[derive(Clone)]
-struct CustomStatefulBiConsumer {
-    multiplier: i32,
-    log: Arc<Mutex<Vec<i32>>>,
-}
-
-impl StatefulBiConsumer<i32, i32> for CustomStatefulBiConsumer {
-    fn accept(&mut self, first: &i32, second: &i32) {
-        self.multiplier += 1;
-        let result = (*first + *second) * self.multiplier;
-        self.log.lock().expect("mutex should not be poisoned").push(result);
-    }
-}
-
 #[cfg(test)]
 mod box_conditional_bi_consumer_tests {
-    use super::Arc;
-    use super::BoxStatefulBiConsumer;
-    use super::Mutex;
-    use super::StatefulBiConsumer;
+    use std::sync::Arc;
+    use std::sync::Mutex;
+
+    use qubit_function::BoxStatefulBiConsumer;
+    use qubit_function::StatefulBiConsumer;
 
     // Test accept() with true condition
     #[test]

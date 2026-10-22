@@ -6,41 +6,16 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-//! # Box Predicate Methods Macro
-//!
-//! Generates logical operation method implementations for Box-based Predicate
-//!
-//! Generates basic logical operations (and, or, nand, xor, nor) for Box-based
-//! predicates that consume self (because Box cannot be cloned).
-//!
-//! This macro supports both single-parameter and two-parameter predicates
-//! through pattern matching on the struct signature.
-//!
-//! # Parameters
-//!
-//! * `$struct_name<$generics>` - The struct name with its generic parameters
-//!   - Single parameter: `BoxPredicate<T>`
-//!   - Two parameters: `BoxBiPredicate<T, U>`
-//!
-//! # Examples
-//!
-//! ```ignore
-//! // Single-parameter predicate
-//! impl_box_predicate_methods!(BoxPredicate<T>);
-//!
-//! // Two-parameter predicate
-//! impl_box_predicate_methods!(BoxBiPredicate<T, U>);
-//! ```
+//! Provides a macro for generating logical composition methods for boxed
+//! predicates.
 
-/// Generates logical operation method implementations for Box-based Predicate
+/// Generates logical operation methods for boxed predicates.
 ///
 /// This macro should be used at the top level (outside of any impl block) as
 /// it generates a complete impl block with methods for the specified struct.
-/// Generates basic logical operations (and, or, nand, xor, nor) for Box-based
-/// predicates that consume self (because Box cannot be cloned).
-///
-/// This macro supports both single-parameter and two-parameter predicates
-/// through pattern matching on the struct signature.
+/// The generated methods consume `self` because boxed predicates cannot be
+/// cloned. The macro supports both single-parameter and two-parameter
+/// predicates through pattern matching on the struct signature.
 ///
 /// # Parameters
 ///
@@ -65,6 +40,11 @@ macro_rules! impl_box_predicate_methods {
         ///
         /// This method consumes `self` due to single-ownership semantics.
         ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The type of the other predicate; it must implement the
+        ///   matching predicate trait and be `'static`.
+        ///
         /// # Parameters
         ///
         /// * `other` - The other predicate to combine with.
@@ -85,6 +65,11 @@ macro_rules! impl_box_predicate_methods {
         /// and another.
         ///
         /// This method consumes `self` due to single-ownership semantics.
+        ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The type of the other predicate; it must implement the
+        ///   matching predicate trait and be `'static`.
         ///
         /// # Parameters
         ///
@@ -110,6 +95,11 @@ macro_rules! impl_box_predicate_methods {
         ///
         /// This method consumes `self` due to single-ownership semantics.
         ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The type of the other predicate; it must implement the
+        ///   matching predicate trait and be `'static`.
+        ///
         /// # Parameters
         ///
         /// * `other` - The other predicate to combine with.
@@ -132,6 +122,11 @@ macro_rules! impl_box_predicate_methods {
         /// XOR returns `true` if exactly one of the predicates is `true`.
         ///
         /// This method consumes `self` due to single-ownership semantics.
+        ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The type of the other predicate; it must implement the
+        ///   matching predicate trait and be `'static`.
         ///
         /// # Parameters
         ///
@@ -157,6 +152,11 @@ macro_rules! impl_box_predicate_methods {
         ///
         /// This method consumes `self` due to single-ownership semantics.
         ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The type of the other predicate; it must implement the
+        ///   matching predicate trait and be `'static`.
+        ///
         /// # Parameters
         ///
         /// * `other` - The other predicate to combine with.
@@ -181,6 +181,11 @@ macro_rules! impl_box_predicate_methods {
         ///
         /// This method consumes `self` due to single-ownership semantics.
         ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The type of the other bi-predicate; it must implement the
+        ///   matching predicate trait and be `'static`.
+        ///
         /// # Parameters
         ///
         /// * `other` - The other bi-predicate to combine with.
@@ -202,6 +207,11 @@ macro_rules! impl_box_predicate_methods {
         /// bi-predicate and another.
         ///
         /// This method consumes `self` due to single-ownership semantics.
+        ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The type of the other bi-predicate; it must implement the
+        ///   matching predicate trait and be `'static`.
         ///
         /// # Parameters
         ///
@@ -228,6 +238,11 @@ macro_rules! impl_box_predicate_methods {
         ///
         /// This method consumes `self` due to single-ownership semantics.
         ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The type of the other bi-predicate; it must implement the
+        ///   matching predicate trait and be `'static`.
+        ///
         /// # Parameters
         ///
         /// * `other` - The other bi-predicate to combine with.
@@ -253,6 +268,11 @@ macro_rules! impl_box_predicate_methods {
         ///
         /// This method consumes `self` due to single-ownership semantics.
         ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The type of the other bi-predicate; it must implement the
+        ///   matching predicate trait and be `'static`.
+        ///
         /// # Parameters
         ///
         /// * `other` - The other bi-predicate to combine with.
@@ -277,6 +297,11 @@ macro_rules! impl_box_predicate_methods {
         /// Equivalent to `!(self OR other)`.
         ///
         /// This method consumes `self` due to single-ownership semantics.
+        ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The type of the other bi-predicate; it must implement the
+        ///   matching predicate trait and be `'static`.
         ///
         /// # Parameters
         ///

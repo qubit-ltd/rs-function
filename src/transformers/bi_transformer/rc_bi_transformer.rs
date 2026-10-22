@@ -36,6 +36,22 @@ use crate::transformers::macros::impl_transformer_debug_display;
 ///   inputs)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync`)
 /// - **Clonable**: Cheap cloning via `Rc::clone`
+///
+/// # Type Parameters
+///
+/// - `T` - The type of the first input consumed by the callback.
+/// - `U` - The type of the second input consumed by the callback.
+/// - `R` - The callback's output type.
+///
+/// # Examples
+///
+/// ```
+/// use qubit_function::BiTransformer;
+/// use qubit_function::RcBiTransformer;
+///
+/// let add = RcBiTransformer::new(|first: i32, second: i32| first + second);
+/// assert_eq!(add.apply(2, 3), 5);
+/// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcBiTransformer<T, U, R> {
     /// The wrapped callback implementation.

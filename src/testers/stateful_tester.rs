@@ -55,6 +55,7 @@ impl<F> StatefulTester for F
 where
     F: FnMut() -> bool,
 {
+    /// Delegates each test call to the wrapped stateful function.
     #[inline(always)]
     fn test(&mut self) -> bool {
         self()

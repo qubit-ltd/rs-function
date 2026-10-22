@@ -25,12 +25,15 @@ use crate::functions::macros::impl_shared_function_methods;
 // 4. RcStatefulMutatingFunction - Single-Threaded Shared Ownership
 // =======================================================================
 
-/// RcStatefulMutatingFunction struct
-///
 /// A stateful mutating function implementation based on
 /// `Rc<RefCell<dyn FnMut(&mut T) -> R>>` for single-threaded shared
 /// ownership scenarios. This type allows multiple references to the same
 /// function without the overhead of thread safety.
+///
+/// # Type Parameters
+///
+/// * `T` - The type of the mutable input accepted by the callback.
+/// * `R` - The result type returned by the callback.
 ///
 /// # Features
 ///
@@ -67,6 +70,7 @@ use crate::functions::macros::impl_shared_function_methods;
 ///
 /// let mut value = 5;
 /// assert_eq!(clone.apply(&mut value), 1);
+/// assert_eq!(value, 10);
 /// ```
 /// # Borrowing and reentrancy
 ///

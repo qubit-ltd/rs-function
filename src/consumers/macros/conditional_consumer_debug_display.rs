@@ -17,7 +17,8 @@
 //! # Parameters
 //!
 //! * `$struct_name` - The struct name
-//! * `$generic` - Generic parameter list (one or more type parameters)
+//! * `$t` - The first type parameter
+//! * `$u` - The second type parameter, when the struct has two parameters
 //!
 //! # Examples
 //!
@@ -50,8 +51,8 @@
 /// # Parameters
 ///
 /// * `$struct_name` - The struct name
-/// * `$t` - Generic parameter list (one or more type parameters)
-/// * `u` - Generic parameter list (one or more type parameters)
+/// * `$t` - The first type parameter
+/// * `$u` - The second type parameter, when the struct has two parameters
 ///
 /// # Examples
 ///

@@ -35,6 +35,12 @@ use crate::functions::macros::impl_shared_conditional_function;
 /// - **Conditional Execution**: Only computes when bi-predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 ///
+/// # Type Parameters
+///
+/// - `T` - The type of the first borrowed input.
+/// - `U` - The type of the second borrowed input.
+/// - `R` - The value produced by the selected bi-function.
+///
 /// # Examples
 ///
 /// ```rust
