@@ -8,8 +8,8 @@
 
 //! Unit tests for Mutator types (stateless Fn(&mut T))
 
-use qubit_function::RcMutator;
 use qubit_function::Mutator;
+use qubit_function::RcMutator;
 
 // ============================================================================
 // RcMutator Tests

@@ -6,11 +6,12 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::ArcConditionalStatefulTransformer;
+use qubit_function::ArcStatefulTransformer;
+use qubit_function::StatefulTransformer;
 
 #[test]
 fn test_arc_conditional_stateful_transformer_observable_behavior() {
-    let mut transformer = ArcConditionalStatefulTransformer::new(|value: i32| value * 2)
+    let mut transformer = ArcStatefulTransformer::new(|value: i32| value * 2)
         .when(|value: &i32| *value > 0)
         .or_else(|value: i32| -value);
 

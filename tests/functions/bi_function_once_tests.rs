@@ -284,8 +284,8 @@ fn test_box_conditional_bi_function_once_debug() {
 fn test_bi_function_once_with_large_data() {
     // Test with large data structures
     let large_vec = vec![1; 10000];
-    let combine = |v1: &[i32], v2: &[i32]| {
-        let mut result = v1.to_vec();
+    let combine = |v1: &Vec<i32>, v2: &Vec<i32>| {
+        let mut result = v1.clone();
         result.extend(v2);
         result
     };

@@ -9,9 +9,9 @@
 //! Comprehensive tests for StatefulFunction trait and its implementations
 
 use qubit_function::ArcStatefulFunction;
-use qubit_function::StatefulFunction;
 use qubit_function::BoxStatefulFunction;
 use qubit_function::RcStatefulFunction;
+use qubit_function::StatefulFunction;
 
 // ============================================================================
 // Conditional StatefulFunction Debug and Display Tests

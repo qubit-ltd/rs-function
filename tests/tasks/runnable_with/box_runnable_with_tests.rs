@@ -17,6 +17,6 @@ fn test_box_runnable_with_runs_callback_on_mutable_input() {
     });
     let mut input = 0;
 
-    assert_eq!(runnable.run_with(&mut input), Ok(()));
+    assert!(runnable.run_with(&mut input).is_ok());
     assert_eq!(input, 1);
 }

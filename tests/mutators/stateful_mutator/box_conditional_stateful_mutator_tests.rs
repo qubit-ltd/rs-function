@@ -12,7 +12,7 @@ use qubit_function::StatefulMutator;
 #[test]
 fn test_box_conditional_stateful_mutator_applies_only_when_predicate_matches() {
     let mut calls = 0;
-    let mut conditional = BoxStatefulMutator::new(|value: &mut i32| {
+    let mut conditional = BoxStatefulMutator::new(move |value: &mut i32| {
         calls += 1;
         *value += calls;
     })

@@ -12,7 +12,7 @@ use qubit_function::StatefulBiTransformer;
 #[test]
 fn test_arc_stateful_bi_transformer_applies_stateful_function() {
     let mut total = 0;
-    let mut transformer = ArcStatefulBiTransformer::new(|first: i32, second: i32| {
+    let mut transformer = ArcStatefulBiTransformer::new(move |first: i32, second: i32| {
         total += first + second;
         total
     });

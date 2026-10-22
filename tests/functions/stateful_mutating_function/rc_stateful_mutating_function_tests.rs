@@ -12,7 +12,7 @@ use qubit_function::StatefulMutatingFunction;
 #[test]
 fn test_rc_stateful_mutating_function_observable_behavior() {
     let mut call_count = 0;
-    let mut function = RcStatefulMutatingFunction::new(|value: &mut i32| {
+    let mut function = RcStatefulMutatingFunction::new(move |value: &mut i32| {
         call_count += 1;
         *value += 1;
         call_count

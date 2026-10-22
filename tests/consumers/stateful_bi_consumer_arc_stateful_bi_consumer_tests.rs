@@ -15,7 +15,6 @@ mod arc_stateful_bi_consumer_tests {
     use std::sync::Mutex;
 
     use qubit_function::ArcStatefulBiConsumer;
-    use qubit_function::BiConsumerOnce;
     use qubit_function::StatefulBiConsumer;
 
     // Test new() constructor
@@ -123,15 +122,15 @@ mod arc_stateful_bi_consumer_tests {
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
     }
 
-    // Test accept_once() from BiConsumerOnce trait
+    // Test accept() on the stateful consumer.
     #[test]
-    fn test_accept_once() {
+    fn test_accept_updates_state() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
-        let consumer = ArcStatefulBiConsumer::new(move |x: &i32, y: &i32| {
+        let mut consumer = ArcStatefulBiConsumer::new(move |x: &i32, y: &i32| {
             l.lock().expect("mutex should not be poisoned").push(*x + *y);
         });
-        BiConsumerOnce::accept(consumer, &5, &3);
+        consumer.accept(&5, &3);
         assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
     }
 

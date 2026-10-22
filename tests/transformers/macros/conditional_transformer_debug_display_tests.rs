@@ -18,6 +18,6 @@ fn test_conditional_transformer_debug_display_observable_behavior() {
     );
     assert_eq!(
         format!("{:?}", conditional),
-        "BoxConditionalTransformer { transformer: BoxTransformer, predicate: BoxPredicate { name: None, function: \"<function>\" } }"
+        "BoxConditionalTransformer { transformer: BoxTransformer { name: None, function: \"<function>\" }, predicate: BoxPredicate { name: None, function: \"<function>\" } }"
     );
 }

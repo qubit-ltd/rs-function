@@ -23,7 +23,7 @@ fn test_arc_runnable_clone_shares_callback_state() {
     });
     let mut cloned_runnable = runnable.clone();
 
-    assert_eq!(runnable.run(), Ok(()));
-    assert_eq!(cloned_runnable.run(), Ok(()));
+    assert!(runnable.run().is_ok());
+    assert!(cloned_runnable.run().is_ok());
     assert_eq!(call_count.load(Ordering::SeqCst), 2);
 }

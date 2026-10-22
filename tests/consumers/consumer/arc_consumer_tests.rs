@@ -7,11 +7,11 @@
 // =============================================================================
 
 use std::sync::Arc;
-use qubit_function::Consumer;
 use std::sync::atomic::AtomicUsize;
 use std::sync::atomic::Ordering;
 
 use qubit_function::ArcConsumer;
+use qubit_function::Consumer;
 
 #[test]
 fn test_arc_consumer_observable_behavior() {

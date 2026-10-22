@@ -8,10 +8,10 @@
 
 //! Unit tests for the predicate module.
 
+use qubit_function::Predicate;
 use qubit_function::predicates::ArcPredicate;
 use qubit_function::predicates::BoxPredicate;
 use qubit_function::predicates::RcPredicate;
-use qubit_function::Predicate;
 
 #[cfg(test)]
 mod parameter_types_tests {

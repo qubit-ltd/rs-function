@@ -7,15 +7,17 @@
 // =============================================================================
 
 use std::cell::Cell;
+use std::rc::Rc;
 
 use qubit_function::BiConsumer;
 use qubit_function::RcBiConsumer;
 
 #[test]
 fn test_rc_conditional_bi_consumer_observable_behavior() {
-    let total = Cell::new(0);
-    let consumer = RcBiConsumer::new(|first: &usize, second: &usize| {
-        total.set(total.get() + first + second);
+    let total = Rc::new(Cell::new(0));
+    let callback_total = Rc::clone(&total);
+    let consumer = RcBiConsumer::new(move |first: &usize, second: &usize| {
+        callback_total.set(callback_total.get() + first + second);
     });
     let conditional_consumer = consumer.when(|first: &usize, second: &usize| first + second > 10);
 

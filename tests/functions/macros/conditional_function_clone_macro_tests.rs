@@ -8,8 +8,8 @@
 
 //! Verifies cloning and using a conditional two-argument function.
 
-use qubit_function::RcBiFunction;
 use qubit_function::BiFunction;
+use qubit_function::RcBiFunction;
 use qubit_function::RcBiPredicate;
 
 /// Confirms a cloned conditional function retains its selected behavior.

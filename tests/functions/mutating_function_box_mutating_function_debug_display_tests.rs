@@ -9,8 +9,8 @@
 //! Unit tests for MutatingFunction types (stateless Fn(&mut T) -> R)
 
 use qubit_function::ArcMutatingFunction;
-use qubit_function::MutatingFunction;
 use qubit_function::BoxMutatingFunction;
+use qubit_function::MutatingFunction;
 use qubit_function::RcMutatingFunction;
 
 // ============================================================================

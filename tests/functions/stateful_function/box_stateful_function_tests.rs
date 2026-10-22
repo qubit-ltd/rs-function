@@ -12,7 +12,7 @@ use qubit_function::StatefulFunction;
 #[test]
 fn test_box_stateful_function_reuses_mutable_callback_state() {
     let mut call_count = 0;
-    let mut function = BoxStatefulFunction::new(|input: &i32| {
+    let mut function = BoxStatefulFunction::new(move |input: &i32| {
         call_count += 1;
         input + call_count
     });

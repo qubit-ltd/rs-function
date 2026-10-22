@@ -9,8 +9,8 @@
 //! Unit tests for the predicate module.
 
 use std::sync::Arc;
-use qubit_function::Predicate;
 
+use qubit_function::Predicate;
 use qubit_function::predicates::ArcPredicate;
 use qubit_function::predicates::BoxPredicate;
 use qubit_function::predicates::RcPredicate;
@@ -19,6 +19,7 @@ use qubit_function::predicates::RcPredicate;
 mod logical_operations_tests {
     use super::ArcPredicate;
     use super::BoxPredicate;
+    use super::Predicate;
     use super::RcPredicate;
 
     // BoxPredicate NAND tests

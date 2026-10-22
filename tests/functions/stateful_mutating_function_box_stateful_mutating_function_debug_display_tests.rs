@@ -10,9 +10,9 @@
 //! R)
 
 use qubit_function::ArcStatefulMutatingFunction;
-use qubit_function::StatefulMutatingFunction;
 use qubit_function::BoxStatefulMutatingFunction;
 use qubit_function::RcStatefulMutatingFunction;
+use qubit_function::StatefulMutatingFunction;
 
 // ============================================================================
 // BoxStatefulMutatingFunction Tests

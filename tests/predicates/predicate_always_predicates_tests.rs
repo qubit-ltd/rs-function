@@ -11,6 +11,7 @@
 use qubit_function::Predicate;
 #[cfg(test)]
 mod always_predicates_tests {
+    use qubit_function::Predicate;
     use qubit_function::predicates::ArcPredicate;
     use qubit_function::predicates::BoxPredicate;
     use qubit_function::predicates::RcPredicate;

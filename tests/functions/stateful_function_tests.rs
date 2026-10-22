@@ -35,7 +35,7 @@ fn test_stateful_function_trait_apply() {
 
     let counter = Rc::new(RefCell::new(0));
     let counter_clone = Rc::clone(&counter);
-    let func = move |x: &i32| {
+    let mut func = move |x: &i32| {
         let current = *counter_clone.borrow();
         *counter_clone.borrow_mut() += 1;
         x + current

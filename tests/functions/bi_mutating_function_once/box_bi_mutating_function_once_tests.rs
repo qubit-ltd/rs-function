@@ -6,8 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::BoxBiMutatingFunctionOnce;
 use qubit_function::BiMutatingFunctionOnce;
+use qubit_function::BoxBiMutatingFunctionOnce;
 
 #[test]
 fn test_box_bi_mutating_function_once_observable_behavior() {
