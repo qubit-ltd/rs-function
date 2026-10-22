@@ -40,9 +40,9 @@ pub use stateful_mutator::ArcStatefulMutator;
 pub use stateful_mutator::BoxConditionalStatefulMutator;
 #[cfg(feature = "stateful")]
 pub use stateful_mutator::BoxStatefulMutator;
-#[cfg(feature = "stateful")]
+#[cfg(all(feature = "stateful", feature = "rc"))]
 pub use stateful_mutator::RcConditionalStatefulMutator;
-#[cfg(feature = "stateful")]
+#[cfg(all(feature = "stateful", feature = "rc"))]
 pub use stateful_mutator::RcStatefulMutator;
 #[cfg(feature = "stateful")]
 pub use stateful_mutator::StatefulMutator;
