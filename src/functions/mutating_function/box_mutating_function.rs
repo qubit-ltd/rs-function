@@ -100,7 +100,7 @@ impl<T, R> BoxMutatingFunction<T, R> {
 impl_function_debug_display!(BoxMutatingFunction<T, R>);
 
 // Generates: identity() method for BoxMutatingFunction<T, T>
-impl_function_identity_method!(BoxMutatingFunction<T, T>, mutating);
+impl_function_identity_method!(BoxMutatingFunction<T, T>, mutating, MutatingFunction);
 
 // Implement MutatingFunction trait for BoxMutatingFunction<T, R>
 impl<T, R> MutatingFunction<T, R> for BoxMutatingFunction<T, R> {

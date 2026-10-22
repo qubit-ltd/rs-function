@@ -48,10 +48,12 @@ type BoxBiFunctionOnceFn<T, U, R> = Box<dyn FnOnce(&T, &U) -> R>;
 /// ```
 /// use qubit_function::{BiFunctionOnce, BoxBiFunctionOnce};
 ///
-/// let concatenate = BoxBiFunctionOnce::new(|first: &str, second: &str| {
+/// let first = String::from("hello");
+/// let second = String::from(" world");
+/// let concatenate = BoxBiFunctionOnce::new(|first: &String, second: &String| {
 ///     format!("{first}{second}")
 /// });
-/// assert_eq!(concatenate.apply("hello", " world"), "hello world");
+/// assert_eq!(concatenate.apply(&first, &second), "hello world");
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxBiFunctionOnce<T, U, R> {

@@ -40,14 +40,19 @@ type ArcStatefulBiPredicateFn<T, U> = Arc<Mutex<dyn FnMut(&T, &U) -> bool + Send
 /// use qubit_function::ArcStatefulBiPredicate;
 /// use qubit_function::StatefulBiPredicate;
 ///
-/// let mut calls = 0;
-/// let mut predicate = ArcStatefulBiPredicate::new(|first: &i32, second: &i32| {
-///     calls += 1;
+/// use std::sync::Arc;
+/// use std::sync::atomic::AtomicUsize;
+/// use std::sync::atomic::Ordering;
+///
+/// let calls = Arc::new(AtomicUsize::new(0));
+/// let callback_calls = Arc::clone(&calls);
+/// let mut predicate = ArcStatefulBiPredicate::new(move |first: &i32, second: &i32| {
+///     callback_calls.fetch_add(1, Ordering::SeqCst);
 ///     first + second == 10
 /// });
 ///
 /// assert!(predicate.test(&4, &6));
-/// assert_eq!(calls, 1);
+/// assert_eq!(calls.load(Ordering::SeqCst), 1);
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcStatefulBiPredicate<T, U> {

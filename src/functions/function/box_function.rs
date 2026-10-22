@@ -77,7 +77,7 @@ impl<T, R> BoxFunction<T, R> {
 impl_function_constant_method!(BoxFunction<T, R>, 'static);
 
 // Generates: identity() method for BoxFunction<T, T>
-impl_function_identity_method!(BoxFunction<T, T>);
+impl_function_identity_method!(BoxFunction<T, T>, Function);
 
 // Generates: Debug and Display implementations for BoxFunction<T, R>
 impl_function_debug_display!(BoxFunction<T, R>);

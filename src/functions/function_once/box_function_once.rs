@@ -83,7 +83,7 @@ impl<T, R> FunctionOnce<T, R> for BoxFunctionOnce<T, R> {
 impl_function_constant_method!(BoxFunctionOnce<T, R>, 'static);
 
 // Generates: identity() method for BoxFunctionOnce<T, T>
-impl_function_identity_method!(BoxFunctionOnce<T, T>);
+impl_function_identity_method!(BoxFunctionOnce<T, T>, FunctionOnce);
 
 // Generates: Debug and Display implementations for BoxFunctionOnce<T, R>
 impl_function_debug_display!(BoxFunctionOnce<T, R>);

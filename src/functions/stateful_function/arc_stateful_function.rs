@@ -103,7 +103,7 @@ impl<T, R> ArcStatefulFunction<T, R> {
 impl_function_constant_method!(ArcStatefulFunction<T, R>, Send + 'static);
 
 // Generates: identity() method for ArcStatefulFunction<T, T>
-impl_function_identity_method!(ArcStatefulFunction<T, T>);
+impl_function_identity_method!(ArcStatefulFunction<T, T>, StatefulFunction);
 
 // Generates: Clone implementation for ArcStatefulFunction<T, R>
 impl_function_clone!(ArcStatefulFunction<T, R>);

@@ -107,7 +107,7 @@ impl<T, R> BoxStatefulMutatingFunction<T, R> {
 impl_function_debug_display!(BoxStatefulMutatingFunction<T, R>);
 
 // Generates: identity() method for BoxStatefulMutatingFunction<T, T>
-impl_function_identity_method!(BoxStatefulMutatingFunction<T, T>, mutating);
+impl_function_identity_method!(BoxStatefulMutatingFunction<T, T>, mutating, StatefulMutatingFunction);
 
 // Implement StatefulMutatingFunction trait for BoxStatefulMutatingFunction<T,
 // R>

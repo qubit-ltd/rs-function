@@ -113,7 +113,7 @@ impl_function_clone!(RcStatefulMutatingFunction<T, R>);
 impl_function_debug_display!(RcStatefulMutatingFunction<T, R>);
 
 // Generates: identity() method for RcStatefulMutatingFunction<T, T>
-impl_function_identity_method!(RcStatefulMutatingFunction<T, T>, mutating);
+impl_function_identity_method!(RcStatefulMutatingFunction<T, T>, mutating, StatefulMutatingFunction);
 
 // Implement StatefulMutatingFunction trait for RcStatefulMutatingFunction<T, R>
 impl<T, R> StatefulMutatingFunction<T, R> for RcStatefulMutatingFunction<T, R> {

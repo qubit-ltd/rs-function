@@ -136,7 +136,7 @@ impl<T, R> MutatingFunctionOnce<T, R> for BoxMutatingFunctionOnce<T, R> {
 }
 
 // Generates: identity() method for BoxMutatingFunctionOnce<T, T>
-impl_function_identity_method!(BoxMutatingFunctionOnce<T, T>, mutating);
+impl_function_identity_method!(BoxMutatingFunctionOnce<T, T>, mutating, MutatingFunctionOnce);
 
 // Generates: Debug and Display implementations for BoxMutatingFunctionOnce<T,
 // R>

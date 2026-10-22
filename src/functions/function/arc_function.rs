@@ -83,7 +83,7 @@ impl<T, R> ArcFunction<T, R> {
 impl_function_constant_method!(ArcFunction<T, R>, Send + Sync + 'static);
 
 // Generates: identity() method for ArcFunction<T, T>
-impl_function_identity_method!(ArcFunction<T, T>);
+impl_function_identity_method!(ArcFunction<T, T>, Function);
 
 // Generates: Clone implementation for ArcFunction<T, R>
 impl_function_clone!(ArcFunction<T, R>);

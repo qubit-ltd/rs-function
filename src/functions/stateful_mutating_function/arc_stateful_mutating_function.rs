@@ -110,7 +110,7 @@ impl_function_clone!(ArcStatefulMutatingFunction<T, R>);
 impl_function_debug_display!(ArcStatefulMutatingFunction<T, R>);
 
 // Generates: identity() method for ArcStatefulMutatingFunction<T, T>
-impl_function_identity_method!(ArcStatefulMutatingFunction<T, T>, mutating);
+impl_function_identity_method!(ArcStatefulMutatingFunction<T, T>, mutating, StatefulMutatingFunction);
 
 // Implement StatefulMutatingFunction trait for ArcStatefulMutatingFunction<T,
 // R>

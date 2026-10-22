@@ -98,7 +98,7 @@ impl<T, R> RcStatefulFunction<T, R> {
 impl_function_constant_method!(RcStatefulFunction<T, R>, 'static);
 
 // Generates: identity() method for RcStatefulFunction<T, T>
-impl_function_identity_method!(RcStatefulFunction<T, T>);
+impl_function_identity_method!(RcStatefulFunction<T, T>, StatefulFunction);
 
 // Generates: Clone implementation for RcStatefulFunction<T, R>
 impl_function_clone!(RcStatefulFunction<T, R>);

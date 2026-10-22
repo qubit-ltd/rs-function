@@ -104,7 +104,7 @@ impl_function_clone!(RcMutatingFunction<T, R>);
 impl_function_debug_display!(RcMutatingFunction<T, R>);
 
 // Generates: identity() method for RcMutatingFunction<T, T>
-impl_function_identity_method!(RcMutatingFunction<T, T>, mutating);
+impl_function_identity_method!(RcMutatingFunction<T, T>, mutating, MutatingFunction);
 
 impl<T, R> MutatingFunction<T, R> for RcMutatingFunction<T, R> {
     #[inline(always)]

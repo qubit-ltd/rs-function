@@ -47,10 +47,12 @@ use crate::consumers::macros::impl_conditional_consumer_debug_display;
 /// use qubit_function::{BiConsumer, BoxBiConsumer};
 ///
 /// use std::cell::Cell;
+/// use std::rc::Rc;
 ///
-/// let total = Cell::new(0);
-/// let consumer = BoxBiConsumer::new(|x: &i32, y: &i32| {
-///     total.set(x + y);
+/// let total = Rc::new(Cell::new(0));
+/// let callback_total = Rc::clone(&total);
+/// let consumer = BoxBiConsumer::new(move |x: &i32, y: &i32| {
+///     callback_total.set(x + y);
 /// });
 /// let conditional = consumer.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
 ///

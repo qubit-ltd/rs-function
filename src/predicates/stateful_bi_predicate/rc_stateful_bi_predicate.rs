@@ -42,14 +42,18 @@ type RcStatefulBiPredicateFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U) -> bool>>;
 /// use qubit_function::RcStatefulBiPredicate;
 /// use qubit_function::StatefulBiPredicate;
 ///
-/// let mut calls = 0;
-/// let mut predicate = RcStatefulBiPredicate::new(|first: &i32, second: &i32| {
-///     calls += 1;
+/// use std::cell::Cell;
+/// use std::rc::Rc;
+///
+/// let calls = Rc::new(Cell::new(0));
+/// let callback_calls = Rc::clone(&calls);
+/// let mut predicate = RcStatefulBiPredicate::new(move |first: &i32, second: &i32| {
+///     callback_calls.set(callback_calls.get() + 1);
 ///     first + second == 10
 /// });
 ///
 /// assert!(predicate.test(&4, &6));
-/// assert_eq!(calls, 1);
+/// assert_eq!(calls.get(), 1);
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcStatefulBiPredicate<T, U> {

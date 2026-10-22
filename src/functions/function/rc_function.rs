@@ -83,7 +83,7 @@ impl<T, R> RcFunction<T, R> {
 impl_function_constant_method!(RcFunction<T, R>, 'static);
 
 // Generates: identity() method for RcFunction<T, T>
-impl_function_identity_method!(RcFunction<T, T>);
+impl_function_identity_method!(RcFunction<T, T>, Function);
 
 // Generates: Clone implementation for RcFunction<T, R>
 impl_function_clone!(RcFunction<T, R>);

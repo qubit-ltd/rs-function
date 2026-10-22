@@ -43,10 +43,12 @@ pub use box_conditional_bi_function_once::BoxConditionalBiFunctionOnce;
 /// ```
 /// use qubit_function::{BiFunctionOnce, BoxBiFunctionOnce};
 ///
-/// let append = BoxBiFunctionOnce::new(|first: &str, second: &str| {
+/// let first = String::from("hello");
+/// let second = String::from(" world");
+/// let append = BoxBiFunctionOnce::new(|first: &String, second: &String| {
 ///     format!("{first}{second}")
 /// });
-/// assert_eq!(append.apply("hello", " world"), "hello world");
+/// assert_eq!(append.apply(&first, &second), "hello world");
 /// ```
 pub trait BiFunctionOnce<T, U, R> {
     /// Computes output from two input references, consuming self

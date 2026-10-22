@@ -64,15 +64,15 @@
 /// # Usage
 ///
 /// ```text
-/// impl_function_identity_method!(BoxFunction<T, T>);
-/// impl_function_identity_method!(RcFunction<T, T>);
-/// impl_function_identity_method!(ArcFunction<T, T>);
-/// impl_function_identity_method!(BoxFunctionOnce<T, T>);
-/// impl_function_identity_method!(BoxMutatingFunction<T, T>);
-/// impl_function_identity_method!(BoxStatefulFunction<T, T>);
+/// impl_function_identity_method!(BoxFunction<T, T>, Function);
+/// impl_function_identity_method!(RcFunction<T, T>, Function);
+/// impl_function_identity_method!(ArcFunction<T, T>, Function);
+/// impl_function_identity_method!(BoxFunctionOnce<T, T>, FunctionOnce);
+/// impl_function_identity_method!(BoxMutatingFunction<T, T>, mutating, MutatingFunction);
+/// impl_function_identity_method!(BoxStatefulFunction<T, T>, StatefulFunction);
 /// ```
 macro_rules! impl_function_identity_method {
-    ($struct_name:ident < $t:ident , $r:ident >) => {
+    ($struct_name:ident < $t:ident , $r:ident >, $trait_name:ident) => {
         // Note: The caller must ensure $t and $r are the same identifier
         impl<$t> $struct_name<$t, $t> {
             /// Creates a function that clones its input and returns the clone.
@@ -88,7 +88,7 @@ macro_rules! impl_function_identity_method {
             /// A function that clones and returns its borrowed input.
             ///
             /// # Examples
-            #[doc = concat!("```rust\nuse qubit_function as qf;\nuse qf::", stringify!($struct_name), ";\n\nlet identity = ", stringify!($struct_name), "::<i32, i32>::identity();\nassert_eq!(identity.apply(&42), 42);\n```")]
+            #[doc = concat!("```rust\nuse qubit_function as qf;\nuse qf::", stringify!($struct_name), ";\nuse qf::", stringify!($trait_name), ";\n\nlet mut identity = ", stringify!($struct_name), "::<i32, i32>::identity();\nassert_eq!(identity.apply(&42), 42);\n```")]
             #[inline]
             pub fn identity() -> $struct_name<$t, $t>
             where
@@ -100,7 +100,7 @@ macro_rules! impl_function_identity_method {
     };
 
     // Special case for mutating functions that take &mut T
-    ($struct_name:ident < $t:ident , $r:ident >, mutating) => {
+    ($struct_name:ident < $t:ident , $r:ident >, mutating, $trait_name:ident) => {
         // Note: The caller must ensure $t and $r are the same identifier
         impl<$t> $struct_name<$t, $t> {
             /// Creates a function that clones its input and returns the clone.
@@ -117,7 +117,7 @@ macro_rules! impl_function_identity_method {
             /// without modifying it.
             ///
             /// # Examples
-            #[doc = concat!("```rust\nuse qubit_function as qf;\nuse qf::", stringify!($struct_name), ";\n\nlet mut identity = ", stringify!($struct_name), "::<i32, i32>::identity();\nlet mut value = 42;\nassert_eq!(identity.apply(&mut value), 42);\n```")]
+            #[doc = concat!("```rust\nuse qubit_function as qf;\nuse qf::", stringify!($struct_name), ";\nuse qf::", stringify!($trait_name), ";\n\nlet mut identity = ", stringify!($struct_name), "::<i32, i32>::identity();\nlet mut value = 42;\nassert_eq!(identity.apply(&mut value), 42);\n```")]
             #[inline]
             pub fn identity() -> $struct_name<$t, $t>
             where

@@ -103,7 +103,7 @@ impl_function_clone!(ArcMutatingFunction<T, R>);
 impl_function_debug_display!(ArcMutatingFunction<T, R>);
 
 // Generates: identity() method for ArcMutatingFunction<T, T>
-impl_function_identity_method!(ArcMutatingFunction<T, T>, mutating);
+impl_function_identity_method!(ArcMutatingFunction<T, T>, mutating, MutatingFunction);
 
 impl<T, R> MutatingFunction<T, R> for ArcMutatingFunction<T, R> {
     #[inline(always)]

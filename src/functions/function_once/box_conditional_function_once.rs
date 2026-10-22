@@ -21,9 +21,9 @@ use crate::functions::macros::impl_conditional_function_debug_display;
 /// A boxed, one-shot conditional transformer that owns its predicate and
 /// callback and consumes them when applied.
 ///
-/// The wrapped callback runs when the predicate matches. Use [`or_else`] to
-/// provide a second one-shot callback for inputs that do not match. This type
-/// is typically created with [`BoxFunctionOnce::when`].
+/// The wrapped callback runs when the predicate matches. Use [`Self::or_else`]
+/// to provide a second one-shot callback for inputs that do not match. This
+/// type is typically created with [`BoxFunctionOnce::when`].
 ///
 /// # Features
 ///
