@@ -73,7 +73,6 @@ impl CallbackMetadata {
     /// # Returns
     ///
     /// `Some(name)` when a diagnostic name is stored, or `None` otherwise.
-    #[must_use]
     #[inline(always)]
     pub(crate) fn name(&self) -> Option<&str> {
         self.name.as_deref()

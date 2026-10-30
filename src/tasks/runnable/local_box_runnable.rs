@@ -76,7 +76,6 @@ impl<E> LocalBoxRunnable<E> {
     /// # Returns
     ///
     /// Returns `Some(name)` when a name is set, or `None` otherwise.
-    #[must_use]
     #[inline(always)]
     pub fn name(&self) -> Option<&str> {
         self.metadata.name()
