@@ -24,49 +24,52 @@
 //!   `Fn(&T) + 'static`)
 //! * `$wrapper_expr` - Wrapper expression (uses `f` for the closure)
 //!
-//! # Usage
-//!
-//! The example requires the `stateful` feature.
+//! # Example
 //!
 //! ```rust
-//! # #[cfg(feature = "stateful")]
-//! # {
-//! // Single generic parameter - Consumer
-//! use std::sync::Arc;
-//! use std::sync::Mutex;
-//! use qubit_function::{ArcStatefulConsumer, BoxBiConsumer, BoxConsumer};
-//! macro_rules! impl_consumer_common_methods {
-//!     ($struct_name:ident < $t:ident >, ($($fn_trait_with_bounds:tt)+), |$f:ident| $wrapper_expr:expr) => {
-//!         let _ = stringify!($struct_name);
-//!         let _ = stringify!($($fn_trait_with_bounds)+);
-//!         let _ = stringify!($wrapper_expr);
-//!     };
-//!     ($struct_name:ident < $t:ident, $u:ident >, ($($fn_trait_with_bounds:tt)+), |$f:ident| $wrapper_expr:expr) => {
-//!         let _ = stringify!($struct_name);
-//!         let _ = stringify!($($fn_trait_with_bounds)+);
-//!         let _ = stringify!($wrapper_expr);
-//!     };
+//! use std::cell::Cell;
+//! use std::rc::Rc;
+//!
+//! use qubit_function::BoxConsumer;
+//! use qubit_function::Consumer;
+//!
+//! let total = Rc::new(Cell::new(0usize));
+//! let captured = Rc::clone(&total);
+//! let mut consumer = BoxConsumer::new_with_name("count", move |value: &usize| {
+//!     captured.set(captured.get() + *value);
+//! });
+//! consumer.accept(&2);
+//! assert_eq!(total.get(), 2);
+//! assert_eq!(consumer.name(), Some("count"));
+//! consumer.set_name("updated");
+//! assert_eq!(consumer.name(), Some("updated"));
+//! consumer.clear_name();
+//! assert_eq!(consumer.name(), None);
+//! BoxConsumer::<usize>::noop().accept(&7);
+//! assert_eq!(total.get(), 2);
+//! ```
+//!
+//! # Internal invocation syntax
+//!
+//! The macro is invoked inside a consumer `impl` block. These snippets show
+//! internal call sites; they are not public macro invocations.
+//!
+//! ```text
+//! impl<T> BoxConsumer<T> {
+//!     impl_consumer_common_methods!(
+//!         BoxConsumer<T>,
+//!         (Fn(&T) + 'static),
+//!         |f| Box::new(f)
+//!     );
 //! }
-//! impl_consumer_common_methods!(
-//!     BoxConsumer<i32>,
-//!     (Fn(&i32) + 'static),
-//!     |f| Box::new(f)
-//! );
 //!
-//! // Single generic parameter - StatefulConsumer
-//! impl_consumer_common_methods!(
-//!     ArcStatefulConsumer<i32>,
-//!     (FnMut(&i32) + Send + 'static),
-//!     |f| Arc::new(Mutex::new(f))
-//! );
-//!
-//! // Two generic parameters - BiConsumer
-//! impl_consumer_common_methods!(
-//!     BoxBiConsumer<i32, i32>,
-//!     (Fn(&i32, &i32) + 'static),
-//!     |f| Box::new(f)
-//! );
-//! # }
+//! impl<T> ArcStatefulConsumer<T> {
+//!     impl_consumer_common_methods!(
+//!         ArcStatefulConsumer<T>,
+//!         (FnMut(&T) + Send + 'static),
+//!         |f| Arc::new(parking_lot::Mutex::new(f))
+//!     );
+//! }
 //! ```
 //!
 //! # Generated Methods
@@ -235,19 +238,21 @@ macro_rules! impl_consumer_metadata_method {
 ///   'static`.
 /// * `$wrapper_expr` - Expression that wraps the supplied closure, using `f`.
 ///
-/// # Usage
+/// # Internal invocation syntax
 ///
-/// ```ignore
-/// impl_consumer_common_methods!(
-///     BoxConsumer<T>,
-///     (Fn(&T) + 'static),
-///     |f| Box::new(f)
-/// );
+/// This macro is invoked within the target type's `impl` block. The syntax
+/// below illustrates an internal call site; it is not a public macro
+/// invocation.
+///
+/// ```text
+/// impl<T> BoxConsumer<T> {
+///     impl_consumer_common_methods!(
+///         BoxConsumer<T>,
+///         (Fn(&T) + 'static),
+///         |f| Box::new(f)
+///     );
+/// }
 /// ```
-///
-/// The expansion provides `new`, `new_with_name`, `name`, `set_name`, and
-/// `noop` methods. The macro must be invoked within the target type's `impl`
-/// block.
 macro_rules! impl_consumer_common_methods {
     // Single generic parameter - Consumer types
     (

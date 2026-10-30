@@ -22,24 +22,30 @@ use crate::functions::macros::impl_shared_conditional_function;
 
 /// ArcConditionalStatefulMutatingFunction struct
 ///
-/// A thread-safe conditional function that only executes when a predicate is
-/// satisfied. Uses `ArcStatefulMutatingFunction` and `ArcPredicate` for shared
-/// ownership across threads.
+/// A conditional function that shares its stateful callback through
+/// `ArcStatefulMutatingFunction` and its predicate through `ArcPredicate`.
 ///
 /// This type is typically created by calling
 /// `ArcStatefulMutatingFunction::when()` and is designed to work with the
 /// `or_else()` method to create if-then-else logic.
 ///
+/// The predicate borrows the input through `&T`. After it returns, the
+/// selected callback receives `&mut T`. The value returned by `when` is an
+/// intermediate builder; call `or_else` to obtain a callable wrapper. The
+/// stateful callback is protected by a mutex while it runs.
+///
 /// # Type Parameters
 ///
-/// * `T` - The mutable input type accepted by the wrapped callback and
-///   predicate.
+/// * `T` - The input type borrowed by the predicate and mutably borrowed by the
+///   selected callback.
 /// * `R` - The result type returned by the wrapped callback.
 ///
 /// # Features
 ///
 /// - **Shared Ownership**: Cloneable via `Arc`, multiple owners allowed
-/// - **Thread-Safe**: Implements `Send + Sync`, safe for concurrent use
+/// - **Callback bounds**: The stored stateful callback requires `Send`, and the
+///   stored predicate requires `Send + Sync`. These bounds do not require `T`
+///   or `R` to be `Send` or `Sync`.
 /// - **Conditional Execution**: Only transforms when predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 ///

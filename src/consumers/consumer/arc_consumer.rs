@@ -31,7 +31,8 @@ use crate::consumers::macros::impl_shared_consumer_methods;
 ///
 /// - **Shared Ownership**: Cloneable through `Arc`, allows multiple owners
 /// - **Thread Safe**: Implements `Send + Sync`, can be safely used concurrently
-/// - **Lock-free Wrapper**: No Mutex protection needed by the wrapper
+/// - **Wrapper locking**: The wrapper does not acquire a `Mutex` while invoking
+///   the callback; the callback may still block or lock internally
 /// - **Non-consuming API**: `and_then` borrows `&self`, original object remains
 ///   usable
 ///
@@ -44,12 +45,7 @@ use crate::consumers::macros::impl_shared_consumer_methods;
 /// Choose `ArcConsumer` when:
 /// - Need to share non-mutating consumer across multiple threads
 /// - Pure observation operations, such as logging, monitoring, notifications
-/// - Need high-concurrency reads with no lock overhead
-///
-/// # Performance Advantages
-///
-/// Compared to `ArcStatefulConsumer`, `ArcConsumer` has no Mutex lock overhead,
-/// performing better in high-concurrency observation scenarios.
+/// - Need a shared `Fn` callback
 ///
 /// # Examples
 ///

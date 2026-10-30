@@ -21,24 +21,24 @@ use crate::functions::macros::impl_shared_conditional_function;
 
 /// ArcConditionalBiFunction struct
 ///
-/// A thread-safe conditional bi-function that only executes when a
-/// bi-predicate is satisfied. Uses `ArcBiFunction` and `ArcBiPredicate` for
-/// shared ownership across threads.
+/// A conditional bi-function that shares its callback and bi-predicate through
+/// `ArcBiFunction` and `ArcBiPredicate`.
 ///
-/// This type is typically created by calling `ArcBiFunction::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
+/// Call `when` to create an intermediate conditional builder, then `or_else`
+/// to provide the fallback and obtain an `ArcBiFunction` callable wrapper. The
+/// builder is not itself a `BiFunction`. Calling `apply` tests the predicate
+/// with `&T` and `&U` before running the selected callback.
 ///
 /// # Features
 ///
 /// - **Shared Ownership**: Cloneable via `Arc`, multiple owners allowed
-/// - **Thread-Safe**: Implements `Send + Sync`, safe for concurrent use
 /// - **Conditional Execution**: Only computes when bi-predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 ///
 /// # Type Parameters
 ///
-/// - `T` - The type of the first borrowed input.
-/// - `U` - The type of the second borrowed input.
+/// - `T` - The first input type borrowed by the bi-predicate and callback.
+/// - `U` - The second input type borrowed by the bi-predicate and callback.
 /// - `R` - The value produced by the selected bi-function.
 ///
 /// # Examples

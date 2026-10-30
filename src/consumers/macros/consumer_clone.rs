@@ -19,37 +19,31 @@
 //! * `$struct_name` - The struct name
 //! * `$generic` - Generic parameter list (one or two type parameters)
 //!
-//! # Examples
+//! # Example
 //!
-//! The example requires the `rc` feature.
+//! Cloning an `ArcConsumer` shares its callback while each clone keeps its own
+//! diagnostic name.
 //!
 //! ```rust
-//! # #[cfg(feature = "rc")]
-//! # {
-//! // For single type parameter
-//! use qubit_function::{ArcConsumer, RcConsumer};
-//! use qubit_function::consumers::{ArcBiConsumer, RcBiConsumer};
-//! macro_rules! impl_consumer_clone {
-//!     ($struct_name:ident<$t:ident>) => {
-//!         let _ = core::marker::PhantomData::<$t>;
-//!         let _ = stringify!($struct_name);
-//!     };
-//!     ($struct_name:ident<$t:ident, $u:ident>) => {
-//!         let _ = core::marker::PhantomData::<($t, $u)>;
-//!         let _ = stringify!($struct_name);
-//!     };
-//! }
-//! impl_consumer_clone!(ArcConsumer<i32>);
+//! use std::sync::Arc;
+//! use std::sync::atomic::AtomicUsize;
+//! use std::sync::atomic::Ordering;
 //!
-//! // For single type parameter with Rc
-//! impl_consumer_clone!(RcConsumer<i32>);
+//! use qubit_function::ArcConsumer;
+//! use qubit_function::Consumer;
 //!
-//! // For two type parameters
-//! impl_consumer_clone!(ArcBiConsumer<i32, i32>);
-//!
-//! // For two type parameters with Rc
-//! impl_consumer_clone!(RcBiConsumer<i32, i32>);
-//! # }
+//! let total = Arc::new(AtomicUsize::new(0));
+//! let captured = Arc::clone(&total);
+//! let original = ArcConsumer::new_with_name("original", move |value: &usize| {
+//!     captured.fetch_add(*value, Ordering::SeqCst);
+//! });
+//! let mut cloned = original.clone();
+//! cloned.set_name("cloned");
+//! original.accept(&2);
+//! cloned.accept(&3);
+//! assert_eq!(total.load(Ordering::SeqCst), 5);
+//! assert_eq!(original.name(), Some("original"));
+//! assert_eq!(cloned.name(), Some("cloned"));
 //! ```
 
 /// Generates Clone trait implementation for basic Consumer types
@@ -67,37 +61,14 @@
 /// * `$t` - The first type parameter identifier
 /// * `$u` - The second type parameter identifier for bi-consumer types
 ///
-/// # Examples
+/// # Internal invocation syntax
 ///
-/// The example requires the `rc` feature.
+/// This macro is invoked outside the target type's `impl` block. The following
+/// syntax illustrates its internal use; it is not a public macro invocation.
 ///
-/// ```rust
-/// # #[cfg(feature = "rc")]
-/// # {
-/// // For single type parameter with Arc
-/// use qubit_function::{ArcConsumer, RcConsumer};
-/// use qubit_function::consumers::{ArcBiConsumer, RcBiConsumer};
-/// macro_rules! impl_consumer_clone {
-///     ($struct_name:ident<$t:ident>) => {
-///         let _ = core::marker::PhantomData::<$t>;
-///         let _ = stringify!($struct_name);
-///     };
-///     ($struct_name:ident<$t:ident, $u:ident>) => {
-///         let _ = core::marker::PhantomData::<($t, $u)>;
-///         let _ = stringify!($struct_name);
-///     };
-/// }
-/// impl_consumer_clone!(ArcConsumer<i32>);
-///
-/// // For single type parameter with Rc
-/// impl_consumer_clone!(RcConsumer<i32>);
-///
-/// // For two type parameters with Arc
-/// impl_consumer_clone!(ArcBiConsumer<i32, i32>);
-///
-/// // For two type parameters with Rc
-/// impl_consumer_clone!(RcBiConsumer<i32, i32>);
-/// # }
+/// ```text
+/// impl_consumer_clone!(ArcConsumer<T>);
+/// impl_consumer_clone!(ArcBiConsumer<T, U>);
 /// ```
 macro_rules! impl_consumer_clone {
     // Single generic parameter - Consumer types

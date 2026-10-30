@@ -34,8 +34,8 @@ use crate::consumers::macros::impl_shared_conditional_consumer;
 /// - **Shared Ownership**: Cloneable via `Rc`, multiple owners allowed
 /// - **Single-Threaded**: Not thread-safe, cannot be sent across threads
 /// - **Conditional Execution**: Only consumes when predicate returns `true`
-/// - **No Lock Overhead**: More efficient than
-///   `ArcConditionalStatefulBiConsumer`
+/// - **Callback sharing**: Uses `Rc` and checks mutable callback borrows with
+///   `RefCell`; it does not use a mutex.
 ///
 /// # Type Parameters
 ///

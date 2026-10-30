@@ -20,9 +20,12 @@ use crate::functions::macros::impl_conditional_function_debug_display;
 
 /// BoxConditionalMutatingFunctionOnce struct
 ///
-/// A conditional consuming transformer that only executes when a predicate is
-/// satisfied. Uses `BoxMutatingFunctionOnce` and `BoxPredicate` for single
-/// ownership semantics.
+/// An intermediate conditional builder for one-shot mutating callbacks. It
+/// stores a predicate and the selected callback; the value returned by `when`
+/// is not itself a `MutatingFunctionOnce`. Call `or_else` to provide the
+/// fallback and obtain the callable `BoxMutatingFunctionOnce` wrapper. The
+/// predicate borrows through `&T`, while the selected callback receives
+/// `&mut T`; it does not consume the input value like a transformer.
 ///
 /// This type is typically created by calling `BoxMutatingFunctionOnce::when()`
 /// and is designed to work with the `or_else()` method to create if-then-else

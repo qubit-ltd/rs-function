@@ -21,8 +21,8 @@ use crate::consumers::macros::impl_consumer_debug_display;
 /// BoxStatefulConsumer struct
 ///
 /// Consumer implementation based on `Box<dyn FnMut(&T)>` for single ownership
-/// scenarios. When sharing is not needed, this is the simplest and most
-/// efficient consumer type.
+/// scenarios. Choose it when the callback should use single-owner `Box`
+/// storage.
 ///
 /// # Features
 ///
@@ -48,7 +48,7 @@ use crate::consumers::macros::impl_consumer_debug_display;
 /// - Consumer is used only once or in a linear flow
 /// - Building pipelines where ownership flows naturally
 /// - No need to share consumers across contexts
-/// - Performance critical and cannot accept sharing overhead
+/// - The callback should use single-owner `Box` storage
 ///
 /// # Examples
 ///

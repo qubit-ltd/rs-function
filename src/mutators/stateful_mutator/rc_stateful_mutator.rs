@@ -42,7 +42,8 @@ type RcMutMutatorFn<T> = Rc<RefCell<dyn FnMut(&mut T)>>;
 /// - **Interior Mutability**: Uses `RefCell` for runtime borrow checking
 /// - **Mutable State**: Can modify captured environment via `FnMut`
 /// - **Chainable**: Method chaining via `&self` (non-consuming)
-/// - **Performance**: More efficient than `ArcStatefulMutator` (no locking)
+/// - **Callback sharing**: Uses `Rc` and checks mutable callback borrows with
+///   `RefCell`; it does not use a mutex.
 ///
 /// # Type Parameters
 ///
@@ -53,7 +54,7 @@ type RcMutMutatorFn<T> = Rc<RefCell<dyn FnMut(&mut T)>>;
 /// Choose `RcStatefulMutator` when:
 /// - The mutator needs to be shared within a single thread
 /// - Thread safety is not required
-/// - Performance is important (avoiding lock overhead)
+/// - A single-threaded callback sharing mechanism is appropriate
 ///
 /// # Examples
 ///

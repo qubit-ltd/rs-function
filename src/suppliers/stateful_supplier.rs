@@ -33,15 +33,17 @@
 //! # Three Implementations
 //!
 //! - **`BoxStatefulSupplier<T>`**: Single ownership using `Box<dyn FnMut() ->
-//!   T>`. Uses one heap allocation and dynamic dispatch, cannot be cloned.
+//!   T>` with dynamic dispatch; cannot be cloned. The callback wrapper does not
+//!   add reference counting, while diagnostic naming and composition may
+//!   allocate through shared `Arc<str>` metadata.
 //!
 //! - **`ArcStatefulSupplier<T>`**: Thread-safe shared ownership using
 //!   `Arc<Mutex<dyn FnMut() -> T + Send>>`. Can be cloned and sent across
-//!   threads. Higher overhead due to locking.
+//!   threads. Calls use a mutex to access the stateful callback.
 //!
 //! - **`RcStatefulSupplier<T>`**: Single-threaded shared ownership using
 //!   `Rc<RefCell<dyn FnMut() -> T>>`. Can be cloned but not sent across
-//!   threads. Lower overhead than `ArcStatefulSupplier`.
+//!   threads. Calls use `RefCell` borrow checking to access the callback.
 //!
 //! # Comparison with Other Functional Abstractions
 //!

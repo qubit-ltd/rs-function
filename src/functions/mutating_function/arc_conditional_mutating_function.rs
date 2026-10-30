@@ -25,13 +25,18 @@ use crate::functions::macros::impl_shared_conditional_function;
 /// The predicate is evaluated against the input before the wrapped callback is
 /// invoked. If it returns `false`, the alternative callback supplied to
 /// [`or_else`](Self::or_else) is used instead. The callbacks and predicate use
-/// `Arc` ownership, which permits sharing when their input and output types
-/// satisfy the required thread-safety bounds; callback invocation itself is
-/// not protected by a lock.
+/// `Arc` ownership. The stored callbacks and predicate satisfy `Send + Sync`;
+/// this does not impose `Send` or `Sync` bounds on `T` or `R`. Sending concrete
+/// inputs or results across threads is the caller's concern. Callback
+/// invocation itself is not protected by a lock.
 ///
 /// This type is typically created by calling `ArcMutatingFunction::when()` and
 /// is designed to work with the `or_else()` method to create if-then-else
 /// logic.
+///
+/// The value returned by `when` is an intermediate builder and does not
+/// implement `MutatingFunction`. Call `or_else` to provide the fallback and
+/// obtain the callable wrapper.
 ///
 /// # Features
 ///
@@ -65,8 +70,8 @@ use crate::functions::macros::impl_shared_conditional_function;
 ///
 /// # Type Parameters
 ///
-/// * `T` - The input value type, mutably borrowed by the predicate and
-///   callback.
+/// * `T` - The input type borrowed by the predicate and mutably borrowed by the
+///   selected callback.
 /// * `R` - The result type returned by whichever callback is selected.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcConditionalMutatingFunction<T, R> {

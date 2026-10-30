@@ -36,22 +36,6 @@
 /// | **BiConsumer** | `BoxBiConsumer<T, U>` | BoxConditionalBiConsumer | BiConsumer |
 /// | **BiConsumerOnce** | `BoxBiConsumerOnce<T, U>` | BoxConditionalBiConsumerOnce | BiConsumerOnce |
 /// | **StatefulBiConsumer** | `BoxStatefulBiConsumer<T, U>` | BoxConditionalStatefulBiConsumer | StatefulBiConsumer |
-///
-/// # Examples
-///
-/// ```rust
-/// use qubit_function::consumers::BoxBiConsumer;
-/// use qubit_function::consumers::BoxConsumer;
-/// macro_rules! impl_box_consumer_methods {
-///     ($struct_name:ty, $conditional_type:ty, $consumer_trait:ident) => {
-///         let _ = std::mem::size_of::<$struct_name>();
-///         let _ = stringify!($conditional_type);
-///         let _ = stringify!($consumer_trait);
-///     };
-/// }
-/// impl_box_consumer_methods!(BoxConsumer<i32>, BoxConditionalConsumer<i32>, Consumer);
-/// impl_box_consumer_methods!(BoxBiConsumer<i32, i32>, BoxConditionalBiConsumer<i32, i32>, BiConsumer);
-/// ```
 macro_rules! impl_box_consumer_methods {
     (@doc_state Consumer, $state:literal, $payload:literal) => { "" };
     (@doc_state BiConsumer, $state:literal, $payload:literal) => { "" };

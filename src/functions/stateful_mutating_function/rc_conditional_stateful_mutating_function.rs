@@ -30,10 +30,14 @@ use crate::functions::macros::impl_shared_conditional_function;
 /// `RcStatefulMutatingFunction::when()` and is designed to work with the
 /// `or_else()` method to create if-then-else logic.
 ///
+/// The predicate borrows the input through `&T`. After it returns, the
+/// selected callback receives `&mut T`. The value returned by `when` is an
+/// intermediate builder; call `or_else` to obtain a callable wrapper.
+///
 /// # Type Parameters
 ///
-/// * `T` - The mutable input type accepted by the wrapped callback and
-///   predicate.
+/// * `T` - The input type borrowed by the predicate and mutably borrowed by the
+///   selected callback.
 /// * `R` - The result type returned by the wrapped callback.
 ///
 /// # Features
@@ -41,7 +45,8 @@ use crate::functions::macros::impl_shared_conditional_function;
 /// - **Shared Ownership**: Cloneable via `Rc`, multiple owners allowed
 /// - **Single-Threaded**: Not thread-safe, cannot be sent across threads
 /// - **Conditional Execution**: Only transforms when predicate returns `true`
-/// - **No Lock Overhead**: More efficient than `ArcConditionalFunction`
+/// - **Callback sharing**: Uses `Rc` and checks mutable callback borrows with
+///   `RefCell`; it does not use a mutex.
 ///
 /// # Examples
 ///

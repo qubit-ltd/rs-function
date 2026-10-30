@@ -20,9 +20,10 @@ use crate::suppliers::macros::impl_supplier_debug_display;
 
 /// Box-based single ownership stateless supplier.
 ///
-/// Uses `Box<dyn Fn() -> T>` for single ownership scenarios. This
-/// is the most lightweight stateless supplier with zero reference
-/// counting overhead.
+/// Uses `Box<dyn Fn() -> T>` for single ownership and dynamic dispatch.
+/// Callback ownership does not add reference counting. The diagnostic name
+/// uses shared `Arc<str>` storage when present, and naming or composition may
+/// allocate. Total cost also depends on the callback and its captures.
 ///
 /// # Type Parameters
 ///

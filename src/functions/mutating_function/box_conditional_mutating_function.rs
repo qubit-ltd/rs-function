@@ -21,14 +21,18 @@ use crate::functions::macros::impl_conditional_function_debug_display;
 /// A single-owner wrapper that applies a mutating callback when its predicate
 /// accepts the input.
 ///
-/// The predicate and callback receive the same mutable input. The callback's
-/// result is returned to the caller, and [`or_else`](Self::or_else) can add an
-/// alternative callback for inputs the predicate rejects. The wrapper owns its
-/// callback and predicate through `BoxMutatingFunction` and `BoxPredicate`.
+/// The predicate borrows the input through `&T`; after it returns, the selected
+/// callback receives `&mut T`. The callback's result is returned to the caller.
+/// The wrapper owns its callback and predicate through `BoxMutatingFunction`
+/// and `BoxPredicate`.
 ///
 /// This type is typically created by calling `BoxMutatingFunction::when()` and
 /// is designed to work with the `or_else()` method to create if-then-else
 /// logic.
+///
+/// The value returned by `when` is an intermediate builder and does not
+/// implement `MutatingFunction`. Call `or_else` to provide the fallback and
+/// obtain the callable wrapper.
 ///
 /// # Features
 ///
@@ -64,7 +68,8 @@ use crate::functions::macros::impl_conditional_function_debug_display;
 ///
 /// # Type Parameters
 ///
-/// * `T` - The input type mutably borrowed by the predicate and callbacks.
+/// * `T` - The input type borrowed by the predicate and mutably borrowed by the
+///   selected callback.
 /// * `R` - The result type returned by the selected callback.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConditionalMutatingFunction<T, R> {

@@ -22,13 +22,17 @@ use crate::macros::impl_common_new_methods;
 /// Single ownership Tester implemented using `Box`
 ///
 /// `BoxTester` wraps a closure in `Box<dyn Fn() -> bool>`, providing single
-/// ownership semantics with no additional allocation overhead beyond the
-/// initial boxing.
+/// ownership semantics. The callback is type-erased behind a `Box` and invoked
+/// through dynamic dispatch. Callback ownership does not add reference
+/// counting. An optional diagnostic name uses shared `Arc<str>` storage, so
+/// naming and composition may allocate. Total cost also depends on the
+/// callback and its captures.
 ///
 /// # Characteristics
 ///
 /// - **Single ownership**: Cannot be cloned
-/// - **Runtime cost**: One heap allocation and dynamic dispatch
+/// - **Runtime cost**: Dynamic dispatch through the type-erased callback;
+///   naming and composition may allocate
 /// - **Consuming combination**: `and()`/`or()` consume `self`
 /// - **Type flexibility**: Accepts any `Tester` implementation
 ///

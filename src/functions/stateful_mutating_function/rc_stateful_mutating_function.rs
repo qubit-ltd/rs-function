@@ -37,8 +37,8 @@ pub(super) type RcStatefulMutatingFunctionFn<T, R> = Rc<RefCell<dyn FnMut(&mut T
 
 /// A stateful mutating function implementation based on
 /// `Rc<RefCell<dyn FnMut(&mut T) -> R>>` for single-threaded shared
-/// ownership scenarios. This type allows multiple references to the same
-/// function without the overhead of thread safety.
+/// ownership scenarios. Clones share the callback through `Rc`, and each call
+/// checks its mutable borrow through `RefCell`.
 ///
 /// # Type Parameters
 ///
@@ -51,8 +51,8 @@ pub(super) type RcStatefulMutatingFunctionFn<T, R> = Rc<RefCell<dyn FnMut(&mut T
 /// - **Single-Threaded**: Not thread-safe, cannot be sent across threads
 /// - **Stateful**: Can modify captured environment (uses `FnMut`)
 /// - **Chainable**: Method chaining via `&self` (non-consuming)
-/// - **Performance**: More efficient than `ArcStatefulMutatingFunction` (no
-///   locking)
+/// - **Callback sharing**: Uses `Rc` and checks mutable callback borrows with
+///   `RefCell`; it does not use a mutex.
 ///
 /// # Use Cases
 ///
@@ -60,7 +60,7 @@ pub(super) type RcStatefulMutatingFunctionFn<T, R> = Rc<RefCell<dyn FnMut(&mut T
 /// - The function needs to be shared within a single thread for stateful
 ///   operations
 /// - Thread safety is not required
-/// - Performance is important (avoiding lock overhead)
+/// - A single-threaded callback sharing mechanism is appropriate
 ///
 /// # Examples
 ///

@@ -42,7 +42,8 @@ use crate::transformers::macros::impl_conditional_transformer_debug_display;
 ///
 /// # Type Parameters
 ///
-/// * `T` - The input type consumed by the wrapped transformer and predicate.
+/// * `T` - The input type borrowed by the predicate and consumed by the
+///   selected transformer.
 /// * `R` - The output type produced by the wrapped transformer.
 ///
 /// # Examples
