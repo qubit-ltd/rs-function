@@ -581,6 +581,28 @@ assert_eq!(counter.get(), 1);
 assert_eq!(counter.get(), 2);
 ```
 
+Supplier 保留现有 `map` 方法以兼容只实现 `Transformer` 的映射器。需要转移捕获值时，
+使用接受 `TransformerOnce` 的 `map_once`；映射器需要 `FnMut` 状态时，使用
+`map_stateful`：
+
+```rust
+use qubit_function::{
+    BoxStatefulSupplier, BoxSupplierOnce, StatefulSupplier, SupplierOnce,
+};
+
+let resource = String::from("owned");
+let once = BoxSupplierOnce::new(|| 7).map_once(move |value| (value, resource));
+assert_eq!(once.get(), (7, String::from("owned")));
+
+let mut count = 0;
+let mut mapped = BoxStatefulSupplier::new(|| 10).map_stateful(move |value| {
+    count += 1;
+    value + count
+});
+assert_eq!(mapped.get(), 11);
+assert_eq!(mapped.get(), 12);
+```
+
 ### 18. Function - 借用输入函数
 
 基于借用输入计算结果,不消耗输入。

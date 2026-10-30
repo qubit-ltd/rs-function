@@ -13,6 +13,7 @@ use parking_lot::Mutex;
 
 use crate::Predicate;
 use crate::StatefulSupplier;
+use crate::StatefulTransformer;
 use crate::Transformer;
 use crate::suppliers::macros::impl_shared_supplier_methods;
 use crate::suppliers::macros::impl_supplier_clone;
@@ -125,6 +126,55 @@ impl<T> ArcStatefulSupplier<T> {
         StatefulSupplier,
         callback_bounds = (Send + 'static)
     );
+
+    /// Maps each supplied value with a stateful transformer.
+    ///
+    /// This method borrows the source and captures a clone. Each `get` first
+    /// calls the source once, then calls the mapper once. Clones of the
+    /// returned supplier share the mapper's mutable state, while separate
+    /// calls to `map_stateful` create independent mapper states. The mapper
+    /// must be `Send` but need not be `Sync`; the source's diagnostic name is
+    /// preserved. Panics from either callback propagate to the caller. The
+    /// source lock is released before the mapper runs, and the returned
+    /// supplier's lock protects mapper execution.
+    ///
+    /// # Parameters
+    ///
+    /// * `mapper` - A stateful transformer applied to each supplied value.
+    ///
+    /// # Returns
+    ///
+    /// A thread-safe shared stateful supplier that returns the mapped value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use qubit_function::{ArcStatefulSupplier, StatefulSupplier};
+    ///
+    /// let source = ArcStatefulSupplier::new(|| 10);
+    /// let mut mapped = source.map_stateful({
+    ///     let mut count = 0;
+    ///     move |value| { count += 1; value + count }
+    /// });
+    /// assert_eq!(mapped.get(), 11);
+    /// assert_eq!(mapped.get(), 12);
+    /// ```
+    pub fn map_stateful<U, M>(&self, mut mapper: M) -> ArcStatefulSupplier<U>
+    where
+        T: 'static,
+        U: 'static,
+        M: StatefulTransformer<T, U> + Send + 'static,
+    {
+        let metadata = self.metadata.clone();
+        let mut source = self.clone();
+        ArcStatefulSupplier::new_with_metadata(
+            move || {
+                let value = source.get();
+                mapper.apply(value)
+            },
+            metadata,
+        )
+    }
 }
 
 // Separate impl block for constant() and memoize() with stricter T: Send bound

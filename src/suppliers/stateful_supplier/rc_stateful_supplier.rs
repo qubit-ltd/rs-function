@@ -12,6 +12,7 @@ use std::rc::Rc;
 
 use crate::Predicate;
 use crate::StatefulSupplier;
+use crate::StatefulTransformer;
 use crate::Transformer;
 use crate::suppliers::macros::impl_shared_supplier_methods;
 use crate::suppliers::macros::impl_supplier_clone;
@@ -111,6 +112,54 @@ impl<T> RcStatefulSupplier<T> {
         StatefulSupplier,
         ('static)
     );
+
+    /// Maps each supplied value with a stateful transformer.
+    ///
+    /// This method borrows the source and captures a clone. Each `get` first
+    /// calls the source once, then calls the mapper once. Clones of the
+    /// returned supplier share the mapper's mutable state, while separate
+    /// calls to `map_stateful` create independent mapper states. The source's
+    /// diagnostic name is preserved. Panics from either callback propagate to
+    /// the caller; a panic during the mapper call releases the `RefCell` borrow
+    /// through normal unwinding.
+    ///
+    /// # Parameters
+    ///
+    /// * `mapper` - A stateful transformer applied to each supplied value.
+    ///
+    /// # Returns
+    ///
+    /// A shared stateful supplier that returns the mapped value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use qubit_function::{RcStatefulSupplier, StatefulSupplier};
+    ///
+    /// let source = RcStatefulSupplier::new(|| 10);
+    /// let mut mapped = source.map_stateful({
+    ///     let mut count = 0;
+    ///     move |value| { count += 1; value + count }
+    /// });
+    /// assert_eq!(mapped.get(), 11);
+    /// assert_eq!(mapped.get(), 12);
+    /// ```
+    pub fn map_stateful<U, M>(&self, mut mapper: M) -> RcStatefulSupplier<U>
+    where
+        T: 'static,
+        U: 'static,
+        M: StatefulTransformer<T, U> + 'static,
+    {
+        let metadata = self.metadata.clone();
+        let mut source = self.clone();
+        RcStatefulSupplier::new_with_metadata(
+            move || {
+                let value = source.get();
+                mapper.apply(value)
+            },
+            metadata,
+        )
+    }
 
     /// Creates a memoizing supplier.
     ///

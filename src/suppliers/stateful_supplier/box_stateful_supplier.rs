@@ -9,6 +9,7 @@
 
 use crate::Predicate;
 use crate::StatefulSupplier;
+use crate::StatefulTransformer;
 use crate::Transformer;
 use crate::suppliers::macros::impl_box_supplier_methods;
 use crate::suppliers::macros::impl_supplier_common_methods;
@@ -86,6 +87,45 @@ impl<T> BoxStatefulSupplier<T> {
 
     // Generates: map(), filter(), zip()
     impl_box_supplier_methods!(BoxStatefulSupplier<T>, StatefulSupplier);
+
+    /// Maps each supplied value with a stateful transformer.
+    ///
+    /// The supplier and mapper are consumed. Each `get` first calls the source
+    /// once, then calls the mapper once; the mapper retains its mutable state
+    /// between calls. The source's diagnostic name is preserved. Panics from
+    /// either callback propagate to the caller.
+    ///
+    /// # Parameters
+    ///
+    /// * `mapper` - A stateful transformer applied to each supplied value.
+    ///
+    /// # Returns
+    ///
+    /// A stateful supplier that returns the mapped value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use qubit_function::{BoxStatefulSupplier, StatefulSupplier};
+    ///
+    /// let mut count = 0;
+    /// let mut mapped = BoxStatefulSupplier::new(|| 10).map_stateful(move |value| {
+    ///     count += 1;
+    ///     value + count
+    /// });
+    /// assert_eq!(mapped.get(), 11);
+    /// assert_eq!(mapped.get(), 12);
+    /// ```
+    pub fn map_stateful<U, M>(self, mut mapper: M) -> BoxStatefulSupplier<U>
+    where
+        T: 'static,
+        U: 'static,
+        M: StatefulTransformer<T, U> + 'static,
+    {
+        let metadata = self.metadata;
+        let mut source = self.function;
+        BoxStatefulSupplier::new_with_metadata(move || mapper.apply(source()), metadata)
+    }
 
     /// Creates a memoizing supplier.
     ///

@@ -10,6 +10,7 @@
 use crate::Predicate;
 use crate::SupplierOnce;
 use crate::Transformer;
+use crate::TransformerOnce;
 use crate::macros::impl_closure_once_trait;
 use crate::suppliers::macros::impl_box_supplier_methods;
 use crate::suppliers::macros::impl_supplier_common_methods;
@@ -69,6 +70,41 @@ impl<T> BoxSupplierOnce<T> {
 
     // Generates: map(), filter(), zip()
     impl_box_supplier_methods!(BoxSupplierOnce<T>, SupplierOnce);
+
+    /// Maps the value produced by this supplier with a consuming transformer.
+    ///
+    /// The supplier and mapper are both consumed. The mapper runs after the
+    /// supplier and can move captured values into its output without cloning.
+    /// The source supplier's diagnostic name is preserved. Panics from either
+    /// callback propagate to the caller.
+    ///
+    /// # Parameters
+    ///
+    /// * `mapper` - A one-time transformer applied to the supplied value.
+    ///
+    /// # Returns
+    ///
+    /// A one-time supplier that returns the mapped value.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use qubit_function::{BoxSupplierOnce, SupplierOnce, TransformerOnce};
+    ///
+    /// let resource = String::from("owned");
+    /// let mapped = BoxSupplierOnce::new(|| 7).map_once(move |value| (value, resource));
+    /// assert_eq!(mapped.get(), (7, String::from("owned")));
+    /// ```
+    pub fn map_once<U, M>(self, mapper: M) -> BoxSupplierOnce<U>
+    where
+        T: 'static,
+        U: 'static,
+        M: TransformerOnce<T, U> + 'static,
+    {
+        let metadata = self.metadata;
+        let source = self.function;
+        BoxSupplierOnce::new_with_metadata(move || mapper.apply(source()), metadata)
+    }
 }
 
 // Generates: implement SupplierOnce for BoxSupplierOnce<T>

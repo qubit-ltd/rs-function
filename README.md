@@ -599,6 +599,28 @@ assert_eq!(counter.get(), 1);
 assert_eq!(counter.get(), 2);
 ```
 
+Supplier mapping keeps the existing `map` method for `Transformer`
+implementations. Use `map_once` to transfer captured values with a
+`TransformerOnce`, or `map_stateful` when the mapper needs `FnMut` state:
+
+```rust
+use qubit_function::{
+    BoxStatefulSupplier, BoxSupplierOnce, StatefulSupplier, SupplierOnce,
+};
+
+let resource = String::from("owned");
+let once = BoxSupplierOnce::new(|| 7).map_once(move |value| (value, resource));
+assert_eq!(once.get(), (7, String::from("owned")));
+
+let mut count = 0;
+let mut mapped = BoxStatefulSupplier::new(|| 10).map_stateful(move |value| {
+    count += 1;
+    value + count
+});
+assert_eq!(mapped.get(), 11);
+assert_eq!(mapped.get(), 12);
+```
+
 ### 18. Function - Borrowed-Input Function
 
 Computes a result from a borrowed input without consuming the input.
