@@ -43,6 +43,23 @@
 /// | Arc stateful | `Send + 'static` |
 /// | Rc stateless/stateful | `'static` |
 macro_rules! impl_shared_conditional_mutator {
+    (@callback Mutator, $state:literal, $increment:literal) => {
+        concat!("|x: &mut i32| { *x += ", $increment, "; }")
+    };
+
+    (@callback StatefulMutator, $state:literal, $increment:literal) => {
+        concat!("move |x: &mut i32| { ", $state,
+            " += 1; assert!(", $state, " <= 2); *x += ", $increment, "; }")
+    };
+
+    (@state_init Mutator, $state:literal) => { "" };
+    (@state_init StatefulMutator, $state:literal) => {
+        concat!("let mut ", $state, " = 0;\n")
+    };
+
+    (@mut Mutator) => { "" };
+    (@mut StatefulMutator) => { "mut " };
+
     (@let_mutator Mutator, $name:ident, $value:expr) => {
         let $name = $value;
     };
@@ -85,27 +102,25 @@ macro_rules! impl_shared_conditional_mutator {
             ///
             /// # Examples
             ///
-            /// ```ignore
-            /// use std::sync::atomic::{AtomicI32, Ordering};
-            ///
-            /// let result = AtomicI32::new(0);
-            ///
-            /// let mutator1 = ArcMutator::new(|x: &mut i32| {
-            ///     *x += 1;
-            /// });
-            ///
-            /// let mutator2 = ArcMutator::new(|x: &mut i32| {
-            ///     *x += 2;
-            /// });
-            ///
-            /// let conditional = mutator1.when(|x| *x > 0);
-            /// let chained = conditional.and_then(mutator2);
-            ///
-            /// let mut val = 5;
-            /// chained.apply(&mut val);  // val = 5 + 1 + 2 = 8
-            /// let mut val2 = -1;
-            /// chained.apply(&mut val2); // val2 = -1 + 2 = 1 (not -1 + 1 + 2!)
-            /// ```
+            #[doc = concat!(
+                "```rust\n",
+                "use qubit_function::{", stringify!($mutator_type), ", ", stringify!($mutator_trait), "};\n",
+                impl_shared_conditional_mutator!(@state_init $mutator_trait, "first_calls"),
+                impl_shared_conditional_mutator!(@state_init $mutator_trait, "next_calls"),
+                "let first = ", stringify!($mutator_type), "::new(",
+                impl_shared_conditional_mutator!(@callback $mutator_trait, "first_calls", "1"), ");\n",
+                "let next = ", stringify!($mutator_type), "::new(",
+                impl_shared_conditional_mutator!(@callback $mutator_trait, "next_calls", "2"), ");\n",
+                "let conditional = first.when(|x: &i32| *x > 0);\n",
+                "let ", impl_shared_conditional_mutator!(@mut $mutator_trait), "chained = conditional.and_then(next);\n",
+                "let mut positive = 5;\n",
+                "chained.apply(&mut positive);\n",
+                "assert_eq!(positive, 8);\n",
+                "let mut negative = -1;\n",
+                "chained.apply(&mut negative);\n",
+                "assert_eq!(negative, 1);\n",
+                "```"
+            )]
             pub fn and_then<M>(&self, next: M) -> $mutator_type<$t>
             where
                 $t: 'static,

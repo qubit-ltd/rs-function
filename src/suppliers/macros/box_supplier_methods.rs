@@ -71,6 +71,70 @@
 /// // supplier methods in that module.
 /// ```
 macro_rules! impl_box_supplier_methods {
+    (@map_doc Supplier, $supplier:ident) => {
+        concat!("```rust\nuse qubit_function::{", stringify!($supplier), ", Supplier};\n",
+            "let supplier = ", stringify!($supplier), "::new(|| 10);\n",
+            "let mapped = supplier.map(|value| value * 2);\n",
+            "assert_eq!(mapped.get(), 20);\n```")
+    };
+    (@map_doc StatefulSupplier, $supplier:ident) => {
+        concat!("```rust\nuse qubit_function::{", stringify!($supplier), ", StatefulSupplier};\n",
+            "let mut source_calls = 0;\n",
+            "let supplier = ", stringify!($supplier), "::new(move || { source_calls += 1; source_calls * 10 });\n",
+            "let mut mapped = supplier.map(|value| value * 2);\n",
+            "assert_eq!(mapped.get(), 20);\n```")
+    };
+    (@map_doc SupplierOnce, $supplier:ident) => {
+        concat!("```rust\nuse qubit_function::{", stringify!($supplier), ", SupplierOnce};\n",
+            "let payload = String::from(\"item\");\n",
+            "let supplier = ", stringify!($supplier), "::new(move || payload);\n",
+            "let mapped = supplier.map(|value| format!(\"{value}!\"));\n",
+            "assert_eq!(mapped.get(), \"item!\");\n```")
+    };
+    (@filter_doc Supplier, $supplier:ident) => {
+        concat!("```rust\nuse qubit_function::{", stringify!($supplier), ", Supplier};\n",
+            "let supplier = ", stringify!($supplier), "::new(|| 42);\n",
+            "let filtered = supplier.filter(|value: &i32| *value % 2 == 0);\n",
+            "assert_eq!(filtered.get(), Some(42));\n```")
+    };
+    (@filter_doc StatefulSupplier, $supplier:ident) => {
+        concat!("```rust\nuse qubit_function::{", stringify!($supplier), ", StatefulSupplier};\n",
+            "let mut source_calls = 0;\n",
+            "let supplier = ", stringify!($supplier), "::new(move || { source_calls += 1; 42 });\n",
+            "let mut filtered = supplier.filter(|value: &i32| *value % 2 == 0);\n",
+            "assert_eq!(filtered.get(), Some(42));\n```")
+    };
+    (@filter_doc SupplierOnce, $supplier:ident) => {
+        concat!("```rust\nuse qubit_function::{", stringify!($supplier), ", SupplierOnce};\n",
+            "let payload = String::from(\"item\");\n",
+            "let supplier = ", stringify!($supplier), "::new(move || payload);\n",
+            "let filtered = supplier.filter(|value: &String| value == \"item\");\n",
+            "assert_eq!(filtered.get(), Some(String::from(\"item\")));\n```")
+    };
+    (@zip_doc Supplier, $supplier:ident) => {
+        concat!("```rust\nuse qubit_function::{", stringify!($supplier), ", Supplier};\n",
+            "let first = ", stringify!($supplier), "::new(|| 42);\n",
+            "let second = ", stringify!($supplier), "::new(|| \"hello\");\n",
+            "let zipped = first.zip(second);\n",
+            "assert_eq!(zipped.get(), (42, \"hello\"));\n```")
+    };
+    (@zip_doc StatefulSupplier, $supplier:ident) => {
+        concat!("```rust\nuse qubit_function::{", stringify!($supplier), ", StatefulSupplier};\n",
+            "let mut first_calls = 0;\nlet mut second_calls = 0;\n",
+            "let first = ", stringify!($supplier), "::new(move || { first_calls += 1; first_calls });\n",
+            "let second = ", stringify!($supplier), "::new(move || { second_calls += 1; second_calls });\n",
+            "let mut zipped = first.zip(second);\n",
+            "assert_eq!(zipped.get(), (1, 1));\n```")
+    };
+    (@zip_doc SupplierOnce, $supplier:ident) => {
+        concat!("```rust\nuse qubit_function::{", stringify!($supplier), ", SupplierOnce};\n",
+            "let payload = String::from(\"item\");\n",
+            "let first = ", stringify!($supplier), "::new(move || payload);\n",
+            "let second = ", stringify!($supplier), "::new(|| 7);\n",
+            "let zipped = first.zip(second);\n",
+            "assert_eq!(zipped.get(), (String::from(\"item\"), 7));\n```")
+    };
+
     (@let_supplier_fn Supplier, $name:ident, $value:expr) => {
         let $name = $value;
     };
@@ -117,15 +181,7 @@ macro_rules! impl_box_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
-        /// use qubit_function::suppliers::*;
-        ///
-        /// let supplier = BoxSupplier::new(|| 10);
-        /// let mapped = supplier
-        ///     .map(|x| x * 2)
-        ///     .map(|x| x + 5);
-        /// assert_eq!(mapped.get(), 25);
-        /// ```
+        #[doc = concat!(impl_box_supplier_methods!(@map_doc $supplier_trait, $struct_name))]
         pub fn map<U, M>(self, mapper: M) -> $struct_name<U>
         where
             $t: 'static,
@@ -155,16 +211,7 @@ macro_rules! impl_box_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
-        /// use qubit_function::predicates::BoxPredicate;
-        /// use qubit_function::{Predicate, suppliers::*};
-        ///
-        /// let supplier = BoxSupplier::new(|| 42);
-        /// let is_even = BoxPredicate::new(|x: &i32| *x % 2 == 0);
-        /// let filtered = supplier.filter(is_even);
-        ///
-        /// assert_eq!(filtered.get(), Some(42));
-        /// ```
+        #[doc = concat!(impl_box_supplier_methods!(@filter_doc $supplier_trait, $struct_name))]
         pub fn filter<P>(self, predicate: P) -> $struct_name<Option<$t>>
         where
             $t: 'static,
@@ -196,15 +243,7 @@ macro_rules! impl_box_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
-        /// use qubit_function::suppliers::*;
-        ///
-        /// let first = BoxSupplier::new(|| 42);
-        /// let second = BoxSupplier::new(|| "hello");
-        /// let zipped = first.zip(second);
-        ///
-        /// assert_eq!(zipped.get(), (42, "hello"));
-        /// ```
+        #[doc = concat!(impl_box_supplier_methods!(@zip_doc $supplier_trait, $struct_name))]
         pub fn zip<U, S>(self, other: S) -> $struct_name<($t, U)>
         where
             $t: 'static,

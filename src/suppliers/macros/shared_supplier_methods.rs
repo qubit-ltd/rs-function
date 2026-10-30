@@ -43,6 +43,48 @@
 /// | `ArcStatefulSupplier` | `Send + 'static` |
 /// | Rc stateless/stateful | `'static` |
 macro_rules! impl_shared_supplier_methods {
+    (@map_doc Supplier, $supplier:ident) => {
+        concat!("```rust\nuse qubit_function::{", stringify!($supplier), ", Supplier};\n",
+            "let source = ", stringify!($supplier), "::new(|| 10);\n",
+            "let mapped = source.map(|value| value * 2);\n",
+            "assert_eq!(mapped.get(), 20);\nassert_eq!(source.get(), 10);\n```")
+    };
+    (@map_doc StatefulSupplier, $supplier:ident) => {
+        concat!("```rust\nuse qubit_function::{", stringify!($supplier), ", StatefulSupplier};\n",
+            "let mut source_calls = 0;\n",
+            "let mut source = ", stringify!($supplier), "::new(move || { source_calls += 1; source_calls * 10 });\n",
+            "let mut mapped = source.map(|value| value * 2);\n",
+            "assert_eq!(mapped.get(), 20);\nassert_eq!(source.get(), 20);\n```")
+    };
+    (@filter_doc Supplier, $supplier:ident) => {
+        concat!("```rust\nuse qubit_function::{", stringify!($supplier), ", Supplier};\n",
+            "let source = ", stringify!($supplier), "::new(|| 42);\n",
+            "let filtered = source.filter(|value: &i32| *value % 2 == 0);\n",
+            "assert_eq!(filtered.get(), Some(42));\nassert_eq!(source.get(), 42);\n```")
+    };
+    (@filter_doc StatefulSupplier, $supplier:ident) => {
+        concat!("```rust\nuse qubit_function::{", stringify!($supplier), ", StatefulSupplier};\n",
+            "let mut source_calls = 0;\n",
+            "let mut source = ", stringify!($supplier), "::new(move || { source_calls += 1; 42 });\n",
+            "let mut filtered = source.filter(|value: &i32| *value % 2 == 0);\n",
+            "assert_eq!(filtered.get(), Some(42));\nassert_eq!(source.get(), 42);\n```")
+    };
+    (@zip_doc Supplier, $supplier:ident) => {
+        concat!("```rust\nuse qubit_function::{", stringify!($supplier), ", Supplier};\n",
+            "let first = ", stringify!($supplier), "::new(|| 42);\n",
+            "let second = ", stringify!($supplier), "::new(|| \"hello\");\n",
+            "let zipped = first.zip(second);\n",
+            "assert_eq!(zipped.get(), (42, \"hello\"));\nassert_eq!(first.get(), 42);\n```")
+    };
+    (@zip_doc StatefulSupplier, $supplier:ident) => {
+        concat!("```rust\nuse qubit_function::{", stringify!($supplier), ", StatefulSupplier};\n",
+            "let mut first_calls = 0;\nlet mut second_calls = 0;\n",
+            "let mut first = ", stringify!($supplier), "::new(move || { first_calls += 1; first_calls });\n",
+            "let second = ", stringify!($supplier), "::new(move || { second_calls += 1; second_calls });\n",
+            "let mut zipped = first.zip(second);\n",
+            "assert_eq!(zipped.get(), (1, 1));\nassert_eq!(first.get(), 2);\n```")
+    };
+
     (@let_supplier Supplier, $name:ident, $value:expr) => {
         let $name = $value;
     };
@@ -70,14 +112,7 @@ macro_rules! impl_shared_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
-        /// use qubit_function::{ArcSupplier, Supplier};
-        ///
-        /// let source = ArcSupplier::new(|| 10);
-        /// let mapped = source.map(|x| x * 2);
-        /// // source is still usable
-        /// assert_eq!(mapped.get(), 20);
-        /// ```
+        #[doc = concat!(impl_shared_supplier_methods!(@map_doc $supplier_trait, $struct_name))]
         #[inline]
         pub fn map<U, M>(&self, mapper: M) -> $struct_name<U>
         where
@@ -108,14 +143,7 @@ macro_rules! impl_shared_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
-        /// use qubit_function::{ArcSupplier, Supplier};
-        ///
-        /// let source = ArcSupplier::new(|| 42);
-        /// let filtered = source.filter(|x: &i32| x % 2 == 0);
-        ///
-        /// assert_eq!(filtered.get(), Some(42));
-        /// ```
+        #[doc = concat!(impl_shared_supplier_methods!(@filter_doc $supplier_trait, $struct_name))]
         #[inline]
         pub fn filter<P>(&self, predicate: P) -> $struct_name<Option<$t>>
         where
@@ -145,16 +173,7 @@ macro_rules! impl_shared_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
-        /// use qubit_function::{ArcSupplier, Supplier};
-        ///
-        /// let first = ArcSupplier::new(|| 42);
-        /// let second = ArcSupplier::new(|| "hello");
-        ///
-        /// let zipped = first.zip(second);
-        ///
-        /// assert_eq!(zipped.get(), (42, "hello"));
-        /// ```
+        #[doc = concat!(impl_shared_supplier_methods!(@zip_doc $supplier_trait, $struct_name))]
         #[inline]
         pub fn zip<U, S>(&self, other: S) -> $struct_name<($t, U)>
         where
@@ -190,14 +209,7 @@ macro_rules! impl_shared_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
-        /// use qubit_function::{RcSupplier, Supplier};
-        ///
-        /// let source = RcSupplier::new(|| 10);
-        /// let mapped = source.map(|x| x * 2);
-        /// // source is still usable
-        /// assert_eq!(mapped.get(), 20);
-        /// ```
+        #[doc = concat!(impl_shared_supplier_methods!(@map_doc $supplier_trait, $struct_name))]
         #[inline]
         pub fn map<U, M>(&self, mapper: M) -> $struct_name<U>
         where
@@ -228,14 +240,7 @@ macro_rules! impl_shared_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
-        /// use qubit_function::{RcSupplier, Supplier};
-        ///
-        /// let source = RcSupplier::new(|| 42);
-        /// let filtered = source.filter(|x: &i32| x % 2 == 0);
-        ///
-        /// assert_eq!(filtered.get(), Some(42));
-        /// ```
+        #[doc = concat!(impl_shared_supplier_methods!(@filter_doc $supplier_trait, $struct_name))]
         #[inline]
         pub fn filter<P>(&self, predicate: P) -> $struct_name<Option<$t>>
         where
@@ -265,16 +270,7 @@ macro_rules! impl_shared_supplier_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
-        /// use qubit_function::{RcSupplier, Supplier};
-        ///
-        /// let first = RcSupplier::new(|| 42);
-        /// let second = RcSupplier::new(|| "hello");
-        ///
-        /// let zipped = first.zip(second);
-        ///
-        /// assert_eq!(zipped.get(), (42, "hello"));
-        /// ```
+        #[doc = concat!(impl_shared_supplier_methods!(@zip_doc $supplier_trait, $struct_name))]
         #[inline]
         pub fn zip<U, S>(&self, other: S) -> $struct_name<($t, U)>
         where

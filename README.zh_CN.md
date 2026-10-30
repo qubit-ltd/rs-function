@@ -56,6 +56,48 @@ qubit-function = { version = "0.18", features = ["full"] }
 
 ## 快速开始
 
+如果 API 只在调用期间执行回调，可以直接接收语义 trait。下面这个由应用
+自行定义的泛型函数只在本次调用中借用回调，因此闭包也可以借用局部状态；它是示例，
+不是本 crate 新增的方法：
+
+```rust
+use qubit_function::Consumer;
+
+fn observe<T, C: Consumer<T>>(input: &T, callback: C) {
+    callback.accept(input);
+}
+
+fn main() {
+    let expected = String::from("ready");
+    observe(&String::from("ready"), |value: &String| {
+        assert_eq!(value, &expected);
+    });
+    assert_eq!(expected, "ready");
+}
+```
+
+需要类型擦除、保存、共享、命名或组合回调时，再使用包装器。现有包装器要求捕获值满足
+`'static`；这不表示包装器必须运行到进程结束，也不表示输入必须是 `'static`：
+
+```rust
+use qubit_function::BoxConsumer;
+use qubit_function::Consumer;
+
+fn main() {
+    let expected = String::from("ready");
+    let callback = BoxConsumer::new(move |value: &String| {
+        assert_eq!(value, &expected);
+    });
+    callback.accept(&String::from("ready"));
+}
+```
+
+`move` 会把捕获值移动进闭包，但不会延长引用的生命周期。需要保存时可移动
+`String`、`Vec` 等拥有值；需要共享时可使用 `Rc`/`Arc`。`LocalBox*` 包装器放宽了
+`Send` 要求，但所存储的捕获仍须满足 `'static`，不能保存任意栈借用。语义 trait
+本身没有统一的 `'static` 或线程约束，接收回调的 API 决定这些要求。如果 API 直接接收
+语义 trait，通常可以直接传入回调；只有在需要类型擦除、保存、共享、命名或组合时才包装。
+
 组合后的回调需要提交给执行器时，使用任务 `Box` 包装器。包装器及其组合结果均为
 `Send`：
 

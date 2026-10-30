@@ -150,7 +150,6 @@ macro_rules! impl_box_mutator_methods {
         /// ```
         pub fn when<P>(self, predicate: P) -> $conditional_type<$t>
         where
-            $t: 'static,
             P: Predicate<$t> + 'static,
         {
             $conditional_type {

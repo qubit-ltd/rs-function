@@ -61,6 +61,55 @@ Unless noted otherwise, examples below assume the `full` feature is enabled.
 
 ## Quick Start
 
+When an API only invokes a callback immediately, it can accept the semantic
+trait directly. This application-defined generic function borrows the callback
+for the call, so its closure can also borrow local state; it is an example, not
+a new method provided by this crate:
+
+```rust
+use qubit_function::Consumer;
+
+fn observe<T, C: Consumer<T>>(input: &T, callback: C) {
+    callback.accept(input);
+}
+
+fn main() {
+    let expected = String::from("ready");
+    observe(&String::from("ready"), |value: &String| {
+        assert_eq!(value, &expected);
+    });
+    assert_eq!(expected, "ready");
+}
+```
+
+Use a wrapper when a callback needs type erasure, storage, sharing, naming, or
+composition. Existing wrappers require captured values to be `'static`; this
+does not mean the wrapper must live for the whole process or that its input
+must be `'static`:
+
+```rust
+use qubit_function::BoxConsumer;
+use qubit_function::Consumer;
+
+fn main() {
+    let expected = String::from("ready");
+    let callback = BoxConsumer::new(move |value: &String| {
+        assert_eq!(value, &expected);
+    });
+    callback.accept(&String::from("ready"));
+}
+```
+
+`move` transfers captured values into the closure but does not extend a
+borrow's lifetime. Move owned values such as `String` or `Vec` when storage is
+needed, or use `Rc`/`Arc` for shared ownership. `LocalBox*` wrappers remove the
+`Send` requirement, but stored captures still need to be `'static`; they do not
+store arbitrary stack borrows. The semantic traits themselves impose no
+uniform `'static` or thread bound: the API that receives a callback sets those
+requirements. If an API accepts a semantic trait directly, pass the callback
+without wrapping it unless type erasure, storage, sharing, naming, or
+composition is needed.
+
 Use a task `Box` wrapper when a composed callback will be submitted to an
 executor. The wrapper, including every returned composition, is `Send`:
 
