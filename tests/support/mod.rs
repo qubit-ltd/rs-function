@@ -7,18 +7,15 @@
 // =============================================================================
 
 use std::fs;
+use std::path::Path;
 use std::process::Command;
 use std::process::Output;
-use std::sync::OnceLock;
 use std::sync::atomic::AtomicUsize;
 use std::sync::atomic::Ordering;
-
-use tempfile::TempDir;
 
 const SUPPORTED_FEATURES: [&str; 4] = ["full", "once", "rc", "stateful"];
 const FIXTURE_MANIFEST: &str = include_str!("fixture/Cargo.toml");
 const FIXTURE_LOCK: &str = include_str!("fixture/Cargo.lock");
-static TARGET_ROOT: OnceLock<TempDir> = OnceLock::new();
 static NEXT_BIN_ID: AtomicUsize = AtomicUsize::new(0);
 
 /// Compiles an isolated consumer source against this checkout.
@@ -53,18 +50,18 @@ pub(super) fn compile_consumer(features: &[&str], source: &str) -> Output {
     fs::write(project_root.join("main.rs"), source)
         .expect("compile-contract infrastructure: fixture source write failed");
 
-    let target_root = TARGET_ROOT.get_or_init(|| {
-        tempfile::Builder::new()
-            .prefix("qubit-function-contract-target-")
-            .tempdir()
-            .expect("compile-contract infrastructure: shared target directory creation failed")
-    });
     let feature_key = if normalized_features.is_empty() {
         "no-features".to_owned()
     } else {
         normalized_features.join("-")
     };
-    let target_dir = target_root.path().join(feature_key);
+    // Keep this rebuildable cache under the checkout; unlike the fixture source,
+    // it is intentionally persistent and is not removed when a test process exits.
+    let target_dir = Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("target")
+        .join("compile-contract")
+        .join(feature_key);
+    fs::create_dir_all(&target_dir).expect("compile-contract infrastructure: stable target directory creation failed");
 
     let mut command = Command::new("cargo");
     command
