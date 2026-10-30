@@ -80,15 +80,16 @@ cargo llvm-cov --json --output-path target/llvm-cov/coverage.json
 cargo llvm-cov --cobertura --output-path target/llvm-cov/cobertura.xml
 ```
 
-To filter tests, pass normal test filters after `--`:
+The `integration_tests` target runs with the default feature set. To run the
+specific filtered test below, enable the `rc` feature and pass the test path
+filter after `--`:
 
 ```bash
-cargo llvm-cov --all-features --html --open --test integration_tests -- testers::tester_2_tests::tests::test_always_true
+cargo llvm-cov --features rc --html --open --test integration_tests -- testers::tester_2_tests::tests::test_always_true
 ```
 
-`integration_tests` requires the `full` feature, which `--all-features` enables.
-The argument after `--` is a libtest filter matched against the test path; it is
-not a Cargo test target name.
+The argument after `--` is a libtest test-path filter string, not a Cargo test
+target name.
 
 ## Compile-Contract Cache
 

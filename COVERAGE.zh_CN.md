@@ -67,14 +67,14 @@ cargo llvm-cov --json --output-path target/llvm-cov/coverage.json
 cargo llvm-cov --cobertura --output-path target/llvm-cov/cobertura.xml
 ```
 
-如需筛选测试，请在 `--` 后传入普通测试过滤参数：
+`integration_tests` 目标使用默认 feature 集即可运行。要运行下面这个具体筛选测试，需启用
+`rc` feature，并在 `--` 后传入测试路径过滤串：
 
 ```bash
-cargo llvm-cov --all-features --html --open --test integration_tests -- testers::tester_2_tests::tests::test_always_true
+cargo llvm-cov --features rc --html --open --test integration_tests -- testers::tester_2_tests::tests::test_always_true
 ```
 
-`integration_tests` 需要 `full` feature，`--all-features` 会启用该 feature。`--` 后的参数是
-libtest 用于匹配测试路径的过滤串，不是 Cargo 测试目标名。
+`--` 后的参数是 libtest 测试路径过滤串，不是 Cargo 测试目标名。
 
 ## 编译契约缓存
 
