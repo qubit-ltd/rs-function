@@ -68,7 +68,7 @@ type RcStatefulBiConsumerFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U)>>;
 /// - **Reference Counting**: Though non-atomic, still exists
 /// - **Runtime Borrow Checking**: `RefCell` checks at runtime
 ///
-/// # Safety
+/// # Thread safety
 ///
 /// `RcStatefulBiConsumer` is not thread-safe and does not implement `Send` or
 /// `Sync`. Attempting to send it to another thread will result in a

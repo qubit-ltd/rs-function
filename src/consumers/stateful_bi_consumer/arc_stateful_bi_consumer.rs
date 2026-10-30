@@ -20,6 +20,8 @@ use crate::consumers::macros::impl_consumer_debug_display;
 use crate::consumers::macros::impl_shared_consumer_methods;
 
 /// The erased callback representation used by this implementation.
+///
+/// The shared mutex serializes mutable callback access across cloned consumers.
 type ArcStatefulBiConsumerFn<T, U> = Arc<Mutex<dyn FnMut(&T, &U) + Send>>;
 
 // =======================================================================

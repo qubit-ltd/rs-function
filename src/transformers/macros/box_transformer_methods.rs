@@ -7,13 +7,12 @@
 // =============================================================================
 //! # Box Transformer Methods Macro
 //!
-//! Generates when and and_then method implementations for Box-based Transformer
+//! Generates `when` and `and_then` methods for Box-based transformers.
 //!
-//! Generates conditional execution when method and chaining and_then method
-//! for Box-based transformers that consume self (because Box cannot be cloned).
+//! The generated methods support predicate-based conditional execution and
+//! chaining for Box-based transformers that consume `self`.
 //!
-//! This macro supports both single-parameter and two-parameter transformers
-//! through pattern matching on the struct signature.
+//! Separate patterns handle single-parameter and two-parameter transformers.
 //!
 //! # Parameters
 //!
@@ -55,12 +54,12 @@
 //! // );
 //! ```
 
-/// Generates when and and_then method implementations for Box-based Transformer
+/// Generates `when` and `and_then` methods for Box-based transformers.
 ///
-/// This macro should be used at the top level (outside of any impl block) as
-/// it generates a complete impl block with methods for the specified struct.
-/// Generates conditional execution when method and chaining and_then method
-/// for Box-based transformers that consume self (because Box cannot be cloned).
+/// Invoke this macro inside the inherent `impl` block for the specified struct.
+/// It emits methods for predicate-based conditional execution and transformer
+/// chaining. These methods consume `self`, which supports Box-based
+/// transformers that cannot be cloned.
 ///
 /// This macro supports both single-parameter and two-parameter transformers
 /// through pattern matching on the struct signature.
@@ -134,6 +133,10 @@ macro_rules! impl_box_transformer_methods {
         /// Creates a conditional transformer that executes based on predicate
         /// result.
         ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The predicate evaluated for each input value.
+        ///
         /// # Parameters
         ///
         /// * `predicate` - The predicate to determine whether to execute
@@ -173,6 +176,11 @@ macro_rules! impl_box_transformer_methods {
 
         /// Chains execution with another transformer, executing the current
         /// transformer first, then the subsequent transformer.
+        ///
+        /// # Type Parameters
+        ///
+        /// * `S` - The output type produced by the subsequent transformer.
+        /// * `F` - The subsequent transformer implementation.
         ///
         /// # Parameters
         ///
@@ -227,6 +235,10 @@ macro_rules! impl_box_transformer_methods {
         /// Creates a conditional two-parameter transformer that executes based
         /// on bi-predicate result.
         ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The predicate evaluated for each pair of input values.
+        ///
         /// # Parameters
         ///
         /// * `predicate` - The bi-predicate to determine whether to execute
@@ -269,6 +281,11 @@ macro_rules! impl_box_transformer_methods {
 
         /// Chains execution with another two-parameter transformer, executing
         /// the current transformer first, then the subsequent transformer.
+        ///
+        /// # Type Parameters
+        ///
+        /// * `S` - The output type produced by the subsequent transformer.
+        /// * `F` - The subsequent two-parameter transformer implementation.
         ///
         /// # Parameters
         ///

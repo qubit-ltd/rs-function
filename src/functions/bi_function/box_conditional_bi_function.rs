@@ -27,6 +27,12 @@ use crate::functions::macros::impl_conditional_function_debug_display;
 /// This type is typically created by calling `BoxBiFunction::when()` and is
 /// designed to work with the `or_else()` method to create if-then-else logic.
 ///
+/// # Type Parameters
+///
+/// - `T` - The type of the first borrowed input.
+/// - `U` - The type of the second borrowed input.
+/// - `R` - The value produced by the selected callback.
+///
 /// # Features
 ///
 /// - **Owned builder state**: Holds the selected callback and predicate; the

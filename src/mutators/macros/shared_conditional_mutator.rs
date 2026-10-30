@@ -148,7 +148,7 @@ macro_rules! impl_shared_conditional_mutator {
             ///
             /// # Returns
             ///
-            /// Returns a new mutator with if-then-else logic
+            /// Returns a new mutator with if-then-else logic.
             pub fn or_else<M>(&self, else_mutator: M) -> $mutator_type<$t>
             where
                 $t: 'static,

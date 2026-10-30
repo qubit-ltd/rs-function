@@ -24,10 +24,14 @@ use crate::predicates::macros::impl_shared_predicate_methods;
 /// reused in a single-threaded context. Composition methods borrow `&self`,
 /// allowing the original predicate to remain usable after composition.
 ///
+/// # Type Parameters
+///
+/// * `T` - The type of value tested by this predicate.
 ///
 /// # Examples
 ///
 /// ```rust
+/// # #[cfg(feature = "rc")]
 /// # {
 /// use qubit_function::{Predicate, RcPredicate};
 ///
@@ -67,6 +71,10 @@ where
 {
     type Output = RcPredicate<T>;
 
+    /// Returns a predicate that negates this predicate's result.
+    ///
+    /// This implementation consumes the wrapper and moves its callback and
+    /// diagnostic metadata into the new predicate.
     fn not(self) -> Self::Output {
         let metadata = self.metadata;
         let function = self.function;
@@ -80,6 +88,10 @@ where
 {
     type Output = RcPredicate<T>;
 
+    /// Returns a predicate that negates this predicate's result.
+    ///
+    /// This implementation preserves the borrowed wrapper by cloning its
+    /// callback handle and diagnostic metadata for the new predicate.
     fn not(self) -> Self::Output {
         let function = self.function.clone();
         RcPredicate::new_with_metadata(move |value: &T| !function(value), self.metadata.clone())

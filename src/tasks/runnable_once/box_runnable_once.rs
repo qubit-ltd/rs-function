@@ -59,6 +59,10 @@ impl<E> BoxRunnableOnce<E> {
     /// This is an explicit bridge from `SupplierOnce<Result<(), E>>` to
     /// `RunnableOnce<E>`.
     ///
+    /// # Type Parameters
+    ///
+    /// * `S` - The supplier implementation that produces the runnable result.
+    ///
     /// # Parameters
     ///
     /// * `supplier` - The supplier that produces the runnable result.
@@ -79,6 +83,10 @@ impl<E> BoxRunnableOnce<E> {
     /// Chains another runnable after this runnable succeeds.
     ///
     /// The second runnable is not executed if this runnable returns `Err`.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `N` - The runnable implementation to execute after `self` succeeds.
     ///
     /// # Parameters
     ///
@@ -106,6 +114,11 @@ impl<E> BoxRunnableOnce<E> {
     /// Because this operation sequences two independent callbacks, the
     /// returned callable is unnamed.
     ///
+    /// # Type Parameters
+    ///
+    /// * `R` - The result type produced by the callable.
+    /// * `C` - The callable implementation to execute after `self` succeeds.
+    ///
     /// # Parameters
     ///
     /// * `callable` - The callable to execute after this runnable succeeds.
@@ -130,6 +143,15 @@ impl<E> BoxRunnableOnce<E> {
 
 impl<E> RunnableOnce<E> for BoxRunnableOnce<E> {
     /// Executes the boxed runnable.
+    ///
+    /// # Returns
+    ///
+    /// Returns `Ok(())` when the runnable succeeds, or the error returned by
+    /// the underlying action.
+    ///
+    /// # Errors
+    ///
+    /// Returns the error produced by the underlying action.
     #[inline(always)]
     fn run_once(self) -> Result<(), E> {
         (self.function)()
@@ -138,6 +160,14 @@ impl<E> RunnableOnce<E> for BoxRunnableOnce<E> {
 
 impl<E> SupplierOnce<Result<(), E>> for BoxRunnableOnce<E> {
     /// Executes the boxed runnable as a one-time supplier of `Result<(), E>`.
+    ///
+    /// # Returns
+    ///
+    /// Returns the result of the underlying runnable.
+    ///
+    /// # Errors
+    ///
+    /// Returns the error produced by the underlying action.
     #[inline(always)]
     fn get(self) -> Result<(), E> {
         self.run_once()

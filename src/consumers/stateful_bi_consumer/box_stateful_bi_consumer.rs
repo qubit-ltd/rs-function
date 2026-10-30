@@ -36,7 +36,7 @@ type BoxStatefulBiConsumerFn<T, U> = Box<dyn FnMut(&T, &U)>;
 /// # Use Cases
 ///
 /// Choose `BoxStatefulBiConsumer` when:
-/// - The bi-consumer is used only once or in a linear flow
+/// - The bi-consumer has one owner, even if `accept` is called repeatedly
 /// - Building pipelines where ownership naturally flows
 /// - No need to share the consumer across contexts
 /// - The callback does not need shared ownership
@@ -49,11 +49,18 @@ type BoxStatefulBiConsumerFn<T, U> = Box<dyn FnMut(&T, &U)>;
 /// storage. Memory usage and allocation depend on the capture and name. No
 /// fixed pointer count or unconditional performance ranking is guaranteed.
 ///
+/// # Type Parameters
+///
+/// - `T` - Type of the first input borrowed by the callback.
+/// - `U` - Type of the second input borrowed by the callback.
+///
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{BiConsumer, BoxStatefulBiConsumer, StatefulBiConsumer};
-/// use std::sync::{Arc, Mutex};
+/// use qubit_function::BoxStatefulBiConsumer;
+/// use qubit_function::StatefulBiConsumer;
+/// use std::sync::Arc;
+/// use std::sync::Mutex;
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
 /// let l = log.clone();

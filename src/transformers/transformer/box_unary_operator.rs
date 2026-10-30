@@ -19,6 +19,10 @@ use super::BoxTransformer;
 /// value of the same type `T`, with single ownership semantics. Equivalent to
 /// Java's `UnaryOperator<T>`.
 ///
+/// # Type Parameters
+///
+/// * `T` - The input and output type of the transformation.
+///
 /// # Examples
 ///
 /// ```rust

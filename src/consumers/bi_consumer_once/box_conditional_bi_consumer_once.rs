@@ -45,15 +45,20 @@ use crate::consumers::macros::impl_conditional_consumer_debug_display;
 /// ## Basic Conditional Execution
 ///
 /// ```rust
-/// use qubit_function::{BiConsumerOnce, BoxBiConsumerOnce};
-/// use std::sync::{Arc, Mutex};
+/// use std::sync::Arc;
+/// use std::sync::Mutex;
+///
+/// use qubit_function::BiConsumerOnce;
+/// use qubit_function::BoxBiConsumerOnce;
+/// use qubit_function::BoxConditionalBiConsumerOnce;
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
 /// let l = log.clone();
 /// let consumer = BoxBiConsumerOnce::new(move |x: &i32, y: &i32| {
 ///     l.lock().expect("mutex should not be poisoned").push(*x + *y);
 /// });
-/// let conditional = consumer.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+/// let conditional: BoxConditionalBiConsumerOnce<i32, i32> =
+///     consumer.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
 ///
 /// conditional.accept(&5, &3);
 /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]); // Executed
@@ -62,16 +67,22 @@ use crate::consumers::macros::impl_conditional_consumer_debug_display;
 /// ## With or_else Branch
 ///
 /// ```rust
-/// use qubit_function::{BiConsumerOnce, BoxBiConsumerOnce};
-/// use std::sync::{Arc, Mutex};
+/// use std::sync::Arc;
+/// use std::sync::Mutex;
+///
+/// use qubit_function::BiConsumerOnce;
+/// use qubit_function::BoxBiConsumerOnce;
+/// use qubit_function::BoxConditionalBiConsumerOnce;
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
 /// let l1 = log.clone();
 /// let l2 = log.clone();
 /// let consumer = BoxBiConsumerOnce::new(move |x: &i32, y: &i32| {
 ///     l1.lock().expect("mutex should not be poisoned").push(*x + *y);
-/// }).when(|x: &i32, y: &i32| *x > 0 && *y > 0)
-///   .or_else(move |x: &i32, y: &i32| {
+/// });
+/// let conditional: BoxConditionalBiConsumerOnce<i32, i32> =
+///     consumer.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+/// let consumer = conditional.or_else(move |x: &i32, y: &i32| {
 ///     l2.lock().expect("mutex should not be poisoned").push(*x * *y);
 /// });
 ///
@@ -99,6 +110,12 @@ impl<T, U> BiConsumerOnce<T, U> for BoxConditionalBiConsumerOnce<T, U> {
     ///
     /// If the predicate returns `false`, the callback is dropped without being
     /// invoked.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - The first input value passed to the predicate and callback.
+    /// * `second` - The second input value passed to the predicate and
+    ///   callback.
     fn accept(self, first: &T, second: &U) {
         if self.predicate.test(first, second) {
             self.consumer.accept(first, second);

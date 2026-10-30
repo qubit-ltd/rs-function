@@ -21,4 +21,6 @@ pub mod common_new_methods;
 pub(crate) use closure_once_trait::impl_closure_once_trait;
 pub(crate) use closure_trait::impl_closure_trait;
 pub(crate) use common_name_methods::impl_common_name_methods;
+pub(crate) use common_new_methods::impl_common_new_metadata_method;
 pub(crate) use common_new_methods::impl_common_new_methods;
+pub(crate) use common_new_methods::impl_common_new_public_methods;

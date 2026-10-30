@@ -28,11 +28,14 @@ use crate::suppliers::macros::impl_supplier_debug_display;
 /// Uses `Arc<Mutex<dyn FnMut() -> T + Send>>` for thread-safe
 /// shared ownership. Can be cloned and sent across threads.
 ///
+/// # Type Parameters
+///
+/// * `T` - The value produced by each call to [`StatefulSupplier::get`].
+///
 /// # Ownership Model
 ///
 /// Methods borrow `&self` instead of consuming `self`. The original
 /// supplier remains usable after method calls:
-///
 ///
 /// ```rust
 /// # {

@@ -38,13 +38,12 @@ use crate::suppliers::macros::impl_supplier_debug_display;
 ///
 ///
 /// ```rust
-/// # {
-/// use qubit_function::{ArcSupplier, Supplier};
+/// use qubit_function::ArcSupplier;
+/// use qubit_function::Supplier;
 ///
 /// let source = ArcSupplier::new(|| 10);
 /// let mapped = source.map(|x| x * 2);
 /// // source is still usable here!
-/// # }
 /// ```
 ///
 /// # Callback Synchronization
@@ -59,8 +58,10 @@ use crate::suppliers::macros::impl_supplier_debug_display;
 /// ## Thread-safe Factory
 ///
 /// ```rust
-/// use qubit_function::{ArcSupplier, Supplier};
 /// use std::thread;
+///
+/// use qubit_function::ArcSupplier;
+/// use qubit_function::Supplier;
 ///
 /// let factory = ArcSupplier::new(|| {
 ///     String::from("Hello")
@@ -80,8 +81,8 @@ use crate::suppliers::macros::impl_supplier_debug_display;
 ///
 ///
 /// ```rust
-/// # {
-/// use qubit_function::{ArcSupplier, Supplier};
+/// use qubit_function::ArcSupplier;
+/// use qubit_function::Supplier;
 ///
 /// let base = ArcSupplier::new(|| 10);
 /// let doubled = base.map(|x| x * 2);
@@ -91,7 +92,6 @@ use crate::suppliers::macros::impl_supplier_debug_display;
 /// assert_eq!(base.get(), 10);
 /// assert_eq!(doubled.get(), 20);
 /// assert_eq!(tripled.get(), 30);
-/// # }
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcSupplier<T> {
@@ -142,7 +142,8 @@ impl<T> ArcSupplier<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_function::{ArcSupplier, Supplier};
+    /// use qubit_function::ArcSupplier;
+    /// use qubit_function::Supplier;
     ///
     /// let supplier = ArcSupplier::constant(42);
     /// assert_eq!(supplier.get(), 42);

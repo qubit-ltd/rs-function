@@ -31,18 +31,12 @@
 //! wrapper-level interior mutability (`Mutex`/`RefCell`), making it more
 //! efficient and easier to share.
 
-// ==========================================================================
-// Type Aliases
-// ==========================================================================
-
-/// Type alias for non-mutating bi-consumer function signature.
-type BiConsumerFn<T, U> = dyn Fn(&T, &U);
-
-/// Type alias for thread-safe non-mutating bi-consumer function signature.
-type ThreadSafeBiConsumerFn<T, U> = dyn Fn(&T, &U) + Send + Sync;
-
 mod box_bi_consumer;
 pub use box_bi_consumer::BoxBiConsumer;
+#[path = "bi_consumer/bi_consumer.rs"]
+mod bi_consumer_trait;
+pub use bi_consumer_trait::BiConsumer;
+mod internal;
 #[cfg(feature = "rc")]
 mod rc_bi_consumer;
 #[cfg(feature = "rc")]
@@ -57,81 +51,3 @@ pub use arc_conditional_bi_consumer::ArcConditionalBiConsumer;
 mod rc_conditional_bi_consumer;
 #[cfg(feature = "rc")]
 pub use rc_conditional_bi_consumer::RcConditionalBiConsumer;
-
-// =======================================================================
-// 1. BiConsumer Trait - Unified Interface
-// =======================================================================
-
-/// BiConsumer trait - Unified non-mutating bi-consumer interface
-///
-/// It is similar to the `Fn(&T, &U)` trait in the standard library.
-///
-/// Defines core behavior for all non-mutating bi-consumer types. The API uses
-/// `&self` and shared input references, so callers can use a bi-consumer
-/// without granting mutable access to the consumer wrapper or input values.
-///
-/// # Automatic Implementations
-///
-/// - All closures implementing `Fn(&T, &U)`
-/// - `BoxBiConsumer<T, U>`, `ArcBiConsumer<T, U>`, `RcBiConsumer<T, U>`
-///
-/// # Features
-///
-/// - **Unified Interface**: All non-mutating bi-consumer types share the same
-///   `accept` method signature
-/// - **Automatic Implementation**: Closures implement this trait directly,
-///   without allocating an adapter
-/// - **Generic Programming**: Write functions accepting any non-mutating
-///   bi-consumer type
-/// - **No Wrapper Interior Mutability**: No need for Mutex or RefCell in the
-///   wrapper, making shared ownership more efficient
-///
-/// # Examples
-///
-/// ```rust
-/// use qubit_function::{BiConsumer, BoxBiConsumer};
-///
-/// fn apply_consumer<C: BiConsumer<i32, i32>>(
-///     consumer: &C,
-///     a: &i32,
-///     b: &i32
-/// ) {
-///     consumer.accept(a, b);
-/// }
-///
-/// let box_con = BoxBiConsumer::new(|x: &i32, y: &i32| {
-///     println!("Sum: {}", x + y);
-/// });
-/// apply_consumer(&box_con, &5, &3);
-/// ```
-pub trait BiConsumer<T, U> {
-    /// Performs the non-mutating consumption operation
-    ///
-    /// Executes an operation on the given two references. The operation
-    /// typically reads input values or produces side effects. It receives no
-    /// direct mutable access to the inputs or consumer, though interior
-    /// mutability and external state remain possible.
-    ///
-    /// # Parameters
-    ///
-    /// * `first` - Reference to the first value to consume
-    /// * `second` - Reference to the second value to consume
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::{BiConsumer, BoxBiConsumer};
-    ///
-    /// let consumer = BoxBiConsumer::new(|x: &i32, y: &i32| {
-    ///     println!("Values: {}, {}", x, y);
-    /// });
-    /// consumer.accept(&5, &3);
-    /// ```
-    fn accept(&self, first: &T, second: &U);
-}
-
-crate::macros::impl_closure_trait!(
-    BiConsumer<T, U>,
-    accept,
-    Fn(first: &T, second: &U)
-);

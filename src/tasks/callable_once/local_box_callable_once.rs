@@ -140,7 +140,16 @@ impl<R, E> LocalBoxCallableOnce<R, E> {
 }
 
 impl<R, E> CallableOnce<R, E> for LocalBoxCallableOnce<R, E> {
-    /// Executes the local boxed callable.
+    /// Executes the local boxed callable, consuming the wrapper.
+    ///
+    /// # Returns
+    ///
+    /// Returns the closure's `Ok(R)` value on success or its `Err(E)` value
+    /// when the closure reports an error.
+    ///
+    /// # Errors
+    ///
+    /// Returns the error produced by the stored closure.
     #[inline(always)]
     fn call_once(self) -> Result<R, E> {
         (self.function)()
@@ -149,7 +158,16 @@ impl<R, E> CallableOnce<R, E> for LocalBoxCallableOnce<R, E> {
 
 impl<R, E> SupplierOnce<Result<R, E>> for LocalBoxCallableOnce<R, E> {
     /// Executes the local boxed callable as a one-time supplier of
-    /// `Result<R, E>`.
+    /// `Result<R, E>`, consuming the wrapper.
+    ///
+    /// # Returns
+    ///
+    /// Returns the closure's `Ok(R)` value on success or its `Err(E)` value
+    /// when the closure reports an error.
+    ///
+    /// # Errors
+    ///
+    /// Returns the error produced by the stored closure.
     #[inline(always)]
     fn get(self) -> Result<R, E> {
         self.call_once()

@@ -18,33 +18,20 @@
 //! * `$struct_name` - The struct name
 //! * `$generic` - Generic parameter list (one or two type parameters)
 //!
-//! # Examples
+//! # Expansion Shape
 //!
-//! This example requires the `rc` feature.
+//! The macro is an internal implementation detail. For a conditional consumer
+//! with one type parameter, it generates an implementation equivalent to:
 //!
-//! ```rust
-//! # #[cfg(feature = "rc")]
-//! # {
-//! use qubit_function::consumers::{ArcConditionalBiConsumer, RcConditionalBiConsumer};
-//! use qubit_function::consumers::{ArcConditionalConsumer, RcConditionalConsumer};
-//! macro_rules! impl_conditional_consumer_clone {
-//!     ($struct_name:ident<$t:ident>) => {
-//!         let _ = std::marker::PhantomData::<$t>;
-//!         let _ = std::any::TypeId::of::<$struct_name<$t>>();
-//!     };
-//!     ($struct_name:ident<$t:ident, $u:ident>) => {
-//!         let _ = std::marker::PhantomData::<($t, $u)>;
-//!         let _ = std::any::TypeId::of::<$struct_name<$t, $u>>();
-//!     };
+//! ```text
+//! impl<T> Clone for ConditionalConsumer<T> {
+//!     fn clone(&self) -> Self {
+//!         Self {
+//!             consumer: self.consumer.clone(),
+//!             predicate: self.predicate.clone(),
+//!         }
+//!     }
 //! }
-//! // For single type parameter
-//! impl_conditional_consumer_clone!(ArcConditionalConsumer<i32>);
-//! impl_conditional_consumer_clone!(RcConditionalConsumer<i32>);
-//!
-//! // For two type parameters
-//! impl_conditional_consumer_clone!(ArcConditionalBiConsumer<i32, i32>);
-//! impl_conditional_consumer_clone!(RcConditionalBiConsumer<i32, i32>);
-//! # }
 //! ```
 
 /// Generates Clone trait implementation for Conditional Consumer types
@@ -61,32 +48,20 @@
 /// * `$t` - Generic parameter list (one or two type parameters)
 /// * `$u` - Generic parameter list (one or two type parameters)
 ///
-/// # Examples
+/// # Expansion Shape
 ///
-/// This example requires the `rc` feature.
+/// For a single type parameter, the generated implementation clones both
+/// fields:
 ///
-/// ```rust
-/// # #[cfg(feature = "rc")]
-/// # {
-/// use qubit_function::consumers::{ArcConditionalBiConsumer, RcConditionalBiConsumer};
-/// use qubit_function::consumers::{ArcConditionalConsumer, RcConditionalConsumer};
-/// use std::marker::PhantomData;
-/// macro_rules! impl_conditional_consumer_clone {
-///     ($struct_name:ident<$t:ident>) => {
-///         let _ = PhantomData::<$t>;
-///     };
-///     ($struct_name:ident<$t:ident, $u:ident>) => {
-///         let _ = PhantomData::<($t, $u)>;
-///     };
+/// ```text
+/// impl<T> Clone for ConditionalConsumer<T> {
+///     fn clone(&self) -> Self {
+///         Self {
+///             consumer: self.consumer.clone(),
+///             predicate: self.predicate.clone(),
+///         }
+///     }
 /// }
-/// // For single type parameter
-/// impl_conditional_consumer_clone!(ArcConditionalConsumer<i32>);
-/// impl_conditional_consumer_clone!(RcConditionalConsumer<i32>);
-///
-/// // For two type parameters
-/// impl_conditional_consumer_clone!(ArcConditionalBiConsumer<i32, i32>);
-/// impl_conditional_consumer_clone!(RcConditionalBiConsumer<i32, i32>);
-/// # }
 /// ```
 macro_rules! impl_conditional_consumer_clone {
     // Single generic parameter - Consumer types

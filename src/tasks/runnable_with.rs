@@ -77,6 +77,20 @@ impl<T, E, F> RunnableWith<T, E> for F
 where
     F: FnMut(&mut T) -> Result<(), E>,
 {
+    /// Forwards the mutable input to the wrapped closure and returns its
+    /// result.
+    ///
+    /// # Parameters
+    ///
+    /// * `input` - The mutable input supplied to the closure.
+    ///
+    /// # Returns
+    ///
+    /// Returns the closure's success or error value unchanged.
+    ///
+    /// # Errors
+    ///
+    /// Returns the error produced by the closure.
     #[inline(always)]
     fn run_with(&mut self, input: &mut T) -> Result<(), E> {
         self(input)

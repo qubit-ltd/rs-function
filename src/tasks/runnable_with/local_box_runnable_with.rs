@@ -8,6 +8,7 @@
 //! Defines the `LocalBoxRunnableWith` public type.
 
 use crate::functions::macros::impl_function_debug_display;
+use crate::internal::CallbackMetadata;
 use crate::macros::impl_common_name_methods;
 use crate::macros::impl_common_new_methods;
 use crate::tasks::callable_with::CallableWith;
@@ -48,7 +49,7 @@ pub struct LocalBoxRunnableWith<T, E> {
     /// The stateful closure executed by this runnable.
     pub(super) function: LocalBoxRunnableWithFn<T, E>,
     /// The optional name of this runnable.
-    pub(super) metadata: crate::internal::CallbackMetadata,
+    pub(super) metadata: CallbackMetadata,
 }
 
 impl<T, E> LocalBoxRunnableWith<T, E> {
@@ -62,6 +63,10 @@ impl<T, E> LocalBoxRunnableWith<T, E> {
     impl_common_name_methods!("local runnable-with");
 
     /// Chains another runnable after this runnable succeeds.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `N` - The runnable to execute after this runnable succeeds.
     ///
     /// # Parameters
     ///
@@ -90,6 +95,11 @@ impl<T, E> LocalBoxRunnableWith<T, E> {
     }
 
     /// Runs this runnable before a local callable.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `R` - The success value produced by the callable.
+    /// * `C` - The callable to execute after this runnable succeeds.
     ///
     /// # Parameters
     ///

@@ -57,6 +57,8 @@ use crate::consumers::macros::impl_shared_consumer_methods;
 /// # Examples
 ///
 /// ```rust
+/// # #[cfg(feature = "rc")]
+/// # {
 /// use qubit_function::{Consumer, RcConsumer};
 ///
 /// let consumer = RcConsumer::new(|x: &i32| {
@@ -66,6 +68,7 @@ use crate::consumers::macros::impl_shared_consumer_methods;
 ///
 /// consumer.accept(&5);
 /// clone.accept(&10);
+/// # }
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcConsumer<T> {

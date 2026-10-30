@@ -36,6 +36,11 @@ use crate::functions::macros::impl_shared_conditional_function;
 /// - **Conditional Execution**: Only maps when predicate returns `true`
 /// - **No Lock Overhead**: More efficient than `ArcConditionalStatefulFunction`
 ///
+/// # Type Parameters
+///
+/// * `T` - The input type borrowed by the predicate and callbacks.
+/// * `R` - The value returned by the selected callback.
+///
 /// # Examples
 ///
 /// ```rust
@@ -50,6 +55,12 @@ use crate::functions::macros::impl_shared_conditional_function;
 /// assert_eq!(function.apply(&5), 10);
 /// assert_eq!(function_clone.apply(&-5), 5);
 /// ```
+///
+/// # Borrowing and reentrancy
+///
+/// Each call holds a mutable `RefCell` borrow while the selected callback
+/// runs. Synchronous re-entry through the same shared wrapper panics with a
+/// borrow error. Mutations completed before a panic are not rolled back.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcConditionalStatefulFunction<T, R> {
     /// The wrapped callback implementation.

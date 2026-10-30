@@ -22,6 +22,9 @@ use crate::predicates::macros::impl_predicate_debug_display;
 /// but does not need to be cloned or shared. Composition methods consume
 /// `self`, reflecting the single-ownership model.
 ///
+/// # Type Parameters
+///
+/// * `T` - The input value type tested through a shared reference.
 ///
 /// # Examples
 ///
@@ -65,6 +68,14 @@ where
 {
     type Output = BoxPredicate<T>;
 
+    /// Returns a predicate that negates this predicate's result.
+    ///
+    /// The operation consumes this wrapper and preserves its diagnostic
+    /// metadata in the returned predicate.
+    ///
+    /// # Returns
+    ///
+    /// A boxed predicate that returns the logical negation of this predicate.
     fn not(self) -> Self::Output {
         let metadata = self.metadata;
         let function = self.function;
@@ -78,6 +89,7 @@ impl_predicate_debug_display!(BoxPredicate<T>);
 
 // Implements Predicate trait for BoxPredicate<T>
 impl<T> Predicate<T> for BoxPredicate<T> {
+    /// Tests the borrowed value by invoking the wrapped predicate.
     #[inline(always)]
     fn test(&self, value: &T) -> bool {
         (self.function)(value)

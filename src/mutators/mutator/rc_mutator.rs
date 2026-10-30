@@ -9,7 +9,6 @@
 
 use std::rc::Rc;
 
-use super::RcMutatorFn;
 use crate::Mutator;
 use crate::Predicate;
 use crate::RcConditionalMutator;
@@ -17,6 +16,9 @@ use crate::mutators::macros::impl_mutator_clone;
 use crate::mutators::macros::impl_mutator_common_methods;
 use crate::mutators::macros::impl_mutator_debug_display;
 use crate::mutators::macros::impl_shared_mutator_methods;
+
+/// Type alias for the erased single-threaded mutator callback.
+type RcMutatorFn<T> = Rc<dyn Fn(&mut T)>;
 
 // ============================================================================
 // 4. RcMutator - Single-Threaded Shared Ownership Implementation
@@ -52,6 +54,8 @@ use crate::mutators::macros::impl_shared_mutator_methods;
 /// # Examples
 ///
 /// ```rust
+/// # #[cfg(feature = "rc")]
+/// # {
 /// use qubit_function::{Mutator, RcMutator};
 ///
 /// let mutator = RcMutator::new(|x: &mut i32| *x *= 2);
@@ -60,6 +64,7 @@ use crate::mutators::macros::impl_shared_mutator_methods;
 /// let mut value = 5;
 /// mutator.apply(&mut value);
 /// assert_eq!(value, 10);
+/// # }
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcMutator<T> {

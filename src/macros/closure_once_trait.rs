@@ -77,62 +77,61 @@
 /// );
 /// ```
 macro_rules! impl_closure_once_trait {
-  // ==================== Internal Implementation ====================
+    // ==================== Internal Implementation ====================
 
-  // Core implementation: Generate complete trait implementation
-  (
-      @impl
-      $trait_name:ident < $($generics:ident),* >,
-      $method_name:ident,
-      $box_type:ident,
-      ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
-  ) => {
-      impl<F, $($generics),*> $trait_name<$($generics),*> for F
-      where
-          F: FnOnce($($arg_ty),*) $(-> $ret)?,
-      {
-          // Core method: Direct closure call
-          #[inline]
-          fn $method_name(self, $($arg : $arg_ty),*) $(-> $ret)? {
-              self($($arg),*)
-          }
+    // Core implementation: Generate complete trait implementation
+    (
+        @impl
+        $trait_name:ident < $($generics:ident),* >,
+        $method_name:ident,
+        $box_type:ident,
+        ($($arg:ident : $arg_ty:ty),*) $(-> $ret:ty)?
+    ) => {
+        impl<F, $($generics),*> $trait_name<$($generics),*> for F
+        where
+            F: FnOnce($($arg_ty),*) $(-> $ret)?,
+        {
+            // Core method: Direct closure call
+            #[inline]
+            fn $method_name(self, $($arg : $arg_ty),*) $(-> $ret)? {
+                self($($arg),*)
+            }
+        }
+    };
 
-      }
-  };
+    // ==================== Public Interface ====================
 
-  // ==================== Public Interface ====================
+    // No return value version
+    (
+        $trait_name:ident < $($generics:ident),* >,
+        $method_name:ident,
+        $box_type:ident,
+        FnOnce($($arg:ident : $arg_ty:ty),*)
+    ) => {
+        impl_closure_once_trait!(
+            @impl
+            $trait_name<$($generics),*>,
+            $method_name,
+            $box_type,
+            ($($arg : $arg_ty),*)
+        );
+    };
 
-  // No return value version
-  (
-      $trait_name:ident < $($generics:ident),* >,
-      $method_name:ident,
-      $box_type:ident,
-      FnOnce($($arg:ident : $arg_ty:ty),*)
-  ) => {
-      impl_closure_once_trait!(
-          @impl
-          $trait_name<$($generics),*>,
-          $method_name,
-          $box_type,
-          ($($arg : $arg_ty),*)
-      );
-  };
-
-  // With return value version
-  (
-      $trait_name:ident < $($generics:ident),* >,
-      $method_name:ident,
-      $box_type:ident,
-      FnOnce($($arg:ident : $arg_ty:ty),*) -> $ret:ty
-  ) => {
-      impl_closure_once_trait!(
-          @impl
-          $trait_name<$($generics),*>,
-          $method_name,
-          $box_type,
-          ($($arg : $arg_ty),*) -> $ret
-      );
-  };
+    // With return value version
+    (
+        $trait_name:ident < $($generics:ident),* >,
+        $method_name:ident,
+        $box_type:ident,
+        FnOnce($($arg:ident : $arg_ty:ty),*) -> $ret:ty
+    ) => {
+        impl_closure_once_trait!(
+            @impl
+            $trait_name<$($generics),*>,
+            $method_name,
+            $box_type,
+            ($($arg : $arg_ty),*) -> $ret
+        );
+    };
 }
 
 pub(crate) use impl_closure_once_trait;

@@ -128,6 +128,10 @@ macro_rules! impl_shared_consumer_methods {
         /// conditional consumer that will only execute the original consumer
         /// when the predicate evaluates to true.
         ///
+        /// # Type Parameters
+        ///
+        /// * `P` - Predicate that decides whether the wrapped callback runs.
+        ///
         /// # Parameters
         ///
         /// * `predicate` - The condition that must be satisfied for the consumer
@@ -173,6 +177,10 @@ macro_rules! impl_shared_consumer_methods {
         /// that executes both consumers in sequence. The returned consumer
         /// first executes this consumer, then unconditionally executes the
         /// `after` consumer.
+        ///
+        /// # Type Parameters
+        ///
+        /// * `C` - Callback implementation chained after this one.
         ///
         /// # Parameters
         ///
@@ -229,6 +237,10 @@ macro_rules! impl_shared_consumer_methods {
         /// conditional bi-consumer that will only execute the original bi-consumer
         /// when the predicate evaluates to true.
         ///
+        /// # Type Parameters
+        ///
+        /// * `P` - Predicate that decides whether the wrapped callback runs.
+        ///
         /// # Parameters
         ///
         /// * `predicate` - The condition that must be satisfied for the bi-consumer
@@ -274,6 +286,10 @@ macro_rules! impl_shared_consumer_methods {
         /// bi-consumer that executes both bi-consumers in sequence. The returned
         /// bi-consumer first executes this bi-consumer, then unconditionally
         /// executes the `after` bi-consumer.
+        ///
+        /// # Type Parameters
+        ///
+        /// * `C` - Callback implementation chained after this one.
         ///
         /// # Parameters
         ///

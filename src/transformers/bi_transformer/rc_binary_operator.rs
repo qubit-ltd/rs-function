@@ -22,9 +22,11 @@ use super::RcBiTransformer;
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{RcBinaryOperator, BiTransformer};
+/// use qubit_function::BiTransformer;
+/// use qubit_function::RcBinaryOperator;
 ///
-/// let max: RcBinaryOperator<i32> = RcBinaryOperator::new(|x, y| if x > y { x } else { y });
+/// let max: RcBinaryOperator<i32> =
+///     RcBinaryOperator::new(|x, y| if x > y { x } else { y });
 /// let max_clone = max.clone();
 /// assert_eq!(max.apply(30, 42), 42);
 /// assert_eq!(max_clone.apply(30, 42), 42);

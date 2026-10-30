@@ -38,6 +38,12 @@ use crate::transformers::macros::impl_shared_conditional_transformer;
 ///   `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 ///
+/// # Type Parameters
+///
+/// * `T` - Type of the first input consumed by the callbacks.
+/// * `U` - Type of the second input consumed by the callbacks.
+/// * `R` - Type of the value returned by the callbacks.
+///
 /// # Examples
 ///
 /// ```rust

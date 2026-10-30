@@ -46,14 +46,16 @@ use crate::consumers::macros::impl_shared_conditional_consumer;
 /// use std::rc::Rc;
 ///
 /// use qubit_function::BiConsumer;
+/// use qubit_function::RcConditionalBiConsumer;
 /// use qubit_function::RcBiConsumer;
 ///
 /// let total = Rc::new(Cell::new(0));
 /// let callback_total = Rc::clone(&total);
-/// let consumer = RcBiConsumer::new(move |first: &i32, second: &i32| {
-///     callback_total.set(callback_total.get() + first + second);
-/// })
-/// .when(|first: &i32, second: &i32| *first > 0 && *second > 0);
+/// let consumer: RcConditionalBiConsumer<i32, i32> =
+///     RcBiConsumer::new(move |first: &i32, second: &i32| {
+///         callback_total.set(callback_total.get() + first + second);
+///     })
+///     .when(|first: &i32, second: &i32| *first > 0 && *second > 0);
 ///
 /// consumer.accept(&2, &3);
 /// consumer.accept(&-1, &5);

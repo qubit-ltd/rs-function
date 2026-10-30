@@ -24,6 +24,10 @@ use crate::mutators::macros::impl_mutator_debug_display;
 /// ownership scenarios. This is the straightforward mutator
 /// type when sharing is not required.
 ///
+/// # Type Parameters
+///
+/// - `T`: The value type that the mutator modifies through a mutable reference.
+///
 /// # Features
 ///
 /// - **Single Ownership**: Not cloneable; `apply` borrows `&self`

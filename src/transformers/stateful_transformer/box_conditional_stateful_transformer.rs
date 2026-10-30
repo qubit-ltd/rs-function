@@ -40,6 +40,11 @@ use crate::transformers::macros::impl_conditional_transformer_debug_display;
 /// and obtain a callable wrapper. Invoking that wrapper follows the
 /// `StatefulTransformer` receiver contract (`&mut self`).
 ///
+/// # Type Parameters
+///
+/// * `T` - The input type consumed by the wrapped transformer and predicate.
+/// * `R` - The output type produced by the wrapped transformer.
+///
 /// # Examples
 ///
 /// ```rust

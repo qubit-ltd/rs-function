@@ -10,7 +10,6 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use super::RcStatefulMutatingFunctionFn;
 use crate::Function;
 use crate::Predicate;
 use crate::RcConditionalStatefulMutatingFunction;
@@ -20,6 +19,17 @@ use crate::functions::macros::impl_function_common_methods;
 use crate::functions::macros::impl_function_debug_display;
 use crate::functions::macros::impl_function_identity_method;
 use crate::functions::macros::impl_shared_function_methods;
+
+/// Erases the callback type while preserving its mutable call behavior.
+///
+/// The `Rc<RefCell<_>>` wrapper allows shared ownership on one thread; calling
+/// through a reentrant mutable borrow panics.
+///
+/// # Type Parameters
+///
+/// * `T` - The mutable input accepted by the callback.
+/// * `R` - The value returned by the callback.
+pub(super) type RcStatefulMutatingFunctionFn<T, R> = Rc<RefCell<dyn FnMut(&mut T) -> R>>;
 
 // =======================================================================
 // 4. RcStatefulMutatingFunction - Single-Threaded Shared Ownership

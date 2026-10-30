@@ -132,7 +132,21 @@ impl<E> BoxRunnable<E> {
 }
 
 impl<E> Runnable<E> for BoxRunnable<E> {
-    /// Executes the boxed runnable.
+    /// Executes the stored action and returns its success or error unchanged.
+    ///
+    /// This forwarding implementation mutably borrows the runnable, so its
+    /// `FnMut` action may update captured state and may be called repeatedly.
+    /// An `Err(E)` from the action is returned directly without retrying or
+    /// translating it; callers decide how to handle that error.
+    ///
+    /// # Returns
+    ///
+    /// Returns `Ok(())` when the action succeeds, or the action's original
+    /// `Err(E)` value when it fails.
+    ///
+    /// # Errors
+    ///
+    /// Returns the error produced by the stored action.
     #[inline(always)]
     fn run(&mut self) -> Result<(), E> {
         (self.function)()

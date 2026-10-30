@@ -88,6 +88,10 @@ macro_rules! impl_shared_transformer_methods {
         /// Creates a conditional transformer that applies this transformer
         /// only when `predicate` accepts the input.
         ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The predicate evaluated before transformation.
+        ///
         /// # Parameters
         ///
         /// * `predicate` - The condition evaluated before transformation.
@@ -110,6 +114,11 @@ macro_rules! impl_shared_transformer_methods {
         }
 
         /// Chains `after` to run on the value produced by this transformer.
+        ///
+        /// # Type Parameters
+        ///
+        /// * `S` - The output type produced by the chained transformer.
+        /// * `F` - The transformer applied to this transformer's output.
         ///
         /// # Parameters
         ///
@@ -148,6 +157,10 @@ macro_rules! impl_shared_transformer_methods {
         /// Creates a conditional transformer that applies this transformer
         /// only when `predicate` accepts both inputs.
         ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The predicate evaluated before transformation.
+        ///
         /// # Parameters
         ///
         /// * `predicate` - The condition evaluated before transformation.
@@ -171,6 +184,11 @@ macro_rules! impl_shared_transformer_methods {
         }
 
         /// Chains `after` to run on the value produced from both inputs.
+        ///
+        /// # Type Parameters
+        ///
+        /// * `S` - The output type produced by the chained transformer.
+        /// * `F` - The transformer applied to this transformer's output.
         ///
         /// # Parameters
         ///

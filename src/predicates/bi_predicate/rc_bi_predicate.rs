@@ -31,9 +31,12 @@ use crate::predicates::macros::impl_shared_predicate_methods;
 /// * `T` - The type of the first value tested by the predicate.
 /// * `U` - The type of the second value tested by the predicate.
 ///
+/// This type requires the `rc` feature.
+///
 /// # Examples
 ///
 /// ```rust
+/// # #[cfg(feature = "rc")]
 /// # {
 /// use qubit_function::{BiPredicate, RcBiPredicate};
 ///

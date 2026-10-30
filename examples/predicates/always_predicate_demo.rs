@@ -5,6 +5,12 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
+//! Demonstrates always-accepting and always-rejecting predicates.
+//!
+//! The example covers boxed, reference-counted, and atomically
+//! reference-counted predicates, their logical composition, and their use in
+//! configurable filters.
+
 use qubit_function::ArcPredicate;
 use qubit_function::BoxPredicate;
 use qubit_function::Predicate;

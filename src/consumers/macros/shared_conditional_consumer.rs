@@ -35,6 +35,13 @@
 /// through a shared reference and require `Sync`; stateful Arc wrappers call
 /// under an outer mutex and require only `Send`.
 ///
+/// # Parameters
+///
+/// * `$struct_name` - Conditional wrapper type receiving the generated methods.
+/// * `$consumer_type` - Shared consumer type returned by the generated methods.
+/// * `$consumer_trait` - Consumer trait implemented by the callback arguments.
+/// * `callback_bounds` - Additional bounds required by the callback storage.
+///
 /// # Capability policy
 ///
 /// | Wrapper family | `callback_bounds` |
@@ -83,6 +90,10 @@ macro_rules! impl_shared_conditional_consumer {
             /// executes the first action (based on the predicate), and then
             /// always executes the second action.
             ///
+            /// # Type Parameters
+            ///
+            /// * `C` - Type of the next consumer.
+            ///
             /// # Parameters
             ///
             /// * `next` - The next consumer to execute (always executed)
@@ -97,18 +108,18 @@ macro_rules! impl_shared_conditional_consumer {
             /// use std::sync::atomic::{AtomicI32, Ordering};
             /// use qubit_function::{Consumer, ArcConsumer};
             ///
-/// let result = std::sync::Arc::new(AtomicI32::new(0));
-/// let result1 = std::sync::Arc::clone(&result);
-/// let consumer = ArcConsumer::new(move |x: &i32| {
-///     result1.fetch_add(*x, Ordering::SeqCst);
-/// });
+            /// let result = std::sync::Arc::new(AtomicI32::new(0));
+            /// let result1 = std::sync::Arc::clone(&result);
+            /// let consumer = ArcConsumer::new(move |x: &i32| {
+            ///     result1.fetch_add(*x, Ordering::SeqCst);
+            /// });
             ///
-/// let consumer2 = consumer.when(|x: &i32| *x > 0);
+            /// let consumer2 = consumer.when(|x: &i32| *x > 0);
             ///
-/// let result2 = std::sync::Arc::clone(&result);
-/// let chained = consumer2.and_then(ArcConsumer::new(move |x: &i32| {
-///     result2.fetch_add(2 * (*x), Ordering::SeqCst);
-/// }));
+            /// let result2 = std::sync::Arc::clone(&result);
+            /// let chained = consumer2.and_then(ArcConsumer::new(move |x: &i32| {
+            ///     result2.fetch_add(2 * (*x), Ordering::SeqCst);
+            /// }));
             ///
             /// chained.accept(&5);  // result = 5 + (2*5) = 15
             /// result.store(0, Ordering::SeqCst);  // reset
@@ -135,6 +146,10 @@ macro_rules! impl_shared_conditional_consumer {
             ///
             /// Executes the original consumer when the condition is satisfied, otherwise
             /// executes else_consumer.
+            ///
+            /// # Type Parameters
+            ///
+            /// * `C` - Type of the else-branch consumer.
             ///
             /// # Parameters
             ///
@@ -189,6 +204,10 @@ macro_rules! impl_shared_conditional_consumer {
             /// executes the first action (based on the predicate), and then
             /// always executes the second action.
             ///
+            /// # Type Parameters
+            ///
+            /// * `C` - Type of the next bi-consumer.
+            ///
             /// # Parameters
             ///
             /// * `next` - The next bi-consumer to execute (always executed)
@@ -200,21 +219,21 @@ macro_rules! impl_shared_conditional_consumer {
             /// # Examples
             ///
             /// ```rust
-/// use std::sync::atomic::{AtomicI32, Ordering};
-/// use std::sync::Arc;
-/// use qubit_function::{BiConsumer, ArcBiConsumer};
-///
-/// let result = Arc::new(AtomicI32::new(0));
-/// let result1 = std::sync::Arc::clone(&result);
-/// let consumer = ArcBiConsumer::new(move |x: &i32, y: &i32| {
-///     result1.fetch_add(*x + *y, Ordering::SeqCst);
-/// });
+            /// use std::sync::atomic::{AtomicI32, Ordering};
+            /// use std::sync::Arc;
+            /// use qubit_function::{BiConsumer, ArcBiConsumer};
             ///
-/// let consumer2 = consumer.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
-/// let result2 = std::sync::Arc::clone(&result);
-/// let chained = consumer2.and_then(ArcBiConsumer::new(move |x: &i32, y: &i32| {
-///     result2.fetch_add(2 * (*x + *y), Ordering::SeqCst);
-/// }));
+            /// let result = Arc::new(AtomicI32::new(0));
+            /// let result1 = std::sync::Arc::clone(&result);
+            /// let consumer = ArcBiConsumer::new(move |x: &i32, y: &i32| {
+            ///     result1.fetch_add(*x + *y, Ordering::SeqCst);
+            /// });
+            ///
+            /// let consumer2 = consumer.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
+            /// let result2 = std::sync::Arc::clone(&result);
+            /// let chained = consumer2.and_then(ArcBiConsumer::new(move |x: &i32, y: &i32| {
+            ///     result2.fetch_add(2 * (*x + *y), Ordering::SeqCst);
+            /// }));
             ///
             /// chained.accept(&5, &3);  // result = (5+3) + 2*(5+3) = 24
             /// result.store(0, Ordering::SeqCst);  // reset
@@ -242,6 +261,10 @@ macro_rules! impl_shared_conditional_consumer {
             ///
             /// Executes the original bi-consumer when the condition is satisfied, otherwise
             /// executes else_consumer.
+            ///
+            /// # Type Parameters
+            ///
+            /// * `C` - Type of the else-branch bi-consumer.
             ///
             /// # Parameters
             ///

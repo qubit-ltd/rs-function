@@ -66,14 +66,11 @@ impl<E> Clone for ArcRunnable<E> {
 }
 
 impl<E> ArcRunnable<E> {
-    impl_common_new_methods!(
-        semantic_mut(Runnable<E> + Send + 'static),
-        |source| move || source.run(),
-        |function| Arc::new(Mutex::new(function)),
-        "runnable"
-    );
-
     /// Creates a thread-safe runnable from a reusable supplier.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `S` - The supplier implementation that produces the runnable result.
     ///
     /// # Parameters
     ///
@@ -89,6 +86,13 @@ impl<E> ArcRunnable<E> {
     {
         Self::new(move || supplier.get())
     }
+
+    impl_common_new_methods!(
+        semantic_mut(Runnable<E> + Send + 'static),
+        |source| move || source.run(),
+        |function| Arc::new(Mutex::new(function)),
+        "runnable"
+    );
 
     impl_common_name_methods!("runnable");
 }

@@ -65,6 +65,10 @@ impl<T> RcStatefulPredicate<T> {
     /// This method borrows `self`; the returned predicate shares this
     /// predicate's mutable state through the same `Rc<RefCell<_>>`.
     ///
+    /// # Type Parameters
+    ///
+    /// * `P` - The other stateful predicate applied to the same value type.
+    ///
     /// # Parameters
     ///
     /// * `other` - The other predicate to combine with.
@@ -93,6 +97,10 @@ impl<T> RcStatefulPredicate<T> {
     /// This method borrows `self`; the returned predicate shares this
     /// predicate's mutable state through the same `Rc<RefCell<_>>`.
     ///
+    /// # Type Parameters
+    ///
+    /// * `P` - The other stateful predicate applied to the same value type.
+    ///
     /// # Parameters
     ///
     /// * `other` - The other predicate to combine with.
@@ -119,6 +127,10 @@ impl<T> RcStatefulPredicate<T> {
     /// Returns a predicate representing logical NAND with another predicate.
     ///
     /// NAND returns `true` unless both predicates return `true`.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `P` - The other stateful predicate applied to the same value type.
     ///
     /// # Parameters
     ///
@@ -148,6 +160,10 @@ impl<T> RcStatefulPredicate<T> {
     /// XOR evaluates both predicates and returns `true` when exactly one
     /// predicate returns `true`.
     ///
+    /// # Type Parameters
+    ///
+    /// * `P` - The other stateful predicate applied to the same value type.
+    ///
     /// # Parameters
     ///
     /// * `other` - The other predicate to combine with.
@@ -174,6 +190,10 @@ impl<T> RcStatefulPredicate<T> {
     /// Returns a predicate representing logical NOR with another predicate.
     ///
     /// NOR returns `true` only when both predicates return `false`.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `P` - The other stateful predicate applied to the same value type.
     ///
     /// # Parameters
     ///

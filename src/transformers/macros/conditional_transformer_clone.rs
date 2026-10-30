@@ -41,8 +41,9 @@
 /// # Parameters
 ///
 /// * `$struct_name` - The struct name
-/// * `$t` - Generic parameter list (two or three type parameters)
-/// * `$r` - Generic parameter list (two or three type parameters)
+/// * `$t` - The first type parameter
+/// * `$u` - The second type parameter in the three-parameter form
+/// * `$r` - The final type parameter
 ///
 /// # Examples
 ///

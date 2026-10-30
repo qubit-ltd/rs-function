@@ -18,8 +18,6 @@ use crate::consumers::macros::impl_conditional_consumer_debug_display;
 // 7. BoxConditionalConsumer - Box-based Conditional Consumer
 // ============================================================================
 
-/// BoxConditionalConsumer struct
-///
 /// A conditional non-mutating consumer that only executes when a predicate is
 /// satisfied. Uses `BoxConsumer` and `BoxPredicate` for single ownership
 /// semantics.
@@ -39,37 +37,54 @@ use crate::consumers::macros::impl_conditional_consumer_debug_display;
 /// - **Shared access**: Receives `&self` and `&T`; interior mutability and
 ///   external side effects remain possible
 ///
+/// # Type Parameters
+///
+/// * `T` - The input type borrowed by the predicate and consumer callbacks.
+///
 /// # Examples
 ///
 /// ## Basic Conditional Execution
 ///
 /// ```rust
-/// use qubit_function::{Consumer, BoxConsumer};
+/// use std::cell::Cell;
+/// use std::rc::Rc;
+/// use qubit_function::{BoxConsumer, Consumer};
 ///
-/// let consumer = BoxConsumer::new(|x: &i32| {
-///     println!("Positive: {}", x);
+/// let observed = Rc::new(Cell::new(0));
+/// let observed_by_consumer = Rc::clone(&observed);
+/// let consumer = BoxConsumer::new(move |x: &i32| {
+///     observed_by_consumer.set(*x);
 /// });
 /// let conditional = consumer.when(|x: &i32| *x > 0);
 ///
-/// conditional.accept(&5);  // Prints: Positive: 5
-/// conditional.accept(&-5); // Does nothing
+/// conditional.accept(&5);
+/// assert_eq!(observed.get(), 5);
+/// conditional.accept(&-5);
+/// assert_eq!(observed.get(), 5);
 /// ```
 ///
 /// ## With or_else Branch
 ///
 /// ```rust
-/// use qubit_function::{Consumer, BoxConsumer};
+/// use std::cell::Cell;
+/// use std::rc::Rc;
+/// use qubit_function::{BoxConsumer, Consumer};
 ///
-/// let consumer = BoxConsumer::new(|x: &i32| {
-///     println!("Positive: {}", x);
+/// let observed = Rc::new(Cell::new(0));
+/// let observed_by_consumer = Rc::clone(&observed);
+/// let observed_by_fallback = Rc::clone(&observed);
+/// let consumer = BoxConsumer::new(move |x: &i32| {
+///     observed_by_consumer.set(*x);
 /// })
 /// .when(|x: &i32| *x > 0)
-/// .or_else(|x: &i32| {
-///     println!("Non-positive: {}", x);
+/// .or_else(move |x: &i32| {
+///     observed_by_fallback.set(*x);
 /// });
 ///
-/// consumer.accept(&5);  // Prints: Positive: 5
-/// consumer.accept(&-5); // Prints: Non-positive: -5
+/// consumer.accept(&5);
+/// assert_eq!(observed.get(), 5);
+/// consumer.accept(&-5);
+/// assert_eq!(observed.get(), -5);
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConditionalConsumer<T> {

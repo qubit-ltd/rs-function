@@ -11,11 +11,11 @@
 
 /// Generates logical operation methods for boxed predicates.
 ///
-/// This macro should be used at the top level (outside of any impl block) as
-/// it generates a complete impl block with methods for the specified struct.
-/// The generated methods consume `self` because boxed predicates cannot be
-/// cloned. The macro supports both single-parameter and two-parameter
-/// predicates through pattern matching on the struct signature.
+/// Use this macro inside the inherent `impl` block for the specified struct.
+/// It generates logical composition methods that consume `self`, because
+/// boxed predicates cannot be cloned. The macro supports both single-parameter
+/// and two-parameter predicates through pattern matching on the struct
+/// signature.
 ///
 /// # Parameters
 ///
@@ -27,10 +27,14 @@
 ///
 /// ```ignore
 /// // Single-parameter predicate
-/// impl_box_predicate_methods!(BoxPredicate<T>);
+/// impl<T> BoxPredicate<T> {
+///     impl_box_predicate_methods!(BoxPredicate<T>);
+/// }
 ///
 /// // Two-parameter predicate
-/// impl_box_predicate_methods!(BoxBiPredicate<T, U>);
+/// impl<T, U> BoxBiPredicate<T, U> {
+///     impl_box_predicate_methods!(BoxBiPredicate<T, U>);
+/// }
 /// ```
 macro_rules! impl_box_predicate_methods {
     // Internal macro for generating logical operations

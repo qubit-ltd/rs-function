@@ -31,6 +31,10 @@ use crate::mutators::macros::impl_mutator_debug_display;
 /// - **Builder Pattern**: Composition methods consume `self` naturally
 /// - **Factory Methods**: Convenient constructors for common patterns
 ///
+/// # Type Parameters
+///
+/// * `T` - The value type passed mutably to the wrapped callback.
+///
 /// # Use Cases
 ///
 /// Choose `BoxStatefulMutator` when:

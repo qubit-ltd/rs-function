@@ -22,6 +22,12 @@ type LocalBoxCallableWithFn<T, R, E> = Box<dyn FnMut(&mut T) -> Result<R, E>>;
 /// [`BoxCallableWith`](crate::tasks::callable_with::BoxCallableWith) when the
 /// callable must be movable across threads.
 ///
+/// # Type Parameters
+///
+/// * `T` - The mutable input type passed to the callback.
+/// * `R` - The success value returned by the callback.
+/// * `E` - The error value returned when the callback fails.
+///
 /// # Examples
 ///
 /// ```rust

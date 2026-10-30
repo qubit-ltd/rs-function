@@ -32,7 +32,8 @@ use crate::tasks::callable::Callable;
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{BoxCallable, Callable};
+/// use qubit_function::BoxCallable;
+/// use qubit_function::Callable;
 ///
 /// let mut task = BoxCallable::new(|| Ok::<i32, String>(42));
 /// assert_eq!(task.call().expect("call should succeed"), 42);
@@ -46,17 +47,14 @@ pub struct BoxCallable<R, E> {
 }
 
 impl<R, E> BoxCallable<R, E> {
-    impl_common_new_methods!(
-        semantic_mut(Callable<R, E> + Send + 'static),
-        |source| move || source.call(),
-        |function| Box::new(function),
-        "callable"
-    );
-
     /// Creates a boxed callable from a reusable supplier.
     ///
     /// This is an explicit bridge from `Supplier<Result<R, E>>` to
     /// `Callable<R, E>`.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `S` - The supplier type that produces the callable result.
     ///
     /// # Parameters
     ///
@@ -73,9 +71,24 @@ impl<R, E> BoxCallable<R, E> {
         Self::new(move || supplier.get())
     }
 
+    impl_common_new_methods!(
+        semantic_mut(Callable<R, E> + Send + 'static),
+        |source| move || source.call(),
+        |function| Box::new(function),
+        "callable"
+    );
+
     impl_common_name_methods!("callable");
 
     /// Maps the success value of this callable.
+    ///
+    /// Consumes this callable and returns a new callable that owns its
+    /// computation and the mapper.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `U` - The success value produced after mapping.
+    /// * `M` - The mapper type.
     ///
     /// # Parameters
     ///
@@ -98,6 +111,14 @@ impl<R, E> BoxCallable<R, E> {
 
     /// Maps the error value of this callable.
     ///
+    /// Consumes this callable and returns a new callable that owns its
+    /// computation and the mapper.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `E2` - The error value produced after mapping.
+    /// * `M` - The mapper type.
+    ///
     /// # Parameters
     ///
     /// * `mapper` - Function that transforms the error value.
@@ -118,6 +139,14 @@ impl<R, E> BoxCallable<R, E> {
     }
 
     /// Chains another fallible computation after this callable succeeds.
+    ///
+    /// Consumes this callable and returns a new callable that owns its
+    /// computation and the next computation.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `U` - The success value produced by the next computation.
+    /// * `N` - The next computation's type.
     ///
     /// # Parameters
     ///
@@ -145,6 +174,15 @@ impl<R, E> BoxCallable<R, E> {
 
 impl<R, E> Callable<R, E> for BoxCallable<R, E> {
     /// Executes the boxed callable.
+    ///
+    /// # Returns
+    ///
+    /// Returns `Ok(R)` when the computation succeeds, or `Err(E)` when it
+    /// fails.
+    ///
+    /// # Errors
+    ///
+    /// Returns `Err(E)` when the underlying computation fails.
     #[inline(always)]
     fn call(&mut self) -> Result<R, E> {
         (self.function)()

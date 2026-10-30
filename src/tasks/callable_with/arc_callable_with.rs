@@ -23,6 +23,13 @@ type ArcCallableWithFn<T, R, E> = Arc<Mutex<dyn FnMut(&mut T) -> Result<R, E> + 
 ///
 /// `ArcCallableWith<T, R, E>` stores an
 /// `Arc<Mutex<dyn FnMut(&mut T) -> Result<R, E> + Send>>`.
+///
+/// # Type Parameters
+///
+/// * `T` - The mutable input type passed to the callback.
+/// * `R` - The success value returned by the callback.
+/// * `E` - The error value returned when the callback fails.
+///
 /// # Locking and reentrancy
 ///
 /// Each call acquires a `parking_lot::Mutex` and holds it while the user
@@ -74,6 +81,22 @@ impl<T, R, E> ArcCallableWith<T, R, E> {
 
 impl<T, R, E> CallableWith<T, R, E> for ArcCallableWith<T, R, E> {
     /// Executes the thread-safe callable with mutable input.
+    ///
+    /// # Parameters
+    ///
+    /// * `input` - The mutable input passed to the callback.
+    ///
+    /// # Returns
+    ///
+    /// Returns the callback's success value or error unchanged.
+    ///
+    /// # Errors
+    ///
+    /// Returns the error produced by the callback.
+    ///
+    /// # Panics
+    ///
+    /// Propagates any panic raised by the callback.
     #[inline]
     fn call_with(&mut self, input: &mut T) -> Result<R, E> {
         let mut function = self.function.lock();

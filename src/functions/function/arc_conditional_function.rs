@@ -19,14 +19,18 @@ use crate::functions::macros::impl_shared_conditional_function;
 // ArcConditionalFunction - Arc-based Conditional Function
 // ============================================================================
 
-/// ArcConditionalFunction struct
-///
-/// A thread-safe conditional function that only executes when a predicate is
-/// satisfied. Uses `ArcFunction` and `ArcPredicate` for shared ownership
-/// across threads.
+/// A thread-safe wrapper that invokes an `ArcFunction` only when its
+/// `ArcPredicate` accepts the input.
 ///
 /// This type is typically created by calling `ArcFunction::when()` and is
 /// designed to work with the `or_else()` method to create if-then-else logic.
+/// Both callbacks and the predicate use shared ownership, so cloning this
+/// wrapper does not consume the original value.
+///
+/// # Type Parameters
+///
+/// - `T` is the input type borrowed by the callback and predicate.
+/// - `R` is the value returned when the callback is invoked.
 ///
 /// # Features
 ///

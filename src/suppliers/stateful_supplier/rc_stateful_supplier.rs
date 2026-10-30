@@ -28,6 +28,10 @@ use crate::suppliers::macros::impl_supplier_debug_display;
 /// Uses `Rc<RefCell<dyn FnMut() -> T>>` for single-threaded shared
 /// ownership. Can be cloned but not sent across threads.
 ///
+/// # Type Parameters
+///
+/// * `T` - The type of value produced by the wrapped callback.
+///
 /// # Ownership Model
 ///
 /// Like `ArcStatefulSupplier`, methods borrow `&self` instead of consuming
@@ -49,9 +53,10 @@ use crate::suppliers::macros::impl_supplier_debug_display;
 /// ## Shared Counter
 ///
 /// ```rust
-/// use qubit_function::{RcStatefulSupplier, StatefulSupplier};
-/// use std::rc::Rc;
 /// use std::cell::RefCell;
+/// use std::rc::Rc;
+///
+/// use qubit_function::{RcStatefulSupplier, StatefulSupplier};
 ///
 /// let counter = Rc::new(RefCell::new(0));
 /// let counter_clone = Rc::clone(&counter);
@@ -173,9 +178,10 @@ impl<T> RcStatefulSupplier<T> {
     /// # Examples
     ///
     /// ```rust
-    /// use qubit_function::{RcStatefulSupplier, StatefulSupplier};
-    /// use std::rc::Rc;
     /// use std::cell::RefCell;
+    /// use std::rc::Rc;
+    ///
+    /// use qubit_function::{RcStatefulSupplier, StatefulSupplier};
     ///
     /// let call_count = Rc::new(RefCell::new(0));
     /// let call_count_clone = Rc::clone(&call_count);

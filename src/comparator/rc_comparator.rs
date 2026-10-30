@@ -15,7 +15,10 @@ use crate::Comparator;
 use crate::internal::CallbackMetadata;
 use crate::macros::impl_common_name_methods;
 
-/// The erased callback representation used by this implementation.
+/// Stores the comparison callback behind shared, single-threaded ownership.
+///
+/// Cloning this handle shares the same callback allocation; the callback
+/// compares borrowed values and returns their ordering.
 type RcComparatorFn<T> = Rc<dyn Fn(&T, &T) -> Ordering>;
 
 /// An Rc-based single-threaded comparator with shared ownership.
@@ -137,30 +140,6 @@ impl<T> RcComparator<T> {
         }
     }
 
-    /// Creates a comparator while preserving existing callback metadata.
-    ///
-    /// The comparator is stored in an `Rc`-owned closure, so its captured
-    /// values must be `'static` and cannot borrow local data.
-    ///
-    /// # Parameters
-    ///
-    /// * `source` - The comparator implementation to wrap.
-    /// * `metadata` - The callback metadata to preserve.
-    ///
-    /// # Returns
-    ///
-    /// An `RcComparator` containing `metadata`.
-    #[inline]
-    pub(crate) fn new_with_metadata<F>(source: F, metadata: CallbackMetadata) -> Self
-    where
-        F: Comparator<T> + 'static,
-    {
-        Self {
-            function: Rc::new(move |left: &T, right: &T| source.compare(left, right)),
-            metadata,
-        }
-    }
-
     /// Returns a comparator that compares values by a key extracted by the
     /// given function.
     ///
@@ -199,6 +178,30 @@ impl<T> RcComparator<T> {
         F: Fn(&T) -> &K + 'static,
     {
         RcComparator::new(move |a: &T, b: &T| key_fn(a).cmp(key_fn(b)))
+    }
+
+    /// Creates a comparator while preserving existing callback metadata.
+    ///
+    /// The comparator is stored in an `Rc`-owned closure, so its captured
+    /// values must be `'static` and cannot borrow local data.
+    ///
+    /// # Parameters
+    ///
+    /// * `source` - The comparator implementation to wrap.
+    /// * `metadata` - The callback metadata to preserve.
+    ///
+    /// # Returns
+    ///
+    /// An `RcComparator` containing `metadata`.
+    #[inline]
+    pub(crate) fn new_with_metadata<F>(source: F, metadata: CallbackMetadata) -> Self
+    where
+        F: Comparator<T> + 'static,
+    {
+        Self {
+            function: Rc::new(move |left: &T, right: &T| source.compare(left, right)),
+            metadata,
+        }
     }
 
     impl_common_name_methods!("comparator");

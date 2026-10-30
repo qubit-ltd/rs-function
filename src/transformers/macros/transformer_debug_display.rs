@@ -5,30 +5,6 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-//! # Transformer Debug Display Macro
-//!
-//! Generates Debug and Display trait implementations for Transformer structs
-//!
-//! Generates standard Debug and Display trait implementations for Transformer
-//! structs that have a `name: Option<String>` field.
-//!
-//! # Parameters
-//!
-//! * `$struct_name` - The struct name
-//! * `$t`, `$r` - Type parameters for a transformer with two generic parameters
-//! * `$t`, `$u`, `$r` - Type parameters for a transformer with three generic
-//!   parameters
-//!
-//! # Examples
-//!
-//! ```ignore
-//! // For two type parameters
-//! impl_transformer_debug_display!(BoxTransformer<T, U>);
-//!
-//! // For three type parameters
-//! impl_transformer_debug_display!(BoxBiTransformer<T, U, V>);
-//! ```
-
 /// Generates Debug and Display trait implementations for Transformer structs
 ///
 /// This macro should be used at the top level (outside of any impl block) as
@@ -44,14 +20,16 @@
 /// * `$t`, `$u`, and `$r` - Type parameters for a transformer with three
 ///   generic parameters
 ///
-/// # Examples
+/// # Usage
 ///
-/// ```ignore
+/// The following invocations show the supported generic arities:
+///
+/// ```text
 /// // For two type parameters
-/// impl_transformer_debug_display!(BoxTransformer<T, U>);
+/// impl_transformer_debug_display!(BoxTransformer<T, R>);
 ///
 /// // For three type parameters
-/// impl_transformer_debug_display!(BoxBiTransformer<T, U, V>);
+/// impl_transformer_debug_display!(BoxBiTransformer<T, U, R>);
 /// ```
 macro_rules! impl_transformer_debug_display {
     // Two generic parameters

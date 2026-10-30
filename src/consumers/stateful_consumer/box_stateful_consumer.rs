@@ -53,7 +53,7 @@ use crate::consumers::macros::impl_consumer_debug_display;
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{Consumer, StatefulConsumer, BoxStatefulConsumer};
+/// use qubit_function::{StatefulConsumer, BoxStatefulConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));

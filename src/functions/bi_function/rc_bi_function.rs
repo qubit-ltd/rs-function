@@ -80,6 +80,15 @@ impl<T, U, R> RcBiFunction<T, U, R> {
 // Implement BiFunction trait for RcBiFunction
 impl<T, U, R> BiFunction<T, U, R> for RcBiFunction<T, U, R> {
     /// Invokes the stored callback with borrowed inputs and returns its result.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - The first input borrowed by the callback.
+    /// * `second` - The second input borrowed by the callback.
+    ///
+    /// # Returns
+    ///
+    /// The value produced by the stored callback.
     #[inline(always)]
     fn apply(&self, first: &T, second: &U) -> R {
         (self.function)(first, second)

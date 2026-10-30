@@ -7,10 +7,11 @@
 // =============================================================================
 //! Defines the `LocalBoxRunnable` public type.
 
-use crate::macros::impl_common_name_methods;
 use crate::macros::impl_common_new_methods;
 use crate::suppliers::macros::impl_supplier_debug_display;
 use crate::suppliers::supplier::Supplier;
+#[cfg(feature = "once")]
+use crate::suppliers::supplier_once::SupplierOnce;
 use crate::tasks::callable::Callable;
 use crate::tasks::callable::LocalBoxCallable;
 use crate::tasks::runnable::Runnable;
@@ -52,6 +53,9 @@ impl<E> LocalBoxRunnable<E> {
 
     /// Creates a local boxed runnable from a reusable supplier.
     ///
+    /// This adapts `Supplier<Result<(), E>>` to `Runnable<E>` without requiring
+    /// the supplier to be `Send`.
+    ///
     /// # Parameters
     ///
     /// * `supplier` - The supplier that produces the runnable result.
@@ -67,9 +71,51 @@ impl<E> LocalBoxRunnable<E> {
         Self::new(move || supplier.get())
     }
 
-    impl_common_name_methods!("local runnable");
+    /// Returns the diagnostic name assigned to this runnable, if any.
+    ///
+    /// # Returns
+    ///
+    /// Returns `Some(name)` when a name is set, or `None` otherwise.
+    #[must_use]
+    #[inline(always)]
+    pub fn name(&self) -> Option<&str> {
+        self.metadata.name()
+    }
+
+    /// Sets the diagnostic name used when displaying this runnable.
+    ///
+    /// # Parameters
+    ///
+    /// * `name` - The diagnostic name to assign.
+    #[inline(always)]
+    pub fn set_name(&mut self, name: &str) {
+        self.metadata.set_name(name);
+    }
+
+    /// Sets the diagnostic name and returns this runnable for further setup.
+    ///
+    /// # Parameters
+    ///
+    /// * `name` - The diagnostic name to assign.
+    ///
+    /// # Returns
+    ///
+    /// This runnable with the supplied name.
+    #[inline(always)]
+    pub fn with_name(mut self, name: &str) -> Self {
+        self.metadata.set_name(name);
+        self
+    }
+
+    /// Removes the diagnostic name assigned to this runnable.
+    #[inline(always)]
+    pub fn clear_name(&mut self) {
+        self.metadata.clear_name();
+    }
 
     /// Chains another runnable after this runnable succeeds.
+    ///
+    /// The next runnable is skipped if this runnable returns `Err`.
     ///
     /// # Parameters
     ///
@@ -92,6 +138,8 @@ impl<E> LocalBoxRunnable<E> {
     }
 
     /// Runs this runnable before a local callable.
+    ///
+    /// The callable is skipped if this runnable returns `Err`.
     ///
     /// # Parameters
     ///
@@ -116,7 +164,15 @@ impl<E> LocalBoxRunnable<E> {
 }
 
 impl<E> Runnable<E> for LocalBoxRunnable<E> {
-    /// Executes the local boxed runnable.
+    /// Executes the stored callback on the local thread.
+    ///
+    /// # Returns
+    ///
+    /// Returns `Ok(())` when the callback succeeds, or propagates its `Err(E)`.
+    ///
+    /// # Errors
+    ///
+    /// Returns the error produced by the stored callback.
     #[inline(always)]
     fn run(&mut self) -> Result<(), E> {
         (self.function)()
@@ -124,8 +180,16 @@ impl<E> Runnable<E> for LocalBoxRunnable<E> {
 }
 
 #[cfg(feature = "once")]
-impl<E> crate::suppliers::supplier_once::SupplierOnce<Result<(), E>> for LocalBoxRunnable<E> {
+impl<E> SupplierOnce<Result<(), E>> for LocalBoxRunnable<E> {
     /// Executes the local boxed runnable as a one-time supplier.
+    ///
+    /// # Returns
+    ///
+    /// Returns the callback's `Ok(())` or propagates its `Err(E)`.
+    ///
+    /// # Errors
+    ///
+    /// Returns the error produced by the stored callback.
     #[inline(always)]
     fn get(mut self) -> Result<(), E> {
         self.run()

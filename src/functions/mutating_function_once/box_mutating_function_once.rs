@@ -21,12 +21,17 @@ use crate::macros::impl_closure_once_trait;
 // 2. BoxMutatingFunctionOnce - Single Ownership Implementation
 // =======================================================================
 
-/// BoxMutatingFunctionOnce struct
+/// Owns a one-time mutating callback behind a heap-allocated trait object.
 ///
-/// A one-time mutating function implementation based on
-/// `Box<dyn FnOnce(&mut T) -> R>` for single ownership scenarios. This is
-/// the only MutatingFunctionOnce implementation type because FnOnce
-/// conflicts with shared ownership semantics.
+/// The wrapper provides single ownership for `FnOnce(&mut T) -> R` callbacks,
+/// allowing them to move captured values and return a result when invoked.
+/// Shared `Arc` and `Rc` variants are not provided because a one-time callback
+/// cannot be invoked by multiple owners.
+///
+/// # Type Parameters
+///
+/// * `T` - The mutable input type passed to the callback.
+/// * `R` - The result type returned by the callback.
 ///
 /// # Features
 ///

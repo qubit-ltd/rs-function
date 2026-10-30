@@ -116,6 +116,11 @@ macro_rules! impl_box_consumer_methods {
         /// Creates a conditional consumer that executes based on predicate
         /// result.
         ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The predicate type used to decide whether the consumer
+        ///   runs.
+        ///
         /// # Parameters
         ///
         /// * `predicate` - The predicate to determine whether to execute
@@ -159,6 +164,10 @@ macro_rules! impl_box_consumer_methods {
 
         /// Chains execution with another consumer, executing the current
         /// consumer first, then the subsequent consumer.
+        ///
+        /// # Type Parameters
+        ///
+        /// * `C` - The subsequent consumer type.
         ///
         /// # Parameters
         ///
@@ -219,6 +228,11 @@ macro_rules! impl_box_consumer_methods {
         /// Creates a conditional two-parameter consumer that executes based
         /// on bi-predicate result.
         ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The bi-predicate type used to decide whether the consumer
+        ///   runs.
+        ///
         /// # Parameters
         ///
         /// * `predicate` - The bi-predicate to determine whether to execute
@@ -264,6 +278,10 @@ macro_rules! impl_box_consumer_methods {
 
         /// Chains execution with another two-parameter consumer, executing
         /// the current consumer first, then the subsequent consumer.
+        ///
+        /// # Type Parameters
+        ///
+        /// * `C` - The subsequent two-parameter consumer type.
         ///
         /// # Parameters
         ///

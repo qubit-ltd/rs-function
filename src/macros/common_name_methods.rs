@@ -29,39 +29,56 @@
 ///   instance
 macro_rules! impl_common_name_methods {
     ($type_desc:literal) => {
-        #[doc = concat!("Gets the name of this ", $type_desc, ".")]
+        #[doc = concat!("Returns the diagnostic name assigned to this ", $type_desc, ".")]
+        ///
+        /// The returned string is borrowed from this wrapper. It is `None` when
+        /// no diagnostic name has been assigned, and reading it does not
+        /// invoke or otherwise affect the wrapped callback.
         ///
         /// # Returns
         ///
-        /// Returns `Some(&str)` if a name was set, `None` otherwise.
+        /// `Some(name)` containing the borrowed diagnostic name, or `None` if
+        /// this wrapper is unnamed.
         #[inline(always)]
         pub fn name(&self) -> Option<&str> {
             self.metadata.name()
         }
 
-        #[doc = concat!("Sets the name of this ", $type_desc, ".")]
+        #[doc = concat!("Replaces the diagnostic name assigned to this ", $type_desc, ".")]
+        ///
+        /// The supplied name is stored with this wrapper's metadata and does
+        /// not change the wrapped callback's behavior.
         ///
         /// # Parameters
-        #[doc = concat!("* `name` - The name to set for this ", $type_desc)]
+        #[doc = concat!("* `name` - The diagnostic name to store for this ", $type_desc)]
         #[inline(always)]
         pub fn set_name(&mut self, name: &str) {
             self.metadata.set_name(name);
         }
 
-        #[doc = concat!("Sets the name of this ", $type_desc, " and returns it.")]
+        #[doc = concat!("Consumes this ", $type_desc, " and assigns it a diagnostic name.")]
+        ///
+        /// This changes only the wrapper's metadata, not the wrapped
+        /// callback's behavior. The returned wrapper can be used in a method
+        /// chain.
         ///
         /// # Parameters
-        #[doc = concat!("* `name` - The name to set for this ", $type_desc)]
+        #[doc = concat!("* `name` - The diagnostic name to store for this ", $type_desc)]
         ///
         /// # Returns
         #[doc = concat!("This ", $type_desc, " with the supplied name.")]
+        /// Replaces the stored name only when it differs from `name`, then
+        /// returns the updated instance.
         #[inline(always)]
         pub fn with_name(mut self, name: &str) -> Self {
             self.metadata.set_name(name);
             self
         }
 
-        #[doc = concat!("Clears the name of this ", $type_desc, ".")]
+        #[doc = concat!("Removes the diagnostic name assigned to this ", $type_desc, ".")]
+        ///
+        /// This changes only the wrapper's metadata, not the wrapped
+        /// callback's behavior.
         #[inline(always)]
         pub fn clear_name(&mut self) {
             self.metadata.clear_name();

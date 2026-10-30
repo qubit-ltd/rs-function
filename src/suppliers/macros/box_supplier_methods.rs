@@ -17,7 +17,7 @@
 //!
 //! # Parameters
 //!
-//! * `$struct_name<$generics>` - The struct name with its generic parameters
+//! * `$struct_name<$t>` - The struct name with its generic parameter
 //!   - Single parameter: `BoxSupplier<T>`
 //! * `$supplier_trait` - Supplier trait name (e.g., Supplier, StatefulSupplier)
 //!
@@ -51,7 +51,7 @@
 ///
 /// # Parameters
 ///
-/// * `$struct_name<$generics>` - The struct name with its generic parameters
+/// * `$struct_name<$t>` - The struct name with its generic parameter
 ///   - Single parameter: `BoxSupplier<T>`
 /// * `$supplier_trait` - Supplier trait name (e.g., Supplier, StatefulSupplier)
 ///
@@ -169,6 +169,11 @@ macro_rules! impl_box_supplier_methods {
         /// Consumes self and returns a new supplier that applies the
         /// mapper to each output.
         ///
+        /// # Type Parameters
+        ///
+        /// * `U` - The output type produced by the mapped supplier.
+        /// * `M` - The transformation applied to each output.
+        ///
         /// # Parameters
         ///
         /// * `mapper` - The transformer to apply to the output. Can be a
@@ -201,13 +206,18 @@ macro_rules! impl_box_supplier_methods {
         /// Returns a new supplier that returns `Some(value)` if the
         /// predicate is satisfied, `None` otherwise.
         ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The predicate applied to each supplied value.
+        ///
         /// # Parameters
         ///
         /// * `predicate` - The predicate to test the supplied value
         ///
         /// # Returns
         ///
-        /// A new filtered supplier
+        /// A new supplier that returns `Some(value)` when the predicate
+        /// accepts the value and `None` otherwise.
         ///
         /// # Examples
         ///
@@ -232,6 +242,11 @@ macro_rules! impl_box_supplier_methods {
         ///
         /// Consumes both suppliers and returns a new supplier that
         /// produces tuples.
+        ///
+        /// # Type Parameters
+        ///
+        /// * `U` - The output type produced by the other supplier.
+        /// * `S` - The supplier combined with this one.
         ///
         /// # Parameters
         ///

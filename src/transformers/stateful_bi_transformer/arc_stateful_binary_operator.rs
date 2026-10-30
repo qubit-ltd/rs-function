@@ -24,7 +24,8 @@ use super::ArcStatefulBiTransformer;
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{ArcStatefulBinaryOperator, StatefulBiTransformer};
+/// use qubit_function::ArcStatefulBinaryOperator;
+/// use qubit_function::StatefulBiTransformer;
 ///
 /// let multiply: ArcStatefulBinaryOperator<i32> = ArcStatefulBinaryOperator::new(|x, y| x * y);
 /// let mut multiply_clone = multiply.clone();

@@ -31,6 +31,12 @@ type RcBiMutatingFunctionFn<T, U, R> = Rc<dyn Fn(&mut T, &mut U) -> R>;
 /// A single-threaded, clonable bi-mutating-function wrapper optimized for
 /// scenarios that require sharing without thread-safety overhead.
 ///
+/// # Type Parameters
+///
+/// * `T` - Type of the first value mutably borrowed by the callback.
+/// * `U` - Type of the second value mutably borrowed by the callback.
+/// * `R` - Type of the value returned by the callback.
+///
 /// # Features
 ///
 /// - **Based on**: `Rc<dyn Fn(&mut T, &mut U) -> R>`

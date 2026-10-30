@@ -12,8 +12,8 @@
 //!
 //! It is similar to the `FnMut(&T, &U)` trait in the standard library.
 //!
-//! This module provides a unified `BiConsumer` trait and three concrete
-//! implementations based on different ownership models:
+//! This module provides the `StatefulBiConsumer` trait and concrete regular
+//! and conditional implementations based on different ownership models:
 //!
 //! - **`BoxStatefulBiConsumer<T, U>`**: Box-based single ownership
 //! - **`ArcStatefulBiConsumer<T, U>`**: Arc<Mutex<>>-based thread-safe shared
@@ -31,6 +31,9 @@
 
 mod box_stateful_bi_consumer;
 pub use box_stateful_bi_consumer::BoxStatefulBiConsumer;
+#[path = "stateful_bi_consumer/stateful_bi_consumer.rs"]
+mod stateful_bi_consumer_trait;
+pub use stateful_bi_consumer_trait::StatefulBiConsumer;
 #[cfg(feature = "rc")]
 mod rc_stateful_bi_consumer;
 #[cfg(feature = "rc")]
@@ -45,97 +48,3 @@ pub use arc_conditional_stateful_bi_consumer::ArcConditionalStatefulBiConsumer;
 mod rc_conditional_stateful_bi_consumer;
 #[cfg(feature = "rc")]
 pub use rc_conditional_stateful_bi_consumer::RcConditionalStatefulBiConsumer;
-
-// =======================================================================
-// 1. BiConsumer Trait - Unified BiConsumer Interface
-// =======================================================================
-
-/// BiConsumer trait - Unified bi-consumer interface
-///
-/// Defines core behavior for all bi-consumer types. Similar to Java's
-/// `BiConsumer<T, U>` interface, performs operations accepting two values
-/// but returning no result (side effects only).
-///
-/// It is similar to the `FnMut(&T, &U)` trait in the standard library.
-///
-/// BiConsumer can modify its own state (e.g., accumulate, count) but
-/// should NOT modify the consumed values themselves.
-///
-/// # Automatic Implementations
-///
-/// - All closures implementing `FnMut(&T, &U)`
-/// - `BoxStatefulBiConsumer<T, U>`, `ArcStatefulBiConsumer<T, U>`,
-///   `RcStatefulBiConsumer<T, U>`
-///
-/// # Features
-///
-/// - **Unified Interface**: All bi-consumer types share the same `accept`
-///   method signature
-/// - **Automatic Implementation**: Closures implement this trait directly,
-///   without allocating an adapter
-/// - **Generic Programming**: Write functions accepting any bi-consumer type
-///
-/// # Type Parameters
-///
-/// - `T` - Type of the first input value
-/// - `U` - Type of the second input value
-///
-/// # Examples
-///
-/// ```rust
-/// use qubit_function::{BoxStatefulBiConsumer, StatefulBiConsumer};
-/// use std::cell::RefCell;
-/// use std::rc::Rc;
-///
-/// fn apply_bi_consumer<C: StatefulBiConsumer<i32, i32>>(
-///     consumer: &mut C,
-///     a: &i32,
-///     b: &i32
-/// ) {
-///     consumer.accept(a, b);
-/// }
-///
-/// // Works with any bi-consumer type
-/// let log = Rc::new(RefCell::new(Vec::new()));
-/// let l = log.clone();
-/// let mut box_con = BoxStatefulBiConsumer::new(move |x: &i32, y: &i32| {
-///     l.borrow_mut().push(*x + *y);
-/// });
-/// apply_bi_consumer(&mut box_con, &5, &3);
-/// assert_eq!(*log.borrow(), vec![8]);
-/// ```
-pub trait StatefulBiConsumer<T, U> {
-    /// Performs the consumption operation
-    ///
-    /// Executes an operation on the given two references. The operation
-    /// typically reads input values or produces side effects, but does not
-    /// modify the input values themselves. Can modify the consumer's own
-    /// state.
-    ///
-    /// # Parameters
-    ///
-    /// * `first` - Reference to the first value to consume
-    /// * `second` - Reference to the second value to consume
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::{BoxStatefulBiConsumer, StatefulBiConsumer};
-    /// use std::sync::{Arc, Mutex};
-    ///
-    /// let log = Arc::new(Mutex::new(Vec::new()));
-    /// let l = log.clone();
-    /// let mut consumer = BoxStatefulBiConsumer::new(move |x: &i32, y: &i32| {
-    ///     l.lock().expect("mutex should not be poisoned").push(*x + *y);
-    /// });
-    /// consumer.accept(&5, &3);
-    /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
-    /// ```
-    fn accept(&mut self, first: &T, second: &U);
-}
-
-crate::macros::impl_closure_trait!(
-    StatefulBiConsumer<T, U>,
-    accept,
-    FnMut(first: &T, second: &U)
-);

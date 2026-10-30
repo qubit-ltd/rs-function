@@ -6,66 +6,14 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-//! # Function Common Methods Macro
-//!
-//! Generates common Function methods (new, new_with_name, name,
-//! set_name, identity)
-//!
-//! Generates constructor methods, name management methods and identity
-//! constructor for Function structs. This macro should be called inside
-//! an impl block.
-//!
-//! The macro automatically detects the number of generic parameters and
-//! generates the appropriate implementations for single-parameter or
-//! two-parameter functions.
-//!
-//! # Parameters
-//!
-//! * `$struct_name<$generics>` - Struct name with generic parameters
-//! * `$fn_trait_with_bounds` - Closure trait with complete bounds (e.g.,
-//!   `Fn(&T) -> R + 'static`)
-//! * `$wrapper_expr` - Wrapper expression (uses `f` for the closure)
-//!
-//! # Usage
-//!
-//! ```text
-//! // Single generic parameter - Function
-//! // impl_function_common_methods!(
-//! //     BoxFunction<T, R>,
-//! //     (Fn(&T) -> R + 'static),
-//! //     |f| Box::new(f)
-//! // );
-//!
-//! // Stateful function with state
-//! // impl_function_common_methods!(
-//! //     ArcStatefulFunction<T, R>,
-//! //     (FnMut(&T) -> R + Send + 'static),
-//! //     |f| Arc::new(Mutex::new(f))
-//! // );
-//!
-//! // Two generic parameters - BiFunction (if applicable)
-//! // impl_function_common_methods!(
-//! //     BoxBiFunction<T, U, R>,
-//! //     (Fn(&T, &U) -> R + 'static),
-//! //     |f| Box::new(f)
-//! // );
-//! ```
-//!
-//! # Generated Methods
-//!
-//! * `new()` - Creates a new function
-//! * `new_with_name()` - Creates a named function
-//! * `name()` - Gets the name of the function
-//! * `set_name()` - Sets the name of the function
-//! * `identity()` - Creates an identity function
+//! Crate-internal macros for generating common methods and callback wrappers
+//! used by function types.
 
-/// Generates common Function methods (new, new_with_name, name,
-/// set_name, identity)
+/// Generates constructors and name-management methods for a function type.
 ///
 /// This macro should be used inside an existing impl block for the target
 /// struct. It generates individual methods but does not create a complete
-/// impl block itself. Generates constructor methods, name management methods
-/// and identity constructor for Function structs.
+/// impl block itself. Identity constructors are provided by a separate macro.
 ///
 /// The macro automatically detects the number of generic parameters and
 /// generates the appropriate implementations for single-parameter or
@@ -81,35 +29,34 @@
 /// # Usage
 ///
 /// ```text
-/// // Single generic parameter - Function
-/// // impl_function_common_methods!(
-/// //     BoxFunction<T, R>,
-/// //     (Fn(&T) -> R + 'static),
-/// //     |f| Box::new(f)
-/// // );
+/// // Single-input function.
+/// impl_function_common_methods!(
+///     BoxFunction<T, R>,
+///     (Fn(&T) -> R + 'static),
+///     |f| Box::new(f)
+/// );
 ///
-/// // Stateful function with state
-/// // impl_function_common_methods!(
-/// //     ArcStatefulFunction<T, R>,
-/// //     (FnMut(&T) -> R + Send + 'static),
-/// //     |f| Arc::new(Mutex::new(f))
-/// // );
+/// // Stateful function with shared state.
+/// impl_function_common_methods!(
+///     ArcStatefulFunction<T, R>,
+///     (FnMut(&T) -> R + Send + 'static),
+///     |f| Arc::new(Mutex::new(f))
+/// );
 ///
-/// // Two generic parameters - BiFunction (if applicable)
-/// // impl_function_common_methods!(
-/// //     BoxBiFunction<T, U, R>,
-/// //     (Fn(&T, &U) -> R + 'static),
-/// //     |f| Box::new(f)
-/// // );
+/// // Two-input function.
+/// impl_function_common_methods!(
+///     BoxBiFunction<T, U, R>,
+///     (Fn(&T, &U) -> R + 'static),
+///     |f| Box::new(f)
+/// );
 /// ```
 ///
 /// # Generated Methods
 ///
-/// * `new()` - Creates a new function
-/// * `new_with_name()` - Creates a named function
-/// * `name()` - Gets the name of the function
-/// * `set_name()` - Sets the name of the function
-/// * `identity()` - Creates an identity function
+/// * `new()` and `new_with_name()` - Create unnamed or named functions
+/// * `new_with_optional_name()` - Creates a function with optional metadata
+/// * `name()` and `set_name()` - Read and replace the diagnostic name
+/// * `with_name()` and `clear_name()` - Chain a name change or clear it
 macro_rules! impl_function_common_methods {
     ($name:ident<$t:ident, $r:ident>, (Fn(&$arg:ident) -> $out:ident + $($b:tt)+), |$f:ident| $w:expr) => { $crate::functions::macros::impl_function_common_methods!(@one Function, $t, $r, shared, ($($b)+), |$f| $w); };
     ($name:ident<$t:ident, $r:ident>, (Fn(&mut $arg:ident) -> $out:ident + $($b:tt)+), |$f:ident| $w:expr) => { $crate::functions::macros::impl_function_common_methods!(@one MutatingFunction, $t, $r, shared_mut, ($($b)+), |$f| $w); };
@@ -131,8 +78,14 @@ macro_rules! impl_function_common_methods {
 
 pub(crate) use impl_function_common_methods;
 
-/// Creates a function wrapper from a callback with the matching argument
-/// types for the requested function kind.
+/// Creates a function wrapper from a callback with the argument types
+/// required by the selected function kind.
+///
+/// # Parameters
+///
+/// The first argument identifies the function kind, followed by the wrapper
+/// type and its input type parameters. The callback pattern and body provide
+/// the function's arguments and implementation.
 macro_rules! impl_function_new_callback {
     ($_trait:ident, BoxMutatingFunction, $t:ident, |$v:ident| $body:block) => {
         BoxMutatingFunction::new(move |$v: &mut $t| $body)

@@ -68,6 +68,8 @@ macro_rules! impl_function_clone {
     // Two generic parameters - Function types
     ($struct_name:ident < $t:ident, $r:ident >) => {
         impl<$t, $r> Clone for $struct_name<$t, $r> {
+            /// Clones the shared callback handle and the wrapper metadata.
+            #[inline]
             fn clone(&self) -> Self {
                 Self {
                     function: self.function.clone(),
@@ -79,6 +81,8 @@ macro_rules! impl_function_clone {
     // Three generic parameters - BiFunction types
     ($struct_name:ident < $t:ident, $u:ident, $r:ident >) => {
         impl<$t, $u, $r> Clone for $struct_name<$t, $u, $r> {
+            /// Clones the shared callback handle and the wrapper metadata.
+            #[inline]
             fn clone(&self) -> Self {
                 Self {
                     function: self.function.clone(),

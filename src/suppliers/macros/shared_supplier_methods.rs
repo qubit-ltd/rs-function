@@ -14,7 +14,7 @@
 //!
 //! # Parameters
 //!
-//! * `$struct_name<$generics>` - Supplier wrapper type.
+//! * `$struct_name<$t>` - Supplier wrapper type parameterized by its output.
 //! * `$supplier_trait` - `Supplier` or `StatefulSupplier`.
 //! * `$callback_bounds` - Explicit callback bounds for Arc invocations.
 //! * `$extra_bounds` - Local callback and output bounds for Rc invocations;
@@ -102,6 +102,11 @@ macro_rules! impl_shared_supplier_methods {
     ) => {
         /// Maps the output using a transformation function.
         ///
+        /// # Type Parameters
+        ///
+        /// * `U` - The mapped output type.
+        /// * `M` - The transformation function type.
+        ///
         /// # Parameters
         ///
         /// * `mapper` - The transformation function to apply
@@ -133,13 +138,18 @@ macro_rules! impl_shared_supplier_methods {
 
         /// Filters output based on a predicate.
         ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The predicate type.
+        ///
         /// # Parameters
         ///
         /// * `predicate` - The predicate to test the supplied value
         ///
         /// # Returns
         ///
-        /// A new filtered `$struct_name<Option<$t>>`
+        /// A new `$struct_name<Option<$t>>` that yields `Some(value)` when the
+        /// predicate accepts the supplied value and `None` otherwise.
         ///
         /// # Examples
         ///
@@ -162,6 +172,11 @@ macro_rules! impl_shared_supplier_methods {
         }
 
         /// Combines this supplier with another, producing a tuple.
+        ///
+        /// # Type Parameters
+        ///
+        /// * `U` - The other supplier's output type.
+        /// * `S` - The other supplier type.
         ///
         /// # Parameters
         ///
@@ -199,6 +214,11 @@ macro_rules! impl_shared_supplier_methods {
     ) => {
         /// Maps the output using a transformation function.
         ///
+        /// # Type Parameters
+        ///
+        /// * `U` - The mapped output type.
+        /// * `M` - The transformation function type.
+        ///
         /// # Parameters
         ///
         /// * `mapper` - The transformation function to apply
@@ -230,13 +250,18 @@ macro_rules! impl_shared_supplier_methods {
 
         /// Filters output based on a predicate.
         ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The predicate type.
+        ///
         /// # Parameters
         ///
         /// * `predicate` - The predicate to test the supplied value
         ///
         /// # Returns
         ///
-        /// A new filtered `$struct_name<Option<$t>>`
+        /// A new `$struct_name<Option<$t>>` that yields `Some(value)` when the
+        /// predicate accepts the supplied value and `None` otherwise.
         ///
         /// # Examples
         ///
@@ -259,6 +284,11 @@ macro_rules! impl_shared_supplier_methods {
         }
 
         /// Combines this supplier with another, producing a tuple.
+        ///
+        /// # Type Parameters
+        ///
+        /// * `U` - The other supplier's output type.
+        /// * `S` - The other supplier type.
         ///
         /// # Parameters
         ///

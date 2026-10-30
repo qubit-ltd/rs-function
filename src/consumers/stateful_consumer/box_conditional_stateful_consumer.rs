@@ -45,15 +45,21 @@ use crate::consumers::macros::impl_conditional_consumer_debug_display;
 /// ## Basic Conditional Execution
 ///
 /// ```rust
-/// use qubit_function::{Consumer, StatefulConsumer, BoxStatefulConsumer};
-/// use std::sync::{Arc, Mutex};
+/// use std::sync::Arc;
+/// use std::sync::Mutex;
+///
+/// use qubit_function::BoxConditionalStatefulConsumer;
+/// use qubit_function::BoxStatefulConsumer;
+/// use qubit_function::Consumer;
+/// use qubit_function::StatefulConsumer;
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
 /// let l = log.clone();
 /// let consumer = BoxStatefulConsumer::new(move |x: &i32| {
 ///     l.lock().expect("mutex should not be poisoned").push(*x);
 /// });
-/// let mut conditional = consumer.when(|x: &i32| *x > 0);
+/// let mut conditional: BoxConditionalStatefulConsumer<i32> =
+///     consumer.when(|x: &i32| *x > 0);
 ///
 /// conditional.accept(&5);
 /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]); // Executed
@@ -65,19 +71,25 @@ use crate::consumers::macros::impl_conditional_consumer_debug_display;
 /// ## With or_else Branch
 ///
 /// ```rust
-/// use qubit_function::{Consumer, StatefulConsumer, BoxStatefulConsumer};
-/// use std::sync::{Arc, Mutex};
+/// use std::sync::Arc;
+/// use std::sync::Mutex;
+///
+/// use qubit_function::BoxConditionalStatefulConsumer;
+/// use qubit_function::BoxStatefulConsumer;
+/// use qubit_function::Consumer;
+/// use qubit_function::StatefulConsumer;
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
 /// let l1 = log.clone();
 /// let l2 = log.clone();
-/// let mut consumer = BoxStatefulConsumer::new(move |x: &i32| {
-///     l1.lock().expect("mutex should not be poisoned").push(*x);
-/// })
-/// .when(|x: &i32| *x > 0)
-/// .or_else(move |x: &i32| {
-///     l2.lock().expect("mutex should not be poisoned").push(-*x);
-/// });
+/// let mut consumer: BoxStatefulConsumer<i32> =
+///     BoxStatefulConsumer::new(move |x: &i32| {
+///         l1.lock().expect("mutex should not be poisoned").push(*x);
+///     })
+///     .when(|x: &i32| *x > 0)
+///     .or_else(move |x: &i32| {
+///         l2.lock().expect("mutex should not be poisoned").push(-*x);
+///     });
 ///
 /// consumer.accept(&5);
 /// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]); // when branch executed
@@ -97,6 +109,8 @@ pub struct BoxConditionalStatefulConsumer<T> {
 impl_box_conditional_consumer!(BoxConditionalStatefulConsumer<T>, BoxStatefulConsumer, StatefulConsumer);
 
 impl<T> StatefulConsumer<T> for BoxConditionalStatefulConsumer<T> {
+    /// Forwards the borrowed value to the wrapped consumer when the predicate
+    /// matches.
     fn accept(&mut self, value: &T) {
         if self.predicate.test(value) {
             self.consumer.accept(value);

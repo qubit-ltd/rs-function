@@ -45,46 +45,6 @@ mod rc_conditional_transformer;
 pub use rc_conditional_transformer::RcConditionalTransformer;
 mod arc_conditional_transformer;
 pub use arc_conditional_transformer::ArcConditionalTransformer;
-
-// ============================================================================
-// Core Trait
-// ============================================================================
-
-/// Transformer trait - transforms values from type T to type R
-///
-/// Defines the behavior of a transformation: converting a value of type `T`
-/// to a value of type `R` by consuming the input. This is analogous to
-/// `Fn(T) -> R` in Rust's standard library.
-///
-/// # Type Parameters
-///
-/// * `T` - The type of the input value (consumed)
-/// * `R` - The type of the output value
-///
-/// # Examples
-///
-/// ```
-/// use qubit_function::Transformer;
-///
-/// let increment = |value: i32| value + 1;
-/// assert_eq!(increment.apply(41), 42);
-/// ```
-pub trait Transformer<T, R> {
-    /// Applies the transformation to the input value to produce an output value
-    ///
-    /// # Parameters
-    ///
-    /// * `input` - The input value to transform (consumed)
-    ///
-    /// # Returns
-    ///
-    /// The transformed output value
-    #[must_use = "the computed callback result should be used"]
-    fn apply(&self, input: T) -> R;
-}
-
-crate::macros::impl_closure_trait!(
-    Transformer<T, R>,
-    apply,
-    Fn(input: T) -> R
-);
+#[path = "transformer/transformer.rs"]
+mod transformer_trait;
+pub use transformer_trait::Transformer;

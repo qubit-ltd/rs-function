@@ -23,6 +23,9 @@
 
 mod box_bi_function;
 pub use box_bi_function::BoxBiFunction;
+#[path = "bi_function/bi_function.rs"]
+mod bi_function_trait;
+pub use bi_function_trait::BiFunction;
 #[cfg(feature = "rc")]
 mod rc_bi_function;
 #[cfg(feature = "rc")]
@@ -45,50 +48,3 @@ mod rc_conditional_bi_function;
 pub use rc_conditional_bi_function::RcConditionalBiFunction;
 mod arc_conditional_bi_function;
 pub use arc_conditional_bi_function::ArcConditionalBiFunction;
-
-// ============================================================================
-// Core Trait
-// ============================================================================
-
-/// BiFunction trait - computes output from two input references
-///
-/// Defines the behavior of a bi-function: computing a value of type `R`
-/// from references to types `T` and `U` without consuming the inputs. This is
-/// analogous to `Fn(&T, &U) -> R` in Rust's standard library, similar to Java's
-/// `BiFunction<T, U, R>`.
-///
-/// # Type Parameters
-///
-/// * `T` - The type of the first input value (borrowed)
-/// * `U` - The type of the second input value (borrowed)
-/// * `R` - The type of the output value
-///
-/// # Examples
-///
-/// ```
-/// use qubit_function::{BiFunction, BoxBiFunction};
-///
-/// let add = BoxBiFunction::new(|first: &i32, second: &i32| first + second);
-/// assert_eq!(add.apply(&2, &3), 5);
-/// ```
-pub trait BiFunction<T, U, R> {
-    /// Applies the bi-function to two input references to produce an output
-    /// value
-    ///
-    /// # Parameters
-    ///
-    /// * `first` - Reference to the first input value
-    /// * `second` - Reference to the second input value
-    ///
-    /// # Returns
-    ///
-    /// The computed output value
-    #[must_use = "the computed callback result should be used"]
-    fn apply(&self, first: &T, second: &U) -> R;
-}
-
-crate::macros::impl_closure_trait!(
-    BiFunction<T, U, R>,
-    apply,
-    Fn(first: &T, second: &U) -> R
-);

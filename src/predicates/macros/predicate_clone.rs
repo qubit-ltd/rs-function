@@ -8,17 +8,17 @@
 
 //! # Predicate Clone Macro
 //!
-//! Generates Clone trait implementation for basic Predicate types
+//! Generates `Clone` implementations for predicate wrapper types.
 //!
-//! Generates Clone implementation for Predicate structs that have `function`
-//! and `name` fields. The function field is cloned using its inherent `clone`
-//! method, which performs a shallow clone for smart pointers like `Arc` or
+//! Generates `Clone` implementations for predicate structs with `function`
+//! and `metadata` fields. Both fields are cloned using their inherent `clone`
+//! methods, preserving shared ownership for smart pointers such as `Arc` and
 //! `Rc`.
 //!
 //! # Parameters
 //!
-//! * `$struct_name` - The struct name
-//! * `$generic` - Generic parameter list (one or two type parameters)
+//! * `$struct_name` - The wrapper type name.
+//! * Generic arguments - One or two type parameters written in angle brackets.
 //!
 //! # Examples
 //!
@@ -36,18 +36,19 @@
 //! impl_predicate_clone!(RcBiPredicate<T, U>);
 //! ```
 
-/// Generates Clone trait implementation for basic Predicate types
+/// Generates a `Clone` implementation for a predicate wrapper type.
 ///
 /// This macro should be used at the top level (outside of any impl block) as
 /// it generates a complete `impl Clone for $struct_name` block. It generates
-/// Clone implementation for Predicate structs that have `function` and `name`
-/// fields. The function field is cloned using its inherent `clone` method,
-/// which performs a shallow clone for smart pointers like `Arc` or `Rc`.
+/// `Clone` implementation for predicate structs that have `function` and
+/// `metadata` fields. Both fields are cloned using their inherent `clone`
+/// methods, preserving shared ownership for smart pointers such as `Arc` and
+/// `Rc`.
 ///
 /// # Parameters
 ///
-/// * `$struct_name` - The struct name
-/// * `$generic` - Generic parameter list (one or two type parameters)
+/// * `$struct_name` - The wrapper type name.
+/// * Generic arguments - One or two type parameters written in angle brackets.
 ///
 /// # Examples
 ///
@@ -68,6 +69,7 @@ macro_rules! impl_predicate_clone {
     // Single generic parameter
     ($struct_name:ident < $t:ident >) => {
         impl<$t> Clone for $struct_name<$t> {
+            #[inline]
             fn clone(&self) -> Self {
                 Self {
                     function: self.function.clone(),
@@ -79,6 +81,7 @@ macro_rules! impl_predicate_clone {
     // Two generic parameters
     ($struct_name:ident < $t:ident, $u:ident >) => {
         impl<$t, $u> Clone for $struct_name<$t, $u> {
+            #[inline]
             fn clone(&self) -> Self {
                 Self {
                     function: self.function.clone(),

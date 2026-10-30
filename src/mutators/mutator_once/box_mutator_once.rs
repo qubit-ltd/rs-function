@@ -19,11 +19,15 @@ use crate::mutators::macros::impl_mutator_debug_display;
 // 2. BoxMutatorOnce - Single Ownership Implementation
 // ============================================================================
 
-/// BoxMutatorOnce struct
+/// Owns a one-shot callback that mutates a value through a mutable reference.
 ///
-/// A one-time mutator implementation based on `Box<dyn FnOnce(&mut T)>` for
-/// single ownership scenarios. This is the only MutatorOnce implementation type
-/// because FnOnce conflicts with shared ownership semantics.
+/// The callback is heap-allocated and invoked through dynamic dispatch. The
+/// wrapper consumes itself when applied, allowing the callback to move captured
+/// values into the mutation.
+///
+/// # Type Parameters
+///
+/// * `T` - The value type mutated by the callback.
 ///
 /// # Features
 ///

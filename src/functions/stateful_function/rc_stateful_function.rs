@@ -58,7 +58,8 @@ use crate::functions::macros::impl_shared_function_methods;
 /// assert_eq!(function.apply(&5), 6);
 /// assert_eq!(function.apply(&5), 7);
 /// ```
-/// # Borrowing and reentrancy
+///
+/// # Panics
 ///
 /// Each call holds a mutable `RefCell` borrow while the user callback runs.
 /// Synchronous re-entry through the same shared wrapper panics with a borrow

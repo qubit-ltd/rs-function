@@ -9,7 +9,6 @@
 
 use std::sync::Arc;
 
-use super::ArcMutatorFn;
 use crate::ArcConditionalMutator;
 use crate::Mutator;
 use crate::Predicate;
@@ -21,6 +20,9 @@ use crate::mutators::macros::impl_shared_mutator_methods;
 // ============================================================================
 // 5. ArcMutator - Thread-Safe Shared Ownership Implementation
 // ============================================================================
+
+/// The erased callback representation used by `ArcMutator`.
+type ArcMutatorFn<T> = Arc<dyn Fn(&mut T) + Send + Sync>;
 
 /// ArcMutator struct
 ///

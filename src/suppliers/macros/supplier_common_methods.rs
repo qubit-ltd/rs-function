@@ -16,9 +16,7 @@
 //! constant constructor for Supplier structs. This macro should be called
 //! inside an impl block.
 //!
-//! The macro automatically detects the number of generic parameters and
-//! generates the appropriate implementations for single-parameter or
-//! two-parameter suppliers.
+//! The macro generates common methods for single-parameter supplier types.
 //!
 //! # Parameters
 //!
@@ -62,9 +60,7 @@
 /// constant constructor for Supplier structs. This macro should be used
 /// inside an existing impl block for the target struct.
 ///
-/// The macro automatically detects the number of generic parameters and
-/// generates the appropriate implementations for single-parameter or
-/// two-parameter suppliers.
+/// The macro generates common methods for single-parameter supplier types.
 ///
 /// # Parameters
 ///

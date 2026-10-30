@@ -46,7 +46,8 @@ use crate::functions::macros::impl_shared_conditional_function;
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{StatefulMutatingFunction, RcStatefulMutatingFunction};
+/// use qubit_function::RcStatefulMutatingFunction;
+/// use qubit_function::StatefulMutatingFunction;
 ///
 /// let double = RcStatefulMutatingFunction::new(|x: &mut i32| {
 ///     *x *= 2;

@@ -9,7 +9,7 @@
 
 use std::sync::Arc;
 
-use super::ThreadSafeBiConsumerFn;
+use super::internal::ThreadSafeBiConsumerFn;
 use crate::ArcConditionalBiConsumer;
 use crate::BiConsumer;
 use crate::BiPredicate;
@@ -28,6 +28,11 @@ use crate::consumers::macros::impl_shared_consumer_methods;
 /// `Arc<dyn Fn(&T, &U) + Send + Sync>` for thread-safe shared ownership
 /// scenarios. The wrapper does not need `Mutex` because it only invokes a
 /// shared `Fn`.
+///
+/// # Type Parameters
+///
+/// * `T` - The type of the first borrowed input.
+/// * `U` - The type of the second borrowed input.
 ///
 /// # Features
 ///
@@ -91,6 +96,7 @@ impl<T, U> ArcBiConsumer<T, U> {
 }
 
 impl<T, U> BiConsumer<T, U> for ArcBiConsumer<T, U> {
+    /// Invokes the shared callback with both borrowed input values.
     #[inline(always)]
     fn accept(&self, first: &T, second: &U) {
         (self.function)(first, second)

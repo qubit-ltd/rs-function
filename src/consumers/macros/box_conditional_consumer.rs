@@ -82,7 +82,7 @@ macro_rules! impl_box_conditional_consumer {
         $consumer_trait:ident
     ) => {
         impl<$t> $struct_name<$t> {
-            /// Chains another consumer in sequence
+            /// Chains another consumer in sequence.
             ///
             /// Combines the current conditional consumer with another consumer
             /// into a new consumer that implements the following semantics:
@@ -100,17 +100,19 @@ macro_rules! impl_box_conditional_consumer {
             ///
             /// # Parameters
             ///
-            /// * `next` - The next consumer to execute (always executed)
+            /// * `next` - The next consumer to execute after the conditional consumer.
             ///
             /// # Returns
             ///
-            /// Returns a new combined consumer
+            /// Returns a new combined consumer.
             ///
             /// # Examples
             ///
             /// ```rust
-            /// use std::sync::atomic::{AtomicI32, Ordering};
+            /// use std::sync::atomic::AtomicI32;
+            /// use std::sync::atomic::Ordering;
             /// use std::sync::Arc;
+            ///
             /// use qubit_function::BoxConsumer;
             /// use qubit_function::Consumer;
             ///
@@ -150,18 +152,18 @@ macro_rules! impl_box_conditional_consumer {
                 })
             }
 
-            /// Adds an else branch
+            /// Adds an else branch.
             ///
             /// Executes the original consumer when the condition is satisfied, otherwise
-            /// executes else_consumer.
+            /// executes `else_consumer`.
             ///
             /// # Parameters
             ///
-            /// * `else_consumer` - The consumer for the else branch
+            /// * `else_consumer` - The consumer to execute when the predicate is false.
             ///
             /// # Returns
             ///
-            /// Returns a new consumer with if-then-else logic
+            /// Returns a new consumer with if-then-else logic.
             pub fn or_else<C>(self, else_consumer: C) -> $consumer_type<$t>
             where
                 $t: 'static,
@@ -188,7 +190,7 @@ macro_rules! impl_box_conditional_consumer {
         $consumer_trait:ident
     ) => {
         impl<$t, $u> $struct_name<$t, $u> {
-            /// Chains another bi-consumer in sequence
+            /// Chains another bi-consumer in sequence.
             ///
             /// Combines the current conditional bi-consumer with another
             /// bi-consumer into a new bi-consumer that implements the
@@ -209,19 +211,21 @@ macro_rules! impl_box_conditional_consumer {
             ///
             /// # Parameters
             ///
-            /// * `next` - The next bi-consumer to execute (always executed)
+            /// * `next` - The bi-consumer to execute after the conditional bi-consumer.
             ///
             /// # Returns
             ///
-            /// Returns a new combined bi-consumer
+            /// Returns a new combined bi-consumer.
             ///
             /// # Examples
             ///
             /// ```rust
-            /// use std::sync::atomic::{AtomicI32, Ordering};
-            /// use qubit_function::BoxBiConsumer;
-            /// use qubit_function::BiConsumer;
+            /// use std::sync::atomic::AtomicI32;
+            /// use std::sync::atomic::Ordering;
             /// use std::sync::Arc;
+            ///
+            /// use qubit_function::BiConsumer;
+            /// use qubit_function::BoxBiConsumer;
             ///
             /// let result = Arc::new(AtomicI32::new(0));
             /// let result1 = result.clone();
@@ -260,18 +264,18 @@ macro_rules! impl_box_conditional_consumer {
                 })
             }
 
-            /// Adds an else branch
+            /// Adds an else branch.
             ///
             /// Executes the original bi-consumer when the condition is satisfied, otherwise
-            /// executes else_consumer.
+            /// executes `else_consumer`.
             ///
             /// # Parameters
             ///
-            /// * `else_consumer` - The bi-consumer for the else branch
+            /// * `else_consumer` - The bi-consumer to execute when the predicate is false.
             ///
             /// # Returns
             ///
-            /// Returns a new bi-consumer with if-then-else logic
+            /// Returns a new bi-consumer with if-then-else logic.
             pub fn or_else<C>(self, else_consumer: C) -> $consumer_type<$t, $u>
             where
                 $t: 'static,

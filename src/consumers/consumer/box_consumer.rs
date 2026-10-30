@@ -49,7 +49,8 @@ use crate::consumers::macros::impl_consumer_debug_display;
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{Consumer, BoxConsumer};
+/// use qubit_function::BoxConsumer;
+/// use qubit_function::Consumer;
 ///
 /// let consumer = BoxConsumer::new(|x: &i32| {
 ///     println!("Observed value: {}", x);

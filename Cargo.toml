@@ -46,6 +46,10 @@ name = "integration_tests"
 path = "tests/mod.rs"
 required-features = ["full"]
 
+[[test]]
+name = "callback_metadata_contract_tests"
+path = "tests/callback_metadata_contract_tests/callback_metadata_contract_tests.rs"
+
 [dependencies]
 parking_lot = { version = "^0.12", optional = true }
 

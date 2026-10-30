@@ -141,6 +141,10 @@ macro_rules! impl_box_conditional_function {
             /// - If the predicate is satisfied, it executes the internal function
             /// - If the predicate is NOT satisfied, it executes the alternative function
             ///
+            /// # Type Parameters
+            ///
+            /// * `F` - The alternative function implementation.
+            ///
             /// # Parameters
             ///
             /// * `else_function` - The alternative function to execute when predicate fails
@@ -197,6 +201,10 @@ macro_rules! impl_box_conditional_function {
             /// When the returned bi-function is called with two arguments:
             /// - If the predicate is satisfied, it executes the internal bi-function
             /// - If the predicate is NOT satisfied, it executes the alternative bi-function
+            ///
+            /// # Type Parameters
+            ///
+            /// * `F` - The alternative bi-function implementation.
             ///
             /// # Parameters
             ///

@@ -80,6 +80,10 @@ impl<T, R, E> RcCallableWith<T, R, E> {
 impl<T, R, E> CallableWith<T, R, E> for RcCallableWith<T, R, E> {
     /// Executes the shared callable with mutable input.
     ///
+    /// # Parameters
+    ///
+    /// * `input` - The mutable input passed to the callback.
+    ///
     /// # Returns
     ///
     /// Returns the callback's success value or error unchanged.
@@ -87,6 +91,11 @@ impl<T, R, E> CallableWith<T, R, E> for RcCallableWith<T, R, E> {
     /// # Errors
     ///
     /// Returns the error produced by the callback.
+    ///
+    /// # Panics
+    ///
+    /// Panics if this callable is synchronously re-entered while its callback
+    /// is running, because the shared `RefCell` is already mutably borrowed.
     #[inline]
     fn call_with(&mut self, input: &mut T) -> Result<R, E> {
         let mut function = self.function.borrow_mut();

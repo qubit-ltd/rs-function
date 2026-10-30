@@ -45,7 +45,8 @@ use crate::transformers::macros::impl_shared_conditional_transformer;
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{BiTransformer, ArcBiTransformer};
+/// use qubit_function::BiTransformer;
+/// use qubit_function::ArcBiTransformer;
 ///
 /// let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
 /// let multiply = ArcBiTransformer::new(|x: i32, y: i32| x * y);

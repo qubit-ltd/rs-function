@@ -7,7 +7,7 @@
 // =============================================================================
 //! Defines the `BoxBiConsumer` public type.
 
-use super::BiConsumerFn;
+use super::internal::BiConsumerFn;
 use crate::BiConsumer;
 use crate::BiPredicate;
 use crate::BoxConditionalBiConsumer;
@@ -55,12 +55,17 @@ use crate::consumers::macros::impl_consumer_debug_display;
 /// # Examples
 ///
 /// ```rust
+/// use std::cell::Cell;
+/// use std::rc::Rc;
 /// use qubit_function::{BiConsumer, BoxBiConsumer};
 ///
-/// let consumer = BoxBiConsumer::new(|x: &i32, y: &i32| {
-///     println!("Sum: {}", x + y);
+/// let observed_sum = Rc::new(Cell::new(0));
+/// let callback_sum = Rc::clone(&observed_sum);
+/// let consumer = BoxBiConsumer::new(move |x: &i32, y: &i32| {
+///     callback_sum.set(x + y);
 /// });
 /// consumer.accept(&5, &3);
+/// assert_eq!(observed_sum.get(), 8);
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxBiConsumer<T, U> {

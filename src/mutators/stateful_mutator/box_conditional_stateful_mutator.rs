@@ -35,6 +35,11 @@ use crate::mutators::macros::impl_conditional_mutator_debug_display;
 /// - **Implements StatefulMutator**: Can be used anywhere a `StatefulMutator`
 ///   is expected
 ///
+/// # Type Parameters
+///
+/// * `T` - The input value mutated by the wrapped callback and inspected by the
+///   predicate.
+///
 /// # Examples
 ///
 /// ## Basic Conditional Execution

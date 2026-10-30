@@ -1,0 +1,95 @@
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
+//! Defines the `Tester` public trait.
+
+/// Tests whether a zero-argument condition holds.
+///
+/// `Tester` is a functional abstraction equivalent to `Fn() -> bool`. It
+/// accepts no parameters, uses `&self`, and returns a boolean value indicating
+/// the test result of some state or condition.
+///
+/// # Core Characteristics
+///
+/// - **No input parameters**: Captures context through closures
+/// - **Returns boolean**: Indicates test results
+/// - **Uses `&self`**: Matches `Fn() -> bool` and does not require `&mut self`;
+///   interior mutability and external side effects remain possible
+/// - **Repeatable calls**: The same Tester can call `test()` multiple times
+/// - **Stateless closure shape**: For `FnMut() -> bool`, use `StatefulTester`
+///
+/// # Use Cases
+///
+/// - **State checking**: Check system or service status
+/// - **Condition waiting**: Repeatedly check until conditions are met
+/// - **Health monitoring**: Check system health status
+/// - **Precondition validation**: Verify conditions before operations
+///
+/// # Design Philosophy
+///
+/// Tester's responsibility is "test judgment". The `Fn` call shape permits
+/// repeated invocation through `&self`; it does not guarantee purity or forbid
+/// interior mutability and external state changes.
+///
+/// # Examples
+///
+/// ```rust
+/// use std::sync::atomic::AtomicBool;
+/// use std::sync::atomic::Ordering;
+/// use std::sync::Arc;
+///
+/// use qubit_function::BoxTester;
+/// use qubit_function::Tester;
+///
+/// // State managed externally
+/// let ready = Arc::new(AtomicBool::new(false));
+/// let ready_clone = Arc::clone(&ready);
+///
+/// // Tester only responsible for reading state
+/// let tester = BoxTester::new(move || {
+///     ready_clone.load(Ordering::Acquire)
+/// });
+///
+/// // Can be called multiple times
+/// assert!(!tester.test());
+/// ready.store(true, Ordering::Release);
+/// assert!(tester.test());
+/// ```
+pub trait Tester {
+    /// Executes the test and returns the test result
+    ///
+    /// This method can be called multiple times through `&self`.
+    /// Implementations may still use interior mutability or external side
+    /// effects.
+    ///
+    /// # Returns
+    ///
+    /// Returns `true` if the condition holds, otherwise returns `false`
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use qubit_function::BoxTester;
+    /// use qubit_function::Tester;
+    ///
+    /// let tester = BoxTester::new(|| true);
+    /// assert!(tester.test());
+    /// ```
+    #[must_use = "the test result should be used"]
+    fn test(&self) -> bool;
+}
+
+impl<F> Tester for F
+where
+    F: Fn() -> bool,
+{
+    /// Calls the closure and returns its boolean result.
+    #[inline(always)]
+    fn test(&self) -> bool {
+        self()
+    }
+}

@@ -179,6 +179,7 @@ impl StatefulTester for BoxStatefulTester {
 }
 
 impl fmt::Debug for BoxStatefulTester {
+    /// Formats the wrapper type and its optional diagnostic name.
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         formatter
             .debug_struct("BoxStatefulTester")
@@ -188,6 +189,8 @@ impl fmt::Debug for BoxStatefulTester {
 }
 
 impl fmt::Display for BoxStatefulTester {
+    /// Displays `BoxStatefulTester(name)` when named, or
+    /// `BoxStatefulTester` when no diagnostic name is set.
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.metadata.name() {
             Some(name) => write!(formatter, "BoxStatefulTester({name})"),

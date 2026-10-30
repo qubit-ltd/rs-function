@@ -35,6 +35,12 @@ use crate::functions::macros::impl_conditional_function_debug_display;
 /// - **Conditional Execution**: Only computes when bi-predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 ///
+/// # Type Parameters
+///
+/// * `T` - The type of the first input borrowed by the predicate and function.
+/// * `U` - The type of the second input borrowed by the predicate and function.
+/// * `R` - The output type produced by the selected function.
+///
 /// # Examples
 ///
 /// ## With or_else Branch

@@ -6,6 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
+//! Demonstrates sorting values with owned and shared comparators.
+
 use qubit_function::ArcComparator;
 use qubit_function::BoxComparator;
 use qubit_function::Comparator;

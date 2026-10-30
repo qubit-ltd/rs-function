@@ -5,7 +5,6 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-#![cfg_attr(docsrs, feature(doc_auto_cfg))]
 //! # Qubit Function
 //!
 //! Provides functional programming abstractions for Rust, including:
@@ -35,6 +34,8 @@
 //!   computations
 //! - **Tester types**: Functions that test zero-argument conditions
 //! - **Comparator types**: Functions that compare values and return ordering
+
+#![cfg_attr(docsrs, feature(doc_auto_cfg))]
 
 // Module declarations
 pub mod comparator;

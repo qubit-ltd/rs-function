@@ -11,7 +11,6 @@ use std::sync::Arc;
 
 use parking_lot::Mutex;
 
-use super::ArcMutMutatorFn;
 use crate::ArcConditionalStatefulMutator;
 use crate::Predicate;
 use crate::StatefulMutator;
@@ -23,6 +22,12 @@ use crate::mutators::macros::impl_shared_mutator_methods;
 // ============================================================================
 // 4. ArcStatefulMutator - Thread-Safe Shared Ownership Implementation
 // ============================================================================
+
+/// Stores a mutable callback behind a thread-safe shared pointer and mutex.
+///
+/// The callback must be `Send` so the shared mutator can cross thread
+/// boundaries; the mutex provides exclusive access when it is invoked.
+type ArcMutMutatorFn<T> = Arc<Mutex<dyn FnMut(&mut T) + Send>>;
 
 /// Arc-based stateful mutator.
 ///

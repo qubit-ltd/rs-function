@@ -130,7 +130,6 @@ macro_rules! impl_mutator_common_methods {
         ($($fn_trait_with_bounds:tt)+),
         |$f:ident| $wrapper_expr:expr
     ) => {
-        $crate::mutators::macros::impl_mutator_new_methods!($struct_name<$t>, |$f| $wrapper_expr);
         /// Creates a no-operation mutator.
         ///
         /// Creates a mutator that does nothing when called. Useful for
@@ -144,6 +143,7 @@ macro_rules! impl_mutator_common_methods {
             Self::new(|_: &mut $t| {})
         }
 
+        $crate::mutators::macros::impl_mutator_new_methods!($struct_name<$t>, |$f| $wrapper_expr);
         crate::macros::impl_common_name_methods!("mutator");
     };
 }

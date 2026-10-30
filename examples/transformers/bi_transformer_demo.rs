@@ -5,6 +5,10 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
+//! # BiTransformer Demo
+//!
+//! Demonstrates `BiTransformer` implementations with different ownership
+//! models, conditional execution, and common input and output types.
 
 use qubit_function::ArcBiTransformer;
 use qubit_function::BiTransformer;

@@ -21,56 +21,6 @@ mod box_runnable_once;
 pub use box_runnable_once::BoxRunnableOnce;
 mod local_box_runnable_once;
 pub use local_box_runnable_once::LocalBoxRunnableOnce;
-
-// ============================================================================
-// RunnableOnce Trait
-// ============================================================================
-
-/// A fallible one-time action.
-///
-/// Conceptually this matches `FnOnce() -> Result<(), E>`: `run_once` consumes
-/// `self`
-/// and returns `Result<(), E>`, but the surface uses task-oriented naming and
-/// helpers instead of closure types. It is a semantic specialization of
-/// `SupplierOnce<Result<(), E>>` for executable actions and deferred side
-/// effects.
-///
-/// Choose **`RunnableOnce`** when only success or failure matters; the success
-/// type is `()`. When callers need the success value `R`, use
-/// [`CallableOnce`](crate::tasks::callable_once::CallableOnce).
-///
-/// # Type Parameters
-///
-/// * `E` - The error value returned when the action fails.
-///
-/// # Examples
-///
-/// ```rust
-/// use qubit_function::RunnableOnce;
-///
-/// let task = || Ok::<(), String>(());
-/// assert_eq!(RunnableOnce::run_once(task), Ok(()));
-/// ```
-pub trait RunnableOnce<E> {
-    /// Executes the action, consuming `self`.
-    ///
-    /// # Returns
-    ///
-    /// Returns `Ok(())` when the action succeeds, or `Err(E)` when it fails.
-    /// The exact error meaning is defined by the concrete runnable.
-    ///
-    /// # Errors
-    ///
-    /// Returns `Err(E)` when the underlying action fails.
-    fn run_once(self) -> Result<(), E>;
-}
-
-impl<E, F> RunnableOnce<E> for F
-where
-    F: FnOnce() -> Result<(), E>,
-{
-    #[inline(always)]
-    fn run_once(self) -> Result<(), E> {
-        self()
-    }
-}
+#[path = "runnable_once/runnable_once.rs"]
+mod runnable_once_trait;
+pub use runnable_once_trait::RunnableOnce;

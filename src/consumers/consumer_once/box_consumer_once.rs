@@ -54,12 +54,20 @@ use crate::macros::impl_closure_once_trait;
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{ConsumerOnce, BoxConsumerOnce};
+/// use std::sync::Arc;
+/// use std::sync::atomic::AtomicI32;
+/// use std::sync::atomic::Ordering;
 ///
-/// let consumer = BoxConsumerOnce::new(|x: &i32| {
-///     println!("Value: {}", x);
+/// use qubit_function::BoxConsumerOnce;
+/// use qubit_function::ConsumerOnce;
+///
+/// let observed = Arc::new(AtomicI32::new(0));
+/// let callback_observed = Arc::clone(&observed);
+/// let consumer = BoxConsumerOnce::new(move |x: &i32| {
+///     callback_observed.store(*x, Ordering::SeqCst);
 /// });
 /// consumer.accept(&5);
+/// assert_eq!(observed.load(Ordering::SeqCst), 5);
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxConsumerOnce<T> {

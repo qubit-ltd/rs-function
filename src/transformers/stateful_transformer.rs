@@ -37,47 +37,6 @@ pub use rc_conditional_stateful_transformer::RcConditionalStatefulTransformer;
 mod arc_conditional_stateful_transformer;
 pub use arc_conditional_stateful_transformer::ArcConditionalStatefulTransformer;
 
-// ============================================================================
-// Core Trait
-// ============================================================================
-
-/// StatefulTransformer trait - transforms values from type T to type R with
-/// state
-///
-/// Defines the behavior of a stateful transformation: converting a value
-/// of type `T` to a value of type `R` by consuming the input while
-/// allowing modification of internal state. This is analogous to
-/// `FnMut(T) -> R` in Rust's standard library.
-///
-/// # Examples
-///
-/// ```
-/// use qubit_function::StatefulTransformer;
-///
-/// let mut double = |value| value * 2;
-/// assert_eq!(double.apply(3), 6);
-/// ```
-///
-/// # Type Parameters
-///
-/// * `T` - The type of the input value (consumed)
-/// * `R` - The type of the output value
-pub trait StatefulTransformer<T, R> {
-    /// Applies the transformation to the input value to produce an output value
-    ///
-    /// # Parameters
-    ///
-    /// * `input` - The input value to transform (consumed)
-    ///
-    /// # Returns
-    ///
-    /// The transformed output value
-    #[must_use = "the computed callback result should be used"]
-    fn apply(&mut self, input: T) -> R;
-}
-
-crate::macros::impl_closure_trait!(
-    StatefulTransformer<T, R>,
-    apply,
-    FnMut(input: T) -> R
-);
+#[path = "stateful_transformer/stateful_transformer.rs"]
+mod stateful_transformer_trait;
+pub use stateful_transformer_trait::StatefulTransformer;

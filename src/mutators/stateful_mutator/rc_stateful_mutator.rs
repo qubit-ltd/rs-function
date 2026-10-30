@@ -10,7 +10,6 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use super::RcMutMutatorFn;
 use crate::Predicate;
 use crate::RcConditionalStatefulMutator;
 use crate::StatefulMutator;
@@ -22,6 +21,13 @@ use crate::mutators::macros::impl_shared_mutator_methods;
 // ============================================================================
 // 3. RcStatefulMutator - Single-Threaded Shared Ownership Implementation
 // ============================================================================
+
+/// Stores a mutable callback behind single-threaded shared ownership and
+/// interior mutability.
+///
+/// The callback is not required to be `Send` because `Rc` cannot cross thread
+/// boundaries. `RefCell` provides exclusive access when it is invoked.
+type RcMutMutatorFn<T> = Rc<RefCell<dyn FnMut(&mut T)>>;
 
 /// Rc-based stateful mutator.
 ///
@@ -68,6 +74,7 @@ use crate::mutators::macros::impl_shared_mutator_methods;
 /// second.apply(&mut value);
 /// assert_eq!(value, 13);
 /// ```
+///
 /// # Borrowing and reentrancy
 ///
 /// Each call holds a mutable `RefCell` borrow while the user callback runs.

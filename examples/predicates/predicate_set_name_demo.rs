@@ -8,6 +8,8 @@
 
 //! Demonstrates the set_name and new_with_name methods of Predicate
 
+use std::thread;
+
 use qubit_function::ArcPredicate;
 use qubit_function::BoxPredicate;
 use qubit_function::Predicate;
@@ -100,7 +102,7 @@ fn demo_arc_predicate() {
 
     // Name is preserved when sharing between threads
     let pred3 = pred2.clone();
-    let handle = std::thread::spawn(move || {
+    let handle = thread::spawn(move || {
         let name = pred3.name().map(str::to_string);
         let result = pred3.test(&"Threading".to_string());
         (name, result)

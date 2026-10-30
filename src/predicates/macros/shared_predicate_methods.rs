@@ -19,8 +19,6 @@
 //! * `$struct_name<$generics>` - The struct name with its generic parameters
 //!   - Single parameter: `ArcPredicate<T>`
 //!   - Two parameters: `ArcBiPredicate<T, U>`
-//! * `$predicate_trait_name` - Predicate trait name (e.g., Predicate,
-//!   BiPredicate)
 //! * `$predicate_extra_bounds` - Extra trait bounds (e.g., 'static for Rc, Send
 //!   + Sync + 'static for Arc)
 //!
@@ -58,8 +56,6 @@
 /// * `$struct_name<$generics>` - The struct name with its generic parameters
 ///   - Single parameter: `ArcPredicate<T>`
 ///   - Two parameters: `ArcBiPredicate<T, U>`
-/// * `$predicate_trait_name` - Predicate trait name (e.g., Predicate,
-///   BiPredicate)
 /// * `$predicate_extra_bounds` - Extra trait bounds (e.g., 'static for Rc, Send
 ///   + Sync + 'static for Arc)
 ///
@@ -97,6 +93,11 @@ macro_rules! impl_shared_predicate_methods {
         /// This method borrows `self`; the original shared predicate remains
         /// usable.
         ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The other predicate type, which must implement the matching
+        ///   predicate trait and the target wrapper's additional bounds.
+        ///
         /// # Parameters
         ///
         /// * `other` - The other predicate to combine with.
@@ -119,6 +120,11 @@ macro_rules! impl_shared_predicate_methods {
         ///
         /// This method borrows `self`; the original shared predicate remains
         /// usable.
+        ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The other predicate type, which must implement the matching
+        ///   predicate trait and the target wrapper's additional bounds.
         ///
         /// # Parameters
         ///
@@ -146,6 +152,11 @@ macro_rules! impl_shared_predicate_methods {
         /// This method borrows `self`; the original shared predicate remains
         /// usable.
         ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The other predicate type, which must implement the matching
+        ///   predicate trait and the target wrapper's additional bounds.
+        ///
         /// # Parameters
         ///
         /// * `other` - The other predicate to combine with.
@@ -170,6 +181,11 @@ macro_rules! impl_shared_predicate_methods {
         ///
         /// This method borrows `self`; the original shared predicate remains
         /// usable.
+        ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The other predicate type, which must implement the matching
+        ///   predicate trait and the target wrapper's additional bounds.
         ///
         /// # Parameters
         ///
@@ -196,6 +212,11 @@ macro_rules! impl_shared_predicate_methods {
         ///
         /// This method borrows `self`; the original shared predicate remains
         /// usable.
+        ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The other predicate type, which must implement the matching
+        ///   predicate trait and the target wrapper's additional bounds.
         ///
         /// # Parameters
         ///
@@ -228,6 +249,12 @@ macro_rules! impl_shared_predicate_methods {
         /// This method borrows `self`; the original shared bi-predicate remains
         /// usable.
         ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The other bi-predicate type, which must implement the
+        ///   matching bi-predicate trait and the target wrapper's additional
+        ///   bounds.
+        ///
         /// # Parameters
         ///
         /// * `other` - The other bi-predicate to combine with.
@@ -251,6 +278,12 @@ macro_rules! impl_shared_predicate_methods {
         ///
         /// This method borrows `self`; the original shared bi-predicate remains
         /// usable.
+        ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The other bi-predicate type, which must implement the
+        ///   matching bi-predicate trait and the target wrapper's additional
+        ///   bounds.
         ///
         /// # Parameters
         ///
@@ -279,6 +312,12 @@ macro_rules! impl_shared_predicate_methods {
         /// This method borrows `self`; the original shared bi-predicate remains
         /// usable.
         ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The other bi-predicate type, which must implement the
+        ///   matching bi-predicate trait and the target wrapper's additional
+        ///   bounds.
+        ///
         /// # Parameters
         ///
         /// * `other` - The other bi-predicate to combine with.
@@ -306,6 +345,12 @@ macro_rules! impl_shared_predicate_methods {
         /// This method borrows `self`; the original shared bi-predicate remains
         /// usable.
         ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The other bi-predicate type, which must implement the
+        ///   matching bi-predicate trait and the target wrapper's additional
+        ///   bounds.
+        ///
         /// # Parameters
         ///
         /// * `other` - The other bi-predicate to combine with.
@@ -332,6 +377,12 @@ macro_rules! impl_shared_predicate_methods {
         ///
         /// This method borrows `self`; the original shared bi-predicate remains
         /// usable.
+        ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The other bi-predicate type, which must implement the
+        ///   matching bi-predicate trait and the target wrapper's additional
+        ///   bounds.
         ///
         /// # Parameters
         ///

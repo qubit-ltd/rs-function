@@ -93,6 +93,19 @@ impl<E> RcRunnable<E> {
 
 impl<E> Runnable<E> for RcRunnable<E> {
     /// Executes the shared runnable.
+    ///
+    /// # Returns
+    ///
+    /// Returns `Ok(())` when the callback succeeds, or `Err(E)` when it fails.
+    ///
+    /// # Errors
+    ///
+    /// Returns the error produced by the callback.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the callback synchronously re-enters this runnable while its
+    /// mutable callback borrow is active.
     #[inline]
     fn run(&mut self) -> Result<(), E> {
         let mut function = self.function.borrow_mut();

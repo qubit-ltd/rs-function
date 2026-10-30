@@ -13,8 +13,10 @@ use crate::BoxConditionalBiTransformer;
 use crate::Transformer;
 use crate::transformers::macros::impl_box_transformer_methods;
 use crate::transformers::macros::impl_transformer_common_methods;
-use crate::transformers::macros::impl_transformer_constant_method;
 use crate::transformers::macros::impl_transformer_debug_display;
+
+// Implements the constant constructor.
+mod constant;
 
 // ============================================================================
 // BoxBiTransformer - Box<dyn Fn(T, U) -> R>
@@ -71,9 +73,6 @@ impl<T, U, R> BoxBiTransformer<T, U, R> {
         Transformer
     );
 }
-
-// Implement constant method for BoxBiTransformer
-impl_transformer_constant_method!(BoxBiTransformer<T, U, R>, BiTransformer);
 
 // Implement Debug and Display for BoxBiTransformer
 impl_transformer_debug_display!(BoxBiTransformer<T, U, R>);

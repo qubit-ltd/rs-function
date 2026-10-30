@@ -11,7 +11,6 @@ use std::sync::Arc;
 
 use parking_lot::Mutex;
 
-use super::ArcStatefulMutatingFunctionFn;
 use crate::ArcConditionalStatefulMutatingFunction;
 use crate::Function;
 use crate::Predicate;
@@ -25,6 +24,14 @@ use crate::functions::macros::impl_shared_function_methods;
 // =======================================================================
 // 5. ArcStatefulMutatingFunction - Thread-Safe Shared Ownership
 // =======================================================================
+
+/// Erases a stateful mutable callback behind shared, synchronized ownership.
+///
+/// # Type Parameters
+///
+/// * `T` - The type of the callback's mutable input.
+/// * `R` - The type returned by the callback.
+type ArcStatefulMutatingFunctionFn<T, R> = Arc<Mutex<dyn FnMut(&mut T) -> R + Send + 'static>>;
 
 /// ArcStatefulMutatingFunction struct
 ///
@@ -40,6 +47,11 @@ use crate::functions::macros::impl_shared_function_methods;
 /// - **Stateful**: Can modify captured environment (uses `FnMut`)
 /// - **Chainable**: Method chaining via `&self` (non-consuming)
 ///
+/// # Type Parameters
+///
+/// * `T` - The mutable input type accepted by the callback.
+/// * `R` - The result type returned by the callback.
+///
 /// # Use Cases
 ///
 /// Choose `ArcStatefulMutatingFunction` when:
@@ -51,8 +63,8 @@ use crate::functions::macros::impl_shared_function_methods;
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{StatefulMutatingFunction,
-///                       ArcStatefulMutatingFunction};
+/// use qubit_function::ArcStatefulMutatingFunction;
+/// use qubit_function::StatefulMutatingFunction;
 ///
 /// let counter = {
 ///     let mut count = 0;
@@ -66,6 +78,7 @@ use crate::functions::macros::impl_shared_function_methods;
 ///
 /// let mut value = 5;
 /// assert_eq!(clone.apply(&mut value), 1);
+/// assert_eq!(value, 10);
 /// ```
 ///
 /// # Locking and reentrancy

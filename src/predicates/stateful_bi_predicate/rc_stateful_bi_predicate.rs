@@ -18,13 +18,18 @@ use crate::predicates::macros::impl_predicate_clone;
 use crate::predicates::macros::impl_predicate_common_methods;
 use crate::predicates::macros::impl_predicate_debug_display;
 
-/// The erased callback representation used by this implementation.
+/// Stores a mutable callback behind single-threaded shared ownership.
+///
+/// Cloned wrappers retain the same callback state through the `Rc` handle.
+/// Each invocation requires a mutable `RefCell` borrow, so synchronous
+/// re-entry through a shared wrapper panics while that borrow is active.
 type RcStatefulBiPredicateFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U) -> bool>>;
 
 /// An Rc-based stateful bi-predicate with single-threaded shared ownership.
 ///
 /// This type stores the predicate closure inside `Rc<RefCell<_>>`, allowing
 /// cheap clones that share the same mutable predicate state on one thread.
+///
 /// # Borrowing and reentrancy
 ///
 /// Each call holds a mutable `RefCell` borrow while the user callback runs.
@@ -64,18 +69,22 @@ pub struct RcStatefulBiPredicate<T, U> {
 }
 
 impl<T, U> RcStatefulBiPredicate<T, U> {
-    // Generates: new(), new_with_name(), name(), set_name(), always_true(),
-    // always_false()
+    // Generates constructors, factories, and name methods.
     impl_predicate_common_methods!(
         RcStatefulBiPredicate<T, U>,
         (FnMut(&T, &U) -> bool + 'static),
-        |f| Rc::new(RefCell::new(f))
+        |f| Rc::new(RefCell::new(f)),
+        defer_metadata
     );
 
     /// Returns a bi-predicate representing logical AND with another predicate.
     ///
     /// This method borrows `self`; the returned predicate shares this
     /// predicate's mutable state through the same `Rc<RefCell<_>>`.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `P` - The type of the other stateful bi-predicate.
     ///
     /// # Parameters
     ///
@@ -84,6 +93,11 @@ impl<T, U> RcStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `RcStatefulBiPredicate` representing logical AND.
+    ///
+    /// # Panics
+    ///
+    /// Panics if either callback panics or synchronously re-enters this
+    /// wrapper while its callback is already mutably borrowed.
     #[inline]
     pub fn and<P>(&self, mut other: P) -> RcStatefulBiPredicate<T, U>
     where
@@ -106,6 +120,10 @@ impl<T, U> RcStatefulBiPredicate<T, U> {
     /// This method borrows `self`; the returned predicate shares this
     /// predicate's mutable state through the same `Rc<RefCell<_>>`.
     ///
+    /// # Type Parameters
+    ///
+    /// * `P` - The type of the other stateful bi-predicate.
+    ///
     /// # Parameters
     ///
     /// * `other` - The other bi-predicate to combine with.
@@ -113,6 +131,11 @@ impl<T, U> RcStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `RcStatefulBiPredicate` representing logical OR.
+    ///
+    /// # Panics
+    ///
+    /// Panics if either callback panics or synchronously re-enters this
+    /// wrapper while its callback is already mutably borrowed.
     #[inline]
     pub fn or<P>(&self, mut other: P) -> RcStatefulBiPredicate<T, U>
     where
@@ -134,6 +157,10 @@ impl<T, U> RcStatefulBiPredicate<T, U> {
     ///
     /// NAND returns `true` unless both predicates return `true`.
     ///
+    /// # Type Parameters
+    ///
+    /// * `P` - The type of the other stateful bi-predicate.
+    ///
     /// # Parameters
     ///
     /// * `other` - The other bi-predicate to combine with.
@@ -141,6 +168,11 @@ impl<T, U> RcStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `RcStatefulBiPredicate` representing logical NAND.
+    ///
+    /// # Panics
+    ///
+    /// Panics if either callback panics or synchronously re-enters this
+    /// wrapper while its callback is already mutably borrowed.
     #[inline]
     pub fn nand<P>(&self, mut other: P) -> RcStatefulBiPredicate<T, U>
     where
@@ -163,6 +195,10 @@ impl<T, U> RcStatefulBiPredicate<T, U> {
     /// XOR evaluates both predicates and returns `true` when exactly one
     /// predicate returns `true`.
     ///
+    /// # Type Parameters
+    ///
+    /// * `P` - The type of the other stateful bi-predicate.
+    ///
     /// # Parameters
     ///
     /// * `other` - The other bi-predicate to combine with.
@@ -170,6 +206,11 @@ impl<T, U> RcStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `RcStatefulBiPredicate` representing logical XOR.
+    ///
+    /// # Panics
+    ///
+    /// Panics if either callback panics or synchronously re-enters this
+    /// wrapper while its callback is already mutably borrowed.
     #[inline]
     pub fn xor<P>(&self, mut other: P) -> RcStatefulBiPredicate<T, U>
     where
@@ -191,6 +232,10 @@ impl<T, U> RcStatefulBiPredicate<T, U> {
     ///
     /// NOR returns `true` only when both predicates return `false`.
     ///
+    /// # Type Parameters
+    ///
+    /// * `P` - The type of the other stateful bi-predicate.
+    ///
     /// # Parameters
     ///
     /// * `other` - The other bi-predicate to combine with.
@@ -198,6 +243,11 @@ impl<T, U> RcStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `RcStatefulBiPredicate` representing logical NOR.
+    ///
+    /// # Panics
+    ///
+    /// Panics if either callback panics or synchronously re-enters this
+    /// wrapper while its callback is already mutably borrowed.
     #[inline]
     pub fn nor<P>(&self, mut other: P) -> RcStatefulBiPredicate<T, U>
     where
@@ -223,6 +273,20 @@ where
 {
     type Output = RcStatefulBiPredicate<T, U>;
 
+    /// Negates this predicate while transferring its shared callback state.
+    ///
+    /// The returned predicate keeps the same callback allocation, so its
+    /// mutable state remains shared with any existing clones.
+    ///
+    /// # Returns
+    ///
+    /// A predicate that returns the opposite result while sharing the
+    /// original callback state.
+    ///
+    /// # Panics
+    ///
+    /// The predicate panics if its callback panics or synchronously re-enters
+    /// a wrapper that already holds a mutable borrow of the callback.
     fn not(self) -> Self::Output {
         let metadata = self.metadata;
         let function = self.function;
@@ -243,6 +307,20 @@ where
 {
     type Output = RcStatefulBiPredicate<T, U>;
 
+    /// Creates a negated predicate that shares this predicate's callback.
+    ///
+    /// Cloning the callback handle leaves `self` available and makes calls to
+    /// either wrapper update the same mutable callback state.
+    ///
+    /// # Returns
+    ///
+    /// A predicate that returns the opposite result while sharing this
+    /// predicate's callback state.
+    ///
+    /// # Panics
+    ///
+    /// The predicate panics if its callback panics or synchronously re-enters
+    /// a wrapper that already holds a mutable borrow of the callback.
     fn not(self) -> Self::Output {
         let function = self.function.clone();
         RcStatefulBiPredicate::new_with_metadata(
@@ -263,6 +341,24 @@ impl_predicate_clone!(RcStatefulBiPredicate<T, U>);
 impl_predicate_debug_display!(RcStatefulBiPredicate<T, U>);
 
 impl<T, U> StatefulBiPredicate<T, U> for RcStatefulBiPredicate<T, U> {
+    /// Evaluates the callback with mutable access to its shared state.
+    ///
+    /// Clones of this predicate use the same callback state. The two tested
+    /// values remain immutably borrowed for the duration of the callback.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - The first value supplied to the callback.
+    /// * `second` - The second value supplied to the callback.
+    ///
+    /// # Returns
+    ///
+    /// The boolean result returned by the callback.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the callback panics or synchronously re-enters this wrapper
+    /// while the callback is already mutably borrowed.
     #[inline]
     fn test(&mut self, first: &T, second: &U) -> bool {
         let mut function = self.function.borrow_mut();

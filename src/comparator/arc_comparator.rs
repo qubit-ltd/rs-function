@@ -59,6 +59,10 @@ impl<T> Clone for ArcComparator<T> {
 impl<T> ArcComparator<T> {
     /// Creates a new `ArcComparator` from a comparator implementation.
     ///
+    /// # Type Parameters
+    ///
+    /// * `F` - A thread-safe comparator implementation with a static lifetime.
+    ///
     /// # Parameters
     ///
     /// * `source` - The comparator implementation to wrap
@@ -87,6 +91,10 @@ impl<T> ArcComparator<T> {
 
     /// Creates a named `ArcComparator` from a thread-safe comparator.
     ///
+    /// # Type Parameters
+    ///
+    /// * `F` - A thread-safe comparator implementation with a static lifetime.
+    ///
     /// # Parameters
     ///
     /// * `name` - The diagnostic name assigned to the comparator.
@@ -108,14 +116,21 @@ impl<T> ArcComparator<T> {
 
     /// Creates an `ArcComparator` with an optional diagnostic name.
     ///
+    /// # Type Parameters
+    ///
+    /// * `F` - A thread-safe comparator implementation with a static lifetime.
+    ///
     /// # Parameters
     ///
     /// * `source` - The thread-safe comparator implementation to wrap.
     /// * `name` - The optional diagnostic name assigned to the comparator.
+    ///   `Some(name)` stores the name, while `None` leaves the comparator
+    ///   unnamed.
     ///
     /// # Returns
     ///
-    /// An `ArcComparator` containing the supplied optional name.
+    /// An `ArcComparator` containing the supplied name when `name` is
+    /// `Some(name)`, or no diagnostic name when it is `None`.
     #[inline]
     pub fn new_with_optional_name<F>(source: F, name: Option<String>) -> Self
     where
@@ -127,29 +142,13 @@ impl<T> ArcComparator<T> {
         }
     }
 
-    /// Creates a comparator while preserving existing callback metadata.
-    ///
-    /// # Parameters
-    ///
-    /// * `source` - The thread-safe comparator implementation to wrap.
-    /// * `metadata` - The callback metadata to preserve.
-    ///
-    /// # Returns
-    ///
-    /// An `ArcComparator` containing `metadata`.
-    #[inline]
-    pub(crate) fn new_with_metadata<F>(source: F, metadata: CallbackMetadata) -> Self
-    where
-        F: Comparator<T> + Send + Sync + 'static,
-    {
-        Self {
-            function: Arc::new(move |left: &T, right: &T| source.compare(left, right)),
-            metadata,
-        }
-    }
-
     /// Returns a comparator that compares values by a key extracted by the
     /// given function.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `K` - The ordered key type extracted from each value.
+    /// * `F` - A thread-safe key extraction function with a static lifetime.
     ///
     /// # Parameters
     ///
@@ -185,9 +184,37 @@ impl<T> ArcComparator<T> {
         ArcComparator::new(move |a: &T, b: &T| key_fn(a).cmp(key_fn(b)))
     }
 
+    /// Creates a comparator while preserving existing callback metadata.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `F` - A thread-safe comparator implementation with a static lifetime.
+    ///
+    /// # Parameters
+    ///
+    /// * `source` - The thread-safe comparator implementation to wrap.
+    /// * `metadata` - The callback metadata to preserve.
+    ///
+    /// # Returns
+    ///
+    /// An `ArcComparator` containing `metadata`.
+    #[inline]
+    pub(crate) fn new_with_metadata<F>(source: F, metadata: CallbackMetadata) -> Self
+    where
+        F: Comparator<T> + Send + Sync + 'static,
+    {
+        Self {
+            function: Arc::new(move |left: &T, right: &T| source.compare(left, right)),
+            metadata,
+        }
+    }
+
     impl_common_name_methods!("comparator");
 
     /// Returns a comparator that imposes the reverse ordering.
+    ///
+    /// `T` must be `'static` because the returned comparator stores the
+    /// callback that performs the reversed comparison.
     ///
     /// # Returns
     ///
@@ -215,6 +242,13 @@ impl<T> ArcComparator<T> {
 
     /// Returns a comparator that uses this comparator first, then another
     /// comparator if this one considers the values equal.
+    ///
+    /// `T` and `other` must be `'static` because the result stores both
+    /// comparison callbacks.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `C` - A thread-safe comparator used to break ties.
     ///
     /// # Parameters
     ///

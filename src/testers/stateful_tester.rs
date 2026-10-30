@@ -7,6 +7,10 @@
 // =============================================================================
 //! Defines the `StatefulTester` public trait.
 
+#[path = "stateful_tester/stateful_tester.rs"]
+mod stateful_tester_trait;
+pub use stateful_tester_trait::StatefulTester;
+
 mod arc_stateful_tester;
 pub use arc_stateful_tester::ArcStatefulTester;
 mod box_stateful_tester;
@@ -15,49 +19,3 @@ pub use box_stateful_tester::BoxStatefulTester;
 mod rc_stateful_tester;
 #[cfg(feature = "rc")]
 pub use rc_stateful_tester::RcStatefulTester;
-
-/// Tests whether a zero-argument condition holds while allowing state mutation.
-///
-/// `StatefulTester` is the stateful counterpart of
-/// [`Tester`](super::tester::Tester).
-/// It is equivalent to `FnMut() -> bool`: callers execute it through
-/// `&mut self`, so the implementation may update captured or internal state
-/// between calls.
-///
-/// # Examples
-///
-/// ```rust
-/// use qubit_function::StatefulTester;
-///
-/// let mut count = 0;
-/// let mut tester = move || {
-///     count += 1;
-///     count >= 2
-/// };
-///
-/// assert!(!tester.test());
-/// assert!(tester.test());
-/// ```
-pub trait StatefulTester {
-    /// Executes the stateful test and returns the test result.
-    ///
-    /// This method uses `&mut self` to match `FnMut() -> bool`, allowing each
-    /// call to update internal state before producing the boolean result.
-    ///
-    /// # Returns
-    ///
-    /// Returns `true` if the condition holds, otherwise returns `false`.
-    #[must_use = "the test result should be used"]
-    fn test(&mut self) -> bool;
-}
-
-impl<F> StatefulTester for F
-where
-    F: FnMut() -> bool,
-{
-    /// Delegates each test call to the wrapped stateful function.
-    #[inline(always)]
-    fn test(&mut self) -> bool {
-        self()
-    }
-}

@@ -94,6 +94,11 @@ macro_rules! impl_shared_conditional_function {
             /// When called, the returned function invokes the existing callback
             /// if the predicate succeeds, and the alternative callback otherwise.
             ///
+            /// # Type Parameters
+            ///
+            /// * `F` - Alternative callback type implementing the accepted
+            ///   function trait and the storage bounds selected for this wrapper.
+            ///
             /// # Parameters
             ///
             /// * `else_function` - Callback used when the predicate fails. It must
@@ -142,6 +147,11 @@ macro_rules! impl_shared_conditional_function {
             ///
             /// When called, the returned bi-function invokes the existing callback
             /// if the predicate succeeds, and the alternative callback otherwise.
+            ///
+            /// # Type Parameters
+            ///
+            /// * `F` - Alternative callback type implementing the accepted
+            ///   bi-function trait and the storage bounds selected for this wrapper.
             ///
             /// # Parameters
             ///

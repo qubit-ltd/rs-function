@@ -146,6 +146,12 @@ macro_rules! impl_transformer_constant_method {
         impl<$t, $u, $r> $struct_name<$t, $u, $r> {
             /// Creates a constant bi-transformer
             ///
+            /// # Type Parameters
+            ///
+            /// * `T` - The type of the first input, which is ignored.
+            /// * `U` - The type of the second input, which is ignored.
+            /// * `R` - The cloned value returned by each invocation.
+            ///
             /// # Parameters
             ///
             /// * `value` - The value cloned for each invocation.

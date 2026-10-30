@@ -19,14 +19,18 @@ use crate::consumers::macros::impl_shared_conditional_consumer;
 // 9. ArcConditionalConsumer - Arc-based Conditional Consumer
 // ============================================================================
 
-/// ArcConditionalConsumer struct
-///
-/// A conditional non-mutating consumer that only executes when a predicate is
-/// satisfied. Uses `ArcConsumer` and `ArcPredicate` for thread-safe shared
-/// ownership semantics.
+/// A thread-safe conditional consumer that invokes its callback only when its
+/// predicate accepts the input.
 ///
 /// This type is typically created by calling `ArcConsumer::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
+/// designed to work with `or_else()` to create if-then-else logic. It shares
+/// its callback and predicate through `Arc`, so the wrapper can be cloned and
+/// used across threads when `T` meets the required thread-safety bounds.
+///
+/// # Type Parameters
+///
+/// * `T` - The input type observed by the consumer and predicate through a
+///   shared reference.
 ///
 /// # Features
 ///
@@ -40,18 +44,23 @@ use crate::consumers::macros::impl_shared_conditional_consumer;
 ///
 /// # Examples
 ///
-/// ## Basic Conditional Execution
+/// ## Conditional Execution
 ///
 /// ```rust
-/// use qubit_function::{Consumer, ArcConsumer};
+/// use std::sync::atomic::{AtomicI32, Ordering};
+/// use std::sync::Arc;
+/// use qubit_function::{ArcConsumer, Consumer};
 ///
-/// let consumer = ArcConsumer::new(|x: &i32| {
-///     println!("Positive: {}", x);
+/// let total = Arc::new(AtomicI32::new(0));
+/// let consumer_total = Arc::clone(&total);
+/// let consumer = ArcConsumer::new(move |x: &i32| {
+///     consumer_total.fetch_add(*x, Ordering::SeqCst);
 /// });
 /// let conditional = consumer.when(|x: &i32| *x > 0);
 ///
-/// conditional.accept(&5);  // Prints: Positive: 5
-/// conditional.accept(&-5); // Does nothing
+/// conditional.accept(&5);
+/// conditional.accept(&-5);
+/// assert_eq!(total.load(Ordering::SeqCst), 5);
 /// ```
 ///
 /// ## With or_else Branch

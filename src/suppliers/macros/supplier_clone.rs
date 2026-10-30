@@ -18,7 +18,7 @@
 //! # Parameters
 //!
 //! * `$struct_name` - The struct name
-//! * `$generic` - Generic parameter list (one type parameter)
+//! * `$t` - Generic type parameter used by the supplier struct
 //!
 //! # Examples
 //!
@@ -27,7 +27,11 @@
 //! ```rust
 //! # #[cfg(all(feature = "rc", feature = "stateful"))]
 //! # {
-//! use qubit_function::{ArcStatefulSupplier, ArcSupplier, RcStatefulSupplier, RcSupplier, Supplier};
+//! use qubit_function::ArcStatefulSupplier;
+//! use qubit_function::ArcSupplier;
+//! use qubit_function::RcStatefulSupplier;
+//! use qubit_function::RcSupplier;
+//! use qubit_function::Supplier;
 //!
 //! let arc = ArcSupplier::new(|| 1);
 //! let arc_clone = arc.clone();
@@ -66,7 +70,11 @@
 /// ```rust
 /// # #[cfg(all(feature = "rc", feature = "stateful"))]
 /// # {
-/// use qubit_function::{ArcStatefulSupplier, ArcSupplier, RcStatefulSupplier, RcSupplier, Supplier};
+/// use qubit_function::ArcStatefulSupplier;
+/// use qubit_function::ArcSupplier;
+/// use qubit_function::RcStatefulSupplier;
+/// use qubit_function::RcSupplier;
+/// use qubit_function::Supplier;
 ///
 /// let arc = ArcSupplier::new(|| 1);
 /// let arc_clone = arc.clone();

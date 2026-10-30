@@ -15,6 +15,10 @@ use super::ArcTransformer;
 /// to another value of the same type `T`. Equivalent to Java's
 /// `UnaryOperator<T>` with shared, thread-safe ownership.
 ///
+/// # Type Parameters
+///
+/// * `T` - The input value consumed by the transformation and its output type.
+///
 /// # Examples
 ///
 /// ```rust

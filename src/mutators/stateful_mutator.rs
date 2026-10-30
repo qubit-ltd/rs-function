@@ -182,32 +182,6 @@
 //! assert_eq!(negative, -6);
 //! # }
 //! ```
-#[cfg(feature = "rc")]
-use std::cell::RefCell;
-#[cfg(feature = "rc")]
-use std::rc::Rc;
-use std::sync::Arc;
-
-use parking_lot::Mutex;
-
-// ============================================================================
-// 1. Type Aliases
-// ============================================================================
-
-/// Stores a mutable callback behind a thread-safe shared pointer and mutex.
-///
-/// The callback must be `Send` so the shared mutator can cross thread
-/// boundaries; the mutex provides exclusive access when it is invoked.
-type ArcMutMutatorFn<T> = Arc<Mutex<dyn FnMut(&mut T) + Send>>;
-
-/// Stores a mutable callback behind single-threaded shared ownership and
-/// interior mutability.
-///
-/// The callback is not required to be `Send` because `Rc` cannot cross thread
-/// boundaries. `RefCell` provides exclusive access when it is invoked.
-#[cfg(feature = "rc")]
-type RcMutMutatorFn<T> = Rc<RefCell<dyn FnMut(&mut T)>>;
-
 mod box_stateful_mutator;
 pub use box_stateful_mutator::BoxStatefulMutator;
 #[cfg(feature = "rc")]
@@ -224,101 +198,6 @@ mod rc_conditional_stateful_mutator;
 pub use rc_conditional_stateful_mutator::RcConditionalStatefulMutator;
 mod arc_conditional_stateful_mutator;
 pub use arc_conditional_stateful_mutator::ArcConditionalStatefulMutator;
-
-// ============================================================================
-// 2. StatefulMutator Trait - Unified Stateful Mutator Interface
-// ============================================================================
-
-/// Unified stateful mutator interface.
-///
-/// Defines operations that may modify both a mutable input and captured state.
-///
-/// This trait is automatically implemented by:
-/// - All closures implementing `FnMut(&mut T)`
-/// - `BoxStatefulMutator<T>`, `ArcStatefulMutator<T>`, and
-///   `RcStatefulMutator<T>`
-///
-/// # Design Rationale
-///
-/// The trait provides a unified abstraction over different ownership models,
-/// allowing generic code to work with any stateful mutator type.
-///
-/// # Type Parameters
-///
-/// * `T` - The input value that an implementation can mutate.
-///
-/// # Features
-///
-/// - **Unified Interface**: All stateful mutator types share the same `apply`
-///   method signature
-/// - **Automatic Implementation**: Closures implement this trait directly,
-///   without allocating an adapter
-/// - **Generic Programming**: Write functions that work with any mutator type
-///
-/// # Examples
-///
-/// ## Generic Stateful Mutator Function
-///
-/// ```rust
-/// use qubit_function::{BoxStatefulMutator, StatefulMutator};
-///
-/// fn apply_mutator<M: StatefulMutator<i32>>(
-///     mutator: &mut M,
-///     value: i32
-/// ) -> i32 {
-///     let mut val = value;
-///     mutator.apply(&mut val);
-///     val
-/// }
-///
-/// let mut calls = 0;
-/// let mut mutator = BoxStatefulMutator::new(move |x: &mut i32| {
-///     calls += 1;
-///     *x += calls;
-/// });
-/// assert_eq!(apply_mutator(&mut mutator, 10), 11);
-/// assert_eq!(apply_mutator(&mut mutator, 10), 12);
-/// ```
-///
-/// ## Wrapper Construction
-///
-/// ```rust
-/// use qubit_function::BoxStatefulMutator;
-///
-/// let closure = |x: &mut i32| *x *= 2;
-///
-/// // Construct a concrete ownership wrapper.
-/// let box_mutator = BoxStatefulMutator::new(closure);
-/// ```
-pub trait StatefulMutator<T> {
-    /// Performs the mutation operation
-    ///
-    /// Executes an operation on the given mutable reference. The operation may
-    /// also update state captured by the mutator.
-    ///
-    /// # Parameters
-    ///
-    /// * `value` - A mutable reference to the value to be mutated
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::{BoxStatefulMutator, StatefulMutator};
-    ///
-    /// let mut calls = 0;
-    /// let mut mutator = BoxStatefulMutator::new(move |x: &mut i32| {
-    ///     calls += 1;
-    ///     *x += calls;
-    /// });
-    /// let mut value = 10;
-    /// mutator.apply(&mut value);
-    /// assert_eq!(value, 11);
-    /// ```
-    fn apply(&mut self, value: &mut T);
-}
-
-crate::macros::impl_closure_trait!(
-    StatefulMutator<T>,
-    apply,
-    FnMut(value: &mut T)
-);
+#[path = "stateful_mutator/stateful_mutator.rs"]
+mod stateful_mutator_trait;
+pub use stateful_mutator_trait::StatefulMutator;

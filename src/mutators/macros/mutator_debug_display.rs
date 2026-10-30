@@ -7,29 +7,17 @@
 // =============================================================================
 //! # Mutator Debug Display Macro
 //!
-//! Generates Debug and Display trait implementations for Mutator structs
-//!
-//! Generates standard Debug and Display trait implementations for Mutator
-//! structs that have a `name: Option<String>` field.
-//!
-//! # Parameters
-//!
-//! * `$struct_name` - The struct name
-//! * `$generic` - Generic parameter list (one type parameter)
-//!
-//! # Examples
-//!
-//! ```ignore
-//! // For single type parameter
-//! impl_mutator_debug_display!(BoxMutator<T>);
-//! ```
+//! Provides the macro that generates standard `Debug` and `Display`
+//! implementations for mutator structs.
 
 /// Generates Debug and Display trait implementations for Mutator structs
 ///
 /// This macro should be used at the top level (outside of any impl block)
 /// to generate Debug and Display trait implementations for Mutator structs.
-/// It generates standard Debug and Display trait implementations for Mutator
-/// structs that have a `name: Option<String>` field.
+/// The generated implementations read the display name from
+/// `self.metadata.name()`. `Debug` also uses a `"<function>"` placeholder
+/// instead of exposing the wrapped callback, while `Display` prints the type
+/// name alone when no display name is set.
 ///
 /// # Parameters
 ///
@@ -41,10 +29,11 @@
 /// This macro should be used at the top level, outside of any impl block,
 /// typically in the same file as the struct definition.
 ///
-/// # Examples
+/// # Example
 ///
-/// ```ignore
-/// // At the top level, outside of any impl block
+/// Place the invocation at module scope, outside any `impl` block:
+///
+/// ```text
 /// impl_mutator_debug_display!(BoxMutator<T>);
 /// ```
 macro_rules! impl_mutator_debug_display {

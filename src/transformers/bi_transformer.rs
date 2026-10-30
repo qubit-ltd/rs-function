@@ -20,6 +20,9 @@
 
 mod box_bi_transformer;
 pub use box_bi_transformer::BoxBiTransformer;
+#[path = "bi_transformer/bi_transformer.rs"]
+mod bi_transformer_trait;
+pub use bi_transformer_trait::BiTransformer;
 #[cfg(feature = "rc")]
 mod rc_bi_transformer;
 #[cfg(feature = "rc")]
@@ -44,52 +47,3 @@ mod rc_conditional_bi_transformer;
 pub use rc_conditional_bi_transformer::RcConditionalBiTransformer;
 mod arc_conditional_bi_transformer;
 pub use arc_conditional_bi_transformer::ArcConditionalBiTransformer;
-
-// ============================================================================
-// Core Trait
-// ============================================================================
-
-/// BiTransformer trait - transforms two values to produce a result
-///
-/// Defines the behavior of a bi-transformation: converting two values of types
-/// `T` and `U` to a value of type `R` by consuming the inputs. This is
-/// analogous to `Fn(T, U) -> R` in Rust's standard library.
-///
-/// # Type Parameters
-///
-/// * `T` - The type of the first input value (consumed)
-/// * `U` - The type of the second input value (consumed)
-/// * `R` - The type of the output value
-///
-/// # Examples
-///
-/// ```
-/// use qubit_function::BiTransformer;
-///
-/// let add = |first, second| first + second;
-/// assert_eq!(add.apply(2, 3), 5);
-/// ```
-pub trait BiTransformer<T, U, R> {
-    /// Transforms two input values to produce an output value
-    ///
-    /// # Parameters
-    ///
-    /// * `first` - The first input value to transform (consumed)
-    /// * `second` - The second input value to transform (consumed)
-    ///
-    /// # Returns
-    ///
-    /// The transformed output value
-    #[must_use = "the computed callback result should be used"]
-    fn apply(&self, first: T, second: U) -> R;
-}
-
-impl<T, U, R, F> BiTransformer<T, U, R> for F
-where
-    F: Fn(T, U) -> R,
-{
-    #[inline(always)]
-    fn apply(&self, first: T, second: U) -> R {
-        self(first, second)
-    }
-}

@@ -38,6 +38,12 @@ use crate::transformers::macros::impl_conditional_transformer_debug_display;
 /// a callable wrapper. Invoking that wrapper follows the `Transformer`
 /// receiver contract (`&self`).
 ///
+/// # Type Parameters
+///
+/// * `T` - The input type consumed by the wrapped transformer and inspected by
+///   the predicate.
+/// * `R` - The output type produced by the wrapped transformer.
+///
 /// # Examples
 ///
 /// ## With or_else Branch

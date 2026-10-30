@@ -77,7 +77,7 @@ impl<T, U, R> BoxStatefulBiTransformer<T, U, R> {
 // Implement constant method for BoxStatefulBiTransformer
 impl_transformer_constant_method!(stateful BoxStatefulBiTransformer<T, U, R>);
 
-// Implement Debug and Display for BoxTransformer
+// Implement Debug and Display for BoxStatefulBiTransformer
 impl_transformer_debug_display!(BoxStatefulBiTransformer<T, U, R>);
 
 impl<T, U, R> StatefulBiTransformer<T, U, R> for BoxStatefulBiTransformer<T, U, R> {

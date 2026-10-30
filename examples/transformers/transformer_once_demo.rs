@@ -6,7 +6,7 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-//! # TransformerOnce Demo
+//! # Transformer Demo
 //!
 //! Demonstrates consuming a `TransformerOnce` callback and sharing an
 //! `ArcTransformer` between the current thread and a worker thread.

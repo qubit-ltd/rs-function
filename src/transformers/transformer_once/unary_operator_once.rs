@@ -5,7 +5,7 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-//! Defines the `UnaryOperatorOnce` public type.
+//! Defines the public `UnaryOperatorOnce` marker trait.
 
 use super::TransformerOnce;
 

@@ -22,12 +22,9 @@
 //!
 //! # Examples
 //!
-//! ```text
-//! // For two type parameters
-//! // impl_function_debug_display!(BoxFunction<T, R>);
-//!
-//! // For three type parameters
-//! // impl_function_debug_display!(BoxBiFunction<T, U, R>);
+//! ```ignore
+//! impl_function_debug_display!(BoxFunction<T, R>);
+//! impl_function_debug_display!(BoxBiFunction<T, U, R>);
 //! ```
 
 /// Generates Debug and Display trait implementations for Function structs
@@ -47,17 +44,15 @@
 ///
 /// # Examples
 ///
-/// ```text
-/// // For two type parameters
-/// // impl_function_debug_display!(BoxFunction<T, R>);
-///
-/// // For three type parameters
-/// // impl_function_debug_display!(BoxBiFunction<T, U, R>);
+/// ```ignore
+/// impl_function_debug_display!(BoxFunction<T, R>);
+/// impl_function_debug_display!(BoxBiFunction<T, U, R>);
 /// ```
 macro_rules! impl_function_debug_display {
     // Two generic parameters - Function types
     ($struct_name:ident < $t:ident, $r:ident >) => {
         impl<$t, $r> std::fmt::Debug for $struct_name<$t, $r> {
+            /// Formats the callback using its name and an opaque function marker.
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 f.debug_struct(stringify!($struct_name))
                     .field("name", &self.metadata.name())
@@ -67,6 +62,7 @@ macro_rules! impl_function_debug_display {
         }
 
         impl<$t, $r> std::fmt::Display for $struct_name<$t, $r> {
+            /// Writes the type name and, when present, the callback name.
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 match self.metadata.name() {
                     Some(name) => {
@@ -81,6 +77,7 @@ macro_rules! impl_function_debug_display {
     // Three generic parameters - BiFunction types
     ($struct_name:ident < $t:ident, $u:ident, $r:ident >) => {
         impl<$t, $u, $r> std::fmt::Debug for $struct_name<$t, $u, $r> {
+            /// Formats the callback using its name and an opaque function marker.
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 f.debug_struct(stringify!($struct_name))
                     .field("name", &self.metadata.name())
@@ -90,6 +87,7 @@ macro_rules! impl_function_debug_display {
         }
 
         impl<$t, $u, $r> std::fmt::Display for $struct_name<$t, $u, $r> {
+            /// Writes the type name and, when present, the callback name.
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 match self.metadata.name() {
                     Some(name) => {

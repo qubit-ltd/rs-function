@@ -19,7 +19,7 @@ use crate::transformers::macros::impl_shared_conditional_transformer;
 // RcConditionalTransformer - Rc-based Conditional Transformer
 // ============================================================================
 
-/// RcConditionalTransformer struct
+/// Applies a single-threaded predicate before invoking a shared transformer.
 ///
 /// A single-threaded conditional transformer that only executes when a
 /// predicate is satisfied. Uses `RcTransformer` and `RcPredicate` for shared

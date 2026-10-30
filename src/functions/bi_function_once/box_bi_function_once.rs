@@ -17,6 +17,8 @@ use crate::functions::macros::impl_function_debug_display;
 use crate::macros::impl_closure_once_trait;
 
 /// The erased callback representation used by this implementation.
+///
+/// The callback borrows both inputs and can be invoked only once.
 type BoxBiFunctionOnceFn<T, U, R> = Box<dyn FnOnce(&T, &U) -> R>;
 
 // ============================================================================

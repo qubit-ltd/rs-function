@@ -12,7 +12,10 @@ use crate::macros::impl_common_name_methods;
 use crate::macros::impl_common_new_methods;
 use crate::tasks::callable_with::CallableWith;
 
-/// The erased callback representation used by this implementation.
+/// Stores a mutable callback that receives `&mut T` and returns `Result<R, E>`.
+///
+/// The `Send` bound allows the callback wrapper to move between threads when
+/// its other contained values satisfy the corresponding bounds.
 type BoxCallableWithFn<T, R, E> = Box<dyn FnMut(&mut T) -> Result<R, E> + Send>;
 
 /// Box-based callable with mutable input.
@@ -64,9 +67,19 @@ impl<T, R, E> BoxCallableWith<T, R, E> {
     ///
     /// * `mapper` - Function that transforms the success value.
     ///
+    /// # Type Parameters
+    ///
+    /// * `U` - The success value type produced by `mapper`.
+    /// * `M` - The mutable mapping function type.
+    ///
     /// # Returns
     ///
     /// A new callable with mutable input that applies `mapper` on success.
+    ///
+    /// # Errors
+    ///
+    /// When invoked, the returned callable propagates errors from this
+    /// callable without applying `mapper`.
     #[inline]
     pub fn map<U, M>(self, mut mapper: M) -> BoxCallableWith<T, U, E>
     where
@@ -86,9 +99,19 @@ impl<T, R, E> BoxCallableWith<T, R, E> {
     ///
     /// * `mapper` - Function that transforms the error value.
     ///
+    /// # Type Parameters
+    ///
+    /// * `E2` - The error type produced by `mapper`.
+    /// * `M` - The mutable mapping function type.
+    ///
     /// # Returns
     ///
     /// A new callable with mutable input that applies `mapper` on failure.
+    ///
+    /// # Errors
+    ///
+    /// When invoked, the returned callable maps errors from this callable
+    /// using `mapper`.
     #[inline]
     pub fn map_err<E2, M>(self, mut mapper: M) -> BoxCallableWith<T, R, E2>
     where
@@ -108,9 +131,19 @@ impl<T, R, E> BoxCallableWith<T, R, E> {
     ///
     /// * `next` - Function receiving the success value and mutable input.
     ///
+    /// # Type Parameters
+    ///
+    /// * `U` - The success value type produced by `next`.
+    /// * `N` - The mutable follow-up function type.
+    ///
     /// # Returns
     ///
     /// A new callable that runs `next` only when this callable succeeds.
+    ///
+    /// # Errors
+    ///
+    /// When invoked, the returned callable propagates errors from this
+    /// callable or from `next`.
     #[inline]
     pub fn and_then<U, N>(self, next: N) -> BoxCallableWith<T, U, E>
     where

@@ -117,6 +117,10 @@ macro_rules! impl_box_mutator_methods {
         /// Creates a conditional mutator that executes based on predicate
         /// result.
         ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The predicate type used to decide whether to run the mutator
+        ///
         /// # Parameters
         ///
         /// * `predicate` - The predicate to determine whether to execute
@@ -131,8 +135,11 @@ macro_rules! impl_box_mutator_methods {
         ///
         /// ```rust
         /// use std::sync::Arc;
-        /// use std::sync::atomic::{AtomicI32, Ordering};
-        /// use qubit_function::mutators::*;
+        /// use std::sync::atomic::AtomicI32;
+        /// use std::sync::atomic::Ordering;
+        ///
+        /// use qubit_function::mutators::BoxMutator;
+        /// use qubit_function::mutators::Mutator;
         ///
         /// let counter = Arc::new(AtomicI32::new(0));
         /// let mutator = BoxMutator::new({
@@ -151,6 +158,7 @@ macro_rules! impl_box_mutator_methods {
         /// assert_eq!(val2, -1);
         /// assert_eq!(counter.load(Ordering::SeqCst), 1);
         /// ```
+        #[inline]
         pub fn when<P>(self, predicate: P) -> $conditional_type<$t>
         where
             P: Predicate<$t> + 'static,
@@ -163,6 +171,10 @@ macro_rules! impl_box_mutator_methods {
 
         /// Chains execution with another mutator, executing the current
         /// mutator first, then the subsequent mutator.
+        ///
+        /// # Type Parameters
+        ///
+        /// * `M` - The type of the subsequent mutator
         ///
         /// # Parameters
         ///
@@ -178,8 +190,11 @@ macro_rules! impl_box_mutator_methods {
         ///
         /// ```rust
         /// use std::sync::Arc;
-        /// use std::sync::atomic::{AtomicI32, Ordering};
-        /// use qubit_function::mutators::*;
+        /// use std::sync::atomic::AtomicI32;
+        /// use std::sync::atomic::Ordering;
+        ///
+        /// use qubit_function::mutators::BoxMutator;
+        /// use qubit_function::mutators::Mutator;
         ///
         /// let counter1 = Arc::new(AtomicI32::new(0));
         /// let counter2 = Arc::new(AtomicI32::new(0));
@@ -205,6 +220,7 @@ macro_rules! impl_box_mutator_methods {
         /// assert_eq!(counter1.load(Ordering::SeqCst), 1);
         /// assert_eq!(counter2.load(Ordering::SeqCst), 1);
         /// ```
+        #[inline]
         pub fn and_then<M>(self, after: M) -> $struct_name<$t>
         where
             Self: Sized + 'static,

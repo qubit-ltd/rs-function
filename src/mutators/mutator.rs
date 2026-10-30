@@ -214,22 +214,6 @@
 //! assert_eq!(negative, -6); // or_else branch
 //! # }
 //! ```
-#[cfg(feature = "rc")]
-use std::rc::Rc;
-use std::sync::Arc;
-
-// ============================================================================
-// 1. Type Aliases
-// ============================================================================
-
-/// Type alias for Arc-wrapped stateless mutator function
-type ArcMutatorFn<T> = Arc<dyn Fn(&mut T) + Send + Sync>;
-
-/// Type alias for Rc-wrapped stateless mutator function
-/// The erased callback representation used by this implementation.
-#[cfg(feature = "rc")]
-type RcMutatorFn<T> = Rc<dyn Fn(&mut T)>;
-
 mod box_mutator;
 pub use box_mutator::BoxMutator;
 #[cfg(feature = "rc")]
@@ -246,105 +230,6 @@ mod rc_conditional_mutator;
 pub use rc_conditional_mutator::RcConditionalMutator;
 mod arc_conditional_mutator;
 pub use arc_conditional_mutator::ArcConditionalMutator;
-
-// ============================================================================
-// 2. Mutator Trait - Unified Mutator Interface
-// ============================================================================
-
-/// Mutator trait - Unified shared-receiver mutator interface
-///
-/// Defines the core behavior of all stateless mutator types. Performs
-/// operations that accept a mutable reference and modify the input value
-/// without requiring `&mut self`. Interior mutability and external side effects
-/// remain possible.
-///
-/// This trait is automatically implemented by:
-/// - All closures implementing `Fn(&mut T)` (stateless)
-/// - `BoxMutator<T>`, `ArcMutator<T>`, and `RcMutator<T>`
-///
-/// # Design Rationale
-///
-/// The trait provides a unified abstraction over different ownership models for
-/// **stateless** operations. Unlike `StatefulMutator` which uses `FnMut` and
-/// can modify ordinary captured state, `Mutator` uses `Fn`. Implementations may
-/// still use interior mutability or external side effects.
-///
-/// # Features
-///
-/// - **Shared-receiver calls**: Uses `Fn`, so invocation does not require `&mut
-///   self`; interior mutability and external side effects remain possible
-/// - **Unified Interface**: All mutator types share the same `mutate` method
-///   signature
-/// - **Automatic Implementation**: Closures automatically implement this trait
-/// - **Generic Programming**: Write functions that work with any mutator type
-///
-/// # Type Parameters
-///
-/// - `T` - The value type that the mutator receives and modifies.
-///
-/// # Examples
-///
-/// ## Generic Mutator Function
-///
-/// ```rust
-/// use qubit_function::{Mutator, BoxMutator, ArcMutator};
-///
-/// fn apply_mutator<M: Mutator<i32>>(
-///     mutator: &mut M,
-///     value: i32
-/// ) -> i32 {
-///     let mut val = value;
-///     mutator.apply(&mut val);
-///     val
-/// }
-///
-/// // Works with any mutator type
-/// let mut box_mut = BoxMutator::new(|x: &mut i32| *x *= 2);
-/// assert_eq!(apply_mutator(&mut box_mut, 5), 10);
-///
-/// let mut arc_mut = ArcMutator::new(|x: &mut i32| *x *= 2);
-/// assert_eq!(apply_mutator(&mut arc_mut, 5), 10);
-///
-/// let mut closure = |x: &mut i32| *x *= 2;
-/// assert_eq!(apply_mutator(&mut closure, 5), 10);
-/// ```
-///
-/// ## Type Conversion
-///
-/// ```rust
-/// use qubit_function::BoxMutator;
-///
-/// let closure = |x: &mut i32| *x *= 2;
-///
-/// // Convert to different ownership models
-/// let box_mutator = BoxMutator::new(closure);
-/// ```
-pub trait Mutator<T> {
-    /// Performs the stateless mutation operation
-    ///
-    /// Executes an operation on the given mutable reference without modifying
-    /// ordinary captured state through the `Fn` receiver. Implementations may
-    /// still use interior mutability or external side effects.
-    ///
-    /// # Parameters
-    ///
-    /// * `value` - A mutable reference to the value to be mutated
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::{Mutator, BoxMutator};
-    ///
-    /// let mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
-    /// let mut value = 5;
-    /// mutator.apply(&mut value);
-    /// assert_eq!(value, 10);
-    /// ```
-    fn apply(&self, value: &mut T);
-}
-
-crate::macros::impl_closure_trait!(
-    Mutator<T>,
-    apply,
-    Fn(value: &mut T)
-);
+#[path = "mutator/mutator.rs"]
+mod mutator_trait;
+pub use mutator_trait::Mutator;

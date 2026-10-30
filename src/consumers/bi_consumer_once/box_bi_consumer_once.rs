@@ -20,7 +20,7 @@ use crate::macros::impl_closure_once_trait;
 // 2. BoxBiConsumerOnce - Single Ownership Implementation
 // =======================================================================
 
-/// BoxBiConsumerOnce struct
+/// Owns a one-time callback that consumes two borrowed inputs.
 ///
 /// A one-time bi-consumer implementation based on
 /// `Box<dyn FnOnce(&T, &U)>` for single ownership scenarios. This is the
@@ -52,11 +52,16 @@ use crate::macros::impl_closure_once_trait;
 ///
 /// ```rust
 /// use qubit_function::{BiConsumerOnce, BoxBiConsumerOnce};
+/// use std::sync::Arc;
+/// use std::sync::Mutex;
 ///
-/// let consumer = BoxBiConsumerOnce::new(|x: &i32, y: &i32| {
-///     println!("Sum: {}", x + y);
+/// let sum = Arc::new(Mutex::new(0));
+/// let captured_sum = Arc::clone(&sum);
+/// let consumer = BoxBiConsumerOnce::new(move |x: &i32, y: &i32| {
+///     *captured_sum.lock().expect("mutex should not be poisoned") = x + y;
 /// });
 /// consumer.accept(&5, &3);
+/// assert_eq!(*sum.lock().expect("mutex should not be poisoned"), 8);
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxBiConsumerOnce<T, U> {

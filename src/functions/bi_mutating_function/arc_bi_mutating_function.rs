@@ -95,6 +95,15 @@ impl<T, U, R> ArcBiMutatingFunction<T, U, R> {
 impl<T, U, R> BiMutatingFunction<T, U, R> for ArcBiMutatingFunction<T, U, R> {
     /// Calls the stored callback with mutable access to both inputs and returns
     /// its result.
+    ///
+    /// # Parameters
+    ///
+    /// - `first` - The first input, which the callback may modify.
+    /// - `second` - The second input, which the callback may modify.
+    ///
+    /// # Returns
+    ///
+    /// The value produced by the callback.
     #[inline(always)]
     fn apply(&self, first: &mut T, second: &mut U) -> R {
         (self.function)(first, second)

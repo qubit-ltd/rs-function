@@ -59,8 +59,8 @@ use crate::functions::macros::impl_function_identity_method;
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{StatefulMutatingFunction,
-///                       BoxStatefulMutatingFunction};
+/// use qubit_function::BoxStatefulMutatingFunction;
+/// use qubit_function::StatefulMutatingFunction;
 ///
 /// let mut counter = {
 ///     let mut count = 0;
@@ -91,7 +91,7 @@ impl<T, R> BoxStatefulMutatingFunction<T, R> {
         |f| Box::new(f)
     );
 
-    // Generates: when(), and_then(), compose()
+    // Generates: when() and and_then()
     impl_box_function_methods!(
         BoxStatefulMutatingFunction<T, R>,
         BoxConditionalStatefulMutatingFunction,

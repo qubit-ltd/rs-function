@@ -120,6 +120,10 @@ macro_rules! impl_shared_function_methods {
         /// Creates a conditional function that executes based on predicate
         /// result.
         ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The predicate type, which implements `Predicate<T>`.
+        ///
         /// # Parameters
         ///
         /// * `predicate` - The predicate to determine whether to execute
@@ -156,6 +160,11 @@ macro_rules! impl_shared_function_methods {
         /// Chains execution with another function, executing the current
         /// function first, then the subsequent function.
         ///
+        /// # Type Parameters
+        ///
+        /// * `S` - The result type produced by the subsequent function.
+        /// * `F` - The subsequent function type.
+        ///
         /// # Parameters
         ///
         /// * `after` - The subsequent function to execute after the current
@@ -170,7 +179,6 @@ macro_rules! impl_shared_function_methods {
         ///
         /// ```rust
         /// use qubit_function::{ArcFunction, Function};
-        /// use std::sync::Arc;
         ///
         /// let double = ArcFunction::new(|x: &i32| x * 2);
         /// let to_string = ArcFunction::new(|x: &i32| x.to_string());
@@ -205,6 +213,10 @@ macro_rules! impl_shared_function_methods {
     ) => {
         /// Creates a conditional two-parameter function that executes based
         /// on bi-predicate result.
+        ///
+        /// # Type Parameters
+        ///
+        /// * `P` - The predicate type, which implements `BiPredicate<T, U>`.
         ///
         /// # Parameters
         ///
@@ -242,6 +254,11 @@ macro_rules! impl_shared_function_methods {
 
         /// Chains execution with another two-parameter function, executing
         /// the current function first, then the subsequent function.
+        ///
+        /// # Type Parameters
+        ///
+        /// * `S` - The result type produced by the subsequent function.
+        /// * `F` - The subsequent function type.
         ///
         /// # Parameters
         ///

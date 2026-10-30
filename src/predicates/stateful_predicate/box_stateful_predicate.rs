@@ -12,6 +12,7 @@ use std::ops::Not;
 use super::ALWAYS_FALSE_NAME;
 use super::ALWAYS_TRUE_NAME;
 use crate::StatefulPredicate;
+use crate::internal::CallbackMetadata;
 use crate::predicates::macros::impl_predicate_common_methods;
 use crate::predicates::macros::impl_predicate_debug_display;
 
@@ -40,7 +41,7 @@ pub struct BoxStatefulPredicate<T> {
     /// The wrapped callback implementation.
     pub(super) function: Box<dyn FnMut(&T) -> bool>,
     /// Diagnostic metadata associated with this callback.
-    pub(super) metadata: crate::internal::CallbackMetadata,
+    pub(super) metadata: CallbackMetadata,
 }
 
 impl<T> BoxStatefulPredicate<T> {

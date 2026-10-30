@@ -100,37 +100,36 @@ macro_rules! impl_box_conditional_mutator {
             /// executes the first action (based on the predicate), and then
             /// always executes the second action.
             ///
+            /// # Type Parameters
+            ///
+            /// * `M` - The mutator type to execute after this conditional mutator.
+            ///
             /// # Parameters
             ///
             /// * `next` - The next mutator to execute (always executed)
             ///
             /// # Returns
             ///
-            /// Returns a new combined mutator
+            /// A mutator that conditionally runs this mutator and then always
+            /// runs `next`.
             ///
             /// # Examples
             ///
-            /// ```text
-            /// // use std::sync::atomic::{AtomicI32, Ordering};
-            /// //
-            /// // let result = AtomicI32::new(0);
-            /// //
-            /// // let mutator1 = BoxMutator::new(|x: &mut i32| {
-            /// //     *x += 1;
-            /// // });
-            /// //
-            /// // let mutator2 = BoxMutator::new(|x: &mut i32| {
-            /// //     *x += 2;
-            /// // });
-            /// //
-            /// // let conditional = mutator1.when(|x| *x > 0);
-            /// // let chained = conditional.and_then(mutator2);
-            /// //
-            /// // let mut val = 5;
-            /// // chained.apply(&mut val);  // val = 5 + 1 + 2 = 8
-            /// // let mut val2 = -1;
-            /// // chained.apply(&mut val2); // val2 = -1 + 2 = 1 (not -1 + 1 + 2!)
-            /// // ```
+            /// ```
+            /// use qubit_function::{BoxMutator, Mutator};
+            ///
+            /// let mutator = BoxMutator::new(|value: &mut i32| *value += 1)
+            ///     .when(|value: &i32| *value > 0)
+            ///     .and_then(|value: &mut i32| *value += 2);
+            ///
+            /// let mut positive = 5;
+            /// mutator.apply(&mut positive);
+            /// assert_eq!(positive, 8);
+            ///
+            /// let mut negative = -1;
+            /// mutator.apply(&mut negative);
+            /// assert_eq!(negative, 1);
+            /// ```
             pub fn and_then<M>(self, next: M) -> $mutator_type<$t>
             where
                 $t: 'static,
@@ -152,13 +151,36 @@ macro_rules! impl_box_conditional_mutator {
             /// Executes the original mutator when the condition is satisfied, otherwise
             /// executes else_mutator.
             ///
+            /// # Type Parameters
+            ///
+            /// * `M` - The mutator type to execute when the predicate is false.
+            ///
             /// # Parameters
             ///
             /// * `else_mutator` - The mutator for the else branch
             ///
             /// # Returns
             ///
-            /// Returns a new mutator with if-then-else logic
+            /// A mutator that runs the original mutator when the predicate is
+            /// true and `else_mutator` otherwise.
+            ///
+            /// # Examples
+            ///
+            /// ```
+            /// use qubit_function::{BoxMutator, Mutator};
+            ///
+            /// let mutator = BoxMutator::new(|value: &mut i32| *value += 1)
+            ///     .when(|value: &i32| *value > 0)
+            ///     .or_else(|value: &mut i32| *value -= 1);
+            ///
+            /// let mut positive = 5;
+            /// mutator.apply(&mut positive);
+            /// assert_eq!(positive, 6);
+            ///
+            /// let mut negative = -5;
+            /// mutator.apply(&mut negative);
+            /// assert_eq!(negative, -6);
+            /// ```
             pub fn or_else<M>(self, else_mutator: M) -> $mutator_type<$t>
             where
                 $t: 'static,

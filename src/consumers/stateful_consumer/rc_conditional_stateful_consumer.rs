@@ -19,11 +19,10 @@ use crate::consumers::macros::impl_shared_conditional_consumer;
 // 9. RcConditionalStatefulConsumer - Rc-based Conditional Consumer
 // ============================================================================
 
-/// RcConditionalStatefulConsumer struct
+/// Runs its callback only when an input satisfies a predicate, sharing both
+/// through `Rc` within a single thread.
 ///
-/// A single-threaded conditional consumer that only executes when a predicate
-/// is satisfied. Uses `RcStatefulConsumer` and `RcPredicate` for shared
-/// ownership within a single thread.
+/// Clones share the `RcStatefulConsumer` callback and `RcPredicate` condition.
 ///
 /// This type is typically created by calling `RcStatefulConsumer::when()` and
 /// is designed to work with the `or_else()` method to create if-then-else

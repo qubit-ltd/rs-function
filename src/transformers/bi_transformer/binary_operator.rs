@@ -34,7 +34,8 @@ use super::BiTransformer;
 /// ## Using in generic constraints
 ///
 /// ```rust
-/// use qubit_function::{BinaryOperator, BiTransformer};
+/// use qubit_function::BiTransformer;
+/// use qubit_function::BinaryOperator;
 ///
 /// fn reduce<T, O>(values: Vec<T>, initial: T, op: O) -> T
 /// where
@@ -51,7 +52,9 @@ use super::BiTransformer;
 /// ## With concrete types
 ///
 /// ```rust
-/// use qubit_function::{BoxBinaryOperator, BinaryOperator, BiTransformer};
+/// use qubit_function::BiTransformer;
+/// use qubit_function::BinaryOperator;
+/// use qubit_function::BoxBinaryOperator;
 ///
 /// fn create_adder() -> BoxBinaryOperator<i32> {
 ///     BoxBinaryOperator::new(|x, y| x + y)

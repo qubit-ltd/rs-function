@@ -13,7 +13,6 @@ use crate::RcStatefulTransformer;
 use crate::StatefulTransformer;
 use crate::transformers::macros::impl_conditional_transformer_clone;
 use crate::transformers::macros::impl_conditional_transformer_debug_display;
-use crate::transformers::macros::impl_shared_conditional_transformer;
 
 // ============================================================================
 // RcConditionalStatefulTransformer - Rc-based Conditional StatefulTransformer
@@ -65,13 +64,38 @@ pub struct RcConditionalStatefulTransformer<T, R> {
     pub(super) predicate: RcPredicate<T>,
 }
 
-// Implement RcConditionalStatefulTransformer
-impl_shared_conditional_transformer!(
-    RcConditionalStatefulTransformer<T, R>,
-    RcStatefulTransformer,
-    StatefulTransformer,
-    callback_bounds = ('static)
-);
+impl<T, R> RcConditionalStatefulTransformer<T, R> {
+    /// Adds an else branch to the conditional transformation.
+    ///
+    /// The original transformer runs when the predicate matches; otherwise,
+    /// the supplied stateful transformer handles the input.
+    ///
+    /// # Parameters
+    ///
+    /// * `else_transformer` - The stateful transformer used when the predicate
+    ///   does not match.
+    ///
+    /// # Returns
+    ///
+    /// A shared stateful transformer that applies the selected branch.
+    pub fn or_else<F>(&self, else_transformer: F) -> RcStatefulTransformer<T, R>
+    where
+        T: 'static,
+        R: 'static,
+        F: StatefulTransformer<T, R> + 'static,
+    {
+        let predicate = self.predicate.clone();
+        let mut then_transformer = self.transformer.clone();
+        let mut else_transformer = else_transformer;
+        RcStatefulTransformer::new(move |input| {
+            if predicate.test(&input) {
+                then_transformer.apply(input)
+            } else {
+                else_transformer.apply(input)
+            }
+        })
+    }
+}
 
 // Use macro to generate Debug and Display implementations
 impl_conditional_transformer_debug_display!(RcConditionalStatefulTransformer<T, R>);

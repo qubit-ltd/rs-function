@@ -175,6 +175,10 @@ macro_rules! impl_function_constant_method {
             ///
             /// A function that returns the cloned value without modifying
             /// either input.
+            ///
+            /// # Examples
+            ///
+            #[doc = concat!("```\nuse qubit_function::", stringify!($struct_name), ";\n\nlet constant: ", stringify!($struct_name), "<i32, i32, &str> = ", stringify!($struct_name), "::constant(\"hello\");\nassert_eq!(constant.name(), None);\n```")]
             #[inline]
             pub fn constant(value: $r) -> $struct_name<$t, $u, $r>
             where

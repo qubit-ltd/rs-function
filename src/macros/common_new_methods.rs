@@ -30,7 +30,7 @@
 /// * `new_with_name<F>(name: &str, f: F) -> Self` - Creates a named instance
 /// * `new_with_optional_name<F>(f: F, name: Option<String>) -> Self` - Creates
 ///   an instance with an optional name
-macro_rules! impl_common_new_methods {
+macro_rules! impl_common_new_public_methods {
     (
         semantic_mut ($($semantic_bounds:tt)+),
         |$source:ident| $adapter_expr:expr,
@@ -39,9 +39,14 @@ macro_rules! impl_common_new_methods {
     ) => {
         #[doc = concat!("Creates a new ", $type_desc, ".")]
         ///
+        /// # Type Parameters
+        ///
+        /// * `F` - The semantic callback implementation accepted by this
+        ///   wrapper.
+        ///
         /// # Parameters
         ///
-        /// * `source` - The semantic callback implementation to wrap.
+        #[doc = concat!("* `", stringify!($source), "` - The semantic callback implementation to wrap.")]
         ///
         /// # Returns
         ///
@@ -60,10 +65,15 @@ macro_rules! impl_common_new_methods {
 
         #[doc = concat!("Creates a new named ", $type_desc, ".")]
         ///
+        /// # Type Parameters
+        ///
+        /// * `F` - The semantic callback implementation accepted by this
+        ///   wrapper.
+        ///
         /// # Parameters
         ///
         /// * `name` - The diagnostic name assigned to the wrapper.
-        /// * `source` - The semantic callback implementation to wrap.
+        #[doc = concat!("* `", stringify!($source), "` - The semantic callback implementation to wrap.")]
         ///
         /// # Returns
         ///
@@ -80,11 +90,16 @@ macro_rules! impl_common_new_methods {
             }
         }
 
-        #[doc = concat!("Creates a new named ", $type_desc, " with an optional name.")]
+        #[doc = concat!("Creates a new ", $type_desc, " with an optional name.")]
+        ///
+        /// # Type Parameters
+        ///
+        /// * `F` - The semantic callback implementation accepted by this
+        ///   wrapper.
         ///
         /// # Parameters
         ///
-        /// * `source` - The semantic callback implementation to wrap.
+        #[doc = concat!("* `", stringify!($source), "` - The semantic callback implementation to wrap.")]
         /// * `name` - The optional diagnostic name assigned to the wrapper.
         ///
         /// # Returns
@@ -102,31 +117,6 @@ macro_rules! impl_common_new_methods {
             }
         }
 
-        /// Creates a wrapper while preserving existing metadata.
-        ///
-        /// # Parameters
-        ///
-        /// * `source` - The semantic callback implementation to wrap.
-        /// * `metadata` - The diagnostic metadata to preserve.
-        ///
-        /// # Returns
-        ///
-        #[doc = concat!("A new ", $type_desc, " wrapper.")]
-        #[allow(
-            dead_code,
-            reason = "generated for metadata-preserving wrapper transformations"
-        )]
-        #[inline]
-        pub(crate) fn new_with_metadata<F>(
-            mut $source: F,
-            metadata: $crate::internal::CallbackMetadata,
-        ) -> Self
-        where
-            F: $($semantic_bounds)+,
-        {
-            let $f = $adapter_expr;
-            Self { function: $wrapper_expr, metadata }
-        }
     };
 
     (
@@ -140,9 +130,14 @@ macro_rules! impl_common_new_methods {
         /// Adapts the provided semantic callback implementation to this
         /// wrapper's erased callable representation.
         ///
+        /// # Type Parameters
+        ///
+        /// * `F` - The semantic callback implementation accepted by this
+        ///   wrapper.
+        ///
         /// # Parameters
         ///
-        /// * `source` - The semantic callback implementation to wrap.
+        #[doc = concat!("* `", stringify!($source), "` - The semantic callback implementation to wrap.")]
         ///
         /// # Returns
         ///
@@ -164,10 +159,15 @@ macro_rules! impl_common_new_methods {
         /// Adapts the provided semantic callback implementation and assigns
         /// the supplied name for diagnostics.
         ///
+        /// # Type Parameters
+        ///
+        /// * `F` - The semantic callback implementation accepted by this
+        ///   wrapper.
+        ///
         /// # Parameters
         ///
         /// * `name` - The diagnostic name assigned to the wrapper.
-        /// * `source` - The semantic callback implementation to wrap.
+        #[doc = concat!("* `", stringify!($source), "` - The semantic callback implementation to wrap.")]
         ///
         /// # Returns
         ///
@@ -184,14 +184,19 @@ macro_rules! impl_common_new_methods {
             }
         }
 
-        #[doc = concat!("Creates a new named ", $type_desc, " with an optional name.")]
+        #[doc = concat!("Creates a new ", $type_desc, " with an optional name.")]
         ///
         /// Adapts the provided semantic callback implementation and preserves
         /// the optional diagnostic name.
         ///
+        /// # Type Parameters
+        ///
+        /// * `F` - The semantic callback implementation accepted by this
+        ///   wrapper.
+        ///
         /// # Parameters
         ///
-        /// * `source` - The semantic callback implementation to wrap.
+        #[doc = concat!("* `", stringify!($source), "` - The semantic callback implementation to wrap.")]
         /// * `name` - The optional diagnostic name assigned to the wrapper.
         ///
         /// # Returns
@@ -212,34 +217,6 @@ macro_rules! impl_common_new_methods {
             }
         }
 
-        /// Creates a wrapper while preserving existing metadata.
-        ///
-        /// # Parameters
-        ///
-        /// * `source` - The semantic callback implementation to wrap.
-        /// * `metadata` - The diagnostic metadata to preserve.
-        ///
-        /// # Returns
-        ///
-        #[doc = concat!("A new ", $type_desc, " wrapper.")]
-        #[allow(
-            dead_code,
-            reason = "generated for metadata-preserving wrapper transformations"
-        )]
-        #[inline]
-        pub(crate) fn new_with_metadata<F>(
-            $source: F,
-            metadata: $crate::internal::CallbackMetadata,
-        ) -> Self
-        where
-            F: $($semantic_bounds)+,
-        {
-            let $f = $adapter_expr;
-            Self {
-                function: $wrapper_expr,
-                metadata,
-            }
-        }
     };
 
     (
@@ -293,7 +270,7 @@ macro_rules! impl_common_new_methods {
             }
         }
 
-        #[doc = concat!("Creates a new named ", $type_desc, " with an optional name.")]
+        #[doc = concat!("Creates a new ", $type_desc, " with an optional name.")]
         ///
         /// Wraps the provided closure and assigns it an optional name.
         ///
@@ -316,6 +293,145 @@ macro_rules! impl_common_new_methods {
             }
         }
 
+    };
+}
+
+/// Generates public constructors and the metadata-preserving constructor.
+macro_rules! impl_common_new_methods {
+    (
+        semantic_mut ($($semantic_bounds:tt)+),
+        |$source:ident| $adapter_expr:expr,
+        |$f:ident| $wrapper_expr:expr,
+        $type_desc:literal
+    ) => {
+        $crate::macros::impl_common_new_public_methods!(
+            semantic_mut ($($semantic_bounds)+),
+            |$source| $adapter_expr,
+            |$f| $wrapper_expr,
+            $type_desc
+        );
+        $crate::macros::impl_common_new_metadata_method!(
+            semantic_mut ($($semantic_bounds)+),
+            |$source| $adapter_expr,
+            |$f| $wrapper_expr,
+            $type_desc
+        );
+    };
+    (
+        semantic ($($semantic_bounds:tt)+),
+        |$source:ident| $adapter_expr:expr,
+        |$f:ident| $wrapper_expr:expr,
+        $type_desc:literal
+    ) => {
+        $crate::macros::impl_common_new_public_methods!(
+            semantic ($($semantic_bounds)+),
+            |$source| $adapter_expr,
+            |$f| $wrapper_expr,
+            $type_desc
+        );
+        $crate::macros::impl_common_new_metadata_method!(
+            semantic ($($semantic_bounds)+),
+            |$source| $adapter_expr,
+            |$f| $wrapper_expr,
+            $type_desc
+        );
+    };
+    (
+        ($($fn_trait_with_bounds:tt)+),
+        |$f:ident| $wrapper_expr:expr,
+        $type_desc:literal
+    ) => {
+        $crate::macros::impl_common_new_public_methods!(
+            ($($fn_trait_with_bounds)+),
+            |$f| $wrapper_expr,
+            $type_desc
+        );
+        $crate::macros::impl_common_new_metadata_method!(
+            ($($fn_trait_with_bounds)+),
+            |$f| $wrapper_expr,
+            $type_desc
+        );
+    };
+}
+
+pub(crate) use impl_common_new_methods;
+pub(crate) use impl_common_new_public_methods;
+
+/// Generates the crate-visible constructor used to preserve callback metadata.
+///
+/// This helper is expanded after public constructors and before other methods
+/// so constructors remain grouped first in each inherent impl.
+macro_rules! impl_common_new_metadata_method {
+    (
+        semantic_mut ($($semantic_bounds:tt)+),
+        |$source:ident| $adapter_expr:expr,
+        |$f:ident| $wrapper_expr:expr,
+        $type_desc:literal
+    ) => {
+        /// Creates a wrapper while preserving existing metadata.
+        ///
+        /// Adapts the provided semantic callback implementation to this
+        /// wrapper's erased callable representation.
+        ///
+        /// # Type Parameters
+        ///
+        /// * `F` - The callback implementation type.
+        ///
+        /// # Parameters
+        ///
+        /// * `source` - The semantic callback implementation to wrap.
+        /// * `metadata` - The diagnostic metadata to preserve.
+        ///
+        /// # Returns
+        ///
+        #[doc = concat!("A new ", $type_desc, " wrapper.")]
+        #[allow(dead_code, reason = "generated for metadata-preserving wrapper transformations")]
+        #[inline]
+        pub(crate) fn new_with_metadata<F>(
+            mut $source: F,
+            metadata: $crate::internal::CallbackMetadata,
+        ) -> Self
+        where
+            F: $($semantic_bounds)+,
+        {
+            let $f = $adapter_expr;
+            Self { function: $wrapper_expr, metadata }
+        }
+    };
+    (
+        semantic ($($semantic_bounds:tt)+),
+        |$source:ident| $adapter_expr:expr,
+        |$f:ident| $wrapper_expr:expr,
+        $type_desc:literal
+    ) => {
+        /// Creates a wrapper while preserving existing metadata.
+        ///
+        /// # Parameters
+        ///
+        /// * `source` - The semantic callback implementation to wrap.
+        /// * `metadata` - The diagnostic metadata to preserve.
+        ///
+        /// # Returns
+        ///
+        #[doc = concat!("A new ", $type_desc, " wrapper.")]
+        #[allow(dead_code, reason = "generated for metadata-preserving wrapper transformations")]
+        #[inline]
+        pub(crate) fn new_with_metadata<F>(
+            $source: F,
+            metadata: $crate::internal::CallbackMetadata,
+        ) -> Self
+        where
+            F: $($semantic_bounds)+,
+        {
+            let $f = $adapter_expr;
+            Self { function: $wrapper_expr, metadata }
+        }
+    };
+    (
+        ($($fn_trait_with_bounds:tt)+),
+        |$f:ident| $wrapper_expr:expr,
+        $type_desc:literal
+    ) => {
         /// Creates a wrapper while preserving existing metadata.
         ///
         /// # Parameters
@@ -326,10 +442,7 @@ macro_rules! impl_common_new_methods {
         /// # Returns
         ///
         #[doc = concat!("A new ", $type_desc, " wrapper.")]
-        #[allow(
-            dead_code,
-            reason = "generated for metadata-preserving wrapper transformations"
-        )]
+        #[allow(dead_code, reason = "generated for metadata-preserving wrapper transformations")]
         #[inline]
         pub(crate) fn new_with_metadata<F>(
             $f: F,
@@ -338,12 +451,9 @@ macro_rules! impl_common_new_methods {
         where
             F: $($fn_trait_with_bounds)+,
         {
-            Self {
-                function: $wrapper_expr,
-                metadata,
-            }
+            Self { function: $wrapper_expr, metadata }
         }
     };
 }
 
-pub(crate) use impl_common_new_methods;
+pub(crate) use impl_common_new_metadata_method;

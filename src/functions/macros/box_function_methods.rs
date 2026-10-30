@@ -7,7 +7,7 @@
 // =============================================================================
 //! # Box Function Methods Macro
 //!
-//! Generates when and and_then method implementations for Box-based Function
+//! Generates `when` and `and_then` method implementations for boxed functions.
 //!
 //! Generates conditional execution when method and chaining and_then method
 //! for Box-based functions that consume self (because Box cannot be cloned).
@@ -57,7 +57,7 @@
 //! // );
 //! ```
 
-/// Generates when and and_then method implementations for Box-based Function
+/// Generates `when` and `and_then` method implementations for boxed functions.
 ///
 /// This macro should be used at the top level (outside of any impl block) as
 /// it generates a complete impl block with methods for the specified struct.

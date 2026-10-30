@@ -57,6 +57,13 @@ use crate::functions::macros::impl_shared_conditional_function;
 /// let mut negative = -5;
 /// assert_eq!(conditional_clone.apply(&mut negative), -5);
 /// ```
+///
+/// # Type Parameters
+///
+/// * `T` - The input type mutably borrowed by the wrapped callback and
+///   inspected by the predicate.
+/// * `R` - The value returned by the wrapped callback when the predicate
+///   succeeds.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcConditionalMutatingFunction<T, R> {
     /// The wrapped callback implementation.

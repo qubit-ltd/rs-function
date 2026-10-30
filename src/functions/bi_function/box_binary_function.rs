@@ -27,7 +27,7 @@ use super::BoxBiFunction;
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{BoxBinaryFunction, BiFunction};
+/// use qubit_function::{BiFunction, BoxBinaryFunction};
 ///
 /// let add: BoxBinaryFunction<i32, i32> = BoxBinaryFunction::new(|x: &i32, y: &i32| *x + *y);
 /// assert_eq!(add.apply(&20, &22), 42);

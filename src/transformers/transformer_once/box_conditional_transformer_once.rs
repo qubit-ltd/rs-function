@@ -36,6 +36,12 @@ use crate::transformers::macros::impl_conditional_transformer_debug_display;
 ///   returns `true`; the once wrapper is consumed on every call
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 ///
+/// # Type Parameters
+///
+/// * `T` - The input type consumed by the transformer and borrowed by the
+///   predicate
+/// * `R` - The output type produced by the transformer
+///
 /// # Examples
 ///
 /// ## With or_else Branch

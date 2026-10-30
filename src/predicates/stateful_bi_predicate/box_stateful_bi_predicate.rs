@@ -69,6 +69,10 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
     /// This method consumes `self` and evaluates `other` only when this
     /// predicate returns `true`.
     ///
+    /// # Type Parameters
+    ///
+    /// * `P` - The other stateful bi-predicate implementation.
+    ///
     /// # Parameters
     ///
     /// * `other` - The other bi-predicate to combine with.
@@ -91,6 +95,10 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
     /// This method consumes `self` and evaluates `other` only when this
     /// predicate returns `false`.
     ///
+    /// # Type Parameters
+    ///
+    /// * `P` - The other stateful bi-predicate implementation.
+    ///
     /// # Parameters
     ///
     /// * `other` - The other bi-predicate to combine with.
@@ -111,6 +119,10 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
     /// Returns a bi-predicate representing logical NAND with another predicate.
     ///
     /// NAND returns `true` unless both predicates return `true`.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `P` - The other stateful bi-predicate implementation.
     ///
     /// # Parameters
     ///
@@ -136,6 +148,10 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
     /// XOR evaluates both predicates and returns `true` when exactly one
     /// predicate returns `true`.
     ///
+    /// # Type Parameters
+    ///
+    /// * `P` - The other stateful bi-predicate implementation.
+    ///
     /// # Parameters
     ///
     /// * `other` - The other bi-predicate to combine with.
@@ -156,6 +172,10 @@ impl<T, U> BoxStatefulBiPredicate<T, U> {
     /// Returns a bi-predicate representing logical NOR with another predicate.
     ///
     /// NOR returns `true` only when both predicates return `false`.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `P` - The other stateful bi-predicate implementation.
     ///
     /// # Parameters
     ///
@@ -184,6 +204,11 @@ where
 {
     type Output = BoxStatefulBiPredicate<T, U>;
 
+    /// Negates the wrapped predicate while preserving its diagnostic metadata.
+    ///
+    /// # Returns
+    ///
+    /// A predicate that returns the opposite result for each input pair.
     fn not(self) -> Self::Output {
         let metadata = self.metadata;
         let mut function = self.function;

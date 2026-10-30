@@ -58,7 +58,8 @@ use crate::functions::macros::impl_function_identity_method;
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{MutatingFunction, BoxMutatingFunction};
+/// use qubit_function::BoxMutatingFunction;
+/// use qubit_function::MutatingFunction;
 ///
 /// let func = BoxMutatingFunction::new(|x: &mut i32| {
 ///     *x *= 2;
@@ -101,6 +102,8 @@ impl_function_identity_method!(BoxMutatingFunction<T, T>, mutating, MutatingFunc
 
 // Implement MutatingFunction trait for BoxMutatingFunction<T, R>
 impl<T, R> MutatingFunction<T, R> for BoxMutatingFunction<T, R> {
+    /// Invokes the wrapped callback with the mutable input and returns its
+    /// result.
     #[inline]
     fn apply(&self, t: &mut T) -> R {
         (self.function)(t)

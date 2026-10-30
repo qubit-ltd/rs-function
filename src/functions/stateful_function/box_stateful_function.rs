@@ -35,6 +35,11 @@ use crate::functions::macros::impl_function_identity_method;
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
 /// - **Statefulness**: Can modify internal state between calls
 ///
+/// # Type Parameters
+///
+/// - `T`: The input type, borrowed immutably for each invocation.
+/// - `R`: The output type produced by each invocation.
+///
 /// # Examples
 ///
 /// ```
@@ -51,9 +56,11 @@ use crate::functions::macros::impl_function_identity_method;
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct BoxStatefulFunction<T, R> {
-    /// The wrapped callback implementation.
+    /// The boxed callback invoked by [`StatefulFunction::apply`].
+    ///
+    /// Its `FnMut` implementation can retain and update state between calls.
     pub(super) function: Box<dyn FnMut(&T) -> R>,
-    /// Diagnostic metadata associated with this callback.
+    /// Optional diagnostic naming metadata used when displaying this wrapper.
     pub(super) metadata: crate::internal::CallbackMetadata,
 }
 

@@ -27,6 +27,11 @@ type ArcStatefulBiPredicateFn<T, U> = Arc<Mutex<dyn FnMut(&T, &U) -> bool + Send
 /// This type stores the predicate closure inside `Arc<Mutex<_>>`, allowing
 /// cheap clones that share mutable predicate state across threads.
 ///
+/// # Type Parameters
+///
+/// * `T` - The type of the first value tested by the predicate.
+/// * `U` - The type of the second value tested by the predicate.
+///
 /// # Locking and reentrancy
 ///
 /// Each call acquires a `parking_lot::Mutex` and holds it while the user

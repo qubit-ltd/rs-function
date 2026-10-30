@@ -67,18 +67,29 @@ macro_rules! impl_shared_conditional_transformer {
         callback_bounds = ($($callback_bounds:tt)+)
     ) => {
         impl<$t, $r> $struct_name<$t, $r> {
-            /// Adds an else branch
+            /// Adds an else branch to the shared conditional transformer.
             ///
-            /// Executes the original transformer when the condition is satisfied, otherwise
-            /// executes else_transformer.
+            /// The returned wrapper retains the original transformer and stores
+            /// `else_transformer`; it invokes the selected callback when its
+            /// `apply` method is called.
+            ///
+            /// # Type Parameters
+            ///
+            /// * `F` - The callback type used for the else branch.
             ///
             /// # Parameters
             ///
-            /// * `else_transformer` - The transformer for the else branch
+            /// * `else_transformer` - The callback to invoke when the condition
+            ///   is not satisfied.
+            ///
+            /// # Type Parameters
+            ///
+            /// * `F` - The else-branch callback type implementing the
+            ///   transformer trait and the selected wrapper's callback bounds.
             ///
             /// # Returns
             ///
-            /// Returns a new transformer with if-then-else logic
+            /// A shared transformer wrapper with the conditional branch logic.
             pub fn or_else<F>(&self, else_transformer: F) -> $transformer_type<$t, $r>
             where
                 $t: 'static,
@@ -107,18 +118,30 @@ macro_rules! impl_shared_conditional_transformer {
         callback_bounds = ($($callback_bounds:tt)+)
     ) => {
         impl<$t, $u, $r> $struct_name<$t, $u, $r> {
-            /// Adds an else branch
+            /// Adds an else branch to the shared conditional bi-transformer.
             ///
-            /// Executes the original bi-transformer when the condition is satisfied, otherwise
-            /// executes else_transformer.
+            /// The returned wrapper retains the original bi-transformer and
+            /// stores `else_transformer`; it invokes the selected callback
+            /// when its `apply` method is called.
+            ///
+            /// # Type Parameters
+            ///
+            /// * `F` - The callback type used for the else branch.
             ///
             /// # Parameters
             ///
-            /// * `else_transformer` - The bi-transformer for the else branch
+            /// * `else_transformer` - The callback to invoke when the condition
+            ///   is not satisfied.
+            ///
+            /// # Type Parameters
+            ///
+            /// * `F` - The else-branch callback type implementing the
+            ///   bi-transformer trait and the selected wrapper's callback bounds.
             ///
             /// # Returns
             ///
-            /// Returns a new bi-transformer with if-then-else logic
+            /// A shared bi-transformer wrapper with the conditional branch
+            /// logic.
             pub fn or_else<F>(&self, else_transformer: F) -> $transformer_type<$t, $u, $r>
             where
                 $t: 'static,

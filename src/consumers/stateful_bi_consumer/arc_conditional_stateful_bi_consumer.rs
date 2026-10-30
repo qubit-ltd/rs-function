@@ -44,7 +44,7 @@ use crate::consumers::macros::impl_shared_conditional_consumer;
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{BiConsumer, ArcStatefulBiConsumer, StatefulBiConsumer};
+/// use qubit_function::{ArcStatefulBiConsumer, StatefulBiConsumer};
 /// use std::sync::{Arc, Mutex};
 ///
 /// let log = Arc::new(Mutex::new(Vec::new()));
@@ -53,12 +53,13 @@ use crate::consumers::macros::impl_shared_conditional_consumer;
 ///     l.lock().expect("mutex should not be poisoned").push(*x + *y);
 /// }).when(|x: &i32, y: &i32| *x > 0 && *y > 0);
 ///
-/// let conditional_clone = conditional.clone();
+/// let mut conditional_clone = conditional.clone();
 ///
-/// let mut value = 5;
+/// let value = 5;
 /// let mut m = conditional;
 /// m.accept(&value, &3);
-/// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
+/// conditional_clone.accept(&value, &3);
+/// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8, 8]);
 /// ```
 ///
 /// # Locking and reentrancy

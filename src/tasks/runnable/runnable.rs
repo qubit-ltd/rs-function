@@ -1,0 +1,55 @@
+// =============================================================================
+//    Copyright (c) 2025 - 2026 Haixing Hu.
+//
+//    SPDX-License-Identifier: Apache-2.0
+//
+//    Licensed under the Apache License, Version 2.0.
+// =============================================================================
+
+use crate::macros::impl_closure_trait;
+
+// ============================================================================
+// Runnable Trait
+// ============================================================================
+
+/// A fallible, reusable, zero-argument action.
+///
+/// Conceptually, `Runnable<E>` matches [`FnMut`] `() -> Result<(), E>`, but
+/// uses task-oriented vocabulary. Prefer it when the operation's side effect
+/// matters and only success or failure need to be reported.
+///
+/// Each call borrows `self` mutably and returns [`Result::Ok`] with unit or
+/// [`Result::Err`] with `E`. Semantically, this is a specialization of
+/// [`Callable`](super::super::Callable) with `R = ()` for executable actions
+/// and deferred side effects.
+///
+/// The trait does not require [`Send`]. Concurrent executors should require
+/// `Runnable<E> + Send + 'static` (or similar) at their API boundary.
+///
+/// # Type Parameters
+///
+/// * `E` - The error value returned when the action fails.
+///
+/// # Examples
+///
+/// ```rust
+/// use qubit_function::Runnable;
+///
+/// let mut task = || Ok::<(), String>(());
+/// assert_eq!(task.run(), Ok(()));
+/// ```
+pub trait Runnable<E> {
+    /// Executes the action, borrowing `self` mutably.
+    ///
+    /// # Returns
+    ///
+    /// Returns `Ok(())` when the action succeeds, or `Err(E)` when it fails.
+    /// The exact error meaning is defined by the concrete runnable.
+    ///
+    /// # Errors
+    ///
+    /// Returns `Err(E)` when the underlying action fails.
+    fn run(&mut self) -> Result<(), E>;
+}
+
+impl_closure_trait!(Runnable<E>, run, FnMut() -> Result<(), E>);

@@ -9,7 +9,7 @@
 
 use std::rc::Rc;
 
-use super::BiConsumerFn;
+use super::internal::BiConsumerFn;
 use crate::BiConsumer;
 use crate::BiPredicate;
 use crate::RcConditionalBiConsumer;
@@ -27,6 +27,11 @@ use crate::consumers::macros::impl_shared_consumer_methods;
 /// A non-mutating bi-consumer implementation based on `Rc<dyn Fn(&T, &U)>`
 /// for single-threaded shared ownership scenarios. The wrapper does not need
 /// `RefCell` because it only invokes a shared `Fn`.
+///
+/// # Type Parameters
+///
+/// * `T` - Type of the first value passed to the callback.
+/// * `U` - Type of the second value passed to the callback.
 ///
 /// # Features
 ///

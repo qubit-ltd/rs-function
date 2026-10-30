@@ -52,7 +52,7 @@ use crate::transformers::macros::impl_transformer_identity_method;
 /// let mut transformer = RcStatefulTransformer::new(|value: i32| value * 2);
 /// assert_eq!(transformer.apply(3), 6);
 /// ```
-/// # Borrowing and reentrancy
+/// # Panics
 ///
 /// Each call holds a mutable `RefCell` borrow while the user callback runs.
 /// Synchronous re-entry through the same shared wrapper panics with a borrow

@@ -5,68 +5,25 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-//! # Transformer Clone Macro
-//!
-//! Generates `Clone` implementations for Transformer types.
-//!
-//! The macro supports Transformer structs with two or three type parameters.
-//! It clones each struct's `function` and `metadata` fields using their
-//! respective `Clone` implementations. For smart pointers such as `Arc` and
-//! `Rc`, cloning the `function` field is a shallow clone.
-//!
-//! # Parameters
-//!
-//! * `$struct_name` - Transformer struct identifier
-//! * `$t`, `$r` - Type parameter identifiers for a two-parameter Transformer
-//! * `$t`, `$u`, `$r` - Type parameter identifiers for a three-parameter
-//!   Transformer
-//!
-//! # Examples
-//!
-//! ```ignore
-//! // For two type parameters
-//! impl_transformer_clone!(ArcTransformer<T, U>);
-//!
-//! // For two type parameters with Rc
-//! impl_transformer_clone!(RcTransformer<T, U>);
-//!
-//! // For three type parameters
-//! impl_transformer_clone!(ArcBiTransformer<T, U, V>);
-//!
-//! // For three type parameters with Rc
-//! impl_transformer_clone!(RcBiTransformer<T, U, V>);
-//! ```
-
 /// Generates a `Clone` implementation for a Transformer type.
 ///
 /// This macro should be used at the top level (outside of any impl block) as
 /// it expands to a complete `impl Clone for $struct_name` block. The target
 /// struct must have `function` and `metadata` fields that implement `Clone`.
-/// Cloning smart pointers such as `Arc` or `Rc` in the `function` field is
-/// shallow.
+/// Cloning shared pointers such as `Arc` or `Rc` in the `function` field only
+/// clones the pointer.
 ///
 /// # Parameters
 ///
-/// * `$struct_name` - Transformer struct identifier
-/// * `$t`, `$r` - Type parameter identifiers for a two-parameter Transformer
-/// * `$t`, `$u`, `$r` - Type parameter identifiers for a three-parameter
-///   Transformer
+/// * `$struct_name` - The Transformer struct identifier.
+/// * `$t` and `$r` - The two type parameters for a Transformer.
+/// * `$u` - The additional middle type parameter for a three-parameter
+///   Transformer.
 ///
-/// # Examples
-///
-/// ```ignore
-/// // For two type parameters with Arc
-/// impl_transformer_clone!(ArcTransformer<T, U>);
-///
-/// // For two type parameters with Rc
-/// impl_transformer_clone!(RcTransformer<T, U>);
-///
-/// // For three type parameters with Arc
-/// impl_transformer_clone!(ArcBiTransformer<T, U, V>);
-///
-/// // For three type parameters with Rc
-/// impl_transformer_clone!(RcBiTransformer<T, U, V>);
-/// ```
+/// A two-parameter invocation has the form `impl_transformer_clone!(Name<T,
+/// R>);`; a three-parameter invocation has the form
+/// `impl_transformer_clone!(Name<T, U, R>);`. Invoke the macro at module scope,
+/// outside any `impl` block.
 macro_rules! impl_transformer_clone {
     // Two generic parameters
     ($struct_name:ident < $t:ident, $r:ident >) => {

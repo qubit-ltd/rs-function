@@ -24,42 +24,6 @@ mod box_binary_operator_once;
 pub use box_binary_operator_once::BoxBinaryOperatorOnce;
 mod box_conditional_bi_transformer_once;
 pub use box_conditional_bi_transformer_once::BoxConditionalBiTransformerOnce;
-
-// ============================================================================
-// Core Trait
-// ============================================================================
-
-/// BiTransformerOnce trait - consuming bi-transformation that takes ownership
-///
-/// Defines the behavior of a consuming bi-transformer: converting two values of
-/// types `T` and `U` to a value of type `R` by taking ownership of self and
-/// both inputs. This trait is analogous to `FnOnce(T, U) -> R`.
-///
-/// # Type Parameters
-///
-/// * `T` - The type of the first input value (consumed)
-/// * `U` - The type of the second input value (consumed)
-/// * `R` - The type of the output value
-///
-/// # Examples
-///
-/// ```
-/// use qubit_function::BiTransformerOnce;
-///
-/// let add_once = |first, second| first + second;
-/// assert_eq!(add_once.apply(2, 3), 5);
-/// ```
-pub trait BiTransformerOnce<T, U, R> {
-    /// Transforms two input values, consuming self and both inputs
-    ///
-    /// # Parameters
-    ///
-    /// * `first` - The first input value (consumed)
-    /// * `second` - The second input value (consumed)
-    ///
-    /// # Returns
-    ///
-    /// The transformed output value
-    #[must_use = "the computed callback result should be used"]
-    fn apply(self, first: T, second: U) -> R;
-}
+#[path = "bi_transformer_once/bi_transformer_once.rs"]
+mod bi_transformer_once_trait;
+pub use bi_transformer_once_trait::BiTransformerOnce;

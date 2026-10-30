@@ -54,6 +54,10 @@ impl<R, E> LocalBoxCallable<R, E> {
     /// This is an explicit bridge from `Supplier<Result<R, E>>` to
     /// `Callable<R, E>` without requiring `Send`.
     ///
+    /// # Type Parameters
+    ///
+    /// * `S` - The supplier that produces the callable result.
+    ///
     /// # Parameters
     ///
     /// * `supplier` - The supplier that produces the callable result.
@@ -72,6 +76,11 @@ impl<R, E> LocalBoxCallable<R, E> {
     impl_common_name_methods!("local callable");
 
     /// Maps the success value of this callable.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `U` - The success value produced by the mapper.
+    /// * `M` - The mapper applied to a successful result.
     ///
     /// # Parameters
     ///
@@ -94,6 +103,11 @@ impl<R, E> LocalBoxCallable<R, E> {
 
     /// Maps the error value of this callable.
     ///
+    /// # Type Parameters
+    ///
+    /// * `E2` - The error value produced by the mapper.
+    /// * `M` - The mapper applied to a failed result.
+    ///
     /// # Parameters
     ///
     /// * `mapper` - Function that transforms the error value.
@@ -114,6 +128,11 @@ impl<R, E> LocalBoxCallable<R, E> {
     }
 
     /// Chains another fallible computation after this callable succeeds.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `U` - The success value produced by the next computation.
+    /// * `N` - The computation called after this callable succeeds.
     ///
     /// # Parameters
     ///
@@ -139,7 +158,17 @@ impl<R, E> LocalBoxCallable<R, E> {
 }
 
 impl<R, E> Callable<R, E> for LocalBoxCallable<R, E> {
-    /// Executes the local boxed callable.
+    /// Executes the stored closure once, preserving its mutable state for
+    /// subsequent calls on the current thread.
+    ///
+    /// # Returns
+    ///
+    /// Returns the closure's successful value as `Ok(R)` or its error as
+    /// `Err(E)`.
+    ///
+    /// # Errors
+    ///
+    /// Returns the error produced by the stored closure.
     #[inline(always)]
     fn call(&mut self) -> Result<R, E> {
         (self.function)()

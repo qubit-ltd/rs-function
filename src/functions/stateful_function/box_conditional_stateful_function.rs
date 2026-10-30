@@ -40,6 +40,12 @@ use crate::functions::macros::impl_conditional_function_debug_display;
 /// obtain a callable wrapper. Invoking that wrapper follows the
 /// `StatefulFunction` receiver contract (`&mut self`).
 ///
+/// # Type Parameters
+///
+/// * `T` - The type of each borrowed input passed to the predicate and
+///   callback.
+/// * `R` - The value returned by the selected callback branch.
+///
 /// # Examples
 ///
 /// ```rust

@@ -58,6 +58,10 @@ impl<R, E> BoxCallableOnce<R, E> {
     /// This is an explicit bridge from `SupplierOnce<Result<R, E>>` to
     /// `CallableOnce<R, E>`.
     ///
+    /// # Type Parameters
+    ///
+    /// * `S` - The one-time supplier that produces the callable result.
+    ///
     /// # Parameters
     ///
     /// * `supplier` - The supplier that produces the callable result.
@@ -76,6 +80,11 @@ impl<R, E> BoxCallableOnce<R, E> {
     impl_common_name_methods!("callable");
 
     /// Maps the success value of this callable.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `U` - The success value type produced by `mapper`.
+    /// * `M` - The one-time mapper applied to a successful value.
     ///
     /// # Parameters
     ///
@@ -98,6 +107,11 @@ impl<R, E> BoxCallableOnce<R, E> {
 
     /// Maps the error value of this callable.
     ///
+    /// # Type Parameters
+    ///
+    /// * `E2` - The error type produced by `mapper`.
+    /// * `M` - The one-time mapper applied to an error value.
+    ///
     /// # Parameters
     ///
     /// * `mapper` - Function that transforms the error value.
@@ -118,6 +132,11 @@ impl<R, E> BoxCallableOnce<R, E> {
     }
 
     /// Chains another fallible computation after this callable succeeds.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `U` - The success value type returned by `next`.
+    /// * `N` - The one-time computation run after success.
     ///
     /// # Parameters
     ///

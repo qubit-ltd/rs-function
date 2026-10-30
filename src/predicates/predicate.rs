@@ -224,6 +224,11 @@ pub use arc_predicate::ArcPredicate;
 /// Any closure matching `Fn(&T) -> bool` automatically implements this
 /// trait, providing seamless integration with Rust's closure system.
 ///
+/// # Type Parameters
+///
+/// * `T` - The value type borrowed by the predicate when evaluating a
+///   condition.
+///
 /// ## Examples
 ///
 /// ### Basic Usage

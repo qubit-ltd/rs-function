@@ -27,6 +27,7 @@ impl CallbackMetadata {
     /// # Returns
     ///
     /// Metadata whose diagnostic name is `None`.
+    #[must_use]
     #[inline(always)]
     pub(crate) const fn unnamed() -> Self {
         Self { name: None }
@@ -41,6 +42,7 @@ impl CallbackMetadata {
     /// # Returns
     ///
     /// Metadata whose diagnostic name is `Some(name)`.
+    #[must_use]
     #[inline]
     pub(crate) fn named(name: &str) -> Self {
         Self {
@@ -58,6 +60,7 @@ impl CallbackMetadata {
     ///
     /// Metadata containing the supplied name, or unnamed metadata when
     /// `name` is `None`.
+    #[must_use]
     #[inline]
     pub(crate) fn from_optional_name(name: Option<String>) -> Self {
         Self {
@@ -70,6 +73,7 @@ impl CallbackMetadata {
     /// # Returns
     ///
     /// `Some(name)` when a diagnostic name is stored, or `None` otherwise.
+    #[must_use]
     #[inline(always)]
     pub(crate) fn name(&self) -> Option<&str> {
         self.name.as_deref()

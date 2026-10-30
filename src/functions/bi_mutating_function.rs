@@ -23,6 +23,9 @@
 
 mod box_bi_mutating_function;
 pub use box_bi_mutating_function::BoxBiMutatingFunction;
+#[path = "bi_mutating_function/bi_mutating_function.rs"]
+mod bi_mutating_function_trait;
+pub use bi_mutating_function_trait::BiMutatingFunction;
 #[cfg(feature = "rc")]
 mod rc_bi_mutating_function;
 #[cfg(feature = "rc")]
@@ -45,58 +48,3 @@ mod rc_conditional_bi_mutating_function;
 pub use rc_conditional_bi_mutating_function::RcConditionalBiMutatingFunction;
 mod arc_conditional_bi_mutating_function;
 pub use arc_conditional_bi_mutating_function::ArcConditionalBiMutatingFunction;
-
-// ============================================================================
-// Core Trait
-// ============================================================================
-
-/// BiMutatingFunction trait - performs operations on two mutable references
-///
-/// Defines the behavior of a bi-mutating-function: computing a value of type
-/// `R` from mutable references to types `T` and `U`, potentially modifying both
-/// inputs. This is analogous to `Fn(&mut T, &mut U) -> R` in Rust's standard
-/// library.
-///
-/// # Type Parameters
-///
-/// * `T` - The type of the first input value (mutable reference)
-/// * `U` - The type of the second input value (mutable reference)
-/// * `R` - The type of the output value
-///
-/// # Examples
-///
-/// ```
-/// use qubit_function::BiMutatingFunction;
-///
-/// let add_second = |first: &mut i32, second: &mut i32| {
-///     *first += *second;
-///     *first
-/// };
-/// let mut first = 2;
-/// let mut second = 3;
-///
-/// assert_eq!(add_second.apply(&mut first, &mut second), 5);
-/// assert_eq!(first, 5);
-/// assert_eq!(second, 3);
-/// ```
-pub trait BiMutatingFunction<T, U, R> {
-    /// Applies the bi-mutating-function to two mutable references and returns a
-    /// result
-    ///
-    /// # Parameters
-    ///
-    /// * `first` - Mutable reference to the first input value
-    /// * `second` - Mutable reference to the second input value
-    ///
-    /// # Returns
-    ///
-    /// The computed output value
-    #[must_use = "the computed callback result should be used"]
-    fn apply(&self, first: &mut T, second: &mut U) -> R;
-}
-
-crate::macros::impl_closure_trait!(
-    BiMutatingFunction<T, U, R>,
-    apply,
-    Fn(first: &mut T, second: &mut U) -> R
-);

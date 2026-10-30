@@ -31,6 +31,9 @@
 
 mod box_stateful_consumer;
 pub use box_stateful_consumer::BoxStatefulConsumer;
+#[path = "stateful_consumer/stateful_consumer.rs"]
+mod stateful_consumer_trait;
+pub use stateful_consumer_trait::StatefulConsumer;
 #[cfg(feature = "rc")]
 mod rc_stateful_consumer;
 #[cfg(feature = "rc")]
@@ -45,84 +48,3 @@ pub use arc_conditional_stateful_consumer::ArcConditionalStatefulConsumer;
 mod rc_conditional_stateful_consumer;
 #[cfg(feature = "rc")]
 pub use rc_conditional_stateful_consumer::RcConditionalStatefulConsumer;
-
-// ============================================================================
-// 1. Consumer Trait - Unified Consumer Interface
-// ============================================================================
-
-/// Stateful consumer trait - unified stateful consumer interface
-///
-/// Defines the core behavior of all stateful consumer types. Similar to Java's
-/// `Consumer<T>` interface, it executes operations that accept a value but
-/// return no result (side effects only).
-///
-/// It is similar to the `FnMut(&T)` trait in the standard library.
-///
-/// A stateful consumer can modify its own state (such as an accumulator or
-/// counter), but should not modify the consumed value itself.
-///
-/// # Automatic Implementation
-///
-/// - All closures implementing `FnMut(&T)`
-/// - `BoxStatefulConsumer<T>`, `ArcStatefulConsumer<T>`,
-///   `RcStatefulConsumer<T>`
-///
-/// # Features
-///
-/// - **Unified Interface**: All consumer types share the same `accept` method
-///   signature
-/// - **Automatic Implementation**: Closures implement this trait directly,
-///   without allocating an adapter
-/// - **Generic Programming**: Write functions that work with any consumer type
-///
-/// # Type Parameters
-///
-/// * `T` - The input value type passed to the consumer by shared reference.
-///
-/// # Examples
-///
-/// ```rust
-/// use qubit_function::{StatefulConsumer, BoxStatefulConsumer};
-/// use std::sync::{Arc, Mutex};
-///
-/// fn apply_consumer<C: StatefulConsumer<i32>>(consumer: &mut C, value: &i32) {
-///     consumer.accept(value);
-/// }
-///
-/// // Works with any consumer type
-/// let log = Arc::new(Mutex::new(Vec::new()));
-/// let l = log.clone();
-/// let mut box_con = BoxStatefulConsumer::new(move |x: &i32| {
-///     l.lock().expect("mutex should not be poisoned").push(*x);
-/// });
-/// apply_consumer(&mut box_con, &5);
-/// assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![5]);
-/// ```
-pub trait StatefulConsumer<T> {
-    /// Execute consumption operation
-    ///
-    /// Performs an operation on the given reference. The operation typically
-    /// reads the input value or produces side effects, but does not modify the
-    /// input value itself. Can modify the consumer's own state.
-    ///
-    /// # Parameters
-    ///
-    /// * `value` - Reference to the value to be consumed
-    ///
-    /// # Examples
-    ///
-    /// ```rust
-    /// use qubit_function::{StatefulConsumer, BoxStatefulConsumer};
-    ///
-    /// let mut consumer = BoxStatefulConsumer::new(|x: &i32| println!("{}", x));
-    /// let value = 5;
-    /// consumer.accept(&value);
-    /// ```
-    fn accept(&mut self, value: &T);
-}
-
-crate::macros::impl_closure_trait!(
-    StatefulConsumer<T>,
-    accept,
-    FnMut(value: &T)
-);

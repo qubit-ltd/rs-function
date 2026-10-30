@@ -81,6 +81,10 @@ impl RcTester {
     /// pass. Borrows `&self`, so the original tester remains available, and
     /// moves `next` into the result.
     ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The tester type to combine with this tester.
+    ///
     /// # Parameters
     ///
     /// * `next` - The tester to combine with
@@ -114,6 +118,10 @@ impl RcTester {
     /// Borrows `&self`, so the original tester remains available, and moves
     /// `next` into the result.
     ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The tester type to combine with this tester.
+    ///
     /// # Parameters
     ///
     /// * `next` - The tester to combine with
@@ -146,6 +154,10 @@ impl RcTester {
     /// Returns a new `RcTester` that returns `true` unless both tests pass.
     /// Borrows `&self`, so the original tester remains available, and moves
     /// `next` into the result.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The tester type to combine with this tester.
     ///
     /// # Parameters
     ///
@@ -186,6 +198,10 @@ impl RcTester {
     /// passes. Borrows `&self`, so the original tester remains available, and
     /// moves `next` into the result.
     ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The tester type to combine with this tester.
+    ///
     /// # Parameters
     ///
     /// * `next` - The tester to combine with
@@ -224,6 +240,10 @@ impl RcTester {
     /// Returns a new `RcTester` that returns `true` only when both tests
     /// fail. Borrows `&self`, so the original tester remains available, and
     /// moves `next` into the result.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The tester type to combine with this tester.
     ///
     /// # Parameters
     ///

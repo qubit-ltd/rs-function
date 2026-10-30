@@ -5,28 +5,7 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-//! # StatefulBiPredicate Abstraction
-//!
-//! Provides bi-predicate wrappers for closures that implement
-//! `FnMut(&T, &U) -> bool`. A stateful bi-predicate can update its own
-//! internal state while testing two borrowed input values.
-//!
-//! Use [`BiPredicate`](crate::BiPredicate) for immutable
-//! `Fn(&T, &U) -> bool` predicates and `StatefulBiPredicate` when the
-//! predicate needs native `FnMut` semantics, such as counters, rolling
-//! windows, sampling, or stateful filters over pairs of values.
-
-use crate::predicates::macros::constants::ALWAYS_FALSE_NAME;
-use crate::predicates::macros::constants::ALWAYS_TRUE_NAME;
-
-mod arc_stateful_bi_predicate;
-pub use arc_stateful_bi_predicate::ArcStatefulBiPredicate;
-mod box_stateful_bi_predicate;
-pub use box_stateful_bi_predicate::BoxStatefulBiPredicate;
-#[cfg(feature = "rc")]
-mod rc_stateful_bi_predicate;
-#[cfg(feature = "rc")]
-pub use rc_stateful_bi_predicate::RcStatefulBiPredicate;
+//! Defines the `StatefulBiPredicate` trait.
 
 /// A stateful bi-predicate trait for testing pairs with mutable internal state.
 ///

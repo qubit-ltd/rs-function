@@ -20,7 +20,7 @@ use crate::consumers::macros::impl_shared_conditional_consumer;
 // =======================================================================
 
 /// A conditional bi-consumer that shares its callback and predicate through
-/// `Arc`, and invokes the callback only when the predicate accepts both inputs.
+/// `Arc`, invoking the callback only when the predicate accepts both inputs.
 /// The callback and predicate must be thread-safe and `'static`.
 ///
 /// # Type Parameters
@@ -32,7 +32,8 @@ use crate::consumers::macros::impl_shared_conditional_consumer;
 ///
 /// - **Shared Ownership**: Cloneable through `Arc`, allows multiple owners
 /// - **Thread Safe**: Implements `Send + Sync`, can be safely used concurrently
-/// - **Conditional Execution**: Only consumes when predicate returns `true`
+/// - **Conditional Execution**: Invokes the callback only when the predicate
+///   returns `true`
 /// - **Implements BiConsumer**: Can be used anywhere a `BiConsumer` is expected
 /// - **Shared access**: Receives shared references; interior mutability and
 ///   external side effects remain possible
@@ -45,6 +46,7 @@ use crate::consumers::macros::impl_shared_conditional_consumer;
 /// use std::sync::atomic::Ordering;
 ///
 /// use qubit_function::ArcBiConsumer;
+/// use qubit_function::ArcConditionalBiConsumer;
 /// use qubit_function::BiConsumer;
 ///
 /// let total = Arc::new(AtomicI32::new(0));
@@ -53,9 +55,10 @@ use crate::consumers::macros::impl_shared_conditional_consumer;
 ///     callback_total.fetch_add(first + second, Ordering::SeqCst);
 /// })
 /// .when(|first: &i32, second: &i32| *first > 0 && *second > 0);
+/// let conditional: ArcConditionalBiConsumer<i32, i32> = consumer;
 ///
-/// consumer.accept(&2, &3);
-/// consumer.accept(&-1, &5);
+/// conditional.accept(&2, &3);
+/// conditional.accept(&-1, &5);
 /// assert_eq!(total.load(Ordering::SeqCst), 5);
 /// ```
 #[must_use = "callback wrappers do nothing unless stored or invoked"]

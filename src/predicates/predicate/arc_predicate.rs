@@ -24,7 +24,6 @@ use crate::predicates::macros::impl_shared_predicate_methods;
 /// shared across threads. Composition methods borrow `&self`, allowing the
 /// original predicate to remain usable after composition.
 ///
-///
 /// # Examples
 ///
 /// ```rust

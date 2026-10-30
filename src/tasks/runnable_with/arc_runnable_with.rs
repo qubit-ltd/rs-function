@@ -16,13 +16,18 @@ use crate::macros::impl_common_name_methods;
 use crate::macros::impl_common_new_methods;
 use crate::tasks::runnable_with::RunnableWith;
 
-/// The erased callback representation used by this implementation.
+/// Shares a mutable callback behind a mutex and requires it to be `Send`.
+///
+/// The callback receives mutable input and returns `Result<(), E>`. Cloned
+/// handles invoke the same callback state, with the mutex serializing access.
 type ArcRunnableWithFn<T, E> = Arc<Mutex<dyn FnMut(&mut T) -> Result<(), E> + Send>>;
 
 /// Thread-safe shared runnable with mutable input.
 ///
 /// `ArcRunnableWith<T, E>` stores an
 /// `Arc<Mutex<dyn FnMut(&mut T) -> Result<(), E> + Send>>`.
+/// Clones share callback state but keep independently mutable name metadata.
+///
 /// # Locking and reentrancy
 ///
 /// Each call acquires a `parking_lot::Mutex` and holds it while the user
@@ -38,7 +43,8 @@ type ArcRunnableWithFn<T, E> = Arc<Mutex<dyn FnMut(&mut T) -> Result<(), E> + Se
 /// # Examples
 ///
 /// ```
-/// use qubit_function::tasks::runnable_with::{ArcRunnableWith, RunnableWith};
+/// use qubit_function::tasks::runnable_with::ArcRunnableWith;
+/// use qubit_function::tasks::runnable_with::RunnableWith;
 ///
 /// let mut runnable = ArcRunnableWith::new(|value: &mut i32| {
 ///     *value += 1;
@@ -57,6 +63,8 @@ pub struct ArcRunnableWith<T, E> {
 }
 
 impl<T, E> Clone for ArcRunnableWith<T, E> {
+    /// Clones the shared callback handle and the independently owned name
+    /// metadata.
     #[inline]
     fn clone(&self) -> Self {
         Self {
@@ -78,7 +86,20 @@ impl<T, E> ArcRunnableWith<T, E> {
 }
 
 impl<T, E> RunnableWith<T, E> for ArcRunnableWith<T, E> {
-    /// Executes the thread-safe runnable with mutable input.
+    /// Executes the shared callback while holding its mutex.
+    ///
+    /// # Parameters
+    ///
+    /// * `input` - The value the callback may mutate during this invocation.
+    ///
+    /// # Returns
+    ///
+    /// Returns `Ok(())` when the callback succeeds, or forwards its `Err(E)`.
+    ///
+    /// # Errors
+    ///
+    /// Returns the error produced by the wrapped callback. The input may have
+    /// been partially mutated before the error was returned.
     #[inline]
     fn run_with(&mut self, input: &mut T) -> Result<(), E> {
         let mut function = self.function.lock();

@@ -7,8 +7,7 @@
 // =============================================================================
 //! # Consumer Common Methods Macro
 //!
-//! Generates common Consumer methods (new, new_with_name, name,
-//! set_name, noop)
+//! Generates common Consumer constructors and name management methods.
 //!
 //! Generates constructor methods, name management methods and noop
 //! constructor for Consumer structs. This macro should be called inside
@@ -72,11 +71,13 @@
 //!
 //! # Generated Methods
 //!
-//! * `new()` - Creates a new consumer
-//! * `new_with_name()` - Creates a named consumer
-//! * `name()` - Gets the name of the consumer
-//! * `set_name()` - Sets the name of the consumer
-//! * `noop()` - Creates a consumer that performs no operation
+//! * `new()`, `new_with_name()`, and `new_with_optional_name()` - Create
+//!   consumers with the corresponding metadata.
+//! * `noop()` - Creates a consumer that performs no operation.
+//! * `new_with_metadata()` - Creates a crate-visible consumer while preserving
+//!   callback metadata.
+//! * `name()`, `set_name()`, `with_name()`, and `clear_name()` - Read or update
+//!   the consumer's diagnostic name.
 
 /// Expands a consumer type into constructor methods used by the common-methods
 /// macro. This implementation macro is invoked internally and is not the
@@ -96,12 +97,128 @@ macro_rules! impl_consumer_new_methods {
     (RcStatefulBiConsumer<$t:ident, $u:ident>, |$f:ident| $wrapper:expr) => { $crate::consumers::macros::impl_consumer_new_methods!(@two_mut StatefulBiConsumer, $t, $u, ('static), |$f| $wrapper); };
     (ArcStatefulBiConsumer<$t:ident, $u:ident>, |$f:ident| $wrapper:expr) => { $crate::consumers::macros::impl_consumer_new_methods!(@two_mut StatefulBiConsumer, $t, $u, (Send + 'static), |$f| $wrapper); };
     (BoxBiConsumerOnce<$t:ident, $u:ident>, |$f:ident| $wrapper:expr) => { $crate::consumers::macros::impl_consumer_new_methods!(@two_once BiConsumerOnce, $t, $u, ('static), |$f| $wrapper); };
-    (@one $trait:ident, $t:ident, ($($bounds:tt)+), |$f:ident| $wrapper:expr) => { crate::macros::impl_common_new_methods!(semantic ($trait<$t> + $($bounds)+), |source| move |value: &$t| source.accept(value), |$f| $wrapper, "consumer"); };
-    (@one_mut $trait:ident, $t:ident, ($($bounds:tt)+), |$f:ident| $wrapper:expr) => { crate::macros::impl_common_new_methods!(semantic_mut ($trait<$t> + $($bounds)+), |source| move |value: &$t| source.accept(value), |$f| $wrapper, "consumer"); };
-    (@one_once $trait:ident, $t:ident, ($($bounds:tt)+), |$f:ident| $wrapper:expr) => { crate::macros::impl_common_new_methods!(semantic ($trait<$t> + $($bounds)+), |source| move |value: &$t| source.accept(value), |$f| $wrapper, "consumer"); };
-    (@two $trait:ident, $t:ident, $u:ident, ($($bounds:tt)+), |$f:ident| $wrapper:expr) => { crate::macros::impl_common_new_methods!(semantic ($trait<$t, $u> + $($bounds)+), |source| move |first: &$t, second: &$u| source.accept(first, second), |$f| $wrapper, "bi-consumer"); };
-    (@two_mut $trait:ident, $t:ident, $u:ident, ($($bounds:tt)+), |$f:ident| $wrapper:expr) => { crate::macros::impl_common_new_methods!(semantic_mut ($trait<$t, $u> + $($bounds)+), |source| move |first: &$t, second: &$u| source.accept(first, second), |$f| $wrapper, "bi-consumer"); };
-    (@two_once $trait:ident, $t:ident, $u:ident, ($($bounds:tt)+), |$f:ident| $wrapper:expr) => { crate::macros::impl_common_new_methods!(semantic ($trait<$t, $u> + $($bounds)+), |source| move |first: &$t, second: &$u| source.accept(first, second), |$f| $wrapper, "bi-consumer"); };
+    (@one $trait:ident, $t:ident, ($($bounds:tt)+), |$f:ident| $wrapper:expr) => { crate::macros::impl_common_new_public_methods!(semantic ($trait<$t> + $($bounds)+), |source| move |value: &$t| source.accept(value), |$f| $wrapper, "consumer"); };
+    (@one_mut $trait:ident, $t:ident, ($($bounds:tt)+), |$f:ident| $wrapper:expr) => { crate::macros::impl_common_new_public_methods!(semantic_mut ($trait<$t> + $($bounds)+), |source| move |value: &$t| source.accept(value), |$f| $wrapper, "consumer"); };
+    (@one_once $trait:ident, $t:ident, ($($bounds:tt)+), |$f:ident| $wrapper:expr) => { crate::macros::impl_common_new_public_methods!(semantic ($trait<$t> + $($bounds)+), |source| move |value: &$t| source.accept(value), |$f| $wrapper, "consumer"); };
+    (@two $trait:ident, $t:ident, $u:ident, ($($bounds:tt)+), |$f:ident| $wrapper:expr) => { crate::macros::impl_common_new_public_methods!(semantic ($trait<$t, $u> + $($bounds)+), |source| move |first: &$t, second: &$u| source.accept(first, second), |$f| $wrapper, "bi-consumer"); };
+    (@two_mut $trait:ident, $t:ident, $u:ident, ($($bounds:tt)+), |$f:ident| $wrapper:expr) => { crate::macros::impl_common_new_public_methods!(semantic_mut ($trait<$t, $u> + $($bounds)+), |source| move |first: &$t, second: &$u| source.accept(first, second), |$f| $wrapper, "bi-consumer"); };
+    (@two_once $trait:ident, $t:ident, $u:ident, ($($bounds:tt)+), |$f:ident| $wrapper:expr) => { crate::macros::impl_common_new_public_methods!(semantic ($trait<$t, $u> + $($bounds)+), |source| move |first: &$t, second: &$u| source.accept(first, second), |$f| $wrapper, "bi-consumer"); };
+}
+
+/// Expands the restricted metadata-preserving constructor after public methods.
+macro_rules! impl_consumer_metadata_method {
+    (BoxConsumer<$t:ident>, |$f:ident| $wrapper:expr) => {
+        crate::macros::impl_common_new_metadata_method!(
+            semantic(Consumer<$t> + 'static),
+            |source| move |value: &$t| source.accept(value),
+            |$f| $wrapper,
+            "consumer"
+        );
+    };
+    (RcConsumer<$t:ident>, |$f:ident| $wrapper:expr) => {
+        crate::macros::impl_common_new_metadata_method!(
+            semantic(Consumer<$t> + 'static),
+            |source| move |value: &$t| source.accept(value),
+            |$f| $wrapper,
+            "consumer"
+        );
+    };
+    (ArcConsumer<$t:ident>, |$f:ident| $wrapper:expr) => {
+        crate::macros::impl_common_new_metadata_method!(
+            semantic(Consumer<$t> + Send + Sync + 'static),
+            |source| move |value: &$t| source.accept(value),
+            |$f| $wrapper,
+            "consumer"
+        );
+    };
+    (BoxStatefulConsumer<$t:ident>, |$f:ident| $wrapper:expr) => {
+        crate::macros::impl_common_new_metadata_method!(
+            semantic_mut(StatefulConsumer<$t> + 'static),
+            |source| move |value: &$t| source.accept(value),
+            |$f| $wrapper,
+            "consumer"
+        );
+    };
+    (RcStatefulConsumer<$t:ident>, |$f:ident| $wrapper:expr) => {
+        crate::macros::impl_common_new_metadata_method!(
+            semantic_mut(StatefulConsumer<$t> + 'static),
+            |source| move |value: &$t| source.accept(value),
+            |$f| $wrapper,
+            "consumer"
+        );
+    };
+    (ArcStatefulConsumer<$t:ident>, |$f:ident| $wrapper:expr) => {
+        crate::macros::impl_common_new_metadata_method!(
+            semantic_mut(StatefulConsumer<$t> + Send + 'static),
+            |source| move |value: &$t| source.accept(value),
+            |$f| $wrapper,
+            "consumer"
+        );
+    };
+    (BoxConsumerOnce<$t:ident>, |$f:ident| $wrapper:expr) => {
+        crate::macros::impl_common_new_metadata_method!(
+            semantic(ConsumerOnce<$t> + 'static),
+            |source| move |value: &$t| source.accept(value),
+            |$f| $wrapper,
+            "consumer"
+        );
+    };
+    (BoxBiConsumer<$t:ident, $u:ident>, |$f:ident| $wrapper:expr) => {
+        crate::macros::impl_common_new_metadata_method!(
+            semantic(BiConsumer<$t, $u> + 'static),
+            |source| move |first: &$t, second: &$u| source.accept(first, second),
+            |$f| $wrapper,
+            "bi-consumer"
+        );
+    };
+    (RcBiConsumer<$t:ident, $u:ident>, |$f:ident| $wrapper:expr) => {
+        crate::macros::impl_common_new_metadata_method!(
+            semantic(BiConsumer<$t, $u> + 'static),
+            |source| move |first: &$t, second: &$u| source.accept(first, second),
+            |$f| $wrapper,
+            "bi-consumer"
+        );
+    };
+    (ArcBiConsumer<$t:ident, $u:ident>, |$f:ident| $wrapper:expr) => {
+        crate::macros::impl_common_new_metadata_method!(
+            semantic(BiConsumer<$t, $u> + Send + Sync + 'static),
+            |source| move |first: &$t, second: &$u| source.accept(first, second),
+            |$f| $wrapper,
+            "bi-consumer"
+        );
+    };
+    (BoxStatefulBiConsumer<$t:ident, $u:ident>, |$f:ident| $wrapper:expr) => {
+        crate::macros::impl_common_new_metadata_method!(
+            semantic_mut(StatefulBiConsumer<$t, $u> + 'static),
+            |source| move |first: &$t, second: &$u| source.accept(first, second),
+            |$f| $wrapper,
+            "bi-consumer"
+        );
+    };
+    (RcStatefulBiConsumer<$t:ident, $u:ident>, |$f:ident| $wrapper:expr) => {
+        crate::macros::impl_common_new_metadata_method!(
+            semantic_mut(StatefulBiConsumer<$t, $u> + 'static),
+            |source| move |first: &$t, second: &$u| source.accept(first, second),
+            |$f| $wrapper,
+            "bi-consumer"
+        );
+    };
+    (ArcStatefulBiConsumer<$t:ident, $u:ident>, |$f:ident| $wrapper:expr) => {
+        crate::macros::impl_common_new_metadata_method!(
+            semantic_mut(StatefulBiConsumer<$t, $u> + Send + 'static),
+            |source| move |first: &$t, second: &$u| source.accept(first, second),
+            |$f| $wrapper,
+            "bi-consumer"
+        );
+    };
+    (BoxBiConsumerOnce<$t:ident, $u:ident>, |$f:ident| $wrapper:expr) => {
+        crate::macros::impl_common_new_metadata_method!(
+            semantic(BiConsumerOnce<$t, $u> + 'static),
+            |source| move |first: &$t, second: &$u| source.accept(first, second),
+            |$f| $wrapper,
+            "bi-consumer"
+        );
+    };
 }
 
 /// Generates constructors, name management methods, and a no-operation
@@ -139,6 +256,7 @@ macro_rules! impl_consumer_common_methods {
         |$f:ident| $wrapper_expr:expr
     ) => {
         $crate::consumers::macros::impl_consumer_new_methods!($struct_name<$t>, |$f| $wrapper_expr);
+
         /// Creates a no-operation consumer.
         ///
         /// Creates a consumer that does nothing when called. Useful for
@@ -152,6 +270,7 @@ macro_rules! impl_consumer_common_methods {
             Self::new(|_: &$t| {})
         }
 
+        $crate::consumers::macros::impl_consumer_metadata_method!($struct_name<$t>, |$f| $wrapper_expr);
         crate::macros::impl_common_name_methods!("consumer");
     };
 
@@ -162,6 +281,7 @@ macro_rules! impl_consumer_common_methods {
         |$f:ident| $wrapper_expr:expr
     ) => {
         $crate::consumers::macros::impl_consumer_new_methods!($struct_name<$t, $u>, |$f| $wrapper_expr);
+
         /// Creates a no-operation bi-consumer.
         ///
         /// Creates a bi-consumer that does nothing when called. Useful
@@ -175,9 +295,11 @@ macro_rules! impl_consumer_common_methods {
             Self::new(|_: &$t, _: &$u| {})
         }
 
+        $crate::consumers::macros::impl_consumer_metadata_method!($struct_name<$t, $u>, |$f| $wrapper_expr);
         crate::macros::impl_common_name_methods!("bi-consumer");
     };
 }
 
 pub(crate) use impl_consumer_common_methods;
+pub(crate) use impl_consumer_metadata_method;
 pub(crate) use impl_consumer_new_methods;

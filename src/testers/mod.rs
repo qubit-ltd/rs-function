@@ -163,5 +163,15 @@ pub mod stateful_tester;
 pub mod tester;
 
 #[cfg(feature = "stateful")]
-pub use stateful_tester::*;
-pub use tester::*;
+pub use stateful_tester::ArcStatefulTester;
+#[cfg(feature = "stateful")]
+pub use stateful_tester::BoxStatefulTester;
+#[cfg(all(feature = "stateful", feature = "rc"))]
+pub use stateful_tester::RcStatefulTester;
+#[cfg(feature = "stateful")]
+pub use stateful_tester::StatefulTester;
+pub use tester::ArcTester;
+pub use tester::BoxTester;
+#[cfg(feature = "rc")]
+pub use tester::RcTester;
+pub use tester::Tester;

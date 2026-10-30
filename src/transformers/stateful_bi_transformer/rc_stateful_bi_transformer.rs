@@ -38,11 +38,11 @@ use crate::transformers::macros::impl_transformer_debug_display;
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync`)
 /// - **Clonable**: Cheap cloning via `Rc::clone`
 ///
-/// # Borrowing and reentrancy
+/// # Panics
 ///
-/// Each call holds a mutable `RefCell` borrow while the user callback runs.
-/// Synchronous re-entry through the same shared wrapper panics with a borrow
-/// error. Mutations completed before a panic are not rolled back.
+/// A call panics if the callback synchronously re-enters the same wrapper
+/// while its mutable `RefCell` borrow is active. Mutations completed before a
+/// panic are not rolled back.
 ///
 /// # Type Parameters
 ///

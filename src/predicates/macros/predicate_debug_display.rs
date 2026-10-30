@@ -6,49 +6,20 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-//! # Predicate Debug Display Macro
-//!
-//! Generates Debug and Display trait implementations for Predicate structs
-//!
-//! Generates standard Debug and Display trait implementations for Predicate
-//! structs that have a `name: Option<String>` field.
-//!
-//! # Parameters
-//!
-//! * `$struct_name` - The struct name
-//! * `$generic` - Generic parameter list (one or more type parameters)
-//!
-//! # Examples
-//!
-//! ```ignore
-//! // For single type parameter
-//! impl_predicate_debug_display!(BoxPredicate<T>);
-//!
-//! // For two type parameters
-//! impl_predicate_debug_display!(BoxBiPredicate<T, U>);
-//! ```
+//! Implements formatting macros used by predicate types.
 
-/// Generates Debug and Display trait implementations for Predicate structs
+/// Implements `Debug` and `Display` for a predicate type with metadata.
 ///
-/// This macro should be used at the top level (outside of any impl block) as
-/// it generates complete `impl Debug` and `impl Display` blocks for the
-/// specified struct. Generates standard Debug and Display trait implementations
-/// for Predicate structs that have a `name: Option<String>` field.
+/// Invoke this macro at module scope for a predicate type whose `metadata`
+/// field provides a `name()` method. The debug output includes the type name,
+/// metadata name, and a placeholder for the wrapped function. The display
+/// output includes the type name and metadata name, or `unnamed` when no name
+/// is set.
 ///
 /// # Parameters
 ///
-/// * `$struct_name` - The struct name
-/// * `$generic` - Generic parameter list (one or more type parameters)
-///
-/// # Examples
-///
-/// ```ignore
-/// // For single type parameter
-/// impl_predicate_debug_display!(BoxPredicate<T>);
-///
-/// // For two type parameters
-/// impl_predicate_debug_display!(BoxBiPredicate<T, U>);
-/// ```
+/// * `$struct_name` is the predicate type name.
+/// * `$t` and optional `$u` are its one or two generic type parameters.
 macro_rules! impl_predicate_debug_display {
     // Single generic parameter
     ($struct_name:ident < $t:ident >) => {

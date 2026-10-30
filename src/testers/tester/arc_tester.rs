@@ -14,7 +14,8 @@ use std::sync::Arc;
 use crate::Tester;
 use crate::internal::CallbackMetadata;
 use crate::macros::impl_common_name_methods;
-use crate::macros::impl_common_new_methods;
+use crate::macros::impl_common_new_metadata_method;
+use crate::macros::impl_common_new_public_methods;
 
 // ============================================================================
 // ArcTester: Thread-Safe Shared Ownership Implementation
@@ -72,7 +73,14 @@ pub struct ArcTester {
 }
 
 impl ArcTester {
-    impl_common_new_methods!(
+    impl_common_new_public_methods!(
+        semantic(Tester + Send + Sync + 'static),
+        |source| move || source.test(),
+        |function| Arc::new(function),
+        "tester"
+    );
+
+    impl_common_new_metadata_method!(
         semantic(Tester + Send + Sync + 'static),
         |source| move || source.test(),
         |function| Arc::new(function),
@@ -90,6 +98,10 @@ impl ArcTester {
     /// # Parameters
     ///
     /// * `next` - The tester to combine with
+    ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The type of the tester combined with `self`.
     ///
     /// # Returns
     ///
@@ -159,6 +171,10 @@ impl ArcTester {
     /// # Parameters
     ///
     /// * `next` - The tester to combine with
+    ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The type of the tester combined with `self`.
     ///
     /// # Returns
     ///
@@ -244,6 +260,10 @@ impl ArcTester {
     ///
     /// * `next` - The tester to combine with
     ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The type of the tester combined with `self`.
+    ///
     /// # Returns
     ///
     /// A new `ArcTester` representing logical NAND
@@ -300,6 +320,10 @@ impl ArcTester {
     /// # Parameters
     ///
     /// * `next` - The tester to combine with
+    ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The type of the tester combined with `self`.
     ///
     /// # Returns
     ///
@@ -363,6 +387,10 @@ impl ArcTester {
     ///
     /// * `next` - The tester to combine with
     ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The type of the tester combined with `self`.
+    ///
     /// # Returns
     ///
     /// A new `ArcTester` representing logical NOR
@@ -414,6 +442,14 @@ impl ArcTester {
 impl Not for ArcTester {
     type Output = ArcTester;
 
+    /// Returns a tester that negates the result of this tester.
+    ///
+    /// The consumed tester's callback and metadata are transferred to the
+    /// returned wrapper.
+    ///
+    /// # Returns
+    ///
+    /// A tester that returns the logical negation of this tester's result.
     #[inline]
     fn not(self) -> Self::Output {
         let metadata = self.metadata;
@@ -425,6 +461,14 @@ impl Not for ArcTester {
 impl Not for &ArcTester {
     type Output = ArcTester;
 
+    /// Returns a tester that negates the result of the borrowed tester.
+    ///
+    /// The callback is shared and its diagnostic metadata is cloned.
+    ///
+    /// # Returns
+    ///
+    /// A tester that returns the logical negation of the borrowed tester's
+    /// result.
     #[inline]
     fn not(self) -> Self::Output {
         let func = Arc::clone(&self.function);
@@ -433,6 +477,14 @@ impl Not for &ArcTester {
 }
 
 impl Tester for ArcTester {
+    /// Executes the wrapped callback and returns its boolean result.
+    ///
+    /// The callback is invoked through shared ownership and may observe
+    /// interior state or external side effects.
+    ///
+    /// # Returns
+    ///
+    /// `true` when the wrapped callback succeeds; otherwise, `false`.
     #[inline]
     fn test(&self) -> bool {
         (self.function)()
@@ -455,6 +507,15 @@ impl Clone for ArcTester {
 }
 
 impl fmt::Debug for ArcTester {
+    /// Formats the tester as a debug structure with its optional name.
+    ///
+    /// # Parameters
+    ///
+    /// * `formatter` - The formatter that receives the debug representation.
+    ///
+    /// # Returns
+    ///
+    /// `Ok(())` when formatting succeeds, or the formatter's error.
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         formatter
             .debug_struct("ArcTester")
@@ -464,6 +525,15 @@ impl fmt::Debug for ArcTester {
 }
 
 impl fmt::Display for ArcTester {
+    /// Formats the tester using its name when one is available.
+    ///
+    /// # Parameters
+    ///
+    /// * `formatter` - The formatter that receives the display representation.
+    ///
+    /// # Returns
+    ///
+    /// `Ok(())` when formatting succeeds, or the formatter's error.
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.metadata.name() {
             Some(name) => write!(formatter, "ArcTester({name})"),

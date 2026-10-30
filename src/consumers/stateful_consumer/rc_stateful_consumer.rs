@@ -63,7 +63,7 @@ type RcStatefulConsumerFn<T> = Rc<RefCell<dyn FnMut(&T)>>;
 /// - **Reference Counting**: Non-atomic but still exists
 /// - **Runtime Borrowing Checks**: `RefCell` checks at runtime
 ///
-/// # Safety
+/// # Thread safety
 ///
 /// `RcStatefulConsumer` is not thread-safe and does not implement `Send` or
 /// `Sync`. Attempting to send it to another thread will result in a compilation
@@ -73,12 +73,18 @@ type RcStatefulConsumerFn<T> = Rc<RefCell<dyn FnMut(&T)>>;
 ///
 /// * `T` - The input value type borrowed by the callback.
 ///
+/// # Panics
+///
+/// Each call holds a mutable `RefCell` borrow while the user callback runs.
+/// Synchronous re-entry through the same shared wrapper panics with a borrow
+/// error. Mutations completed before a panic are not rolled back.
+///
 /// # Examples
 ///
 /// ```rust
-/// use qubit_function::{Consumer, StatefulConsumer, RcStatefulConsumer};
-/// use std::rc::Rc;
+/// use qubit_function::{RcStatefulConsumer, StatefulConsumer};
 /// use std::cell::RefCell;
+/// use std::rc::Rc;
 ///
 /// let log = Rc::new(RefCell::new(Vec::new()));
 /// let l = log.clone();
@@ -91,11 +97,6 @@ type RcStatefulConsumerFn<T> = Rc<RefCell<dyn FnMut(&T)>>;
 /// clone.accept(&7);
 /// assert_eq!(*log.borrow(), vec![10, 14]);
 /// ```
-/// # Panics
-///
-/// Each call holds a mutable `RefCell` borrow while the user callback runs.
-/// Synchronous re-entry through the same shared wrapper panics with a borrow
-/// error. Mutations completed before a panic are not rolled back.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcStatefulConsumer<T> {
     /// The wrapped callback implementation.

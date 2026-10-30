@@ -25,6 +25,10 @@ use crate::suppliers::macros::impl_supplier_debug_display;
 /// This is the most lightweight supplier with zero reference
 /// counting overhead.
 ///
+/// # Type Parameters
+///
+/// * `T` - The type of value produced by the wrapped callback.
+///
 /// # Ownership Model
 ///
 /// Methods consume `self` (move semantics). When you call a method

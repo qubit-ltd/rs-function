@@ -67,6 +67,13 @@ impl<T> ArcStatefulPredicate<T> {
     ///
     /// This method borrows `self`; the returned predicate shares this
     /// predicate's mutable state through the same `Arc<Mutex<_>>`.
+    /// Evaluation short-circuits when this predicate returns `false`, so
+    /// `other` is not called and its state is not updated in that case.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `P` - The other stateful predicate, which must be sendable and owned
+    ///   for the lifetime of the returned predicate.
     ///
     /// # Parameters
     ///
@@ -95,6 +102,13 @@ impl<T> ArcStatefulPredicate<T> {
     ///
     /// This method borrows `self`; the returned predicate shares this
     /// predicate's mutable state through the same `Arc<Mutex<_>>`.
+    /// Evaluation short-circuits when this predicate returns `true`, so
+    /// `other` is not called and its state is not updated in that case.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `P` - The other stateful predicate, which must be sendable and owned
+    ///   for the lifetime of the returned predicate.
     ///
     /// # Parameters
     ///
@@ -122,6 +136,13 @@ impl<T> ArcStatefulPredicate<T> {
     /// Returns a predicate representing logical NAND with another predicate.
     ///
     /// NAND returns `true` unless both predicates return `true`.
+    /// Evaluation short-circuits when this predicate returns `false`, so
+    /// `other` is not called and its state is not updated in that case.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `P` - The other stateful predicate, which must be sendable and owned
+    ///   for the lifetime of the returned predicate.
     ///
     /// # Parameters
     ///
@@ -151,6 +172,11 @@ impl<T> ArcStatefulPredicate<T> {
     /// XOR evaluates both predicates and returns `true` when exactly one
     /// predicate returns `true`.
     ///
+    /// # Type Parameters
+    ///
+    /// * `P` - The other stateful predicate, which must be sendable and owned
+    ///   for the lifetime of the returned predicate.
+    ///
     /// # Parameters
     ///
     /// * `other` - The other predicate to combine with.
@@ -177,6 +203,13 @@ impl<T> ArcStatefulPredicate<T> {
     /// Returns a predicate representing logical NOR with another predicate.
     ///
     /// NOR returns `true` only when both predicates return `false`.
+    /// Evaluation short-circuits when this predicate returns `true`, so
+    /// `other` is not called and its state is not updated in that case.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `P` - The other stateful predicate, which must be sendable and owned
+    ///   for the lifetime of the returned predicate.
     ///
     /// # Parameters
     ///
