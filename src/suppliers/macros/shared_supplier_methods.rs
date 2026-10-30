@@ -101,6 +101,7 @@ macro_rules! impl_shared_supplier_methods {
         callback_bounds = ($($callback_bounds:tt)+)
     ) => {
         /// Maps the output using a transformation function.
+        /// The returned supplier preserves the source diagnostic name.
         ///
         /// # Type Parameters
         ///
@@ -137,6 +138,7 @@ macro_rules! impl_shared_supplier_methods {
         }
 
         /// Filters output based on a predicate.
+        /// The returned supplier is unnamed.
         ///
         /// # Type Parameters
         ///
@@ -172,6 +174,7 @@ macro_rules! impl_shared_supplier_methods {
         }
 
         /// Combines this supplier with another, producing a tuple.
+        /// The returned supplier is unnamed.
         ///
         /// # Type Parameters
         ///
@@ -213,6 +216,7 @@ macro_rules! impl_shared_supplier_methods {
         ($($extra_bounds:tt)*)
     ) => {
         /// Maps the output using a transformation function.
+        /// The returned supplier preserves the source diagnostic name.
         ///
         /// # Type Parameters
         ///
@@ -249,6 +253,7 @@ macro_rules! impl_shared_supplier_methods {
         }
 
         /// Filters output based on a predicate.
+        /// The returned supplier is unnamed.
         ///
         /// # Type Parameters
         ///
@@ -284,6 +289,7 @@ macro_rules! impl_shared_supplier_methods {
         }
 
         /// Combines this supplier with another, producing a tuple.
+        /// The returned supplier is unnamed.
         ///
         /// # Type Parameters
         ///

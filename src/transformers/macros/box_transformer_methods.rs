@@ -133,6 +133,12 @@ macro_rules! impl_box_transformer_methods {
         /// Creates a conditional transformer that executes based on predicate
         /// result.
         ///
+        /// # Lifetimes
+        ///
+        /// This composition method requires `T` and `R` to be `'static`.
+        /// Direct application can accept borrowed input types when the
+        /// transformer implementation permits them.
+        ///
         /// # Type Parameters
         ///
         /// * `P` - The predicate evaluated for each input value.
@@ -176,6 +182,12 @@ macro_rules! impl_box_transformer_methods {
 
         /// Chains execution with another transformer, executing the current
         /// transformer first, then the subsequent transformer.
+        ///
+        /// # Lifetimes
+        ///
+        /// This composition method requires `T`, `R`, and `S` to be `'static`.
+        /// Direct application can accept borrowed input types when the
+        /// transformer implementation permits them.
         ///
         /// # Type Parameters
         ///
@@ -235,6 +247,12 @@ macro_rules! impl_box_transformer_methods {
         /// Creates a conditional two-parameter transformer that executes based
         /// on bi-predicate result.
         ///
+        /// # Lifetimes
+        ///
+        /// This composition method requires `T`, `U`, and `R` to be `'static`.
+        /// Direct application can accept borrowed input types when the
+        /// transformer implementation permits them.
+        ///
         /// # Type Parameters
         ///
         /// * `P` - The predicate evaluated for each pair of input values.
@@ -281,6 +299,12 @@ macro_rules! impl_box_transformer_methods {
 
         /// Chains execution with another two-parameter transformer, executing
         /// the current transformer first, then the subsequent transformer.
+        ///
+        /// # Lifetimes
+        ///
+        /// This composition method requires `T`, `U`, `R`, and `S` to be
+        /// `'static`. Direct application can accept borrowed input types when
+        /// the transformer implementation permits them.
         ///
         /// # Type Parameters
         ///

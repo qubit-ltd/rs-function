@@ -88,6 +88,13 @@ macro_rules! impl_shared_transformer_methods {
         /// Creates a conditional transformer that applies this transformer
         /// only when `predicate` accepts the input.
         ///
+        /// # Lifetimes
+        ///
+        /// The current wrapper requires `T` and `R` to be `'static`; this is
+        /// an additional constraint of this composition method. A transformer
+        /// can still be called directly with borrowed input types when its
+        /// semantic trait implementation permits them.
+        ///
         /// # Type Parameters
         ///
         /// * `P` - The predicate evaluated before transformation.
@@ -114,6 +121,13 @@ macro_rules! impl_shared_transformer_methods {
         }
 
         /// Chains `after` to run on the value produced by this transformer.
+        ///
+        /// # Lifetimes
+        ///
+        /// The current wrapper requires `T`, `R`, and `S` to be `'static`;
+        /// these are additional constraints of this composition method. A
+        /// transformer can still be called directly with borrowed input types
+        /// when its semantic trait implementation permits them.
         ///
         /// # Type Parameters
         ///
@@ -157,6 +171,13 @@ macro_rules! impl_shared_transformer_methods {
         /// Creates a conditional transformer that applies this transformer
         /// only when `predicate` accepts both inputs.
         ///
+        /// # Lifetimes
+        ///
+        /// The current wrapper requires `T`, `U`, and `R` to be `'static`;
+        /// these are additional constraints of this composition method. A
+        /// transformer can still be called directly with borrowed input types
+        /// when its semantic trait implementation permits them.
+        ///
         /// # Type Parameters
         ///
         /// * `P` - The predicate evaluated before transformation.
@@ -184,6 +205,13 @@ macro_rules! impl_shared_transformer_methods {
         }
 
         /// Chains `after` to run on the value produced from both inputs.
+        ///
+        /// # Lifetimes
+        ///
+        /// The current wrapper requires `T`, `U`, `R`, and `S` to be
+        /// `'static`; these are additional constraints of this composition
+        /// method. A transformer can still be called directly with borrowed
+        /// input types when its semantic trait implementation permits them.
         ///
         /// # Type Parameters
         ///

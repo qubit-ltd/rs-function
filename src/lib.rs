@@ -36,6 +36,32 @@
 //! - **Comparator types**: Functions that compare values and return ordering
 
 #![cfg_attr(docsrs, feature(doc_auto_cfg))]
+//!
+//! # Diagnostic names
+//!
+//! Diagnostic names identify a wrapper for logs and other diagnostics. Callable
+//! `map` and `map_err` preserve the source name. Their `and_then` methods
+//! return an unnamed wrapper. Supplier `map` preserves its source name, while
+//! `filter` and `zip` return unnamed wrappers. Stateful supplier `map_stateful`
+//! and `memoize`, comparator `reversed`, and predicate/tester logical negation
+//! preserve the source name. Methods that combine independent sources, such as
+//! `then_callable`, `then_callable_with`, and `then_comparing`, return unnamed
+//! wrappers; names are not automatically concatenated.
+//!
+//! Cloning a wrapper copies its diagnostic name independently: changing the
+//! name of one clone does not rename the other. Assign a name after composing
+//! operations when the final wrapper needs a useful diagnostic name:
+//!
+//! ```
+//! use qubit_function::{BoxCallable, Callable};
+//!
+//! let mut task = BoxCallable::new_with_name("load", || Ok::<i32, String>(20))
+//!     .map(|value| value + 1)
+//!     .and_then(|value| Ok(value * 2))
+//!     .with_name("load-and-transform");
+//! assert_eq!(task.name(), Some("load-and-transform"));
+//! assert_eq!(task.call(), Ok(42));
+//! ```
 
 // Module declarations
 pub mod comparator;

@@ -81,6 +81,7 @@ impl<R, E> BoxCallable<R, E> {
     impl_common_name_methods!("callable");
 
     /// Maps the success value of this callable.
+    /// The returned callable preserves the source diagnostic name.
     ///
     /// Consumes this callable and returns a new callable that owns its
     /// computation and the mapper.
@@ -110,6 +111,7 @@ impl<R, E> BoxCallable<R, E> {
     }
 
     /// Maps the error value of this callable.
+    /// The returned callable preserves the source diagnostic name.
     ///
     /// Consumes this callable and returns a new callable that owns its
     /// computation and the mapper.
@@ -139,6 +141,8 @@ impl<R, E> BoxCallable<R, E> {
     }
 
     /// Chains another fallible computation after this callable succeeds.
+    /// The returned wrapper is unnamed; assign a name to the final composition
+    /// if needed.
     ///
     /// Consumes this callable and returns a new callable that owns its
     /// computation and the next computation.

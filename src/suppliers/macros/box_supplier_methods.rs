@@ -165,6 +165,7 @@ macro_rules! impl_box_supplier_methods {
         $supplier_trait:ident
     ) => {
         /// Maps the output using a transformation function.
+        /// The returned supplier preserves the source diagnostic name.
         ///
         /// Consumes self and returns a new supplier that applies the
         /// mapper to each output.
@@ -202,6 +203,7 @@ macro_rules! impl_box_supplier_methods {
         }
 
         /// Filters output based on a predicate.
+        /// The returned supplier is unnamed.
         ///
         /// Returns a new supplier that returns `Some(value)` if the
         /// predicate is satisfied, `None` otherwise.
@@ -239,6 +241,7 @@ macro_rules! impl_box_supplier_methods {
         }
 
         /// Combines this supplier with another, producing a tuple.
+        /// The returned supplier is unnamed.
         ///
         /// Consumes both suppliers and returns a new supplier that
         /// produces tuples.

@@ -76,6 +76,7 @@ impl<R, E> LocalBoxCallable<R, E> {
     impl_common_name_methods!("local callable");
 
     /// Maps the success value of this callable.
+    /// The returned callable preserves the source diagnostic name.
     ///
     /// # Type Parameters
     ///
@@ -102,6 +103,7 @@ impl<R, E> LocalBoxCallable<R, E> {
     }
 
     /// Maps the error value of this callable.
+    /// The returned callable preserves the source diagnostic name.
     ///
     /// # Type Parameters
     ///
@@ -128,6 +130,8 @@ impl<R, E> LocalBoxCallable<R, E> {
     }
 
     /// Chains another fallible computation after this callable succeeds.
+    /// The returned wrapper is unnamed; assign a name to the final composition
+    /// if needed.
     ///
     /// # Type Parameters
     ///

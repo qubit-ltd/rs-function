@@ -62,6 +62,7 @@ impl<T, R, E> BoxCallableWith<T, R, E> {
     impl_common_name_methods!("callable-with");
 
     /// Maps the success value of this callable.
+    /// The returned callable preserves the source diagnostic name.
     ///
     /// # Parameters
     ///
@@ -94,6 +95,7 @@ impl<T, R, E> BoxCallableWith<T, R, E> {
     }
 
     /// Maps the error value of this callable.
+    /// The returned callable preserves the source diagnostic name.
     ///
     /// # Parameters
     ///
@@ -126,6 +128,8 @@ impl<T, R, E> BoxCallableWith<T, R, E> {
     }
 
     /// Chains another fallible computation after this callable succeeds.
+    /// The returned wrapper is unnamed; assign a name to the final composition
+    /// if needed.
     ///
     /// # Parameters
     ///
