@@ -13,7 +13,7 @@ use crate::Transformer;
 use crate::TransformerOnce;
 use crate::macros::impl_closure_once_trait;
 use crate::suppliers::macros::impl_box_supplier_methods;
-use crate::suppliers::macros::impl_supplier_common_methods;
+use crate::suppliers::macros::impl_supplier_new_methods;
 use crate::suppliers::macros::impl_supplier_debug_display;
 
 // ==========================================================================
@@ -65,8 +65,29 @@ pub struct BoxSupplierOnce<T> {
 }
 
 impl<T> BoxSupplierOnce<T> {
-    // Generates: new(), new_with_name(), name(), set_name(), constant()
-    impl_supplier_common_methods!(BoxSupplierOnce<T>, (FnOnce() -> T + 'static), |f| Box::new(f));
+    impl_supplier_new_methods!(BoxSupplierOnce<T>, |f| Box::new(f));
+    crate::macros::impl_common_name_methods!("supplier");
+
+    /// Creates a one-time supplier that returns the owned value.
+    ///
+    /// The value is moved into the supplier and does not need to implement
+    /// `Clone`. If the supplier is dropped without being called, the captured
+    /// value is dropped with it.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use qubit_function::{BoxSupplierOnce, SupplierOnce};
+    ///
+    /// let constant = BoxSupplierOnce::constant(String::from("ready"));
+    /// assert_eq!(constant.get(), "ready");
+    /// ```
+    pub fn constant(value: T) -> Self
+    where
+        T: 'static,
+    {
+        Self::new(move || value)
+    }
 
     // Generates: map(), filter(), zip()
     impl_box_supplier_methods!(BoxSupplierOnce<T>, SupplierOnce);

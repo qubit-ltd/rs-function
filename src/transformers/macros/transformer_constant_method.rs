@@ -89,7 +89,7 @@
 /// assert_eq!(constant.apply(123), "hello");
 /// ```
 macro_rules! impl_transformer_constant_method {
-    // Single-parameter transformer (BoxTransformer, RcTransformer, BoxTransformerOnce)
+    // Single-parameter reusable transformer (BoxTransformer, RcTransformer)
     ($struct_name:ident < $t:ident, $r:ident >, $call_trait:ident) => {
         impl<$t, $r> $struct_name<$t, $r> {
             /// Creates a constant transformer
@@ -141,7 +141,7 @@ macro_rules! impl_transformer_constant_method {
         }
     };
 
-    // Two-parameter transformer (BoxBiTransformer, RcBiTransformer, BoxBiTransformerOnce)
+    // Two-parameter reusable transformer (BoxBiTransformer, RcBiTransformer)
     ($struct_name:ident < $t:ident, $u:ident, $r:ident >, $call_trait:ident) => {
         impl<$t, $u, $r> $struct_name<$t, $u, $r> {
             /// Creates a constant bi-transformer

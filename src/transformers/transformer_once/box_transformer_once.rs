@@ -13,7 +13,6 @@ use crate::TransformerOnce;
 use crate::macros::impl_closure_once_trait;
 use crate::transformers::macros::impl_box_transformer_methods;
 use crate::transformers::macros::impl_transformer_common_methods;
-use crate::transformers::macros::impl_transformer_constant_method;
 use crate::transformers::macros::impl_transformer_debug_display;
 use crate::transformers::macros::impl_transformer_identity_method;
 
@@ -74,8 +73,28 @@ impl<T, R> TransformerOnce<T, R> for BoxTransformerOnce<T, R> {
     }
 }
 
-// Implement constant method for BoxTransformerOnce
-impl_transformer_constant_method!(BoxTransformerOnce<T, R>, TransformerOnce);
+impl<T, R> BoxTransformerOnce<T, R> {
+    /// Creates a one-time transformer that returns the owned value.
+    ///
+    /// The value is moved into the transformer and does not need to implement
+    /// `Clone`. If the transformer is dropped without being called, the
+    /// captured value is dropped with it.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use qubit_function::{BoxTransformerOnce, TransformerOnce};
+    ///
+    /// let constant = BoxTransformerOnce::constant(String::from("ready"));
+    /// assert_eq!(constant.apply(0), "ready");
+    /// ```
+    pub fn constant(value: R) -> Self
+    where
+        R: 'static,
+    {
+        Self::new(move |_| value)
+    }
+}
 
 // Use macro to generate Debug and Display implementations
 impl_transformer_debug_display!(BoxTransformerOnce<T, R>);

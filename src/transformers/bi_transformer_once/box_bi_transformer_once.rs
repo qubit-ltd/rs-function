@@ -14,7 +14,6 @@ use crate::TransformerOnce;
 use crate::macros::impl_closure_once_trait;
 use crate::transformers::macros::impl_box_transformer_methods;
 use crate::transformers::macros::impl_transformer_common_methods;
-use crate::transformers::macros::impl_transformer_constant_method;
 use crate::transformers::macros::impl_transformer_debug_display;
 
 // ============================================================================
@@ -78,8 +77,28 @@ impl<T, U, R> BiTransformerOnce<T, U, R> for BoxBiTransformerOnce<T, U, R> {
     }
 }
 
-// Implement constant method for BoxBiTransformerOnce
-impl_transformer_constant_method!(BoxBiTransformerOnce<T, U, R>, BiTransformerOnce);
+impl<T, U, R> BoxBiTransformerOnce<T, U, R> {
+    /// Creates a one-time bi-transformer that returns the owned value.
+    ///
+    /// The value is moved into the transformer and does not need to implement
+    /// `Clone`. If the transformer is dropped without being called, the
+    /// captured value is dropped with it.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use qubit_function::{BiTransformerOnce, BoxBiTransformerOnce};
+    ///
+    /// let constant = BoxBiTransformerOnce::constant(String::from("ready"));
+    /// assert_eq!(constant.apply(0, false), "ready");
+    /// ```
+    pub fn constant(value: R) -> Self
+    where
+        R: 'static,
+    {
+        Self::new(move |_, _| value)
+    }
+}
 
 // Use macro to generate Debug and Display implementations
 impl_transformer_debug_display!(BoxBiTransformerOnce<T, U, R>);
