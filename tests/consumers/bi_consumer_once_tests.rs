@@ -129,13 +129,12 @@ mod box_bi_consumer_once_tests {
 
     #[test]
     fn test_moved_value() {
-        let data = [1, 2, 3];
+        let data = String::from("owned");
         let consumer = BoxBiConsumerOnce::new(move |_x: &i32, _y: &i32| {
-            // data is moved into the closure
-            std::hint::black_box(data.len());
+            drop(data);
         });
         consumer.accept(&5, &3);
-        // data is no longer available here
+        // The captured String was consumed by the callback.
     }
 
     #[test]
