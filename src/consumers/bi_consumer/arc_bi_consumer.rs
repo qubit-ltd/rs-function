@@ -39,8 +39,8 @@ use crate::consumers::macros::impl_shared_consumer_methods;
 ///
 /// - **Shared Ownership**: Cloneable via `Arc`, multiple owners allowed
 /// - **Thread-Safe**: Implements `Send + Sync`, safe for concurrent use
-/// - **Callback Storage**: The wrapper stores an `Arc<dyn Fn(&T, &U) + Send + Sync>`
-///   and does not add a mutex around callback invocation
+/// - **Callback Storage**: The wrapper stores an `Arc<dyn Fn(&T, &U) + Send +
+///   Sync>` and does not add a mutex around callback invocation
 /// - **Non-Consuming API**: `and_then` borrows `&self`, original remains usable
 ///
 /// # Use Cases

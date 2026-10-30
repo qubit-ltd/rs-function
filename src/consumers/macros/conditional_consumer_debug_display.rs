@@ -62,7 +62,6 @@
 /// );
 /// conditional.accept(&1);
 /// ```
-
 macro_rules! impl_conditional_consumer_debug_display {
     // Single generic parameter - Consumer types
     ($struct_name:ident < $t:ident >) => {

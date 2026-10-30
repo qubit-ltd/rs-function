@@ -13,8 +13,8 @@ use crate::Transformer;
 use crate::TransformerOnce;
 use crate::macros::impl_closure_once_trait;
 use crate::suppliers::macros::impl_box_supplier_methods;
-use crate::suppliers::macros::impl_supplier_new_methods;
 use crate::suppliers::macros::impl_supplier_debug_display;
+use crate::suppliers::macros::impl_supplier_new_methods;
 
 // ==========================================================================
 // BoxSupplierOnce - One-time Supplier Implementation

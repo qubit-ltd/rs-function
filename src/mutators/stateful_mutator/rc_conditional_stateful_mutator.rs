@@ -33,8 +33,8 @@ use crate::mutators::macros::impl_shared_conditional_mutator;
 /// - **Shared Ownership**: Cloneable via `Rc`, multiple owners allowed
 /// - **Single-Threaded**: Not thread-safe, cannot be sent across threads
 /// - **Conditional Execution**: Only mutates when predicate returns `true`
-/// - **Shared callback storage**: Uses `Rc` and `RefCell` for shared
-///   callback ownership and runtime borrow checking.
+/// - **Shared callback storage**: Uses `Rc` and `RefCell` for shared callback
+///   ownership and runtime borrow checking.
 ///
 /// # Type Parameters
 ///

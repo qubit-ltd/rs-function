@@ -12,9 +12,9 @@ use std::cell::Cell;
 use std::rc::Rc;
 
 use qubit_function::BiFunctionOnce;
+use qubit_function::BiMutatingFunctionOnce;
 use qubit_function::BiTransformer;
 use qubit_function::BiTransformerOnce;
-use qubit_function::BiMutatingFunctionOnce;
 use qubit_function::BoxBiFunctionOnce;
 use qubit_function::BoxBiMutatingFunctionOnce;
 use qubit_function::BoxBiTransformer;
@@ -159,18 +159,16 @@ fn test_once_constant_inputs_can_borrow_local_values() {
 
 #[test]
 fn test_once_constants_keep_name_and_call_paths() {
-    let unary = BoxTransformerOnce::<i32, Resource>::constant(Resource("unary".into()))
-        .with_name("unary-constant");
+    let unary = BoxTransformerOnce::<i32, Resource>::constant(Resource("unary".into())).with_name("unary-constant");
     assert_eq!(unary.name(), Some("unary-constant"));
     assert_eq!(unary.apply(7).0, "unary");
 
-    let binary = BoxBiTransformerOnce::<i32, bool, Resource>::constant(Resource("binary".into()))
-        .with_name("binary-constant");
+    let binary =
+        BoxBiTransformerOnce::<i32, bool, Resource>::constant(Resource("binary".into())).with_name("binary-constant");
     assert_eq!(binary.name(), Some("binary-constant"));
     assert_eq!(binary.apply(7, false).0, "binary");
 
-    let supplier = BoxSupplierOnce::constant(Resource("supplier".into()))
-        .with_name("supplier-constant");
+    let supplier = BoxSupplierOnce::constant(Resource("supplier".into())).with_name("supplier-constant");
     assert_eq!(supplier.name(), Some("supplier-constant"));
     assert_eq!(supplier.get().0, "supplier");
 }

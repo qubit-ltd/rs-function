@@ -29,11 +29,11 @@
 //! `StatefulMutatingFunction` extends `MutatingFunction` with the ability to
 //! maintain internal state:
 //!
-//! - **MutatingFunction**: `Fn(&mut T) -> R`, called through `&self`; it
-//!   can mutate the input but not ordinary captured values. Interior
-//!   mutability and external side effects remain possible.
-//! - **StatefulMutatingFunction**: `FnMut(&mut T) -> R`, called through
-//!   `&mut self`; it can mutate both the input and ordinary captured state.
+//! - **MutatingFunction**: `Fn(&mut T) -> R`, called through `&self`; it can
+//!   mutate the input but not ordinary captured values. Interior mutability and
+//!   external side effects remain possible.
+//! - **StatefulMutatingFunction**: `FnMut(&mut T) -> R`, called through `&mut
+//!   self`; it can mutate both the input and ordinary captured state.
 //!
 //! ## Comparison with Related Types
 //!

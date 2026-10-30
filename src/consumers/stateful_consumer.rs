@@ -8,8 +8,8 @@
 //! # Consumer Types
 //!
 //! Provides implementations of consumer interfaces for executing operations
-//! that accept a shared reference to one input and return no result. This module
-//! is available with the `stateful` feature.
+//! that accept a shared reference to one input and return no result. This
+//! module is available with the `stateful` feature.
 //!
 //! It is similar to the `FnMut(&T)` trait in the standard library.
 //!
