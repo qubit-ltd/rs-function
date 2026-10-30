@@ -104,6 +104,83 @@
 /// // );
 /// ```
 macro_rules! impl_box_transformer_methods {
+    (@doc_when BoxTransformer) => { concat!(
+        "```rust\nuse qubit_function::{BoxTransformer, Transformer};\n",
+        "let source = BoxTransformer::new(|value: i32| value + 1);\n",
+        "let mut conditional = source.when(|value: &i32| *value > 0).or_else(|_: i32| 0);\n",
+        "assert_eq!(conditional.apply(2), 3);\nassert_eq!(conditional.apply(-2), 0);\n```"
+    ) };
+    (@doc_then BoxTransformer) => { concat!(
+        "```rust\nuse qubit_function::{BoxTransformer, Transformer};\n",
+        "let source = BoxTransformer::new(|value: i32| value + 1);\n",
+        "let combined = source.and_then(|value: i32| value * 2);\nassert_eq!(combined.apply(2), 6);\n```"
+    ) };
+    (@doc_when BoxTransformerOnce) => { concat!(
+        "```rust\nuse qubit_function::{BoxTransformerOnce, TransformerOnce};\n",
+        "let suffix = String::from(\"!\");\nlet source = BoxTransformerOnce::new(move |value: i32| (value + 1, suffix));\n",
+        "let selected = source.when(|value: &i32| *value > 0).or_else(|value: i32| (value, String::from(\"fallback\")));\n",
+        "assert_eq!(selected.apply(2), (3, String::from(\"!\")));\n",
+        "let suffix = String::from(\"!\");\nlet source = BoxTransformerOnce::new(move |value: i32| (value + 1, suffix));\n",
+        "let rejected = source.when(|value: &i32| *value > 0).or_else(|value: i32| (value, String::from(\"fallback\")));\n",
+        "assert_eq!(rejected.apply(-2), (-2, String::from(\"fallback\")));\n```"
+    ) };
+    (@doc_then BoxTransformerOnce) => { concat!(
+        "```rust\nuse qubit_function::{BoxTransformerOnce, TransformerOnce};\n",
+        "let suffix = String::from(\"!\");\nlet source = BoxTransformerOnce::new(move |value: i32| (value + 1, suffix));\n",
+        "let extra = String::from(\"?\");\nlet combined = source.and_then(move |(value, suffix): (i32, String)| (value * 2, suffix, extra));\n",
+        "assert_eq!(combined.apply(2), (6, String::from(\"!\"), String::from(\"?\")));\n```"
+    ) };
+    (@doc_when BoxStatefulTransformer) => { concat!(
+        "```rust\nuse qubit_function::{BoxStatefulTransformer, StatefulTransformer};\n",
+        "let mut calls = 0;\nlet source = BoxStatefulTransformer::new(move |value: i32| { calls += 1; value + calls });\n",
+        "let mut conditional = source.when(|value: &i32| *value > 0).or_else(|_: i32| 0);\n",
+        "assert_eq!(conditional.apply(2), 3);\nassert_eq!(conditional.apply(-2), 0);\nassert_eq!(conditional.apply(2), 4);\n```"
+    ) };
+    (@doc_then BoxStatefulTransformer) => { concat!(
+        "```rust\nuse qubit_function::{BoxStatefulTransformer, StatefulTransformer};\n",
+        "let mut calls = 0;\nlet source = BoxStatefulTransformer::new(move |value: i32| { calls += 1; value + calls });\n",
+        "let mut combined = source.and_then(|value: i32| value * 2);\n",
+        "assert_eq!(combined.apply(2), 6);\nassert_eq!(combined.apply(2), 8);\n```"
+    ) };
+    (@doc_when BoxBiTransformer) => { concat!(
+        "```rust\nuse qubit_function::{BiTransformer, BoxBiTransformer};\n",
+        "let source = BoxBiTransformer::new(|first: i32, second: i32| first + second);\n",
+        "let mut conditional = source.when(|first: &i32, _second: &i32| *first > 0).or_else(|_: i32, _: i32| 0);\n",
+        "assert_eq!(conditional.apply(2, 3), 5);\nassert_eq!(conditional.apply(-2, 3), 0);\n```"
+    ) };
+    (@doc_then BoxBiTransformer) => { concat!(
+        "```rust\nuse qubit_function::{BiTransformer, BoxBiTransformer, Transformer};\n",
+        "let source = BoxBiTransformer::new(|first: i32, second: i32| first + second);\n",
+        "let combined = source.and_then(|value: i32| value * 2);\nassert_eq!(combined.apply(2, 3), 10);\n```"
+    ) };
+    (@doc_when BoxBiTransformerOnce) => { concat!(
+        "```rust\nuse qubit_function::{BiTransformerOnce, BoxBiTransformerOnce};\n",
+        "let suffix = String::from(\"!\");\nlet source = BoxBiTransformerOnce::new(move |value: i32, extra: i32| (value + extra, suffix));\n",
+        "let selected = source.when(|value: &i32, _extra: &i32| *value > 0).or_else(|value: i32, extra: i32| (value + extra, String::from(\"fallback\")));\n",
+        "assert_eq!(selected.apply(2, 3), (5, String::from(\"!\")));\n",
+        "let suffix = String::from(\"!\");\nlet source = BoxBiTransformerOnce::new(move |value: i32, extra: i32| (value + extra, suffix));\n",
+        "let rejected = source.when(|value: &i32, _extra: &i32| *value > 0).or_else(|value: i32, extra: i32| (value + extra, String::from(\"fallback\")));\n",
+        "assert_eq!(rejected.apply(-2, 3), (1, String::from(\"fallback\")));\n```"
+    ) };
+    (@doc_then BoxBiTransformerOnce) => { concat!(
+        "```rust\nuse qubit_function::{BiTransformerOnce, BoxBiTransformerOnce, TransformerOnce};\n",
+        "let suffix = String::from(\"!\");\nlet source = BoxBiTransformerOnce::new(move |first: i32, second: i32| (first + second, suffix));\n",
+        "let extra = String::from(\"?\");\nlet combined = source.and_then(move |(value, suffix): (i32, String)| (value * 2, suffix, extra));\n",
+        "assert_eq!(combined.apply(2, 3), (10, String::from(\"!\"), String::from(\"?\")));\n```"
+    ) };
+    (@doc_when BoxStatefulBiTransformer) => { concat!(
+        "```rust\nuse qubit_function::{BoxStatefulBiTransformer, StatefulBiTransformer};\n",
+        "let mut calls = 0;\nlet source = BoxStatefulBiTransformer::new(move |first: i32, second: i32| { calls += 1; first + second + calls });\n",
+        "let mut conditional = source.when(|first: &i32, _second: &i32| *first > 0).or_else(|_: i32, _: i32| 0);\n",
+        "assert_eq!(conditional.apply(2, 3), 6);\nassert_eq!(conditional.apply(-2, 3), 0);\nassert_eq!(conditional.apply(2, 3), 7);\n```"
+    ) };
+    (@doc_then BoxStatefulBiTransformer) => { concat!(
+        "```rust\nuse qubit_function::{BoxStatefulBiTransformer, StatefulBiTransformer, StatefulTransformer};\n",
+        "let mut calls = 0;\nlet source = BoxStatefulBiTransformer::new(move |first: i32, second: i32| { calls += 1; first + second + calls });\n",
+        "let mut combined = source.and_then(|value: i32| value * 2);\n",
+        "assert_eq!(combined.apply(2, 3), 12);\nassert_eq!(combined.apply(2, 3), 14);\n```"
+    ) };
+
     (@let_before BoxStatefulTransformer, $name:ident, $value:expr) => {
         let mut $name = $value;
     };
@@ -155,18 +232,7 @@ macro_rules! impl_box_transformer_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
-        /// use qubit_function::transformers::BoxTransformer;
-        /// use qubit_function::transformers::Transformer;
-        ///
-        /// let transformer = BoxTransformer::new({
-        ///     |value: i32| value * 2
-        /// });
-        ///
-        /// let conditional = transformer.when(|value: &i32| *value > 0).or_else(|value: i32| value);
-        /// assert_eq!(conditional.apply(5), 10);  // transformed
-        /// assert_eq!(conditional.apply(-1), -1); // identity (unchanged)
-        /// ```
+        #[doc = impl_box_transformer_methods!(@doc_when $struct_name)]
         #[inline]
         pub fn when<P>(self, predicate: P) -> $conditional_type<$t, $r>
         where
@@ -208,21 +274,7 @@ macro_rules! impl_box_transformer_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
-        /// use qubit_function::transformers::BoxTransformer;
-        /// use qubit_function::transformers::Transformer;
-        ///
-        /// let transformer1 = BoxTransformer::new({
-        ///     |value: i32| value + 1
-        /// });
-        ///
-        /// let transformer2 = BoxTransformer::new({
-        ///     |value: i32| value * 2
-        /// });
-        ///
-        /// let chained = transformer1.and_then(transformer2);
-        /// assert_eq!(chained.apply(5), 12); // (5 + 1) * 2 = 12
-        /// ```
+        #[doc = impl_box_transformer_methods!(@doc_then $struct_name)]
         #[inline]
         pub fn and_then<S, F>(self, after: F) -> $struct_name<$t, S>
         where
@@ -271,20 +323,7 @@ macro_rules! impl_box_transformer_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
-        /// use qubit_function::transformers::BiTransformer;
-        /// use qubit_function::transformers::BoxBiTransformer;
-        ///
-        /// let bi_transformer = BoxBiTransformer::new({
-        ///     |key: String, value: i32| format!("{}: {}", key, value)
-        /// });
-        ///
-        /// let conditional = bi_transformer
-        ///     .when(|key: &String, value: &i32| *value > 0)
-        ///     .or_else(|key: String, _value: i32| key);
-        /// assert_eq!(conditional.apply("test".to_string(), 5), "test: 5".to_string());  // transformed
-        /// assert_eq!(conditional.apply("test".to_string(), -1), "test".to_string());    // identity (key unchanged)
-        /// ```
+        #[doc = impl_box_transformer_methods!(@doc_when $struct_name)]
         #[inline]
         pub fn when<P>(self, predicate: P) -> $conditional_type<$t, $u, $r>
         where
@@ -328,24 +367,7 @@ macro_rules! impl_box_transformer_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
-        /// use qubit_function::transformers::BiTransformer;
-        /// use qubit_function::transformers::Transformer;
-        /// use qubit_function::transformers::BoxBiTransformer;
-        /// use qubit_function::transformers::BoxTransformer;
-        ///
-        /// let bi_transformer1 = BoxBiTransformer::new({
-        ///     |key: String, value: i32| (key, value + 1)
-        /// });
-        ///
-        /// let bi_transformer2 = BoxTransformer::new({
-        ///     |(key, number): (String, i32)| format!("{}: {}", key, number)
-        /// });
-        ///
-        /// let chained = bi_transformer1.and_then(bi_transformer2);
-        /// let result = chained.apply("test".to_string(), 5);
-        /// assert_eq!(result, "test: 6"); // (value + 1) = 6
-        /// ```
+        #[doc = impl_box_transformer_methods!(@doc_then $struct_name)]
         #[inline]
         pub fn and_then<S, F>(self, after: F) -> $struct_name<$t, $u, S>
         where
