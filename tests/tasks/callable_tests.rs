@@ -8,18 +8,27 @@
 
 //! Unit tests for callable task types.
 
+#[cfg(any(feature = "rc", feature = "stateful"))]
 use std::cell::Cell;
 use std::io;
+#[cfg(feature = "rc")]
 use std::rc::Rc;
+#[cfg(feature = "stateful")]
 use std::sync::Arc;
+#[cfg(feature = "stateful")]
 use std::sync::atomic::AtomicUsize;
+#[cfg(feature = "stateful")]
 use std::sync::atomic::Ordering;
 
+#[cfg(feature = "stateful")]
 use qubit_function::ArcCallable;
 use qubit_function::BoxCallable;
+#[cfg(feature = "once")]
 use qubit_function::BoxCallableOnce;
 use qubit_function::Callable;
+#[cfg(feature = "rc")]
 use qubit_function::RcCallable;
+#[cfg(feature = "once")]
 use qubit_function::SupplierOnce;
 
 #[derive(Clone)]
@@ -33,11 +42,13 @@ impl Callable<i32, io::Error> for ClonedCallable {
     }
 }
 
+#[cfg(feature = "rc")]
 #[derive(Clone)]
 struct SharedCallable {
     count: Rc<Cell<u32>>,
 }
 
+#[cfg(feature = "rc")]
 impl Callable<u32, io::Error> for SharedCallable {
     fn call(&mut self) -> Result<u32, io::Error> {
         self.count.set(self.count.get() + 1);
@@ -45,11 +56,13 @@ impl Callable<u32, io::Error> for SharedCallable {
     }
 }
 
+#[cfg(feature = "stateful")]
 #[derive(Clone)]
 struct SharedCallableForArc {
     count: Arc<AtomicUsize>,
 }
 
+#[cfg(feature = "stateful")]
 impl Callable<u32, io::Error> for SharedCallableForArc {
     fn call(&mut self) -> Result<u32, io::Error> {
         let value = self.count.fetch_add(1, Ordering::SeqCst) + 1;
@@ -57,10 +70,12 @@ impl Callable<u32, io::Error> for SharedCallableForArc {
     }
 }
 
+#[cfg(feature = "stateful")]
 struct NonCloneCallable {
     calls: Cell<u32>,
 }
 
+#[cfg(feature = "stateful")]
 impl Callable<u32, ()> for NonCloneCallable {
     fn call(&mut self) -> Result<u32, ()> {
         self.calls.set(self.calls.get() + 1);
@@ -74,25 +89,32 @@ fn test_custom_semantic_callable_wrappers() {
     assert_eq!(boxed.call().expect("boxed custom callable"), 42);
     assert_eq!(boxed.call().expect("repeated custom callable"), 42);
 
-    let count = Rc::new(Cell::new(0));
-    let mut shared = RcCallable::new(SharedCallable {
-        count: Rc::clone(&count),
-    });
-    let mut clone = shared.clone();
-    assert_eq!(shared.call().expect("rc first call"), 1);
-    assert_eq!(clone.call().expect("rc clone call"), 2);
-    assert_eq!(count.get(), 2);
+    #[cfg(feature = "rc")]
+    {
+        let count = Rc::new(Cell::new(0));
+        let mut shared = RcCallable::new(SharedCallable {
+            count: Rc::clone(&count),
+        });
+        let mut clone = shared.clone();
+        assert_eq!(shared.call().expect("rc first call"), 1);
+        assert_eq!(clone.call().expect("rc clone call"), 2);
+        assert_eq!(count.get(), 2);
+    }
 
-    let count = Arc::new(AtomicUsize::new(0));
-    let mut shared = ArcCallable::new(SharedCallableForArc {
-        count: Arc::clone(&count),
-    });
-    let mut clone = shared.clone();
-    assert_eq!(shared.call().expect("arc first call"), 1);
-    assert_eq!(clone.call().expect("arc clone call"), 2);
-    assert_eq!(count.load(Ordering::SeqCst), 2);
+    #[cfg(feature = "stateful")]
+    {
+        let count = Arc::new(AtomicUsize::new(0));
+        let mut shared = ArcCallable::new(SharedCallableForArc {
+            count: Arc::clone(&count),
+        });
+        let mut clone = shared.clone();
+        assert_eq!(shared.call().expect("arc first call"), 1);
+        assert_eq!(clone.call().expect("arc clone call"), 2);
+        assert_eq!(count.load(Ordering::SeqCst), 2);
+    }
 }
 
+#[cfg(feature = "stateful")]
 #[test]
 fn test_custom_semantic_arc_callable_accepts_non_clone_non_sync() {
     let mut task = ArcCallable::new(NonCloneCallable { calls: Cell::new(0) });
@@ -149,6 +171,7 @@ fn test_box_callable_from_supplier() {
     assert_eq!(task.call().expect("supplier-backed callable should succeed"), 34,);
 }
 
+#[cfg(feature = "once")]
 #[test]
 fn test_box_callable_implements_supplier_once() {
     let task = BoxCallableOnce::new(|| Ok::<i32, io::Error>(55));
@@ -201,6 +224,7 @@ fn test_box_callable_and_then_skips_next_on_error() {
     );
 }
 
+#[cfg(feature = "rc")]
 #[test]
 fn test_rc_callable_from_supplier() {
     let count = Rc::new(Cell::new(0));
@@ -215,6 +239,7 @@ fn test_rc_callable_from_supplier() {
     assert_eq!(count.get(), 2);
 }
 
+#[cfg(feature = "stateful")]
 #[test]
 fn test_arc_callable_from_supplier() {
     let count = Arc::new(AtomicUsize::new(0));

@@ -8,16 +8,23 @@
 
 //! Unit tests for callable-with task types.
 
+#[cfg(any(feature = "rc", feature = "stateful"))]
 use std::cell::Cell;
 use std::io;
+#[cfg(feature = "rc")]
 use std::rc::Rc;
+#[cfg(feature = "stateful")]
 use std::sync::Arc;
+#[cfg(feature = "stateful")]
 use std::sync::atomic::AtomicUsize;
+#[cfg(feature = "stateful")]
 use std::sync::atomic::Ordering;
 
+#[cfg(feature = "stateful")]
 use qubit_function::ArcCallableWith;
 use qubit_function::BoxCallableWith;
 use qubit_function::CallableWith;
+#[cfg(feature = "rc")]
 use qubit_function::RcCallableWith;
 
 #[derive(Clone)]
@@ -32,11 +39,13 @@ impl CallableWith<i32, i32, io::Error> for AddWith {
     }
 }
 
+#[cfg(feature = "rc")]
 #[derive(Clone)]
 struct SharedCallableWith {
     count: Rc<Cell<u32>>,
 }
 
+#[cfg(feature = "rc")]
 impl CallableWith<i32, u32, io::Error> for SharedCallableWith {
     fn call_with(&mut self, input: &mut i32) -> Result<u32, io::Error> {
         *input += 1;
@@ -45,10 +54,12 @@ impl CallableWith<i32, u32, io::Error> for SharedCallableWith {
     }
 }
 
+#[cfg(feature = "stateful")]
 struct NonCloneCallableWith {
     calls: Cell<u32>,
 }
 
+#[cfg(feature = "stateful")]
 impl CallableWith<i32, u32, ()> for NonCloneCallableWith {
     fn call_with(&mut self, input: &mut i32) -> Result<u32, ()> {
         *input += 2;
@@ -64,16 +75,20 @@ fn test_custom_semantic_callable_with_wrappers() {
     assert_eq!(boxed.call_with(&mut input).expect("boxed first call"), 8);
     assert_eq!(boxed.call_with(&mut input).expect("boxed second call"), 11);
 
-    let count = Rc::new(Cell::new(0));
-    let mut shared = RcCallableWith::new(SharedCallableWith {
-        count: Rc::clone(&count),
-    });
-    let mut clone = shared.clone();
-    assert_eq!(shared.call_with(&mut input).expect("rc first call"), 1);
-    assert_eq!(clone.call_with(&mut input).expect("rc clone call"), 2);
-    assert_eq!((input, count.get()), (13, 2));
+    #[cfg(feature = "rc")]
+    {
+        let count = Rc::new(Cell::new(0));
+        let mut shared = RcCallableWith::new(SharedCallableWith {
+            count: Rc::clone(&count),
+        });
+        let mut clone = shared.clone();
+        assert_eq!(shared.call_with(&mut input).expect("rc first call"), 1);
+        assert_eq!(clone.call_with(&mut input).expect("rc clone call"), 2);
+        assert_eq!((input, count.get()), (13, 2));
+    }
 }
 
+#[cfg(feature = "stateful")]
 #[test]
 fn test_custom_semantic_arc_callable_with_accepts_non_clone_non_sync() {
     let mut task = ArcCallableWith::new(NonCloneCallableWith { calls: Cell::new(0) });
@@ -111,6 +126,7 @@ fn test_callable_with_closure_call_with_returns_error() {
     assert_eq!(value, 10);
 }
 
+#[cfg(feature = "rc")]
 #[test]
 fn test_rc_callable_with_shares_state_between_clones() {
     let count = Rc::new(Cell::new(0));
@@ -129,6 +145,7 @@ fn test_rc_callable_with_shares_state_between_clones() {
     assert_eq!(input, 2);
 }
 
+#[cfg(feature = "stateful")]
 #[test]
 fn test_arc_callable_with_shares_state_between_clones() {
     let count = Arc::new(AtomicUsize::new(0));

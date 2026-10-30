@@ -8,16 +8,20 @@
 
 //! Unit tests for runnable-with task types.
 
+#[cfg(feature = "rc")]
 use std::cell::Cell;
 use std::io;
+#[cfg(feature = "rc")]
 use std::rc::Rc;
 use std::sync::Arc;
 use std::sync::atomic::AtomicUsize;
 use std::sync::atomic::Ordering;
 
+#[cfg(feature = "stateful")]
 use qubit_function::ArcRunnableWith;
 use qubit_function::BoxRunnableWith;
 use qubit_function::CallableWith;
+#[cfg(feature = "rc")]
 use qubit_function::RcRunnableWith;
 use qubit_function::RunnableWith;
 
@@ -116,6 +120,7 @@ fn test_box_runnable_with_then_callable_runs_after_success() {
     assert_eq!(input, 14);
 }
 
+#[cfg(feature = "rc")]
 #[test]
 fn test_rc_runnable_with_shares_state_between_clones() {
     let count = Rc::new(Cell::new(0));
@@ -135,6 +140,7 @@ fn test_rc_runnable_with_shares_state_between_clones() {
     assert_eq!(input, 2);
 }
 
+#[cfg(feature = "stateful")]
 #[test]
 fn test_arc_runnable_with_shares_state_between_clones() {
     let count = Arc::new(AtomicUsize::new(0));

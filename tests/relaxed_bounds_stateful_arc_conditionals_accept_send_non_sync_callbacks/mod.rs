@@ -10,7 +10,7 @@
     unused_imports,
     reason = "split contract fixtures share support definitions"
 )]
-#![cfg(all(feature = "rc", feature = "once", feature = "stateful"))]
+#![cfg(feature = "stateful")]
 use std::cell::Cell;
 use std::cell::RefCell;
 use std::marker::PhantomData;
@@ -34,27 +34,38 @@ use qubit_function::ArcStatefulTransformer;
 use qubit_function::ArcSupplier;
 use qubit_function::ArcTransformer;
 use qubit_function::BiConsumer;
+#[cfg(feature = "once")]
 use qubit_function::BiConsumerOnce;
 use qubit_function::BiTransformer;
+#[cfg(feature = "once")]
 use qubit_function::BiTransformerOnce;
 use qubit_function::BinaryOperator;
+#[cfg(feature = "once")]
 use qubit_function::BinaryOperatorOnce;
 use qubit_function::BoxBiConsumer;
+#[cfg(feature = "once")]
 use qubit_function::BoxBiConsumerOnce;
 use qubit_function::BoxConsumer;
+#[cfg(feature = "once")]
 use qubit_function::BoxConsumerOnce;
 use qubit_function::BoxMutator;
+#[cfg(feature = "once")]
 use qubit_function::BoxMutatorOnce;
 use qubit_function::BoxPredicate;
 use qubit_function::BoxSupplier;
+#[cfg(feature = "once")]
 use qubit_function::BoxSupplierOnce;
 use qubit_function::BoxTransformer;
+#[cfg(feature = "once")]
 use qubit_function::BoxTransformerOnce;
 use qubit_function::Consumer;
+#[cfg(feature = "once")]
 use qubit_function::ConsumerOnce;
 use qubit_function::Mutator;
+#[cfg(feature = "once")]
 use qubit_function::MutatorOnce;
 use qubit_function::Predicate;
+#[cfg(feature = "rc")]
 use qubit_function::RcConsumer;
 use qubit_function::StatefulBiConsumer;
 use qubit_function::StatefulBiTransformer;
@@ -65,10 +76,13 @@ use qubit_function::StatefulMutator;
 use qubit_function::StatefulSupplier;
 use qubit_function::StatefulTransformer;
 use qubit_function::Supplier;
+#[cfg(feature = "once")]
 use qubit_function::SupplierOnce;
 use qubit_function::Transformer;
+#[cfg(feature = "once")]
 use qubit_function::TransformerOnce;
 use qubit_function::UnaryOperator;
+#[cfg(feature = "once")]
 use qubit_function::UnaryOperatorOnce;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -97,6 +111,7 @@ impl<'a> BiTransformer<Borrowed<'a>, Borrowed<'a>, Borrowed<'a>> for BorrowedBin
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 struct BorrowedUnaryOpOnce;
 
+#[cfg(feature = "once")]
 impl<'a> TransformerOnce<Borrowed<'a>, Borrowed<'a>> for BorrowedUnaryOpOnce {
     fn apply(self, input: Borrowed<'a>) -> Borrowed<'a> {
         input
@@ -106,6 +121,7 @@ impl<'a> TransformerOnce<Borrowed<'a>, Borrowed<'a>> for BorrowedUnaryOpOnce {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 struct BorrowedBinaryOpOnce;
 
+#[cfg(feature = "once")]
 impl<'a> BiTransformerOnce<Borrowed<'a>, Borrowed<'a>, Borrowed<'a>> for BorrowedBinaryOpOnce {
     fn apply(self, first: Borrowed<'a>, _second: Borrowed<'a>) -> Borrowed<'a> {
         first
@@ -116,6 +132,7 @@ fn make_box_supplier_with_lifetime(_: &i32) -> BoxSupplier<PhantomData<&i32>> {
     BoxSupplier::new(|| PhantomData)
 }
 
+#[cfg(feature = "once")]
 fn make_box_supplier_once_with_lifetime(_: &i32) -> BoxSupplierOnce<PhantomData<&i32>> {
     BoxSupplierOnce::new(|| PhantomData)
 }
@@ -152,6 +169,7 @@ where
     let _ = f;
 }
 
+#[cfg(feature = "once")]
 fn assert_unary_operator_once_impl<'a, F>(_: &'a i32, f: F)
 where
     F: UnaryOperatorOnce<Borrowed<'a>>,
@@ -159,6 +177,7 @@ where
     let _ = f;
 }
 
+#[cfg(feature = "once")]
 fn assert_binary_operator_once_impl<'a, F>(_: &'a i32, f: F)
 where
     F: BinaryOperatorOnce<Borrowed<'a>>,
