@@ -781,15 +781,27 @@ without being called, its captured value is dropped then. To preserve the old
 per-call cloning behavior, migrate each call site independently:
 
 ```rust
+use qubit_function::{BoxTransformerOnce, TransformerOnce};
+
+let value = String::from("payload");
 let once = BoxTransformerOnce::new(move |_: i32| value.clone());
+assert_eq!(once.apply(7), "payload");
 ```
 
 ```rust
+use qubit_function::{BiTransformerOnce, BoxBiTransformerOnce};
+
+let value = String::from("payload");
 let once = BoxBiTransformerOnce::new(move |_: i32, _: bool| value.clone());
+assert_eq!(once.apply(7, false), "payload");
 ```
 
 ```rust
+use qubit_function::{BoxSupplierOnce, SupplierOnce};
+
+let value = String::from("payload");
 let once = BoxSupplierOnce::new(move || value.clone());
+assert_eq!(once.get(), "payload");
 ```
 
 ### 20. StatefulFunction - Stateful Borrowed-Input Function

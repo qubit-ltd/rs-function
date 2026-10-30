@@ -751,15 +751,27 @@ assert_eq!(to_string.apply(&42), "值: 42");
 逐次克隆行为，应分别迁移每个调用点：
 
 ```rust
+use qubit_function::{BoxTransformerOnce, TransformerOnce};
+
+let value = String::from("payload");
 let once = BoxTransformerOnce::new(move |_: i32| value.clone());
+assert_eq!(once.apply(7), "payload");
 ```
 
 ```rust
+use qubit_function::{BiTransformerOnce, BoxBiTransformerOnce};
+
+let value = String::from("payload");
 let once = BoxBiTransformerOnce::new(move |_: i32, _: bool| value.clone());
+assert_eq!(once.apply(7, false), "payload");
 ```
 
 ```rust
+use qubit_function::{BoxSupplierOnce, SupplierOnce};
+
+let value = String::from("payload");
 let once = BoxSupplierOnce::new(move || value.clone());
+assert_eq!(once.get(), "payload");
 ```
 
 ### 20. StatefulFunction - 有状态借用输入函数
