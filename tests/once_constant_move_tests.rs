@@ -89,15 +89,15 @@ fn test_once_constants_do_not_clone_and_reusable_constants_still_clone() {
     let repeated = BoxTransformer::<i32, CloneTracked>::constant(CloneTracked {
         clones: Rc::clone(&clones),
     });
-    let _ = repeated.apply(&0);
-    let _ = repeated.apply(&1);
+    let _ = repeated.apply(0);
+    let _ = repeated.apply(1);
     assert_eq!(clones.get(), 2);
 
     let repeated_binary = BoxBiTransformer::<i32, bool, CloneTracked>::constant(CloneTracked {
         clones: Rc::clone(&clones),
     });
-    let _ = repeated_binary.apply(&0, &false);
-    let _ = repeated_binary.apply(&1, &true);
+    let _ = repeated_binary.apply(0, false);
+    let _ = repeated_binary.apply(1, true);
     assert_eq!(clones.get(), 4);
 
     let repeated_supplier = BoxSupplier::constant(CloneTracked {
@@ -161,17 +161,17 @@ fn test_once_constant_inputs_can_borrow_local_values() {
 fn test_once_constants_keep_name_and_call_paths() {
     let unary = BoxTransformerOnce::<i32, Resource>::constant(Resource("unary".into()))
         .with_name("unary-constant");
-    assert_eq!(unary.name(), "unary-constant");
+    assert_eq!(unary.name(), Some("unary-constant"));
     assert_eq!(unary.apply(7).0, "unary");
 
     let binary = BoxBiTransformerOnce::<i32, bool, Resource>::constant(Resource("binary".into()))
         .with_name("binary-constant");
-    assert_eq!(binary.name(), "binary-constant");
+    assert_eq!(binary.name(), Some("binary-constant"));
     assert_eq!(binary.apply(7, false).0, "binary");
 
     let supplier = BoxSupplierOnce::constant(Resource("supplier".into()))
         .with_name("supplier-constant");
-    assert_eq!(supplier.name(), "supplier-constant");
+    assert_eq!(supplier.name(), Some("supplier-constant"));
     assert_eq!(supplier.get().0, "supplier");
 }
 
