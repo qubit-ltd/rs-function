@@ -11,7 +11,8 @@
 //! Generates Debug and Display trait implementations for Supplier structs
 //!
 //! Generates standard Debug and Display trait implementations for Supplier
-//! structs that have a `name: Option<String>` field.
+//! structs whose `metadata` field provides a `name()` method. The method
+//! returns `Option<String>`; the macro does not require a `name` field.
 //!
 //! # Parameters
 //!
@@ -36,7 +37,8 @@
 /// This macro should be used at the top level (outside of any impl block) as
 /// it generates complete `impl Debug` and `impl Display` blocks for the
 /// specified struct. Generates standard Debug and Display trait implementations
-/// for Supplier structs that have a `name: Option<String>` field.
+/// for Supplier structs whose `metadata` field provides a `name()` method
+/// returning `Option<String>`. No `name` field is required.
 ///
 /// # Parameters
 ///

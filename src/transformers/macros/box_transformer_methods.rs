@@ -21,9 +21,10 @@
 //!   - Two parameters: `BoxBiTransformer<T, U, V>`
 //! * `$conditional_type` - The conditional transformer type for when (e.g.,
 //!   BoxConditionalTransformer)
-//! * `$chained_transformer_trait` - The name of the transformer trait that is
-//!   chained after the execution of this transformer (e.g., Transformer,
-//!   BiTransformer)
+//! * `$chained_transformer_trait` - The trait implemented by the next
+//!   transformer, which receives the preceding transformer’s single return
+//!   value. Its input arity is independent of the preceding transformer’s input
+//!   arity.
 //!
 //! # Parameter Usage Comparison
 //!
@@ -32,9 +33,9 @@
 //! | **Transformer** | `BoxTransformer<T, U>` | BoxConditionalTransformer | Transformer |
 //! | **TransformerOnce** | `BoxTransformerOnce<T, U>` | BoxConditionalTransformerOnce | TransformerOnce |
 //! | **StatefulTransformer** | `BoxStatefulTransformer<T, U>` | BoxConditionalStatefulTransformer | StatefulTransformer |
-//! | **BiTransformer** | `BoxBiTransformer<T, U, V>` | BoxConditionalBiTransformer | BiTransformer |
-//! | **BiTransformerOnce** | `BoxBiTransformerOnce<T, U, V>` | BoxConditionalBiTransformerOnce | BiTransformerOnce |
-//! | **StatefulBiTransformer** | `BoxStatefulBiTransformer<T, U, V>` | BoxConditionalStatefulBiTransformer | StatefulBiTransformer |
+//! | **BiTransformer** | `BoxBiTransformer<T, U, V>` | BoxConditionalBiTransformer | Transformer |
+//! | **BiTransformerOnce** | `BoxBiTransformerOnce<T, U, V>` | BoxConditionalBiTransformerOnce | TransformerOnce |
+//! | **StatefulBiTransformer** | `BoxStatefulBiTransformer<T, U, V>` | BoxConditionalStatefulBiTransformer | StatefulTransformer |
 //!
 //! # Examples
 //!
@@ -50,7 +51,7 @@
 //! // impl_box_transformer_methods!(
 //! //     BoxBiTransformer<T, U, V>,
 //! //     BoxConditionalBiTransformer,
-//! //     BiTransformer
+//! //     Transformer
 //! // );
 //! ```
 
@@ -71,9 +72,10 @@
 ///   - Two parameters: `BoxBiTransformer<T, U, V>`
 /// * `$conditional_type` - The conditional transformer type for when (e.g.,
 ///   BoxConditionalTransformer)
-/// * `$chained_transformer_trait` - The name of the transformer trait that is
-///   chained after the execution of this transformer (e.g., Transformer,
-///   BiTransformer)
+/// * `$chained_transformer_trait` - The trait implemented by the next
+///   transformer, which receives the preceding transformer’s single return
+///   value. Its input arity is independent of the preceding transformer’s input
+///   arity.
 ///
 /// # Parameter Usage Comparison
 ///
@@ -82,9 +84,9 @@
 /// | **Transformer** | `BoxTransformer<T, U>` | BoxConditionalTransformer | Transformer |
 /// | **TransformerOnce** | `BoxTransformerOnce<T, U>` | BoxConditionalTransformerOnce | TransformerOnce |
 /// | **StatefulTransformer** | `BoxStatefulTransformer<T, U>` | BoxConditionalStatefulTransformer | StatefulTransformer |
-/// | **BiTransformer** | `BoxBiTransformer<T, U, V>` | BoxConditionalBiTransformer | BiTransformer |
-/// | **BiTransformerOnce** | `BoxBiTransformerOnce<T, U, V>` | BoxConditionalBiTransformerOnce | BiTransformerOnce |
-/// | **StatefulBiTransformer** | `BoxStatefulBiTransformer<T, U, V>` | BoxConditionalStatefulBiTransformer | StatefulBiTransformer |
+/// | **BiTransformer** | `BoxBiTransformer<T, U, V>` | BoxConditionalBiTransformer | Transformer |
+/// | **BiTransformerOnce** | `BoxBiTransformerOnce<T, U, V>` | BoxConditionalBiTransformerOnce | TransformerOnce |
+/// | **StatefulBiTransformer** | `BoxStatefulBiTransformer<T, U, V>` | BoxConditionalStatefulBiTransformer | StatefulTransformer |
 ///
 /// # Examples
 ///
@@ -100,7 +102,7 @@
 /// // impl_box_transformer_methods!(
 /// //     BoxBiTransformer<T, U, V>,
 /// //     BoxConditionalBiTransformer,
-/// //     BiTransformer
+/// //     Transformer
 /// // );
 /// ```
 macro_rules! impl_box_transformer_methods {
