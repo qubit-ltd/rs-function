@@ -72,8 +72,17 @@ cargo llvm-cov --cobertura --output-path target/llvm-cov/cobertura.xml
 如果只想筛选部分测试，把普通测试过滤参数放在 `--` 后面：
 
 ```bash
-cargo llvm-cov --html --open --test tester_tests -- test_always_true
+cargo llvm-cov --all-features --html --open --test integration_tests -- testers::tester_2_tests::tests::test_always_true
 ```
+
+`integration_tests` 需要 `full` feature，`--all-features` 会启用该 feature。`--` 后的参数是
+libtest 用于匹配测试路径的过滤串，不是 Cargo 测试目标名。
+
+## 编译契约缓存
+
+编译契约测试将 Cargo 构建缓存固定在
+`<checkout>/target/compile-contract/<feature_key>`。source fixture 仍存放在临时目录中，并在每次调用后清理；按 feature 区分的 target 目录则是持久、可复用的缓存。为 checkout 设置
+`CARGO_TARGET_DIR` 不会改变此辅助缓存的位置。正常测试不会清理共享缓存；如需清理，应只针对当前 checkout 内已确认的缓存。辅助逻辑不会扫描历史 `/tmp` 残留目录。
 
 ## 排除规则
 

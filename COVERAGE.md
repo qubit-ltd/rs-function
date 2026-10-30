@@ -75,8 +75,22 @@ cargo llvm-cov --cobertura --output-path target/llvm-cov/cobertura.xml
 To filter tests, pass normal test filters after `--`:
 
 ```bash
-cargo llvm-cov --html --open --test tester_tests -- test_always_true
+cargo llvm-cov --all-features --html --open --test integration_tests -- testers::tester_2_tests::tests::test_always_true
 ```
+
+`integration_tests` requires the `full` feature, which `--all-features` enables. The
+argument after `--` is a libtest filter matched against the test path; it is not a
+Cargo test target name.
+
+## Compile-Contract Cache
+
+Compile-contract tests keep their Cargo build cache at
+`<checkout>/target/compile-contract/<feature_key>`. Their source fixtures remain in
+temporary directories and are removed after each invocation; the feature-specific
+target directory is a persistent, reusable cache. Setting `CARGO_TARGET_DIR` for
+the checkout does not change this helper cache location. Normal test runs do not
+clear the shared cache. If cleanup is needed, target only the confirmed cache under
+the current checkout; the helper does not scan historical `/tmp` leftovers.
 
 ## Exclusions
 
