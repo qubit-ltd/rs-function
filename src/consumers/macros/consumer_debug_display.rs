@@ -7,41 +7,32 @@
 // =============================================================================
 //! # Consumer Debug Display Macro
 //!
-//! Generates Debug and Display trait implementations for Consumer structs
-//!
-//! Generates standard Debug and Display trait implementations for Consumer
-//! structs that have a `name: Option<String>` field.
+//! Generates standard `Debug` and `Display` implementations for consumer
+//! wrappers. `Debug` shows the optional metadata name and a `"<function>"`
+//! placeholder; `Display` shows the wrapper name and its diagnostic name.
 //!
 //! # Parameters
 //!
 //! * `$struct_name` - The struct name
 //! * `$generic` - Generic parameter list (one or more type parameters)
 //!
-//! # Examples
+//! # Example
 //!
 //! ```rust
-//! // For single type parameter
-//! use qubit_function::{BoxBiConsumer, BoxConsumer};
-//! macro_rules! impl_consumer_debug_display {
-//!     ($struct_name:ident < $t:ident >) => {
-//!         let _ = stringify!($struct_name);
-//!     };
-//!     ($struct_name:ident < $t:ident, $u:ident >) => {
-//!         let _ = stringify!($struct_name);
-//!     };
-//! }
-//! impl_consumer_debug_display!(BoxConsumer<i32>);
+//! use qubit_function::BoxConsumer;
 //!
-//! // For two type parameters
-//! impl_consumer_debug_display!(BoxBiConsumer<i32, i32>);
+//! let consumer = BoxConsumer::new_with_name("observe", |_: &i32| {});
+//! assert_eq!(format!("{consumer}"), "BoxConsumer(observe)");
+//! assert_eq!(
+//!     format!("{consumer:?}"),
+//!     "BoxConsumer { name: Some(\"observe\"), function: \"<function>\" }"
+//! );
 //! ```
 
-/// Generates Debug and Display trait implementations for Consumer structs
+/// Generates `Debug` and `Display` implementations for consumer wrappers.
 ///
-/// This macro should be used at the top level (outside of any impl block) as
-/// it generates complete `impl Debug` and `impl Display` blocks for the
-/// specified struct. Generates standard Debug and Display trait implementations
-/// for Consumer structs that have a `name: Option<String>` field.
+/// Use this macro at module scope to generate complete implementations for
+/// the specified struct.
 ///
 /// # Parameters
 ///
@@ -49,24 +40,19 @@
 /// * `$t` - Generic parameter list (one or more type parameters)
 /// * `$u` - Generic parameter list (one or more type parameters)
 ///
-/// # Examples
+/// # Example
 ///
 /// ```rust
-/// // For single type parameter
-/// use qubit_function::{BoxBiConsumer, BoxConsumer};
-/// macro_rules! impl_consumer_debug_display {
-///     ($struct_name:ident < $t:ident >) => {
-///         let _ = stringify!($struct_name);
-///     };
-///     ($struct_name:ident < $t:ident, $u:ident >) => {
-///         let _ = stringify!($struct_name);
-///     };
-/// }
-/// impl_consumer_debug_display!(BoxConsumer<i32>);
+/// use qubit_function::BoxConsumer;
 ///
-/// // For two type parameters
-/// impl_consumer_debug_display!(BoxBiConsumer<i32, i32>);
+/// let consumer = BoxConsumer::new_with_name("observe", |_: &i32| {});
+/// assert_eq!(format!("{consumer}"), "BoxConsumer(observe)");
+/// assert_eq!(
+///     format!("{consumer:?}"),
+///     "BoxConsumer { name: Some(\"observe\"), function: \"<function>\" }"
+/// );
 /// ```
+
 macro_rules! impl_consumer_debug_display {
     // Single generic parameter - Consumer types
     ($struct_name:ident < $t:ident >) => {

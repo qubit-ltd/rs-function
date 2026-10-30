@@ -7,12 +7,9 @@
 // =============================================================================
 //! # Conditional Consumer Debug Display Macro
 //!
-//! Generates Debug and Display trait implementations for Conditional Consumer
-//! structs
-//!
-//! Generates standard Debug and Display trait implementations for Conditional
-//! Consumer structs that have `consumer` and `predicate` fields but no `name`
-//! field.
+//! Generates standard `Debug` and `Display` implementations for conditional
+//! consumer wrappers. Their output uses the stored `consumer` and `predicate`;
+//! each inner wrapper formats its own metadata and callback placeholder.
 //!
 //! # Parameters
 //!
@@ -20,33 +17,28 @@
 //! * `$t` - The first type parameter
 //! * `$u` - The second type parameter, when the struct has two parameters
 //!
-//! # Examples
+//! # Example
 //!
 //! ```rust
-//! use qubit_function::consumers::BoxConditionalBiConsumer;
-//! use qubit_function::consumers::BoxConditionalConsumer;
-//! macro_rules! impl_conditional_consumer_debug_display {
-//!     ($struct_name:ident<$t:ident>) => {
-//!         let _ = core::marker::PhantomData::<$t>;
-//!         let _ = stringify!($struct_name);
-//!     };
-//!     ($struct_name:ident<$t:ident, $u:ident>) => {
-//!         let _ = core::marker::PhantomData::<($t, $u)>;
-//!         let _ = stringify!($struct_name);
-//!     };
-//! }
-//! impl_conditional_consumer_debug_display!(BoxConditionalConsumer<i32>);
-//! impl_conditional_consumer_debug_display!(BoxConditionalBiConsumer<i32, i32>);
+//! use qubit_function::{BoxConsumer, Consumer};
+//!
+//! let conditional = BoxConsumer::new(|_: &i32| {}).when(|value: &i32| *value > 0);
+//! assert_eq!(
+//!     format!("{conditional}"),
+//!     "BoxConditionalConsumer(BoxConsumer, BoxPredicate(unnamed))"
+//! );
+//! assert_eq!(
+//!     format!("{conditional:?}"),
+//!     "BoxConditionalConsumer { consumer: BoxConsumer { name: None, function: \"<function>\" }, predicate: BoxPredicate { name: None, function: \"<function>\" } }"
+//! );
+//! conditional.accept(&1);
 //! ```
 
-/// Generates Debug and Display trait implementations for Conditional Consumer
-/// structs
+/// Generates `Debug` and `Display` implementations for conditional consumer
+/// wrappers.
 ///
-/// This macro should be used at the top level (outside of any impl block) as
-/// it generates complete `impl Debug` and `impl Display` blocks for the
-/// specified struct. Generates standard Debug and Display trait implementations
-/// for Conditional Consumer structs that have `consumer` and `predicate` fields
-/// but no `name` field.
+/// Use this macro at module scope to generate complete implementations from
+/// the wrapper's stored `consumer` and `predicate` fields.
 ///
 /// # Parameters
 ///
@@ -54,27 +46,23 @@
 /// * `$t` - The first type parameter
 /// * `$u` - The second type parameter, when the struct has two parameters
 ///
-/// # Examples
+/// # Example
 ///
 /// ```rust
-/// // For single type parameter
-/// use qubit_function::consumers::BoxConditionalBiConsumer;
-/// use qubit_function::consumers::BoxConditionalConsumer;
-/// macro_rules! impl_conditional_consumer_debug_display {
-///     ($struct_name:ident<$t:ident>) => {
-///         let _ = core::marker::PhantomData::<$t>;
-///         let _ = stringify!($struct_name);
-///     };
-///     ($struct_name:ident<$t:ident, $u:ident>) => {
-///         let _ = core::marker::PhantomData::<($t, $u)>;
-///         let _ = stringify!($struct_name);
-///     };
-/// }
-/// impl_conditional_consumer_debug_display!(BoxConditionalConsumer<i32>);
+/// use qubit_function::{BoxConsumer, Consumer};
 ///
-/// // For two type parameters
-/// impl_conditional_consumer_debug_display!(BoxConditionalBiConsumer<i32, i32>);
+/// let conditional = BoxConsumer::new(|_: &i32| {}).when(|value: &i32| *value > 0);
+/// assert_eq!(
+///     format!("{conditional}"),
+///     "BoxConditionalConsumer(BoxConsumer, BoxPredicate(unnamed))"
+/// );
+/// assert_eq!(
+///     format!("{conditional:?}"),
+///     "BoxConditionalConsumer { consumer: BoxConsumer { name: None, function: \"<function>\" }, predicate: BoxPredicate { name: None, function: \"<function>\" } }"
+/// );
+/// conditional.accept(&1);
 /// ```
+
 macro_rules! impl_conditional_consumer_debug_display {
     // Single generic parameter - Consumer types
     ($struct_name:ident < $t:ident >) => {

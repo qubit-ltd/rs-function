@@ -101,6 +101,63 @@ fn main() {
 }
 ```
 
+An application can store an optional hook and notify it after processing an
+event. The application calls `notify_processed`; the library only stores,
+shares, and invokes the callback. `ArcConsumer` expresses the thread-safe
+callback bounds. When no hook is registered, the application skips the
+notification. This example shows the wiring only; it does not implement CAS or
+HTTP integration, scheduling, error recovery, or a production observability
+system:
+
+```rust
+use std::sync::Arc;
+use std::sync::atomic::AtomicUsize;
+use std::sync::atomic::Ordering;
+
+use qubit_function::ArcConsumer;
+use qubit_function::Consumer;
+
+struct ProcessedEvent {
+    records: usize,
+}
+
+#[derive(Default)]
+struct ProcessingHooks {
+    on_processed: Option<ArcConsumer<ProcessedEvent>>,
+}
+
+impl ProcessingHooks {
+    fn on_processed<C>(mut self, callback: C) -> Self
+    where
+        C: Consumer<ProcessedEvent> + Send + Sync + 'static,
+    {
+        self.on_processed = Some(ArcConsumer::new(callback));
+        self
+    }
+
+    fn notify_processed(&self, records: usize) {
+        if let Some(callback) = &self.on_processed {
+            callback.accept(&ProcessedEvent { records });
+        }
+    }
+}
+
+fn main() {
+    let completed = Arc::new(AtomicUsize::new(0));
+    let observed = Arc::clone(&completed);
+    let hooks = ProcessingHooks::default().on_processed(move |event: &ProcessedEvent| {
+        observed.fetch_add(event.records, Ordering::SeqCst);
+    });
+    hooks.notify_processed(3);
+    hooks.notify_processed(2);
+    assert_eq!(completed.load(Ordering::SeqCst), 5);
+
+    let disabled_hooks = ProcessingHooks::default();
+    disabled_hooks.notify_processed(7);
+    assert_eq!(completed.load(Ordering::SeqCst), 5);
+}
+```
+
 Use a wrapper when a callback needs type erasure, storage, sharing, naming, or
 composition. Existing wrappers require captured values to be `'static`; this
 does not mean the wrapper must live for the whole process or that its input
@@ -713,12 +770,27 @@ Computes a result from a borrowed input once.
 **Implementations**:
 - `BoxFunctionOnce<T, R>` - Single ownership, one-time use
 
-`BoxFunctionOnce::constant`, `BoxBiFunctionOnce::constant`, and
-`BoxBiMutatingFunctionOnce::constant` move their value into the one-shot
-function and support return types that do not implement `Clone`. Reusable
-constant functions such as `BoxFunction::constant` still clone the value on
-each call. To preserve the previous cloning behavior, use an explicit closure
-that calls `value.clone()`.
+`BoxTransformerOnce::constant`, `BoxBiTransformerOnce::constant`, and
+`BoxSupplierOnce::constant` move the value into the one-shot wrapper and return
+that original value when called, so the value need not implement `Clone`.
+Reusable constants such as `BoxTransformer::constant`,
+`BoxBiTransformer::constant`, and `BoxSupplier::constant` still clone on each
+call. The Once behavior removes the previous clone side effects: the value is
+returned to the caller instead of a clone, and if the wrapper is dropped
+without being called, its captured value is dropped then. To preserve the old
+per-call cloning behavior, migrate each call site independently:
+
+```rust
+let once = BoxTransformerOnce::new(move |_: i32| value.clone());
+```
+
+```rust
+let once = BoxBiTransformerOnce::new(move |_: i32, _: bool| value.clone());
+```
+
+```rust
+let once = BoxSupplierOnce::new(move || value.clone());
+```
 
 ### 20. StatefulFunction - Stateful Borrowed-Input Function
 

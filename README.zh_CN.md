@@ -95,6 +95,60 @@ fn main() {
 }
 ```
 
+应用可以保存一个可选钩子，并在事件处理完成后通知它。由应用调用
+`notify_processed`；库只负责保存、共享和调用回调。`ArcConsumer` 的类型约束表达
+了线程安全回调要求。没有注册钩子时，应用会跳过通知。此示例只演示接线，不包含
+CAS/HTTP 集成、调度、错误恢复或完整的生产可观测系统：
+
+```rust
+use std::sync::Arc;
+use std::sync::atomic::AtomicUsize;
+use std::sync::atomic::Ordering;
+
+use qubit_function::ArcConsumer;
+use qubit_function::Consumer;
+
+struct ProcessedEvent {
+    records: usize,
+}
+
+#[derive(Default)]
+struct ProcessingHooks {
+    on_processed: Option<ArcConsumer<ProcessedEvent>>,
+}
+
+impl ProcessingHooks {
+    fn on_processed<C>(mut self, callback: C) -> Self
+    where
+        C: Consumer<ProcessedEvent> + Send + Sync + 'static,
+    {
+        self.on_processed = Some(ArcConsumer::new(callback));
+        self
+    }
+
+    fn notify_processed(&self, records: usize) {
+        if let Some(callback) = &self.on_processed {
+            callback.accept(&ProcessedEvent { records });
+        }
+    }
+}
+
+fn main() {
+    let completed = Arc::new(AtomicUsize::new(0));
+    let observed = Arc::clone(&completed);
+    let hooks = ProcessingHooks::default().on_processed(move |event: &ProcessedEvent| {
+        observed.fetch_add(event.records, Ordering::SeqCst);
+    });
+    hooks.notify_processed(3);
+    hooks.notify_processed(2);
+    assert_eq!(completed.load(Ordering::SeqCst), 5);
+
+    let disabled_hooks = ProcessingHooks::default();
+    disabled_hooks.notify_processed(7);
+    assert_eq!(completed.load(Ordering::SeqCst), 5);
+}
+```
+
 需要类型擦除、保存、共享、命名或组合回调时，再使用包装器。现有包装器要求捕获值满足
 `'static`；这不表示包装器必须运行到进程结束，也不表示输入必须是 `'static`：
 
@@ -689,10 +743,24 @@ assert_eq!(to_string.apply(&42), "值: 42");
 **实现类型**:
 - `BoxFunctionOnce<T, R>` - 单一所有权,一次性使用
 
-`BoxFunctionOnce::constant`、`BoxBiFunctionOnce::constant` 和
-`BoxBiMutatingFunctionOnce::constant` 会将值移动到一次性函数中，因此返回类型无需实现
-`Clone`。`BoxFunction::constant` 等可重复调用的常量函数仍会在每次调用时克隆值。
-如果要保留旧的克隆行为，可使用显式调用 `value.clone()` 的闭包。
+`BoxTransformerOnce::constant`、`BoxBiTransformerOnce::constant` 和
+`BoxSupplierOnce::constant` 会把值移动到一次性包装器中，调用时返回原值，因此返回值无需
+实现 `Clone`。`BoxTransformer::constant`、`BoxBiTransformer::constant` 和
+`BoxSupplier::constant` 等可重复调用的常量仍会在每次调用时克隆值。Once 行为移除了旧有的
+克隆副作用：调用后原值交给调用方；若包装器未调用就被丢弃，捕获值会在此时析构。要保留旧的
+逐次克隆行为，应分别迁移每个调用点：
+
+```rust
+let once = BoxTransformerOnce::new(move |_: i32| value.clone());
+```
+
+```rust
+let once = BoxBiTransformerOnce::new(move |_: i32, _: bool| value.clone());
+```
+
+```rust
+let once = BoxSupplierOnce::new(move || value.clone());
+```
 
 ### 20. StatefulFunction - 有状态借用输入函数
 
