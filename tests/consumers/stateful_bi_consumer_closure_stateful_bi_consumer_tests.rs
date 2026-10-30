@@ -10,21 +10,16 @@
 
 #[cfg(test)]
 mod closure_stateful_bi_consumer_tests {
-    use std::sync::Arc;
-    use std::sync::Mutex;
-
-    use qubit_function::BiConsumerOnce;
+    use qubit_function::StatefulBiConsumer;
 
     // Test accept() on closure
     #[test]
-    fn test_closure_accept() {
-        let log = Arc::new(Mutex::new(Vec::new()));
-        let l = log.clone();
-        let closure = move |x: &i32, y: &i32| {
-            l.lock().expect("mutex should not be poisoned").push(*x + *y);
-        };
-        closure.accept(&5, &3);
-        assert_eq!(*log.lock().expect("mutex should not be poisoned"), vec![8]);
+    fn test_closure_accept_updates_captured_state() {
+        let mut sums = Vec::new();
+        let mut consumer = |left: &i32, right: &i32| sums.push(left + right);
+        consumer.accept(&5, &3);
+        consumer.accept(&2, &4);
+        assert_eq!(sums, vec![8, 6]);
     }
 }
 

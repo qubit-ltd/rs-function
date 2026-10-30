@@ -6,15 +6,17 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use std::any::type_name;
-
 use qubit_function::BoxConditionalFunctionOnce;
+use qubit_function::BoxFunctionOnce;
+use qubit_function::FunctionOnce;
 
 #[test]
-fn test_box_conditional_function_once_observable_behavior() {
-    let actual_type_name = type_name::<BoxConditionalFunctionOnce<i32, i32>>();
-    assert!(
-        actual_type_name.contains("BoxConditionalFunctionOnce"),
-        "{actual_type_name}"
-    );
+fn test_box_conditional_function_once_selects_branch() {
+    let apply = |value: i32| {
+        let function = BoxFunctionOnce::new(|value: &i32| value * 2);
+        let conditional: BoxConditionalFunctionOnce<i32, i32> = function.when(|value: &i32| *value > 0);
+        conditional.or_else(|value: &i32| -value).apply(&value)
+    };
+    assert_eq!(apply(5), 10);
+    assert_eq!(apply(-5), 5);
 }

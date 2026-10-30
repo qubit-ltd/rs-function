@@ -6,12 +6,18 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use std::any::type_name as type_name_of;
-
 use qubit_function::ArcStatefulSupplier;
+use qubit_function::StatefulSupplier;
 
 #[test]
-fn test_arc_stateful_supplier_observable_behavior() {
-    let type_name = type_name_of::<ArcStatefulSupplier<i32>>();
-    assert!(type_name.contains("ArcStatefulSupplier"), "{type_name}");
+fn test_arc_stateful_supplier_clones_share_mutable_callback_state() {
+    let mut count = 0;
+    let mut supplier = ArcStatefulSupplier::new(move || {
+        count += 1;
+        count
+    });
+    let mut cloned = supplier.clone();
+
+    assert_eq!(supplier.get(), 1);
+    assert_eq!(cloned.get(), 2);
 }

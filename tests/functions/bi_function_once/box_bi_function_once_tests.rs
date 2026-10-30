@@ -6,10 +6,11 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
+use qubit_function::BiFunctionOnce;
 use qubit_function::BoxBiFunctionOnce;
 
 #[test]
-fn test_box_bi_function_once_observable_behavior() {
-    let type_name = std::any::type_name::<BoxBiFunctionOnce<i32, i32, i32>>();
-    assert!(type_name.contains("BoxBiFunctionOnce"), "{type_name}");
+fn test_box_bi_function_once_invokes_owned_callback() {
+    let function = BoxBiFunctionOnce::new(|left: &i32, right: &i32| left + right);
+    assert_eq!(function.apply(&6, &4), 10);
 }

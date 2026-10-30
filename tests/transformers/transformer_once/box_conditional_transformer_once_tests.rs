@@ -6,10 +6,20 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::BoxConditionalTransformerOnce;
+use qubit_function::BoxTransformerOnce;
+use qubit_function::TransformerOnce;
 
 #[test]
-fn test_box_conditional_transformer_once_observable_behavior() {
-    let type_name = std::any::type_name::<BoxConditionalTransformerOnce<i32, i32>>();
-    assert!(type_name.contains("BoxConditionalTransformerOnce"), "{type_name}");
+fn test_box_conditional_transformer_once_selects_matching_branch() {
+    let conditional = BoxTransformerOnce::new(|value: i32| value * 2)
+        .when(|value: &i32| *value > 0)
+        .or_else(|value: i32| -value);
+
+    assert_eq!(conditional.apply(5), 10);
+
+    let conditional = BoxTransformerOnce::new(|value: i32| value * 2)
+        .when(|value: &i32| *value > 0)
+        .or_else(|value: i32| -value);
+
+    assert_eq!(conditional.apply(-5), 5);
 }

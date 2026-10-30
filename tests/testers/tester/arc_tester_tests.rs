@@ -18,12 +18,6 @@ impl Tester for ArcAlwaysTrue {
 }
 
 #[test]
-fn test_arc_tester_observable_behavior() {
-    let type_name = std::any::type_name::<ArcTester>();
-    assert!(type_name.contains("ArcTester"), "{type_name}");
-}
-
-#[test]
 fn test_arc_tester_not_operator_observable_behavior() {
     let owned_negated = !ArcTester::new(|| true);
     assert!(!owned_negated.test());

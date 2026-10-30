@@ -7,9 +7,16 @@
 // =============================================================================
 
 use qubit_function::BoxStatefulTransformer;
+use qubit_function::StatefulTransformer;
 
 #[test]
-fn test_box_stateful_transformer_observable_behavior() {
-    let type_name = std::any::type_name::<BoxStatefulTransformer<i32, i32>>();
-    assert!(type_name.contains("BoxStatefulTransformer"), "{type_name}");
+fn test_box_stateful_transformer_retains_mutable_callback_state() {
+    let mut count = 0;
+    let mut transformer = BoxStatefulTransformer::new(move |value: i32| {
+        count += 1;
+        value + count
+    });
+
+    assert_eq!(transformer.apply(10), 11);
+    assert_eq!(transformer.apply(10), 12);
 }

@@ -7,9 +7,14 @@
 // =============================================================================
 
 use qubit_function::BoxSupplierOnce;
+use qubit_function::SupplierOnce;
 
 #[test]
-fn test_box_supplier_once_observable_behavior() {
-    let type_name = std::any::type_name::<BoxSupplierOnce<i32>>();
-    assert!(type_name.contains("BoxSupplierOnce"), "{type_name}");
+fn test_box_supplier_once_moves_non_clone_capture_into_result() {
+    struct Payload(&'static str);
+
+    let payload = Payload("owned");
+    let supplier = BoxSupplierOnce::new(move || payload);
+
+    assert_eq!(supplier.get().0, "owned");
 }

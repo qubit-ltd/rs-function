@@ -11,8 +11,9 @@ use qubit_function::RcPredicate;
 
 #[test]
 fn test_rc_predicate_observable_behavior() {
-    let type_name = std::any::type_name::<RcPredicate<i32>>();
-    assert!(type_name.contains("RcPredicate"), "{type_name}");
+    let predicate = RcPredicate::new(|value: &i32| *value % 2 == 0);
+    assert!(predicate.test(&4));
+    assert!(!predicate.test(&3));
 }
 
 #[test]

@@ -9,7 +9,6 @@
 use std::sync::Arc;
 use std::sync::Mutex;
 
-use qubit_function::ArcConditionalStatefulBiConsumer;
 use qubit_function::ArcStatefulBiConsumer;
 use qubit_function::StatefulBiConsumer;
 
@@ -103,10 +102,4 @@ fn test_arc_conditional_stateful_bi_consumer_formats_debug_and_display() {
     assert!(debug_output.contains("consumer"));
     assert!(debug_output.contains("predicate"));
     assert!(display_output.contains("ArcConditionalStatefulBiConsumer"));
-}
-
-#[test]
-fn test_arc_conditional_stateful_bi_consumer_observable_behavior() {
-    let type_name = std::any::type_name::<ArcConditionalStatefulBiConsumer<i32, i32>>();
-    assert!(type_name.contains("ArcConditionalStatefulBiConsumer"), "{type_name}");
 }

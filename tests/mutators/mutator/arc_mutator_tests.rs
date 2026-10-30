@@ -201,12 +201,3 @@ mod test_arc_mutator {
         assert_eq!(value, 6);
     }
 }
-
-// ============================================================================
-// ArcMutator Type Name Test
-// ============================================================================
-#[test]
-fn test_arc_mutator_observable_behavior() {
-    let type_name = std::any::type_name::<ArcMutator<i32>>();
-    assert!(type_name.contains("ArcMutator"), "{type_name}");
-}

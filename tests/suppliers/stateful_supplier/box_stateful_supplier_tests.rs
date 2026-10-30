@@ -7,9 +7,16 @@
 // =============================================================================
 
 use qubit_function::BoxStatefulSupplier;
+use qubit_function::StatefulSupplier;
 
 #[test]
-fn test_box_stateful_supplier_observable_behavior() {
-    let type_name = std::any::type_name::<BoxStatefulSupplier<i32>>();
-    assert!(type_name.contains("BoxStatefulSupplier"), "{type_name}");
+fn test_box_stateful_supplier_retains_mutable_callback_state() {
+    let mut count = 0;
+    let mut supplier = BoxStatefulSupplier::new(move || {
+        count += 1;
+        count
+    });
+
+    assert_eq!(supplier.get(), 1);
+    assert_eq!(supplier.get(), 2);
 }

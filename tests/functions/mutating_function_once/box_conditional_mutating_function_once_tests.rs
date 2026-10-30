@@ -7,9 +7,24 @@
 // =============================================================================
 
 use qubit_function::BoxConditionalMutatingFunctionOnce;
+use qubit_function::BoxMutatingFunctionOnce;
+use qubit_function::MutatingFunctionOnce;
 
 #[test]
-fn test_box_conditional_mutating_function_once_observable_behavior() {
-    let type_name = std::any::type_name::<BoxConditionalMutatingFunctionOnce<i32, i32>>();
-    assert!(type_name.contains("BoxConditionalMutatingFunctionOnce"), "{type_name}");
+fn test_box_conditional_mutating_function_once_selects_branch() {
+    let apply = |mut value: i32| {
+        let function = BoxMutatingFunctionOnce::new(|value: &mut i32| {
+            *value += 2;
+            *value
+        });
+        let conditional: BoxConditionalMutatingFunctionOnce<i32, i32> = function.when(|value: &i32| *value > 0);
+        conditional
+            .or_else(|value: &mut i32| {
+                *value -= 2;
+                *value
+            })
+            .apply(&mut value)
+    };
+    assert_eq!(apply(5), 7);
+    assert_eq!(apply(-5), -7);
 }

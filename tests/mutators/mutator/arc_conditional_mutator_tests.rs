@@ -7,9 +7,19 @@
 // =============================================================================
 
 use qubit_function::ArcConditionalMutator;
+use qubit_function::ArcMutator;
+use qubit_function::Mutator;
 
 #[test]
-fn test_arc_conditional_mutator_observable_behavior() {
-    let type_name = std::any::type_name::<ArcConditionalMutator<i32>>();
-    assert!(type_name.contains("ArcConditionalMutator"), "{type_name}");
+fn test_arc_conditional_mutator_applies_only_when_predicate_matches() {
+    let mutator = ArcMutator::new(|value: &mut i32| *value += 1);
+    let conditional: ArcConditionalMutator<i32> = mutator.when(|value: &i32| *value > 0);
+
+    let mut accepted = 1;
+    conditional.apply(&mut accepted);
+    assert_eq!(accepted, 2);
+
+    let mut rejected = 0;
+    conditional.apply(&mut rejected);
+    assert_eq!(rejected, 0);
 }

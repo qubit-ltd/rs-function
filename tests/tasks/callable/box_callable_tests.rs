@@ -7,9 +7,11 @@
 // =============================================================================
 
 use qubit_function::BoxCallable;
+use qubit_function::Callable;
 
 #[test]
-fn test_box_callable_observable_behavior() {
-    let type_name = std::any::type_name::<BoxCallable<i32, std::io::Error>>();
-    assert!(type_name.contains("BoxCallable"), "{type_name}");
+fn test_box_callable_returns_success_value() {
+    let mut callable = BoxCallable::new(|| Ok::<_, std::io::Error>(42));
+
+    assert_eq!(callable.call().expect("call should succeed"), 42);
 }

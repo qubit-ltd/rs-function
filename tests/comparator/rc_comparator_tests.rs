@@ -19,12 +19,6 @@ impl Comparator<i32> for RcNaturalComparator {
     }
 }
 
-#[test]
-fn test_rc_comparator_observable_behavior() {
-    let type_name = std::any::type_name::<RcComparator<i32>>();
-    assert!(type_name.contains("RcComparator"), "{type_name}");
-}
-
 /// Verifies naming, diagnostics, and clone-independent metadata updates.
 #[test]
 fn test_rc_comparator_name_and_diagnostics() {

@@ -6,10 +6,18 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
+use std::sync::Arc;
+use std::sync::atomic::AtomicI32;
+use std::sync::atomic::Ordering;
+
 use qubit_function::BoxConsumer;
+use qubit_function::Consumer;
 
 #[test]
-fn test_box_consumer_observable_behavior() {
-    let type_name = std::any::type_name::<BoxConsumer<i32>>();
-    assert!(type_name.contains("BoxConsumer"), "{type_name}");
+fn test_box_consumer_accepts_input() {
+    let consumed = Arc::new(AtomicI32::new(0));
+    let captured = Arc::clone(&consumed);
+    let consumer = BoxConsumer::new(move |value: &i32| captured.store(*value, Ordering::SeqCst));
+    consumer.accept(&7);
+    assert_eq!(consumed.load(Ordering::SeqCst), 7);
 }

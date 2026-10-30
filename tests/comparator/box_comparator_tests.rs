@@ -6,7 +6,6 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use std::any::type_name;
 use std::cmp::Ordering;
 
 use qubit_function::BoxComparator;
@@ -18,12 +17,6 @@ impl Comparator<i32> for BoxNaturalComparator {
     fn compare(&self, left: &i32, right: &i32) -> Ordering {
         left.cmp(right)
     }
-}
-
-#[test]
-fn test_box_comparator_observable_behavior() {
-    let comparator_type_name = type_name::<BoxComparator<i32>>();
-    assert!(comparator_type_name.contains("BoxComparator"), "{comparator_type_name}");
 }
 
 /// Verifies the complete diagnostic metadata contract of `BoxComparator`.

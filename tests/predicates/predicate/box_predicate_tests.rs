@@ -7,9 +7,11 @@
 // =============================================================================
 
 use qubit_function::BoxPredicate;
+use qubit_function::Predicate;
 
 #[test]
-fn test_box_predicate_observable_behavior() {
-    let type_name = std::any::type_name::<BoxPredicate<i32>>();
-    assert!(type_name.contains("BoxPredicate"), "{type_name}");
+fn test_box_predicate_evaluates_values() {
+    let predicate = BoxPredicate::new(|value: &i32| *value > 0);
+    assert!(predicate.test(&1));
+    assert!(!predicate.test(&0));
 }

@@ -6,10 +6,11 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
+use qubit_function::BiFunction;
 use qubit_function::RcBiFunction;
 
 #[test]
-fn test_rc_bi_function_observable_behavior() {
-    let type_name = std::any::type_name::<RcBiFunction<i32, i32, i32>>();
-    assert!(type_name.contains("RcBiFunction"), "{type_name}");
+fn test_rc_bi_function_applies_shared_callback() {
+    let function = RcBiFunction::new(|left: &i32, right: &i32| left - right);
+    assert_eq!(function.apply(&9, &4), 5);
 }

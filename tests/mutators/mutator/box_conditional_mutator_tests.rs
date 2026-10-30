@@ -7,9 +7,19 @@
 // =============================================================================
 
 use qubit_function::BoxConditionalMutator;
+use qubit_function::BoxMutator;
+use qubit_function::Mutator;
 
 #[test]
-fn test_box_conditional_mutator_observable_behavior() {
-    let type_name = std::any::type_name::<BoxConditionalMutator<i32>>();
-    assert!(type_name.contains("BoxConditionalMutator"), "{type_name}");
+fn test_box_conditional_mutator_applies_only_when_predicate_matches() {
+    let mutator = BoxMutator::new(|value: &mut i32| *value += 1);
+    let conditional: BoxConditionalMutator<i32> = mutator.when(|value: &i32| *value > 0);
+
+    let mut accepted = 1;
+    conditional.apply(&mut accepted);
+    assert_eq!(accepted, 2);
+
+    let mut rejected = 0;
+    conditional.apply(&mut rejected);
+    assert_eq!(rejected, 0);
 }

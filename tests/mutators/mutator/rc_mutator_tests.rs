@@ -6,10 +6,13 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
+use qubit_function::Mutator;
 use qubit_function::RcMutator;
 
 #[test]
-fn test_rc_mutator_observable_behavior() {
-    let type_name = std::any::type_name::<RcMutator<i32>>();
-    assert!(type_name.contains("RcMutator"), "{type_name}");
+fn test_rc_mutator_applies_to_value() {
+    let mutator = RcMutator::new(|value: &mut i32| *value *= 2);
+    let mut value = 21;
+    mutator.apply(&mut value);
+    assert_eq!(value, 42);
 }

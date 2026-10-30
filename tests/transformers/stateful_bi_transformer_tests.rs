@@ -342,9 +342,10 @@ fn test_arc_stateful_bi_transformer_thread_safe() {
     let result1 = handle1.join().expect("thread should not panic");
     let result2 = handle2.join().expect("thread should not panic");
 
-    // Results depend on execution order, but both should be valid
-    assert!((31..=32).contains(&result1));
-    assert!((11..=12).contains(&result2));
+    assert!(
+        matches!((result1, result2), (31, 12) | (32, 11)),
+        "shared counter must advance once per call; got ({result1}, {result2})",
+    );
 }
 
 // ============================================================================

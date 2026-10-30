@@ -11,8 +11,9 @@ use qubit_function::Predicate;
 
 #[test]
 fn test_arc_predicate_observable_behavior() {
-    let type_name = std::any::type_name::<ArcPredicate<i32>>();
-    assert!(type_name.contains("ArcPredicate"), "{type_name}");
+    let predicate = ArcPredicate::new(|value: &i32| *value % 2 == 0);
+    assert!(predicate.test(&4));
+    assert!(!predicate.test(&3));
 }
 
 #[test]

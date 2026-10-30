@@ -7,9 +7,14 @@
 // =============================================================================
 
 use qubit_function::BoxCallableOnce;
+use qubit_function::CallableOnce;
 
 #[test]
-fn test_box_callable_once_observable_behavior() {
-    let type_name = std::any::type_name::<BoxCallableOnce<i32, std::io::Error>>();
-    assert!(type_name.contains("BoxCallableOnce"), "{type_name}");
+fn test_box_callable_once_moves_non_clone_capture() {
+    struct Payload(&'static str);
+
+    let payload = Payload("owned");
+    let callable = BoxCallableOnce::new(move || Ok::<_, std::io::Error>(payload));
+
+    assert_eq!(callable.call_once().expect("call should succeed").0, "owned");
 }

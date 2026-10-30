@@ -7,9 +7,15 @@
 // =============================================================================
 
 use qubit_function::ArcBiMutatingFunction;
+use qubit_function::BiMutatingFunction;
 
 #[test]
-fn test_arc_bi_mutating_function_observable_behavior() {
-    let type_name = std::any::type_name::<ArcBiMutatingFunction<i32, i32, i32>>();
-    assert!(type_name.contains("ArcBiMutatingFunction"), "{type_name}");
+fn test_arc_bi_mutating_function_mutates_inputs() {
+    let function = ArcBiMutatingFunction::new(|left: &mut i32, right: &mut i32| {
+        *left += *right;
+        *left
+    });
+    let (mut left, mut right) = (5, 3);
+    assert_eq!(function.apply(&mut left, &mut right), 8);
+    assert_eq!((left, right), (8, 3));
 }

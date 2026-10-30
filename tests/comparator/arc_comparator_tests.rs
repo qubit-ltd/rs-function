@@ -19,12 +19,6 @@ impl Comparator<i32> for ArcNaturalComparator {
     }
 }
 
-#[test]
-fn test_arc_comparator_observable_behavior() {
-    let type_name = std::any::type_name::<ArcComparator<i32>>();
-    assert!(type_name.contains("ArcComparator"), "{type_name}");
-}
-
 /// Verifies naming, diagnostics, and clone-independent metadata updates.
 #[test]
 fn test_arc_comparator_name_and_diagnostics() {

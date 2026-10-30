@@ -7,9 +7,15 @@
 // =============================================================================
 
 use qubit_function::ArcMutatingFunction;
+use qubit_function::MutatingFunction;
 
 #[test]
-fn test_arc_mutating_function_observable_behavior() {
-    let type_name = std::any::type_name::<ArcMutatingFunction<i32, i32>>();
-    assert!(type_name.contains("ArcMutatingFunction"), "{type_name}");
+fn test_arc_mutating_function_mutates_input() {
+    let function = ArcMutatingFunction::new(|value: &mut i32| {
+        *value += 2;
+        *value
+    });
+    let mut value = 5;
+    assert_eq!(function.apply(&mut value), 7);
+    assert_eq!(value, 7);
 }

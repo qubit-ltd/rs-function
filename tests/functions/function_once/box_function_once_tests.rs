@@ -6,12 +6,11 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use std::any::type_name;
-
 use qubit_function::BoxFunctionOnce;
+use qubit_function::FunctionOnce;
 
 #[test]
-fn test_box_function_once_observable_behavior() {
-    let actual_type_name = type_name::<BoxFunctionOnce<i32, i32>>();
-    assert!(actual_type_name.contains("BoxFunctionOnce"), "{actual_type_name}");
+fn test_box_function_once_invokes_owned_callback() {
+    let function = BoxFunctionOnce::new(|value: &i32| value * 2);
+    assert_eq!(function.apply(&6), 12);
 }

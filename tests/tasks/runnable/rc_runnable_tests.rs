@@ -6,13 +6,20 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use std::any::type_name;
 use std::io::Error;
 
 use qubit_function::RcRunnable;
+use qubit_function::Runnable;
 
 #[test]
-fn test_rc_runnable_observable_behavior() {
-    let type_name = type_name::<RcRunnable<Error>>();
-    assert!(type_name.contains("RcRunnable"), "{type_name}");
+fn test_rc_runnable_executes_callback() {
+    let count = std::rc::Rc::new(std::cell::Cell::new(0));
+    let captured_count = std::rc::Rc::clone(&count);
+    let mut runnable = RcRunnable::<Error>::new(move || {
+        captured_count.set(captured_count.get() + 1);
+        Ok(())
+    });
+
+    runnable.run().expect("task should succeed");
+    assert_eq!(count.get(), 1);
 }

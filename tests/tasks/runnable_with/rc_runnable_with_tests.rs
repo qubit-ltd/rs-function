@@ -6,12 +6,17 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use std::any::type_name;
-
 use qubit_function::RcRunnableWith;
+use qubit_function::RunnableWith;
 
 #[test]
-fn test_rc_runnable_with_observable_behavior() {
-    let type_name = type_name::<RcRunnableWith<i32, std::io::Error>>();
-    assert!(type_name.contains("RcRunnableWith"), "{type_name}");
+fn test_rc_runnable_with_mutates_input() {
+    let mut runnable = RcRunnableWith::new(|value: &mut i32| {
+        *value += 1;
+        Ok::<_, std::io::Error>(())
+    });
+    let mut input = 41;
+
+    runnable.run_with(&mut input).expect("task should succeed");
+    assert_eq!(input, 42);
 }

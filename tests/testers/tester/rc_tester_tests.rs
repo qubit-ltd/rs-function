@@ -18,12 +18,6 @@ impl Tester for RcAlwaysTrue {
 }
 
 #[test]
-fn test_rc_tester_observable_behavior() {
-    let type_name = std::any::type_name::<RcTester>();
-    assert!(type_name.contains("RcTester"), "{type_name}");
-}
-
-#[test]
 fn test_rc_tester_not_operator_observable_behavior() {
     let owned_negated = !RcTester::new(|| true);
     assert!(!owned_negated.test());

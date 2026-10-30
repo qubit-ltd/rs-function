@@ -6,11 +6,13 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::BoxFunction;
+use qubit_function::ArcFunction;
 use qubit_function::Function;
 
 #[test]
 fn test_shared_function_methods_observable_behavior() {
-    let function = BoxFunction::new(|value: &i32| value + 1);
-    assert_eq!(function.apply(&41), 42);
+    let double = ArcFunction::new(|value: &i32| value * 2);
+    let to_string = ArcFunction::new(|value: &i32| value.to_string());
+    let chained = double.and_then(to_string);
+    assert_eq!(chained.apply(&21), "42");
 }

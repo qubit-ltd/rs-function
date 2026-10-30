@@ -6,15 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::ArcConditionalTransformer;
 use qubit_function::ArcTransformer;
 use qubit_function::Transformer;
-
-#[test]
-fn test_arc_conditional_transformer_observable_behavior() {
-    let type_name = std::any::type_name::<ArcConditionalTransformer<i32, i32>>();
-    assert!(type_name.contains("ArcConditionalTransformer"), "{type_name}");
-}
 
 #[test]
 fn test_arc_conditional_transformer_when_or_else() {

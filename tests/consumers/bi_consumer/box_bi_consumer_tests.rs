@@ -6,10 +6,18 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
+use std::sync::Arc;
+use std::sync::atomic::AtomicI32;
+use std::sync::atomic::Ordering;
+
+use qubit_function::BiConsumer;
 use qubit_function::BoxBiConsumer;
 
 #[test]
-fn test_box_bi_consumer_observable_behavior() {
-    let type_name = std::any::type_name::<BoxBiConsumer<i32, i32>>();
-    assert!(type_name.contains("BoxBiConsumer"), "{type_name}");
+fn test_box_bi_consumer_accepts_inputs() {
+    let sum = Arc::new(AtomicI32::new(0));
+    let captured = Arc::clone(&sum);
+    let consumer = BoxBiConsumer::new(move |left: &i32, right: &i32| captured.store(left + right, Ordering::SeqCst));
+    consumer.accept(&5, &3);
+    assert_eq!(sum.load(Ordering::SeqCst), 8);
 }

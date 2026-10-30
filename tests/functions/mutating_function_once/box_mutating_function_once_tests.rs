@@ -7,9 +7,15 @@
 // =============================================================================
 
 use qubit_function::BoxMutatingFunctionOnce;
+use qubit_function::MutatingFunctionOnce;
 
 #[test]
-fn test_box_mutating_function_once_observable_behavior() {
-    let type_name = std::any::type_name::<BoxMutatingFunctionOnce<i32, i32>>();
-    assert!(type_name.contains("BoxMutatingFunctionOnce"), "{type_name}");
+fn test_box_mutating_function_once_mutates_input() {
+    let function = BoxMutatingFunctionOnce::new(|value: &mut i32| {
+        *value *= 2;
+        *value
+    });
+    let mut value = 6;
+    assert_eq!(function.apply(&mut value), 12);
+    assert_eq!(value, 12);
 }

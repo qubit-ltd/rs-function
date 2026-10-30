@@ -11,8 +11,22 @@ use qubit_function::Mutator;
 
 #[test]
 fn test_conditional_mutator_applies_mutation() {
-    let mutator = BoxMutator::new(|value: &mut i32| *value += 1);
+    let conditional = BoxMutator::new(|value: &mut i32| *value += 1).when(|value: &i32| *value > 0);
+
+    let debug = format!("{conditional:?}");
+    assert!(debug.starts_with("BoxConditionalMutator {"), "{debug}");
+    assert!(debug.contains("mutator:"), "{debug}");
+    assert!(debug.contains("predicate:"), "{debug}");
+    assert_eq!(
+        format!("{conditional}"),
+        "BoxConditionalMutator(BoxMutator, BoxPredicate(unnamed))"
+    );
+
     let mut value = 41;
-    mutator.apply(&mut value);
+    conditional.apply(&mut value);
     assert_eq!(value, 42);
+
+    let mut rejected = 0;
+    conditional.apply(&mut rejected);
+    assert_eq!(rejected, 0);
 }

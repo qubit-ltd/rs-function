@@ -17,12 +17,6 @@ impl Tester for BoxAlwaysTrue {
     }
 }
 
-#[test]
-fn test_box_tester_observable_behavior() {
-    let type_name = std::any::type_name::<BoxTester>();
-    assert!(type_name.contains("BoxTester"), "{type_name}");
-}
-
 /// Verifies naming and diagnostic formatting for `BoxTester`.
 #[test]
 fn test_box_tester_name_and_diagnostics() {
