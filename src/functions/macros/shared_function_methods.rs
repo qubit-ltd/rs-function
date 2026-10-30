@@ -252,8 +252,8 @@ macro_rules! impl_shared_function_methods {
             }
         }
 
-        /// Chains execution with another two-parameter function, executing
-        /// the current function first, then the subsequent function.
+        /// Passes the result of this two-parameter function to a
+        /// single-parameter function.
         ///
         /// # Type Parameters
         ///
@@ -262,13 +262,13 @@ macro_rules! impl_shared_function_methods {
         ///
         /// # Parameters
         ///
-        /// * `after` - The subsequent two-parameter function to execute after
-        ///   the current function completes
+        /// * `after` - The single-parameter function to apply to the result
+        ///   produced by the current function
         ///
         /// # Returns
         ///
-        /// Returns a new two-parameter function that executes the current
-        /// function and the subsequent function in sequence.
+        /// Returns a new two-parameter function that preserves the original
+        /// two inputs and applies `after` to the current function's result.
         ///
         /// # Examples
         ///

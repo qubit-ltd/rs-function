@@ -53,6 +53,73 @@
 /// impl_box_consumer_methods!(BoxBiConsumer<i32, i32>, BoxConditionalBiConsumer<i32, i32>, BiConsumer);
 /// ```
 macro_rules! impl_box_consumer_methods {
+    (@doc_state Consumer, $state:literal, $payload:literal) => { "" };
+    (@doc_state BiConsumer, $state:literal, $payload:literal) => { "" };
+    (@doc_state StatefulConsumer, $state:literal, $payload:literal) => {
+        concat!("let mut ", $state, " = 0;\n")
+    };
+    (@doc_state StatefulBiConsumer, $state:literal, $payload:literal) => {
+        concat!("let mut ", $state, " = 0;\n")
+    };
+    (@doc_state ConsumerOnce, $state:literal, $payload:literal) => {
+        concat!("let ", $payload, " = String::from(\"owned\");\n")
+    };
+    (@doc_state BiConsumerOnce, $state:literal, $payload:literal) => {
+        concat!("let ", $payload, " = String::from(\"owned\");\n")
+    };
+    (@doc_mut Consumer) => { "" };
+    (@doc_mut BiConsumer) => { "" };
+    (@doc_mut StatefulConsumer) => { "mut " };
+    (@doc_mut StatefulBiConsumer) => { "mut " };
+    (@doc_mut ConsumerOnce) => { "" };
+    (@doc_mut BiConsumerOnce) => { "" };
+    (@doc_apply Consumer) => { "&1" };
+    (@doc_apply StatefulConsumer) => { "&1" };
+    (@doc_apply ConsumerOnce) => { "&1" };
+    (@doc_apply BiConsumer) => { "&1, &2" };
+    (@doc_apply StatefulBiConsumer) => { "&1, &2" };
+    (@doc_apply BiConsumerOnce) => { "&1, &2" };
+    (@doc_when_calls Consumer, $wrapper:ident) => { "conditional.accept(&-1);\nassert_eq!(calls.load(Ordering::SeqCst), 0);\nconditional.accept(&1);\nassert_eq!(calls.load(Ordering::SeqCst), 1);\n" };
+    (@doc_when_calls StatefulConsumer, $wrapper:ident) => { "conditional.accept(&-1);\nassert_eq!(calls.load(Ordering::SeqCst), 0);\nconditional.accept(&1);\nassert_eq!(calls.load(Ordering::SeqCst), 1);\n" };
+    (@doc_when_calls BiConsumer, $wrapper:ident) => { "conditional.accept(&-1, &1);\nassert_eq!(calls.load(Ordering::SeqCst), 0);\nconditional.accept(&1, &1);\nassert_eq!(calls.load(Ordering::SeqCst), 1);\n" };
+    (@doc_when_calls StatefulBiConsumer, $wrapper:ident) => { "conditional.accept(&-1, &1);\nassert_eq!(calls.load(Ordering::SeqCst), 0);\nconditional.accept(&1, &1);\nassert_eq!(calls.load(Ordering::SeqCst), 1);\n" };
+    (@doc_when_calls BiConsumerOnce, $wrapper:ident) => {
+        concat!("conditional.accept(&-1, &1);\nassert_eq!(calls.load(Ordering::SeqCst), 0);\n",
+            "let hit_payload = String::from(\"owned\");\n",
+            "let hit_calls = Arc::new(AtomicUsize::new(0));\n",
+            "let hit_observed = Arc::clone(&hit_calls);\n",
+            "let hit = ", stringify!($wrapper), "::new(move |_: &i32, _: &i32| { drop(hit_payload); hit_observed.fetch_add(1, Ordering::SeqCst); });\n",
+            "hit.when(|x: &i32, y: &i32| *x > 0 && *y > 0).accept(&1, &1);\n",
+            "assert_eq!(hit_calls.load(Ordering::SeqCst), 1);\n")
+    };
+    (@doc_when_calls ConsumerOnce, $wrapper:ident) => {
+        concat!("conditional.accept(&-1);\nassert_eq!(calls.load(Ordering::SeqCst), 0);\n",
+            "let hit_payload = String::from(\"owned\");\n",
+            "let hit_calls = Arc::new(AtomicUsize::new(0));\n",
+            "let hit_observed = Arc::clone(&hit_calls);\n",
+            "let hit = ", stringify!($wrapper), "::new(move |_: &i32| { drop(hit_payload); hit_observed.fetch_add(1, Ordering::SeqCst); });\n",
+            "hit.when(|x: &i32| *x > 0).accept(&1);\n",
+            "assert_eq!(hit_calls.load(Ordering::SeqCst), 1);\n")
+    };
+    (@doc_callback Consumer, $args:literal, $state:literal, $payload:literal, $observed:literal) => {
+        concat!("move |", $args, "| { ", $observed, ".fetch_add(1, Ordering::SeqCst); }")
+    };
+    (@doc_callback BiConsumer, $args:literal, $state:literal, $payload:literal, $observed:literal) => {
+        concat!("move |", $args, "| { ", $observed, ".fetch_add(1, Ordering::SeqCst); }")
+    };
+    (@doc_callback StatefulConsumer, $args:literal, $state:literal, $payload:literal, $observed:literal) => {
+        concat!("move |", $args, "| { ", $state, " += 1; ", $observed, ".store(", $state, ", Ordering::SeqCst); }")
+    };
+    (@doc_callback StatefulBiConsumer, $args:literal, $state:literal, $payload:literal, $observed:literal) => {
+        concat!("move |", $args, "| { ", $state, " += 1; ", $observed, ".store(", $state, ", Ordering::SeqCst); }")
+    };
+    (@doc_callback ConsumerOnce, $args:literal, $state:literal, $payload:literal, $observed:literal) => {
+        concat!("move |", $args, "| { drop(", $payload, "); ", $observed, ".fetch_add(1, Ordering::SeqCst); }")
+    };
+    (@doc_callback BiConsumerOnce, $args:literal, $state:literal, $payload:literal, $observed:literal) => {
+        concat!("move |", $args, "| { drop(", $payload, "); ", $observed, ".fetch_add(1, Ordering::SeqCst); }")
+    };
+
     (@and_then Consumer, $struct_name:ident, $first:expr, $after:expr, $t:ident) => {{
         let first = $first;
         let after = $after;
@@ -133,25 +200,22 @@ macro_rules! impl_box_consumer_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
-        /// use std::sync::Arc;
-        /// use std::sync::atomic::AtomicI32;
-        /// use std::sync::atomic::Ordering;
-        /// use qubit_function::Consumer;
-        /// use qubit_function::consumers::BoxConsumer;
-        ///
-        /// let counter = Arc::new(AtomicI32::new(0));
-        /// let consumer = BoxConsumer::new({
-        ///     let counter = Arc::clone(&counter);
-        ///     move |value: &i32| {
-        ///         counter.fetch_add(*value, Ordering::SeqCst);
-        ///     }
-        /// });
-        ///
-        /// let conditional = consumer.when(|value: &i32| *value > 0);
-        /// conditional.accept(&1);  // counter = 1
-        /// conditional.accept(&-1); // not executed, counter remains 1
-        /// ```
+        #[doc = concat!(
+            "```rust\n",
+            "use std::sync::Arc;\n",
+            "use std::sync::atomic::AtomicUsize;\n",
+            "use std::sync::atomic::Ordering;\n",
+            "use qubit_function::", stringify!($struct_name), ";\n",
+            "use qubit_function::", stringify!($consumer_trait), ";\n",
+            impl_box_consumer_methods!(@doc_state $consumer_trait, "callback_calls", "payload"),
+            "let calls = Arc::new(AtomicUsize::new(0));\n",
+            "let observed = Arc::clone(&calls);\n",
+            "let consumer = ", stringify!($struct_name), "::new(",
+            impl_box_consumer_methods!(@doc_callback $consumer_trait, "_: &i32", "callback_calls", "payload", "observed"), ");\n",
+            "let ", impl_box_consumer_methods!(@doc_mut $consumer_trait), "conditional = consumer.when(|x: &i32| *x > 0);\n",
+            impl_box_consumer_methods!(@doc_when_calls $consumer_trait, $struct_name),
+            "```"
+        )]
         pub fn when<P>(self, predicate: P) -> $conditional_type<$t>
         where
             P: Predicate<$t> + 'static,
@@ -181,34 +245,29 @@ macro_rules! impl_box_consumer_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
-        /// use std::sync::Arc;
-        /// use std::sync::atomic::AtomicI32;
-        /// use std::sync::atomic::Ordering;
-        /// use qubit_function::Consumer;
-        /// use qubit_function::consumers::BoxConsumer;
-        ///
-        /// let counter1 = Arc::new(AtomicI32::new(0));
-        /// let counter2 = Arc::new(AtomicI32::new(0));
-        ///
-        /// let consumer1 = BoxConsumer::new({
-        ///     let counter = Arc::clone(&counter1);
-        ///     move |value: &i32| {
-        ///         counter.fetch_add(*value, Ordering::SeqCst);
-        ///     }
-        /// });
-        ///
-        /// let consumer2 = BoxConsumer::new({
-        ///     let counter = Arc::clone(&counter2);
-        ///     move |value: &i32| {
-        ///         counter.fetch_add(*value * 2, Ordering::SeqCst);
-        ///     }
-        /// });
-        ///
-        /// let chained = consumer1.and_then(consumer2);
-        /// chained.accept(&5);
-        /// // counter1 = 5, counter2 = 10
-        /// ```
+        #[doc = concat!(
+            "```rust\n",
+            "use std::sync::Arc;\n",
+            "use std::sync::atomic::AtomicUsize;\n",
+            "use std::sync::atomic::Ordering;\n",
+            "use qubit_function::", stringify!($struct_name), ";\n",
+            "use qubit_function::", stringify!($consumer_trait), ";\n",
+            impl_box_consumer_methods!(@doc_state $consumer_trait, "first_state", "first_payload"),
+            impl_box_consumer_methods!(@doc_state $consumer_trait, "after_state", "after_payload"),
+            "let first_calls = Arc::new(AtomicUsize::new(0));\n",
+            "let first_observed = Arc::clone(&first_calls);\n",
+            "let first = ", stringify!($struct_name), "::new(",
+            impl_box_consumer_methods!(@doc_callback $consumer_trait, "_: &i32", "first_state", "first_payload", "first_observed"), ");\n",
+            "let after_calls = Arc::new(AtomicUsize::new(0));\n",
+            "let after_observed = Arc::clone(&after_calls);\n",
+            "let after = ", stringify!($struct_name), "::new(",
+            impl_box_consumer_methods!(@doc_callback $consumer_trait, "_: &i32", "after_state", "after_payload", "after_observed"), ");\n",
+            "let ", impl_box_consumer_methods!(@doc_mut $consumer_trait), "chained = first.and_then(after);\n",
+            "chained.accept(", impl_box_consumer_methods!(@doc_apply $consumer_trait), ");\n",
+            "assert_eq!(first_calls.load(Ordering::SeqCst), 1);\n",
+            "assert_eq!(after_calls.load(Ordering::SeqCst), 1);\n",
+            "```"
+        )]
         pub fn and_then<C>(self, after: C) -> $struct_name<$t>
         where
             Self: Sized + 'static,
@@ -245,27 +304,22 @@ macro_rules! impl_box_consumer_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
-        /// use std::sync::Arc;
-        /// use std::sync::atomic::AtomicI32;
-        /// use std::sync::atomic::Ordering;
-        /// use qubit_function::BiConsumer;
-        /// use qubit_function::consumers::BoxBiConsumer;
-        ///
-        /// let counter = Arc::new(AtomicI32::new(0));
-        /// let bi_consumer = BoxBiConsumer::new({
-        ///     let counter = Arc::clone(&counter);
-        ///     move |key: &String, value: &i32| {
-        ///         if key == "increment" {
-        ///             counter.fetch_add(*value, Ordering::SeqCst);
-        ///         }
-        ///     }
-        /// });
-        ///
-        /// let conditional = bi_consumer.when(|key: &String, value: &i32| *value > 0);
-        /// conditional.accept(&"increment".to_string(), &5);  // counter = 5
-        /// conditional.accept(&"increment".to_string(), &-2); // not executed
-        /// ```
+        #[doc = concat!(
+            "```rust\n",
+            "use std::sync::Arc;\n",
+            "use std::sync::atomic::AtomicUsize;\n",
+            "use std::sync::atomic::Ordering;\n",
+            "use qubit_function::", stringify!($struct_name), ";\n",
+            "use qubit_function::", stringify!($consumer_trait), ";\n",
+            impl_box_consumer_methods!(@doc_state $consumer_trait, "callback_calls", "payload"),
+            "let calls = Arc::new(AtomicUsize::new(0));\n",
+            "let observed = Arc::clone(&calls);\n",
+            "let consumer = ", stringify!($struct_name), "::new(",
+            impl_box_consumer_methods!(@doc_callback $consumer_trait, "_: &i32, _: &i32", "callback_calls", "payload", "observed"), ");\n",
+            "let ", impl_box_consumer_methods!(@doc_mut $consumer_trait), "conditional = consumer.when(|x: &i32, y: &i32| *x > 0 && *y > 0);\n",
+            impl_box_consumer_methods!(@doc_when_calls $consumer_trait, $struct_name),
+            "```"
+        )]
         pub fn when<P>(self, predicate: P) -> $conditional_type<$t, $u>
         where
             P: BiPredicate<$t, $u> + 'static,
@@ -295,34 +349,29 @@ macro_rules! impl_box_consumer_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
-        /// use std::sync::Arc;
-        /// use std::sync::atomic::AtomicI32;
-        /// use std::sync::atomic::Ordering;
-        /// use qubit_function::BiConsumer;
-        /// use qubit_function::consumers::BoxBiConsumer;
-        ///
-        /// let counter1 = Arc::new(AtomicI32::new(0));
-        /// let counter2 = Arc::new(AtomicI32::new(0));
-        ///
-        /// let bi_consumer1 = BoxBiConsumer::new({
-        ///     let counter = Arc::clone(&counter1);
-        ///     move |key: &String, value: &i32| {
-        ///         counter.fetch_add(*value, Ordering::SeqCst);
-        ///     }
-        /// });
-        ///
-        /// let bi_consumer2 = BoxBiConsumer::new({
-        ///     let counter = Arc::clone(&counter2);
-        ///     move |key: &String, value: &i32| {
-        ///         counter.fetch_add(*value * 2, Ordering::SeqCst);
-        ///     }
-        /// });
-        ///
-        /// let chained = bi_consumer1.and_then(bi_consumer2);
-        /// chained.accept(&"test".to_string(), &3);
-        /// // counter1 = 3, counter2 = 6
-        /// ```
+        #[doc = concat!(
+            "```rust\n",
+            "use std::sync::Arc;\n",
+            "use std::sync::atomic::AtomicUsize;\n",
+            "use std::sync::atomic::Ordering;\n",
+            "use qubit_function::", stringify!($struct_name), ";\n",
+            "use qubit_function::", stringify!($consumer_trait), ";\n",
+            impl_box_consumer_methods!(@doc_state $consumer_trait, "first_state", "first_payload"),
+            impl_box_consumer_methods!(@doc_state $consumer_trait, "after_state", "after_payload"),
+            "let first_calls = Arc::new(AtomicUsize::new(0));\n",
+            "let first_observed = Arc::clone(&first_calls);\n",
+            "let first = ", stringify!($struct_name), "::new(",
+            impl_box_consumer_methods!(@doc_callback $consumer_trait, "_: &i32, _: &i32", "first_state", "first_payload", "first_observed"), ");\n",
+            "let after_calls = Arc::new(AtomicUsize::new(0));\n",
+            "let after_observed = Arc::clone(&after_calls);\n",
+            "let after = ", stringify!($struct_name), "::new(",
+            impl_box_consumer_methods!(@doc_callback $consumer_trait, "_: &i32, _: &i32", "after_state", "after_payload", "after_observed"), ");\n",
+            "let ", impl_box_consumer_methods!(@doc_mut $consumer_trait), "chained = first.and_then(after);\n",
+            "chained.accept(", impl_box_consumer_methods!(@doc_apply $consumer_trait), ");\n",
+            "assert_eq!(first_calls.load(Ordering::SeqCst), 1);\n",
+            "assert_eq!(after_calls.load(Ordering::SeqCst), 1);\n",
+            "```"
+        )]
         pub fn and_then<C>(self, after: C) -> $struct_name<$t, $u>
         where
             Self: Sized + 'static,

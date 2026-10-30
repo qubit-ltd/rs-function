@@ -18,7 +18,7 @@
 ///
 /// This trait provides a unified abstraction for one-time mutation operations.
 /// The key difference from `Mutator`:
-/// - `Mutator` uses `&mut self`, can be called multiple times
+/// - `Mutator` uses `&self`, can be called multiple times
 /// - `MutatorOnce` uses `self`, can only be called once
 ///
 /// # Type Parameters

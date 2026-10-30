@@ -31,7 +31,7 @@ use crate::transformers::macros::impl_transformer_debug_display;
 ///
 /// # Features
 ///
-/// - **Based on**: `Rc<dyn FnMut(T, U) -> R>`
+/// - **Based on**: `Rc<RefCell<dyn FnMut(T, U) -> R>>`
 /// - **Ownership**: Shared ownership via reference counting (non-atomic)
 /// - **Reusability**: Can be called multiple times (each call consumes its
 ///   inputs)

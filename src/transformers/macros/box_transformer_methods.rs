@@ -180,8 +180,8 @@ macro_rules! impl_box_transformer_methods {
             }
         }
 
-        /// Chains execution with another transformer, executing the current
-        /// transformer first, then the subsequent transformer.
+        /// Passes the output of this transformer to a single-parameter
+        /// transformer.
         ///
         /// # Lifetimes
         ///
@@ -192,17 +192,19 @@ macro_rules! impl_box_transformer_methods {
         /// # Type Parameters
         ///
         /// * `S` - The output type produced by the subsequent transformer.
-        /// * `F` - The subsequent transformer implementation.
+        /// * `F` - The subsequent single-parameter transformer implementation.
+        ///
+        /// For `TransformerOnce` variants, `F` implements `TransformerOnce`.
         ///
         /// # Parameters
         ///
-        /// * `after` - The subsequent transformer to execute after the current
-        ///   transformer completes
+        /// * `after` - The single-parameter transformer to apply to the output
+        ///   of the current transformer
         ///
         /// # Returns
         ///
-        /// Returns a new transformer that executes the current transformer and
-        /// the subsequent transformer in sequence.
+        /// Returns a new transformer that preserves the original input shape
+        /// and applies `after` to the current transformer's output.
         ///
         /// # Examples
         ///
@@ -297,8 +299,8 @@ macro_rules! impl_box_transformer_methods {
             }
         }
 
-        /// Chains execution with another two-parameter transformer, executing
-        /// the current transformer first, then the subsequent transformer.
+        /// Passes the output of this two-parameter transformer to a
+        /// single-parameter transformer.
         ///
         /// # Lifetimes
         ///
@@ -309,22 +311,26 @@ macro_rules! impl_box_transformer_methods {
         /// # Type Parameters
         ///
         /// * `S` - The output type produced by the subsequent transformer.
-        /// * `F` - The subsequent two-parameter transformer implementation.
+        /// * `F` - The subsequent single-parameter transformer implementation.
+        ///
+        /// For `BiTransformerOnce` variants, `F` implements `TransformerOnce`.
         ///
         /// # Parameters
         ///
-        /// * `after` - The subsequent two-parameter transformer to execute after
-        ///   the current transformer completes
+        /// * `after` - The single-parameter transformer to apply to the output
+        ///   of the current transformer
         ///
         /// # Returns
         ///
-        /// Returns a new two-parameter transformer that executes the current
-        /// transformer and the subsequent transformer in sequence.
+        /// Returns a new two-parameter transformer that preserves both
+        /// original inputs and applies `after` to the current transformer's
+        /// output.
         ///
         /// # Examples
         ///
         /// ```rust
         /// use qubit_function::transformers::BiTransformer;
+        /// use qubit_function::transformers::Transformer;
         /// use qubit_function::transformers::BoxBiTransformer;
         /// use qubit_function::transformers::BoxTransformer;
         ///

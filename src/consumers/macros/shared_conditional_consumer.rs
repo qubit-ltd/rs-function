@@ -50,6 +50,19 @@
 /// | Arc stateful | `Send + 'static` |
 /// | Rc stateless/stateful | `'static` |
 macro_rules! impl_shared_conditional_consumer {
+    (@doc_state Consumer, $state:literal) => { "" };
+    (@doc_state BiConsumer, $state:literal) => { "" };
+    (@doc_state StatefulConsumer, $state:literal) => { concat!("let mut ", $state, " = 0;\n") };
+    (@doc_state StatefulBiConsumer, $state:literal) => { concat!("let mut ", $state, " = 0;\n") };
+    (@doc_mut Consumer) => { "" };
+    (@doc_mut BiConsumer) => { "" };
+    (@doc_mut StatefulConsumer) => { "mut " };
+    (@doc_mut StatefulBiConsumer) => { "mut " };
+    (@doc_callback Consumer, $args:literal, $state:literal, $observed:literal) => { concat!("move |", $args, "| { ", $observed, ".fetch_add(1, Ordering::SeqCst); }") };
+    (@doc_callback BiConsumer, $args:literal, $state:literal, $observed:literal) => { concat!("move |", $args, "| { ", $observed, ".fetch_add(1, Ordering::SeqCst); }") };
+    (@doc_callback StatefulConsumer, $args:literal, $state:literal, $observed:literal) => { concat!("move |", $args, "| { ", $state, " += 1; ", $observed, ".store(", $state, ", Ordering::SeqCst); }") };
+    (@doc_callback StatefulBiConsumer, $args:literal, $state:literal, $observed:literal) => { concat!("move |", $args, "| { ", $state, " += 1; ", $observed, ".store(", $state, ", Ordering::SeqCst); }") };
+
     (@let_consumer Consumer, $name:ident, $value:expr) => {
         let $name = $value;
     };
@@ -104,28 +117,27 @@ macro_rules! impl_shared_conditional_consumer {
             ///
             /// # Examples
             ///
-            /// ```rust
-            /// use std::sync::atomic::{AtomicI32, Ordering};
-            /// use qubit_function::{Consumer, ArcConsumer};
-            ///
-            /// let result = std::sync::Arc::new(AtomicI32::new(0));
-            /// let result1 = std::sync::Arc::clone(&result);
-            /// let consumer = ArcConsumer::new(move |x: &i32| {
-            ///     result1.fetch_add(*x, Ordering::SeqCst);
-            /// });
-            ///
-            /// let consumer2 = consumer.when(|x: &i32| *x > 0);
-            ///
-            /// let result2 = std::sync::Arc::clone(&result);
-            /// let chained = consumer2.and_then(ArcConsumer::new(move |x: &i32| {
-            ///     result2.fetch_add(2 * (*x), Ordering::SeqCst);
-            /// }));
-            ///
-            /// chained.accept(&5);  // result = 5 + (2*5) = 15
-            /// result.store(0, Ordering::SeqCst);  // reset
-            /// chained.accept(&-5); // result = 0 + (2*-5) = -10 (not -15!)
-            /// assert_eq!(result.load(Ordering::SeqCst), -10);
-            /// ```
+            #[doc = concat!(
+                "```rust\n",
+                "use std::sync::Arc;\n",
+                "use std::sync::atomic::AtomicUsize;\n",
+                "use std::sync::atomic::Ordering;\n",
+                "use qubit_function::{", stringify!($consumer_type), ", ", stringify!($consumer_trait), "};\n",
+                impl_shared_conditional_consumer!(@doc_state $consumer_trait, "first_state"),
+                impl_shared_conditional_consumer!(@doc_state $consumer_trait, "branch_state"),
+                "let first_calls = Arc::new(AtomicUsize::new(0));\n",
+                "let first_observed = Arc::clone(&first_calls);\n",
+                "let first = ", stringify!($consumer_type), "::new(", impl_shared_conditional_consumer!(@doc_callback $consumer_trait, "_: &i32", "first_state", "first_observed"), ");\n",
+                "let conditional = first.when(|x: &i32| *x > 0);\n",
+                "let branch_calls = Arc::new(AtomicUsize::new(0));\n",
+                "let branch_observed = Arc::clone(&branch_calls);\n",
+                "let branch = ", stringify!($consumer_type), "::new(", impl_shared_conditional_consumer!(@doc_callback $consumer_trait, "_: &i32", "branch_state", "branch_observed"), ");\n",
+                "let ", impl_shared_conditional_consumer!(@doc_mut $consumer_trait), "combined = conditional.and_then(branch);\n",
+                "combined.accept(&-1);\n",
+                "assert_eq!(first_calls.load(Ordering::SeqCst), 0);\n",
+                "assert_eq!(branch_calls.load(Ordering::SeqCst), 1);\n",
+                "```"
+            )]
             pub fn and_then<C>(&self, next: C) -> $consumer_type<$t>
             where
                 $t: 'static,
@@ -158,6 +170,30 @@ macro_rules! impl_shared_conditional_consumer {
             /// # Returns
             ///
             /// Returns a new consumer with if-then-else logic
+            ///
+            /// # Examples
+            ///
+            #[doc = concat!(
+                "```rust\n",
+                "use std::sync::Arc;\n",
+                "use std::sync::atomic::AtomicUsize;\n",
+                "use std::sync::atomic::Ordering;\n",
+                "use qubit_function::{", stringify!($consumer_type), ", ", stringify!($consumer_trait), "};\n",
+                impl_shared_conditional_consumer!(@doc_state $consumer_trait, "first_state"),
+                impl_shared_conditional_consumer!(@doc_state $consumer_trait, "else_state"),
+                "let first_calls = Arc::new(AtomicUsize::new(0));\n",
+                "let first_observed = Arc::clone(&first_calls);\n",
+                "let first = ", stringify!($consumer_type), "::new(", impl_shared_conditional_consumer!(@doc_callback $consumer_trait, "_: &i32", "first_state", "first_observed"), ");\n",
+                "let conditional = first.when(|x: &i32| *x > 0);\n",
+                "let else_calls = Arc::new(AtomicUsize::new(0));\n",
+                "let else_observed = Arc::clone(&else_calls);\n",
+                "let else_consumer = ", stringify!($consumer_type), "::new(", impl_shared_conditional_consumer!(@doc_callback $consumer_trait, "_: &i32", "else_state", "else_observed"), ");\n",
+                "let ", impl_shared_conditional_consumer!(@doc_mut $consumer_trait), "combined = conditional.or_else(else_consumer);\n",
+                "combined.accept(&1);\n",
+                "assert_eq!(first_calls.load(Ordering::SeqCst), 1);\n",
+                "assert_eq!(else_calls.load(Ordering::SeqCst), 0);\n",
+                "```"
+            )]
             pub fn or_else<C>(&self, else_consumer: C) -> $consumer_type<$t>
             where
                 $t: 'static,
@@ -218,28 +254,27 @@ macro_rules! impl_shared_conditional_consumer {
             ///
             /// # Examples
             ///
-            /// ```rust
-            /// use std::sync::atomic::{AtomicI32, Ordering};
-            /// use std::sync::Arc;
-            /// use qubit_function::{BiConsumer, ArcBiConsumer};
-            ///
-            /// let result = Arc::new(AtomicI32::new(0));
-            /// let result1 = std::sync::Arc::clone(&result);
-            /// let consumer = ArcBiConsumer::new(move |x: &i32, y: &i32| {
-            ///     result1.fetch_add(*x + *y, Ordering::SeqCst);
-            /// });
-            ///
-            /// let consumer2 = consumer.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
-            /// let result2 = std::sync::Arc::clone(&result);
-            /// let chained = consumer2.and_then(ArcBiConsumer::new(move |x: &i32, y: &i32| {
-            ///     result2.fetch_add(2 * (*x + *y), Ordering::SeqCst);
-            /// }));
-            ///
-            /// chained.accept(&5, &3);  // result = (5+3) + 2*(5+3) = 24
-            /// result.store(0, Ordering::SeqCst);  // reset
-            /// chained.accept(&-5, &3); // result = 0 + 2*(-5+3) = -4 (not -8!)
-            /// assert_eq!(result.load(Ordering::SeqCst), -4);
-            /// ```
+            #[doc = concat!(
+                "```rust\n",
+                "use std::sync::Arc;\n",
+                "use std::sync::atomic::AtomicUsize;\n",
+                "use std::sync::atomic::Ordering;\n",
+                "use qubit_function::{", stringify!($consumer_type), ", ", stringify!($consumer_trait), "};\n",
+                impl_shared_conditional_consumer!(@doc_state $consumer_trait, "first_state"),
+                impl_shared_conditional_consumer!(@doc_state $consumer_trait, "branch_state"),
+                "let first_calls = Arc::new(AtomicUsize::new(0));\n",
+                "let first_observed = Arc::clone(&first_calls);\n",
+                "let first = ", stringify!($consumer_type), "::new(", impl_shared_conditional_consumer!(@doc_callback $consumer_trait, "_: &i32, _: &i32", "first_state", "first_observed"), ");\n",
+                "let conditional = first.when(|x: &i32, y: &i32| *x > 0 && *y > 0);\n",
+                "let branch_calls = Arc::new(AtomicUsize::new(0));\n",
+                "let branch_observed = Arc::clone(&branch_calls);\n",
+                "let branch = ", stringify!($consumer_type), "::new(", impl_shared_conditional_consumer!(@doc_callback $consumer_trait, "_: &i32, _: &i32", "branch_state", "branch_observed"), ");\n",
+                "let ", impl_shared_conditional_consumer!(@doc_mut $consumer_trait), "combined = conditional.and_then(branch);\n",
+                "combined.accept(&-1, &2);\n",
+                "assert_eq!(first_calls.load(Ordering::SeqCst), 0);\n",
+                "assert_eq!(branch_calls.load(Ordering::SeqCst), 1);\n",
+                "```"
+            )]
             pub fn and_then<C>(&self, next: C) -> $consumer_type<$t, $u>
             where
                 $t: 'static,
@@ -273,6 +308,30 @@ macro_rules! impl_shared_conditional_consumer {
             /// # Returns
             ///
             /// Returns a new bi-consumer with if-then-else logic
+            ///
+            /// # Examples
+            ///
+            #[doc = concat!(
+                "```rust\n",
+                "use std::sync::Arc;\n",
+                "use std::sync::atomic::AtomicUsize;\n",
+                "use std::sync::atomic::Ordering;\n",
+                "use qubit_function::{", stringify!($consumer_type), ", ", stringify!($consumer_trait), "};\n",
+                impl_shared_conditional_consumer!(@doc_state $consumer_trait, "first_state"),
+                impl_shared_conditional_consumer!(@doc_state $consumer_trait, "else_state"),
+                "let first_calls = Arc::new(AtomicUsize::new(0));\n",
+                "let first_observed = Arc::clone(&first_calls);\n",
+                "let first = ", stringify!($consumer_type), "::new(", impl_shared_conditional_consumer!(@doc_callback $consumer_trait, "_: &i32, _: &i32", "first_state", "first_observed"), ");\n",
+                "let conditional = first.when(|x: &i32, y: &i32| *x > 0 && *y > 0);\n",
+                "let else_calls = Arc::new(AtomicUsize::new(0));\n",
+                "let else_observed = Arc::clone(&else_calls);\n",
+                "let else_consumer = ", stringify!($consumer_type), "::new(", impl_shared_conditional_consumer!(@doc_callback $consumer_trait, "_: &i32, _: &i32", "else_state", "else_observed"), ");\n",
+                "let ", impl_shared_conditional_consumer!(@doc_mut $consumer_trait), "combined = conditional.or_else(else_consumer);\n",
+                "combined.accept(&1, &2);\n",
+                "assert_eq!(first_calls.load(Ordering::SeqCst), 1);\n",
+                "assert_eq!(else_calls.load(Ordering::SeqCst), 0);\n",
+                "```"
+            )]
             pub fn or_else<C>(&self, else_consumer: C) -> $consumer_type<$t, $u>
             where
                 $t: 'static,
