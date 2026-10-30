@@ -23,9 +23,11 @@ use crate::consumers::macros::impl_shared_conditional_consumer;
 /// predicate accepts the input.
 ///
 /// This type is typically created by calling `ArcConsumer::when()` and is
-/// designed to work with `or_else()` to create if-then-else logic. It shares
-/// its callback and predicate through `Arc`, so the wrapper can be cloned and
-/// used across threads when `T` meets the required thread-safety bounds.
+/// designed to work with `or_else()` to create if-then-else logic. Its callback
+/// and predicate are shared through `Arc` and require `Send +
+/// Sync + 'static`. The wrapper itself does not require `T: Send` or `T: Sync`.
+/// Sending an actual input reference to another thread must still satisfy that
+/// reference's own thread-safety and lifetime requirements.
 ///
 /// # Type Parameters
 ///

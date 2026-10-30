@@ -30,37 +30,16 @@
 ///
 /// # Examples
 ///
+/// These are crate-internal expansion forms. Identifiers in the trait's type
+/// parameter list are declared as generics; they are not concrete argument
+/// types. The optional wrapper token is accepted only for compatibility with
+/// older syntax.
+///
 /// ```text
-/// // Consumer trait (with once conversion)
-/// // impl_closure_trait!(
-/// //     Consumer<i32>,
-/// //     accept,
-/// //     BoxConsumerOnce,
-/// //     Fn(value: &i32)
-/// // );
-///
-/// // Function trait
-/// // impl_closure_trait!(
-/// //     Function<i32, i32>,
-/// //     apply,
-/// //     BoxFunctionOnce,
-/// //     Fn(input: i32) -> i32
-/// // );
-///
-/// // Predicate trait (no once conversion)
-/// // impl_closure_trait!(
-/// //     Predicate<i32>,
-/// //     test,
-/// //     Fn(value: &i32) -> bool
-/// // );
-///
-/// // StatefulConsumer trait
-/// // impl_closure_trait!(
-/// //     StatefulConsumer<i32>,
-/// //     accept,
-/// //     BoxConsumerOnce,
-/// //     FnMut(value: &i32)
-/// // );
+/// impl_closure_trait!(Consumer<T>, accept, BoxConsumerOnce, Fn(value: &T));
+/// impl_closure_trait!(Function<T, R>, apply, BoxFunctionOnce, Fn(input: &T) -> R);
+/// impl_closure_trait!(Predicate<T>, test, Fn(value: &T) -> bool);
+/// impl_closure_trait!(StatefulConsumer<T>, accept, BoxConsumerOnce, FnMut(value: &T));
 /// ```
 macro_rules! impl_closure_trait {
     (

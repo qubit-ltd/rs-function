@@ -832,6 +832,39 @@ The function family also includes borrowed bi-input and mutable-input forms:
 | `BiMutatingFunction<T, U, R>` | `apply(&self, first: &mut T, second: &mut U) -> R` | `Fn(&mut T, &mut U) -> R` |
 | `BiMutatingFunctionOnce<T, U, R>` | `apply(self, first: &mut T, second: &mut U) -> R` | `FnOnce(&mut T, &mut U) -> R` |
 
+`and_then` continues to accept a `Function` callback. Use
+`and_then_stateful` when the next stage needs to retain state through
+`StatefulFunction` or an `FnMut` closure. It requires the `stateful` feature;
+the Rc variants also require `rc`. Box consumes its source, while Rc and Arc
+borrow it and share its source state. Clones of a composed Rc or Arc wrapper
+also share the mapper state. A composed wrapper starts without a diagnostic
+name and can be named with `with_name`.
+
+```rust
+use qubit_function::BoxStatefulFunction;
+use qubit_function::BoxStatefulMutatingFunction;
+use qubit_function::StatefulMutatingFunction;
+
+let mut source_calls = 0;
+let source = BoxStatefulMutatingFunction::new(move |input: &mut i32| {
+    source_calls += 1;
+    *input += source_calls;
+    *input
+});
+let mut mapper_calls = 0;
+let mapper = BoxStatefulFunction::new(move |result: &i32| {
+    mapper_calls += 1;
+    *result + mapper_calls
+});
+let mut pipeline = source.and_then_stateful(mapper);
+let mut input = 5;
+assert_eq!(pipeline.apply(&mut input), 7);
+assert_eq!(pipeline.apply(&mut input), 10);
+assert_eq!(input, 8);
+```
+
+The two outputs are `7` and `10`, and the final input is `8`.
+
 ### 21. Transformer - Value Transformer
 
 Consumes an input value of type `T` and transforms it into a value of
@@ -1194,9 +1227,10 @@ cargo run --features full --example tester_demo
 ## Learn More
 
 - [API documentation](https://docs.rs/qubit-function/0.18.3/qubit_function/) for the complete type and method reference.
-- **Submit a task and obtain its result**: start with [`Callable`](https://docs.rs/qubit-function/0.18.3/qubit_function/trait.Callable.html) or [`Runnable`](https://docs.rs/qubit-function/0.18.3/qubit_function/trait.Runnable.html). These describe callable tasks; the application or executor handles submission, scheduling, and result processing.
-- **Share observation notifications**: see [`ArcConsumer`](https://docs.rs/qubit-function/0.18.3/qubit_function/struct.ArcConsumer.html). The crate provides a thread-safe shared callback wrapper; the application decides when notifications are delivered and how to handle them.
-- **Modify HTTP request data**: see [`ArcMutatingFunction`](https://docs.rs/qubit-function/0.18.3/qubit_function/struct.ArcMutatingFunction.html). The crate provides a mutable-input callback; HTTP integration, invocation timing, and business handling belong to the application or downstream.
+- The online API page depends on this version being published and its docs.rs build succeeding. To build the docs from the repository root, run `cargo doc --all-features --no-deps --open`; without a desktop environment, omit `--open`. By default, the entry page is `target/doc/qubit_function/index.html`; when `CARGO_TARGET_DIR` is set, use that target directory instead.
+- **Submit a task and obtain its result**: start with [`Callable`](https://docs.rs/qubit-function/0.18.3/qubit_function/trait.Callable.html) ([source](src/tasks/callable/callable.rs)) or [`Runnable`](https://docs.rs/qubit-function/0.18.3/qubit_function/trait.Runnable.html) ([source](src/tasks/runnable/runnable.rs)). These describe callable tasks; the application or executor handles submission, scheduling, and result processing.
+- **Share observation notifications**: see [`ArcConsumer`](https://docs.rs/qubit-function/0.18.3/qubit_function/struct.ArcConsumer.html) ([source](src/consumers/consumer/arc_consumer.rs)). The crate provides a thread-safe shared callback wrapper; the application decides when notifications are delivered and how to handle them.
+- **Modify HTTP request data**: see [`ArcMutatingFunction`](https://docs.rs/qubit-function/0.18.3/qubit_function/struct.ArcMutatingFunction.html) ([source](src/functions/mutating_function/arc_mutating_function.rs)). The crate provides a mutable-input callback; HTTP integration, invocation timing, and business handling belong to the application or downstream.
 - [简体中文 README](README.zh_CN.md)
 
 ## Testing

@@ -801,6 +801,37 @@ Function 家族还包含借用双输入和可变输入形式：
 | `BiMutatingFunction<T, U, R>` | `apply(&self, first: &mut T, second: &mut U) -> R` | `Fn(&mut T, &mut U) -> R` |
 | `BiMutatingFunctionOnce<T, U, R>` | `apply(self, first: &mut T, second: &mut U) -> R` | `FnOnce(&mut T, &mut U) -> R` |
 
+现有 `and_then` 仍接受 `Function` 回调。当后继需要通过 `StatefulFunction` 或
+`FnMut` 闭包保留状态时，使用 `and_then_stateful`。该方法需要 `stateful`
+feature；Rc 变体还需要 `rc`。Box 会消耗源包装器，Rc 和 Arc 则借用它并共享源状态。
+组合后的 Rc 或 Arc 包装器克隆也会共享 mapper 状态。组合包装器初始没有诊断名称，
+可以使用 `with_name` 命名。
+
+```rust
+use qubit_function::BoxStatefulFunction;
+use qubit_function::BoxStatefulMutatingFunction;
+use qubit_function::StatefulMutatingFunction;
+
+let mut source_calls = 0;
+let source = BoxStatefulMutatingFunction::new(move |input: &mut i32| {
+    source_calls += 1;
+    *input += source_calls;
+    *input
+});
+let mut mapper_calls = 0;
+let mapper = BoxStatefulFunction::new(move |result: &i32| {
+    mapper_calls += 1;
+    *result + mapper_calls
+});
+let mut pipeline = source.and_then_stateful(mapper);
+let mut input = 5;
+assert_eq!(pipeline.apply(&mut input), 7);
+assert_eq!(pipeline.apply(&mut input), 10);
+assert_eq!(input, 8);
+```
+
+两次返回值依次为 `7` 和 `10`，最终输入为 `8`。
+
 ### 21. Transformer - 值转换器
 
 取得输入值的所有权,并将类型 `T` 的值转换为类型 `R` 的值。
@@ -1155,9 +1186,10 @@ cargo run --features full --example tester_demo
 ## 延伸阅读
 
 - [API 文档](https://docs.rs/qubit-function/0.18.3/qubit_function/) — 查看完整类型与方法。
-- **提交任务并取得结果**：从 [`Callable`](https://docs.rs/qubit-function/0.18.3/qubit_function/trait.Callable.html) 或 [`Runnable`](https://docs.rs/qubit-function/0.18.3/qubit_function/trait.Runnable.html) 开始。它们描述可调用任务；任务提交、调度和结果处理由应用或执行器负责。
-- **共享观察通知**：查看 [`ArcConsumer`](https://docs.rs/qubit-function/0.18.3/qubit_function/struct.ArcConsumer.html)。库提供线程安全共享的回调包装器，通知何时发送及如何处理由应用决定。
-- **修改 HTTP 请求数据**：查看 [`ArcMutatingFunction`](https://docs.rs/qubit-function/0.18.3/qubit_function/struct.ArcMutatingFunction.html)。库提供可变输入回调能力；HTTP 集成、调用时机和业务处理由应用或下游负责。
+- 在线 API 页面依赖该版本已发布且 docs.rs 构建成功。从仓库根目录运行 `cargo doc --all-features --no-deps --open` 可本地生成文档；无桌面环境时去掉 `--open`。默认入口为 `target/doc/qubit_function/index.html`；设置了 `CARGO_TARGET_DIR` 时使用实际 target 目录。
+- **提交任务并取得结果**：从 [`Callable`](https://docs.rs/qubit-function/0.18.3/qubit_function/trait.Callable.html)（[源码](src/tasks/callable/callable.rs)）或 [`Runnable`](https://docs.rs/qubit-function/0.18.3/qubit_function/trait.Runnable.html)（[源码](src/tasks/runnable/runnable.rs)）开始。它们描述可调用任务；任务提交、调度和结果处理由应用或执行器负责。
+- **共享观察通知**：查看 [`ArcConsumer`](https://docs.rs/qubit-function/0.18.3/qubit_function/struct.ArcConsumer.html)（[源码](src/consumers/consumer/arc_consumer.rs)）。库提供线程安全共享的回调包装器，通知何时发送及如何处理由应用决定。
+- **修改 HTTP 请求数据**：查看 [`ArcMutatingFunction`](https://docs.rs/qubit-function/0.18.3/qubit_function/struct.ArcMutatingFunction.html)（[源码](src/functions/mutating_function/arc_mutating_function.rs)）。库提供可变输入回调能力；HTTP 集成、调用时机和业务处理由应用或下游负责。
 - [English README](README.md)
 
 ## 测试

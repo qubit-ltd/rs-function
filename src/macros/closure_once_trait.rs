@@ -54,27 +54,15 @@
 ///
 /// # Examples
 ///
+/// These are crate-internal expansion forms. Identifiers in the trait's type
+/// parameter list are declared as generics; they are not concrete argument
+/// types. This `text` example illustrates macro syntax and is not a downstream
+/// callable API.
+///
 /// ```text
-/// impl_closure_once_trait!(
-///     ConsumerOnce<i32>,
-///     accept,
-///     BoxConsumerOnce,
-///     FnOnce(value: &i32)
-/// );
-///
-/// impl_closure_once_trait!(
-///     FunctionOnce<i32, i32>,
-///     apply,
-///     BoxFunctionOnce,
-///     FnOnce(input: &i32) -> i32
-/// );
-///
-/// impl_closure_once_trait!(
-///     BiFunctionOnce<i32, i32, i32>,
-///     apply,
-///     BoxBiFunctionOnce,
-///     FnOnce(first: &i32, second: &i32) -> i32
-/// );
+/// impl_closure_once_trait!(ConsumerOnce<T>, accept, BoxConsumerOnce, FnOnce(value: &T));
+/// impl_closure_once_trait!(FunctionOnce<T, R>, apply, BoxFunctionOnce, FnOnce(input: &T) -> R);
+/// impl_closure_once_trait!(BiFunctionOnce<T, U, R>, apply, BoxBiFunctionOnce, FnOnce(first: &T, second: &U) -> R);
 /// ```
 macro_rules! impl_closure_once_trait {
     // ==================== Internal Implementation ====================
