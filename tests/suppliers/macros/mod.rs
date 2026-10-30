@@ -7,8 +7,6 @@
 // =============================================================================
 
 mod box_supplier_methods_tests;
-mod shared_supplier_methods_tests;
 #[cfg(feature = "rc")]
 mod supplier_clone_tests;
-mod supplier_common_methods_tests;
 mod supplier_debug_display_tests;

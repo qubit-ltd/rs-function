@@ -6,14 +6,12 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::BoxFunction;
 use qubit_function::Function;
 
 #[test]
-fn test_closure_trait_observable_behavior() {
-    let mut function = BoxFunction::new_with_name("smoke", |value: &i32| value + 1);
-    assert_eq!(function.name(), Some("smoke"));
-    function.set_name("renamed");
-    assert_eq!(function.apply(&41), 42);
-    assert_eq!(format!("{}", function), "BoxFunction(renamed)");
+fn test_function_blanket_impl_accepts_borrowed_capture() {
+    let prefix = String::from("value=");
+    let callback = |value: &i32| format!("{prefix}{value}");
+    assert_eq!(Function::apply(&callback, &42), "value=42");
+    assert_eq!(prefix, "value=");
 }

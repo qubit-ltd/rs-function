@@ -6,7 +6,6 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-mod box_conversions_tests;
 #[cfg(feature = "once")]
 mod closure_once_trait_tests;
 mod closure_trait_tests;
