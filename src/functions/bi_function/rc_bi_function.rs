@@ -87,7 +87,7 @@ impl<T, U, R> BiFunction<T, U, R> for RcBiFunction<T, U, R> {
 }
 
 // Implement constant method for RcBiFunction
-impl_function_constant_method!(RcBiFunction<T, U, R>);
+impl_function_constant_method!(RcBiFunction<T, U, R>, BiFunction);
 
 // Implement Debug and Display for RcBiFunction
 impl_function_debug_display!(RcBiFunction<T, U, R>);

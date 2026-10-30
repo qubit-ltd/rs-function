@@ -95,7 +95,7 @@ impl<T, R> RcStatefulFunction<T, R> {
 }
 
 // Generates: constant() method for RcStatefulFunction<T, R>
-impl_function_constant_method!(RcStatefulFunction<T, R>, 'static);
+impl_function_constant_method!(RcStatefulFunction<T, R>, StatefulFunction, "mut ", 'static);
 
 // Generates: identity() method for RcStatefulFunction<T, T>
 impl_function_identity_method!(RcStatefulFunction<T, T>, StatefulFunction);

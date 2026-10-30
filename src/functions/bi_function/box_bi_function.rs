@@ -82,7 +82,7 @@ impl<T, U, R> BiFunction<T, U, R> for BoxBiFunction<T, U, R> {
 }
 
 // Implement constant method for BoxBiFunction
-impl_function_constant_method!(BoxBiFunction<T, U, R>);
+impl_function_constant_method!(BoxBiFunction<T, U, R>, BiFunction);
 
 // Implement Debug and Display for BoxBiFunction
 impl_function_debug_display!(BoxBiFunction<T, U, R>);

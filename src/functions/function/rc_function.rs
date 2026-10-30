@@ -80,7 +80,7 @@ impl<T, R> RcFunction<T, R> {
 }
 
 // Generates: constant() method for RcFunction<T, R>
-impl_function_constant_method!(RcFunction<T, R>, 'static);
+impl_function_constant_method!(RcFunction<T, R>, Function, "", 'static);
 
 // Generates: identity() method for RcFunction<T, T>
 impl_function_identity_method!(RcFunction<T, T>, Function);

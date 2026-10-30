@@ -26,10 +26,10 @@
 //!
 //! ```ignore
 //! // Single-parameter function
-//! impl_function_constant_method!(BoxFunction<T, R>);
+//! impl_function_constant_method!(BoxFunction<T, R>, Function, "", 'static);
 //!
 //! // Two-parameter function
-//! impl_function_constant_method!(BoxBiFunction<T, U, R>);
+//! impl_function_constant_method!(BoxBiFunction<T, U, R>, BiFunction);
 //! ```
 //!
 //! # Generated Implementation
@@ -49,7 +49,7 @@
 //!     /// use crate::{BoxFunction, Function};
 //!     ///
 //!     /// let constant = BoxFunction::constant("hello");
-//!     /// assert_eq!(constant.apply(123), "hello");
+//!     /// assert_eq!(constant.apply(&123), "hello");
 //!     /// ```
 //!     pub fn constant(value: R) -> BoxFunction<T, R> {
 //!         BoxFunction::new(move |_| value.clone())
@@ -72,7 +72,7 @@
 //!     /// use crate::{BoxBiFunction, BiFunction};
 //!     ///
 //!     /// let constant = BoxBiFunction::constant("hello");
-//!     /// assert_eq!(constant.apply(123, "test"), "hello");
+//!     /// assert_eq!(constant.apply(&123, &"test"), "hello");
 //!     /// ```
 //!     pub fn constant(value: R) -> BoxBiFunction<T, U, R> {
 //!         BoxBiFunction::new(move |_, _| value.clone())
@@ -98,14 +98,14 @@
 ///
 /// ```ignore
 /// // Single-parameter function
-/// impl_function_constant_method!(BoxFunction<T, R>);
+/// impl_function_constant_method!(BoxFunction<T, R>, Function, "", 'static);
 ///
 /// // Two-parameter function
-/// impl_function_constant_method!(BoxBiFunction<T, U, R>);
+/// impl_function_constant_method!(BoxBiFunction<T, U, R>, BiFunction);
 /// ```
 macro_rules! impl_function_constant_method {
     // Two generic parameters - Function
-    ($struct_name:ident < $t:ident, $r:ident >, $($extra_bounds:tt)+) => {
+    ($struct_name:ident < $t:ident, $r:ident >, $semantic_trait:ident, $binding:literal, $($extra_bounds:tt)+) => {
         impl<$t, $r> $struct_name<$t, $r> {
             /// Creates a constant function
             ///
@@ -120,7 +120,7 @@ macro_rules! impl_function_constant_method {
             ///
             /// # Examples
             ///
-            #[doc = concat!("/// ```ignore\n/// use qubit_function as qf;\n/// use qf::{", stringify!($struct_name), ", Function};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123), \"hello\");\n/// ```")]
+            #[doc = concat!("```rust\nuse qubit_function::", stringify!($struct_name), ";\nuse qubit_function::", stringify!($semantic_trait), ";\n\nlet ", $binding, "constant = ", stringify!($struct_name), "::<i32, &'static str>::constant(\"hello\");\nassert_eq!(constant.apply(&123), \"hello\");\n```")]
             #[inline]
             pub fn constant(value: $r) -> $struct_name<$t, $r>
             where
@@ -132,7 +132,7 @@ macro_rules! impl_function_constant_method {
     };
 
     // Three generic parameters - BiFunction (no extra bounds)
-    ($struct_name:ident < $t:ident, $u:ident, $r:ident >) => {
+    ($struct_name:ident < $t:ident, $u:ident, $r:ident >, $semantic_trait:ident) => {
         impl<$t, $u, $r> $struct_name<$t, $u, $r> {
             /// Creates a constant function
             ///
@@ -147,7 +147,7 @@ macro_rules! impl_function_constant_method {
             ///
             /// # Examples
             ///
-            #[doc = concat!("/// ```ignore\n/// use qubit_function as qf;\n/// use qf::{", stringify!($struct_name), ", BiFunction};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123, \"test\"), \"hello\");\n/// ```")]
+            #[doc = concat!("```rust\nuse qubit_function::", stringify!($struct_name), ";\nuse qubit_function::", stringify!($semantic_trait), ";\n\nlet constant = ", stringify!($struct_name), "::<i32, bool, &'static str>::constant(\"hello\");\nassert_eq!(constant.apply(&123, &true), \"hello\");\n```")]
             #[inline]
             pub fn constant(value: $r) -> $struct_name<$t, $u, $r>
             where
@@ -186,7 +186,7 @@ macro_rules! impl_function_constant_method {
     };
 
     // Three generic parameters - BiFunction
-    ($struct_name:ident < $t:ident, $u:ident, $r:ident >, $($extra_bounds:tt)+) => {
+    ($struct_name:ident < $t:ident, $u:ident, $r:ident >, $semantic_trait:ident, $($extra_bounds:tt)+) => {
         impl<$t, $u, $r> $struct_name<$t, $u, $r> {
             /// Creates a constant function
             ///
@@ -201,7 +201,7 @@ macro_rules! impl_function_constant_method {
             ///
             /// # Examples
             ///
-            #[doc = concat!("/// ```ignore\n/// use qubit_function as qf;\n/// use qf::{", stringify!($struct_name), ", BiFunction};\n///\n/// let constant = ", stringify!($struct_name), "::constant(\"hello\");\n/// assert_eq!(constant.apply(123, \"test\"), \"hello\");\n/// ```")]
+            #[doc = concat!("```rust\nuse qubit_function::", stringify!($struct_name), ";\nuse qubit_function::", stringify!($semantic_trait), ";\n\nlet constant = ", stringify!($struct_name), "::<i32, bool, &'static str>::constant(\"hello\");\nassert_eq!(constant.apply(&123, &true), \"hello\");\n```")]
             #[inline]
             pub fn constant(value: $r) -> $struct_name<$t, $u, $r>
             where

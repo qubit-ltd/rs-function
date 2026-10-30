@@ -80,7 +80,7 @@ impl<T, R> ArcFunction<T, R> {
 }
 
 // Generates: constant() method for ArcFunction<T, R>
-impl_function_constant_method!(ArcFunction<T, R>, Send + Sync + 'static);
+impl_function_constant_method!(ArcFunction<T, R>, Function, "", Send + Sync + 'static);
 
 // Generates: identity() method for ArcFunction<T, T>
 impl_function_identity_method!(ArcFunction<T, T>, Function);

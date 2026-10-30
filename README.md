@@ -582,6 +582,13 @@ Computes a result from a borrowed input once.
 **Implementations**:
 - `BoxFunctionOnce<T, R>` - Single ownership, one-time use
 
+`BoxFunctionOnce::constant`, `BoxBiFunctionOnce::constant`, and
+`BoxBiMutatingFunctionOnce::constant` move their value into the one-shot
+function and support return types that do not implement `Clone`. Reusable
+constant functions such as `BoxFunction::constant` still clone the value on
+each call. To preserve the previous cloning behavior, use an explicit closure
+that calls `value.clone()`.
+
 ### 20. StatefulFunction - Stateful Borrowed-Input Function
 
 Computes a result from a borrowed input while allowing mutable internal

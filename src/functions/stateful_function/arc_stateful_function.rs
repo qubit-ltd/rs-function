@@ -100,7 +100,7 @@ impl<T, R> ArcStatefulFunction<T, R> {
 }
 
 // Generates: constant() method for ArcStatefulFunction<T, R>
-impl_function_constant_method!(ArcStatefulFunction<T, R>, Send + 'static);
+impl_function_constant_method!(ArcStatefulFunction<T, R>, StatefulFunction, "mut ", Send + 'static);
 
 // Generates: identity() method for ArcStatefulFunction<T, T>
 impl_function_identity_method!(ArcStatefulFunction<T, T>, StatefulFunction);

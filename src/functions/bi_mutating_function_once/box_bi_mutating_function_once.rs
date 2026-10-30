@@ -13,7 +13,6 @@ use crate::BoxConditionalBiMutatingFunctionOnce;
 use crate::MutatingFunctionOnce;
 use crate::functions::macros::impl_box_function_methods;
 use crate::functions::macros::impl_function_common_methods;
-use crate::functions::macros::impl_function_constant_method;
 use crate::functions::macros::impl_function_debug_display;
 use crate::macros::impl_closure_once_trait;
 
@@ -85,6 +84,30 @@ impl<T, U, R> BoxBiMutatingFunctionOnce<T, U, R> {
         BoxConditionalBiMutatingFunctionOnce,
         MutatingFunctionOnce
     );
+
+    /// Creates a function that returns the captured value when called.
+    ///
+    /// The value is moved into the function and returned by ownership, so `R`
+    /// does not need to implement `Clone`. The mutable inputs are not changed.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use qubit_function::{BiMutatingFunctionOnce, BoxBiMutatingFunctionOnce};
+    ///
+    /// let constant = BoxBiMutatingFunctionOnce::<i32, bool, &'static str>::constant("hello");
+    /// let mut number = 123;
+    /// let mut flag = true;
+    /// assert_eq!(constant.apply(&mut number, &mut flag), "hello");
+    /// assert_eq!(number, 123);
+    /// assert!(flag);
+    /// ```
+    pub fn constant(value: R) -> Self
+    where
+        R: 'static,
+    {
+        Self::new(move |_: &mut T, _: &mut U| value)
+    }
 }
 
 // Implement BiMutatingFunctionOnce trait for BoxBiMutatingFunctionOnce
@@ -94,9 +117,6 @@ impl<T, U, R> BiMutatingFunctionOnce<T, U, R> for BoxBiMutatingFunctionOnce<T, U
         (self.function)(first, second)
     }
 }
-
-// Implement constant method for BoxBiMutatingFunctionOnce
-impl_function_constant_method!(BoxBiMutatingFunctionOnce<T, U, R>, mut 'static);
 
 // Use macro to generate Debug and Display implementations
 impl_function_debug_display!(BoxBiMutatingFunctionOnce<T, U, R>);

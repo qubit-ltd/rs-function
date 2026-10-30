@@ -571,6 +571,11 @@ assert_eq!(to_string.apply(&42), "值: 42");
 **实现类型**:
 - `BoxFunctionOnce<T, R>` - 单一所有权,一次性使用
 
+`BoxFunctionOnce::constant`、`BoxBiFunctionOnce::constant` 和
+`BoxBiMutatingFunctionOnce::constant` 会将值移动到一次性函数中，因此返回类型无需实现
+`Clone`。`BoxFunction::constant` 等可重复调用的常量函数仍会在每次调用时克隆值。
+如果要保留旧的克隆行为，可使用显式调用 `value.clone()` 的闭包。
+
 ### 20. StatefulFunction - 有状态借用输入函数
 
 基于借用输入计算结果,并允许修改内部状态。

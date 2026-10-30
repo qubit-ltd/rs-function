@@ -74,7 +74,7 @@ impl<T, R> BoxFunction<T, R> {
 }
 
 // Generates: constant() method for BoxFunction<T, R>
-impl_function_constant_method!(BoxFunction<T, R>, 'static);
+impl_function_constant_method!(BoxFunction<T, R>, Function, "", 'static);
 
 // Generates: identity() method for BoxFunction<T, T>
 impl_function_identity_method!(BoxFunction<T, T>, Function);

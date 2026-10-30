@@ -13,7 +13,6 @@ use crate::BoxConditionalBiFunctionOnce;
 use crate::FunctionOnce;
 use crate::functions::macros::impl_box_function_methods;
 use crate::functions::macros::impl_function_common_methods;
-use crate::functions::macros::impl_function_constant_method;
 use crate::functions::macros::impl_function_debug_display;
 use crate::macros::impl_closure_once_trait;
 
@@ -79,6 +78,27 @@ impl<T, U, R> BoxBiFunctionOnce<T, U, R> {
         BoxConditionalBiFunctionOnce,
         FunctionOnce
     );
+
+    /// Creates a function that returns the captured value when called.
+    ///
+    /// The value is moved into the function and returned by ownership, so `R`
+    /// does not need to implement `Clone`.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use qubit_function::{BiFunctionOnce, BoxBiFunctionOnce};
+    ///
+    /// let constant =
+    ///     BoxBiFunctionOnce::<i32, bool, &'static str>::constant("hello");
+    /// assert_eq!(constant.apply(&123, &true), "hello");
+    /// ```
+    pub fn constant(value: R) -> Self
+    where
+        R: 'static,
+    {
+        Self::new(move |_: &T, _: &U| value)
+    }
 }
 
 // Implement BiFunctionOnce trait for BoxBiFunctionOnce
@@ -88,9 +108,6 @@ impl<T, U, R> BiFunctionOnce<T, U, R> for BoxBiFunctionOnce<T, U, R> {
         (self.function)(first, second)
     }
 }
-
-// Implement constant method for BoxBiFunctionOnce
-impl_function_constant_method!(BoxBiFunctionOnce<T, U, R>);
 
 // Use macro to generate Debug and Display implementations
 impl_function_debug_display!(BoxBiFunctionOnce<T, U, R>);

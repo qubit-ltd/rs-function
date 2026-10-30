@@ -75,7 +75,7 @@ impl<T, R> BoxStatefulFunction<T, R> {
 }
 
 // Generates: constant() method for BoxStatefulFunction<T, R>
-impl_function_constant_method!(BoxStatefulFunction<T, R>, 'static);
+impl_function_constant_method!(BoxStatefulFunction<T, R>, StatefulFunction, "mut ", 'static);
 
 // Generates: identity() method for BoxStatefulFunction<T, T>
 impl_function_identity_method!(BoxStatefulFunction<T, T>, StatefulFunction);

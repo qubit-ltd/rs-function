@@ -81,7 +81,7 @@ impl<T, U, R> ArcBiFunction<T, U, R> {
 }
 
 // Implement constant method for ArcBiFunction
-impl_function_constant_method!(ArcBiFunction<T, U, R>, Send + Sync + 'static);
+impl_function_constant_method!(ArcBiFunction<T, U, R>, BiFunction, Send + Sync + 'static);
 
 // Implement Debug and Display for ArcBiFunction
 impl_function_debug_display!(ArcBiFunction<T, U, R>);

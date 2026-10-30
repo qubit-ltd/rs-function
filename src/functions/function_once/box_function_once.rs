@@ -12,7 +12,6 @@ use crate::FunctionOnce;
 use crate::Predicate;
 use crate::functions::macros::impl_box_function_methods;
 use crate::functions::macros::impl_function_common_methods;
-use crate::functions::macros::impl_function_constant_method;
 use crate::functions::macros::impl_function_debug_display;
 use crate::functions::macros::impl_function_identity_method;
 use crate::macros::impl_closure_once_trait;
@@ -70,6 +69,26 @@ impl<T, R> BoxFunctionOnce<T, R> {
         BoxConditionalFunctionOnce,
         FunctionOnce
     );
+
+    /// Creates a function that returns the captured value when called.
+    ///
+    /// The value is moved into the function and returned by ownership, so `R`
+    /// does not need to implement `Clone`.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use qubit_function::{BoxFunctionOnce, FunctionOnce};
+    ///
+    /// let constant = BoxFunctionOnce::<i32, &'static str>::constant("hello");
+    /// assert_eq!(constant.apply(&123), "hello");
+    /// ```
+    pub fn constant(value: R) -> Self
+    where
+        R: 'static,
+    {
+        Self::new(move |_: &T| value)
+    }
 }
 
 impl<T, R> FunctionOnce<T, R> for BoxFunctionOnce<T, R> {
@@ -78,9 +97,6 @@ impl<T, R> FunctionOnce<T, R> for BoxFunctionOnce<T, R> {
         (self.function)(input)
     }
 }
-
-// Generates: constant() method for BoxFunctionOnce<T, R>
-impl_function_constant_method!(BoxFunctionOnce<T, R>, 'static);
 
 // Generates: identity() method for BoxFunctionOnce<T, T>
 impl_function_identity_method!(BoxFunctionOnce<T, T>, FunctionOnce);
