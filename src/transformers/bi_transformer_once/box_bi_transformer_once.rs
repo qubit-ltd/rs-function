@@ -80,7 +80,7 @@ impl<T, U, R> BiTransformerOnce<T, U, R> for BoxBiTransformerOnce<T, U, R> {
 }
 
 // Implement constant method for BoxBiTransformerOnce
-impl_transformer_constant_method!(BoxBiTransformerOnce<T, U, R>);
+impl_transformer_constant_method!(BoxBiTransformerOnce<T, U, R>, BiTransformerOnce);
 
 // Use macro to generate Debug and Display implementations
 impl_transformer_debug_display!(BoxBiTransformerOnce<T, U, R>);

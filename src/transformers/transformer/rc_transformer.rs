@@ -75,7 +75,7 @@ impl<T, R> RcTransformer<T, R> {
     );
 }
 
-impl_transformer_constant_method!(RcTransformer<T, R>);
+impl_transformer_constant_method!(RcTransformer<T, R>, Transformer);
 
 // Implement Debug and Display for RcTransformer
 impl_transformer_debug_display!(RcTransformer<T, R>);

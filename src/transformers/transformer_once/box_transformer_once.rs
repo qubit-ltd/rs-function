@@ -73,7 +73,7 @@ impl<T, R> TransformerOnce<T, R> for BoxTransformerOnce<T, R> {
 }
 
 // Implement constant method for BoxTransformerOnce
-impl_transformer_constant_method!(BoxTransformerOnce<T, R>);
+impl_transformer_constant_method!(BoxTransformerOnce<T, R>, TransformerOnce);
 
 // Use macro to generate Debug and Display implementations
 impl_transformer_debug_display!(BoxTransformerOnce<T, R>);

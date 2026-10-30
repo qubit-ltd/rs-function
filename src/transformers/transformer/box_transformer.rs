@@ -71,7 +71,7 @@ impl<T, R> BoxTransformer<T, R> {
 }
 
 // Implement constant method for BoxTransformer
-impl_transformer_constant_method!(BoxTransformer<T, R>);
+impl_transformer_constant_method!(BoxTransformer<T, R>, Transformer);
 
 // Implement Debug and Display for BoxTransformer
 impl_transformer_debug_display!(BoxTransformer<T, R>);

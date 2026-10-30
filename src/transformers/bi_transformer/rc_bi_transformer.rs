@@ -78,7 +78,7 @@ impl<T, U, R> RcBiTransformer<T, U, R> {
 }
 
 // Implement constant method for RcBiTransformer
-impl_transformer_constant_method!(RcBiTransformer<T, U, R>);
+impl_transformer_constant_method!(RcBiTransformer<T, U, R>, BiTransformer);
 
 // Implement Debug and Display for RcBiTransformer
 impl_transformer_debug_display!(RcBiTransformer<T, U, R>);
