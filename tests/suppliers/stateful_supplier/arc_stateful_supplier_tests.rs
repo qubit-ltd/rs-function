@@ -285,6 +285,38 @@ mod test_arc_stateful_supplier {
             assert_eq!(source.get(), 42);
             assert_eq!(*call_count.lock().expect("mutex should not be poisoned"), 2);
         }
+
+        #[test]
+        fn test_memoize_clones_initialize_shared_cache_once() {
+            use std::sync::Barrier;
+            use std::sync::atomic::AtomicUsize;
+            use std::sync::atomic::Ordering;
+            use std::thread;
+
+            let calls = Arc::new(AtomicUsize::new(0));
+            let callback_calls = Arc::clone(&calls);
+            let source = ArcStatefulSupplier::new(move || callback_calls.fetch_add(1, Ordering::SeqCst) + 1);
+            let mut memoized = source.memoize();
+            let start = Arc::new(Barrier::new(5));
+            let mut workers = Vec::new();
+
+            for _ in 0..4 {
+                let mut shared = memoized.clone();
+                let worker_start = Arc::clone(&start);
+                workers.push(thread::spawn(move || {
+                    worker_start.wait();
+                    shared.get()
+                }));
+            }
+            start.wait();
+
+            for worker in workers {
+                assert_eq!(worker.join().expect("memoize worker should not panic"), 1);
+            }
+            assert_eq!(calls.load(Ordering::SeqCst), 1);
+            assert_eq!(memoized.get(), 1);
+            assert_eq!(calls.load(Ordering::SeqCst), 1);
+        }
     }
 
     mod test_thread_safety {
