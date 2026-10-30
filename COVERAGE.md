@@ -1,68 +1,76 @@
 # Code Coverage Guide
 
-This project uses `cargo-llvm-cov` for local and CI coverage reporting.
-The coverage script is intended for contributor checks and is excluded from
-published crates.
+This project uses `cargo-llvm-cov` for local and CI coverage collection and
+reporting. The project entry point is `./.infra/bin/coverage.sh`; it is intended
+for contributor checks and is excluded from published crates.
 
 ## Dependencies
 
-Install the coverage tool and its LLVM component:
+Install `cargo-llvm-cov`, the LLVM tools component for the active Rust toolchain,
+and `jq`:
 
 ```bash
 cargo install cargo-llvm-cov
 rustup component add llvm-tools-preview
 ```
 
-The `json` and `all` formats also require `jq` because the script validates
-per-file thresholds from the generated JSON report.
+The collection tool uses `cargo-llvm-cov` to collect coverage and check
+thresholds. After collection succeeds, the shared report script exports the
+reports and uses `jq` to read configuration and build the summary files.
 
 ## Quick Start
 
-Use `.infra/bin/coverage.sh` for normal checks:
-
 ```bash
-./.infra/bin/coverage.sh              # Generate HTML and open it in a browser
-./.infra/bin/coverage.sh text         # Print a text report to the terminal
-./.infra/bin/coverage.sh lcov         # Generate LCOV
-./.infra/bin/coverage.sh json         # Generate JSON and enforce thresholds
-./.infra/bin/coverage.sh cobertura    # Generate Cobertura XML
-./.infra/bin/coverage.sh all          # Run tests once and generate all report formats
-./.infra/bin/coverage.sh all --clean  # Clean old coverage data first
-./.infra/bin/coverage.sh help         # Show all options
+./.infra/bin/coverage.sh --help
+./.infra/bin/coverage.sh
 ```
 
-`json` and `all` enforce the default local thresholds for every source file:
+The help output lists the collection options accepted by the underlying
+`rs-infra-coverage collect` command, including `--output` and
+`--ignore-thresholds`. The wrapper runs the report export after collection; if
+help succeeds without producing coverage data, the export step can still fail
+because there are no `.profraw` files.
 
-- Functions: `100%`
-- Lines: `> 95%`
-- Regions: `> 95%`
+The tool checks selected source files using aggregate covered and total counts,
+not a separate threshold for every file. A project's explicit configuration in
+`.infra/coverage/coverage.json` takes precedence. Missing thresholds use these
+tool defaults:
 
-The thresholds can be overridden for stricter checks:
+- Lines: `> 90%`
+- Functions: `>= 95%`
+- Regions: `> 85%`
 
-```bash
-MIN_FUNCTION_COVERAGE=100 MIN_LINE_COVERAGE=98 MIN_REGION_COVERAGE=98 ./.infra/bin/coverage.sh json
-```
+This project currently has no explicit coverage configuration, so these tool
+defaults apply. Configure project policy in `.infra/coverage/coverage.json`
+rather than through undocumented `MIN_*` environment variables.
 
-## Report Locations
+## Collection and Reports
 
-Generated reports are written under `target/llvm-cov`:
+The wrapper first runs `rs-infra-coverage collect`. It writes the raw LLVM JSON
+report to `target/infra/coverage/raw.json` by default and checks thresholds. You
+can choose another raw report path with the supported `--output <PATH>` option.
+If collection or threshold checking fails, the wrapper stops before report
+export.
 
+After successful collection, the shared report script uses `cargo llvm-cov
+report` to export these files:
+
+- JSON: `coverage.json`
+- LCOV: `lcov.info`
+- Text: `coverage.txt`
+- Aggregate JSON summary: `ci-summary.json`
+- Coverage badge data: `coverage-badge.json`
+- Markdown summary: `coverage-summary.md`
 - HTML: `target/llvm-cov/html/index.html`
-- LCOV: `target/llvm-cov/lcov.info`
-- JSON: `target/llvm-cov/coverage.json`
-- Cobertura: `target/llvm-cov/cobertura.xml`
-- Text: `target/llvm-cov/coverage.txt` (`all` only)
+- Cobertura XML: `target/llvm-cov/cobertura.xml`
 
-## How `all` Works
-
-`./.infra/bin/coverage.sh all` runs tests once with `cargo llvm-cov --no-report`, then
-uses `cargo llvm-cov report` to generate HTML, LCOV, JSON, Cobertura, and text
-reports from the same coverage data. This avoids repeated test execution.
+The HTML report is generated on disk; the project wrapper does not request that
+a browser open automatically.
 
 ## Direct `cargo llvm-cov` Usage
 
-Direct commands are useful for ad hoc inspection, but they do not enforce this
-project's per-file thresholds:
+Direct commands are useful for ad hoc inspection. They do not run the project's
+collection tool or its configured threshold checks:
 
 ```bash
 cargo llvm-cov clean
@@ -78,19 +86,20 @@ To filter tests, pass normal test filters after `--`:
 cargo llvm-cov --all-features --html --open --test integration_tests -- testers::tester_2_tests::tests::test_always_true
 ```
 
-`integration_tests` requires the `full` feature, which `--all-features` enables. The
-argument after `--` is a libtest filter matched against the test path; it is not a
-Cargo test target name.
+`integration_tests` requires the `full` feature, which `--all-features` enables.
+The argument after `--` is a libtest filter matched against the test path; it is
+not a Cargo test target name.
 
 ## Compile-Contract Cache
 
 Compile-contract tests keep their Cargo build cache at
-`<checkout>/target/compile-contract/<feature_key>`. Their source fixtures remain in
-temporary directories and are removed after each invocation; the feature-specific
-target directory is a persistent, reusable cache. Setting `CARGO_TARGET_DIR` for
-the checkout does not change this helper cache location. Normal test runs do not
-clear the shared cache. If cleanup is needed, target only the confirmed cache under
-the current checkout; the helper does not scan historical `/tmp` leftovers.
+`<checkout>/target/compile-contract/<feature_key>`. Their source fixtures remain
+in temporary directories and are removed after each invocation; the
+feature-specific target directory is a persistent, reusable cache. Setting
+`CARGO_TARGET_DIR` for the checkout does not change this helper cache location.
+Normal test runs do not clear the shared cache. If cleanup is needed, target
+only the confirmed compile-contract cache under the current checkout; the helper
+does not scan historical `/tmp` leftovers.
 
 ## Exclusions
 
@@ -100,29 +109,34 @@ the current checkout; the helper does not scan historical `/tmp` leftovers.
 - `benches/*`
 - `examples/*`
 
-`.infra/bin/coverage.sh` also filters Cargo registry, rustup, and sibling workspace crates
-so reports only cover this crate's source files.
+The collection tool also filters Cargo registry, rustup, and sibling workspace
+crates so reports cover this crate's source files.
 
 ## CI
 
-The reusable GitHub Actions workflow runs `./.infra/bin/coverage.sh all` with
-`COVERAGE_ENFORCE_THRESHOLDS=0`, publishes coverage artifacts, and reports the
-aggregate result without applying per-source thresholds. The local
-`./.infra/bin/ci-check.sh` command runs `./.infra/bin/coverage.sh json` with threshold enforcement
-enabled by default.
+The repository workflow delegates to the reusable `rs-infra-ci` workflow on
+`main`. That workflow runs `./.infra/bin/coverage.sh` without extra collection
+arguments. The collection tool enforces thresholds from the project
+configuration or its defaults; because collection runs before export, a
+collection or threshold failure prevents report export and artifact upload. On
+success, CI publishes the generated reports as the `coverage-reports` artifact
+and adds a summary to the job. The reusable workflow and coverage tool follow
+their upstream `main` revisions, so their exact behavior can change over time.
 
 ## Common Issues
 
 If `cargo-llvm-cov` is missing, install it and add `llvm-tools-preview` to the
-active toolchain.
+active toolchain. Install `jq` as well: the report export and summary stages use
+it even though threshold checking is performed during collection.
 
-If `json` or `all` fails before threshold checking, install `jq`.
-
-If coverage data looks stale, run:
+If coverage data looks stale, use the supported cleanup subcommand directly:
 
 ```bash
-./.infra/bin/coverage.sh json --clean
+cargo llvm-cov clean
 ```
+
+This cleans the current checkout's cargo-llvm-cov data; it does not remove the
+separate compile-contract cache.
 
 ## References
 
