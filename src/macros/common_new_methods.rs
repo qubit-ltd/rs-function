@@ -44,6 +44,14 @@ macro_rules! impl_common_new_public_methods {
         /// * `F` - The semantic callback implementation accepted by this
         ///   wrapper.
         ///
+        /// # Type Inference
+        ///
+        /// For callbacks that borrow arguments, explicitly annotate closure
+        /// parameter types when inference is insufficient, even when the
+        /// wrapper's type arguments are specified. Constructors accept
+        /// semantic callback traits, which may provide less closure parameter
+        /// inference than direct `Fn` bounds.
+        ///
         /// # Parameters
         ///
         #[doc = concat!("* `", stringify!($source), "` - The semantic callback implementation to wrap.")]
@@ -69,6 +77,14 @@ macro_rules! impl_common_new_public_methods {
         ///
         /// * `F` - The semantic callback implementation accepted by this
         ///   wrapper.
+        ///
+        /// # Type Inference
+        ///
+        /// For callbacks that borrow arguments, explicitly annotate closure
+        /// parameter types when inference is insufficient, even when the
+        /// wrapper's type arguments are specified. Constructors accept
+        /// semantic callback traits, which may provide less closure parameter
+        /// inference than direct `Fn` bounds.
         ///
         /// # Parameters
         ///
@@ -96,6 +112,14 @@ macro_rules! impl_common_new_public_methods {
         ///
         /// * `F` - The semantic callback implementation accepted by this
         ///   wrapper.
+        ///
+        /// # Type Inference
+        ///
+        /// For callbacks that borrow arguments, explicitly annotate closure
+        /// parameter types when inference is insufficient, even when the
+        /// wrapper's type arguments are specified. Constructors accept
+        /// semantic callback traits, which may provide less closure parameter
+        /// inference than direct `Fn` bounds.
         ///
         /// # Parameters
         ///
@@ -135,6 +159,14 @@ macro_rules! impl_common_new_public_methods {
         /// * `F` - The semantic callback implementation accepted by this
         ///   wrapper.
         ///
+        /// # Type Inference
+        ///
+        /// For callbacks that borrow arguments, explicitly annotate closure
+        /// parameter types when inference is insufficient, even when the
+        /// wrapper's type arguments are specified. Constructors accept
+        /// semantic callback traits, which may provide less closure parameter
+        /// inference than direct `Fn` bounds.
+        ///
         /// # Parameters
         ///
         #[doc = concat!("* `", stringify!($source), "` - The semantic callback implementation to wrap.")]
@@ -163,6 +195,14 @@ macro_rules! impl_common_new_public_methods {
         ///
         /// * `F` - The semantic callback implementation accepted by this
         ///   wrapper.
+        ///
+        /// # Type Inference
+        ///
+        /// For callbacks that borrow arguments, explicitly annotate closure
+        /// parameter types when inference is insufficient, even when the
+        /// wrapper's type arguments are specified. Constructors accept
+        /// semantic callback traits, which may provide less closure parameter
+        /// inference than direct `Fn` bounds.
         ///
         /// # Parameters
         ///
@@ -193,6 +233,14 @@ macro_rules! impl_common_new_public_methods {
         ///
         /// * `F` - The semantic callback implementation accepted by this
         ///   wrapper.
+        ///
+        /// # Type Inference
+        ///
+        /// For callbacks that borrow arguments, explicitly annotate closure
+        /// parameter types when inference is insufficient, even when the
+        /// wrapper's type arguments are specified. Constructors accept
+        /// semantic callback traits, which may provide less closure parameter
+        /// inference than direct `Fn` bounds.
         ///
         /// # Parameters
         ///

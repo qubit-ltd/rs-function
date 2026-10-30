@@ -61,6 +61,34 @@ Unless noted otherwise, examples below assume the `full` feature is enabled.
 
 ## Quick Start
 
+When a constructor accepts a semantic callback trait, closure parameter
+inference may require an explicit type annotation even if the wrapper's type
+arguments are specified. Use `&T` for shared-input callbacks and `&mut T` for
+mutable-input callbacks:
+
+```rust
+use qubit_function::ArcConsumer;
+use qubit_function::ArcMutatingFunction;
+use qubit_function::BoxFunction;
+use qubit_function::Consumer;
+use qubit_function::Function;
+use qubit_function::MutatingFunction;
+
+fn main() {
+    let function = BoxFunction::<i32, i32>::new(|x: &i32| *x + 1);
+    assert_eq!(function.apply(&41), 42);
+    let mutator = ArcMutatingFunction::<i32, i32>::new(|x: &mut i32| {
+        *x += 1;
+        *x
+    });
+    let mut input = 41;
+    assert_eq!(mutator.apply(&mut input), 42);
+    assert_eq!(input, 42);
+    let consumer = ArcConsumer::<i32>::new(|x: &i32| assert_eq!(*x, 42));
+    consumer.accept(&input);
+}
+```
+
 When an API only invokes a callback immediately, it can accept the semantic
 trait directly. This application-defined generic function takes ownership of
 the callback value for the call. The callback trait has no `'static` bound, so

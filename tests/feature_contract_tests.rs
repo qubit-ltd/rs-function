@@ -113,6 +113,45 @@ fn main() {
 }
 
 #[test]
+fn test_constructor_inference_accepts_explicit_borrowed_parameters() {
+    let output = support::compile_consumer(
+        &[],
+        r#"
+use qubit_function::ArcConsumer;
+use qubit_function::ArcMutatingFunction;
+use qubit_function::BoxFunction;
+
+fn main() {
+    let _function = BoxFunction::<i32, i32>::new(|x: &i32| *x + 1);
+    let _mutator = ArcMutatingFunction::<i32, i32>::new(|x: &mut i32| {
+        *x += 1;
+        *x
+    });
+    let _consumer = ArcConsumer::<i32>::new(|x: &i32| println!("{}", x));
+}
+"#,
+    );
+    assert!(output.status.success(), "{}", cargo_diagnostics(&output));
+}
+
+#[test]
+fn test_constructor_inference_reports_missing_parameter_annotation() {
+    let output = support::compile_consumer(
+        &[],
+        r#"
+use qubit_function::BoxFunction;
+
+fn main() {
+    let _function = BoxFunction::<i32, i32>::new(|x| *x + 1);
+}
+"#,
+    );
+    // Records the current inference limit; this is not a permanent API promise
+    // to reject closures whose parameter types are omitted.
+    assert_compile_failure(&output, "error[E0282]");
+}
+
+#[test]
 fn test_baseline_rejects_deep_arc_tester_path() {
     let output = support::compile_consumer(
         &[],

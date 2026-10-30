@@ -56,6 +56,32 @@ qubit-function = { version = "0.18", features = ["full"] }
 
 ## 快速开始
 
+当构造器接收语义回调 trait 时，即使已指定包装器的类型参数，闭包参数的类型推断
+仍可能需要显式标注。共享输入回调使用 `&T`，可变输入回调使用 `&mut T`：
+
+```rust
+use qubit_function::ArcConsumer;
+use qubit_function::ArcMutatingFunction;
+use qubit_function::BoxFunction;
+use qubit_function::Consumer;
+use qubit_function::Function;
+use qubit_function::MutatingFunction;
+
+fn main() {
+    let function = BoxFunction::<i32, i32>::new(|x: &i32| *x + 1);
+    assert_eq!(function.apply(&41), 42);
+    let mutator = ArcMutatingFunction::<i32, i32>::new(|x: &mut i32| {
+        *x += 1;
+        *x
+    });
+    let mut input = 41;
+    assert_eq!(mutator.apply(&mut input), 42);
+    assert_eq!(input, 42);
+    let consumer = ArcConsumer::<i32>::new(|x: &i32| assert_eq!(*x, 42));
+    consumer.accept(&input);
+}
+```
+
 如果 API 只在调用期间执行回调，可以直接接收语义 trait。下面这个由应用
 自行定义的泛型函数会按值接收回调，并在本次调用中使用它。回调 trait 没有 `'static`
 约束，因此闭包可以借用调用期间仍然有效的局部状态。此函数只是示例，不是本 crate
