@@ -135,7 +135,9 @@ fn test_box_callable_once_and_then_runs_next_on_success() {
 #[test]
 fn test_box_callable_once_and_then_skips_next_on_error() {
     let task = BoxCallableOnce::new(|| Err::<i32, _>(io::Error::other("stop")));
-    let chained = task.and_then(|_| Ok::<i32, io::Error>(99));
+    let chained = task.and_then(|_| -> Result<i32, io::Error> {
+        panic!("and_then callback must not run after the source returns Err")
+    });
 
     assert_eq!(
         chained

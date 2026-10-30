@@ -40,5 +40,5 @@ mod stateful_bi_predicate;
 #[cfg(all(feature = "rc", feature = "stateful"))]
 mod stateful_bi_predicate_tests;
 mod stateful_predicate;
-#[cfg(all(feature = "rc", feature = "stateful"))]
+#[cfg(feature = "stateful")]
 mod stateful_predicate_tests;

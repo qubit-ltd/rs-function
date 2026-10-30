@@ -16,11 +16,14 @@ use std::sync::atomic::AtomicBool;
 use std::sync::atomic::AtomicUsize;
 use std::sync::atomic::Ordering;
 
+#[cfg(feature = "stateful")]
 use qubit_function::ArcRunnable;
 use qubit_function::BoxRunnable;
 use qubit_function::Callable;
+#[cfg(feature = "rc")]
 use qubit_function::RcRunnable;
 use qubit_function::Runnable;
+#[cfg(feature = "once")]
 use qubit_function::SupplierOnce;
 
 #[test]
@@ -46,6 +49,7 @@ fn test_runnable_closure_run_returns_error() {
 }
 
 #[test]
+#[cfg(feature = "rc")]
 fn test_rc_runnable_from_supplier() {
     let count = Rc::new(Cell::new(0));
     let captured = Rc::clone(&count);
@@ -60,6 +64,7 @@ fn test_rc_runnable_from_supplier() {
 }
 
 #[test]
+#[cfg(feature = "stateful")]
 fn test_arc_runnable_from_supplier() {
     let count = Arc::new(AtomicUsize::new(0));
     let captured = Arc::clone(&count);
@@ -103,14 +108,21 @@ fn test_box_runnable_name_management() {
 }
 
 #[test]
+#[cfg(any(feature = "rc", feature = "stateful"))]
 fn test_shared_runnable_name_display_and_debug() {
-    let rc = RcRunnable::<io::Error>::new_with_name("cleanup", || Ok(()));
-    let arc = ArcRunnable::<io::Error>::new_with_name("cleanup", || Ok(()));
+    #[cfg(feature = "rc")]
+    {
+        let rc = RcRunnable::<io::Error>::new_with_name("cleanup", || Ok(()));
+        assert_eq!(rc.to_string(), "RcRunnable(cleanup)");
+        assert!(format!("{rc:?}").contains("cleanup"));
+    }
 
-    assert_eq!(rc.to_string(), "RcRunnable(cleanup)");
-    assert!(format!("{rc:?}").contains("cleanup"));
-    assert_eq!(arc.to_string(), "ArcRunnable(cleanup)");
-    assert!(format!("{arc:?}").contains("cleanup"));
+    #[cfg(feature = "stateful")]
+    {
+        let arc = ArcRunnable::<io::Error>::new_with_name("cleanup", || Ok(()));
+        assert_eq!(arc.to_string(), "ArcRunnable(cleanup)");
+        assert!(format!("{arc:?}").contains("cleanup"));
+    }
 }
 
 #[test]
@@ -134,6 +146,7 @@ fn test_box_runnable_from_supplier() {
 }
 
 #[test]
+#[cfg(feature = "once")]
 fn test_box_runnable_implements_supplier_once() {
     let task = BoxRunnable::new(|| Ok::<(), io::Error>(()));
 

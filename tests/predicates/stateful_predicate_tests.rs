@@ -16,6 +16,7 @@ use std::sync::atomic::Ordering;
 
 use qubit_function::predicates::ArcStatefulPredicate;
 use qubit_function::predicates::BoxStatefulPredicate;
+#[cfg(feature = "rc")]
 use qubit_function::predicates::RcStatefulPredicate;
 use qubit_function::predicates::StatefulPredicate;
 
@@ -122,6 +123,7 @@ fn test_box_stateful_predicate_debug_and_display() {
 }
 
 #[test]
+#[cfg(feature = "rc")]
 fn test_rc_stateful_predicate_clone_shares_state() {
     let calls = Rc::new(RefCell::new(0));
     let counter = Rc::clone(&calls);
@@ -137,6 +139,7 @@ fn test_rc_stateful_predicate_clone_shares_state() {
 }
 
 #[test]
+#[cfg(feature = "rc")]
 fn test_rc_stateful_predicate_logical_operations_cover_all_branches() {
     let positive = RcStatefulPredicate::new(|value: &i32| *value > 0);
 
@@ -168,6 +171,7 @@ fn test_rc_stateful_predicate_logical_operations_cover_all_branches() {
 }
 
 #[test]
+#[cfg(feature = "rc")]
 fn test_rc_stateful_predicate_self_composition_releases_borrow_between_calls() {
     let calls = Rc::new(RefCell::new(0));
     let counter = Rc::clone(&calls);
@@ -247,14 +251,17 @@ fn test_stateful_predicate_not_operator() {
     assert!(!boxed.test(&5));
     assert!(boxed.test(&-5));
 
-    let rc = RcStatefulPredicate::new(|value: &i32| *value > 0);
-    let mut negated_rc = !&rc;
-    assert!(!negated_rc.test(&5));
-    assert!(negated_rc.test(&-5));
+    #[cfg(feature = "rc")]
+    {
+        let rc = RcStatefulPredicate::new(|value: &i32| *value > 0);
+        let mut negated_rc = !&rc;
+        assert!(!negated_rc.test(&5));
+        assert!(negated_rc.test(&-5));
 
-    let mut owned_negated_rc = !rc;
-    assert!(!owned_negated_rc.test(&5));
-    assert!(owned_negated_rc.test(&-5));
+        let mut owned_negated_rc = !rc;
+        assert!(!owned_negated_rc.test(&5));
+        assert!(owned_negated_rc.test(&-5));
+    }
 
     let arc = ArcStatefulPredicate::new(|value: &i32| *value > 0);
     let mut negated_arc = !&arc;
