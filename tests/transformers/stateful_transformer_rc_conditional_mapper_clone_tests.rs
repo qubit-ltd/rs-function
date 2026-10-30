@@ -67,32 +67,31 @@ fn test_complex_pipeline() {
 
 #[test]
 fn test_nested_conditional() {
-    let mut valid_count = 0;
     let mut invalid_count = 0;
     let mut error_count = 0;
-
+    let sub_mapper = BoxStatefulTransformer::new(move |x: i32| {
+        invalid_count += 1;
+        format!("Invalid[{}]: {}", invalid_count, x + 100)
+    })
+    .when(|x: &i32| *x < 0)
+    .or_else(move |x: i32| {
+        error_count += 1;
+        format!("Error[{}]: {}", error_count, x)
+    });
+    let mut valid_count = 0;
     let mut mapper = BoxStatefulTransformer::new(move |x: i32| {
         valid_count += 1;
         format!("Valid[{}]: {}", valid_count, x * 2)
     })
     .when(|x: &i32| *x > 0)
-    .or_else(move |x: i32| {
-        let mut sub_mapper = BoxStatefulTransformer::new(move |x: i32| {
-            invalid_count += 1;
-            format!("Invalid[{}]: {}", invalid_count, x + 100)
-        })
-        .when(move |x: &i32| *x < 0)
-        .or_else(move |x: i32| {
-            error_count += 1;
-            format!("Error[{}]: {}", error_count, x)
-        });
-        sub_mapper.apply(x)
-    });
+    .or_else(sub_mapper);
 
     assert_eq!(mapper.apply(5), "Valid[1]: 10");
     assert_eq!(mapper.apply(-5), "Invalid[1]: 95");
     assert_eq!(mapper.apply(0), "Error[1]: 0");
     assert_eq!(mapper.apply(10), "Valid[2]: 20");
+    assert_eq!(mapper.apply(-5), "Invalid[2]: 95");
+    assert_eq!(mapper.apply(0), "Error[2]: 0");
 }
 
 // ============================================================================

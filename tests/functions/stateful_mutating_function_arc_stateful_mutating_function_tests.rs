@@ -18,6 +18,8 @@ use qubit_function::StatefulMutatingFunction;
 
 #[cfg(test)]
 mod test_arc_stateful_mutating_function {
+    use std::sync::Arc;
+    use std::sync::Barrier;
     use std::thread;
 
     use super::ArcStatefulMutatingFunction;
@@ -42,7 +44,7 @@ mod test_arc_stateful_mutating_function {
 
     #[test]
     fn test_clone() {
-        let counter = {
+        let mut counter = {
             let mut count = 0;
             ArcStatefulMutatingFunction::new(move |x: &mut i32| {
                 count += 1;
@@ -50,37 +52,53 @@ mod test_arc_stateful_mutating_function {
                 count
             })
         };
-        let mut clone = counter.clone();
-
-        let mut value1 = 5;
-        assert_eq!(clone.apply(&mut value1), 1);
-        assert_eq!(value1, 10);
-
-        // Shared state
-        let mut value2 = 3;
-        assert_eq!(clone.apply(&mut value2), 2);
-        assert_eq!(value2, 6);
+        let mut cloned = counter.clone();
+        let mut first = 5;
+        let mut second = 3;
+        assert_eq!(counter.apply(&mut first), 1);
+        assert_eq!(cloned.apply(&mut second), 2);
+        assert_eq!(counter.apply(&mut first), 3);
+        assert_eq!((first, second), (20, 6));
     }
 
     #[test]
     fn test_thread_safe() {
-        let counter = {
-            let mut count = 0;
-            ArcStatefulMutatingFunction::new(move |x: &mut i32| {
+        let mut counter = {
+            let mut count = 0usize;
+            ArcStatefulMutatingFunction::new(move |value: &mut i32| {
                 count += 1;
-                *x *= 2;
+                *value += 1;
                 count
             })
         };
-        let mut counter_clone = counter.clone();
-
-        let handle = thread::spawn(move || {
-            let mut value = 5;
-            counter_clone.apply(&mut value)
-        });
-
-        let result = handle.join().expect("thread should not panic");
-        assert_eq!(result, 1);
+        let barrier = Arc::new(Barrier::new(5));
+        let handles: Vec<_> = (0..4)
+            .map(|_| {
+                let mut shared = counter.clone();
+                let ready = Arc::clone(&barrier);
+                thread::spawn(move || {
+                    ready.wait();
+                    (0..16)
+                        .map(|_| {
+                            let mut input = 0;
+                            let sequence = shared.apply(&mut input);
+                            assert_eq!(input, 1);
+                            sequence
+                        })
+                        .collect::<Vec<_>>()
+                })
+            })
+            .collect();
+        barrier.wait();
+        let mut observed = Vec::new();
+        for handle in handles {
+            observed.extend(handle.join().expect("worker should not panic"));
+        }
+        observed.sort_unstable();
+        assert_eq!(observed, (1..=64).collect::<Vec<_>>());
+        let mut input = 0;
+        assert_eq!(counter.apply(&mut input), 65);
+        assert_eq!(input, 1);
     }
 
     #[test]
