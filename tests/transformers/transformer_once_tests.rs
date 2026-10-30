@@ -324,6 +324,7 @@ mod box_transformer_transformer_once_tests {
 // RcTransformer TransformerOnce Tests
 // ============================================================================
 
+#[cfg(feature = "rc")]
 #[cfg(test)]
 mod rc_transformer_transformer_once_tests {
     use qubit_function::RcTransformer;
