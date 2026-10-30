@@ -39,13 +39,21 @@ type ArcComparatorFn<T> = Arc<dyn Fn(&T, &T) -> Ordering + Send + Sync>;
 /// assert_eq!(cmp.compare(&5, &3), Ordering::Greater);
 /// assert_eq!(cloned.compare(&5, &3), Ordering::Greater);
 /// ```
-#[derive(Clone)]
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct ArcComparator<T> {
     /// The wrapped callback implementation.
     pub(super) function: ArcComparatorFn<T>,
     /// Diagnostic metadata associated with this callback.
     pub(super) metadata: CallbackMetadata,
+}
+
+impl<T> Clone for ArcComparator<T> {
+    fn clone(&self) -> Self {
+        Self {
+            function: Arc::clone(&self.function),
+            metadata: self.metadata.clone(),
+        }
+    }
 }
 
 impl<T> ArcComparator<T> {

@@ -39,13 +39,21 @@ type RcComparatorFn<T> = Rc<dyn Fn(&T, &T) -> Ordering>;
 /// assert_eq!(cmp.compare(&5, &3), Ordering::Greater);
 /// assert_eq!(cloned.compare(&5, &3), Ordering::Greater);
 /// ```
-#[derive(Clone)]
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcComparator<T> {
     /// The wrapped callback implementation.
     pub(super) function: RcComparatorFn<T>,
     /// Diagnostic metadata associated with this callback.
     pub(super) metadata: CallbackMetadata,
+}
+
+impl<T> Clone for RcComparator<T> {
+    fn clone(&self) -> Self {
+        Self {
+            function: Rc::clone(&self.function),
+            metadata: self.metadata.clone(),
+        }
+    }
 }
 
 impl<T> RcComparator<T> {
