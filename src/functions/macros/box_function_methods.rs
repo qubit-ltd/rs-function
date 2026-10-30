@@ -106,6 +106,175 @@
 /// // );
 /// ```
 macro_rules! impl_box_function_methods {
+    (@doc_when BoxFunction) => { impl_box_function_methods!(@doc_when_function BoxFunction, "Function") };
+    (@doc_when BoxStatefulFunction) => { impl_box_function_methods!(@doc_when_stateful BoxStatefulFunction, "StatefulFunction") };
+    (@doc_when BoxMutatingFunction) => { impl_box_function_methods!(@doc_when_mutating BoxMutatingFunction, "MutatingFunction") };
+    (@doc_when BoxStatefulMutatingFunction) => { impl_box_function_methods!(@doc_when_stateful_mutating BoxStatefulMutatingFunction, "StatefulMutatingFunction") };
+    (@doc_when BoxFunctionOnce) => { impl_box_function_methods!(@doc_when_once BoxFunctionOnce, "FunctionOnce") };
+    (@doc_when BoxMutatingFunctionOnce) => { impl_box_function_methods!(@doc_when_mutating_once BoxMutatingFunctionOnce, "MutatingFunctionOnce") };
+    (@doc_when BoxBiFunction) => { impl_box_function_methods!(@doc_when_bi BoxBiFunction, "BiFunction") };
+    (@doc_when BoxBiFunctionOnce) => { impl_box_function_methods!(@doc_when_bi_once BoxBiFunctionOnce, "BiFunctionOnce") };
+    (@doc_when BoxBiMutatingFunction) => { impl_box_function_methods!(@doc_when_bi_mutating BoxBiMutatingFunction, "BiMutatingFunction") };
+    (@doc_when BoxBiMutatingFunctionOnce) => { impl_box_function_methods!(@doc_when_bi_mutating_once BoxBiMutatingFunctionOnce, "BiMutatingFunctionOnce") };
+
+    (@doc_when_function $wrapper:ident, $source_trait:literal) => { concat!(
+        "```rust\nuse qubit_function::{", stringify!($wrapper), ", ", $source_trait, "};\n",
+        "let positive = ", stringify!($wrapper), "::new(|value: &i32| *value + 1);\n",
+        "let positive = positive.when(|value: &i32| *value > 0);\nlet mut positive = positive.or_else(|_: &i32| 0);\n",
+        "assert_eq!(positive.apply(&5), 6);\n",
+        "let negative = ", stringify!($wrapper), "::new(|value: &i32| *value + 1);\n",
+        "let negative = negative.when(|value: &i32| *value > 0);\nlet mut negative = negative.or_else(|_: &i32| 0);\n",
+        "assert_eq!(negative.apply(&-5), 0);\n```"
+    ) };
+    (@doc_when_stateful $wrapper:ident, $source_trait:literal) => { concat!(
+        "```rust\nuse qubit_function::{", stringify!($wrapper), ", ", $source_trait, "};\n",
+        "let mut positive_calls = 0;\nlet positive = ", stringify!($wrapper), "::new(move |value: &i32| { positive_calls += 1; *value + positive_calls });\n",
+        "let positive = positive.when(|value: &i32| *value > 0);\n",
+        "assert_eq!(positive.or_else(|_: &i32| 0).apply(&5), 6);\n",
+        "let mut negative_calls = 0;\nlet negative = ", stringify!($wrapper), "::new(move |value: &i32| { negative_calls += 1; *value + negative_calls });\n",
+        "let negative = negative.when(|value: &i32| *value > 0);\n",
+        "assert_eq!(negative.or_else(|_: &i32| 0).apply(&-5), 0);\n```"
+    ) };
+    (@doc_when_mutating $wrapper:ident, $source_trait:literal) => { concat!(
+        "```rust\nuse qubit_function::{", stringify!($wrapper), ", ", $source_trait, "};\n",
+        "let positive = ", stringify!($wrapper), "::new(|value: &mut i32| { *value += 1; *value });\n",
+        "let positive = positive.when(|value: &i32| *value > 0);\nlet mut input = 5;\n",
+        "let result = positive.or_else(|_: &mut i32| 0).apply(&mut input);\nassert_eq!((input, result), (6, 6));\n",
+        "let negative = ", stringify!($wrapper), "::new(|value: &mut i32| { *value += 1; *value });\n",
+        "let negative = negative.when(|value: &i32| *value > 0);\nlet mut input = -5;\n",
+        "let result = negative.or_else(|_: &mut i32| 0).apply(&mut input);\nassert_eq!((input, result), (-5, 0));\n```"
+    ) };
+    (@doc_when_stateful_mutating $wrapper:ident, $source_trait:literal) => { concat!(
+        "```rust\nuse qubit_function::{", stringify!($wrapper), ", ", $source_trait, "};\n",
+        "let mut positive_calls = 0;\nlet positive = ", stringify!($wrapper), "::new(move |value: &mut i32| { positive_calls += 1; *value += positive_calls; *value });\n",
+        "let positive = positive.when(|value: &i32| *value > 0);\nlet mut input = 5;\n",
+        "let mut positive = positive.or_else(|_: &mut i32| 0);\nlet result = positive.apply(&mut input);\nassert_eq!((input, result), (6, 6));\n",
+        "let mut negative_calls = 0;\nlet negative = ", stringify!($wrapper), "::new(move |value: &mut i32| { negative_calls += 1; *value += negative_calls; *value });\n",
+        "let negative = negative.when(|value: &i32| *value > 0);\nlet mut input = -5;\n",
+        "let mut negative = negative.or_else(|_: &mut i32| 0);\nlet result = negative.apply(&mut input);\nassert_eq!((input, result), (-5, 0));\n```"
+    ) };
+    (@doc_when_once $wrapper:ident, $source_trait:literal) => { concat!(
+        "```rust\nuse std::sync::Mutex;\nuse qubit_function::{", stringify!($wrapper), ", ", $source_trait, "};\n",
+        "let resource = Mutex::new(6);\nlet positive = ", stringify!($wrapper), "::new(move |value: &i32| *value + resource.into_inner().unwrap());\n",
+        "let positive = positive.when(|value: &i32| *value > 0);\nassert_eq!(positive.or_else(|_: &i32| 0).apply(&5), 11);\n",
+        "let resource = Mutex::new(6);\nlet negative = ", stringify!($wrapper), "::new(move |value: &i32| *value + resource.into_inner().unwrap());\n",
+        "let negative = negative.when(|value: &i32| *value > 0);\nassert_eq!(negative.or_else(|_: &i32| 0).apply(&-5), 0);\n```"
+    ) };
+    (@doc_when_mutating_once $wrapper:ident, $source_trait:literal) => { concat!(
+        "```rust\nuse std::sync::Mutex;\nuse qubit_function::{", stringify!($wrapper), ", ", $source_trait, "};\n",
+        "let resource = Mutex::new(6);\nlet positive = ", stringify!($wrapper), "::new(move |value: &mut i32| { *value += resource.into_inner().unwrap(); *value });\n",
+        "let positive = positive.when(|value: &i32| *value > 0);\nlet mut input = 5;\nlet result = positive.or_else(|_: &mut i32| 0).apply(&mut input);\nassert_eq!((input, result), (11, 11));\n",
+        "let resource = Mutex::new(6);\nlet negative = ", stringify!($wrapper), "::new(move |value: &mut i32| { *value += resource.into_inner().unwrap(); *value });\n",
+        "let negative = negative.when(|value: &i32| *value > 0);\nlet mut input = -5;\nlet result = negative.or_else(|_: &mut i32| 0).apply(&mut input);\nassert_eq!((input, result), (-5, 0));\n```"
+    ) };
+    (@doc_when_bi $wrapper:ident, $source_trait:literal) => { concat!(
+        "```rust\nuse qubit_function::{", stringify!($wrapper), ", ", $source_trait, "};\n",
+        "let positive = ", stringify!($wrapper), "::new(|first: &i32, second: &i32| first + second);\nlet positive = positive.when(|first: &i32, second: &i32| *first > 0 && *second > 0);\n",
+        "assert_eq!(positive.or_else(|_: &i32, _: &i32| 0).apply(&2, &3), 5);\n",
+        "let negative = ", stringify!($wrapper), "::new(|first: &i32, second: &i32| first + second);\nlet negative = negative.when(|first: &i32, second: &i32| *first > 0 && *second > 0);\n",
+        "assert_eq!(negative.or_else(|_: &i32, _: &i32| 0).apply(&-2, &3), 0);\n```"
+    ) };
+    (@doc_when_bi_once $wrapper:ident, $source_trait:literal) => { concat!(
+        "```rust\nuse std::sync::Mutex;\nuse qubit_function::{", stringify!($wrapper), ", ", $source_trait, "};\n",
+        "let resource = Mutex::new(6);\nlet positive = ", stringify!($wrapper), "::new(move |first: &i32, second: &i32| first + second + resource.into_inner().unwrap());\nlet positive = positive.when(|first: &i32, second: &i32| *first > 0 && *second > 0);\n",
+        "assert_eq!(positive.or_else(|_: &i32, _: &i32| 0).apply(&2, &3), 11);\n",
+        "let resource = Mutex::new(6);\nlet negative = ", stringify!($wrapper), "::new(move |first: &i32, second: &i32| first + second + resource.into_inner().unwrap());\nlet negative = negative.when(|first: &i32, second: &i32| *first > 0 && *second > 0);\n",
+        "assert_eq!(negative.or_else(|_: &i32, _: &i32| 0).apply(&-2, &3), 0);\n```"
+    ) };
+    (@doc_when_bi_mutating $wrapper:ident, $source_trait:literal) => { concat!(
+        "```rust\nuse qubit_function::{", stringify!($wrapper), ", ", $source_trait, "};\n",
+        "let positive = ", stringify!($wrapper), "::new(|first: &mut i32, second: &mut i32| { *first += 1; *second += 2; *first + *second });\nlet positive = positive.when(|first: &i32, second: &i32| *first > 0 && *second > 0);\n",
+        "let (mut first, mut second) = (2, 3);\nlet result = positive.or_else(|_: &mut i32, _: &mut i32| 0).apply(&mut first, &mut second);\nassert_eq!((first, second, result), (3, 5, 8));\n",
+        "let negative = ", stringify!($wrapper), "::new(|first: &mut i32, second: &mut i32| { *first += 1; *second += 2; *first + *second });\nlet negative = negative.when(|first: &i32, second: &i32| *first > 0 && *second > 0);\n",
+        "let (mut first, mut second) = (-2, 3);\nlet result = negative.or_else(|_: &mut i32, _: &mut i32| 0).apply(&mut first, &mut second);\nassert_eq!((first, second, result), (-2, 3, 0));\n```"
+    ) };
+    (@doc_when_bi_mutating_once $wrapper:ident, $source_trait:literal) => { concat!(
+        "```rust\nuse std::sync::Mutex;\nuse qubit_function::{", stringify!($wrapper), ", ", $source_trait, "};\n",
+        "let resource = Mutex::new(6);\nlet positive = ", stringify!($wrapper), "::new(move |first: &mut i32, second: &mut i32| { *first += resource.into_inner().unwrap(); *second += 2; *first + *second });\nlet positive = positive.when(|first: &i32, second: &i32| *first > 0 && *second > 0);\n",
+        "let (mut first, mut second) = (2, 3);\nlet result = positive.or_else(|_: &mut i32, _: &mut i32| 0).apply(&mut first, &mut second);\nassert_eq!((first, second, result), (8, 5, 13));\n",
+        "let resource = Mutex::new(6);\nlet negative = ", stringify!($wrapper), "::new(move |first: &mut i32, second: &mut i32| { *first += resource.into_inner().unwrap(); *second += 2; *first + *second });\nlet negative = negative.when(|first: &i32, second: &i32| *first > 0 && *second > 0);\n",
+        "let (mut first, mut second) = (-2, 3);\nlet result = negative.or_else(|_: &mut i32, _: &mut i32| 0).apply(&mut first, &mut second);\nassert_eq!((first, second, result), (-2, 3, 0));\n```"
+    ) };
+
+    (@doc_then BoxFunction, $chained_trait:ident) => { impl_box_function_methods!(@doc_then_function BoxFunction, "Function", $chained_trait) };
+    (@doc_then BoxStatefulFunction, $chained_trait:ident) => { impl_box_function_methods!(@doc_then_stateful BoxStatefulFunction, "StatefulFunction", $chained_trait) };
+    (@doc_then BoxMutatingFunction, $chained_trait:ident) => { impl_box_function_methods!(@doc_then_mutating BoxMutatingFunction, "MutatingFunction", $chained_trait) };
+    (@doc_then BoxStatefulMutatingFunction, $chained_trait:ident) => { impl_box_function_methods!(@doc_then_stateful_mutating BoxStatefulMutatingFunction, "StatefulMutatingFunction", $chained_trait) };
+    (@doc_then BoxFunctionOnce, $chained_trait:ident) => { impl_box_function_methods!(@doc_then_once BoxFunctionOnce, "FunctionOnce", $chained_trait) };
+    (@doc_then BoxMutatingFunctionOnce, $chained_trait:ident) => { impl_box_function_methods!(@doc_then_mutating_once BoxMutatingFunctionOnce, "MutatingFunctionOnce", $chained_trait) };
+    (@doc_then BoxBiFunction, $chained_trait:ident) => { impl_box_function_methods!(@doc_then_bi BoxBiFunction, "BiFunction", $chained_trait) };
+    (@doc_then BoxBiFunctionOnce, $chained_trait:ident) => { impl_box_function_methods!(@doc_then_bi_once BoxBiFunctionOnce, "BiFunctionOnce", $chained_trait) };
+    (@doc_then BoxBiMutatingFunction, $chained_trait:ident) => { impl_box_function_methods!(@doc_then_bi_mutating BoxBiMutatingFunction, "BiMutatingFunction", $chained_trait) };
+    (@doc_then BoxBiMutatingFunctionOnce, $chained_trait:ident) => { impl_box_function_methods!(@doc_then_bi_mutating_once BoxBiMutatingFunctionOnce, "BiMutatingFunctionOnce", $chained_trait) };
+
+    (@doc_then_function $wrapper:ident, $source_trait:literal, $chained_trait:ident) => { concat!(
+        "```rust\nuse qubit_function::{", stringify!($wrapper), ", ", $source_trait, "};\n",
+        "// Source trait: ", $source_trait, "; chained callback trait: ", stringify!($chained_trait), ".\n",
+        "let source = ", stringify!($wrapper), "::new(|value: &i32| *value + 1);\n",
+        "let chained = source.and_then(|value: &i32| *value * 2);\nassert_eq!(chained.apply(&5), 12);\n```"
+    ) };
+    (@doc_then_stateful $wrapper:ident, $source_trait:literal, $chained_trait:ident) => { concat!(
+        "```rust\nuse qubit_function::{", stringify!($wrapper), ", ", $source_trait, "};\n",
+        "// Source trait: ", $source_trait, "; chained callback trait: ", stringify!($chained_trait), ".\n",
+        "let mut source_calls = 0;\nlet source = ", stringify!($wrapper), "::new(move |value: &i32| { source_calls += 1; *value + source_calls });\n",
+        "let mut mapper_calls = 0;\nlet mut chained = source.and_then(move |value: &i32| { mapper_calls += 1; *value * 2 + mapper_calls });\n",
+        "assert_eq!(chained.apply(&5), 13);\nassert_eq!(chained.apply(&5), 16);\n```"
+    ) };
+    (@doc_then_mutating $wrapper:ident, $source_trait:literal, $chained_trait:ident) => { concat!(
+        "```rust\nuse qubit_function::{", stringify!($wrapper), ", ", $source_trait, "};\n",
+        "// Source trait: ", $source_trait, "; chained callback trait: ", stringify!($chained_trait), ".\n",
+        "let source = ", stringify!($wrapper), "::new(|value: &mut i32| { *value += 1; *value });\n",
+        "let mut chained = source.and_then(|value: &i32| *value * 2);\nlet mut input = 5;\n",
+        "assert_eq!(chained.apply(&mut input), 12);\nassert_eq!(input, 6);\n```"
+    ) };
+    (@doc_then_stateful_mutating $wrapper:ident, $source_trait:literal, $chained_trait:ident) => { concat!(
+        "```rust\nuse qubit_function::{", stringify!($wrapper), ", ", $source_trait, "};\n",
+        "// Source trait: ", $source_trait, "; chained callback trait: ", stringify!($chained_trait), ".\n",
+        "let mut calls = 0;\nlet source = ", stringify!($wrapper), "::new(move |value: &mut i32| { calls += 1; *value += calls; *value });\n",
+        "let mut chained = source.and_then(|value: &i32| *value * 2);\nlet mut input = 5;\n",
+        "assert_eq!(chained.apply(&mut input), 12);\nassert_eq!(input, 6);\n```"
+    ) };
+    (@doc_then_once $wrapper:ident, $source_trait:literal, $chained_trait:ident) => { concat!(
+        "```rust\nuse std::sync::Mutex;\nuse qubit_function::{", stringify!($wrapper), ", ", $source_trait, "};\n",
+        "// Source trait: ", $source_trait, "; chained callback trait: ", stringify!($chained_trait), ".\n",
+        "let source_resource = Mutex::new(7);\nlet source = ", stringify!($wrapper), "::new(move |value: &i32| *value + source_resource.into_inner().unwrap());\n",
+        "let mapper_resource = Mutex::new(3);\nlet chained = source.and_then(move |value: &i32| *value + mapper_resource.into_inner().unwrap());\n",
+        "assert_eq!(chained.apply(&5), 15);\n```"
+    ) };
+    (@doc_then_mutating_once $wrapper:ident, $source_trait:literal, $chained_trait:ident) => { concat!(
+        "```rust\nuse std::sync::Mutex;\nuse qubit_function::{", stringify!($wrapper), ", ", $source_trait, "};\n",
+        "// Source trait: ", $source_trait, "; chained callback trait: ", stringify!($chained_trait), ".\n",
+        "let source_resource = Mutex::new(7);\nlet source = ", stringify!($wrapper), "::new(move |value: &mut i32| { *value += source_resource.into_inner().unwrap(); *value });\n",
+        "let mapper_resource = Mutex::new(3);\nlet chained = source.and_then(move |value: &i32| *value + mapper_resource.into_inner().unwrap());\n",
+        "let mut input = 5;\nassert_eq!(chained.apply(&mut input), 15);\nassert_eq!(input, 12);\n```"
+    ) };
+    (@doc_then_bi $wrapper:ident, $source_trait:literal, $chained_trait:ident) => { concat!(
+        "```rust\nuse qubit_function::{", stringify!($wrapper), ", ", $source_trait, "};\n",
+        "// Source trait: ", $source_trait, "; chained callback trait: ", stringify!($chained_trait), ".\n",
+        "let source = ", stringify!($wrapper), "::new(|first: &i32, second: &i32| first + second);\n",
+        "let chained = source.and_then(|value: &i32| *value * 2);\nassert_eq!(chained.apply(&2, &3), 10);\n```"
+    ) };
+    (@doc_then_bi_once $wrapper:ident, $source_trait:literal, $chained_trait:ident) => { concat!(
+        "```rust\nuse std::sync::Mutex;\nuse qubit_function::{", stringify!($wrapper), ", ", $source_trait, "};\n",
+        "// Source trait: ", $source_trait, "; chained callback trait: ", stringify!($chained_trait), ".\n",
+        "let source_resource = Mutex::new(7);\nlet source = ", stringify!($wrapper), "::new(move |first: &i32, second: &i32| first + second + source_resource.into_inner().unwrap());\n",
+        "let mapper_resource = Mutex::new(3);\nlet chained = source.and_then(move |value: &i32| *value + mapper_resource.into_inner().unwrap());\n",
+        "assert_eq!(chained.apply(&2, &3), 15);\n```"
+    ) };
+    (@doc_then_bi_mutating $wrapper:ident, $source_trait:literal, $chained_trait:ident) => { concat!(
+        "```rust\nuse qubit_function::{", stringify!($wrapper), ", ", $source_trait, "};\n",
+        "// Source trait: ", $source_trait, "; chained callback trait: ", stringify!($chained_trait), ".\n",
+        "let source = ", stringify!($wrapper), "::new(|first: &mut i32, second: &mut i32| { *first += 1; *second += 2; *first + *second });\n",
+        "let chained = source.and_then(|value: &mut i32| { *value *= 2; *value });\nlet (mut first, mut second) = (2, 3);\n",
+        "assert_eq!(chained.apply(&mut first, &mut second), 16);\nassert_eq!((first, second), (3, 5));\n```"
+    ) };
+    (@doc_then_bi_mutating_once $wrapper:ident, $source_trait:literal, $chained_trait:ident) => { concat!(
+        "```rust\nuse std::sync::Mutex;\nuse qubit_function::{", stringify!($wrapper), ", ", $source_trait, "};\n",
+        "// Source trait: ", $source_trait, "; chained callback trait: ", stringify!($chained_trait), ".\n",
+        "let source_resource = Mutex::new(7);\nlet source = ", stringify!($wrapper), "::new(move |first: &mut i32, second: &mut i32| { *first += source_resource.into_inner().unwrap(); *second += 2; *first + *second });\n",
+        "let mapper_resource = Mutex::new(3);\nlet chained = source.and_then(move |value: &mut i32| { *value += mapper_resource.into_inner().unwrap(); *value });\n",
+        "let (mut first, mut second) = (2, 3);\nassert_eq!(chained.apply(&mut first, &mut second), 17);\nassert_eq!((first, second), (9, 5));\n```"
+    ) };
     (@let_before BoxStatefulFunction, $name:ident, $value:expr) => {
         let mut $name = $value;
     };
@@ -186,20 +355,7 @@ macro_rules! impl_box_function_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
-        /// use qubit_function::{BoxFunction, Function};
-        ///
-        /// fn or_else_zero(_: &i32) -> i32 {
-        ///     0
-        /// }
-        ///
-        /// let double = BoxFunction::new(|x: &i32| x * 2);
-        /// let conditional = double.when(|value: &i32| *value > 0);
-        /// assert_eq!(conditional.or_else(or_else_zero).apply(&5), 10);  // executed
-        /// let double = BoxFunction::new(|x: &i32| x * 2);
-        /// let conditional = double.when(|value: &i32| *value > 0);
-        /// assert_eq!(conditional.or_else(or_else_zero).apply(&-3), 0);  // not executed
-        /// ```
+        #[doc = impl_box_function_methods!(@doc_when $struct_name)]
         #[inline]
         pub fn when<P>(self, predicate: P) -> $conditional_type<$t, $r>
         where
@@ -233,15 +389,7 @@ macro_rules! impl_box_function_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
-        /// use qubit_function::{BoxFunction, Function};
-        ///
-        /// let double = BoxFunction::new(|x: &i32| x * 2);
-        /// let to_string = BoxFunction::new(|x: &i32| x.to_string());
-        ///
-        /// let chained = double.and_then(to_string);
-        /// assert_eq!(chained.apply(&5), "10".to_string());
-        /// ```
+        #[doc = impl_box_function_methods!(@doc_then $struct_name, $chained_function_trait)]
         #[inline]
         pub fn and_then<S, F>(self, after: F) -> $struct_name<$t, S>
         where
@@ -284,20 +432,7 @@ macro_rules! impl_box_function_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
-        /// use qubit_function::{BiFunction, BoxBiFunction};
-        ///
-        /// fn or_else_zero(_: &i32, _: &i32) -> i32 {
-        ///     0
-        /// }
-        ///
-        /// let add = BoxBiFunction::new(|x: &i32, y: &i32| x + y);
-        /// let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
-        /// assert_eq!(conditional.or_else(or_else_zero).apply(&2, &3), 5);  // executed
-        /// let add = BoxBiFunction::new(|x: &i32, y: &i32| x + y);
-        /// let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
-        /// assert_eq!(conditional.or_else(or_else_zero).apply(&-1, &3), 0); // not executed
-        /// ```
+        #[doc = impl_box_function_methods!(@doc_when $struct_name)]
         #[inline]
         pub fn when<P>(self, predicate: P) -> $conditional_type<$t, $u, $r>
         where
@@ -332,15 +467,7 @@ macro_rules! impl_box_function_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
-        /// use qubit_function::{BiFunction, BoxBiFunction, BoxFunction};
-        ///
-        /// let add = BoxBiFunction::new(|x: &i32, y: &i32| x + y);
-        /// let multiply_by_two = BoxFunction::new(|z: &i32| z * 2);
-        ///
-        /// let chained = add.and_then(multiply_by_two);
-        /// assert_eq!(chained.apply(&2, &3), 10); // (2+3) * 2 = 10
-        /// ```
+        #[doc = impl_box_function_methods!(@doc_then $struct_name, $chained_function_trait)]
         #[inline]
         pub fn and_then<S, F>(self, after: F) -> $struct_name<$t, $u, S>
         where

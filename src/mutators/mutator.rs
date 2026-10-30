@@ -57,9 +57,9 @@
 //!
 //! ## BoxMutator
 //!
-//! - One-time operations that don't require sharing
-//! - Builder patterns where ownership naturally flows
-//! - Simple scenarios with no reuse requirements
+//! - A single owner needs a type-erased mutator that may be invoked repeatedly
+//! - No shared ownership or cloning of the wrapper is required
+//! - Ownership of the wrapper follows the application's data flow
 //!
 //! ## ArcMutator
 //!

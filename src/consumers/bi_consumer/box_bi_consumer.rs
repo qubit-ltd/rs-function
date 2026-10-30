@@ -47,10 +47,9 @@ use crate::consumers::macros::impl_consumer_debug_display;
 ///
 /// # Use Cases
 ///
-/// Choose `BoxBiConsumer` when:
-/// - The non-mutating bi-consumer is used only once or in a linear flow
-/// - No need to share the consumer across contexts
-/// - Pure observation operations like logging
+/// Choose `BoxBiConsumer` when one owner stores a callback that may be invoked
+/// repeatedly, and sharing the wrapper across owners is unnecessary.
+/// Observation callbacks such as logging may still have side effects.
 ///
 /// # Examples
 ///

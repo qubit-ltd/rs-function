@@ -13,12 +13,11 @@
 //! ## Core Semantics
 //!
 //! A **Predicate** is a judgment operation that tests whether a value satisfies
-//! a condition through a shared reference. The API guarantees that it cannot
-//! mutate the input through that reference, but implementations may use
-//! interior mutability or observe external state. Purity and determinism are
-//! application-level conventions, not type-system guarantees.
-//!
-//! - **Read-only**: Does not modify the tested value
+//! a condition through a shared reference. The callback receives its input
+//! through a shared reference and is not given an exclusive mutable reference.
+//! Interior mutability may still change the input or captured state, and
+//! external side effects remain possible. Purity and determinism are
+//! application-level conventions.
 //!
 //! It is similar to the `Fn(&T) -> bool` trait in the standard library.
 //!
