@@ -45,3 +45,16 @@ fn test_arc_comparator_then_comparing_semantic_trait() {
     assert_eq!(comparator.compare(&1, &2), Ordering::Less);
     assert_eq!(first.compare(&2, &1), Ordering::Equal);
 }
+
+#[test]
+fn test_comparing_accepts_unsized_keys() {
+    let text = ArcComparator::comparing(|value: &String| value.as_str());
+    assert_eq!(text.compare(&String::from("a"), &String::from("b")), Ordering::Less);
+    assert_eq!(text.compare(&String::from("a"), &String::from("a")), Ordering::Equal);
+    assert_eq!(text.compare(&String::from("b"), &String::from("a")), Ordering::Greater);
+
+    let bytes = ArcComparator::comparing(|value: &Vec<u8>| value.as_slice());
+    assert_eq!(bytes.compare(&vec![1, 2], &vec![1, 3]), Ordering::Less);
+    assert_eq!(bytes.compare(&vec![1, 2], &vec![1, 2]), Ordering::Equal);
+    assert_eq!(bytes.compare(&vec![1, 3], &vec![1, 2]), Ordering::Greater);
+}

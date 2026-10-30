@@ -139,6 +139,9 @@ impl<T> BoxComparator<T> {
     /// Returns a comparator that compares values by a key extracted by the
     /// given function.
     ///
+    /// The extracted key may be an unsized ordered type such as `str` or
+    /// `[u8]`.
+    ///
     /// # Parameters
     ///
     /// * `key_fn` - A function that extracts a comparable key from values
@@ -167,7 +170,7 @@ impl<T> BoxComparator<T> {
     #[inline]
     pub fn comparing<K, F>(key_fn: F) -> Self
     where
-        K: Ord,
+        K: Ord + ?Sized,
         F: Fn(&T) -> &K + 'static,
     {
         BoxComparator::new(move |a: &T, b: &T| key_fn(a).cmp(key_fn(b)))

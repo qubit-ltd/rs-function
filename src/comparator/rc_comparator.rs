@@ -143,6 +143,9 @@ impl<T> RcComparator<T> {
     /// Returns a comparator that compares values by a key extracted by the
     /// given function.
     ///
+    /// The extracted key may be an unsized ordered type such as `str` or
+    /// `[u8]`.
+    ///
     /// The key extractor is stored in an `Rc`-owned closure, so its captured
     /// values must be `'static` and cannot borrow local data.
     ///
@@ -174,7 +177,7 @@ impl<T> RcComparator<T> {
     #[inline]
     pub fn comparing<K, F>(key_fn: F) -> Self
     where
-        K: Ord,
+        K: Ord + ?Sized,
         F: Fn(&T) -> &K + 'static,
     {
         RcComparator::new(move |a: &T, b: &T| key_fn(a).cmp(key_fn(b)))
