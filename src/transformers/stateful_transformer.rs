@@ -18,7 +18,8 @@
 //!
 //! - [`BoxStatefulTransformer`]: Single ownership, not cloneable
 //! - [`ArcStatefulTransformer`]: Thread-safe shared ownership, cloneable
-//! - [`RcStatefulTransformer`]: Single-threaded shared ownership, cloneable
+//! - `RcStatefulTransformer`: Single-threaded shared ownership, cloneable;
+//!   available with the `rc` feature.
 
 mod box_stateful_transformer;
 pub use box_stateful_transformer::BoxStatefulTransformer;

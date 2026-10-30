@@ -17,7 +17,8 @@
 //!
 //! - [`BoxStatefulFunction`]: Single ownership, not cloneable
 //! - [`ArcStatefulFunction`]: Thread-safe shared ownership, cloneable
-//! - [`RcStatefulFunction`]: Single-threaded shared ownership, cloneable
+//! - `RcStatefulFunction`: Single-threaded shared ownership, cloneable;
+//!   available with the `rc` feature.
 
 mod arc_conditional_stateful_function;
 pub use arc_conditional_stateful_function::ArcConditionalStatefulFunction;
