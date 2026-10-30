@@ -148,7 +148,7 @@ fn main() { RcFunction::<i32, i32>::new(|value: &i32| *value + 1); }
 #[test]
 fn test_stored_callback_wrappers_satisfy_unused_must_use() {
     let output = support::compile_consumer(
-        &["full"],
+        &["rc"],
         r#"
 #![deny(unused_must_use)]
 

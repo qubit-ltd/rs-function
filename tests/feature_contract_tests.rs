@@ -128,6 +128,7 @@ fn main() {
     assert_compile_failure(&output, "module `arc_tester` is private");
 }
 
+#[cfg(feature = "stateful")]
 #[test]
 fn test_stateful_rejects_deep_arc_stateful_tester_path() {
     let output = support::compile_consumer(
@@ -369,6 +370,7 @@ fn main() {
     assert_compile_failure(&output, "cannot be shared between threads safely");
 }
 
+#[cfg(feature = "stateful")]
 #[test]
 fn test_stateful_arc_accepts_send_non_sync_capture() {
     let output = support::compile_consumer(

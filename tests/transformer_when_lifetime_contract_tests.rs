@@ -31,7 +31,7 @@ fn assert_static_lifetime_rejection(output: &Output, case: &str) {
 #[test]
 fn test_shared_when_chain_requires_static_input_type() {
     let output = support::compile_consumer(
-        &["full"],
+        &[],
         r#"
 use qubit_function::ArcTransformer;
 use qubit_function::Transformer;
@@ -56,7 +56,7 @@ fn main() {
 #[test]
 fn test_box_bi_when_chain_requires_static_input_type() {
     let output = support::compile_consumer(
-        &["full"],
+        &[],
         r#"
 use qubit_function::BiTransformer;
 use qubit_function::BoxBiTransformer;
@@ -83,7 +83,7 @@ fn main() {
 #[test]
 fn test_when_callbacks_still_reject_stack_borrows() {
     let output = support::compile_consumer(
-        &["full"],
+        &[],
         r#"
 use qubit_function::ArcTransformer;
 
