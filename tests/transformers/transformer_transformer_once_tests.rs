@@ -7,12 +7,13 @@
 // =============================================================================
 
 // ============================================================================
-// TransformerOnce Tests - Box, Rc, and Arc ownership
+// Historical filename: transformer_transformer_once_tests.rs.
+// Tests regular Transformer behavior: inputs are passed by value, while the
+// wrappers are borrowed and can be called repeatedly.
 // ============================================================================
 
 #[cfg(test)]
-mod transformer_once_tests {
-    use std::sync::Arc;
+mod transformer_tests {
     use std::thread;
 
     use qubit_function::ArcTransformer;
@@ -20,9 +21,9 @@ mod transformer_once_tests {
     use qubit_function::RcTransformer;
     use qubit_function::Transformer;
 
-    // BoxTransformer TransformerOnce Tests
+    // BoxTransformer repeated apply tests
     #[cfg(test)]
-    mod box_transformer_once_tests {
+    mod box_transformer_tests {
         use super::BoxTransformer;
         use super::Transformer;
 
@@ -48,23 +49,17 @@ mod transformer_once_tests {
         }
 
         #[test]
-        fn test_box_transformer_regular_and_once() {
+        fn test_box_transformer_repeated_apply() {
             let double = BoxTransformer::new(|x: i32| x * 2);
-
-            // Regular apply can be called multiple times
             assert_eq!(double.apply(10), 20);
             assert_eq!(double.apply(15), 30);
-
-            // But apply consumes the transformer
-            let double = BoxTransformer::new(|x: i32| x * 2);
-            let result = double.apply(21);
-            assert_eq!(result, 42);
+            assert_eq!(double.apply(21), 42);
         }
     }
 
-    // RcTransformer TransformerOnce Tests
+    // RcTransformer repeated apply tests
     #[cfg(test)]
-    mod rc_transformer_once_tests {
+    mod rc_transformer_tests {
         use super::RcTransformer;
         use super::Transformer;
 
@@ -100,7 +95,7 @@ mod transformer_once_tests {
         }
 
         #[test]
-        fn test_rc_transformer_regular_and_once() {
+        fn test_rc_transformer_repeated_apply() {
             let double = RcTransformer::new(|x: i32| x * 2);
 
             // Regular apply can be called multiple times
@@ -117,10 +112,9 @@ mod transformer_once_tests {
         }
     }
 
-    // ArcTransformer TransformerOnce Tests
+    // ArcTransformer repeated apply and thread tests
     #[cfg(test)]
-    mod arc_transformer_once_tests {
-        use super::Arc;
+    mod arc_transformer_tests {
         use super::ArcTransformer;
         use super::Transformer;
         use super::thread;
@@ -157,7 +151,7 @@ mod transformer_once_tests {
         }
 
         #[test]
-        fn test_arc_transformer_regular_and_once() {
+        fn test_arc_transformer_repeated_apply() {
             let double = ArcTransformer::new(|x: i32| x * 2);
 
             // Regular apply can be called multiple times
@@ -176,24 +170,16 @@ mod transformer_once_tests {
         #[test]
         fn test_arc_transformer_thread_safety() {
             let double = ArcTransformer::new(|x: i32| x * 2);
-            let double_arc = Arc::new(double);
-            let _double_clone = Arc::clone(&double_arc);
-
-            let handle = thread::spawn(move || {
-                // Create a new transformer in the thread to demonstrate thread
-                // safety
-                let new_double = ArcTransformer::new(|x: i32| x * 2);
-                new_double.apply(21)
-            });
-
-            let result = handle.join().expect("thread should not panic");
-            assert_eq!(result, 42);
+            let clone = double.clone();
+            let handle = thread::spawn(move || clone.apply(21));
+            assert_eq!(double.apply(10), 20);
+            assert_eq!(handle.join().expect("thread should not panic"), 42);
         }
     }
 
-    // Cross-type TransformerOnce Tests
+    // Cross-type Transformer tests
     #[cfg(test)]
-    mod cross_type_transformer_once_tests {
+    mod cross_type_transformer_tests {
         use super::ArcTransformer;
         use super::BoxTransformer;
         use super::RcTransformer;
@@ -211,8 +197,7 @@ mod transformer_once_tests {
         }
 
         #[test]
-        fn test_mixed_regular_and_once_usage() {
-            // Test that regular apply and apply work together
+        fn test_repeated_apply_across_clones() {
             let box_transformer = BoxTransformer::new(|x: i32| x * 2);
             let rc_transformer = RcTransformer::new(|x: i32| x * 2);
             let arc_transformer = ArcTransformer::new(|x: i32| x * 2);
@@ -222,11 +207,12 @@ mod transformer_once_tests {
             assert_eq!(rc_transformer.apply(10), 20);
             assert_eq!(arc_transformer.apply(10), 20);
 
-            // Clone for apply
+            // Inputs are consumed by value; cloning the wrappers lets both
+            // clones and originals be borrowed for repeated apply calls.
             let rc_clone = rc_transformer.clone();
             let arc_clone = arc_transformer.clone();
 
-            // Apply once (consuming)
+            // Each call consumes its input value, not the wrapper.
             assert_eq!(rc_clone.apply(21), 42);
             assert_eq!(arc_clone.apply(21), 42);
 

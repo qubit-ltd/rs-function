@@ -16,6 +16,7 @@ use std::sync::atomic::AtomicUsize;
 use std::sync::atomic::Ordering;
 
 use qubit_function::ArcCallableWith;
+use qubit_function::BoxCallableWith;
 use qubit_function::CallableWith;
 use qubit_function::RcCallableWith;
 
@@ -42,6 +43,45 @@ impl CallableWith<i32, u32, io::Error> for SharedCallableWith {
         self.count.set(self.count.get() + 1);
         Ok(self.count.get())
     }
+}
+
+struct NonCloneCallableWith {
+    calls: Cell<u32>,
+}
+
+impl CallableWith<i32, u32, ()> for NonCloneCallableWith {
+    fn call_with(&mut self, input: &mut i32) -> Result<u32, ()> {
+        *input += 2;
+        self.calls.set(self.calls.get() + 1);
+        Ok(self.calls.get())
+    }
+}
+
+#[test]
+fn test_custom_semantic_callable_with_wrappers() {
+    let mut boxed = BoxCallableWith::new(AddWith { amount: 3 });
+    let mut input = 5;
+    assert_eq!(boxed.call_with(&mut input).expect("boxed first call"), 8);
+    assert_eq!(boxed.call_with(&mut input).expect("boxed second call"), 11);
+
+    let count = Rc::new(Cell::new(0));
+    let mut shared = RcCallableWith::new(SharedCallableWith {
+        count: Rc::clone(&count),
+    });
+    let mut clone = shared.clone();
+    assert_eq!(shared.call_with(&mut input).expect("rc first call"), 1);
+    assert_eq!(clone.call_with(&mut input).expect("rc clone call"), 2);
+    assert_eq!((input, count.get()), (13, 2));
+}
+
+#[test]
+fn test_custom_semantic_arc_callable_with_accepts_non_clone_non_sync() {
+    let mut task = ArcCallableWith::new(NonCloneCallableWith { calls: Cell::new(0) });
+    let mut clone = task.clone();
+    let mut input = 0;
+    assert_eq!(task.call_with(&mut input), Ok(1));
+    assert_eq!(clone.call_with(&mut input), Ok(2));
+    assert_eq!(input, 4);
 }
 
 #[test]

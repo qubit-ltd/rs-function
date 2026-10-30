@@ -20,6 +20,8 @@ use qubit_function::predicates::BoxStatefulPredicate;
 use qubit_function::predicates::RcStatefulPredicate;
 use qubit_function::predicates::StatefulPredicate;
 
+use crate::internal::isolated_test::run_isolated;
+
 #[test]
 fn test_closure_implements_stateful_predicate() {
     let mut calls = 0;
@@ -233,16 +235,23 @@ fn test_arc_stateful_predicate_logical_operations_cover_all_branches() {
 
 #[test]
 fn test_arc_stateful_predicate_self_composition_releases_lock_between_calls() {
-    let calls = Arc::new(AtomicUsize::new(0));
-    let counter = Arc::clone(&calls);
-    let predicate = ArcStatefulPredicate::new(move |_value: &i32| {
-        counter.fetch_add(1, Ordering::Relaxed);
-        true
+    let qualified = concat!(
+        module_path!(),
+        "::",
+        "test_arc_stateful_predicate_self_composition_releases_lock_between_calls"
+    );
+    let (_, exact_name) = qualified.split_once("::").expect("test path includes crate prefix");
+    run_isolated(exact_name, || {
+        let calls = Arc::new(AtomicUsize::new(0));
+        let counter = Arc::clone(&calls);
+        let predicate = ArcStatefulPredicate::new(move |_value: &i32| {
+            counter.fetch_add(1, Ordering::Relaxed);
+            true
+        });
+        let mut combined = predicate.and(predicate.clone());
+        assert!(combined.test(&1));
+        assert_eq!(calls.load(Ordering::Relaxed), 2);
     });
-    let mut combined = predicate.and(predicate.clone());
-
-    assert!(combined.test(&1));
-    assert_eq!(calls.load(Ordering::Relaxed), 2);
 }
 
 #[test]

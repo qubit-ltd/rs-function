@@ -57,6 +57,50 @@ impl Callable<u32, io::Error> for SharedCallableForArc {
     }
 }
 
+struct NonCloneCallable {
+    calls: Cell<u32>,
+}
+
+impl Callable<u32, ()> for NonCloneCallable {
+    fn call(&mut self) -> Result<u32, ()> {
+        self.calls.set(self.calls.get() + 1);
+        Ok(self.calls.get())
+    }
+}
+
+#[test]
+fn test_custom_semantic_callable_wrappers() {
+    let mut boxed = BoxCallable::new(ClonedCallable { value: 42 });
+    assert_eq!(boxed.call().expect("boxed custom callable"), 42);
+    assert_eq!(boxed.call().expect("repeated custom callable"), 42);
+
+    let count = Rc::new(Cell::new(0));
+    let mut shared = RcCallable::new(SharedCallable {
+        count: Rc::clone(&count),
+    });
+    let mut clone = shared.clone();
+    assert_eq!(shared.call().expect("rc first call"), 1);
+    assert_eq!(clone.call().expect("rc clone call"), 2);
+    assert_eq!(count.get(), 2);
+
+    let count = Arc::new(AtomicUsize::new(0));
+    let mut shared = ArcCallable::new(SharedCallableForArc {
+        count: Arc::clone(&count),
+    });
+    let mut clone = shared.clone();
+    assert_eq!(shared.call().expect("arc first call"), 1);
+    assert_eq!(clone.call().expect("arc clone call"), 2);
+    assert_eq!(count.load(Ordering::SeqCst), 2);
+}
+
+#[test]
+fn test_custom_semantic_arc_callable_accepts_non_clone_non_sync() {
+    let mut task = ArcCallable::new(NonCloneCallable { calls: Cell::new(0) });
+    let mut clone = task.clone();
+    assert_eq!(task.call(), Ok(1));
+    assert_eq!(clone.call(), Ok(2));
+}
+
 #[test]
 fn test_callable_closure_call_returns_success_value() {
     let mut task = || Ok::<i32, io::Error>(42);

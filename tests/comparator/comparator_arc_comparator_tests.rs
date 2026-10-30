@@ -101,8 +101,10 @@ mod arc_comparator_tests {
     #[test]
     fn test_into_fn() {
         let cmp = ArcComparator::new(|a: &i32, b: &i32| a.cmp(b));
-        let func = move |first: &i32, second: &i32| cmp.compare(first, second);
-        assert_eq!(func(&5, &3), Ordering::Greater);
+        let function = cmp.into_fn();
+        assert_eq!(function(&3, &5), Ordering::Less);
+        assert_eq!(function(&5, &5), Ordering::Equal);
+        assert_eq!(function(&5, &3), Ordering::Greater);
     }
 
     #[test]
