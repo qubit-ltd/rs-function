@@ -13,7 +13,7 @@ mod callable_once_tests;
 #[cfg(all(feature = "rc", feature = "once"))]
 mod callable_tests;
 mod callable_with;
-#[cfg(feature = "rc")]
+#[cfg(all(feature = "rc", feature = "stateful"))]
 mod callable_with_tests;
 mod runnable;
 mod runnable_once;
@@ -22,7 +22,7 @@ mod runnable_once_tests;
 #[cfg(all(feature = "rc", feature = "once"))]
 mod runnable_tests;
 mod runnable_with;
-#[cfg(feature = "rc")]
+#[cfg(all(feature = "rc", feature = "stateful"))]
 mod runnable_with_tests;
 #[cfg(feature = "once")]
 mod task_auto_trait_contract_tests;
