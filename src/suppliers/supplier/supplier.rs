@@ -11,9 +11,12 @@
 ///
 /// The core abstraction for value generation through `&self`. Unlike
 /// `StatefulSupplier<T>`, it does not require `&mut self`, enabling usage in
-/// shared-reference contexts and wrapper-level lock-free concurrent access.
-/// The `Fn` shape does not imply purity: callbacks may use interior mutability
-/// or external side effects.
+/// shared-reference contexts. Shared-reference invocation does not require
+/// mutable access to the supplier. The Arc adapter adds no mutex around
+/// callback invocation. The callback may acquire locks or block; this trait
+/// does not guarantee lock-free progress or thread safety for arbitrary
+/// implementations. The `Fn` shape does not imply purity: callbacks may use
+/// interior mutability or external side effects.
 ///
 /// # Key Characteristics
 ///
@@ -21,7 +24,9 @@
 /// - **Shared-receiver calls**: Uses `Fn`, so invocation does not require `&mut
 ///   self`; interior mutability and external side effects remain possible
 /// - **Returns ownership**: Returns `T` (not `&T`) to avoid lifetime issues
-/// - **Lock-free concurrency**: `Arc` implementation doesn't need `Mutex`
+/// - **No adapter-level invocation mutex**: The Arc adapter invokes its
+///   callback without adding a mutex; synchronization and blocking depend on
+///   the callback.
 ///
 /// # Automatically Implemented for Closures
 ///

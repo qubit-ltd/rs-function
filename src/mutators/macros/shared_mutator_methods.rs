@@ -105,9 +105,13 @@ macro_rules! impl_shared_mutator_methods {
         ///
         /// let conditional = mutator.when(|value: &i32| *value > 0);
         /// let mut val = 1;
-        /// conditional.apply(&mut val);  // val = 2 (1 + 1)
+        /// conditional.apply(&mut val);
+        /// assert_eq!(val, 1);
+        /// assert_eq!(counter.load(Ordering::SeqCst), 1);
         /// let mut val2 = -1;
-        /// conditional.apply(&mut val2); // not executed, val2 remains -1
+        /// conditional.apply(&mut val2);
+        /// assert_eq!(val2, -1);
+        /// assert_eq!(counter.load(Ordering::SeqCst), 1);
         /// ```
         #[inline]
         pub fn when<P>(&self, predicate: P) -> $return_type<$t>

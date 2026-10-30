@@ -75,6 +75,37 @@
 /// // );
 /// ```
 macro_rules! impl_box_conditional_function {
+    (@doc_or_else BoxFunction) => {
+        $crate::functions::macros::impl_box_function_methods!(@doc_when_function BoxFunction, "Function")
+    };
+    (@doc_or_else BoxStatefulFunction) => {
+        $crate::functions::macros::impl_box_function_methods!(@doc_when_stateful BoxStatefulFunction, "StatefulFunction")
+    };
+    (@doc_or_else BoxMutatingFunction) => {
+        $crate::functions::macros::impl_box_function_methods!(@doc_when_mutating BoxMutatingFunction, "MutatingFunction")
+    };
+    (@doc_or_else BoxStatefulMutatingFunction) => {
+        $crate::functions::macros::impl_box_function_methods!(@doc_when_stateful_mutating BoxStatefulMutatingFunction, "StatefulMutatingFunction")
+    };
+    (@doc_or_else BoxFunctionOnce) => {
+        $crate::functions::macros::impl_box_function_methods!(@doc_when_once BoxFunctionOnce, "FunctionOnce")
+    };
+    (@doc_or_else BoxMutatingFunctionOnce) => {
+        $crate::functions::macros::impl_box_function_methods!(@doc_when_mutating_once BoxMutatingFunctionOnce, "MutatingFunctionOnce")
+    };
+    (@doc_or_else BoxBiFunction) => {
+        $crate::functions::macros::impl_box_function_methods!(@doc_when_bi BoxBiFunction, "BiFunction")
+    };
+    (@doc_or_else BoxBiFunctionOnce) => {
+        $crate::functions::macros::impl_box_function_methods!(@doc_when_bi_once BoxBiFunctionOnce, "BiFunctionOnce")
+    };
+    (@doc_or_else BoxBiMutatingFunction) => {
+        $crate::functions::macros::impl_box_function_methods!(@doc_when_bi_mutating BoxBiMutatingFunction, "BiMutatingFunction")
+    };
+    (@doc_or_else BoxBiMutatingFunctionOnce) => {
+        $crate::functions::macros::impl_box_function_methods!(@doc_when_bi_mutating_once BoxBiMutatingFunctionOnce, "BiMutatingFunctionOnce")
+    };
+
     (@let_function Function, $name:ident, $value:expr) => {
         let $name = $value;
     };
@@ -153,17 +184,9 @@ macro_rules! impl_box_conditional_function {
             ///
             /// # Examples
             ///
-            /// ```rust
-            /// use qubit_function::{BoxFunction, Function};
-            ///
-            /// let func = BoxFunction::new(|x: &i32| x * 2);
-            /// let alternative = BoxFunction::new(|x: &i32| x + 10);
-            ///
-            /// let conditional = func.when(|x: &i32| *x > 0).or_else(alternative);
-            ///
-            /// assert_eq!(conditional.apply(&5), 10);  // 5 * 2 = 10
-            /// assert_eq!(conditional.apply(&-3), 7);  // -3 + 10 = 7
-            /// ```
+            #[doc = $crate::functions::macros::impl_box_conditional_function!(
+                @doc_or_else $box_function_type
+            )]
             pub fn or_else<F>(self, else_function: F) -> $box_function_type<$t, $r>
             where
                 $t: 'static,
@@ -214,17 +237,9 @@ macro_rules! impl_box_conditional_function {
             ///
             /// # Examples
             ///
-            /// ```rust
-            /// use qubit_function::{BiFunction, BoxBiFunction};
-            ///
-            /// let func = BoxBiFunction::new(|x: &i32, y: &i32| x + y);
-            /// let alternative = BoxBiFunction::new(|x: &i32, y: &i32| x * y);
-            ///
-            /// let conditional = func.when(|x: &i32, y: &i32| *x > 0 && *y > 0).or_else(alternative);
-            ///
-            /// assert_eq!(conditional.apply(&3, &4), 7);   // 3 + 4 = 7 (predicate satisfied)
-            /// assert_eq!(conditional.apply(&-2, &4), -8); // -2 * 4 = -8 (predicate failed)
-            /// ```
+            #[doc = $crate::functions::macros::impl_box_conditional_function!(
+                @doc_or_else $box_function_type
+            )]
             pub fn or_else<F>(self, else_function: F) -> $box_function_type<$t, $u, $r>
             where
                 $t: 'static,
