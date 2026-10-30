@@ -24,6 +24,14 @@ use crate::consumers::macros::impl_consumer_debug_display;
 /// A non-mutating bi-consumer implementation based on `Box<dyn Fn(&T, &U)>`
 /// for single ownership scenarios.
 ///
+/// # Runtime Cost
+///
+/// The wrapper stores a type-erased callback and diagnostic metadata. Calls use
+/// dynamic dispatch. Callback ownership does not add reference counting or a
+/// shared-wrapper lock; an optional diagnostic name uses shared `Arc<str>`
+/// storage. Memory usage and allocation depend on the capture and name. No
+/// fixed pointer count or unconditional performance ranking is guaranteed.
+///
 /// # Type Parameters
 ///
 /// * `T` - Type of the first value passed to the callback.
@@ -31,9 +39,7 @@ use crate::consumers::macros::impl_consumer_debug_display;
 ///
 /// # Features
 ///
-/// - **Single Ownership**: Not cloneable, ownership moves on use
-/// - **Runtime cost**: One heap allocation and dynamic dispatch; no reference
-///   counting or locking
+/// - **Single Ownership**: Not cloneable; `accept` borrows `&self`
 /// - **Shared-reference API**: Invoked through `&self` and shared input
 ///   references
 /// - **No Wrapper Interior Mutability**: No need for Mutex or RefCell in the

@@ -22,9 +22,10 @@ use crate::suppliers::macros::impl_supplier_debug_display;
 
 /// Thread-safe shared ownership stateless supplier.
 ///
-/// Uses `Arc<dyn Fn() -> T + Send + Sync>` for thread-safe shared
-/// ownership. **Lock-free** - no `Mutex` needed! Can be cloned and
-/// sent across threads with excellent concurrent performance.
+/// Uses `Arc<dyn Fn() -> T + Send + Sync>` for thread-safe shared ownership.
+/// The adapter itself does not add a mutex to callback invocation. The callback
+/// may acquire locks or block, so the complete operation is not guaranteed to
+/// be lock-free. The supplier can be cloned and sent across threads.
 ///
 /// # Type Parameters
 ///
@@ -46,11 +47,12 @@ use crate::suppliers::macros::impl_supplier_debug_display;
 /// # }
 /// ```
 ///
-/// # Lock-Free Performance
+/// # Callback Synchronization
 ///
-/// Unlike `ArcStatefulSupplier`, this implementation doesn't need `Mutex`.
-/// Multiple threads can call `get()` concurrently without lock
-/// contention, making it ideal for high-concurrency scenarios.
+/// Unlike `ArcStatefulSupplier`, this adapter does not use a `Mutex` to
+/// synchronize callback invocation. Multiple threads may call `get()` at the
+/// same time; any synchronization or blocking inside the callback remains the
+/// callback's responsibility.
 ///
 /// # Examples
 ///

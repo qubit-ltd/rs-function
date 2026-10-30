@@ -28,7 +28,7 @@ use crate::mutators::macros::impl_conditional_mutator_debug_display;
 ///
 /// # Features
 ///
-/// - **Single Ownership**: Not cloneable, consumes `self` on use
+/// - **Single Ownership**: Not cloneable; `apply` borrows `&self`
 /// - **Conditional Execution**: Only mutates when predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 /// - **Implements Mutator**: Can be used anywhere a `Mutator` is expected

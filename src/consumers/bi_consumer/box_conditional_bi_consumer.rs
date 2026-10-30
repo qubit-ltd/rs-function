@@ -32,9 +32,12 @@ use crate::consumers::macros::impl_conditional_consumer_debug_display;
 ///
 /// # Features
 ///
-/// - **Single Ownership**: Not cloneable, consumes `self` on use
-/// - **Conditional Execution**: Only consumes when predicate returns `true`
+/// - **Single Ownership**: Not cloneable; `accept` borrows `&self`
+/// - **Conditional Execution**: Calls the callback only when the predicate
+///   returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
+/// - **Shared-reference calls**: `accept` borrows `&self` and both inputs
+///   through shared references
 /// - **Implements BiConsumer**: Can be used anywhere a `BiConsumer` is expected
 /// - **Shared access**: Receives shared references; interior mutability and
 ///   external side effects remain possible

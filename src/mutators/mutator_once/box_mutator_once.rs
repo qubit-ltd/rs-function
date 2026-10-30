@@ -27,9 +27,7 @@ use crate::mutators::macros::impl_mutator_debug_display;
 ///
 /// # Features
 ///
-/// - **Single Ownership**: Not cloneable, consumes self on use
-/// - **Runtime cost**: One heap allocation and dynamic dispatch; no reference
-///   counting or locking
+/// - **Single Ownership**: Not cloneable; `apply` consumes `self`
 /// - **Move Semantics**: Can capture and move variables
 /// - **Method Chaining**: Compose multiple operations via `and_then`
 ///
@@ -40,15 +38,6 @@ use crate::mutators::macros::impl_mutator_debug_display;
 /// - One-time resource transfer operations
 /// - Post-initialization callbacks
 /// - Complex operations requiring ownership transfer
-///
-/// # Performance
-///
-/// `BoxMutatorOnce` performance characteristics:
-/// - No reference counting overhead
-/// - No lock acquisition or runtime borrow checking
-/// - Direct function call through vtable
-/// - Minimal memory footprint (single pointer)
-///
 /// # Why No Arc/Rc Variants?
 ///
 /// FnOnce can only be called once, which conflicts with Arc/Rc shared ownership
@@ -56,6 +45,14 @@ use crate::mutators::macros::impl_mutator_debug_display;
 /// - Arc/Rc implies multiple owners might need to call
 /// - FnOnce is consumed after calling, cannot be called again
 /// - These semantics make Arc/Rc variants meaningless
+///
+/// # Runtime Cost
+///
+/// The wrapper stores a type-erased callback and diagnostic metadata. Calls use
+/// dynamic dispatch. Callback ownership does not add reference counting or a
+/// shared-wrapper lock; an optional diagnostic name uses shared `Arc<str>`
+/// storage. Memory usage and allocation depend on the capture and name. No
+/// fixed pointer count or unconditional performance ranking is guaranteed.
 ///
 /// # Examples
 ///
@@ -75,7 +72,6 @@ use crate::mutators::macros::impl_mutator_debug_display;
 /// ```
 ///
 /// ## Method Chaining
-///
 ///
 /// ```rust
 /// # {

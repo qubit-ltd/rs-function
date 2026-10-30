@@ -25,8 +25,16 @@ use crate::functions::macros::impl_function_identity_method;
 ///
 /// A stateful mutating function implementation based on
 /// `Box<dyn FnMut(&mut T) -> R>` for single ownership scenarios. This is the
-/// simplest and most efficient stateful mutating function type when sharing
+/// straightforward stateful mutating function type when sharing
 /// is not required.
+///
+/// # Runtime Cost
+///
+/// The wrapper stores a type-erased callback and diagnostic metadata. Calls use
+/// dynamic dispatch. Callback ownership does not add reference counting or a
+/// shared-wrapper lock; an optional diagnostic name uses shared `Arc<str>`
+/// storage. Memory usage and allocation depend on the capture and name. No
+/// fixed pointer count or unconditional performance ranking is guaranteed.
 ///
 /// # Type Parameters
 ///
@@ -35,9 +43,7 @@ use crate::functions::macros::impl_function_identity_method;
 ///
 /// # Features
 ///
-/// - **Single Ownership**: Not cloneable, ownership moves on use
-/// - **Runtime cost**: One heap allocation and dynamic dispatch; no reference
-///   counting or locking
+/// - **Single Ownership**: Not cloneable; `apply` borrows `&mut self`
 /// - **Stateful**: Can modify captured environment (uses `FnMut`)
 /// - **Builder Pattern**: Method chaining consumes `self` naturally
 /// - **Factory Methods**: Convenient constructors for common patterns
@@ -48,16 +54,7 @@ use crate::functions::macros::impl_function_identity_method;
 /// - The function needs to maintain internal state
 /// - Building pipelines where ownership naturally flows
 /// - No need to share the function across contexts
-/// - Performance is critical and no sharing overhead is acceptable
-///
-/// # Performance
-///
-/// `BoxStatefulMutatingFunction` has the best performance among the three
-/// function types:
-/// - No reference counting overhead
-/// - No lock acquisition or runtime borrow checking
-/// - Direct function call through vtable
-/// - Minimal memory footprint (single pointer)
+/// - The callback does not need shared ownership
 ///
 /// # Examples
 ///

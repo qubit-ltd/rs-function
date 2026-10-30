@@ -30,7 +30,8 @@ use crate::consumers::macros::impl_conditional_consumer_debug_display;
 /// # Features
 ///
 /// - **Single Ownership**: Not cloneable, consumes `self` on use
-/// - **Conditional Execution**: Only consumes when predicate returns `true`
+/// - **Conditional Execution**: Calls the callback only when the predicate
+///   returns `true`; the once wrapper is consumed on every call
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 /// - **Implements ConsumerOnce**: Can be used anywhere a `ConsumerOnce` is
 ///   expected

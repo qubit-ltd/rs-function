@@ -40,9 +40,9 @@ pub use arc_callable::ArcCallable;
 /// Conceptually this is the same shape as `FnMut() -> Result<R, E>`: `call`
 /// takes `&mut self` and returns `Result<R, E>`, but the API uses task-oriented
 /// naming and helpers. In this crate it aligns with
-/// [`Supplier`](crate::suppliers::Supplier) of `Result<R, E>`—a fallible
-/// supplier—while emphasizing executable work rather than plain value
-/// production.
+/// `StatefulSupplier` of `Result<R, E>`—a
+/// fallible stateful supplier—while emphasizing executable work rather than
+/// plain value production.
 ///
 /// Choose **`Callable`** when callers need the success value `R`. When only
 /// success or failure matters, use [`Runnable`](crate::tasks::Runnable), whose

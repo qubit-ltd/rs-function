@@ -21,16 +21,14 @@ use crate::mutators::macros::impl_mutator_debug_display;
 /// BoxMutator struct
 ///
 /// A stateless mutator implementation based on `Box<dyn Fn(&mut T)>` for single
-/// ownership scenarios. This is the simplest and most efficient mutator
+/// ownership scenarios. This is the straightforward mutator
 /// type when sharing is not required.
 ///
 /// # Features
 ///
-/// - **Single Ownership**: Not cloneable, ownership moves on use
-/// - **Runtime cost**: One heap allocation and dynamic dispatch; no reference
-///   counting or locking
-/// - **Shared-receiver calls**: Uses `Fn`, so invocation does not require `&mut
-///   self`; interior mutability and external side effects remain possible
+/// - **Single Ownership**: Not cloneable; `apply` borrows `&self`
+/// - **Shared-receiver calls**: Uses `Fn` and `apply(&self)`; interior
+///   mutability and external side effects remain possible
 /// - **Builder Pattern**: Method chaining consumes `self` naturally
 /// - **Factory Methods**: Convenient constructors for common patterns
 ///
@@ -40,15 +38,15 @@ use crate::mutators::macros::impl_mutator_debug_display;
 /// - The mutator is used for stateless transformations
 /// - Building pipelines where ownership naturally flows
 /// - No need to share the mutator across contexts
-/// - Performance is critical and no sharing overhead is acceptable
+/// - The callback does not need shared ownership
 ///
-/// # Performance
+/// # Runtime Cost
 ///
-/// `BoxMutator` has the best performance among the three mutator types:
-/// - No reference counting overhead
-/// - No lock acquisition or runtime borrow checking
-/// - Direct function call through vtable
-/// - Minimal memory footprint (single pointer)
+/// The wrapper stores a type-erased callback and diagnostic metadata. Calls use
+/// dynamic dispatch. Callback ownership does not add reference counting or a
+/// shared-wrapper lock; an optional diagnostic name uses shared `Arc<str>`
+/// storage. Memory usage and allocation depend on the capture and name. No
+/// fixed pointer count or unconditional performance ranking is guaranteed.
 ///
 /// # Examples
 ///

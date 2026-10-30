@@ -26,11 +26,17 @@ use crate::consumers::macros::impl_consumer_debug_display;
 ///
 /// # Features
 ///
-/// - **Single Ownership**: Not cloneable, transfers ownership when used
-/// - **Runtime cost**: One heap allocation and dynamic dispatch; no reference
-///   counting or locking
+/// - **Single Ownership**: Not cloneable; `accept` borrows `&mut self`
 /// - **Mutable State**: Can modify captured environment through `FnMut`
 /// - **Builder Pattern**: Method chaining naturally consumes `self`
+///
+/// # Runtime Cost
+///
+/// The wrapper stores a type-erased callback and diagnostic metadata. Calls use
+/// dynamic dispatch. Callback ownership does not add reference counting or a
+/// shared-wrapper lock; an optional diagnostic name uses shared `Arc<str>`
+/// storage. Memory usage and allocation depend on the capture and name. No
+/// fixed pointer count or unconditional performance ranking is guaranteed.
 ///
 /// # Type Parameters
 ///
@@ -43,15 +49,6 @@ use crate::consumers::macros::impl_consumer_debug_display;
 /// - Building pipelines where ownership flows naturally
 /// - No need to share consumers across contexts
 /// - Performance critical and cannot accept sharing overhead
-///
-/// # Performance
-///
-/// `BoxStatefulConsumer` has the best performance among the three consumer
-/// types:
-/// - No reference counting overhead
-/// - No lock acquisition or runtime borrowing checks
-/// - Direct function calls through vtable
-/// - Minimal memory footprint (single pointer)
 ///
 /// # Examples
 ///

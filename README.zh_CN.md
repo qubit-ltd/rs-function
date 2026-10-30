@@ -343,8 +343,8 @@ assert_eq!(value, 20);
 **等价闭包**: `Fn() -> T`
 
 **实现类型**:
-- `BoxSupplier<T>` - 单一所有权,无锁
-- `ArcSupplier<T>` - 线程安全,无锁
+- `BoxSupplier<T>` - 单一所有权
+- `ArcSupplier<T>` - 线程安全；适配器自身不添加互斥锁（回调本身仍可能阻塞）
 - `RcSupplier<T>` - 单线程
 
 **示例**:

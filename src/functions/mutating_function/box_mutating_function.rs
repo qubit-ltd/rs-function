@@ -23,16 +23,14 @@ use crate::functions::macros::impl_function_identity_method;
 /// BoxMutatingFunction struct
 ///
 /// A mutating function implementation based on `Box<dyn Fn(&mut T) -> R>`
-/// for single ownership scenarios. This is the simplest and most efficient
+/// for single ownership scenarios. This is a straightforward
 /// mutating function type when sharing is not required.
 ///
 /// # Features
 ///
-/// - **Single Ownership**: Not cloneable, ownership moves on use
-/// - **Runtime cost**: One heap allocation and dynamic dispatch; no reference
-///   counting or locking
-/// - **Shared-receiver calls**: Uses `Fn`, so invocation does not require `&mut
-///   self`; interior mutability and external side effects remain possible
+/// - **Single Ownership**: Not cloneable; `apply` borrows `&self`
+/// - **Shared-receiver calls**: Uses `Fn` and `apply(&self)`; interior
+///   mutability and external side effects remain possible
 /// - **Builder Pattern**: Method chaining consumes `self` naturally
 /// - **Factory Methods**: Convenient constructors for common patterns
 ///
@@ -42,16 +40,15 @@ use crate::functions::macros::impl_function_identity_method;
 /// - The function is used for stateless operations
 /// - Building pipelines where ownership naturally flows
 /// - No need to share the function across contexts
-/// - Performance is critical and no sharing overhead is acceptable
+/// - The callback does not need shared ownership
 ///
-/// # Performance
+/// # Runtime Cost
 ///
-/// `BoxMutatingFunction` has the best performance among the three function
-/// types:
-/// - No reference counting overhead
-/// - No lock acquisition or runtime borrow checking
-/// - Direct function call through vtable
-/// - Minimal memory footprint (single pointer)
+/// The wrapper stores a type-erased callback and diagnostic metadata. Calls use
+/// dynamic dispatch. Callback ownership does not add reference counting or a
+/// shared-wrapper lock; an optional diagnostic name uses shared `Arc<str>`
+/// storage. Memory usage and allocation depend on the capture and name. No
+/// fixed pointer count or unconditional performance ranking is guaranteed.
 ///
 /// # Type Parameters
 ///

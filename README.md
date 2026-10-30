@@ -354,8 +354,8 @@ supplier uses `&self` (equivalent to `Fn() -> T`). Calling it does not require
 **Closure Equivalent**: `Fn() -> T`
 
 **Implementations**:
-- `BoxSupplier<T>` - Single ownership, lock-free
-- `ArcSupplier<T>` - Thread-safe, lock-free
+- `BoxSupplier<T>` - Single ownership
+- `ArcSupplier<T>` - Thread-safe; adapter adds no mutex (the callback may still block)
 - `RcSupplier<T>` - Single-threaded
 
 **Example**:

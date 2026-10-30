@@ -31,16 +31,23 @@ use crate::functions::macros::impl_conditional_function_debug_display;
 ///
 /// # Type Parameters
 ///
-/// * `T` - The mutable input type accepted by the wrapped callback and
-///   predicate.
+/// * `T` - The input type borrowed by the predicate and mutably borrowed by the
+///   wrapped callbacks.
 /// * `R` - The result type returned by the wrapped callback.
 ///
 /// # Features
 ///
-/// - **Single Ownership**: Not cloneable, consumes `self` on use
+/// - **Owned builder state**: Holds the selected callback and predicate; the
+///   builder is consumed by `or_else` to produce a
+///   `BoxStatefulMutatingFunction`
 /// - **Conditional Execution**: Only transforms when predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
-/// - **Implements Function**: Can be used anywhere a `Function` is expected
+///
+/// The value returned by `when` is an intermediate builder and does not
+/// implement `StatefulMutatingFunction`. Its predicate receives shared input;
+/// the selected callback receives mutable input. Call `or_else` to provide
+/// the fallback and obtain a callable wrapper. Invoking that wrapper follows
+/// the `StatefulMutatingFunction` receiver contract (`&mut self`).
 ///
 /// # Examples
 ///

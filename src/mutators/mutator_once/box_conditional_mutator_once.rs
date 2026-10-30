@@ -30,7 +30,8 @@ use crate::mutators::macros::impl_conditional_mutator_debug_display;
 /// # Features
 ///
 /// - **Single Ownership**: Not cloneable, consumes `self` on use
-/// - **Conditional Execution**: Only mutates when predicate returns `true`
+/// - **Conditional Execution**: Calls the callback only when the predicate
+///   returns `true`; the once wrapper is consumed on every call
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 /// - **Implements MutatorOnce**: Can be used anywhere a `MutatorOnce` is
 ///   expected

@@ -32,7 +32,8 @@ use crate::transformers::macros::impl_conditional_transformer_debug_display;
 ///
 /// - **Single Ownership**: Not cloneable, consumes `self` on use
 /// - **One-time Use**: Can only be called once
-/// - **Conditional Execution**: Only transforms when predicate returns `true`
+/// - **Conditional Execution**: Calls the callback only when the predicate
+///   returns `true`; the once wrapper is consumed on every call
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 ///
 /// # Examples

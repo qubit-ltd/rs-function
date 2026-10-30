@@ -27,10 +27,8 @@ use crate::macros::impl_closure_once_trait;
 ///
 /// # Features
 ///
-/// - **Single Ownership**: Not cloneable, transfers ownership on use
-/// - **Runtime cost**: One heap allocation and dynamic dispatch; no reference
-///   counting or locking
-/// - **One-time Use**: Consumes self on first call
+/// - **Single Ownership**: Not cloneable; `accept` consumes `self`
+/// - **One-time Use**: `accept` consumes `self` on its single call
 /// - **Builder Pattern**: Method chaining naturally consumes `self`
 ///
 /// # Use Cases
@@ -39,15 +37,15 @@ use crate::macros::impl_closure_once_trait;
 /// - Consumer is truly used only once
 /// - Building pipelines where ownership flows naturally
 /// - Consumer captures values that should be consumed
-/// - Performance critical and cannot accept shared overhead
+/// - The callback does not need shared ownership
 ///
-/// # Performance
+/// # Runtime Cost
 ///
-/// `BoxConsumerOnce` has the best performance:
-/// - No reference counting overhead
-/// - No lock acquisition or runtime borrow checking
-/// - Direct function call through vtable
-/// - Minimal memory footprint (single pointer)
+/// The wrapper stores a type-erased callback and diagnostic metadata. Calls use
+/// dynamic dispatch. Callback ownership does not add reference counting or a
+/// shared-wrapper lock; an optional diagnostic name uses shared `Arc<str>`
+/// storage. Memory usage and allocation depend on the capture and name. No
+/// fixed pointer count or unconditional performance ranking is guaranteed.
 ///
 /// # Type Parameters
 ///

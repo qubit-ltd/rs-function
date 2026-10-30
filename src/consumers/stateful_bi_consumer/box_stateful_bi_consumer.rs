@@ -24,14 +24,12 @@ type BoxStatefulBiConsumerFn<T, U> = Box<dyn FnMut(&T, &U)>;
 /// BoxStatefulBiConsumer struct
 ///
 /// A bi-consumer implementation based on `Box<dyn FnMut(&T, &U)>` for
-/// single ownership scenarios. This is the simplest and most efficient
+/// single ownership scenarios. This is a straightforward
 /// bi-consumer type when sharing is not required.
 ///
 /// # Features
 ///
-/// - **Single Ownership**: Not cloneable, ownership moves on use
-/// - **Runtime cost**: One heap allocation and dynamic dispatch; no reference
-///   counting or locking
+/// - **Single Ownership**: Not cloneable; `accept` borrows `&mut self`
 /// - **Mutable State**: Can modify captured environment via `FnMut`
 /// - **Builder Pattern**: Method chaining consumes `self` naturally
 ///
@@ -41,16 +39,15 @@ type BoxStatefulBiConsumerFn<T, U> = Box<dyn FnMut(&T, &U)>;
 /// - The bi-consumer is used only once or in a linear flow
 /// - Building pipelines where ownership naturally flows
 /// - No need to share the consumer across contexts
-/// - Performance is critical and sharing overhead is unacceptable
+/// - The callback does not need shared ownership
 ///
-/// # Performance
+/// # Runtime Cost
 ///
-/// `BoxStatefulBiConsumer` has the best performance among the three bi-consumer
-/// types:
-/// - No reference counting overhead
-/// - No lock acquisition or runtime borrow checking
-/// - Direct function call through vtable
-/// - Minimal memory footprint (single pointer)
+/// The wrapper stores a type-erased callback and diagnostic metadata. Calls use
+/// dynamic dispatch. Callback ownership does not add reference counting or a
+/// shared-wrapper lock; an optional diagnostic name uses shared `Arc<str>`
+/// storage. Memory usage and allocation depend on the capture and name. No
+/// fixed pointer count or unconditional performance ranking is guaranteed.
 ///
 /// # Examples
 ///

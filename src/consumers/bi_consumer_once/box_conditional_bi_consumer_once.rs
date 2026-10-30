@@ -28,11 +28,11 @@ use crate::consumers::macros::impl_conditional_consumer_debug_display;
 ///
 /// # Features
 ///
-/// - **Single Ownership**: Not cloneable, consumes `self` on use
-/// - **Conditional Execution**: Only consumes when predicate returns `true`
+/// - **Single Ownership**: Not cloneable; `accept` consumes `self`
+/// - **Conditional Execution**: Consumes the wrapper on every call; invokes the
+///   callback only when the predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
-/// - **Implements BiConsumerOnce**: Can be used anywhere a `BiConsumerOnce` is
-///   expected
+/// - **Implements BiConsumerOnce**: Calling `accept` consumes the wrapper
 ///
 /// # Type Parameters
 ///

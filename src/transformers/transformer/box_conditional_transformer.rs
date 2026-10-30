@@ -28,11 +28,15 @@ use crate::transformers::macros::impl_conditional_transformer_debug_display;
 ///
 /// # Features
 ///
-/// - **Single Ownership**: Not cloneable, consumes `self` on use
+/// - **Owned builder state**: Holds the selected callback and predicate; the
+///   builder is consumed by `or_else` to produce a `BoxTransformer`
 /// - **Conditional Execution**: Only transforms when predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
-/// - **Implements Transformer**: Can be used anywhere a `Transformer` is
-///   expected
+///
+/// The value returned by `when` is an intermediate builder and does not
+/// implement `Transformer`. Call `or_else` to provide the fallback and obtain
+/// a callable wrapper. Invoking that wrapper follows the `Transformer`
+/// receiver contract (`&self`).
 ///
 /// # Examples
 ///

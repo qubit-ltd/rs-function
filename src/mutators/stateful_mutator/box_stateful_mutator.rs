@@ -27,8 +27,6 @@ use crate::mutators::macros::impl_mutator_debug_display;
 /// # Features
 ///
 /// - **Single Ownership**: Not cloneable; `apply` borrows `&mut self`
-/// - **Runtime cost**: One heap allocation and dynamic dispatch; no reference
-///   counting or locking
 /// - **Mutable State**: Can modify captured environment via `FnMut`
 /// - **Builder Pattern**: Composition methods consume `self` naturally
 /// - **Factory Methods**: Convenient constructors for common patterns
@@ -39,16 +37,15 @@ use crate::mutators::macros::impl_mutator_debug_display;
 /// - The mutator is used only once or in a linear flow
 /// - Building pipelines where ownership naturally flows
 /// - No need to share the mutator across contexts
-/// - Performance is critical and no sharing overhead is acceptable
+/// - The callback does not need shared ownership
 ///
-/// # Performance
+/// # Runtime Cost
 ///
-/// `BoxStatefulMutator` has the least sharing overhead among the three stateful
-/// mutator wrappers:
-/// - No reference counting overhead
-/// - No lock acquisition or runtime borrow checking
-/// - Direct function call through vtable
-/// - Minimal memory footprint (single pointer)
+/// The wrapper stores a type-erased callback and diagnostic metadata. Calls use
+/// dynamic dispatch. Callback ownership does not add reference counting or a
+/// shared-wrapper lock; an optional diagnostic name uses shared `Arc<str>`
+/// storage. Memory usage and allocation depend on the capture and name. No
+/// fixed pointer count or unconditional performance ranking is guaranteed.
 ///
 /// # Examples
 ///
