@@ -6,11 +6,5 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::BoxTransformer;
-use qubit_function::Transformer;
-
-#[test]
-fn test_shared_conditional_transformer_observable_behavior() {
-    let transformer = BoxTransformer::new(|value: i32| value + 1);
-    assert_eq!(transformer.apply(41), 42);
-}
+//! Shared conditional transformer clone behavior is verified by
+//! `conditional_transformer_clone_tests`.

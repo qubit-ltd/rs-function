@@ -6,20 +6,5 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use std::sync::Arc;
-use std::sync::atomic::AtomicI32;
-use std::sync::atomic::Ordering;
-
-use qubit_function::BoxConsumer;
-use qubit_function::Consumer;
-
-#[test]
-fn test_conditional_consumer_conversions_observable_behavior() {
-    let count = Arc::new(AtomicI32::new(0));
-    let captured = Arc::clone(&count);
-    let consumer = BoxConsumer::new(move |value: &i32| {
-        captured.store(*value, Ordering::SeqCst);
-    });
-    consumer.accept(&42);
-    assert_eq!(count.load(Ordering::SeqCst), 42);
-}
+//! Conditional consumer callback and predicate behavior is verified by
+//! `box_conditional_consumer_tests`; this crate exposes no conversion API here.

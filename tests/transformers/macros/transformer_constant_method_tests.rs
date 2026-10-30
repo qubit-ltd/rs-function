@@ -11,6 +11,6 @@ use qubit_function::Transformer;
 
 #[test]
 fn test_transformer_constant_method_observable_behavior() {
-    let transformer = BoxTransformer::new(|value: i32| value + 1);
-    assert_eq!(transformer.apply(41), 42);
+    let transformer = BoxTransformer::constant("constant");
+    assert_eq!(transformer.apply(123), "constant");
 }

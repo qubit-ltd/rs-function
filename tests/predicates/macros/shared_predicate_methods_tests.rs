@@ -6,12 +6,13 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::BoxPredicate;
+use qubit_function::ArcPredicate;
 use qubit_function::Predicate;
 
 #[test]
-fn test_shared_predicate_methods_observable_behavior() {
-    let predicate = BoxPredicate::new(|value: &i32| *value > 0);
+fn test_shared_predicate_clone_preserves_behavior() {
+    let predicate = ArcPredicate::new(|value: &i32| *value > 0);
+    let cloned = predicate.clone();
     assert!(predicate.test(&1));
-    assert!(!predicate.test(&0));
+    assert!(!cloned.test(&0));
 }

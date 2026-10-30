@@ -12,7 +12,11 @@ use qubit_function::MutatorOnce;
 
 #[test]
 fn test_closure_accepts_mutator_once() {
-    let closure = |x: &mut i32| *x *= 2;
+    let captured = String::from("10");
+    let closure = move |x: &mut i32| {
+        let moved = captured;
+        *x = moved.parse().expect("captured integer should parse");
+    };
     let mut value = 5;
     closure.apply(&mut value);
     assert_eq!(value, 10);

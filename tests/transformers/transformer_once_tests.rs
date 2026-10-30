@@ -407,16 +407,9 @@ mod arc_transformer_transformer_once_tests {
     #[test]
     fn test_arc_transformer_thread_safety() {
         let double = ArcTransformer::new(|x: i32| x * 2);
-        let _double_arc = Arc::new(double);
-
-        let handle = thread::spawn(move || {
-            // We can't move out of Arc, so we need to use the regular apply
-            // method or create a new transformer in the thread
-            let new_double = ArcTransformer::new(|x: i32| x * 2);
-            new_double.apply(21)
-        });
-
-        let result = handle.join().expect("thread should not panic");
-        assert_eq!(result, 42);
+        let shared = double.clone();
+        let handle = thread::spawn(move || shared.apply(21));
+        assert_eq!(double.apply(10), 20);
+        assert_eq!(handle.join().expect("thread should not panic"), 42);
     }
 }

@@ -25,11 +25,14 @@ mod test_box_stateful_supplier_once {
         use super::StatefulSupplier;
 
         #[test]
-        fn test_consumes_stateful_supplier() {
-            let mut supplier = BoxStatefulSupplier::new(|| 42);
-            let value = supplier.get();
-            assert_eq!(value, 42);
-            // StatefulSupplier is consumed, cannot be used again
+        fn test_stateful_supplier_can_be_reused() {
+            let mut value = 0;
+            let mut supplier = BoxStatefulSupplier::new(move || {
+                value += 1;
+                value
+            });
+            assert_eq!(supplier.get(), 1);
+            assert_eq!(supplier.get(), 2);
         }
 
         #[test]
