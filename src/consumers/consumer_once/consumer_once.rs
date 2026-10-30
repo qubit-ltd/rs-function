@@ -57,9 +57,10 @@
 pub trait ConsumerOnce<T> {
     /// Execute one-time consumption operation
     ///
-    /// Executes an operation on the given reference. The operation typically
-    /// reads the input value or produces side effects, but does not modify
-    /// the input value itself. Consumes self.
+    /// Executes an operation on the given shared reference and consumes `self`.
+    /// The shared reference does not permit direct mutation of the input, but
+    /// interior mutability may still change its state. The operation may also
+    /// produce external side effects.
     ///
     /// # Parameters
     ///

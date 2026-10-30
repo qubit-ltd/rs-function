@@ -46,7 +46,8 @@ pub trait StatefulBiConsumer<T, U> {
     /// Applies the consumer operation to two shared references.
     ///
     /// The operation may produce side effects or update the consumer's own
-    /// state, but it does not mutate either input.
+    /// state. The shared references do not permit direct mutation of either
+    /// input, but interior mutability may still change their state.
     ///
     /// # Parameters
     ///
