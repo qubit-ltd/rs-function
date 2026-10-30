@@ -152,13 +152,21 @@ fn test_baseline_rejects_deep_tester_ops_path() {
         r#"
 use qubit_function::testers::tester::fn_tester_ops::FnTesterOps;
 
-fn main() {
-    let _tester = (|| true).and(|| true);
-}
+fn main() {}
 "#,
     );
-
-    assert_compile_failure(&output, "fn_tester_ops");
+    let diagnostics = cargo_diagnostics(&output);
+    let stderr = String::from_utf8_lossy(&output.stderr);
+    assert!(!output.status.success(), "{diagnostics}");
+    assert!(
+        stderr.contains("error[E0432]") || stderr.contains("error[E0603]"),
+        "expected an unresolved-import or privacy error: {diagnostics}",
+    );
+    assert!(
+        stderr.contains("could not find `fn_tester_ops` in `tester`")
+            || stderr.contains("module `fn_tester_ops` is private"),
+        "expected the rejected module in the primary diagnostic: {diagnostics}",
+    );
 }
 
 #[test]
