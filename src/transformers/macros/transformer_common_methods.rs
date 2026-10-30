@@ -8,8 +8,7 @@
 //! # Transformer Common Methods Macro
 //!
 //! Provides macros that generate common constructor and name-management
-//! methods for one-input and two-input transformers. One-input transformers
-//! also receive an `identity` constructor.
+//! methods for one-input and two-input transformers.
 
 /// Generates constructor methods for supported transformer types.
 ///
@@ -44,9 +43,7 @@ macro_rules! impl_transformer_new_methods {
 /// Generates constructor and name-management methods for a transformer type.
 ///
 /// The macro selects an implementation based on whether the target transforms
-/// one input or two. Single-input transformers also receive an `identity`
-/// constructor; two-input transformers do not. Invoke it inside the target
-/// type's `impl` block.
+/// one input or two. Invoke it inside the target type's `impl` block.
 ///
 /// # Parameters
 ///
@@ -65,8 +62,7 @@ macro_rules! impl_transformer_new_methods {
 /// ```
 ///
 /// The generated methods include `new`, `new_with_name`,
-/// `new_with_optional_name`, `name`, and `set_name`. For single-input
-/// transformers, the macro also generates `identity`.
+/// `new_with_optional_name`, `name`, and `set_name`.
 macro_rules! impl_transformer_common_methods {
     // Single generic parameter - Transformer types
     (
@@ -75,19 +71,6 @@ macro_rules! impl_transformer_common_methods {
         |$f:ident| $wrapper_expr:expr
     ) => {
         $crate::transformers::macros::impl_transformer_new_methods!($struct_name<$t, $u>, |$f| $wrapper_expr);
-
-        /// Creates an identity transformer.
-        ///
-        /// Creates a transformer that returns the input value unchanged. Useful for
-        /// default values or placeholder implementations.
-        ///
-        /// # Returns
-        ///
-        /// Returns a new transformer instance that returns the input unchanged.
-        #[inline]
-        pub fn identity() -> $struct_name<$t, $t> {
-            $struct_name::<$t, $t>::new(|t: $t| t)
-        }
 
         crate::macros::impl_common_name_methods!("transformer");
     };

@@ -14,6 +14,7 @@ use crate::transformers::macros::impl_box_transformer_methods;
 use crate::transformers::macros::impl_transformer_common_methods;
 use crate::transformers::macros::impl_transformer_constant_method;
 use crate::transformers::macros::impl_transformer_debug_display;
+use crate::transformers::macros::impl_transformer_identity_method;
 
 // ============================================================================
 // BoxTransformer - Box<dyn Fn(T) -> R>
@@ -69,6 +70,8 @@ impl<T, R> BoxTransformer<T, R> {
         Transformer
     );
 }
+
+impl_transformer_identity_method!(BoxTransformer, Transformer);
 
 // Implement constant method for BoxTransformer
 impl_transformer_constant_method!(BoxTransformer<T, R>, Transformer);

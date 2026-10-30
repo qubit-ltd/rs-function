@@ -17,6 +17,7 @@ use crate::transformers::macros::impl_transformer_clone;
 use crate::transformers::macros::impl_transformer_common_methods;
 use crate::transformers::macros::impl_transformer_constant_method;
 use crate::transformers::macros::impl_transformer_debug_display;
+use crate::transformers::macros::impl_transformer_identity_method;
 
 // ============================================================================
 // RcTransformer - Rc<dyn Fn(T) -> R>
@@ -75,6 +76,7 @@ impl<T, R> RcTransformer<T, R> {
     );
 }
 
+impl_transformer_identity_method!(RcTransformer, Transformer);
 impl_transformer_constant_method!(RcTransformer<T, R>, Transformer);
 
 // Implement Debug and Display for RcTransformer

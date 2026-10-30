@@ -21,6 +21,7 @@ mod transformer_clone;
 mod transformer_common_methods;
 mod transformer_constant_method;
 mod transformer_debug_display;
+mod transformer_identity_method;
 
 // Export all macros for use within the crate
 pub(crate) use box_conditional_transformer::impl_box_conditional_transformer;
@@ -34,3 +35,4 @@ pub(crate) use transformer_common_methods::impl_transformer_common_methods;
 pub(crate) use transformer_common_methods::impl_transformer_new_methods;
 pub(crate) use transformer_constant_method::impl_transformer_constant_method;
 pub(crate) use transformer_debug_display::impl_transformer_debug_display;
+pub(crate) use transformer_identity_method::impl_transformer_identity_method;

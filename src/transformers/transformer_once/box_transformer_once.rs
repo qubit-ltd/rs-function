@@ -15,6 +15,7 @@ use crate::transformers::macros::impl_box_transformer_methods;
 use crate::transformers::macros::impl_transformer_common_methods;
 use crate::transformers::macros::impl_transformer_constant_method;
 use crate::transformers::macros::impl_transformer_debug_display;
+use crate::transformers::macros::impl_transformer_identity_method;
 
 // ============================================================================
 // BoxTransformerOnce - Box<dyn FnOnce(T) -> R>
@@ -63,6 +64,8 @@ impl<T, R> BoxTransformerOnce<T, R> {
         TransformerOnce
     );
 }
+
+impl_transformer_identity_method!(BoxTransformerOnce, TransformerOnce);
 
 // Implement TransformerOnce trait for BoxTransformerOnce
 impl<T, R> TransformerOnce<T, R> for BoxTransformerOnce<T, R> {

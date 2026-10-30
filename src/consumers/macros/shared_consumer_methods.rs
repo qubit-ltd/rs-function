@@ -48,6 +48,35 @@
 /// | Arc stateful | `Send + Sync + 'static` | `Send + 'static` |
 /// | Rc stateless/stateful | `'static` | `'static` |
 macro_rules! impl_shared_consumer_methods {
+    (@state_init Consumer, $state:literal) => { "" };
+    (@state_init StatefulConsumer, $state:literal) => {
+        concat!("let mut ", $state, " = 0;\n")
+    };
+    (@state_init BiConsumer, $state:literal) => { "" };
+    (@state_init StatefulBiConsumer, $state:literal) => {
+        concat!("let mut ", $state, " = 0;\n")
+    };
+    (@callback Consumer, $state:literal, $observed:literal, $args:literal) => {
+        concat!("move |", $args, "| { ", $observed,
+            ".fetch_add(1, Ordering::SeqCst); }")
+    };
+    (@callback StatefulConsumer, $state:literal, $observed:literal, $args:literal) => {
+        concat!("move |", $args, "| { ", $state, " += 1; ", $observed,
+            ".store(", $state, ", Ordering::SeqCst); }")
+    };
+    (@callback BiConsumer, $state:literal, $observed:literal, $args:literal) => {
+        concat!("move |", $args, "| { ", $observed,
+            ".fetch_add(1, Ordering::SeqCst); }")
+    };
+    (@callback StatefulBiConsumer, $state:literal, $observed:literal, $args:literal) => {
+        concat!("move |", $args, "| { ", $state, " += 1; ", $observed,
+            ".store(", $state, ", Ordering::SeqCst); }")
+    };
+    (@mut Consumer) => { "" };
+    (@mut StatefulConsumer) => { "mut " };
+    (@mut BiConsumer) => { "" };
+    (@mut StatefulBiConsumer) => { "mut " };
+
     (@and_then Consumer, $struct_name:ident, $first:expr, $after:expr, $t:ident) => {{
         let first = $first;
         let after = $after;
@@ -111,18 +140,25 @@ macro_rules! impl_shared_consumer_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
-        /// use qubit_function::{ArcConsumer, Consumer};
-        /// let consumer = ArcConsumer::new(|x: &i32| println!("{}", x));
-        /// let conditional = consumer.when(|x: &i32| *x > 0);
-        ///
-        /// conditional.accept(&5);  // prints: 5
-        /// conditional.accept(&-5); // prints nothing
-        /// ```
+        #[doc = concat!(
+            "```rust\n",
+            "use std::sync::{Arc, atomic::{AtomicUsize, Ordering}};\n",
+            "use qubit_function::{", stringify!($struct_name), ", ", stringify!($consumer_trait), "};\n",
+            impl_shared_consumer_methods!(@state_init $consumer_trait, "callback_calls"),
+            "let calls = Arc::new(AtomicUsize::new(0));\n",
+            "let observed = Arc::clone(&calls);\n",
+            "let consumer = ", stringify!($struct_name), "::new(",
+            impl_shared_consumer_methods!(@callback $consumer_trait, "callback_calls", "observed", "_: &i32"), ");\n",
+            "let ", impl_shared_consumer_methods!(@mut $consumer_trait), "conditional = consumer.when(|x: &i32| *x > 0);\n",
+            "conditional.accept(&-5);\n",
+            "assert_eq!(calls.load(Ordering::SeqCst), 0);\n",
+            "conditional.accept(&5);\n",
+            "assert_eq!(calls.load(Ordering::SeqCst), 1);\n",
+            "```"
+        )]
         #[inline]
         pub fn when<P>(&self, predicate: P) -> $return_type<$t>
         where
-            $t: 'static,
             P: Predicate<$t> + $($predicate_bounds)+,
         {
             $return_type {
@@ -148,15 +184,26 @@ macro_rules! impl_shared_consumer_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
-        /// use qubit_function::{ArcConsumer, Consumer};
-        /// let consumer1 = ArcConsumer::new(|x: &i32| print!("first: {}", x));
-        /// let consumer2 = ArcConsumer::new(|x: &i32| println!(" second: {}", x));
-        ///
-        /// let chained = consumer1.and_then(consumer2);
-        ///
-        /// chained.accept(&5);  // prints: first: 5 second: 5
-        /// ```
+        #[doc = concat!(
+            "```rust\n",
+            "use std::sync::{Arc, atomic::{AtomicUsize, Ordering}};\n",
+            "use qubit_function::{", stringify!($struct_name), ", ", stringify!($consumer_trait), "};\n",
+            impl_shared_consumer_methods!(@state_init $consumer_trait, "first_state"),
+            impl_shared_consumer_methods!(@state_init $consumer_trait, "after_state"),
+            "let first_calls = Arc::new(AtomicUsize::new(0));\n",
+            "let first_observed = Arc::clone(&first_calls);\n",
+            "let first = ", stringify!($struct_name), "::new(",
+            impl_shared_consumer_methods!(@callback $consumer_trait, "first_state", "first_observed", "_: &i32"), ");\n",
+            "let after_calls = Arc::new(AtomicUsize::new(0));\n",
+            "let after_observed = Arc::clone(&after_calls);\n",
+            "let after = ", stringify!($struct_name), "::new(",
+            impl_shared_consumer_methods!(@callback $consumer_trait, "after_state", "after_observed", "_: &i32"), ");\n",
+            "let ", impl_shared_consumer_methods!(@mut $consumer_trait), "chained = first.and_then(after);\n",
+            "chained.accept(&5);\n",
+            "assert_eq!(first_calls.load(Ordering::SeqCst), 1);\n",
+            "assert_eq!(after_calls.load(Ordering::SeqCst), 1);\n",
+            "```"
+        )]
         #[inline]
         pub fn and_then<C>(&self, after: C) -> $struct_name<$t>
         where
@@ -194,19 +241,25 @@ macro_rules! impl_shared_consumer_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
-        /// use qubit_function::{ArcBiConsumer, BiConsumer};
-        /// let consumer = ArcBiConsumer::new(|x: &i32, y: &i32| println!("{}", x + y));
-        /// let conditional = consumer.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
-        ///
-        /// conditional.accept(&5, &3);  // prints: 8
-        /// conditional.accept(&-5, &3); // prints nothing
-        /// ```
+        #[doc = concat!(
+            "```rust\n",
+            "use std::sync::{Arc, atomic::{AtomicUsize, Ordering}};\n",
+            "use qubit_function::{", stringify!($struct_name), ", ", stringify!($consumer_trait), "};\n",
+            impl_shared_consumer_methods!(@state_init $consumer_trait, "callback_calls"),
+            "let calls = Arc::new(AtomicUsize::new(0));\n",
+            "let observed = Arc::clone(&calls);\n",
+            "let consumer = ", stringify!($struct_name), "::new(",
+            impl_shared_consumer_methods!(@callback $consumer_trait, "callback_calls", "observed", "_: &i32, _: &i32"), ");\n",
+            "let ", impl_shared_consumer_methods!(@mut $consumer_trait), "conditional = consumer.when(|x: &i32, y: &i32| *x > 0 && *y > 0);\n",
+            "conditional.accept(&-5, &3);\n",
+            "assert_eq!(calls.load(Ordering::SeqCst), 0);\n",
+            "conditional.accept(&5, &3);\n",
+            "assert_eq!(calls.load(Ordering::SeqCst), 1);\n",
+            "```"
+        )]
         #[inline]
         pub fn when<P>(&self, predicate: P) -> $return_type<$t, $u>
         where
-            $t: 'static,
-            $u: 'static,
             P: BiPredicate<$t, $u> + $($predicate_bounds)+,
         {
             $return_type {
@@ -232,15 +285,26 @@ macro_rules! impl_shared_consumer_methods {
         ///
         /// # Examples
         ///
-        /// ```rust
-        /// use qubit_function::{ArcBiConsumer, BiConsumer};
-        /// let consumer1 = ArcBiConsumer::new(|x: &i32, y: &i32| print!("first: {}", x + y));
-        /// let consumer2 = ArcBiConsumer::new(|x: &i32, y: &i32| println!(" second: {}", x * y));
-        ///
-        /// let chained = consumer1.and_then(consumer2);
-        ///
-        /// chained.accept(&5, &3);  // prints: first: 8 second: 15
-        /// ```
+        #[doc = concat!(
+            "```rust\n",
+            "use std::sync::{Arc, atomic::{AtomicUsize, Ordering}};\n",
+            "use qubit_function::{", stringify!($struct_name), ", ", stringify!($consumer_trait), "};\n",
+            impl_shared_consumer_methods!(@state_init $consumer_trait, "first_state"),
+            impl_shared_consumer_methods!(@state_init $consumer_trait, "after_state"),
+            "let first_calls = Arc::new(AtomicUsize::new(0));\n",
+            "let first_observed = Arc::clone(&first_calls);\n",
+            "let first = ", stringify!($struct_name), "::new(",
+            impl_shared_consumer_methods!(@callback $consumer_trait, "first_state", "first_observed", "_: &i32, _: &i32"), ");\n",
+            "let after_calls = Arc::new(AtomicUsize::new(0));\n",
+            "let after_observed = Arc::clone(&after_calls);\n",
+            "let after = ", stringify!($struct_name), "::new(",
+            impl_shared_consumer_methods!(@callback $consumer_trait, "after_state", "after_observed", "_: &i32, _: &i32"), ");\n",
+            "let ", impl_shared_consumer_methods!(@mut $consumer_trait), "chained = first.and_then(after);\n",
+            "chained.accept(&5, &3);\n",
+            "assert_eq!(first_calls.load(Ordering::SeqCst), 1);\n",
+            "assert_eq!(after_calls.load(Ordering::SeqCst), 1);\n",
+            "```"
+        )]
         #[inline]
         pub fn and_then<C>(&self, after: C) -> $struct_name<$t, $u>
         where

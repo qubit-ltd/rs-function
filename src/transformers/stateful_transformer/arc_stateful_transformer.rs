@@ -19,6 +19,7 @@ use crate::transformers::macros::impl_transformer_clone;
 use crate::transformers::macros::impl_transformer_common_methods;
 use crate::transformers::macros::impl_transformer_constant_method;
 use crate::transformers::macros::impl_transformer_debug_display;
+use crate::transformers::macros::impl_transformer_identity_method;
 
 // ============================================================================
 // ArcStatefulTransformer - Arc<Mutex<dyn FnMut(T) -> R + Send>>
@@ -84,6 +85,8 @@ impl<T, R> ArcStatefulTransformer<T, R> {
         chained_bounds = (Send + 'static)
     );
 }
+
+impl_transformer_identity_method!(ArcStatefulTransformer, StatefulTransformer);
 
 // Implement constant method for ArcStatefulTransformer
 impl_transformer_constant_method!(stateful thread_safe ArcStatefulTransformer<T, R>);

@@ -18,6 +18,7 @@ use crate::transformers::macros::impl_transformer_clone;
 use crate::transformers::macros::impl_transformer_common_methods;
 use crate::transformers::macros::impl_transformer_constant_method;
 use crate::transformers::macros::impl_transformer_debug_display;
+use crate::transformers::macros::impl_transformer_identity_method;
 
 // ============================================================================
 // RcStatefulTransformer - Rc<RefCell<dyn FnMut(T) -> R>>
@@ -81,6 +82,8 @@ impl<T, R> RcStatefulTransformer<T, R> {
         chained_bounds = ('static)
     );
 }
+
+impl_transformer_identity_method!(RcStatefulTransformer, StatefulTransformer);
 
 // Implement constant method for RcStatefulTransformer
 impl_transformer_constant_method!(stateful RcStatefulTransformer<T, R>);

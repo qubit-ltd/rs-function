@@ -17,6 +17,7 @@ use crate::transformers::macros::impl_transformer_clone;
 use crate::transformers::macros::impl_transformer_common_methods;
 use crate::transformers::macros::impl_transformer_constant_method;
 use crate::transformers::macros::impl_transformer_debug_display;
+use crate::transformers::macros::impl_transformer_identity_method;
 
 // ============================================================================
 // ArcTransformer - Arc<dyn Fn(T) -> R + Send + Sync>
@@ -76,6 +77,8 @@ impl<T, R> ArcTransformer<T, R> {
         chained_bounds = (Send + Sync + 'static)
     );
 }
+
+impl_transformer_identity_method!(ArcTransformer, Transformer);
 
 // Implement constant method for ArcTransformer
 impl_transformer_constant_method!(thread_safe ArcTransformer<T, R>);
