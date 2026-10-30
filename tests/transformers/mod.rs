@@ -47,7 +47,7 @@ mod stateful_bi_transformer_box_stateful_bi_transformer_display_with_name_tests;
 mod stateful_bi_transformer_conditional_stateful_bi_transformer_display_debug_tests;
 #[cfg(all(feature = "rc", feature = "stateful"))]
 mod stateful_bi_transformer_rc_stateful_bi_transformer_when_preserves_original_tests;
-#[cfg(all(feature = "rc", feature = "stateful"))]
+#[cfg(feature = "stateful")]
 mod stateful_bi_transformer_tests;
 mod stateful_transformer;
 #[cfg(all(feature = "rc", feature = "stateful"))]
@@ -56,7 +56,7 @@ mod stateful_transformer_box_stateful_transformer_display_with_name_tests;
 mod stateful_transformer_conditional_stateful_transformer_display_debug_tests;
 #[cfg(all(feature = "rc", feature = "stateful"))]
 mod stateful_transformer_rc_conditional_mapper_clone_tests;
-#[cfg(all(feature = "rc", feature = "stateful"))]
+#[cfg(feature = "stateful")]
 mod stateful_transformer_tests;
 mod transformer;
 mod transformer_arc_transformer_tests;

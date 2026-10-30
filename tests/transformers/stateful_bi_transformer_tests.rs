@@ -15,8 +15,11 @@ use qubit_function::BoxBiPredicate;
 use qubit_function::BoxStatefulBiTransformer;
 use qubit_function::BoxStatefulBinaryOperator;
 use qubit_function::BoxStatefulTransformer;
+#[cfg(feature = "rc")]
 use qubit_function::RcStatefulBiTransformer;
+#[cfg(feature = "rc")]
 use qubit_function::RcStatefulBinaryOperator;
+#[cfg(feature = "rc")]
 use qubit_function::RcStatefulTransformer;
 use qubit_function::StatefulBiTransformer;
 use qubit_function::StatefulBinaryOperator;
@@ -42,8 +45,11 @@ fn test_stateful_binary_operator_aliases() {
     let mut arc_mul: ArcStatefulBinaryOperator<i32> = ArcStatefulBinaryOperator::new(|a, b| a * b);
     assert_eq!(arc_mul.apply(6, 7), 42);
 
-    let mut rc_max: RcStatefulBinaryOperator<i32> = RcStatefulBinaryOperator::new(|a, b| if a > b { a } else { b });
-    assert_eq!(rc_max.apply(30, 42), 42);
+    #[cfg(feature = "rc")]
+    {
+        let mut rc_max: RcStatefulBinaryOperator<i32> = RcStatefulBinaryOperator::new(|a, b| if a > b { a } else { b });
+        assert_eq!(rc_max.apply(30, 42), 42);
+    }
 }
 
 // ============================================================================
@@ -353,6 +359,7 @@ fn test_arc_stateful_bi_transformer_thread_safe() {
 // ============================================================================
 
 #[test]
+#[cfg(feature = "rc")]
 fn test_rc_stateful_bi_transformer_new() {
     // Test basic creation and usage
     let mut counter = 0;
@@ -367,6 +374,7 @@ fn test_rc_stateful_bi_transformer_new() {
 }
 
 #[test]
+#[cfg(feature = "rc")]
 fn test_rc_stateful_bi_transformer_constant() {
     // Test constant bi-transformer
     let mut constant = RcStatefulBiTransformer::constant("hello");
@@ -375,6 +383,7 @@ fn test_rc_stateful_bi_transformer_constant() {
 }
 
 #[test]
+#[cfg(feature = "rc")]
 fn test_rc_stateful_bi_transformer_clone() {
     // Test cloning and shared state
     let mut counter = 0;
@@ -392,6 +401,7 @@ fn test_rc_stateful_bi_transformer_clone() {
 }
 
 #[test]
+#[cfg(feature = "rc")]
 fn test_rc_stateful_bi_transformer_and_then() {
     // Test composition with and_then
     let mut counter1 = 0;
@@ -412,6 +422,7 @@ fn test_rc_stateful_bi_transformer_and_then() {
 }
 
 #[test]
+#[cfg(feature = "rc")]
 fn test_rc_stateful_bi_transformer_and_then_preserves_original() {
     // Test that and_then uses &self and preserves original
     let mut counter = 0;
@@ -431,6 +442,7 @@ fn test_rc_stateful_bi_transformer_and_then_preserves_original() {
 }
 
 #[test]
+#[cfg(feature = "rc")]
 fn test_rc_stateful_bi_transformer_when_or_else() {
     // Test conditional execution
     let mut then_count = 0;

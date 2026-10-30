@@ -7,3 +7,5 @@
 // =============================================================================
 
 mod callback_metadata_tests;
+#[cfg(feature = "stateful")]
+pub(crate) mod isolated_test;

@@ -9,6 +9,7 @@
 use qubit_function::ArcStatefulTransformer;
 use qubit_function::BoxPredicate;
 use qubit_function::BoxStatefulTransformer;
+#[cfg(feature = "rc")]
 use qubit_function::RcStatefulTransformer;
 use qubit_function::StatefulTransformer;
 
@@ -274,6 +275,7 @@ fn test_arc_mapper_when_or_else() {
 // ============================================================================
 
 #[test]
+#[cfg(feature = "rc")]
 fn test_rc_mapper_new() {
     let mut counter = 0;
     let mut mapper = RcStatefulTransformer::new(move |x: i32| {
@@ -287,6 +289,7 @@ fn test_rc_mapper_new() {
 }
 
 #[test]
+#[cfg(feature = "rc")]
 fn test_rc_mapper_identity() {
     let mut identity = RcStatefulTransformer::<i32, i32>::identity();
     assert_eq!(identity.apply(42), 42);
@@ -294,6 +297,7 @@ fn test_rc_mapper_identity() {
 }
 
 #[test]
+#[cfg(feature = "rc")]
 fn test_rc_mapper_constant() {
     let mut constant = RcStatefulTransformer::constant("hello");
     assert_eq!(constant.apply(1), "hello");
@@ -302,6 +306,7 @@ fn test_rc_mapper_constant() {
 }
 
 #[test]
+#[cfg(feature = "rc")]
 fn test_rc_mapper_clone() {
     let mut counter = 0;
     let mapper = RcStatefulTransformer::new(move |x: i32| {
@@ -318,6 +323,7 @@ fn test_rc_mapper_clone() {
 }
 
 #[test]
+#[cfg(feature = "rc")]
 fn test_rc_mapper_and_then() {
     let mut counter1 = 0;
     let mapper1 = RcStatefulTransformer::new(move |x: i32| {
@@ -338,6 +344,7 @@ fn test_rc_mapper_and_then() {
 }
 
 #[test]
+#[cfg(feature = "rc")]
 fn test_rc_mapper_and_then_with_closure() {
     let mut counter = 0;
     let mapper = RcStatefulTransformer::new(move |x: i32| {
@@ -352,6 +359,7 @@ fn test_rc_mapper_and_then_with_closure() {
 }
 
 #[test]
+#[cfg(feature = "rc")]
 fn test_rc_mapper_when_or_else() {
     let mut high_count = 0;
     let mut low_count = 0;
