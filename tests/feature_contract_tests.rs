@@ -8,10 +8,9 @@
 
 use std::fmt::Debug;
 use std::fmt::Display;
-use std::fs;
-use std::path::PathBuf;
-use std::process::Command;
 use std::process::Output;
+
+mod support;
 
 #[cfg(feature = "stateful")]
 use qubit_function::ArcCallable;
@@ -31,67 +30,6 @@ use qubit_function::RcRunnableWith;
 
 /// Asserts at compile time that T supports both formatting traits.
 fn assert_debug_and_display<T: Debug + Display>() {}
-
-/// Compiles a temporary consumer crate against this checkout.
-///
-/// The features argument selects path-dependency features, and source becomes
-/// the fixture crate's main.rs. The returned output contains Cargo's status and
-/// diagnostics.
-fn compile_consumer(features: &[&str], source: &str) -> Output {
-    let project_dir = tempfile::Builder::new()
-        .prefix("qubit-function-feature-contract-")
-        .tempdir()
-        .expect("temporary consumer directory should be created");
-    let project_root = project_dir.path();
-    let source_root = project_root.join("src");
-    fs::create_dir_all(&source_root).expect("temporary consumer source directory should be created");
-
-    let feature_list = features
-        .iter()
-        .map(|feature| format!("\"{feature}\""))
-        .collect::<Vec<_>>()
-        .join(", ");
-    let feature_clause = if feature_list.is_empty() {
-        String::new()
-    } else {
-        format!(", features = [{feature_list}]")
-    };
-    let dependency_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-    let manifest = format!(
-        "[package]\n\
-         name = \"feature-contract-consumer\"\n\
-         version = \"0.0.0\"\n\
-         edition = \"2024\"\n\n\
-         [dependencies]\n\
-         qubit-function = {{ path = \"{}\", default-features = false{} }}\n\n\
-         [workspace]\n",
-        dependency_path.display(),
-        feature_clause,
-    );
-    fs::write(project_root.join("Cargo.toml"), manifest).expect("temporary consumer manifest should be written");
-    fs::write(source_root.join("main.rs"), source).expect("temporary consumer source should be written");
-
-    // Resolve and fetch this consumer's graph before asserting compiler
-    // diagnostics. Its feature selection can differ from the outer Cargo test
-    // invocation.
-    let preparation = Command::new("cargo")
-        .args(["+1.94.0", "fetch", "--quiet"])
-        .current_dir(project_root)
-        .output()
-        .expect("temporary consumer dependencies should be fetched");
-    assert!(
-        preparation.status.success(),
-        "temporary consumer dependency preparation failed: {}",
-        String::from_utf8_lossy(&preparation.stderr),
-    );
-
-    Command::new("cargo")
-        .args(["+1.94.0", "check", "--offline", "--locked", "--quiet", "--target-dir"])
-        .arg(project_root.join("target"))
-        .current_dir(project_root)
-        .output()
-        .expect("temporary consumer should invoke Cargo")
-}
 
 /// Formats Cargo diagnostics for an assertion failure.
 fn cargo_diagnostics(output: &Output) -> String {
@@ -138,7 +76,7 @@ fn test_arc_task_wrappers_implement_debug_and_display() {
 
 #[test]
 fn test_baseline_accepts_box_consumer_when() {
-    let output = compile_consumer(
+    let output = support::compile_consumer(
         &[],
         r#"
 use qubit_function::BoxConsumer;
@@ -156,7 +94,7 @@ fn main() {
 /// Verifies that semantic closure implementations do not depend on wrappers.
 #[test]
 fn test_baseline_semantic_trait_accepts_closure() {
-    let output = compile_consumer(
+    let output = support::compile_consumer(
         &[],
         r#"
 use qubit_function::Function;
@@ -176,7 +114,7 @@ fn main() {
 
 #[test]
 fn test_baseline_rejects_deep_arc_tester_path() {
-    let output = compile_consumer(
+    let output = support::compile_consumer(
         &[],
         r#"
 use qubit_function::testers::tester::arc_tester::ArcTester;
@@ -192,7 +130,7 @@ fn main() {
 
 #[test]
 fn test_stateful_rejects_deep_arc_stateful_tester_path() {
-    let output = compile_consumer(
+    let output = support::compile_consumer(
         &["stateful"],
         r#"
 use qubit_function::testers::stateful_tester::arc_stateful_tester::ArcStatefulTester;
@@ -208,7 +146,7 @@ fn main() {
 
 #[test]
 fn test_baseline_rejects_deep_tester_ops_path() {
-    let output = compile_consumer(
+    let output = support::compile_consumer(
         &[],
         r#"
 use qubit_function::testers::tester::fn_tester_ops::FnTesterOps;
@@ -224,7 +162,7 @@ fn main() {
 
 #[test]
 fn test_baseline_rejects_root_tester_ops_import() {
-    let output = compile_consumer(
+    let output = support::compile_consumer(
         &[],
         r#"
 use qubit_function::FnTesterOps;
@@ -238,7 +176,7 @@ fn main() {}
 
 #[test]
 fn test_baseline_rejects_raw_closure_when_without_ambiguity() {
-    let output = compile_consumer(
+    let output = support::compile_consumer(
         &[],
         r#"
 use qubit_function::*;
@@ -264,7 +202,7 @@ fn main() {
 
 #[test]
 fn test_baseline_accepts_box_consumer_when_with_glob_import() {
-    let output = compile_consumer(
+    let output = support::compile_consumer(
         &[],
         r#"
 use qubit_function::*;
@@ -281,7 +219,7 @@ fn main() {
 
 #[test]
 fn test_baseline_accepts_box_runnable_then_callable() {
-    let output = compile_consumer(
+    let output = support::compile_consumer(
         &[],
         r#"
 use qubit_function::BoxRunnable;
@@ -298,7 +236,7 @@ fn main() {
 
 #[test]
 fn test_baseline_accepts_box_runnable_with_then_callable() {
-    let output = compile_consumer(
+    let output = support::compile_consumer(
         &[],
         r#"
 use qubit_function::BoxRunnableWith;
@@ -316,7 +254,7 @@ fn main() {
 
 #[test]
 fn test_once_accepts_box_runnable_once_then_callable() {
-    let output = compile_consumer(
+    let output = support::compile_consumer(
         &["once"],
         r#"
 use qubit_function::BoxRunnableOnce;
@@ -333,7 +271,7 @@ fn main() {
 
 #[test]
 fn test_once_accepts_local_box_runnable_once_then_callable() {
-    let output = compile_consumer(
+    let output = support::compile_consumer(
         &["once"],
         r#"
 use qubit_function::LocalBoxRunnableOnce;
@@ -350,7 +288,7 @@ fn main() {
 
 #[test]
 fn test_task_box_rejects_non_send_constructor_capture() {
-    let output = compile_consumer(
+    let output = support::compile_consumer(
         &[],
         r#"
 use std::rc::Rc;
@@ -369,7 +307,7 @@ fn main() {
 
 #[test]
 fn test_task_box_rejects_non_send_composition_capture() {
-    let output = compile_consumer(
+    let output = support::compile_consumer(
         &[],
         r#"
 use std::rc::Rc;
@@ -389,7 +327,7 @@ fn main() {
 
 #[test]
 fn test_local_task_box_accepts_non_send_composition_capture() {
-    let output = compile_consumer(
+    let output = support::compile_consumer(
         &[],
         r#"
 use std::rc::Rc;
@@ -411,7 +349,7 @@ fn main() {
 
 #[test]
 fn test_stateless_arc_rejects_send_non_sync_capture() {
-    let output = compile_consumer(
+    let output = support::compile_consumer(
         &[],
         r#"
 use std::cell::Cell;
@@ -433,7 +371,7 @@ fn main() {
 
 #[test]
 fn test_stateful_arc_accepts_send_non_sync_capture() {
-    let output = compile_consumer(
+    let output = support::compile_consumer(
         &["stateful"],
         r#"
 use std::cell::Cell;

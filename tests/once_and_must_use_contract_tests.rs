@@ -6,52 +6,9 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use std::fs;
-use std::path::PathBuf;
-use std::process::Command;
 use std::process::Output;
 
-fn compile_consumer(features: &[&str], source: &str) -> Output {
-    let project_dir = tempfile::Builder::new()
-        .prefix("qubit-function-once-contract-")
-        .tempdir()
-        .expect("temporary consumer directory should be created");
-    let project_root = project_dir.path();
-    let source_root = project_root.join("src");
-    fs::create_dir_all(&source_root).expect("temporary consumer source directory should be created");
-    let feature_list = features
-        .iter()
-        .map(|feature| format!("\"{feature}\""))
-        .collect::<Vec<_>>()
-        .join(", ");
-    let dependency_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-    let manifest = format!(
-        "[package]\nname = \"once-contract-consumer\"\nversion = \"0.0.0\"\nedition = \"2024\"\n\n[dependencies]\nqubit-function = {{ path = \"{}\", default-features = false, features = [{feature_list}] }}\n\n[workspace]\n",
-        dependency_path.display(),
-    );
-    fs::write(project_root.join("Cargo.toml"), manifest).expect("temporary consumer manifest should be written");
-    fs::write(source_root.join("main.rs"), source).expect("temporary consumer source should be written");
-    // Resolve and fetch this consumer's graph before asserting compiler
-    // diagnostics. Its feature selection can differ from the outer Cargo test
-    // invocation.
-    let preparation = Command::new("cargo")
-        .args(["+1.94.0", "fetch", "--quiet"])
-        .current_dir(project_root)
-        .output()
-        .expect("temporary consumer dependencies should be fetched");
-    assert!(
-        preparation.status.success(),
-        "temporary consumer dependency preparation failed: {}",
-        String::from_utf8_lossy(&preparation.stderr),
-    );
-
-    Command::new("cargo")
-        .args(["+1.94.0", "check", "--offline", "--locked", "--quiet", "--target-dir"])
-        .arg(project_root.join("target"))
-        .current_dir(project_root)
-        .output()
-        .expect("temporary consumer should invoke Cargo")
-}
+mod support;
 
 fn diagnostics(output: &Output) -> String {
     format!(
@@ -62,18 +19,21 @@ fn diagnostics(output: &Output) -> String {
     )
 }
 
-fn assert_compile_failure(output: &Output, expected: &str) {
+fn assert_compile_failure(output: &Output, case_name: &str, expected: &str) {
     let diagnostics = diagnostics(output);
-    assert!(!output.status.success(), "{diagnostics}");
+    assert!(
+        !output.status.success(),
+        "case {case_name:?} unexpectedly compiled\n{diagnostics}"
+    );
     assert!(
         String::from_utf8_lossy(&output.stderr).contains(expected),
-        "expected diagnostic containing {expected:?}\n{diagnostics}",
+        "case {case_name:?}: expected diagnostic containing {expected:?}\n{diagnostics}",
     );
 }
 
 #[test]
 fn test_once_accepts_explicit_once_method_names() {
-    let output = compile_consumer(
+    let output = support::compile_consumer(
         &["once"],
         r#"
 use qubit_function::CallableOnce;
@@ -90,7 +50,7 @@ fn main() {
 
 #[test]
 fn test_once_rejects_reusable_method_names() {
-    let callable = compile_consumer(
+    let callable = support::compile_consumer(
         &["once"],
         r#"
 use qubit_function::CallableOnce;
@@ -101,8 +61,12 @@ impl CallableOnce<i32, ()> for OnceCallable {
 fn main() { let _ = OnceCallable.call(); }
 "#,
     );
-    assert_compile_failure(&callable, "no method named `call`");
-    let runnable = compile_consumer(
+    assert_compile_failure(
+        &callable,
+        "once callable rejects reusable method",
+        "no method named `call`",
+    );
+    let runnable = support::compile_consumer(
         &["once"],
         r#"
 use qubit_function::RunnableOnce;
@@ -113,12 +77,16 @@ impl RunnableOnce<()> for OnceRunnable {
 fn main() { let _ = OnceRunnable.run(); }
 "#,
     );
-    assert_compile_failure(&runnable, "no method named `run`");
+    assert_compile_failure(
+        &runnable,
+        "once runnable rejects reusable method",
+        "no method named `run`",
+    );
 }
 
 #[test]
 fn test_once_method_names_are_unambiguous_with_glob_import() {
-    let output = compile_consumer(
+    let output = support::compile_consumer(
         &["once"],
         r#"
 use qubit_function::*;
@@ -135,24 +103,80 @@ fn main() {
 }
 
 #[test]
-fn test_value_producing_methods_have_must_use_contracts() {
-    let output = compile_consumer(
-        &["full"],
+fn test_discarded_apply_result_triggers_its_must_use_contract() {
+    let output = support::compile_consumer(
+        &[],
+        r#"
+#![deny(unused_must_use)]
+use qubit_function::Function;
+fn main() { (|value: &i32| *value + 1).apply(&1); }
+"#,
+    );
+    assert_compile_failure(
+        &output,
+        "discarded apply result",
+        "the computed callback result should be used",
+    );
+}
+
+#[test]
+fn test_discarded_test_result_triggers_its_must_use_contract() {
+    let output = support::compile_consumer(
+        &[],
+        r#"
+#![deny(unused_must_use)]
+use qubit_function::Tester;
+fn main() { (|| true).test(); }
+"#,
+    );
+    assert_compile_failure(&output, "discarded test result", "the test result should be used");
+}
+
+#[test]
+fn test_discarded_get_result_triggers_its_must_use_contract() {
+    let output = support::compile_consumer(
+        &[],
+        r#"
+#![deny(unused_must_use)]
+use qubit_function::Supplier;
+fn main() { (|| 42).get(); }
+"#,
+    );
+    assert_compile_failure(&output, "discarded get result", "the supplied value should be used");
+}
+
+#[test]
+fn test_discarded_compare_result_triggers_its_must_use_contract() {
+    let output = support::compile_consumer(
+        &[],
+        r#"
+#![deny(unused_must_use)]
+use qubit_function::Comparator;
+fn main() { (|left: &i32, right: &i32| left.cmp(right)).compare(&1, &2); }
+"#,
+    );
+    assert_compile_failure(
+        &output,
+        "discarded compare result",
+        "the ordering result should be used",
+    );
+}
+
+#[test]
+fn test_discarded_into_fn_result_triggers_its_must_use_contract() {
+    let output = support::compile_consumer(
+        &[],
         r#"
 #![deny(unused_must_use)]
 use qubit_function::BoxComparator;
-use qubit_function::Comparator;
-use qubit_function::Function;
-use qubit_function::Predicate;
-use qubit_function::Supplier;
 fn main() {
-    (|value: &i32| *value + 1).apply(&1);
-    (|value: &i32| *value > 0).test(&1);
-    (|| 42).get();
-    (|left: &i32, right: &i32| left.cmp(right)).compare(&1, &2);
     BoxComparator::<i32>::new(|left: &i32, right: &i32| left.cmp(right)).into_fn();
 }
 "#,
     );
-    assert_compile_failure(&output, "unused return value");
+    assert_compile_failure(
+        &output,
+        "discarded into_fn result",
+        "the returned comparator closure should be stored or invoked",
+    );
 }

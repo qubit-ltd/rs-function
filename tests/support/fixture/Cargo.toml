@@ -1,0 +1,20 @@
+[package]
+name = "qubit-function-contract-fixture"
+version = "0.0.0"
+edition = "2024"
+
+[workspace]
+
+[[bin]]
+name = "qubit-function-contract-fixture"
+path = "main.rs"
+
+[dependencies]
+qubit-function = { path = "../../..", default-features = false }
+
+[features]
+default = []
+rc = ["qubit-function/rc"]
+once = ["qubit-function/once"]
+stateful = ["qubit-function/stateful"]
+full = ["qubit-function/full"]
