@@ -23,5 +23,4 @@ mod runnable_tests;
 mod runnable_with;
 #[cfg(all(feature = "rc", feature = "stateful"))]
 mod runnable_with_tests;
-#[cfg(feature = "once")]
 mod task_auto_trait_contract_tests;
