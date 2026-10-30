@@ -63,7 +63,6 @@ pub struct BoxStatefulBiTransformer<T, U, R> {
 impl<T, U, R> BoxStatefulBiTransformer<T, U, R> {
     impl_transformer_common_methods!(
         BoxStatefulBiTransformer<T, U, R>,
-        (FnMut(T, U) -> R + 'static),
         |f| Box::new(f)
     );
 

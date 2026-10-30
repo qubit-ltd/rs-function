@@ -81,7 +81,6 @@ pub struct RcStatefulBiTransformer<T, U, R> {
 impl<T, U, R> RcStatefulBiTransformer<T, U, R> {
     impl_transformer_common_methods!(
         RcStatefulBiTransformer<T, U, R>,
-        (FnMut(T, U) -> R + 'static),
         |f| Rc::new(RefCell::new(f))
     );
 

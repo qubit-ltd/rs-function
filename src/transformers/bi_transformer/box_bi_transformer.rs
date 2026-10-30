@@ -63,7 +63,6 @@ pub struct BoxBiTransformer<T, U, R> {
 impl<T, U, R> BoxBiTransformer<T, U, R> {
     impl_transformer_common_methods!(
         BoxBiTransformer<T, U, R>,
-        (Fn(T, U) -> R + 'static),
         |f| Box::new(f)
     );
 

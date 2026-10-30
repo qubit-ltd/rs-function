@@ -62,7 +62,6 @@ pub struct RcTransformer<T, R> {
 impl<T, R> RcTransformer<T, R> {
     impl_transformer_common_methods!(
         RcTransformer<T, R>,
-        (Fn(T) -> R + 'static),
         |f| Rc::new(f)
     );
 

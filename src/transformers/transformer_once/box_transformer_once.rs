@@ -54,7 +54,6 @@ pub struct BoxTransformerOnce<T, R> {
 impl<T, R> BoxTransformerOnce<T, R> {
     impl_transformer_common_methods!(
         BoxTransformerOnce<T, R>,
-        (FnOnce(T) -> R + 'static),
         |f| Box::new(f)
     );
 

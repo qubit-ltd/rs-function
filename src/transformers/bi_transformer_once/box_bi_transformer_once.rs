@@ -60,7 +60,6 @@ pub struct BoxBiTransformerOnce<T, U, R> {
 impl<T, U, R> BoxBiTransformerOnce<T, U, R> {
     impl_transformer_common_methods!(
         BoxBiTransformerOnce<T, U, R>,
-        (FnOnce(T, U) -> R + 'static),
         |f| Box::new(f)
     );
 

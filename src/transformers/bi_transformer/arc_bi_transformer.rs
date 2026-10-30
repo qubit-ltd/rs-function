@@ -63,7 +63,6 @@ pub struct ArcBiTransformer<T, U, R> {
 impl<T, U, R> ArcBiTransformer<T, U, R> {
     impl_transformer_common_methods!(
         ArcBiTransformer<T, U, R>,
-        (Fn(T, U) -> R + Send + Sync + 'static),
         |f| Arc::new(f)
     );
 

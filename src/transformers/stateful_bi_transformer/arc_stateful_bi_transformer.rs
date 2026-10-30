@@ -84,7 +84,6 @@ pub struct ArcStatefulBiTransformer<T, U, R> {
 impl<T, U, R> ArcStatefulBiTransformer<T, U, R> {
     impl_transformer_common_methods!(
         ArcStatefulBiTransformer<T, U, R>,
-        (FnMut(T, U) -> R + Send + 'static),
         |f| Arc::new(Mutex::new(f))
     );
 

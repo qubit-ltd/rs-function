@@ -72,7 +72,6 @@ pub struct ArcStatefulTransformer<T, R> {
 impl<T, R> ArcStatefulTransformer<T, R> {
     impl_transformer_common_methods!(
         ArcStatefulTransformer<T, R>,
-        (FnMut(T) -> R + Send + 'static),
         |f| Arc::new(Mutex::new(f))
     );
 

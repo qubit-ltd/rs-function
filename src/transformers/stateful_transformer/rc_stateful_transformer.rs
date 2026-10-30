@@ -69,7 +69,6 @@ pub struct RcStatefulTransformer<T, R> {
 impl<T, R> RcStatefulTransformer<T, R> {
     impl_transformer_common_methods!(
         RcStatefulTransformer<T, R>,
-        (FnMut(T) -> R + 'static),
         |f| Rc::new(RefCell::new(f))
     );
 

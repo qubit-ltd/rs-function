@@ -16,9 +16,6 @@
 /// the wrapper expression adapts the supplied closure to the target's storage.
 /// This helper is invoked inside the target type's `impl` block by
 /// [`impl_transformer_common_methods`].
-///
-/// The closure-trait token group is retained in the invocation syntax, while
-/// this macro selects bounds from the target type.
 macro_rules! impl_transformer_new_methods {
     (BoxTransformer<$t:ident, $r:ident>, |$f:ident| $w:expr) => { $crate::transformers::macros::impl_transformer_new_methods!(@one Transformer, $t, $r, ('static), |$f| $w); };
     (RcTransformer<$t:ident, $r:ident>, |$f:ident| $w:expr) => { $crate::transformers::macros::impl_transformer_new_methods!(@one Transformer, $t, $r, ('static), |$f| $w); };
@@ -48,7 +45,6 @@ macro_rules! impl_transformer_new_methods {
 /// # Parameters
 ///
 /// * `$struct_name<$generics>` - Transformer type and its generic parameters
-/// * `$fn_trait_with_bounds` - Closure-trait bounds associated with the type
 /// * `$wrapper_expr` - Expression that wraps the closure (using `f`)
 ///
 /// # Usage
@@ -56,7 +52,6 @@ macro_rules! impl_transformer_new_methods {
 /// ```ignore
 /// impl_transformer_common_methods!(
 ///     BoxTransformer<T, U>,
-///     (Fn(&T) -> U + 'static),
 ///     |f| Box::new(f)
 /// );
 /// ```
@@ -64,21 +59,16 @@ macro_rules! impl_transformer_new_methods {
 /// The generated methods include `new`, `new_with_name`,
 /// `new_with_optional_name`, `name`, and `set_name`.
 macro_rules! impl_transformer_common_methods {
-    // Single generic parameter - Transformer types
     (
         $struct_name:ident < $t:ident, $u:ident >,
-        ($($fn_trait_with_bounds:tt)+),
         |$f:ident| $wrapper_expr:expr
     ) => {
         $crate::transformers::macros::impl_transformer_new_methods!($struct_name<$t, $u>, |$f| $wrapper_expr);
 
         crate::macros::impl_common_name_methods!("transformer");
     };
-
-    // Two generic parameters - BiTransformer types
     (
         $struct_name:ident < $t:ident, $u:ident, $v:ident >,
-        ($($fn_trait_with_bounds:tt)+),
         |$f:ident| $wrapper_expr:expr
     ) => {
         $crate::transformers::macros::impl_transformer_new_methods!($struct_name<$t, $u, $v>, |$f| $wrapper_expr);

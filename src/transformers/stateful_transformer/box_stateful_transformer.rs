@@ -59,7 +59,6 @@ pub struct BoxStatefulTransformer<T, R> {
 impl<T, R> BoxStatefulTransformer<T, R> {
     impl_transformer_common_methods!(
         BoxStatefulTransformer<T, R>,
-        (FnMut(T) -> R + 'static),
         |f| Box::new(f)
     );
 

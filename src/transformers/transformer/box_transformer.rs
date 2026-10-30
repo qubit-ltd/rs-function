@@ -60,7 +60,6 @@ pub struct BoxTransformer<T, R> {
 impl<T, R> BoxTransformer<T, R> {
     impl_transformer_common_methods!(
         BoxTransformer<T, R>,
-        (Fn(T) -> R + 'static),
         |f| Box::new(f)
     );
 

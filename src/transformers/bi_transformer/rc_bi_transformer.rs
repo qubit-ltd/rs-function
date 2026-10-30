@@ -63,7 +63,6 @@ pub struct RcBiTransformer<T, U, R> {
 impl<T, U, R> RcBiTransformer<T, U, R> {
     impl_transformer_common_methods!(
         RcBiTransformer<T, U, R>,
-        (Fn(T, U) -> R + 'static),
         |f| Rc::new(f)
     );
 

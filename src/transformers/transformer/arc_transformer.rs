@@ -64,7 +64,6 @@ pub struct ArcTransformer<T, R> {
 impl<T, R> ArcTransformer<T, R> {
     impl_transformer_common_methods!(
         ArcTransformer<T, R>,
-        (Fn(T) -> R + Send + Sync + 'static),
         |f| Arc::new(f)
     );
 
