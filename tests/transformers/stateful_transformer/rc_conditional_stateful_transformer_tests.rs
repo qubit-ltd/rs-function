@@ -15,6 +15,14 @@ fn test_rc_conditional_stateful_transformer_observable_behavior() {
         .when(|value: &i32| *value > 0)
         .or_else(|value: i32| -value);
 
-    assert_eq!(transformer.apply(5), 10);
-    assert_eq!(transformer.apply(-5), 5);
+    assert_eq!(
+        transformer.apply(5),
+        10,
+        "positive inputs should use the primary transformer"
+    );
+    assert_eq!(
+        transformer.apply(-5),
+        5,
+        "negative inputs should use the fallback transformer"
+    );
 }

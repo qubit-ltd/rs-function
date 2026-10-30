@@ -17,7 +17,6 @@ mod mutator_tests;
 mod mutator_unified_interface_tests;
 mod mutator_wrapper_composition_tests;
 mod stateful_mutator;
-mod stateful_mutator_arc_mutator_tests;
 mod stateful_mutator_complex_scenarios_tests;
 mod stateful_mutator_conditional_execution_2_tests;
 mod stateful_mutator_conditional_execution_tests;

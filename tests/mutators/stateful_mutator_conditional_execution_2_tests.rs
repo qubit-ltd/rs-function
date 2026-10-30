@@ -19,6 +19,8 @@ use qubit_function::StatefulMutator;
 
 #[cfg(test)]
 mod test_conditional_execution {
+    use std::thread;
+
     use qubit_function::predicates::ArcPredicate;
 
     use super::ArcStatefulMutator;
@@ -179,8 +181,6 @@ mod test_conditional_execution {
 
     #[test]
     fn test_arc_conditional_thread_safety() {
-        use std::thread;
-
         let conditional = ArcStatefulMutator::new(|x: &mut i32| *x *= 2).when(|x: &i32| *x > 0);
         let clone = conditional.clone();
 
@@ -201,8 +201,6 @@ mod test_conditional_execution {
 
     #[test]
     fn test_arc_or_else_thread_safety() {
-        use std::thread;
-
         let mutator = ArcStatefulMutator::new(|x: &mut i32| *x *= 2)
             .when(|x: &i32| *x > 0)
             .or_else(|x: &mut i32| *x = 0);

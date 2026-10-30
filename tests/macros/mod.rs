@@ -6,7 +6,6 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-mod arc_conversions_tests;
 mod box_conversions_tests;
 mod closure_once_trait_tests;
 mod closure_trait_tests;

@@ -9,6 +9,8 @@
 
 #[cfg(test)]
 mod tests {
+    use std::cell::RefCell;
+    use std::rc::Rc;
     use std::sync::Arc;
     use std::sync::atomic::AtomicBool;
     use std::sync::atomic::AtomicUsize;
@@ -82,6 +84,7 @@ mod tests {
             self.value.load(Ordering::Relaxed)
         }
     }
+
     #[test]
     fn test_box_tester_new_basic() {
         let tester = BoxTester::new(|| true);
@@ -309,9 +312,6 @@ mod tests {
 
     #[test]
     fn test_rc_tester_stateful_shared() {
-        use std::cell::RefCell;
-        use std::rc::Rc;
-
         let counter = Rc::new(RefCell::new(0));
         let counter_clone = Rc::clone(&counter);
 

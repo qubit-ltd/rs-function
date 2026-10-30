@@ -8,8 +8,6 @@
 
 //! Unit tests for the predicate module.
 
-use std::sync::Arc;
-
 use qubit_function::Predicate;
 use qubit_function::predicates::ArcPredicate;
 use qubit_function::predicates::BoxPredicate;

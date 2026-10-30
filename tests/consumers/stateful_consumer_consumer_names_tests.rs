@@ -20,7 +20,6 @@ use qubit_function::BoxStatefulConsumer;
 use qubit_function::Consumer;
 use qubit_function::RcConsumer;
 use qubit_function::RcStatefulConsumer;
-use qubit_function::StatefulConsumer;
 
 // ============================================================================
 // Consumer Name Tests
@@ -54,7 +53,7 @@ mod test_consumer_names {
     }
 
     #[test]
-    fn test_box_consumer_set_name() {
+    fn test_box_stateful_consumer_set_name() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
         let mut consumer = BoxStatefulConsumer::new(move |x: &i32| {
@@ -79,7 +78,7 @@ mod test_consumer_names {
     }
 
     #[test]
-    fn test_arc_consumer_set_name() {
+    fn test_arc_stateful_consumer_set_name() {
         let log = Arc::new(Mutex::new(Vec::new()));
         let l = log.clone();
         let mut consumer = ArcStatefulConsumer::new(move |x: &i32| {
@@ -104,7 +103,7 @@ mod test_consumer_names {
     }
 
     #[test]
-    fn test_rc_consumer_set_name() {
+    fn test_rc_stateful_consumer_set_name() {
         let log = Rc::new(RefCell::new(Vec::new()));
         let l = log.clone();
         let mut consumer = RcStatefulConsumer::new(move |x: &i32| {

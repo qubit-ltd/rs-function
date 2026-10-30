@@ -22,5 +22,5 @@ fn test_rc_stateful_mutator_clones_share_callback_state() {
     mutator.apply(&mut value);
     cloned_mutator.apply(&mut value);
 
-    assert_eq!(value, 13);
+    assert_eq!(value, 13, "cloned mutators should share callback state");
 }

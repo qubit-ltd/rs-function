@@ -27,6 +27,8 @@ impl Predicate<i32> for PositivePredicate {
 
 #[cfg(test)]
 mod interior_mutability_tests {
+    use std::collections::HashMap;
+
     use super::Arc;
     use super::ArcPredicate;
     use super::BoxPredicate;
@@ -68,8 +70,6 @@ mod interior_mutability_tests {
 
     #[test]
     fn test_rc_predicate_with_refcell_cache() {
-        use std::collections::HashMap;
-
         let cache = RefCell::new(HashMap::new());
         let pred = RcPredicate::new(move |x: &i32| {
             let mut c = cache.borrow_mut();

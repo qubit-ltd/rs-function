@@ -11,4 +11,5 @@ mod arc_stateful_bi_consumer_tests;
 mod box_conditional_stateful_bi_consumer_tests;
 mod box_stateful_bi_consumer_tests;
 mod rc_conditional_stateful_bi_consumer_tests;
+mod rc_stateful_bi_consumer_legacy_tests;
 mod rc_stateful_bi_consumer_tests;

@@ -7,4 +7,5 @@
 // =============================================================================
 
 mod box_conditional_function_once_tests;
+mod box_function_once_debug_display_tests;
 mod box_function_once_tests;

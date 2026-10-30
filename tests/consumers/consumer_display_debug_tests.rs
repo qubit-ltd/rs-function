@@ -22,9 +22,7 @@ mod display_debug_tests {
     fn test_box_consumer_debug() {
         let consumer = BoxConsumer::new(|_x: &i32| {});
         let debug_str = format!("{:?}", consumer);
-        assert!(debug_str.contains("BoxConsumer"));
-        assert!(debug_str.contains("name"));
-        assert!(debug_str.contains("function"));
+        assert_eq!(debug_str, "BoxConsumer { name: None, function: \"<function>\" }");
     }
 
     #[test]
@@ -46,9 +44,7 @@ mod display_debug_tests {
     fn test_arc_consumer_debug() {
         let consumer = ArcConsumer::new(|_x: &i32| {});
         let debug_str = format!("{:?}", consumer);
-        assert!(debug_str.contains("ArcConsumer"));
-        assert!(debug_str.contains("name"));
-        assert!(debug_str.contains("function"));
+        assert_eq!(debug_str, "ArcConsumer { name: None, function: \"<function>\" }");
     }
 
     #[test]
@@ -70,9 +66,7 @@ mod display_debug_tests {
     fn test_rc_consumer_debug() {
         let consumer = RcConsumer::new(|_x: &i32| {});
         let debug_str = format!("{:?}", consumer);
-        assert!(debug_str.contains("RcConsumer"));
-        assert!(debug_str.contains("name"));
-        assert!(debug_str.contains("function"));
+        assert_eq!(debug_str, "RcConsumer { name: None, function: \"<function>\" }");
     }
 
     #[test]

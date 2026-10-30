@@ -7,5 +7,6 @@
 // =============================================================================
 
 mod arc_callable_with_tests;
+mod box_callable_with_tests;
 mod local_box_callable_with_tests;
 mod rc_callable_with_tests;

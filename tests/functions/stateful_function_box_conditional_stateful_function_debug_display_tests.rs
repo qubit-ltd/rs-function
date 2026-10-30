@@ -28,16 +28,19 @@ fn test_box_conditional_stateful_function_debug_display() {
     let conditional = double.when(|x: &i32| *x > 0);
 
     let debug_str = format!("{:?}", conditional);
-    assert!(debug_str.contains("BoxConditionalStatefulFunction"));
-    assert!(debug_str.contains("name"));
-    assert!(debug_str.contains("function"));
-    assert!(debug_str.contains("predicate"));
+    assert!(debug_str.contains("BoxConditionalStatefulFunction"), "{debug_str}");
+    assert!(debug_str.contains("name"), "{debug_str}");
+    assert!(debug_str.contains("function"), "{debug_str}");
+    assert!(debug_str.contains("predicate"), "{debug_str}");
 
     let display_str = format!("{}", conditional);
-    assert!(display_str.starts_with("BoxConditionalStatefulFunction("));
-    assert!(display_str.contains("BoxStatefulFunction"));
-    assert!(display_str.contains("BoxPredicate"));
-    assert!(display_str.ends_with(")"));
+    assert!(
+        display_str.starts_with("BoxConditionalStatefulFunction("),
+        "{display_str}"
+    );
+    assert!(display_str.contains("BoxStatefulFunction"), "{display_str}");
+    assert!(display_str.contains("BoxPredicate"), "{display_str}");
+    assert!(display_str.ends_with(")"), "{display_str}");
 
     // Test Debug and Display for BoxConditionalStatefulFunction with name
     let mut named_double = BoxStatefulFunction::new_with_name("stateful_double", |x: &i32| x * 2);
@@ -47,16 +50,25 @@ fn test_box_conditional_stateful_function_debug_display() {
     let named_conditional = named_double.when(|x: &i32| *x % 2 == 0);
 
     let named_debug_str = format!("{:?}", named_conditional);
-    assert!(named_debug_str.contains("BoxConditionalStatefulFunction"));
-    assert!(named_debug_str.contains("name"));
-    assert!(named_debug_str.contains("function"));
-    assert!(named_debug_str.contains("predicate"));
+    assert!(
+        named_debug_str.contains("BoxConditionalStatefulFunction"),
+        "{named_debug_str}"
+    );
+    assert!(named_debug_str.contains("name"), "{named_debug_str}");
+    assert!(named_debug_str.contains("function"), "{named_debug_str}");
+    assert!(named_debug_str.contains("predicate"), "{named_debug_str}");
 
     let named_display_str = format!("{}", named_conditional);
-    assert!(named_display_str.starts_with("BoxConditionalStatefulFunction("));
-    assert!(named_display_str.contains("BoxStatefulFunction(stateful_double)"));
-    assert!(named_display_str.contains("BoxPredicate"));
-    assert!(named_display_str.ends_with(")"));
+    assert!(
+        named_display_str.starts_with("BoxConditionalStatefulFunction("),
+        "{named_display_str}"
+    );
+    assert!(
+        named_display_str.contains("BoxStatefulFunction(stateful_double)"),
+        "{named_display_str}"
+    );
+    assert!(named_display_str.contains("BoxPredicate"), "{named_display_str}");
+    assert!(named_display_str.ends_with(")"), "{named_display_str}");
 }
 
 #[test]
@@ -70,16 +82,19 @@ fn test_rc_conditional_stateful_function_debug_display() {
     let conditional = double.when(|x: &i32| *x > 0);
 
     let debug_str = format!("{:?}", conditional);
-    assert!(debug_str.contains("RcConditionalStatefulFunction"));
-    assert!(debug_str.contains("name"));
-    assert!(debug_str.contains("function"));
-    assert!(debug_str.contains("predicate"));
+    assert!(debug_str.contains("RcConditionalStatefulFunction"), "{debug_str}");
+    assert!(debug_str.contains("name"), "{debug_str}");
+    assert!(debug_str.contains("function"), "{debug_str}");
+    assert!(debug_str.contains("predicate"), "{debug_str}");
 
     let display_str = format!("{}", conditional);
-    assert!(display_str.starts_with("RcConditionalStatefulFunction("));
-    assert!(display_str.contains("RcStatefulFunction"));
-    assert!(display_str.contains("RcPredicate"));
-    assert!(display_str.ends_with(")"));
+    assert!(
+        display_str.starts_with("RcConditionalStatefulFunction("),
+        "{display_str}"
+    );
+    assert!(display_str.contains("RcStatefulFunction"), "{display_str}");
+    assert!(display_str.contains("RcPredicate"), "{display_str}");
+    assert!(display_str.ends_with(")"), "{display_str}");
 
     // Test Debug and Display for RcConditionalStatefulFunction with name
     let mut named_double = RcStatefulFunction::new_with_name("rc_stateful_double", |x: &i32| x * 2);
@@ -89,16 +104,25 @@ fn test_rc_conditional_stateful_function_debug_display() {
     let named_conditional = named_double.when(|x: &i32| *x % 2 == 0);
 
     let named_debug_str = format!("{:?}", named_conditional);
-    assert!(named_debug_str.contains("RcConditionalStatefulFunction"));
-    assert!(named_debug_str.contains("name"));
-    assert!(named_debug_str.contains("function"));
-    assert!(named_debug_str.contains("predicate"));
+    assert!(
+        named_debug_str.contains("RcConditionalStatefulFunction"),
+        "{named_debug_str}"
+    );
+    assert!(named_debug_str.contains("name"), "{named_debug_str}");
+    assert!(named_debug_str.contains("function"), "{named_debug_str}");
+    assert!(named_debug_str.contains("predicate"), "{named_debug_str}");
 
     let named_display_str = format!("{}", named_conditional);
-    assert!(named_display_str.starts_with("RcConditionalStatefulFunction("));
-    assert!(named_display_str.contains("RcStatefulFunction(rc_stateful_double)"));
-    assert!(named_display_str.contains("RcPredicate"));
-    assert!(named_display_str.ends_with(")"));
+    assert!(
+        named_display_str.starts_with("RcConditionalStatefulFunction("),
+        "{named_display_str}"
+    );
+    assert!(
+        named_display_str.contains("RcStatefulFunction(rc_stateful_double)"),
+        "{named_display_str}"
+    );
+    assert!(named_display_str.contains("RcPredicate"), "{named_display_str}");
+    assert!(named_display_str.ends_with(")"), "{named_display_str}");
 }
 
 #[test]
@@ -112,16 +136,19 @@ fn test_arc_conditional_stateful_function_debug_display() {
     let conditional = double.when(|x: &i32| *x > 0);
 
     let debug_str = format!("{:?}", conditional);
-    assert!(debug_str.contains("ArcConditionalStatefulFunction"));
-    assert!(debug_str.contains("name"));
-    assert!(debug_str.contains("function"));
-    assert!(debug_str.contains("predicate"));
+    assert!(debug_str.contains("ArcConditionalStatefulFunction"), "{debug_str}");
+    assert!(debug_str.contains("name"), "{debug_str}");
+    assert!(debug_str.contains("function"), "{debug_str}");
+    assert!(debug_str.contains("predicate"), "{debug_str}");
 
     let display_str = format!("{}", conditional);
-    assert!(display_str.starts_with("ArcConditionalStatefulFunction("));
-    assert!(display_str.contains("ArcStatefulFunction"));
-    assert!(display_str.contains("ArcPredicate"));
-    assert!(display_str.ends_with(")"));
+    assert!(
+        display_str.starts_with("ArcConditionalStatefulFunction("),
+        "{display_str}"
+    );
+    assert!(display_str.contains("ArcStatefulFunction"), "{display_str}");
+    assert!(display_str.contains("ArcPredicate"), "{display_str}");
+    assert!(display_str.ends_with(")"), "{display_str}");
 
     // Test Debug and Display for ArcConditionalStatefulFunction with name
     let mut named_double = ArcStatefulFunction::new_with_name("arc_stateful_double", |x: &i32| x * 2);
@@ -131,14 +158,23 @@ fn test_arc_conditional_stateful_function_debug_display() {
     let named_conditional = named_double.when(|x: &i32| *x % 2 == 0);
 
     let named_debug_str = format!("{:?}", named_conditional);
-    assert!(named_debug_str.contains("ArcConditionalStatefulFunction"));
-    assert!(named_debug_str.contains("name"));
-    assert!(named_debug_str.contains("function"));
-    assert!(named_debug_str.contains("predicate"));
+    assert!(
+        named_debug_str.contains("ArcConditionalStatefulFunction"),
+        "{named_debug_str}"
+    );
+    assert!(named_debug_str.contains("name"), "{named_debug_str}");
+    assert!(named_debug_str.contains("function"), "{named_debug_str}");
+    assert!(named_debug_str.contains("predicate"), "{named_debug_str}");
 
     let named_display_str = format!("{}", named_conditional);
-    assert!(named_display_str.starts_with("ArcConditionalStatefulFunction("));
-    assert!(named_display_str.contains("ArcStatefulFunction(arc_stateful_double)"));
-    assert!(named_display_str.contains("ArcPredicate"));
-    assert!(named_display_str.ends_with(")"));
+    assert!(
+        named_display_str.starts_with("ArcConditionalStatefulFunction("),
+        "{named_display_str}"
+    );
+    assert!(
+        named_display_str.contains("ArcStatefulFunction(arc_stateful_double)"),
+        "{named_display_str}"
+    );
+    assert!(named_display_str.contains("ArcPredicate"), "{named_display_str}");
+    assert!(named_display_str.ends_with(")"), "{named_display_str}");
 }

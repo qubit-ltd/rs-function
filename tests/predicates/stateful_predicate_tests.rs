@@ -82,7 +82,7 @@ fn test_box_stateful_predicate_composition_preserves_state() {
 }
 
 #[test]
-fn test_box_stateful_predicate_logical_operations_cover_all_branches_migrated() {
+fn test_box_stateful_predicate_logical_operations_cover_all_branches() {
     let mut and_pred = BoxStatefulPredicate::new(|value: &i32| *value > 0).and(|value: &i32| value % 2 == 0);
     assert!(and_pred.test(&4));
     assert!(!and_pred.test(&3));
@@ -282,7 +282,7 @@ fn test_box_stateful_predicate_observable_behavior() {
 }
 
 #[test]
-fn test_box_stateful_predicate_logical_operations_cover_all_branches() {
+fn test_box_stateful_predicate_logical_operations_and_negation_cover_all_branches() {
     let mut and_pred = BoxStatefulPredicate::new(|value: &i32| *value > 0).and(|value: &i32| value % 2 == 0);
     assert!(and_pred.test(&4));
     assert!(!and_pred.test(&3));

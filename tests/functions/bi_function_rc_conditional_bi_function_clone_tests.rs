@@ -8,8 +8,11 @@
 
 //! Comprehensive tests for BiFunction trait and its implementations
 
+use std::thread;
+
 use qubit_function::ArcBiFunction;
 use qubit_function::ArcBiPredicate;
+use qubit_function::ArcFunction;
 use qubit_function::BiFunction;
 use qubit_function::RcBiFunction;
 use qubit_function::RcBiPredicate;
@@ -103,8 +106,6 @@ fn test_impl_conditional_function_clone_three_params_macro_coverage() {
 
 #[test]
 fn test_arc_bi_function_and_then() {
-    use qubit_function::ArcFunction;
-
     let add = ArcBiFunction::new(|x: &i32, y: &i32| *x + *y);
     let multiply_by_two = ArcFunction::new(|x: &i32| *x * 2);
 
@@ -114,8 +115,6 @@ fn test_arc_bi_function_and_then() {
 
 #[test]
 fn test_arc_bi_function_thread_safety() {
-    use std::thread;
-
     let func = ArcBiFunction::new(|x: &i32, y: &i32| *x + *y);
     let func_clone = func.clone();
 

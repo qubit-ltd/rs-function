@@ -9,8 +9,7 @@
 // ArcBiTransformer Tests - Immutable, thread-safe shared ownership
 // ============================================================================
 
-#[cfg(test)]
-mod arc_conditional_tests {
+mod tests {
     use qubit_function::ArcBiPredicate;
     use qubit_function::ArcBiTransformer;
     use qubit_function::BiTransformer;

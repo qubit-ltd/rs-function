@@ -7,6 +7,8 @@
 // =============================================================================
 #[cfg(test)]
 mod name_tests {
+    use std::hint::black_box;
+
     use qubit_function::ArcBiConsumer;
     use qubit_function::BiConsumer;
     use qubit_function::BoxBiConsumer;
@@ -15,7 +17,7 @@ mod name_tests {
     #[test]
     fn test_box_consumer_name() {
         let mut consumer = BoxBiConsumer::new(|x: &i32, y: &i32| {
-            std::hint::black_box(x + y);
+            black_box(x + y);
         });
         assert_eq!(consumer.name(), None);
 
@@ -26,7 +28,7 @@ mod name_tests {
     #[test]
     fn test_arc_consumer_name() {
         let mut consumer = ArcBiConsumer::new(|x: &i32, y: &i32| {
-            std::hint::black_box(x + y);
+            black_box(x + y);
         });
         assert_eq!(consumer.name(), None);
 
@@ -37,7 +39,7 @@ mod name_tests {
     #[test]
     fn test_rc_consumer_name() {
         let mut consumer = RcBiConsumer::new(|x: &i32, y: &i32| {
-            std::hint::black_box(x + y);
+            black_box(x + y);
         });
         assert_eq!(consumer.name(), None);
 
@@ -99,7 +101,3 @@ mod name_tests {
         assert_eq!(consumer.name(), Some("name2"));
     }
 }
-
-// ============================================================================
-// Display and Debug Tests
-// ============================================================================

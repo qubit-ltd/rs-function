@@ -14,7 +14,7 @@ use qubit_function::BoxConsumer;
 use qubit_function::Consumer;
 
 #[test]
-fn test_consumer_debug_display_observable_behavior() {
+fn test_box_consumer_invokes_closure() {
     let count = Arc::new(AtomicI32::new(0));
     let captured = Arc::clone(&count);
     let consumer = BoxConsumer::new(move |value: &i32| {

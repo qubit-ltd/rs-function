@@ -9,3 +9,4 @@
 mod arc_stateful_supplier_tests;
 mod box_stateful_supplier_tests;
 mod rc_stateful_supplier_tests;
+mod stateful_supplier_debug_display_tests;

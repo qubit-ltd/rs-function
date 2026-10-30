@@ -22,29 +22,28 @@ mod test_rc_stateful_supplier_once {
         use qubit_function::StatefulSupplier;
 
         #[test]
-        fn test_consumes_stateful_supplier() {
+        fn test_get_returns_supplied_value() {
             let mut supplier = RcStatefulSupplier::new(|| 42);
             let value = supplier.get();
             assert_eq!(value, 42);
-            // StatefulSupplier is consumed, cannot be used again
         }
 
         #[test]
-        fn test_with_string() {
+        fn test_get_returns_string() {
             let mut supplier = RcStatefulSupplier::new(|| String::from("hello"));
             let value = supplier.get();
             assert_eq!(value, "hello");
         }
 
         #[test]
-        fn test_with_vec() {
+        fn test_get_returns_vector() {
             let mut supplier = RcStatefulSupplier::new(|| vec![1, 2, 3]);
             let value = supplier.get();
             assert_eq!(value, vec![1, 2, 3]);
         }
 
         #[test]
-        fn test_with_shared_state() {
+        fn test_get_updates_shared_state() {
             let counter = Rc::new(RefCell::new(0));
             let counter_clone = Rc::clone(&counter);
             let mut supplier = RcStatefulSupplier::new(move || {

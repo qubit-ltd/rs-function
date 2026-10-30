@@ -367,7 +367,6 @@ mod rc_transformer_transformer_once_tests {
 
 #[cfg(test)]
 mod arc_transformer_transformer_once_tests {
-    use std::sync::Arc;
     use std::thread;
 
     use qubit_function::ArcTransformer;

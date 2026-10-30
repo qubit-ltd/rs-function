@@ -170,7 +170,3 @@ mod test_box_stateless_supplier {
         // Sync). This is enforced at compile time by trait bounds.
     }
 }
-
-// ======================================================================
-// ArcSupplier Tests
-// ======================================================================

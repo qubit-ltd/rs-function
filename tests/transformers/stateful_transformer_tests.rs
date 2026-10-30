@@ -6,12 +6,9 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-use qubit_function::ArcPredicate;
 use qubit_function::ArcStatefulTransformer;
 use qubit_function::BoxPredicate;
 use qubit_function::BoxStatefulTransformer;
-use qubit_function::Predicate;
-use qubit_function::RcPredicate;
 use qubit_function::RcStatefulTransformer;
 use qubit_function::StatefulTransformer;
 

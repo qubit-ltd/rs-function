@@ -14,9 +14,8 @@ use std::rc::Rc;
 use qubit_function::RcStatefulBiConsumer;
 use qubit_function::StatefulBiConsumer;
 
-// Test new() constructor
 #[test]
-fn test_new() {
+fn test_new_invokes_callback_with_both_inputs() {
     let log = Rc::new(RefCell::new(Vec::new()));
     let l = log.clone();
     let mut consumer = RcStatefulBiConsumer::new(move |x: &i32, y: &i32| {
@@ -26,9 +25,8 @@ fn test_new() {
     assert_eq!(*log.borrow(), vec![8]);
 }
 
-// Test new_with_name() constructor
 #[test]
-fn test_new_with_name() {
+fn test_new_with_name_sets_name_and_invokes_callback() {
     let log = Rc::new(RefCell::new(Vec::new()));
     let l = log.clone();
     let mut consumer = RcStatefulBiConsumer::new_with_name("test_consumer", move |x: &i32, y: &i32| {
@@ -39,25 +37,22 @@ fn test_new_with_name() {
     assert_eq!(*log.borrow(), vec![8]);
 }
 
-// Test name() getter
 #[test]
-fn test_name_getter() {
+fn test_name_returns_none_without_a_name() {
     let consumer = RcStatefulBiConsumer::new(|_x: &i32, _y: &i32| {});
     assert_eq!(consumer.name(), None);
 }
 
-// Test set_name() setter
 #[test]
-fn test_set_name() {
+fn test_set_name_updates_the_consumer_name() {
     let mut consumer = RcStatefulBiConsumer::new(|_x: &i32, _y: &i32| {});
     assert_eq!(consumer.name(), None);
     consumer.set_name("my_consumer");
     assert_eq!(consumer.name(), Some("my_consumer"));
 }
 
-// Test accept() method
 #[test]
-fn test_accept() {
+fn test_accept_invokes_callback_with_both_inputs() {
     let log = Rc::new(RefCell::new(Vec::new()));
     let l = log.clone();
     let mut consumer = RcStatefulBiConsumer::new(move |x: &i32, y: &i32| {
@@ -67,9 +62,8 @@ fn test_accept() {
     assert_eq!(*log.borrow(), vec![15]);
 }
 
-// Test clone() method
 #[test]
-fn test_clone() {
+fn test_clone_shares_callback_state() {
     let log = Rc::new(RefCell::new(Vec::new()));
     let l = log.clone();
     let consumer = RcStatefulBiConsumer::new(move |x: &i32, y: &i32| {
@@ -86,9 +80,8 @@ fn test_clone() {
     assert_eq!(*log.borrow(), vec![8, 12]);
 }
 
-// Test and_then() method
 #[test]
-fn test_and_then() {
+fn test_and_then_invokes_callbacks_in_sequence() {
     let log = Rc::new(RefCell::new(Vec::new()));
     let l1 = log.clone();
     let l2 = log.clone();
@@ -104,9 +97,8 @@ fn test_and_then() {
     assert_eq!(*log.borrow(), vec![8, 15]);
 }
 
-// Test when() method
 #[test]
-fn test_when() {
+fn test_when_invokes_callback_only_when_predicate_matches() {
     let log = Rc::new(RefCell::new(Vec::new()));
     let l = log.clone();
     let consumer = RcStatefulBiConsumer::new(move |x: &i32, y: &i32| {
@@ -119,9 +111,8 @@ fn test_when() {
     assert_eq!(*log.borrow(), vec![8]);
 }
 
-// Test accept_once() from BiConsumerOnce trait
 #[test]
-fn test_accept_once() {
+fn test_stateful_bi_consumer_accept_invokes_callback() {
     let log = Rc::new(RefCell::new(Vec::new()));
     let l = log.clone();
     let mut consumer = RcStatefulBiConsumer::new(move |x: &i32, y: &i32| {
@@ -131,25 +122,22 @@ fn test_accept_once() {
     assert_eq!(*log.borrow(), vec![8]);
 }
 
-// Test Debug trait implementation
 #[test]
-fn test_debug() {
+fn test_debug_includes_consumer_type_name() {
     let consumer = RcStatefulBiConsumer::new(|_x: &i32, _y: &i32| {});
     let debug_str = format!("{:?}", consumer);
     assert!(debug_str.contains("RcStatefulBiConsumer"));
 }
 
-// Test Display trait implementation
 #[test]
-fn test_display() {
+fn test_display_formats_unnamed_consumer() {
     let consumer = RcStatefulBiConsumer::new(|_x: &i32, _y: &i32| {});
     let display_str = format!("{}", consumer);
     assert_eq!(display_str, "RcStatefulBiConsumer");
 }
 
-// Test Display with name
 #[test]
-fn test_display_with_name() {
+fn test_display_formats_named_consumer() {
     let mut consumer = RcStatefulBiConsumer::new(|_x: &i32, _y: &i32| {});
     consumer.set_name("my_consumer");
     let display_str = format!("{}", consumer);

@@ -7,7 +7,9 @@
 // =============================================================================
 #[cfg(test)]
 mod box_non_mutating_bi_consumer_tests {
+    use std::hint::black_box;
     use std::sync::Arc;
+    use std::sync::Mutex;
 
     use qubit_function::BiConsumer;
     use qubit_function::BoxBiConsumer;
@@ -15,14 +17,14 @@ mod box_non_mutating_bi_consumer_tests {
     #[test]
     fn test_new_and_accept() {
         let consumer = BoxBiConsumer::new(|x: &i32, y: &i32| {
-            std::hint::black_box(x + y);
+            black_box(x + y);
         });
         consumer.accept(&5, &3);
     }
 
     #[test]
     fn test_and_then() {
-        let counter = Arc::new(std::sync::Mutex::new(0));
+        let counter = Arc::new(Mutex::new(0));
         let c1 = counter.clone();
         let c2 = counter.clone();
         let chained = BoxBiConsumer::new(move |_x: &i32, _y: &i32| {

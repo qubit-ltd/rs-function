@@ -6,7 +6,7 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-//! Unit tests for StatefulConsumer types
+//! Integration tests for consumer trait adapters.
 
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -19,7 +19,7 @@ use qubit_function::Consumer;
 use qubit_function::RcConsumer;
 
 // ============================================================================
-// BoxConsumer Tests
+// Consumer Trait Tests
 // ============================================================================
 
 #[cfg(test)]
@@ -69,7 +69,3 @@ mod consumer_once_trait_tests {
         assert_eq!(*log.borrow(), vec![10]);
     }
 }
-
-// ============================================================================
-// BoxStatefulConsumer and_then Tests
-// ============================================================================

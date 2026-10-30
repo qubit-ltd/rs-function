@@ -5,6 +5,8 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
+//! Tests the `Display` and `Debug` implementations of bi-consumer adapters.
+
 #[cfg(test)]
 mod display_debug_tests {
     use qubit_function::ArcBiConsumer;

@@ -11,8 +11,7 @@ use qubit_function::BiTransformer;
 mod custom_bi_transformer_tests {
     use super::BiTransformer;
 
-    /// Custom BiTransformer implementation for testing default into_xxx()
-    /// methods
+    /// A test transformer that multiplies the sum of its inputs.
     struct CustomBiTransformer {
         multiplier: i32,
     }

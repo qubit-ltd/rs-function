@@ -32,11 +32,14 @@ mod test_conditional_mutator_and_then {
 
         let mut positive = 5;
         chained.apply(&mut positive);
-        assert_eq!(positive, 20); // 5 * 2 + 10
+        assert_eq!(positive, 20, "BoxMutator should apply both steps to a positive value"); // 5 * 2 + 10
 
         let mut negative = -5;
         chained.apply(&mut negative);
-        assert_eq!(negative, 5); // -5 + 10 (condition not met)
+        assert_eq!(
+            negative, 5,
+            "BoxMutator should apply only the chained step when the condition fails"
+        ); // -5 + 10 (condition not met)
     }
 
     #[test]
@@ -48,11 +51,17 @@ mod test_conditional_mutator_and_then {
 
         let mut positive = 10;
         chained.apply(&mut positive);
-        assert_eq!(positive, 120); // 10 * 2 + 100
+        assert_eq!(
+            positive, 120,
+            "BoxMutator should apply both mutators to a positive value"
+        ); // 10 * 2 + 100
 
         let mut negative = -10;
         chained.apply(&mut negative);
-        assert_eq!(negative, 90); // -10 + 100 (condition not met)
+        assert_eq!(
+            negative, 90,
+            "BoxMutator should apply only the chained mutator when the condition fails"
+        ); // -10 + 100 (condition not met)
     }
 
     #[test]
@@ -63,11 +72,14 @@ mod test_conditional_mutator_and_then {
 
         let mut positive = 5;
         chained.apply(&mut positive);
-        assert_eq!(positive, 20); // 5 * 2 + 10
+        assert_eq!(positive, 20, "RcMutator should apply both steps to a positive value"); // 5 * 2 + 10
 
         let mut negative = -5;
         chained.apply(&mut negative);
-        assert_eq!(negative, 5); // -5 + 10 (condition not met)
+        assert_eq!(
+            negative, 5,
+            "RcMutator should apply only the chained step when the condition fails"
+        ); // -5 + 10 (condition not met)
     }
 
     #[test]
@@ -79,11 +91,17 @@ mod test_conditional_mutator_and_then {
 
         let mut positive = 10;
         chained.apply(&mut positive);
-        assert_eq!(positive, 120); // 10 * 2 + 100
+        assert_eq!(
+            positive, 120,
+            "RcMutator should apply both mutators to a positive value"
+        ); // 10 * 2 + 100
 
         let mut negative = -10;
         chained.apply(&mut negative);
-        assert_eq!(negative, 90); // -10 + 100 (condition not met)
+        assert_eq!(
+            negative, 90,
+            "RcMutator should apply only the chained mutator when the condition fails"
+        ); // -10 + 100 (condition not met)
     }
 
     #[test]
@@ -94,11 +112,14 @@ mod test_conditional_mutator_and_then {
 
         let mut positive = 5;
         chained.apply(&mut positive);
-        assert_eq!(positive, 20); // 5 * 2 + 10
+        assert_eq!(positive, 20, "ArcMutator should apply both steps to a positive value"); // 5 * 2 + 10
 
         let mut negative = -5;
         chained.apply(&mut negative);
-        assert_eq!(negative, 5); // -5 + 10 (condition not met)
+        assert_eq!(
+            negative, 5,
+            "ArcMutator should apply only the chained step when the condition fails"
+        ); // -5 + 10 (condition not met)
     }
 
     #[test]
@@ -110,10 +131,16 @@ mod test_conditional_mutator_and_then {
 
         let mut positive = 10;
         chained.apply(&mut positive);
-        assert_eq!(positive, 120); // 10 * 2 + 100
+        assert_eq!(
+            positive, 120,
+            "ArcMutator should apply both mutators to a positive value"
+        ); // 10 * 2 + 100
 
         let mut negative = -10;
         chained.apply(&mut negative);
-        assert_eq!(negative, 90); // -10 + 100 (condition not met)
+        assert_eq!(
+            negative, 90,
+            "ArcMutator should apply only the chained mutator when the condition fails"
+        ); // -10 + 100 (condition not met)
     }
 }

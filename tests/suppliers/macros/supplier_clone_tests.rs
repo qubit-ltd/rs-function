@@ -8,6 +8,7 @@
 
 #[cfg(feature = "rc")]
 use qubit_function::RcSupplier;
+#[cfg(feature = "rc")]
 use qubit_function::Supplier;
 
 #[cfg(feature = "rc")]

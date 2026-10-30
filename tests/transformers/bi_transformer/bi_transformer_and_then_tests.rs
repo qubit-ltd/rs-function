@@ -12,6 +12,9 @@
 
 #[cfg(test)]
 mod tests {
+    use std::sync::Arc as StdArc;
+    use std::thread;
+
     use qubit_function::ArcBiTransformer;
     use qubit_function::ArcTransformer;
     use qubit_function::BiTransformer;
@@ -112,9 +115,6 @@ mod tests {
 
     #[test]
     fn test_arc_bi_transformer_and_then_thread_safe() {
-        use std::sync::Arc as StdArc;
-        use std::thread;
-
         let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
         let double = |x: i32| x * 2;
         let composed = StdArc::new(add.and_then(double));

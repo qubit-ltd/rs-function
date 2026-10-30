@@ -12,37 +12,6 @@ use qubit_function::BiMutatingFunctionOnce;
 use qubit_function::BoxBiMutatingFunctionOnce;
 
 // ============================================================================
-// Helper Functions and Data Structures
-// ============================================================================
-
-fn append_strings_once(x: &mut String, y: &mut String) -> usize {
-    x.push_str("_modified");
-    y.push_str("_changed");
-    x.len() + y.len()
-}
-
-#[derive(Clone, Debug, PartialEq)]
-struct TestStruct {
-    value: i32,
-}
-
-impl TestStruct {
-    fn new(value: i32) -> Self {
-        Self { value }
-    }
-
-    fn modify(&mut self, other: &mut Self) -> i32 {
-        self.value += other.value;
-        other.value *= 2;
-        self.value + other.value
-    }
-}
-
-fn modify_structs_once(a: &mut TestStruct, b: &mut TestStruct) -> i32 {
-    a.modify(b)
-}
-
-// ============================================================================
 // BiMutatingFunctionOnce Trait Tests - Core Functionality
 // ============================================================================
 
@@ -141,16 +110,3 @@ fn test_bi_mutating_function_once_with_moving_data() {
     assert_eq!(v1, vec![10, 1, 2, 3]);
     assert_eq!(v2, vec![20, 42]);
 }
-
-// ============================================================================
-// Complex Composition Scenarios
-// ============================================================================
-
-// ============================================================================
-// Integration Tests
-// ============================================================================
-
-// ============================================================================
-// Custom BiMutatingFunctionOnce Implementation Tests - Test Trait Default
-// Methods
-// ============================================================================

@@ -10,7 +10,6 @@
 
 use qubit_function::BoxFunctionOnce;
 use qubit_function::FunctionOnce;
-use qubit_function::Predicate;
 
 // ============================================================================
 // FunctionOnce Trait Tests - Core Functionality
@@ -21,9 +20,10 @@ fn test_box_function_once_debug_display() {
     // Test Debug and Display for BoxFunctionOnce without name
     let double = BoxFunctionOnce::new(|x: &i32| x * 2);
     let debug_str = format!("{:?}", double);
-    assert!(debug_str.contains("BoxFunctionOnce"));
-    assert!(debug_str.contains("name"));
-    assert!(debug_str.contains("function"));
+    assert_eq!(
+        debug_str, "BoxFunctionOnce { name: None, function: \"<function>\" }",
+        "Debug output should expose the wrapper fields and opaque callback"
+    );
 
     let display_str = format!("{}", double);
     assert_eq!(display_str, "BoxFunctionOnce");
@@ -31,9 +31,10 @@ fn test_box_function_once_debug_display() {
     // Test Debug and Display for BoxFunctionOnce with name
     let named_double = BoxFunctionOnce::new_with_name("double", |x: &i32| x * 2);
     let named_debug_str = format!("{:?}", named_double);
-    assert!(named_debug_str.contains("BoxFunctionOnce"));
-    assert!(named_debug_str.contains("name"));
-    assert!(named_debug_str.contains("function"));
+    assert_eq!(
+        named_debug_str, "BoxFunctionOnce { name: Some(\"double\"), function: \"<function>\" }",
+        "named Debug output should include the wrapper name and opaque callback"
+    );
 
     let named_display_str = format!("{}", named_double);
     assert_eq!(named_display_str, "BoxFunctionOnce(double)");
@@ -49,14 +50,26 @@ fn test_box_function_once_name_methods() {
     let mut double = BoxFunctionOnce::new_with_name("double_func_once", |x: &i32| x * 2);
 
     // Test name() returns the initial name
-    assert_eq!(double.name(), Some("double_func_once"));
+    assert_eq!(
+        double.name(),
+        Some("double_func_once"),
+        "new_with_name should preserve the supplied name"
+    );
 
     // Test set_name() changes the name
     double.set_name("modified_double_once");
-    assert_eq!(double.name(), Some("modified_double_once"));
+    assert_eq!(
+        double.name(),
+        Some("modified_double_once"),
+        "set_name should replace the stored name"
+    );
 
     // Test that function still works after name change
-    assert_eq!(double.apply(&5), 10);
+    assert_eq!(
+        double.apply(&5),
+        10,
+        "renaming the wrapper should not change its callback behavior"
+    );
 }
 
 // ============================================================================
@@ -70,30 +83,41 @@ fn test_box_conditional_function_once_debug_display() {
     let conditional = double.when(|x: &i32| *x > 0);
 
     let debug_str = format!("{:?}", conditional);
-    assert!(debug_str.contains("BoxConditionalFunctionOnce"));
-    assert!(debug_str.contains("name"));
-    assert!(debug_str.contains("function"));
-    assert!(debug_str.contains("predicate"));
+    assert_eq!(
+        debug_str,
+        concat!(
+            "BoxConditionalFunctionOnce { function: ",
+            "BoxFunctionOnce { name: None, function: \"<function>\" }, ",
+            "predicate: BoxPredicate { name: None, function: \"<function>\" } }"
+        ),
+        "conditional Debug output should expose its function and predicate"
+    );
 
     let display_str = format!("{}", conditional);
-    assert!(display_str.starts_with("BoxConditionalFunctionOnce("));
-    assert!(display_str.contains("BoxFunctionOnce"));
-    assert!(display_str.contains("BoxPredicate"));
-    assert!(display_str.ends_with(")"));
+    assert_eq!(
+        display_str, "BoxConditionalFunctionOnce(BoxFunctionOnce, BoxPredicate(unnamed))",
+        "conditional Display output should include both wrapped callbacks"
+    );
 
     // Test Debug and Display for BoxConditionalFunctionOnce with name
     let triple = BoxFunctionOnce::new_with_name("triple_func_once", |x: &i32| x * 3);
     let named_conditional = triple.when(|x: &i32| *x % 2 == 0);
 
     let named_debug_str = format!("{:?}", named_conditional);
-    assert!(named_debug_str.contains("BoxConditionalFunctionOnce"));
-    assert!(named_debug_str.contains("name"));
-    assert!(named_debug_str.contains("function"));
-    assert!(named_debug_str.contains("predicate"));
+    assert_eq!(
+        named_debug_str,
+        concat!(
+            "BoxConditionalFunctionOnce { function: ",
+            "BoxFunctionOnce { name: Some(\"triple_func_once\"), ",
+            "function: \"<function>\" }, ",
+            "predicate: BoxPredicate { name: None, function: \"<function>\" } }"
+        ),
+        "named conditional Debug output should preserve the function name and fields"
+    );
 
     let named_display_str = format!("{}", named_conditional);
-    assert!(named_display_str.starts_with("BoxConditionalFunctionOnce("));
-    assert!(named_display_str.contains("BoxFunctionOnce(triple_func_once)"));
-    assert!(named_display_str.contains("BoxPredicate"));
-    assert!(named_display_str.ends_with(")"));
+    assert_eq!(
+        named_display_str, "BoxConditionalFunctionOnce(BoxFunctionOnce(triple_func_once), BoxPredicate(unnamed))",
+        "named conditional Display output should include both wrapped callbacks"
+    );
 }

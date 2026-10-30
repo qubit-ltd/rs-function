@@ -17,9 +17,6 @@ use std::rc::Rc;
 use std::sync::Arc;
 use std::sync::Mutex;
 
-use qubit_function::ArcStatefulBiConsumer;
-use qubit_function::BiConsumerOnce;
-use qubit_function::BoxStatefulBiConsumer;
 use qubit_function::RcStatefulBiConsumer;
 use qubit_function::StatefulBiConsumer;
 

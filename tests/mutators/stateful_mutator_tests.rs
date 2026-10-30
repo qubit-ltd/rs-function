@@ -21,7 +21,7 @@ mod test_box_mutator {
     use super::StatefulMutator;
 
     #[test]
-    fn test_new() {
+    fn test_new_mutator_applies_closure() {
         let mut mutator = BoxStatefulMutator::new(|x: &mut i32| *x += 1);
         let mut value = 5;
         mutator.apply(&mut value);

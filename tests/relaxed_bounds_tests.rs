@@ -11,6 +11,7 @@
     reason = "split contract fixtures share support definitions"
 )]
 #![cfg(feature = "full")]
+
 use std::cell::Cell;
 use std::cell::RefCell;
 use std::marker::PhantomData;

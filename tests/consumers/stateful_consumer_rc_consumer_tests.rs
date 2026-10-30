@@ -171,7 +171,3 @@ mod rc_stateful_consumer_tests {
         assert_eq!(display_str, "RcStatefulConsumer(my_consumer)");
     }
 }
-
-// ============================================================================
-// Conversion Tests
-// ============================================================================

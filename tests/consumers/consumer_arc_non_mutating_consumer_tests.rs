@@ -8,7 +8,11 @@
 
 //! Tests for Consumer types
 
+use std::hint::black_box;
 use std::sync::Arc;
+use std::sync::atomic::AtomicUsize;
+use std::sync::atomic::Ordering;
+use std::thread;
 
 use qubit_function::ArcConsumer;
 use qubit_function::Consumer;
@@ -16,49 +20,49 @@ use qubit_function::Consumer;
 #[test]
 fn test_new_and_accept() {
     let consumer = ArcConsumer::new(|x: &i32| {
-        std::hint::black_box(x);
+        black_box(x);
     });
     consumer.accept(&5);
 }
 
 #[test]
 fn test_clone() {
-    let counter = Arc::new(std::sync::atomic::AtomicUsize::new(0));
+    let counter = Arc::new(AtomicUsize::new(0));
     let c = counter.clone();
     let consumer = ArcConsumer::new(move |_x: &i32| {
-        c.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+        c.fetch_add(1, Ordering::SeqCst);
     });
 
     let clone = consumer.clone();
     consumer.accept(&5);
     clone.accept(&10);
 
-    assert_eq!(counter.load(std::sync::atomic::Ordering::SeqCst), 2);
+    assert_eq!(counter.load(Ordering::SeqCst), 2);
 }
 
 #[test]
 fn test_and_then() {
-    let counter = Arc::new(std::sync::atomic::AtomicUsize::new(0));
+    let counter = Arc::new(AtomicUsize::new(0));
     let c1 = counter.clone();
     let c2 = counter.clone();
 
     let first = ArcConsumer::new(move |_x: &i32| {
-        c1.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+        c1.fetch_add(1, Ordering::SeqCst);
     });
 
     let second = ArcConsumer::new(move |_x: &i32| {
-        c2.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+        c2.fetch_add(1, Ordering::SeqCst);
     });
 
     let chained = first.and_then(second.clone());
     chained.accept(&5);
 
-    assert_eq!(counter.load(std::sync::atomic::Ordering::SeqCst), 2);
+    assert_eq!(counter.load(Ordering::SeqCst), 2);
 
     // Original consumers remain usable
     first.accept(&10);
     second.accept(&15);
-    assert_eq!(counter.load(std::sync::atomic::Ordering::SeqCst), 4);
+    assert_eq!(counter.load(Ordering::SeqCst), 4);
 }
 
 #[test]
@@ -88,16 +92,16 @@ fn test_display() {
 
 #[test]
 fn test_thread_safety() {
-    let counter = Arc::new(std::sync::atomic::AtomicUsize::new(0));
+    let counter = Arc::new(AtomicUsize::new(0));
     let c = counter.clone();
     let consumer = ArcConsumer::new(move |_x: &i32| {
-        c.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+        c.fetch_add(1, Ordering::SeqCst);
     });
 
     let handles: Vec<_> = (0..10)
         .map(|i| {
             let consumer_clone = consumer.clone();
-            std::thread::spawn(move || {
+            thread::spawn(move || {
                 consumer_clone.accept(&i);
             })
         })
@@ -107,5 +111,5 @@ fn test_thread_safety() {
         handle.join().expect("thread should not panic");
     }
 
-    assert_eq!(counter.load(std::sync::atomic::Ordering::SeqCst), 10);
+    assert_eq!(counter.load(Ordering::SeqCst), 10);
 }

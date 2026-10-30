@@ -16,6 +16,6 @@ fn test_box_conditional_mutator_macro_behavior() {
     mutator.apply(&mut positive);
     let mut negative = -1;
     mutator.apply(&mut negative);
-    assert_eq!(positive, 42);
-    assert_eq!(negative, -1);
+    assert_eq!(positive, 42, "the mutator should apply when the value is positive");
+    assert_eq!(negative, -1, "the mutator should leave non-positive values unchanged");
 }

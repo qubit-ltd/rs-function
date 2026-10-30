@@ -16,6 +16,6 @@ fn test_box_stateful_tester_observable_behavior() {
         calls += 1;
         calls == 1
     });
-    assert!(tester.test());
-    assert!(!tester.test());
+    assert!(tester.test(), "the first call should return true");
+    assert!(!tester.test(), "the second call should return false");
 }

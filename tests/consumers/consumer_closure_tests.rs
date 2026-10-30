@@ -10,7 +10,6 @@
 
 use std::sync::Arc;
 
-use qubit_function::ArcConsumer;
 use qubit_function::BoxConsumer;
 use qubit_function::Consumer;
 

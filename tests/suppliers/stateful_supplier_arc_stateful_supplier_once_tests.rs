@@ -91,7 +91,3 @@ mod test_arc_stateful_supplier_once {
         }
     }
 }
-
-// ==========================================================================
-// SupplierOnce Implementation Tests for RcStatefulSupplier
-// ==========================================================================

@@ -5,19 +5,15 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-use qubit_function::ArcBiTransformer;
-use qubit_function::BiTransformer;
-use qubit_function::BoxBiTransformer;
-
 // ============================================================================
 // BoxBiTransformer Tests - Immutable, single ownership
 // ============================================================================
 
 #[cfg(test)]
 mod edge_cases_tests {
-    use super::ArcBiTransformer;
-    use super::BiTransformer;
-    use super::BoxBiTransformer;
+    use qubit_function::ArcBiTransformer;
+    use qubit_function::BiTransformer;
+    use qubit_function::BoxBiTransformer;
 
     #[test]
     fn test_constant_with_different_types() {
@@ -77,11 +73,3 @@ mod edge_cases_tests {
         assert_eq!(join.apply("Hello".to_string(), "World".to_string()), "Hello World");
     }
 }
-
-// ============================================================================
-// Type Conversion Tests - Testing into_box, into_rc, into_arc methods
-// ============================================================================
-
-// ============================================================================
-// Closure BiTransformer Tests - Testing blanket implementation for closures
-// ============================================================================

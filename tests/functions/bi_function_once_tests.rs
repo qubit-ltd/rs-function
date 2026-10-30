@@ -8,6 +8,9 @@
 
 //! Comprehensive tests for BiFunctionOnce trait and BoxBiFunctionOnce
 
+use std::cell::RefCell;
+use std::rc::Rc;
+
 use qubit_function::BiFunctionOnce;
 use qubit_function::BoxBiFunctionOnce;
 
@@ -238,7 +241,7 @@ fn test_box_bi_function_once_display_without_name() {
     // Test Display implementation without name
     let func = BoxBiFunctionOnce::new(|x: &i32, y: &i32| *x + *y);
     let display = format!("{}", func);
-    assert!(display.contains("BoxBiFunctionOnce"));
+    assert_eq!(display, "BoxBiFunctionOnce");
 }
 
 #[test]
@@ -246,8 +249,7 @@ fn test_box_bi_function_once_display_with_name() {
     // Test Display implementation with name
     let func = BoxBiFunctionOnce::new_with_name("adder", |x: &i32, y: &i32| *x + *y);
     let display = format!("{}", func);
-    assert!(display.contains("adder"));
-    assert!(display.contains("BoxBiFunctionOnce"));
+    assert_eq!(display, "BoxBiFunctionOnce(adder)");
 }
 
 #[test]
@@ -255,7 +257,7 @@ fn test_box_bi_function_once_debug() {
     // Test Debug implementation
     let func = BoxBiFunctionOnce::new(|x: &i32, y: &i32| *x + *y);
     let debug = format!("{:?}", func);
-    assert!(debug.contains("BoxBiFunctionOnce"));
+    assert_eq!(debug, "BoxBiFunctionOnce { name: None, function: \"<function>\" }");
 }
 
 #[test]
@@ -264,7 +266,10 @@ fn test_box_conditional_bi_function_once_display() {
     let add = BoxBiFunctionOnce::new(|x: &i32, y: &i32| *x + *y);
     let conditional = add.when(|x: &i32, _y: &i32| *x > 0);
     let display = format!("{}", conditional);
-    assert!(display.contains("BoxConditionalBiFunctionOnce"));
+    assert_eq!(
+        display,
+        "BoxConditionalBiFunctionOnce(BoxBiFunctionOnce, BoxBiPredicate(unnamed))"
+    );
 }
 
 #[test]
@@ -273,7 +278,10 @@ fn test_box_conditional_bi_function_once_debug() {
     let add = BoxBiFunctionOnce::new(|x: &i32, y: &i32| *x + *y);
     let conditional = add.when(|x: &i32, _y: &i32| *x > 0);
     let debug = format!("{:?}", conditional);
-    assert!(debug.contains("BoxConditionalBiFunctionOnce"));
+    assert_eq!(
+        debug,
+        "BoxConditionalBiFunctionOnce { function: BoxBiFunctionOnce { name: None, function: \"<function>\" }, predicate: BoxBiPredicate { name: None, function: \"<function>\" } }"
+    );
 }
 
 // ============================================================================
@@ -298,7 +306,7 @@ fn test_bi_function_once_with_large_data() {
 #[test]
 fn test_bi_function_once_consumption_semantics() {
     // Test that FnOnce semantics are properly maintained
-    let counter = std::rc::Rc::new(std::cell::RefCell::new(0));
+    let counter = Rc::new(RefCell::new(0));
 
     let increment_counter = {
         let counter = counter.clone();

@@ -20,9 +20,7 @@ mod tests {
     // implementations
     // ========================================================================
 
-    mod bi_predicate_ext_tests {
-        use super::BiPredicate;
-    }
+    mod bi_predicate_ext_tests {}
 
     // ========================================================================
     // BoxBiPredicate Tests

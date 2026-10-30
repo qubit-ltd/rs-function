@@ -19,7 +19,10 @@ fn test_box_conditional_stateful_bi_transformer_display() {
     });
     let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
     let display_str = format!("{}", conditional);
-    assert!(display_str.contains("BoxConditionalStatefulBiTransformer"));
+    assert!(
+        display_str.contains("BoxConditionalStatefulBiTransformer"),
+        "{display_str}"
+    );
 }
 
 #[test]
@@ -46,7 +49,7 @@ fn test_box_conditional_stateful_bi_transformer_debug() {
     });
     let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
     let debug_str = format!("{:?}", conditional);
-    assert!(debug_str.contains("BoxConditionalStatefulBiTransformer"));
+    assert!(debug_str.contains("BoxConditionalStatefulBiTransformer"), "{debug_str}");
 }
 
 #[test]
@@ -58,7 +61,10 @@ fn test_rc_conditional_stateful_bi_transformer_display() {
     });
     let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
     let display_str = format!("{}", conditional);
-    assert!(display_str.contains("RcConditionalStatefulBiTransformer"));
+    assert!(
+        display_str.contains("RcConditionalStatefulBiTransformer"),
+        "{display_str}"
+    );
 }
 
 #[test]
@@ -85,7 +91,7 @@ fn test_rc_conditional_stateful_bi_transformer_debug() {
     });
     let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
     let debug_str = format!("{:?}", conditional);
-    assert!(debug_str.contains("RcConditionalStatefulBiTransformer"));
+    assert!(debug_str.contains("RcConditionalStatefulBiTransformer"), "{debug_str}");
 }
 
 #[test]
@@ -97,7 +103,10 @@ fn test_arc_conditional_stateful_bi_transformer_display() {
     });
     let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
     let display_str = format!("{}", conditional);
-    assert!(display_str.contains("ArcConditionalStatefulBiTransformer"));
+    assert!(
+        display_str.contains("ArcConditionalStatefulBiTransformer"),
+        "{display_str}"
+    );
 }
 
 #[test]
@@ -124,5 +133,5 @@ fn test_arc_conditional_stateful_bi_transformer_debug() {
     });
     let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
     let debug_str = format!("{:?}", conditional);
-    assert!(debug_str.contains("ArcConditionalStatefulBiTransformer"));
+    assert!(debug_str.contains("ArcConditionalStatefulBiTransformer"), "{debug_str}");
 }

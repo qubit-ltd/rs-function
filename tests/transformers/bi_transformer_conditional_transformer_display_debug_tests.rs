@@ -24,7 +24,10 @@ mod conditional_transformer_display_debug_tests {
         let add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
         let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
         let display_str = format!("{}", conditional);
-        assert!(display_str.contains("BoxConditionalBiTransformer"));
+        assert!(
+            display_str.contains("BoxConditionalBiTransformer"),
+            "unexpected Display output: {display_str}"
+        );
     }
 
     #[test]
@@ -43,7 +46,10 @@ mod conditional_transformer_display_debug_tests {
         let add = BoxBiTransformer::new(|x: i32, y: i32| x + y);
         let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
         let debug_str = format!("{:?}", conditional);
-        assert!(debug_str.contains("BoxConditionalBiTransformer"));
+        assert!(
+            debug_str.contains("BoxConditionalBiTransformer"),
+            "unexpected Debug output: {debug_str}"
+        );
     }
 
     #[test]
@@ -51,7 +57,10 @@ mod conditional_transformer_display_debug_tests {
         let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
         let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
         let display_str = format!("{}", conditional);
-        assert!(display_str.contains("RcConditionalBiTransformer"));
+        assert!(
+            display_str.contains("RcConditionalBiTransformer"),
+            "unexpected Display output: {display_str}"
+        );
     }
 
     #[test]
@@ -70,7 +79,10 @@ mod conditional_transformer_display_debug_tests {
         let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
         let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
         let debug_str = format!("{:?}", conditional);
-        assert!(debug_str.contains("RcConditionalBiTransformer"));
+        assert!(
+            debug_str.contains("RcConditionalBiTransformer"),
+            "unexpected Debug output: {debug_str}"
+        );
     }
 
     #[test]
@@ -78,7 +90,10 @@ mod conditional_transformer_display_debug_tests {
         let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
         let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
         let display_str = format!("{}", conditional);
-        assert!(display_str.contains("ArcConditionalBiTransformer"));
+        assert!(
+            display_str.contains("ArcConditionalBiTransformer"),
+            "unexpected Display output: {display_str}"
+        );
     }
 
     #[test]
@@ -97,6 +112,9 @@ mod conditional_transformer_display_debug_tests {
         let add = ArcBiTransformer::new(|x: i32, y: i32| x + y);
         let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
         let debug_str = format!("{:?}", conditional);
-        assert!(debug_str.contains("ArcConditionalBiTransformer"));
+        assert!(
+            debug_str.contains("ArcConditionalBiTransformer"),
+            "unexpected Debug output: {debug_str}"
+        );
     }
 }

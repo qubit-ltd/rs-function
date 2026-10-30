@@ -363,7 +363,3 @@ fn test_arc_conditional_stateful_mutating_function_debug_display() {
     assert!(named_display_str.contains("ArcPredicate"));
     assert!(named_display_str.ends_with(")"));
 }
-
-// ============================================================================
-// StatefulMutatingFunction Trait Default Methods Tests - into_once, to_once
-// ============================================================================

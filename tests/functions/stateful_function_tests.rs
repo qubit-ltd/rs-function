@@ -17,7 +17,6 @@ use qubit_function::ArcPredicate;
 use qubit_function::ArcStatefulFunction;
 use qubit_function::BoxPredicate;
 use qubit_function::BoxStatefulFunction;
-use qubit_function::RcPredicate;
 use qubit_function::RcStatefulFunction;
 use qubit_function::StatefulFunction;
 
@@ -26,7 +25,7 @@ use qubit_function::StatefulFunction;
 // ============================================================================
 
 // ============================================================================
-// ArcConditionalStatefulFunction Clone Tests
+// StatefulFunction Trait Tests - Clone Behavior
 // ============================================================================
 
 #[test]
@@ -163,10 +162,6 @@ fn test_box_stateful_function_when_with_predicate() {
 }
 
 // ============================================================================
-// BoxStatefulFunction Tests - Type Conversions
-// ============================================================================
-
-// ============================================================================
 // ArcStatefulFunction Tests - Constructor and Basic Operations
 // ============================================================================
 
@@ -300,10 +295,6 @@ fn test_arc_stateful_function_when_with_predicate() {
     assert_eq!(func.apply(&10), 0); // 10 > 0, apply * 0
     assert_eq!(func.apply(&-5), 5); // -5 <= 0, apply negate
 }
-
-// ============================================================================
-// ArcStatefulFunction Tests - Type Conversions
-// ============================================================================
 
 // ============================================================================
 // ArcStatefulFunction Tests - Thread Safety

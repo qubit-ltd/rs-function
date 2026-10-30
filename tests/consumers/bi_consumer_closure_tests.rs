@@ -5,19 +5,25 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
+//! Tests for closure-based `BiConsumer` implementations.
+
 #[cfg(test)]
 mod closure_tests {
     use std::sync::Arc;
+    use std::sync::Mutex;
 
     use qubit_function::BiConsumer;
     use qubit_function::BoxBiConsumer;
 
     #[test]
     fn test_closure_accept() {
-        let closure = |x: &i32, y: &i32| {
-            std::hint::black_box(x + y);
+        let observed_sum = Arc::new(Mutex::new(0));
+        let closure_sum = Arc::clone(&observed_sum);
+        let closure = move |x: &i32, y: &i32| {
+            *closure_sum.lock().expect("mutex should not be poisoned") = x + y;
         };
         closure.accept(&5, &3);
+        assert_eq!(*observed_sum.lock().expect("mutex should not be poisoned"), 8);
     }
 
     #[test]

@@ -253,14 +253,13 @@ mod debug_display_tests {
 
 #[cfg(test)]
 mod type_conversion_tests {
+    use super::Arc;
     use super::BiConsumerOnce;
     use super::BoxBiConsumerOnce;
+    use super::Mutex;
 
     #[test]
     fn test_when_or_else_conversion() {
-        use std::sync::Arc;
-        use std::sync::Mutex;
-
         let result = Arc::new(Mutex::new(0));
         let result_clone1 = result.clone();
         let result_clone2 = result.clone();

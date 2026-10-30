@@ -10,13 +10,13 @@ use qubit_function::BoxMutator;
 use qubit_function::Mutator;
 
 #[test]
-fn test_conditional_mutator_applies_mutation() {
+fn test_conditional_mutator_debug_and_display() {
     let conditional = BoxMutator::new(|value: &mut i32| *value += 1).when(|value: &i32| *value > 0);
 
-    let debug = format!("{conditional:?}");
-    assert!(debug.starts_with("BoxConditionalMutator {"), "{debug}");
-    assert!(debug.contains("mutator:"), "{debug}");
-    assert!(debug.contains("predicate:"), "{debug}");
+    assert_eq!(
+        format!("{conditional:?}"),
+        "BoxConditionalMutator { mutator: BoxMutator { name: None, function: \"<function>\" }, predicate: BoxPredicate { name: None, function: \"<function>\" } }"
+    );
     assert_eq!(
         format!("{conditional}"),
         "BoxConditionalMutator(BoxMutator, BoxPredicate(unnamed))"

@@ -7,7 +7,6 @@
 // =============================================================================
 
 use qubit_function::BoxFunction;
-use qubit_function::Function;
 
 #[test]
 fn test_conditional_function_debug_display_observable_behavior() {

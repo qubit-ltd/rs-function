@@ -109,6 +109,8 @@ mod test_box_supplier_once {
     }
 
     mod test_use_cases {
+        use std::rc::Rc;
+
         use super::BoxSupplierOnce;
         use super::SupplierOnce;
 
@@ -146,8 +148,6 @@ mod test_box_supplier_once {
 
         #[test]
         fn test_with_non_cloneable_type() {
-            use std::rc::Rc;
-
             let data = Rc::new(vec![1, 2, 3]);
             let once = BoxSupplierOnce::new(move || data);
 

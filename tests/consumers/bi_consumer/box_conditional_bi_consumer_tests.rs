@@ -6,6 +6,8 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
+use std::cell::Cell;
+use std::rc::Rc;
 use std::sync::Arc;
 use std::sync::Mutex;
 
@@ -34,4 +36,20 @@ fn test_box_conditional_bi_consumer_selects_branch() {
     conditional.accept(&5, &3);
     conditional.accept(&-5, &3);
     assert_eq!(*output.lock().expect("mutex should not be poisoned"), vec![8, -15]);
+}
+
+#[test]
+fn test_box_conditional_bi_consumer_rejects_inputs() {
+    let total = Rc::new(Cell::new(0));
+    let callback_total = Rc::clone(&total);
+    let consumer = BoxBiConsumer::new(move |first: &i32, second: &i32| {
+        callback_total.set(first + second);
+    });
+    let conditional = consumer.when(|first: &i32, second: &i32| *first > 0 && *second > 0);
+
+    conditional.accept(&5, &3);
+    assert_eq!(total.get(), 8);
+
+    conditional.accept(&-5, &3);
+    assert_eq!(total.get(), 8, "consumer must skip inputs rejected by predicate");
 }

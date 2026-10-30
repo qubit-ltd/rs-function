@@ -8,10 +8,6 @@
 
 //! Unit tests for the predicate module.
 
-use std::cell::RefCell;
-use std::sync::Arc;
-use std::sync::Mutex;
-
 use qubit_function::predicates::ArcPredicate;
 use qubit_function::predicates::BoxPredicate;
 use qubit_function::predicates::Predicate;

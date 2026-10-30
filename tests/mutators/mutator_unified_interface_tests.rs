@@ -31,25 +31,25 @@ mod test_unified_interface {
     }
 
     #[test]
-    fn test_with_box_mutator() {
+    fn test_box_mutator_applies_mutation() {
         let mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
         assert_eq!(apply_mutator(&mutator, 5), 10);
     }
 
     #[test]
-    fn test_with_arc_mutator() {
+    fn test_arc_mutator_applies_mutation() {
         let mutator = ArcMutator::new(|x: &mut i32| *x *= 2);
         assert_eq!(apply_mutator(&mutator, 5), 10);
     }
 
     #[test]
-    fn test_with_rc_mutator() {
+    fn test_rc_mutator_applies_mutation() {
         let mutator = RcMutator::new(|x: &mut i32| *x *= 2);
         assert_eq!(apply_mutator(&mutator, 5), 10);
     }
 
     #[test]
-    fn test_with_closure() {
+    fn test_closure_mutator_applies_mutation() {
         let closure = |x: &mut i32| *x *= 2;
         assert_eq!(apply_mutator(&closure, 5), 10);
     }

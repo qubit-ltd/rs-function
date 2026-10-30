@@ -9,10 +9,7 @@
 //! Tests for Consumer types
 
 use std::rc::Rc;
-use std::sync::Arc;
 
-use qubit_function::ArcConsumer;
-use qubit_function::BoxConsumer;
 use qubit_function::Consumer;
 use qubit_function::RcConsumer;
 

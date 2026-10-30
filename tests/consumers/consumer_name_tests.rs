@@ -8,9 +8,6 @@
 
 //! Tests for Consumer types
 
-use std::rc::Rc;
-use std::sync::Arc;
-
 use qubit_function::ArcConsumer;
 use qubit_function::BoxConsumer;
 use qubit_function::Consumer;
@@ -99,7 +96,3 @@ mod name_tests {
         assert_eq!(consumer.name(), Some("test_consumer"));
     }
 }
-
-// ============================================================================
-// Display and Debug Tests
-// ============================================================================

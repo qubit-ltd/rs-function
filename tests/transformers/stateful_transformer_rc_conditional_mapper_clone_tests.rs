@@ -15,19 +15,7 @@ use qubit_function::RcStatefulTransformer;
 use qubit_function::StatefulTransformer;
 
 // ============================================================================
-// BoxStatefulTransformer Tests
-// ============================================================================
-
-// ============================================================================
-// into_fn Tests
-// ============================================================================
-
-// ============================================================================
-// Closure to_xxx Non-Consuming Conversion Tests
-// ============================================================================
-
-// ============================================================================
-// TransformerOnce Implementation Tests
+// Conditional StatefulTransformer Clone Tests
 // ============================================================================
 
 #[test]
@@ -206,7 +194,7 @@ fn test_with_rc_predicate() {
 // Custom StatefulTransformer Default Implementation Tests
 // ============================================================================
 
-/// Test BoxStatefulTransformer implements TransformerOnce trait
+/// Tests the `StatefulTransformer` implementation for `BoxStatefulTransformer`.
 #[test]
 fn test_box_mapper_apply() {
     let mut counter = 0;
@@ -215,10 +203,6 @@ fn test_box_mapper_apply() {
         x + counter
     });
 
-    // BoxStatefulTransformer can be consumed as TransformerOnce
+    // Call the implementation through the `StatefulTransformer` trait.
     assert_eq!(StatefulTransformer::apply(&mut mapper, 10), 11); // 10 + 1
 }
-
-// ============================================================================
-// Conditional StatefulTransformer Display/Debug Tests
-// ============================================================================

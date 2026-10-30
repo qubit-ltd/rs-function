@@ -9,12 +9,10 @@
 mod macros;
 mod stateful_supplier;
 mod stateful_supplier_arc_stateful_supplier_once_tests;
-mod stateful_supplier_arc_stateful_supplier_tests;
 mod stateful_supplier_box_stateful_supplier_once_tests;
 mod stateful_supplier_box_stateful_supplier_tests;
 mod stateful_supplier_rc_stateful_supplier_once_tests;
 mod stateful_supplier_rc_stateful_supplier_tests;
-mod stateful_supplier_stateful_supplier_debug_display_tests;
 mod stateful_supplier_tests;
 mod supplier;
 mod supplier_arc_stateless_supplier_map_with_transformer_tests;

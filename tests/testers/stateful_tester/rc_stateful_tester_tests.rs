@@ -16,6 +16,9 @@ fn test_rc_stateful_tester_observable_behavior() {
         calls += 1;
         calls == 1
     });
-    assert!(tester.test());
-    assert!(!tester.test());
+    assert!(tester.test(), "the first callback result should be true");
+    assert!(
+        !tester.test(),
+        "the callback should return false after its state changes"
+    );
 }

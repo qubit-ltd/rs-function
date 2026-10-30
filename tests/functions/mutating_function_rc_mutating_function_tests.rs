@@ -17,7 +17,7 @@ mod test_rc_mutating_function {
     use super::RcMutatingFunction;
 
     #[test]
-    fn test_new() {
+    fn test_new_mutates_input_and_returns_result() {
         let func = RcMutatingFunction::new(|x: &mut i32| {
             *x += 1;
             *x
@@ -28,7 +28,7 @@ mod test_rc_mutating_function {
     }
 
     #[test]
-    fn test_clone() {
+    fn test_clone_applies_mutation_independently() {
         let func = RcMutatingFunction::new(|x: &mut i32| {
             *x *= 2;
             *x
@@ -43,7 +43,7 @@ mod test_rc_mutating_function {
     }
 
     #[test]
-    fn test_identity() {
+    fn test_identity_returns_input_without_mutation() {
         let identity = RcMutatingFunction::<i32, i32>::identity();
         let mut value = 42;
         assert_eq!(identity.apply(&mut value), 42);
@@ -51,7 +51,7 @@ mod test_rc_mutating_function {
     }
 
     #[test]
-    fn test_map() {
+    fn test_map_transforms_result_after_mutation() {
         let func = RcMutatingFunction::new(|x: &mut i32| {
             *x *= 2;
             *x

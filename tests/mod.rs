@@ -6,11 +6,7 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 #![cfg(feature = "full")]
-#![allow(
-    dead_code,
-    unused_imports,
-    reason = "test support types are shared with feature-gated test modules"
-)]
+#![allow(dead_code, reason = "test support types are shared with feature-gated test modules")]
 
 mod comparator;
 mod consumers;
@@ -19,6 +15,8 @@ mod internal;
 mod macros;
 mod mutators;
 mod predicates;
+mod relaxed_bounds_stateful_arc_conditionals_accept_send_non_sync_callbacks;
+mod relaxed_bounds_tests;
 mod suppliers;
 mod tasks;
 mod testers;

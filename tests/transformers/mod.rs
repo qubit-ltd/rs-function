@@ -9,7 +9,6 @@
 mod bi_transformer;
 mod bi_transformer_arc_bi_transformer_once_tests;
 mod bi_transformer_arc_bi_transformer_tests;
-mod bi_transformer_arc_conditional_tests;
 mod bi_transformer_box_bi_transformer_once_tests;
 mod bi_transformer_box_conditional_tests;
 mod bi_transformer_closure_bi_transformer_tests;

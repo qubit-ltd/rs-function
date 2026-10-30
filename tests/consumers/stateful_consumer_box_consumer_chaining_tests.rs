@@ -19,7 +19,6 @@ mod test_box_consumer_chaining {
 
     use qubit_function::BoxConsumer;
     use qubit_function::Consumer;
-    use qubit_function::StatefulConsumer;
 
     #[test]
     fn test_and_then_with_closure() {

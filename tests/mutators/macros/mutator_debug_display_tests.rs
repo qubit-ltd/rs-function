@@ -7,7 +7,6 @@
 // =============================================================================
 
 use qubit_function::BoxMutator;
-use qubit_function::Mutator;
 
 #[test]
 fn test_mutator_debug_and_display_include_mutator_name() {

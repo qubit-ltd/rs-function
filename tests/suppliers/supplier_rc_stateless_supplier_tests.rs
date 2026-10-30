@@ -6,7 +6,7 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-//! Unit tests for Supplier types
+//! Integration tests for Supplier types
 
 use qubit_function::RcSupplier;
 use qubit_function::Supplier;
@@ -185,7 +185,3 @@ mod test_rc_stateless_supplier {
         // enforced at compile time by trait bounds.
     }
 }
-
-// ======================================================================
-// Integration Tests
-// ======================================================================

@@ -9,6 +9,7 @@
 mod arc_bi_transformer_tests;
 mod arc_binary_operator_tests;
 mod arc_conditional_bi_transformer_tests;
+mod arc_conditional_tests;
 mod bi_transformer_and_then_tests;
 mod binary_operator_tests;
 mod box_bi_transformer_tests;

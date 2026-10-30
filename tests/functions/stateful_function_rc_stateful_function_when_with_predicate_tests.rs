@@ -37,7 +37,7 @@ impl StatefulFunction<i32, i32> for CustomStatefulFunction {
 }
 
 // ============================================================================
-// ArcConditionalStatefulFunction Clone Tests
+// RcStatefulFunction Predicate Tests
 // ============================================================================
 
 #[test]
@@ -58,10 +58,6 @@ fn test_rc_stateful_function_when_with_predicate() {
     assert_eq!(func.apply(&10), 0); // 10 > 0, apply * 0
     assert_eq!(func.apply(&-5), 5); // -5 <= 0, apply negate
 }
-
-// ============================================================================
-// RcStatefulFunction Tests - Type Conversions
-// ============================================================================
 
 // ============================================================================
 // Edge Cases and Boundary Tests
@@ -162,10 +158,6 @@ fn test_stateful_function_toggle() {
     assert_eq!(func.apply(&5), -5);
     assert_eq!(func.apply(&5), 5);
 }
-
-// ============================================================================
-// Concrete wrapper composition tests
-// ============================================================================
 
 // ============================================================================
 // Complex State Management Tests
@@ -289,9 +281,15 @@ fn test_box_stateful_function_debug_display() {
     assert_eq!(double.apply(&5), 10);
 
     let debug_str = format!("{:?}", double);
-    assert!(debug_str.contains("BoxStatefulFunction"));
-    assert!(debug_str.contains("name"));
-    assert!(debug_str.contains("function"));
+    assert!(
+        debug_str.contains("BoxStatefulFunction"),
+        "Debug output should identify BoxStatefulFunction"
+    );
+    assert!(debug_str.contains("name"), "Debug output should include the name field");
+    assert!(
+        debug_str.contains("function"),
+        "Debug output should include the function field"
+    );
 
     let display_str = format!("{}", double);
     assert_eq!(display_str, "BoxStatefulFunction");
@@ -302,9 +300,18 @@ fn test_box_stateful_function_debug_display() {
     assert_eq!(named_double.apply(&3), 6);
 
     let named_debug_str = format!("{:?}", named_double);
-    assert!(named_debug_str.contains("BoxStatefulFunction"));
-    assert!(named_debug_str.contains("name"));
-    assert!(named_debug_str.contains("function"));
+    assert!(
+        named_debug_str.contains("BoxStatefulFunction"),
+        "named Debug output should identify BoxStatefulFunction"
+    );
+    assert!(
+        named_debug_str.contains("name"),
+        "named Debug output should include the name field"
+    );
+    assert!(
+        named_debug_str.contains("function"),
+        "named Debug output should include the function field"
+    );
 
     let named_display_str = format!("{}", named_double);
     assert_eq!(named_display_str, "BoxStatefulFunction(stateful_double)");
@@ -319,9 +326,15 @@ fn test_rc_stateful_function_debug_display() {
     assert_eq!(double.apply(&5), 10);
 
     let debug_str = format!("{:?}", double);
-    assert!(debug_str.contains("RcStatefulFunction"));
-    assert!(debug_str.contains("name"));
-    assert!(debug_str.contains("function"));
+    assert!(
+        debug_str.contains("RcStatefulFunction"),
+        "Debug output should identify RcStatefulFunction"
+    );
+    assert!(debug_str.contains("name"), "Debug output should include the name field");
+    assert!(
+        debug_str.contains("function"),
+        "Debug output should include the function field"
+    );
 
     let display_str = format!("{}", double);
     assert_eq!(display_str, "RcStatefulFunction");
@@ -332,9 +345,18 @@ fn test_rc_stateful_function_debug_display() {
     assert_eq!(named_double.apply(&3), 6);
 
     let named_debug_str = format!("{:?}", named_double);
-    assert!(named_debug_str.contains("RcStatefulFunction"));
-    assert!(named_debug_str.contains("name"));
-    assert!(named_debug_str.contains("function"));
+    assert!(
+        named_debug_str.contains("RcStatefulFunction"),
+        "named Debug output should identify RcStatefulFunction"
+    );
+    assert!(
+        named_debug_str.contains("name"),
+        "named Debug output should include the name field"
+    );
+    assert!(
+        named_debug_str.contains("function"),
+        "named Debug output should include the function field"
+    );
 
     let named_display_str = format!("{}", named_double);
     assert_eq!(named_display_str, "RcStatefulFunction(rc_stateful_double)");
@@ -349,9 +371,15 @@ fn test_arc_stateful_function_debug_display() {
     assert_eq!(double.apply(&5), 10);
 
     let debug_str = format!("{:?}", double);
-    assert!(debug_str.contains("ArcStatefulFunction"));
-    assert!(debug_str.contains("name"));
-    assert!(debug_str.contains("function"));
+    assert!(
+        debug_str.contains("ArcStatefulFunction"),
+        "Debug output should identify ArcStatefulFunction"
+    );
+    assert!(debug_str.contains("name"), "Debug output should include the name field");
+    assert!(
+        debug_str.contains("function"),
+        "Debug output should include the function field"
+    );
 
     let display_str = format!("{}", double);
     assert_eq!(display_str, "ArcStatefulFunction");
@@ -362,9 +390,18 @@ fn test_arc_stateful_function_debug_display() {
     assert_eq!(named_double.apply(&3), 6);
 
     let named_debug_str = format!("{:?}", named_double);
-    assert!(named_debug_str.contains("ArcStatefulFunction"));
-    assert!(named_debug_str.contains("name"));
-    assert!(named_debug_str.contains("function"));
+    assert!(
+        named_debug_str.contains("ArcStatefulFunction"),
+        "named Debug output should identify ArcStatefulFunction"
+    );
+    assert!(
+        named_debug_str.contains("name"),
+        "named Debug output should include the name field"
+    );
+    assert!(
+        named_debug_str.contains("function"),
+        "named Debug output should include the function field"
+    );
 
     let named_display_str = format!("{}", named_double);
     assert_eq!(named_display_str, "ArcStatefulFunction(arc_stateful_double)");
@@ -434,7 +471,3 @@ fn test_arc_stateful_function_name_methods() {
     assert_eq!(cloned.name(), Some("modified_arc_stateful"));
     assert_eq!(cloned.apply(&3), 6);
 }
-
-// ============================================================================
-// ConditionalStatefulFunction Debug and Display Tests
-// ============================================================================

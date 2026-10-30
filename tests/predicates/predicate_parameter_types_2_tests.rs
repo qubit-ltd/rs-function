@@ -6,27 +6,15 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-//! Unit tests for the predicate module.
+//! Integration tests for predicate parameter types.
 
 use qubit_function::predicates::ArcPredicate;
-use qubit_function::predicates::BoxPredicate;
 use qubit_function::predicates::Predicate;
-use qubit_function::predicates::RcPredicate;
-
-struct PositivePredicate;
-
-impl Predicate<i32> for PositivePredicate {
-    fn test(&self, value: &i32) -> bool {
-        *value > 0
-    }
-}
 
 #[cfg(test)]
 mod parameter_types_tests {
     use super::ArcPredicate;
-    use super::BoxPredicate;
     use super::Predicate;
-    use super::RcPredicate;
 
     // Helper functions
     fn is_even(x: &i32) -> bool {
@@ -38,7 +26,7 @@ mod parameter_types_tests {
     }
 
     // ============================================================================
-    // BoxPredicate::and parameter type tests
+    // ArcPredicate::or parameter type tests
     // ============================================================================
 
     #[test]
@@ -172,8 +160,4 @@ mod parameter_types_tests {
         assert!(pred1.test(&5));
         assert!(pred2.test(&6));
     }
-
-    // ============================================================================
-    // Box wrapper parameter type tests
-    // ============================================================================
 }

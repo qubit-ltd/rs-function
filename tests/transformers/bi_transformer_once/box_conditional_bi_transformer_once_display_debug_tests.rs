@@ -7,7 +7,6 @@
 // =============================================================================
 //! Tests for BiTransformerOnce trait and implementations
 
-use qubit_function::BiTransformerOnce;
 use qubit_function::BoxBiTransformerOnce;
 
 // ============================================================================
@@ -19,7 +18,10 @@ fn test_box_conditional_bi_transformer_once_display() {
     let add = BoxBiTransformerOnce::new(|x: i32, y: i32| x + y);
     let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
     let display_str = format!("{}", conditional);
-    assert!(display_str.contains("BoxConditionalBiTransformerOnce"));
+    assert_eq!(
+        display_str,
+        "BoxConditionalBiTransformerOnce(BoxBiTransformerOnce, BoxBiPredicate(unnamed))"
+    );
 }
 
 #[test]
@@ -38,5 +40,8 @@ fn test_box_conditional_bi_transformer_once_debug() {
     let add = BoxBiTransformerOnce::new(|x: i32, y: i32| x + y);
     let conditional = add.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
     let debug_str = format!("{:?}", conditional);
-    assert!(debug_str.contains("BoxConditionalBiTransformerOnce"));
+    assert_eq!(
+        debug_str,
+        "BoxConditionalBiTransformerOnce { transformer: BoxBiTransformerOnce { name: None, function: \"<function>\" }, predicate: BoxBiPredicate { name: None, function: \"<function>\" } }"
+    );
 }

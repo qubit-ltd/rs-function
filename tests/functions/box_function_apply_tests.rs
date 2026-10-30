@@ -10,7 +10,7 @@ use qubit_function::BoxFunction;
 use qubit_function::Function;
 
 #[test]
-fn test_conditional_function_clone_observable_behavior() {
+fn test_box_function_apply_returns_transformed_value() {
     let function = BoxFunction::new(|value: &i32| value + 1);
     assert_eq!(function.apply(&41), 42);
 }

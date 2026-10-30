@@ -19,7 +19,10 @@ fn test_box_conditional_stateful_transformer_display() {
     });
     let conditional = add.when(|x: &i32| *x > 0);
     let display_str = format!("{}", conditional);
-    assert!(display_str.contains("BoxConditionalStatefulTransformer"));
+    assert!(
+        display_str.contains("BoxConditionalStatefulTransformer"),
+        "unexpected display output: {display_str}"
+    );
 }
 
 #[test]
@@ -46,7 +49,10 @@ fn test_box_conditional_stateful_transformer_debug() {
     });
     let conditional = add.when(|x: &i32| *x > 0);
     let debug_str = format!("{:?}", conditional);
-    assert!(debug_str.contains("BoxConditionalStatefulTransformer"));
+    assert!(
+        debug_str.contains("BoxConditionalStatefulTransformer"),
+        "unexpected debug output: {debug_str}"
+    );
 }
 
 #[test]
@@ -58,7 +64,10 @@ fn test_rc_conditional_stateful_transformer_display() {
     });
     let conditional = add.when(|x: &i32| *x > 0);
     let display_str = format!("{}", conditional);
-    assert!(display_str.contains("RcConditionalStatefulTransformer"));
+    assert!(
+        display_str.contains("RcConditionalStatefulTransformer"),
+        "unexpected display output: {display_str}"
+    );
 }
 
 #[test]
@@ -85,7 +94,10 @@ fn test_rc_conditional_stateful_transformer_debug() {
     });
     let conditional = add.when(|x: &i32| *x > 0);
     let debug_str = format!("{:?}", conditional);
-    assert!(debug_str.contains("RcConditionalStatefulTransformer"));
+    assert!(
+        debug_str.contains("RcConditionalStatefulTransformer"),
+        "unexpected debug output: {debug_str}"
+    );
 }
 
 #[test]
@@ -97,7 +109,10 @@ fn test_arc_conditional_stateful_transformer_display() {
     });
     let conditional = add.when(|x: &i32| *x > 0);
     let display_str = format!("{}", conditional);
-    assert!(display_str.contains("ArcConditionalStatefulTransformer"));
+    assert!(
+        display_str.contains("ArcConditionalStatefulTransformer"),
+        "unexpected display output: {display_str}"
+    );
 }
 
 #[test]
@@ -124,5 +139,8 @@ fn test_arc_conditional_stateful_transformer_debug() {
     });
     let conditional = add.when(|x: &i32| *x > 0);
     let debug_str = format!("{:?}", conditional);
-    assert!(debug_str.contains("ArcConditionalStatefulTransformer"));
+    assert!(
+        debug_str.contains("ArcConditionalStatefulTransformer"),
+        "unexpected debug output: {debug_str}"
+    );
 }

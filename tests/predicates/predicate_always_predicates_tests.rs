@@ -8,7 +8,6 @@
 
 //! Unit tests for the predicate module.
 
-use qubit_function::Predicate;
 #[cfg(test)]
 mod always_predicates_tests {
     use qubit_function::Predicate;

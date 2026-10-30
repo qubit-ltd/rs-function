@@ -7,6 +7,8 @@
 // =============================================================================
 #[cfg(test)]
 mod rc_non_mutating_bi_consumer_tests {
+    use std::cell::Cell;
+    use std::hint::black_box;
     use std::rc::Rc;
 
     use qubit_function::BiConsumer;
@@ -15,14 +17,14 @@ mod rc_non_mutating_bi_consumer_tests {
     #[test]
     fn test_new_and_accept() {
         let consumer = RcBiConsumer::new(|x: &i32, y: &i32| {
-            std::hint::black_box(x + y);
+            black_box(x + y);
         });
         consumer.accept(&5, &3);
     }
 
     #[test]
     fn test_clone() {
-        let counter = Rc::new(std::cell::Cell::new(0));
+        let counter = Rc::new(Cell::new(0));
         let c = counter.clone();
         let consumer = RcBiConsumer::new(move |_x: &i32, _y: &i32| {
             c.set(c.get() + 1);
@@ -40,7 +42,7 @@ mod rc_non_mutating_bi_consumer_tests {
 
     #[test]
     fn test_and_then() {
-        let counter = Rc::new(std::cell::Cell::new(0));
+        let counter = Rc::new(Cell::new(0));
         let c1 = counter.clone();
         let c2 = counter.clone();
         let first = RcBiConsumer::new(move |_x: &i32, _y: &i32| {

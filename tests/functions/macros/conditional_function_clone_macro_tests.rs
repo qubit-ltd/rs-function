@@ -14,12 +14,12 @@ use qubit_function::RcBiPredicate;
 
 /// Confirms a cloned conditional function retains its selected behavior.
 #[test]
-fn test_three_param_conditional_clone_macro_coverage() {
+fn test_cloned_conditional_bifunction_preserves_selected_behavior() {
     let add = RcBiFunction::new(|x: &i32, y: &i32| *x + *y);
     let multiply = RcBiFunction::new(|x: &i32, y: &i32| *x * *y);
-    let pred = RcBiPredicate::new(|x: &i32, y: &i32| *x > 0 && *y > 0);
+    let predicate = RcBiPredicate::new(|x: &i32, y: &i32| *x > 0 && *y > 0);
 
-    let conditional = add.when(pred);
+    let conditional = add.when(predicate);
 
     let cloned = conditional.clone();
 

@@ -168,7 +168,8 @@ fn test_box_callable_once_combinators_with_text_error_type() {
         "E:raw",
     );
 
-    let chained = BoxCallableOnce::new(|| Ok::<i32, &'static str>(4)).and_then(|v| Ok::<i32, &'static str>(v * 2));
+    let chained =
+        BoxCallableOnce::new(|| Ok::<i32, &'static str>(4)).and_then(|value| Ok::<i32, &'static str>(value * 2));
     assert_eq!(chained.call_once().expect("and_then should succeed"), 8);
 }
 

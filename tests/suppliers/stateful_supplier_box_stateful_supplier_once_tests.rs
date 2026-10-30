@@ -69,7 +69,3 @@ mod test_box_stateful_supplier_once {
         }
     }
 }
-
-// ==========================================================================
-// SupplierOnce Implementation Tests for ArcStatefulSupplier
-// ==========================================================================

@@ -35,10 +35,18 @@ mod arc_conditional_bi_consumer_tests {
         });
 
         chained.accept(&5, &3);
-        assert_eq!(counter.load(Ordering::SeqCst), 11);
+        assert_eq!(
+            counter.load(Ordering::SeqCst),
+            11,
+            "both consumers should run when the condition matches",
+        );
 
         chained.accept(&-5, &3);
-        assert_eq!(counter.load(Ordering::SeqCst), 21);
+        assert_eq!(
+            counter.load(Ordering::SeqCst),
+            21,
+            "the chained consumer should run after the condition rejects",
+        );
     }
 
     #[test]
@@ -58,10 +66,18 @@ mod arc_conditional_bi_consumer_tests {
             });
 
         conditional.accept(&5, &3);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
+        assert_eq!(
+            counter.load(Ordering::SeqCst),
+            1,
+            "the primary consumer should run when the condition matches",
+        );
 
         conditional.accept(&-5, &3);
-        assert_eq!(counter.load(Ordering::SeqCst), 101);
+        assert_eq!(
+            counter.load(Ordering::SeqCst),
+            101,
+            "the fallback consumer should run when the condition rejects",
+        );
     }
 
     #[test]
@@ -76,9 +92,17 @@ mod arc_conditional_bi_consumer_tests {
         let conditional = consumer.when(|x: &i32, y: &i32| *x > 0 && *y > 0);
 
         conditional.accept(&5, &3);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
+        assert_eq!(
+            counter.load(Ordering::SeqCst),
+            1,
+            "the consumer should run when the condition matches",
+        );
 
         conditional.accept(&-5, &3);
-        assert_eq!(counter.load(Ordering::SeqCst), 1);
+        assert_eq!(
+            counter.load(Ordering::SeqCst),
+            1,
+            "the consumer should not run when the condition rejects",
+        );
     }
 }

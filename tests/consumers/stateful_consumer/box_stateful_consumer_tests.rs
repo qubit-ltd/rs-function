@@ -6,6 +6,9 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
+use std::cell::Cell;
+use std::rc::Rc;
+
 use qubit_function::BoxStatefulConsumer;
 use qubit_function::StatefulConsumer;
 
@@ -22,5 +25,3 @@ fn test_box_stateful_consumer_observable_behavior() {
 
     assert_eq!(consumed_value.get(), Some(42));
 }
-use std::cell::Cell;
-use std::rc::Rc;

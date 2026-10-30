@@ -13,6 +13,5 @@ mod conditional_consumer_conversions_tests;
 mod conditional_consumer_debug_display_tests;
 mod consumer_clone_tests;
 mod consumer_common_methods_tests;
-mod consumer_debug_display_tests;
 mod shared_conditional_consumer_tests;
 mod shared_consumer_methods_tests;

@@ -23,14 +23,14 @@ mod debug_display_tests {
     use super::Mutex;
 
     #[test]
-    fn test_debug() {
+    fn test_debug_output_contains_type_name() {
         let consumer = BoxConsumerOnce::new(|_x: &i32| {});
         let debug_str = format!("{:?}", consumer);
         assert!(debug_str.contains("BoxConsumerOnce"));
     }
 
     #[test]
-    fn test_display() {
+    fn test_display_output_uses_type_name() {
         let consumer = BoxConsumerOnce::new(|_x: &i32| {});
         let display_str = format!("{}", consumer);
         assert_eq!(display_str, "BoxConsumerOnce");
@@ -45,7 +45,7 @@ mod debug_display_tests {
     }
 
     #[test]
-    fn test_name() {
+    fn test_name_getter_tracks_set_name() {
         let mut consumer = BoxConsumerOnce::new(|_x: &i32| {});
         assert_eq!(consumer.name(), None);
         consumer.set_name("test");

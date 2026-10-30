@@ -281,7 +281,3 @@ mod test_rc_stateful_supplier {
     // because Rc is not Send. This is prevented at compile time by the
     // trait bound, so we don't test it.
 }
-
-// ==========================================================================
-// SupplierOnce Implementation Tests for BoxStatefulSupplier
-// ==========================================================================

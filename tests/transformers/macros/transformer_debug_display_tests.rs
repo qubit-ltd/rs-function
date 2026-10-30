@@ -7,7 +7,6 @@
 // =============================================================================
 
 use qubit_function::BoxTransformer;
-use qubit_function::Transformer;
 
 #[test]
 fn test_transformer_debug_display_formatting() {

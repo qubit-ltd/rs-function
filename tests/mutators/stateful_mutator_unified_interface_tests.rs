@@ -6,12 +6,7 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-//! Unit tests for StatefulMutator types
-
-use qubit_function::ArcStatefulMutator;
-use qubit_function::BoxStatefulMutator;
-use qubit_function::RcStatefulMutator;
-use qubit_function::StatefulMutator;
+//! Tests the public unified interface for stateful mutator adapters.
 
 // ============================================================================
 // BoxStatefulMutator Tests
@@ -19,10 +14,10 @@ use qubit_function::StatefulMutator;
 
 #[cfg(test)]
 mod test_unified_interface {
-    use super::ArcStatefulMutator;
-    use super::BoxStatefulMutator;
-    use super::RcStatefulMutator;
-    use super::StatefulMutator;
+    use qubit_function::ArcStatefulMutator;
+    use qubit_function::BoxStatefulMutator;
+    use qubit_function::RcStatefulMutator;
+    use qubit_function::StatefulMutator;
 
     fn apply_mutator<C: StatefulMutator<i32>>(mutator: &mut C, value: i32) -> i32 {
         let mut val = value;
@@ -54,7 +49,3 @@ mod test_unified_interface {
         assert_eq!(apply_mutator(&mut closure, 5), 10);
     }
 }
-
-// ============================================================================
-// Complex Scenarios Tests
-// ============================================================================

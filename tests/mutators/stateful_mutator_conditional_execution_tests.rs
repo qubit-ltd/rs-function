@@ -6,7 +6,7 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
-//! Unit tests for StatefulMutator types
+//! Integration tests for StatefulMutator types
 
 use qubit_function::ArcStatefulMutator;
 use qubit_function::BoxStatefulMutator;
@@ -432,12 +432,4 @@ mod test_conditional_execution {
         mutator.apply(&mut negative);
         assert_eq!(negative, 200);
     }
-
-    // ========================================================================
-    // RcConditionalStatefulMutator::clone() tests
-    // ========================================================================
 }
-
-// ============================================================================
-// Conditional Stateful Mutator Debug/Display Tests
-// ============================================================================
