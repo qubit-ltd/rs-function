@@ -8,4 +8,5 @@
 
 mod arc_tester_tests;
 mod box_tester_tests;
+#[cfg(feature = "rc")]
 mod rc_tester_tests;

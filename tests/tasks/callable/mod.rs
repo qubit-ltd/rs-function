@@ -6,6 +6,7 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
+#[cfg(feature = "rc")]
 mod arc_callable_tests;
 mod box_callable_tests;
 mod local_box_callable_tests;

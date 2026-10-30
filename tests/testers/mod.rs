@@ -7,7 +7,10 @@
 // =============================================================================
 
 mod stateful_tester;
+#[cfg(all(feature = "rc", feature = "stateful"))]
 mod stateful_tester_tests;
 mod tester;
+#[cfg(feature = "rc")]
 mod tester_2_tests;
+#[cfg(feature = "rc")]
 mod tester_tests;
