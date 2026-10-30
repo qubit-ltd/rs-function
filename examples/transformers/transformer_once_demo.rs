@@ -8,74 +8,29 @@
 
 //! # TransformerOnce Demo
 //!
-//! Demonstrates TransformerOnce implementation for BoxTransformer,
-//! RcTransformer, and ArcTransformer
+//! Demonstrates consuming a `TransformerOnce` callback and sharing an
+//! `ArcTransformer` between the current thread and a worker thread.
 
-use std::sync::Arc;
 use std::thread;
 
 use qubit_function::ArcTransformer;
-use qubit_function::BoxTransformer;
-use qubit_function::RcTransformer;
+use qubit_function::BoxTransformerOnce;
 use qubit_function::Transformer;
+use qubit_function::TransformerOnce;
 
 fn main() {
-    println!("=== TransformerOnce Demo ===\n");
-
-    // BoxTransformer TransformerOnce demonstration
-    println!("1. BoxTransformer TransformerOnce demonstration:");
-    let double = BoxTransformer::new(|x: i32| x * 2);
-    let result = double.apply(21);
-    println!("   double.apply(21) = {}", result);
-
-    // Convert to BoxTransformerOnce
-    let double = BoxTransformer::new(|x: i32| x * 2);
-    let result = double.apply(21);
-    println!("   double.apply(21) = {}", result);
-
-    // Convert to function
-    let double = BoxTransformer::new(|x: i32| x * 2);
-    let result = double.apply(21);
-    println!("   double.apply(21) = {}", result);
-
-    println!();
-
-    // RcTransformer TransformerOnce demonstration
-    println!("2. RcTransformer TransformerOnce demonstration:");
-    let uppercase = RcTransformer::new(|s: String| s.to_uppercase());
-    let result = uppercase.apply("hello".to_string());
-    println!("   uppercase.apply(\"hello\") = {}", result);
-
-    // Use after cloning
-    let uppercase = RcTransformer::new(|s: String| s.to_uppercase());
-    let uppercase_clone = uppercase.clone();
-    let result1 = uppercase.apply("world".to_string());
-    let result2 = uppercase_clone.apply("rust".to_string());
-    println!("   uppercase.apply(\"world\") = {}", result1);
-    println!("   uppercase_clone.apply(\"rust\") = {}", result2);
-
-    println!();
-
-    // ArcTransformer TransformerOnce demonstration
-    println!("3. ArcTransformer TransformerOnce demonstration:");
-    let parse_and_double = ArcTransformer::new(|s: String| s.parse::<i32>().unwrap_or(0) * 2);
-    let result = parse_and_double.apply("21".to_string());
-    println!("   parse_and_double.apply(\"21\") = {}", result);
-
-    // Thread safety demonstration
-    println!("4. ArcTransformer thread safety demonstration:");
-    let double = ArcTransformer::new(|x: i32| x * 2);
-    let double_arc = Arc::new(double);
-    let _double_clone = Arc::clone(&double_arc);
-
-    let handle = thread::spawn(move || {
-        // Create a new transformer in the thread to demonstrate thread safety
-        let new_double = ArcTransformer::new(|x: i32| x * 2);
-        new_double.apply(21)
+    let suffix = String::from("!");
+    let once = BoxTransformerOnce::new(move |mut input: String| {
+        input.push_str(&suffix);
+        (input, suffix)
     });
+    let result = TransformerOnce::apply(once, String::from("ready"));
+    assert_eq!(result, (String::from("ready!"), String::from("!")));
+    println!("Once callback transferred its captured String: {result:?}");
 
-    let result = handle.join().expect("thread should not panic");
-    println!("   Executed in thread: new_double.apply(21) = {}", result);
-
-    println!("\n=== Demo completed ===");
+    let double = ArcTransformer::new(|value: i32| value * 2);
+    let shared = double.clone();
+    let worker = thread::spawn(move || Transformer::apply(&shared, 21));
+    assert_eq!(Transformer::apply(&double, 10), 20);
+    assert_eq!(worker.join().expect("worker should not panic"), 42);
 }

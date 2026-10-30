@@ -135,45 +135,47 @@ fn main() {
     println!("  {}", pipeline.apply(100));
     println!("  {}", pipeline.apply(200));
 
-    // 8. TransformerOnce implementation - consuming transformers
-    println!("\n8. TransformerOnce implementation - consuming StatefulTransformers:");
+    // 8. Stateful transformers can be reused across calls
+    println!("\n8. Reusing stateful transformers:");
 
-    // BoxStatefulTransformer can be consumed as TransformerOnce
     let mut counter = 0;
     let mut box_mapper = BoxStatefulTransformer::new(move |x: i32| {
         counter += 1;
         x * counter
     });
-    println!("  BoxStatefulTransformer consumed once: {}", box_mapper.apply(10)); // 10 * 1 = 10
+    let first = box_mapper.apply(10);
+    let second = box_mapper.apply(10);
+    assert_eq!((first, second), (10, 20));
+    println!("  BoxStatefulTransformer calls: {first}, {second}");
 
-    // RcStatefulTransformer can be consumed as TransformerOnce
+    // Clones share the same state, even when calls alternate between them.
     let mut counter = 0;
     let mut rc_mapper = RcStatefulTransformer::new(move |x: i32| {
         counter += 1;
         x + counter
     });
-    let rc_clone = rc_mapper.clone(); // Clone before consuming
-    println!("  RcStatefulTransformer consumed once: {}", rc_mapper.apply(10)); // 10 + 1 = 11
-    println!("  RcStatefulTransformer clone still works: {}", {
-        let mut rc_clone_for_call = rc_clone.clone();
-        rc_clone_for_call.apply(10)
-    }); // 10 + 2 = 12
+    let mut rc_clone = rc_mapper.clone();
+    let first = rc_mapper.apply(10);
+    let second = rc_clone.apply(10);
+    let third = rc_mapper.apply(10);
+    assert_eq!((first, second, third), (11, 12, 13));
+    println!("  RcStatefulTransformer calls: {first}, {second}, {third}");
 
-    // ArcStatefulTransformer can be consumed as TransformerOnce
+    // Arc clones also observe one continuously advancing state.
     let mut counter = 0;
     let mut arc_mapper = ArcStatefulTransformer::new(move |x: i32| {
         counter += 1;
         x * counter
     });
-    let arc_clone = arc_mapper.clone(); // Clone before consuming
-    println!("  ArcStatefulTransformer consumed once: {}", arc_mapper.apply(10)); // 10 * 1 = 10
-    println!("  ArcStatefulTransformer clone still works: {}", {
-        let mut arc_clone_for_call = arc_clone.clone();
-        arc_clone_for_call.apply(10)
-    }); // 10 * 2 = 20
+    let mut arc_clone = arc_mapper.clone();
+    let first = arc_mapper.apply(10);
+    let second = arc_clone.apply(10);
+    let third = arc_mapper.apply(10);
+    assert_eq!((first, second, third), (10, 20, 30));
+    println!("  ArcStatefulTransformer calls: {first}, {second}, {third}");
 
-    // 9. Converting to BoxTransformerOnce
-    println!("\n9. Converting StatefulTransformers to BoxTransformerOnce:");
+    // 9. Explicitly adapt one stateful call to a consuming wrapper.
+    println!("\n9. Wrapping one stateful call in BoxTransformerOnce:");
 
     let mut counter = 0;
     let mapper = BoxStatefulTransformer::new(move |x: i32| {
@@ -181,10 +183,15 @@ fn main() {
         x * counter
     });
     let mut mapper = mapper;
+    // This adapter implements TransformerOnce on the outer wrapper, which is
+    // consumed by this call. It does not add TransformerOnce to the inner
+    // stateful mapper.
     let once_mapper = BoxTransformerOnce::new(move |value| mapper.apply(value));
-    println!("  BoxStatefulTransformer->BoxTransformerOnce: {}", once_mapper.apply(5)); // 5 * 1 = 5
+    let result = TransformerOnce::apply(once_mapper, 5);
+    assert_eq!(result, 5);
+    println!("  BoxStatefulTransformer->BoxTransformerOnce: {result}");
 
-    // RcStatefulTransformer can use to_box() to preserve original
+    // Cloning an RcStatefulTransformer still shares its state with the original.
     let mut counter = 0;
     let rc_mapper = RcStatefulTransformer::new(move |x: i32| {
         counter += 1;
