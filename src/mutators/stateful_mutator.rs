@@ -48,9 +48,9 @@
 //!
 //! ## BoxStatefulMutator
 //!
-//! - One-time operations that don't require sharing
+//! - Repeatable operations with single ownership
 //! - Builder patterns where ownership naturally flows
-//! - Simple scenarios with no reuse requirements
+//! - Scenarios where the mutator is reused without sharing
 //!
 //! ## ArcStatefulMutator
 //!

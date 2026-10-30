@@ -144,9 +144,12 @@ macro_rules! impl_box_mutator_methods {
         ///
         /// let conditional = mutator.when(|value: &i32| *value > 0);
         /// let mut val = 1;
-        /// conditional.apply(&mut val);  // val = 2 (1 + 1)
+        /// conditional.apply(&mut val);
+        /// assert_eq!(val, 1); // fetch_add returns the previous counter value (0)
         /// let mut val2 = -1;
-        /// conditional.apply(&mut val2); // not executed, val2 remains -1
+        /// conditional.apply(&mut val2);
+        /// assert_eq!(val2, -1);
+        /// assert_eq!(counter.load(Ordering::SeqCst), 1);
         /// ```
         pub fn when<P>(self, predicate: P) -> $conditional_type<$t>
         where
@@ -198,7 +201,9 @@ macro_rules! impl_box_mutator_methods {
         /// let chained = mutator1.and_then(mutator2);
         /// let mut val = 0;
         /// chained.apply(&mut val);
-        /// // val = 2 (0 + 1 + 1)
+        /// assert_eq!(val, 0);
+        /// assert_eq!(counter1.load(Ordering::SeqCst), 1);
+        /// assert_eq!(counter2.load(Ordering::SeqCst), 1);
         /// ```
         pub fn and_then<M>(self, after: M) -> $struct_name<$t>
         where

@@ -53,7 +53,7 @@ pub use arc_conditional_stateful_bi_transformer::ArcConditionalStatefulBiTransfo
 ///
 /// Defines the behavior of a bi-transformation: converting two values of types
 /// `T` and `U` to a value of type `R` by consuming the inputs. This is
-/// analogous to `Fn(T, U) -> R` in Rust's standard library.
+/// analogous to `FnMut(T, U) -> R` in Rust's standard library.
 ///
 /// # Type Parameters
 ///

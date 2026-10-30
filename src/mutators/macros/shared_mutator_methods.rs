@@ -160,7 +160,9 @@ macro_rules! impl_shared_mutator_methods {
         /// let chained = mutator1.and_then(mutator2);
         /// let mut val = 0;
         /// chained.apply(&mut val);
-        /// // val = 2 (0 + 1 + 1)
+        /// assert_eq!(val, 0);
+        /// assert_eq!(counter1.load(Ordering::SeqCst), 1);
+        /// assert_eq!(counter2.load(Ordering::SeqCst), 1);
         /// ```
         #[inline]
         pub fn and_then<M>(&self, after: M) -> $struct_name<$t>

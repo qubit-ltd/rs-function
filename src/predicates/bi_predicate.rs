@@ -24,13 +24,13 @@
 //!
 //! This module follows the same principles as the `Predicate` module:
 //!
-//! 1. **Single Trait**: Only one `BiPredicate<T, U>` trait with `&self`,
-//!    keeping the API simple and semantically clear
-//! 2. **No BiPredicateMut**: All stateful scenarios use interior mutability
-//!    (`RefCell`, `Cell`, `Mutex`) instead of `&mut self`
-//! 3. **No BiPredicateOnce**: Violates bi-predicate semantics - judgments
+//! 1. **Shared-receiver trait**: `BiPredicate<T, U>` uses `&self` and `Fn`. Use
+//!    `StatefulBiPredicate<T, U>` for callbacks that need `&mut self` and
+//!    `FnMut`; ordinary `BiPredicate` implementations may still use interior
+//!    mutability (`RefCell`, `Cell`, `Mutex`) or external side effects.
+//! 2. **No BiPredicateOnce**: Violates bi-predicate semantics - judgments
 //!    should be repeatable
-//! 4. **Three Implementations**: `BoxBiPredicate`, `RcBiPredicate`, and
+//! 3. **Three Implementations**: `BoxBiPredicate`, `RcBiPredicate`, and
 //!    `ArcBiPredicate` cover all ownership scenarios
 //!
 //! ## Type Selection Guide
@@ -40,7 +40,7 @@
 //! | Single ownership | `BoxBiPredicate` | Type erasure with heap allocation and dynamic dispatch |
 //! | Multi-threaded | `ArcBiPredicate` | Thread-safe, clonable |
 //! | Single-threaded reuse | `RcBiPredicate` | Better performance |
-//! | Stateful predicate | Any type + `RefCell`/`Cell`/`Mutex` | Interior mutability |
+//! | Stateful predicate | `StatefulBiPredicate` | Direct `FnMut` support |
 //!
 //! ## Examples
 //!

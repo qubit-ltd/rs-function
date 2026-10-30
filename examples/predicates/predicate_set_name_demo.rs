@@ -39,12 +39,17 @@ fn demo_box_predicate() {
     println!("     Name after setting: {:?}", pred2.name());
     println!("     Test 4: {}", pred2.test(&4));
 
-    // Combined predicates automatically generate new names
+    // Combined predicates have no name until one is set explicitly
     let pred3 = BoxPredicate::new_with_name("positive", |x: &i32| *x > 0);
     let pred4 = BoxPredicate::new_with_name("even", |x: &i32| x % 2 == 0);
     let combined = pred3.and(pred4);
     println!("\n   Combined predicate name:");
-    println!("     Auto-generated name: {:?}", combined.name());
+    assert_eq!(combined.name(), None);
+    println!("     Default combined name: {:?}", combined.name());
+    let combined = combined.with_name("positive_and_even");
+    assert_eq!(combined.name(), Some("positive_and_even"));
+    assert!(combined.test(&4));
+    println!("     Explicit name: {:?}", combined.name());
     println!("     Test 4: {}\n", combined.test(&4));
 }
 

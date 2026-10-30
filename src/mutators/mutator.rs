@@ -84,11 +84,13 @@
 //! # {
 //! use qubit_function::{BoxMutator, ArcMutator, RcMutator, Mutator};
 //!
-//! // BoxMutator: Single ownership, consumes self
-//! let mut mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
+//! // BoxMutator: Single ownership; calls borrow the mutator immutably
+//! let mutator = BoxMutator::new(|x: &mut i32| *x *= 2);
 //! let mut value = 5;
 //! mutator.apply(&mut value);
 //! assert_eq!(value, 10);
+//! mutator.apply(&mut value);
+//! assert_eq!(value, 20);
 //!
 //! // ArcMutator: Shared ownership, cloneable, thread-safe
 //! let shared = ArcMutator::new(|x: &mut i32| *x *= 2);

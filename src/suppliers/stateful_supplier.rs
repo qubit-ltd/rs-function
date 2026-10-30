@@ -45,13 +45,13 @@
 //!
 //! # Comparison with Other Functional Abstractions
 //!
-//! | Type      | Input | Output | self      | Modifies? | Use Case      |
-//! |-----------|-------|--------|-----------|-----------|---------------|
-//! | Supplier  | None  | `T`    | `&self`   | No        | Factory       |
-//! | StatefulSupplier | None | `T` | `&mut self` | Yes | Stateful factory |
-//! | Consumer  | `&T`  | `()`   | `&self`   | No        | Observer      |
-//! | Predicate | `&T`  | `bool` | `&self`   | No        | Filter        |
-//! | Function  | `&T`  | `R`    | `&self`   | No        | Transform     |
+//! | Type | Receiver | Callback support |
+//! |------|----------|------------------|
+//! | Supplier | `&self` | `Fn() -> T` |
+//! | StatefulSupplier | `&mut self` | `FnMut() -> T` |
+//!
+//! A shared receiver does not guarantee purity: `Fn` callbacks may use
+//! interior mutability or produce external side effects.
 //!
 //! # Examples
 //!

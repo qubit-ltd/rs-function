@@ -22,17 +22,16 @@
 //!
 //! The key difference between `MutatorOnce` and `Mutator`:
 //!
-//! - **Mutator**: `&mut self`, can be called multiple times, uses `FnMut(&mut
-//!   T)`
+//! - **Mutator**: `&self`, can be called multiple times, uses `Fn(&mut T)`
 //! - **MutatorOnce**: `self`, can only be called once, uses `FnOnce(&mut T)`
 //!
 //! ## MutatorOnce vs Mutator
 //!
 //! | Feature | Mutator | MutatorOnce |
 //! |---------|---------|-------------|
-//! | **Self Parameter** | `&mut self` | `self` |
+//! | **Self Parameter** | `&self` | `self` |
 //! | **Call Count** | Multiple | Once |
-//! | **Closure Type** | `FnMut(&mut T)` | `FnOnce(&mut T)` |
+//! | **Closure Type** | `Fn(&mut T)` | `FnOnce(&mut T)` |
 //! | **Use Cases** | Repeatable modifications | One-time resource transfers, init callbacks |
 //!
 //! # Why MutatorOnce?
