@@ -48,6 +48,30 @@
 /// | Arc stateful | `Send + Sync + 'static` | `Send + 'static` |
 /// | Rc stateless/stateful | `'static` | `'static` |
 macro_rules! impl_shared_mutator_methods {
+    (@doc_when RcMutator, Mutator) => {
+        "```rust\nuse qubit_function::Mutator;\nuse qubit_function::RcMutator;\nlet source = RcMutator::new(|value: &mut i32| *value += 1);\nlet conditional = source.when(|value: &i32| *value > 0);\nlet mut positive = 2;\nconditional.apply(&mut positive);\nassert_eq!(positive, 3);\nlet mut negative = -2;\nconditional.apply(&mut negative);\nassert_eq!(negative, -2);\n```"
+    };
+    (@doc_when ArcMutator, Mutator) => {
+        "```rust\nuse qubit_function::ArcMutator;\nuse qubit_function::Mutator;\nlet source = ArcMutator::new(|value: &mut i32| *value += 1);\nlet conditional = source.when(|value: &i32| *value > 0);\nlet mut positive = 2;\nconditional.apply(&mut positive);\nassert_eq!(positive, 3);\nlet mut negative = -2;\nconditional.apply(&mut negative);\nassert_eq!(negative, -2);\n```"
+    };
+    (@doc_when RcStatefulMutator, StatefulMutator) => {
+        "```rust\nuse qubit_function::RcStatefulMutator;\nuse qubit_function::StatefulMutator;\nlet mut calls = 0;\nlet source = RcStatefulMutator::new(move |value: &mut i32| {\n    calls += 1;\n    *value += calls;\n});\nlet mut conditional = source.when(|value: &i32| *value > 0);\nlet mut first = 2;\nconditional.apply(&mut first);\nassert_eq!(first, 3);\nlet mut skipped = -2;\nconditional.apply(&mut skipped);\nassert_eq!(skipped, -2);\nlet mut second = 2;\nconditional.apply(&mut second);\nassert_eq!(second, 4);\n```"
+    };
+    (@doc_when ArcStatefulMutator, StatefulMutator) => {
+        "```rust\nuse qubit_function::ArcStatefulMutator;\nuse qubit_function::StatefulMutator;\nlet mut calls = 0;\nlet source = ArcStatefulMutator::new(move |value: &mut i32| {\n    calls += 1;\n    *value += calls;\n});\nlet mut conditional = source.when(|value: &i32| *value > 0);\nlet mut first = 2;\nconditional.apply(&mut first);\nassert_eq!(first, 3);\nlet mut skipped = -2;\nconditional.apply(&mut skipped);\nassert_eq!(skipped, -2);\nlet mut second = 2;\nconditional.apply(&mut second);\nassert_eq!(second, 4);\n```"
+    };
+    (@doc_then RcMutator, Mutator) => {
+        "```rust\nuse qubit_function::Mutator;\nuse qubit_function::RcMutator;\nlet source = RcMutator::new(|value: &mut i32| *value += 1);\nlet combined = source.and_then(|value: &mut i32| *value *= 2);\nlet mut input = 2;\ncombined.apply(&mut input);\nassert_eq!(input, 6);\n```"
+    };
+    (@doc_then ArcMutator, Mutator) => {
+        "```rust\nuse qubit_function::ArcMutator;\nuse qubit_function::Mutator;\nlet source = ArcMutator::new(|value: &mut i32| *value += 1);\nlet combined = source.and_then(|value: &mut i32| *value *= 2);\nlet mut input = 2;\ncombined.apply(&mut input);\nassert_eq!(input, 6);\n```"
+    };
+    (@doc_then RcStatefulMutator, StatefulMutator) => {
+        "```rust\nuse qubit_function::RcStatefulMutator;\nuse qubit_function::StatefulMutator;\nlet mut calls = 0;\nlet source = RcStatefulMutator::new(move |value: &mut i32| {\n    calls += 1;\n    *value += calls;\n});\nlet mut combined = source.and_then(|value: &mut i32| *value *= 2);\nlet mut first = 2;\ncombined.apply(&mut first);\nassert_eq!(first, 6);\nlet mut second = 2;\ncombined.apply(&mut second);\nassert_eq!(second, 8);\n```"
+    };
+    (@doc_then ArcStatefulMutator, StatefulMutator) => {
+        "```rust\nuse qubit_function::ArcStatefulMutator;\nuse qubit_function::StatefulMutator;\nlet mut calls = 0;\nlet source = ArcStatefulMutator::new(move |value: &mut i32| {\n    calls += 1;\n    *value += calls;\n});\nlet mut combined = source.and_then(|value: &mut i32| *value *= 2);\nlet mut first = 2;\ncombined.apply(&mut first);\nassert_eq!(first, 6);\nlet mut second = 2;\ncombined.apply(&mut second);\nassert_eq!(second, 8);\n```"
+    };
     (@and_then Mutator, $struct_name:ident, $first:expr, $after:expr, $t:ident) => {{
         let first = $first;
         let after = $after;
@@ -89,30 +113,7 @@ macro_rules! impl_shared_mutator_methods {
         /// predicate returns `true`.
         ///
         /// # Examples
-        ///
-        /// ```rust
-        /// use std::sync::Arc;
-        /// use std::sync::atomic::{AtomicI32, Ordering};
-        /// use qubit_function::mutators::*;
-        ///
-        /// let counter = Arc::new(AtomicI32::new(0));
-        /// let mutator = ArcMutator::new({
-        ///     let counter = Arc::clone(&counter);
-        ///     move |value: &mut i32| {
-        ///         *value += counter.fetch_add(1, Ordering::SeqCst);
-        ///     }
-        /// });
-        ///
-        /// let conditional = mutator.when(|value: &i32| *value > 0);
-        /// let mut val = 1;
-        /// conditional.apply(&mut val);
-        /// assert_eq!(val, 1);
-        /// assert_eq!(counter.load(Ordering::SeqCst), 1);
-        /// let mut val2 = -1;
-        /// conditional.apply(&mut val2);
-        /// assert_eq!(val2, -1);
-        /// assert_eq!(counter.load(Ordering::SeqCst), 1);
-        /// ```
+        #[doc = impl_shared_mutator_methods!(@doc_when $struct_name, $mutator_trait)]
         #[inline]
         pub fn when<P>(&self, predicate: P) -> $return_type<$t>
         where
@@ -138,36 +139,7 @@ macro_rules! impl_shared_mutator_methods {
         /// the subsequent mutator in sequence.
         ///
         /// # Examples
-        ///
-        /// ```rust
-        /// use std::sync::Arc;
-        /// use std::sync::atomic::{AtomicI32, Ordering};
-        /// use qubit_function::mutators::*;
-        ///
-        /// let counter1 = Arc::new(AtomicI32::new(0));
-        /// let counter2 = Arc::new(AtomicI32::new(0));
-        ///
-        /// let mutator1 = ArcMutator::new({
-        ///     let counter = Arc::clone(&counter1);
-        ///     move |value: &mut i32| {
-        ///         *value += counter.fetch_add(1, Ordering::SeqCst);
-        ///     }
-        /// });
-        ///
-        /// let mutator2 = ArcMutator::new({
-        ///     let counter = Arc::clone(&counter2);
-        ///     move |value: &mut i32| {
-        ///         *value += counter.fetch_add(1, Ordering::SeqCst);
-        ///     }
-        /// });
-        ///
-        /// let chained = mutator1.and_then(mutator2);
-        /// let mut val = 0;
-        /// chained.apply(&mut val);
-        /// assert_eq!(val, 0);
-        /// assert_eq!(counter1.load(Ordering::SeqCst), 1);
-        /// assert_eq!(counter2.load(Ordering::SeqCst), 1);
-        /// ```
+        #[doc = impl_shared_mutator_methods!(@doc_then $struct_name, $mutator_trait)]
         #[inline]
         pub fn and_then<M>(&self, after: M) -> $struct_name<$t>
         where
