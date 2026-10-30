@@ -13,9 +13,10 @@ use qubit_function::ArcPredicate;
 use qubit_function::BoxFunction;
 use qubit_function::BoxPredicate;
 use qubit_function::Function;
-use qubit_function::FunctionOnce;
 use qubit_function::Predicate;
+#[cfg(feature = "rc")]
 use qubit_function::RcFunction;
+#[cfg(feature = "rc")]
 use qubit_function::RcPredicate;
 
 // ============================================================================
@@ -31,6 +32,7 @@ fn test_function_trait_apply() {
     assert_eq!(double.apply(&-10), -20);
 }
 
+#[cfg(feature = "rc")]
 #[test]
 fn test_rc_function_new_allows_non_static_t() {
     fn run<'a>(value: &'a str) -> usize {
@@ -42,6 +44,7 @@ fn test_rc_function_new_allows_non_static_t() {
     assert_eq!(run(text.as_str()), 5);
 }
 
+#[cfg(feature = "rc")]
 #[test]
 fn test_rc_function_new_allows_non_static_r() {
     fn run<'a>(value: &'a str) -> &'a str {
@@ -158,12 +161,12 @@ fn test_box_function_when_with_predicate() {
 // ============================================================================
 
 // ============================================================================
-// BoxFunction Tests - FunctionOnce Implementation
+// BoxFunction Tests - Reusable Function Implementation
 // ============================================================================
 
 #[test]
-fn test_box_function_once_impl_apply() {
-    // Test FunctionOnce::apply for BoxFunction
+fn test_box_function_reusable_impl_apply() {
+    // Test Function::apply for BoxFunction
     let double = BoxFunction::new(|x: &i32| x * 2);
     let result = double.apply(&21);
     assert_eq!(result, 42);
@@ -200,7 +203,7 @@ fn test_arc_function_constant() {
 }
 
 #[test]
-fn test_arc_function_once_impl_apply() {
+fn test_arc_function_reusable_impl_apply() {
     // Test Function trait implementation for ArcFunction
     let add_one = ArcFunction::new(|x: &i32| x + 1);
     assert_eq!(add_one.apply(&41), 42);
@@ -273,7 +276,7 @@ fn test_arc_function_when_with_predicate() {
 // ============================================================================
 
 // ============================================================================
-// ArcFunction Tests - FunctionOnce Implementation
+// ArcFunction Tests - Reusable Function Implementation
 // ============================================================================
 
 // ============================================================================
@@ -296,6 +299,7 @@ fn test_arc_function_send_sync() {
 // RcFunction Tests - Constructor and Basic Operations
 // ============================================================================
 
+#[cfg(feature = "rc")]
 #[test]
 fn test_rc_function_new() {
     // Test RcFunction::new with simple closure
@@ -305,6 +309,7 @@ fn test_rc_function_new() {
     assert_eq!(double.apply(&-5), -10);
 }
 
+#[cfg(feature = "rc")]
 #[test]
 fn test_rc_function_identity() {
     // Test RcFunction::identity
@@ -314,6 +319,7 @@ fn test_rc_function_identity() {
     assert_eq!(identity.apply(&-100), -100);
 }
 
+#[cfg(feature = "rc")]
 #[test]
 fn test_rc_function_constant() {
     // Test RcFunction::constant
@@ -322,14 +328,16 @@ fn test_rc_function_constant() {
     assert_eq!(constant.apply(&456), "hello");
 }
 
+#[cfg(feature = "rc")]
 #[test]
-fn test_rc_function_once_impl_apply() {
+fn test_rc_function_reusable_impl_apply() {
     // Test Function trait implementation for RcFunction
     let add_one = RcFunction::new(|x: &i32| x + 1);
     assert_eq!(add_one.apply(&41), 42);
     assert_eq!(add_one.apply(&0), 1);
 }
 
+#[cfg(feature = "rc")]
 #[test]
 fn test_rc_function_clone() {
     // Test RcFunction::clone
@@ -343,6 +351,7 @@ fn test_rc_function_clone() {
 // RcFunction Tests - Composition Methods
 // ============================================================================
 
+#[cfg(feature = "rc")]
 #[test]
 fn test_rc_function_and_then() {
     // Test RcFunction::and_then composition
@@ -354,6 +363,7 @@ fn test_rc_function_and_then() {
     assert_eq!(double.apply(&10), 20);
 }
 
+#[cfg(feature = "rc")]
 #[test]
 fn test_rc_function_and_then_with_clone() {
     // Test and_then preserving original with clone
@@ -368,6 +378,7 @@ fn test_rc_function_and_then_with_clone() {
 // RcFunction Tests - Conditional Execution
 // ============================================================================
 
+#[cfg(feature = "rc")]
 #[test]
 fn test_rc_function_when_or_else() {
     // Test conditional execution with when/or_else
@@ -380,6 +391,7 @@ fn test_rc_function_when_or_else() {
     assert_eq!(conditional_clone.apply(&-5), -5);
 }
 
+#[cfg(feature = "rc")]
 #[test]
 fn test_rc_function_when_with_predicate() {
     // Test when with RcPredicate
@@ -398,7 +410,7 @@ fn test_rc_function_when_with_predicate() {
 // ============================================================================
 
 // ============================================================================
-// RcFunction Tests - FunctionOnce Implementation
+// RcFunction Tests - Reusable Function Implementation
 // ============================================================================
 
 // ============================================================================

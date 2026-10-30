@@ -31,7 +31,6 @@ mod function_once;
 mod function_once_function_once_default_impl_tests;
 #[cfg(all(feature = "rc", feature = "once"))]
 mod function_once_tests;
-#[cfg(all(feature = "rc", feature = "once"))]
 mod function_tests;
 mod macros;
 mod mutating_function;
