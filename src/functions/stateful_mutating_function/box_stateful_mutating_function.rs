@@ -10,6 +10,7 @@
 use crate::BoxConditionalStatefulMutatingFunction;
 use crate::Function;
 use crate::Predicate;
+use crate::StatefulFunction;
 use crate::StatefulMutatingFunction;
 use crate::functions::macros::impl_box_function_methods;
 use crate::functions::macros::impl_function_common_methods;
@@ -97,6 +98,63 @@ impl<T, R> BoxStatefulMutatingFunction<T, R> {
         BoxConditionalStatefulMutatingFunction,
         Function        // chains a non-mutating function after this mutating function
     );
+
+    /// Chains a stateful function after this mutating function.
+    ///
+    /// The source is consumed. Each call first mutates the input and produces
+    /// an intermediate result, then passes a shared reference to that result
+    /// to `after`. The returned wrapper has no diagnostic name; use
+    /// [`Self::with_name`] to assign one. A panic in either callback is
+    /// propagated, and completed mutations are not rolled back.
+    ///
+    /// # Type Parameters
+    ///
+    /// - `S`: The result type returned by the chained function.
+    /// - `F`: The stateful function type.
+    ///
+    /// # Parameters
+    ///
+    /// - `after`: The stateful function to call with each intermediate result.
+    ///
+    /// # Returns
+    ///
+    /// A new stateful mutating function that returns the chained result.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use qubit_function::BoxStatefulFunction;
+    /// use qubit_function::BoxStatefulMutatingFunction;
+    /// use qubit_function::StatefulMutatingFunction;
+    ///
+    /// let mut source_calls = 0;
+    /// let source = BoxStatefulMutatingFunction::new(move |value: &mut i32| {
+    ///     source_calls += 1;
+    ///     *value += source_calls;
+    ///     *value
+    /// });
+    /// let mut calls = 0;
+    /// let after = BoxStatefulFunction::new(move |value: &i32| {
+    ///     calls += 1;
+    ///     *value + calls
+    /// });
+    /// let mut pipeline = source.and_then_stateful(after);
+    /// let mut input = 5;
+    /// assert_eq!(pipeline.apply(&mut input), 7);
+    /// assert_eq!(pipeline.apply(&mut input), 10);
+    /// ```
+    pub fn and_then_stateful<S, F>(mut self, mut after: F) -> BoxStatefulMutatingFunction<T, S>
+    where
+        T: 'static,
+        R: 'static,
+        S: 'static,
+        F: StatefulFunction<R, S> + 'static,
+    {
+        BoxStatefulMutatingFunction::new(move |input: &mut T| {
+            let result = self.apply(input);
+            after.apply(&result)
+        })
+    }
 }
 
 // Generates: Debug and Display implementations for

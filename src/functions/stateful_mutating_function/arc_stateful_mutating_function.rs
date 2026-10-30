@@ -14,6 +14,7 @@ use parking_lot::Mutex;
 use crate::ArcConditionalStatefulMutatingFunction;
 use crate::Function;
 use crate::Predicate;
+use crate::StatefulFunction;
 use crate::StatefulMutatingFunction;
 use crate::functions::macros::impl_function_clone;
 use crate::functions::macros::impl_function_common_methods;
@@ -113,6 +114,67 @@ impl<T, R> ArcStatefulMutatingFunction<T, R> {
         predicate_bounds = (Send + Sync + 'static),
         chained_bounds = (Send + 'static)
     );
+
+    /// Chains a stateful function after this mutating function.
+    ///
+    /// The source is borrowed and its shared callback handle is cloned into
+    /// the returned wrapper. Each call first mutates the input and produces an
+    /// intermediate result, then passes a shared reference to that result to
+    /// `after`. Clones of the returned wrapper share both callback states.
+    /// The chained callback must be `Send` so the result remains usable across
+    /// threads; it need not be `Sync`. The returned wrapper has no diagnostic
+    /// name; use [`Self::with_name`] to assign one. The source lock is released
+    /// before the chained callback runs. Reentrant calls through the same
+    /// callback can deadlock, and completed mutations are not rolled back
+    /// after a panic.
+    ///
+    /// # Type Parameters
+    ///
+    /// - `S`: The result type returned by the chained function.
+    /// - `F`: The stateful function type.
+    ///
+    /// # Parameters
+    ///
+    /// - `after`: The stateful function to call with each intermediate result.
+    ///
+    /// # Returns
+    ///
+    /// A new stateful mutating function that returns the chained result.
+    ///
+    /// # Examples
+    ///
+    /// ```rust
+    /// use qubit_function::ArcStatefulMutatingFunction;
+    /// use qubit_function::StatefulMutatingFunction;
+    ///
+    /// let mut source_calls = 0;
+    /// let source = ArcStatefulMutatingFunction::new(move |value: &mut i32| {
+    ///     source_calls += 1;
+    ///     *value += source_calls;
+    ///     *value
+    /// });
+    /// let mut calls = 0;
+    /// let mut pipeline = source.and_then_stateful(move |value: &i32| {
+    ///     calls += 1;
+    ///     *value + calls
+    /// });
+    /// let mut input = 5;
+    /// assert_eq!(pipeline.apply(&mut input), 7);
+    /// assert_eq!(pipeline.apply(&mut input), 10);
+    /// ```
+    pub fn and_then_stateful<S, F>(&self, mut after: F) -> ArcStatefulMutatingFunction<T, S>
+    where
+        T: 'static,
+        R: 'static,
+        S: 'static,
+        F: StatefulFunction<R, S> + Send + 'static,
+    {
+        let mut source = self.clone();
+        ArcStatefulMutatingFunction::new(move |input: &mut T| {
+            let result = source.apply(input);
+            after.apply(&result)
+        })
+    }
 }
 
 // Generates: Clone implementation for ArcStatefulMutatingFunction<T, R>
