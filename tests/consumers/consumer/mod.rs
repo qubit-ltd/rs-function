@@ -10,5 +10,7 @@ mod arc_conditional_consumer_tests;
 mod arc_consumer_tests;
 mod box_conditional_consumer_tests;
 mod box_consumer_tests;
+#[cfg(feature = "rc")]
 mod rc_conditional_consumer_tests;
+#[cfg(feature = "rc")]
 mod rc_consumer_tests;

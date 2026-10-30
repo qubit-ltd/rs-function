@@ -8,6 +8,7 @@
 
 mod box_conditional_function_tests;
 mod box_function_methods_tests;
+#[cfg(feature = "rc")]
 mod conditional_function_clone_macro_tests;
 mod conditional_function_debug_display_tests;
 mod function_clone_tests;

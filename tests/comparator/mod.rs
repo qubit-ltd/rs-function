@@ -16,4 +16,5 @@ mod comparator_edge_cases_tests;
 mod comparator_generic_tests;
 mod comparator_rc_comparator_tests;
 mod comparator_tests;
+#[cfg(feature = "rc")]
 mod rc_comparator_tests;

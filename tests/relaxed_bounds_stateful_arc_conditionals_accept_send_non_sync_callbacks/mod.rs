@@ -10,7 +10,7 @@
     unused_imports,
     reason = "split contract fixtures share support definitions"
 )]
-#![cfg(feature = "full")]
+#![cfg(all(feature = "rc", feature = "once", feature = "stateful"))]
 use std::cell::Cell;
 use std::cell::RefCell;
 use std::marker::PhantomData;

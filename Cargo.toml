@@ -44,7 +44,6 @@ full = ["rc", "once", "stateful"]
 [[test]]
 name = "integration_tests"
 path = "tests/mod.rs"
-required-features = ["full"]
 
 [[test]]
 name = "callback_metadata_contract_tests"

@@ -12,6 +12,9 @@ mod arc_conditional_bi_function_tests;
 mod box_bi_function_tests;
 mod box_binary_function_tests;
 mod box_conditional_bi_function_tests;
+#[cfg(feature = "rc")]
 mod rc_bi_function_tests;
+#[cfg(feature = "rc")]
 mod rc_binary_function_tests;
+#[cfg(feature = "rc")]
 mod rc_conditional_bi_function_tests;

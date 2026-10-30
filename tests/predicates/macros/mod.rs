@@ -8,6 +8,7 @@
 
 mod box_predicate_methods_tests;
 mod constants_tests;
+#[cfg(feature = "rc")]
 mod predicate_clone_tests;
 mod predicate_common_methods_tests;
 mod predicate_debug_display_tests;

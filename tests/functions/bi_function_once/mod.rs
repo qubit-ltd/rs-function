@@ -6,4 +6,5 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
+#[cfg(feature = "once")]
 mod box_bi_function_once_tests;

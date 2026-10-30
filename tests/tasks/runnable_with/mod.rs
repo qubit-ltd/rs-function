@@ -9,4 +9,5 @@
 mod arc_runnable_with_tests;
 mod box_runnable_with_tests;
 mod local_box_runnable_with_tests;
+#[cfg(feature = "rc")]
 mod rc_runnable_with_tests;

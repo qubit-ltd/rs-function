@@ -10,5 +10,7 @@ mod arc_conditional_function_tests;
 mod arc_function_tests;
 mod box_conditional_function_tests;
 mod box_function_tests;
+#[cfg(feature = "rc")]
 mod rc_conditional_function_tests;
+#[cfg(feature = "rc")]
 mod rc_function_tests;

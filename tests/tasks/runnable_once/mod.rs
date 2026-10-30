@@ -6,5 +6,7 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
+#[cfg(feature = "once")]
 mod box_runnable_once_tests;
+#[cfg(feature = "once")]
 mod local_box_runnable_once_tests;

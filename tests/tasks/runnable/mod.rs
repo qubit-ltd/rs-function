@@ -8,5 +8,7 @@
 
 mod arc_runnable_tests;
 mod box_runnable_tests;
+#[cfg(feature = "once")]
 mod local_box_runnable_tests;
+#[cfg(feature = "rc")]
 mod rc_runnable_tests;

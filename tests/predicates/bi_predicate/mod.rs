@@ -8,4 +8,5 @@
 
 mod arc_bi_predicate_tests;
 mod box_bi_predicate_tests;
+#[cfg(feature = "rc")]
 mod rc_bi_predicate_tests;

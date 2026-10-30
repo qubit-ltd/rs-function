@@ -6,10 +6,17 @@
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
 
+#[cfg(feature = "stateful")]
 mod arc_conditional_stateful_bi_consumer_tests;
+#[cfg(feature = "stateful")]
 mod arc_stateful_bi_consumer_tests;
+#[cfg(feature = "stateful")]
 mod box_conditional_stateful_bi_consumer_tests;
+#[cfg(feature = "stateful")]
 mod box_stateful_bi_consumer_tests;
+#[cfg(all(feature = "rc", feature = "stateful"))]
 mod rc_conditional_stateful_bi_consumer_tests;
+#[cfg(all(feature = "rc", feature = "stateful"))]
 mod rc_stateful_bi_consumer_legacy_tests;
+#[cfg(all(feature = "rc", feature = "stateful"))]
 mod rc_stateful_bi_consumer_tests;

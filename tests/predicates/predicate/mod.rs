@@ -9,4 +9,5 @@
 mod arc_predicate_tests;
 mod box_predicate_tests;
 mod predicate_box_predicate_tests;
+#[cfg(feature = "rc")]
 mod rc_predicate_tests;

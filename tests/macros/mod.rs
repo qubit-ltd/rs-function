@@ -7,8 +7,10 @@
 // =============================================================================
 
 mod box_conversions_tests;
+#[cfg(feature = "once")]
 mod closure_once_trait_tests;
 mod closure_trait_tests;
 mod common_name_methods_tests;
 mod common_new_methods_tests;
+#[cfg(feature = "rc")]
 mod rc_conversions_tests;
