@@ -12,9 +12,10 @@
 /// It is similar to the `FnOnce(&T)` trait in the standard library.
 ///
 /// Defines the core behavior of all one-time consumer types. Similar to
-/// consumers implementing `FnOnce(&T)`, executes operations that accept a value
-/// reference but return no result (only side effects), consuming itself in the
-/// process.
+/// consumers implementing `FnOnce(&T)`, it operates on a shared input reference
+/// and returns no result. The reference does not permit direct mutation of the
+/// input; the callback may still use interior mutability or produce external
+/// side effects. The consumer is consumed by the operation.
 ///
 /// # Automatic Implementation
 ///

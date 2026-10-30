@@ -8,7 +8,8 @@
 //! # Stateful Mutator Types
 //!
 //! Provides `StatefulMutator` implementations for operations that accept a
-//! mutable input, may update captured state, and return no result.
+//! mutable input, may update captured state, and return no result. This module
+//! is available with the `stateful` feature.
 //!
 //! This module provides a unified `StatefulMutator` trait and three concrete
 //! implementations based on different ownership models:
@@ -24,14 +25,16 @@
 //!
 //! # Design Philosophy
 //!
-//! Unlike `Mutator`, which uses `Fn(&mut T)`, `StatefulMutator` uses
-//! `FnMut(&mut T)` so the operation can update both the input and its captured
-//! environment.
+//! `StatefulMutator` is called through `&mut self` and accepts `&mut T`, so its
+//! `FnMut(&mut T)` callback can update both the input and ordinary captured
+//! state. `Mutator` is called through `&self`; its `Fn(&mut T)` callback can
+//! modify the input and can use interior mutability, but cannot mutate ordinary
+//! captured values through the shared receiver.
 //!
-//! | Type | Callback | Modifies Input? | Modifies Captured State? |
-//! |------|----------|-----------------|--------------------------|
-//! | **Mutator** | `Fn(&mut T)` | ✅ | ❌ |
-//! | **StatefulMutator** | `FnMut(&mut T)` | ✅ | ✅ |
+//! | Type | Receiver | Callback | Input access | Ordinary captured state |
+//! |------|----------|----------|--------------|--------------------------|
+//! | **Mutator** | `&self` | `Fn(&mut T)` | Mutable | Not mutable through the receiver; interior mutability is possible |
+//! | **StatefulMutator** | `&mut self` | `FnMut(&mut T)` | Mutable | Mutable |
 //!
 //! # Comparison Table
 //!

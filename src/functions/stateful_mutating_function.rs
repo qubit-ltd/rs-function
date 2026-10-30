@@ -9,7 +9,8 @@
 //!
 //! Provides Java-like `StatefulMutatingFunction` interface implementations
 //! for performing operations that accept a mutable reference, potentially
-//! modify internal state, and return a result.
+//! modify internal state, and return a result. This module is available with
+//! the `stateful` feature.
 //!
 //! It is similar to the `FnMut(&mut T) -> R` trait in the standard library.
 //!
@@ -28,9 +29,11 @@
 //! `StatefulMutatingFunction` extends `MutatingFunction` with the ability to
 //! maintain internal state:
 //!
-//! - **MutatingFunction**: `Fn(&mut T) -> R` - stateless, immutable self
-//! - **StatefulMutatingFunction**: `FnMut(&mut T) -> R` - stateful, mutable
-//!   self
+//! - **MutatingFunction**: `Fn(&mut T) -> R`, called through `&self`; it
+//!   can mutate the input but not ordinary captured values. Interior
+//!   mutability and external side effects remain possible.
+//! - **StatefulMutatingFunction**: `FnMut(&mut T) -> R`, called through
+//!   `&mut self`; it can mutate both the input and ordinary captured state.
 //!
 //! ## Comparison with Related Types
 //!

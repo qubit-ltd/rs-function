@@ -24,9 +24,9 @@ use crate::transformers::macros::impl_conditional_transformer_debug_display;
 /// satisfied. Uses `BoxTransformerOnce` and `BoxPredicate` for single
 /// ownership semantics.
 ///
-/// This type is typically created by calling `BoxTransformerOnce::when()` and
-/// is designed to work with the `or_else()` method to create if-then-else
-/// logic.
+/// `BoxTransformerOnce::when()` returns this intermediate object. Call
+/// `or_else()` to provide the fallback and obtain a callable
+/// `BoxTransformerOnce` wrapper for the conditional branches.
 ///
 /// # Features
 ///

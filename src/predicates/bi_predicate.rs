@@ -15,10 +15,12 @@
 //!
 //! ## Design Philosophy
 //!
-//! `BiPredicate<T, U>` is the single immutable-input trait. It does not add
-//! mutable or consuming variants, so stateful implementations use interior
-//! mutability. Logical composition belongs to the concrete wrappers, whose
-//! ownership models differ.
+//! `BiPredicate<T, U>` receives both inputs through shared references and is
+//! called through `&self`. This does not permit mutation through those
+//! references, but `Fn` callbacks may still use interior mutability or external
+//! side effects. With the `stateful` feature, `StatefulBiPredicate` provides a
+//! native `FnMut` callback and `&mut self` receiver. Logical composition
+//! belongs to the concrete wrappers, whose ownership models differ.
 //!
 //! ## Type Selection Guide
 //!
@@ -27,7 +29,7 @@
 //! | Single ownership | `BoxBiPredicate` | Heap-backed type erasure |
 //! | Single-threaded sharing | `RcBiPredicate` | Shared ownership without thread-safety overhead |
 //! | Multi-threaded sharing | `ArcBiPredicate` | Thread-safe shared ownership |
-//! | Stateful predicate | Any wrapper with `Cell`, `RefCell`, or `Mutex` | Interior mutability |
+//! | Mutable callback state | `BoxStatefulBiPredicate` or `ArcStatefulBiPredicate` (`stateful`); `RcStatefulBiPredicate` also requires `rc` | Native `FnMut` with `&mut self` |
 //!
 //! ## Examples
 //!
@@ -53,8 +55,9 @@
 //! ```
 //!
 //! `RcBiPredicate` is available with the `rc` feature. `ArcBiPredicate` can
-//! be cloned and shared between threads. Stateful closures can capture
-//! `Cell` or another suitable interior-mutable value.
+//! be cloned and shared between threads when its callback bounds are met. The
+//! stateful wrappers are available with `stateful`; the Rc variant also
+//! requires `rc`.
 
 pub(super) use crate::predicates::macros::constants::ALWAYS_FALSE_NAME;
 pub(super) use crate::predicates::macros::constants::ALWAYS_TRUE_NAME;

@@ -24,10 +24,11 @@ use crate::consumers::macros::impl_shared_consumer_methods;
 
 /// ArcBiConsumer struct
 ///
-/// A non-mutating bi-consumer implementation based on
+/// A bi-consumer implementation based on
 /// `Arc<dyn Fn(&T, &U) + Send + Sync>` for thread-safe shared ownership
-/// scenarios. The wrapper does not need `Mutex` because it only invokes a
-/// shared `Fn`.
+/// scenarios. The wrapper does not add a mutex around the shared `Fn`
+/// callback; the callback itself may use synchronization or interior
+/// mutability.
 ///
 /// # Type Parameters
 ///
@@ -38,7 +39,8 @@ use crate::consumers::macros::impl_shared_consumer_methods;
 ///
 /// - **Shared Ownership**: Cloneable via `Arc`, multiple owners allowed
 /// - **Thread-Safe**: Implements `Send + Sync`, safe for concurrent use
-/// - **Lock-free Wrapper**: No Mutex protection needed by the wrapper
+/// - **Callback Storage**: The wrapper stores an `Arc<dyn Fn(&T, &U) + Send + Sync>`
+///   and does not add a mutex around callback invocation
 /// - **Non-Consuming API**: `and_then` borrows `&self`, original remains usable
 ///
 /// # Use Cases
@@ -46,13 +48,10 @@ use crate::consumers::macros::impl_shared_consumer_methods;
 /// Choose `ArcBiConsumer` when:
 /// - Need to share non-mutating bi-consumer across multiple threads
 /// - Pure observation operations like logging, monitoring, notifications
-/// - Need high-concurrency reads without lock overhead
+/// - Need a shared callback whose type satisfies `Send + Sync`
 ///
-/// # Performance Advantages
-///
-/// Compared to `ArcStatefulBiConsumer`, `ArcBiConsumer` has no Mutex locking
-/// overhead, resulting in better performance in high-concurrency observation
-/// scenarios.
+/// A mutex-free wrapper does not guarantee that the callback has no locks or
+/// contention.
 ///
 /// # Examples
 ///

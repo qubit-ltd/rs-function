@@ -10,9 +10,11 @@
 /// A unified interface for one-time operations that accept two borrowed
 /// values and return no result.
 ///
-/// Implementations consume themselves while operating on both inputs. All
-/// closures implementing `FnOnce(&T, &U)` and the boxed callback types in this
-/// module implement this trait.
+/// Implementations consume themselves while operating on shared references
+/// to both inputs. These references do not permit direct mutation of the input
+/// values; callbacks may still use interior mutability or produce external
+/// side effects. Closures implementing `FnOnce(&T, &U)` and the boxed callback
+/// types in this module implement this trait.
 ///
 /// # Type Parameters
 ///

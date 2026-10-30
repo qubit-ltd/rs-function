@@ -33,35 +33,14 @@ type RcStatefulConsumerFn<T> = Rc<RefCell<dyn FnMut(&T)>>;
 ///
 /// # Features
 ///
-/// - **Shared Ownership**: Cloneable through `Rc`, allowing multiple owners
-/// - **Single-Threaded**: Not thread-safe, cannot be sent across threads
-/// - **Interior Mutability**: Uses `RefCell` for runtime borrowing checks
-/// - **No Lock Overhead**: More efficient than `ArcStatefulConsumer` for
-///   single-threaded use
-/// - **Non-Consuming API**: `and_then` borrows `&self`, original object remains
-///   usable
+/// - **Shared Ownership**: Cloned wrappers share the callback through `Rc`.
+/// - **Single-Threaded**: Not thread-safe and cannot be sent across threads.
+/// - **Mutable Callback**: Stores `FnMut` in `RefCell` and checks mutable
+///   borrows at runtime while invoking the callback.
+/// - **Non-Consuming API**: `and_then` borrows `&self`.
 ///
-/// # Use Cases
-///
-/// Choose `RcStatefulConsumer` when:
-/// - Need to share consumers within a single thread
-/// - Thread safety is not needed
-/// - Performance is important (avoid lock overhead)
-/// - UI event handling in single-threaded frameworks
-/// - Building complex single-threaded state machines
-///
-/// # Performance Considerations
-///
-/// `RcStatefulConsumer` performs better than `ArcStatefulConsumer` in
-/// single-threaded scenarios:
-/// - **Non-Atomic Counting**: clone/drop is cheaper than `Arc`
-/// - **No Lock Overhead**: `RefCell` uses runtime checks, no locks
-/// - **Better Cache Locality**: No atomic operations means better CPU cache
-///   behavior
-///
-/// But still has slight overhead compared to `BoxStatefulConsumer`:
-/// - **Reference Counting**: Non-atomic but still exists
-/// - **Runtime Borrowing Checks**: `RefCell` checks at runtime
+/// Named diagnostic metadata is shared through `Arc<str>`, in addition to the
+/// callback storage shared through `Rc`.
 ///
 /// # Thread safety
 ///

@@ -7,10 +7,9 @@
 // =============================================================================
 //! # Box Conditional Function Macro
 //!
-//! Generates Box-based Conditional Function implementations
-//!
-//! For Box-based conditional functions, generates `or_else` methods,
-//! as well as complete Function/BiFunction trait implementations.
+//! Generates Box-based conditional function implementations. The `when`
+//! method returns an intermediate object; `or_else` consumes it and returns a
+//! callable function wrapper.
 //!
 //! Box type characteristics:
 //! - `or_else` consumes `self` because `Box` cannot be cloned
@@ -41,15 +40,14 @@
 //! // );
 //! ```
 
-/// Generates Box-based Conditional Function implementations
+/// Generates `or_else` methods for Box-based conditional function
+/// intermediates. The returned Box function wrapper implements the configured
+/// function trait.
 ///
-/// This macro should be used at the top level (outside of any impl block) as
-/// it generates a complete impl block with methods for the specified struct.
-/// For Box-based conditional functions, generates `or_else` methods,
-/// as well as complete Function/BiFunction trait implementations.
+/// Use this macro at the top level, outside any `impl` block.
 ///
 /// Box type characteristics:
-/// - `or_else` consume self (because Box cannot Clone)
+/// - `or_else` consumes the intermediate object and returns a callable wrapper
 ///
 /// # Parameters
 ///

@@ -9,8 +9,10 @@
 
 /// Provides a shared interface for operations on two borrowed values.
 ///
-/// Implementations may update their own state but must not mutate either input.
-/// Closures implementing `FnMut(&T, &U)` implement this trait automatically.
+/// The `&mut self` receiver and `FnMut(&T, &U)` callback allow implementations
+/// to update ordinary captured state. Shared references do not allow direct
+/// mutation of either input, though callbacks may use interior mutability or
+/// external side effects.
 ///
 /// # Type Parameters
 ///

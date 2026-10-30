@@ -16,7 +16,8 @@
 //!
 //! - [`BoxStatefulBiTransformer`]: Single ownership, not cloneable
 //! - [`ArcStatefulBiTransformer`]: Thread-safe shared ownership, cloneable
-//! - [`RcStatefulBiTransformer`]: Single-threaded shared ownership, cloneable
+//! - `RcStatefulBiTransformer`: Single-threaded shared ownership, cloneable;
+//!   available with the `rc` feature
 
 mod box_stateful_bi_transformer;
 pub use box_stateful_bi_transformer::BoxStatefulBiTransformer;

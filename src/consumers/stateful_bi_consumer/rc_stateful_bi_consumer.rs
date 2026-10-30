@@ -34,39 +34,14 @@ type RcStatefulBiConsumerFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U)>>;
 ///
 /// # Features
 ///
-/// - **Shared Ownership**: Cloneable via `Rc`, multiple owners allowed
-/// - **Single-Threaded**: Not thread-safe, cannot send across threads
-/// - **Interior Mutability**: Uses `RefCell` for runtime borrow checking
-/// - **No Lock Overhead**: More efficient than `ArcStatefulBiConsumer` for
-///   single-threaded use
-/// - **Non-Consuming API**: `and_then` borrows `&self`, original remains usable
+/// - **Shared Ownership**: Cloned wrappers share the callback through `Rc`.
+/// - **Single-Threaded**: Not thread-safe and cannot be sent across threads.
+/// - **Mutable Callback**: Stores `FnMut` in `RefCell` and checks mutable
+///   borrows at runtime while invoking the callback.
+/// - **Non-Consuming API**: `and_then` borrows `&self`.
 ///
-/// # Type Parameters
-///
-/// - `T` - Type of the first value passed to the callback.
-/// - `U` - Type of the second value passed to the callback.
-///
-/// # Use Cases
-///
-/// Choose `RcStatefulBiConsumer` when:
-/// - Need to share bi-consumer within a single thread
-/// - Thread safety is not needed
-/// - Performance matters (avoiding lock overhead)
-/// - Single-threaded UI framework event handling
-/// - Building complex single-threaded state machines
-///
-/// # Performance Considerations
-///
-/// `RcStatefulBiConsumer` performs better than `ArcStatefulBiConsumer` in
-/// single-threaded scenarios:
-/// - **Non-Atomic Counting**: clone/drop cheaper than `Arc`
-/// - **No Lock Overhead**: `RefCell` uses runtime checking, no locks
-/// - **Better Cache Locality**: No atomic operations means better CPU cache
-///   behavior
-///
-/// But still has slight overhead compared to `BoxStatefulBiConsumer`:
-/// - **Reference Counting**: Though non-atomic, still exists
-/// - **Runtime Borrow Checking**: `RefCell` checks at runtime
+/// Named diagnostic metadata is shared through `Arc<str>`, in addition to the
+/// callback storage shared through `Rc`.
 ///
 /// # Thread safety
 ///

@@ -34,7 +34,8 @@ use crate::functions::macros::impl_shared_conditional_function;
 /// - **Shared Ownership**: Cloneable via `Rc`, multiple owners allowed
 /// - **Single-Threaded**: Not thread-safe, cannot be sent across threads
 /// - **Conditional Execution**: Only maps when predicate returns `true`
-/// - **No Lock Overhead**: More efficient than `ArcConditionalStatefulFunction`
+/// - **Shared callback storage**: Uses `Rc` and `RefCell` for shared
+///   callback ownership and runtime borrow checking.
 ///
 /// # Type Parameters
 ///

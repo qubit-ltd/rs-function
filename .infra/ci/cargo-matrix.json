@@ -21,7 +21,7 @@
     },
     {
       "name": "stateful",
-      "commands": ["test"],
+      "commands": ["test", "doc"],
       "defaultFeatures": false,
       "features": ["stateful"]
     },

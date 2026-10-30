@@ -8,7 +8,8 @@
 //! # Consumer Types
 //!
 //! Provides implementations of consumer interfaces for executing operations
-//! that accept a single input parameter but return no result.
+//! that accept a shared reference to one input and return no result. This module
+//! is available with the `stateful` feature.
 //!
 //! It is similar to the `FnMut(&T)` trait in the standard library.
 //!
@@ -24,8 +25,9 @@
 //!
 //! # Design Philosophy
 //!
-//! Consumer uses `FnMut(&T)` semantics, allowing modification of its own state
-//! but not the input value.
+//! `StatefulConsumer` is called through `&mut self` and uses `FnMut(&T)`, so
+//! it can update ordinary captured state. The shared input reference does not
+//! allow direct mutation of the input; interior mutability remains possible.
 //!
 //! Suitable for statistics, accumulation, event handling, and other scenarios.
 

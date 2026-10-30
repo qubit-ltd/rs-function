@@ -25,19 +25,19 @@
 //!
 //! # Design Philosophy
 //!
-//! Here, **stateless** describes the `Fn(&mut T)` shared-receiver call shape.
-//! Unlike `StatefulMutator` which uses `FnMut(&mut T)` and can maintain
-//! internal state through `FnMut`, `Mutator` cannot mutate ordinary captured
-//! values through its `Fn` receiver. Implementations can still use interior
-//! mutability or produce external side effects.
+//! `Mutator` uses the `Fn(&mut T)` shared-receiver call shape. It can mutate
+//! the input through `&mut T`, but cannot mutate ordinary captured values
+//! through `&self`; implementations may still use interior mutability or
+//! produce external side effects. `StatefulMutator` instead uses `FnMut` and
+//! an `&mut self` receiver.
 //!
 //! ## Mutator vs StatefulMutator vs Consumer
 //!
-//! | Type | Input | Modifies Input? | Modifies Self? | Use Cases |
-//! |------|-------|----------------|----------------|-----------|
-//! | **Consumer** | `&T` | ❌ | ❌ | Observe, log, notify |
-//! | **Mutator** | `&mut T` | ✅ | Not through ordinary `Fn` captures | Transform, validate, normalize |
-//! | **StatefulMutator** | `&mut T` | ✅ | ✅ | Stateful transform, accumulate |
+//! | Type | Receiver | Input | Input mutation | Ordinary captured state | Use Cases |
+//! |------|----------|-------|----------------|--------------------------|-----------|
+//! | **Consumer** | `&self` | `&T` | No direct mutation | `Fn` cannot mutate it; interior mutability is possible | Observe, log, notify |
+//! | **Mutator** | `&self` | `&mut T` | Yes | `Fn` cannot mutate it; interior mutability is possible | Transform, validate, normalize |
+//! | **StatefulMutator** | `&mut self` | `&mut T` | Yes | `FnMut` can mutate it | Stateful transform, accumulate |
 //!
 //! **Key Insight**: Use `Mutator` for shared-receiver transformations,
 //! `StatefulMutator` for stateful operations, and `Consumer` for observation.

@@ -40,10 +40,10 @@ use crate::functions::macros::impl_conditional_function_debug_display;
 ///   callback's result
 ///
 /// The value returned by `when` is an intermediate builder and does not
-/// implement `MutatingFunction`. Its predicate receives shared input, while
-/// the selected callback receives mutable input. Call `or_else` to provide
-/// the fallback and obtain a callable wrapper. Invoking that wrapper follows
-/// the `MutatingFunction` receiver contract (`&self`).
+/// implement `MutatingFunction`. Its predicate receives `&T`, while the
+/// selected callback receives `&mut T`. Call `or_else` to provide the fallback
+/// and obtain a callable wrapper. Invoking that wrapper follows the
+/// `MutatingFunction` receiver contract (`&self`).
 ///
 /// # Examples
 ///

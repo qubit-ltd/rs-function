@@ -23,8 +23,9 @@ use crate::macros::impl_common_new_methods;
 /// Single-threaded shared ownership Tester implemented using `Rc`
 ///
 /// `RcTester` wraps a closure in `Rc<dyn Fn() -> bool>`, allowing the tester
-/// to be cloned and shared within a single thread. Since it doesn't use atomic
-/// operations, it has lower overhead than `ArcTester`.
+/// to be cloned and shared within a single thread. The callback storage uses
+/// non-atomic reference counting and cannot be sent across threads. Named
+/// diagnostic metadata is shared through `Arc<str>`.
 ///
 /// # Characteristics
 ///

@@ -9,10 +9,10 @@
 
 /// Stateful consumer interface for operations that may update their own state.
 ///
-/// Implementations receive the input through a shared reference, so they can
-/// inspect it without modifying it. They may mutate state captured by the
-/// consumer, which makes this trait suitable for accumulation and event
-/// handling.
+/// Implementations receive the input through a shared reference, which does
+/// not permit direct mutation of the input. The `&mut self` receiver and
+/// `FnMut(&T)` callback allow mutation of ordinary captured state; callbacks
+/// may also use interior mutability or external side effects.
 ///
 /// Closures implementing `FnMut(&T)` implement this trait automatically.
 /// The crate's `BoxStatefulConsumer<T>`, `ArcStatefulConsumer<T>`, and

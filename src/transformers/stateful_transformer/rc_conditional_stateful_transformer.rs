@@ -33,8 +33,8 @@ use crate::transformers::macros::impl_conditional_transformer_debug_display;
 /// - **Shared Ownership**: Cloneable via `Rc`, multiple owners allowed
 /// - **Single-Threaded**: Not thread-safe, cannot be sent across threads
 /// - **Conditional Execution**: Only maps when predicate returns `true`
-/// - **No Lock Overhead**: More efficient than
-///   `ArcConditionalStatefulTransformer`
+/// - **Shared callback storage**: Uses `Rc` and `RefCell` for shared
+///   callback ownership and runtime borrow checking.
 ///
 /// # Type Parameters
 ///

@@ -8,7 +8,8 @@
 //! # BiConsumer Types
 //!
 //! Provides bi-consumer interface implementations for operations accepting
-//! two input parameters without returning a result.
+//! shared references to two inputs without returning a result. This module is
+//! available with the `stateful` feature.
 //!
 //! It is similar to the `FnMut(&T, &U)` trait in the standard library.
 //!
@@ -23,8 +24,10 @@
 //!
 //! # Design Philosophy
 //!
-//! BiConsumer uses `FnMut(&T, &U)` semantics: can modify its own state but
-//! does NOT modify input values.
+//! `StatefulBiConsumer` is called through `&mut self` and uses
+//! `FnMut(&T, &U)`, so it can update ordinary captured state. Shared input
+//! references do not allow direct mutation of either input; interior
+//! mutability and external side effects remain possible.
 //!
 //! Suitable for statistics, accumulation, and event processing scenarios
 //! involving two parameters.

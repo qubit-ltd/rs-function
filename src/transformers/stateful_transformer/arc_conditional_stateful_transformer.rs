@@ -25,9 +25,9 @@ use crate::transformers::macros::impl_shared_conditional_transformer;
 /// is satisfied. Uses `ArcStatefulTransformer` and `ArcPredicate` for shared
 /// ownership across threads.
 ///
-/// This type is typically created by calling `ArcStatefulTransformer::when()`
-/// and is designed to work with the `or_else()` method to create if-then-else
-/// logic.
+/// `ArcStatefulTransformer::when()` returns this intermediate object. Call
+/// `or_else()` to provide the fallback and obtain a callable
+/// `ArcStatefulTransformer` wrapper for the conditional branches.
 ///
 /// # Features
 ///

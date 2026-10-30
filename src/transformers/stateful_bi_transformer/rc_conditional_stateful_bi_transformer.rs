@@ -36,8 +36,8 @@ use crate::transformers::macros::impl_shared_conditional_transformer;
 /// - **Single-Threaded**: Not thread-safe, cannot be sent across threads
 /// - **Conditional Execution**: Only transforms when bi-predicate returns
 ///   `true`
-/// - **No Lock Overhead**: More efficient than
-///   `ArcConditionalStatefulBiTransformer`
+/// - **Shared callback storage**: Uses `Rc` and `RefCell` for shared
+///   callback ownership and runtime borrow checking.
 ///
 /// # Type Parameters
 ///

@@ -12,11 +12,11 @@
 //!
 //! # Overview
 //!
-//! A **Supplier** is a functional abstraction equivalent to
-//! `Fn() -> T`: it generates values without accepting input or
-//! requiring mutable access to itself. The `get` method uses `&self`,
-//! enabling use in read-only contexts and lock-free concurrent access
-//! for the `Arc` implementation.
+//! A **Supplier** is a functional abstraction equivalent to `Fn() -> T`: it
+//! generates values without accepting input or requiring mutable access to
+//! itself. The `get` method uses `&self`. The Arc wrapper stores a shared `Fn`
+//! callback without adding a mutex; callback behavior and synchronization are
+//! determined by the callback itself.
 //!
 //! For generators that need mutable internal state, such as counters
 //! or sequences, use `StatefulSupplier`.
@@ -33,16 +33,15 @@
 //!
 //! # Three Implementations
 //!
-//! - **`BoxSupplier<T>`**: Single ownership using `Box<dyn Fn() -> T>`. It uses
-//!   one heap allocation and dynamic dispatch and cannot be cloned.
+//! - **`BoxSupplier<T>`**: Single ownership using `Box<dyn Fn() -> T>`, with
+//!   dynamic dispatch; it cannot be cloned.
 //!
 //! - **`ArcSupplier<T>`**: Thread-safe shared ownership using `Arc<dyn Fn() ->
-//!   T + Send + Sync>`. **Lock-free** - no Mutex needed! Can be cloned and sent
-//!   across threads with excellent performance.
+//!   T + Send + Sync>`. The wrapper does not add a mutex around the callback;
+//!   this does not guarantee that the callback itself is lock-free.
 //!
 //! - **`RcSupplier<T>`**: Single-threaded shared ownership using `Rc<dyn Fn()
-//!   -> T>`. Can be cloned but not sent across threads. Lightweight alternative
-//!   to `ArcSupplier`.
+//!   -> T>`. It can be cloned but not sent across threads.
 //!
 //! # Use Cases
 //!
@@ -63,7 +62,7 @@
 //! }
 //! ```
 //!
-//! ## 2. High-Concurrency Lock-Free Access
+//! ## 2. Sharing Across Threads
 //!
 //! ```rust
 //! use qubit_function::{ArcSupplier, Supplier};
@@ -76,7 +75,7 @@
 //! let handles: Vec<_> = (0..10)
 //!     .map(|_| {
 //!         let f = factory.clone();
-//!         thread::spawn(move || f.get()) // Lock-free!
+//!         thread::spawn(move || f.get())
 //!     })
 //!     .collect();
 //!
@@ -105,15 +104,10 @@
 //!
 //! # Concurrency Characteristics
 //!
-//! For stateless scenarios in multi-threaded environments:
-//!
-//! - `ArcStatefulSupplier<T>`: Requires `Mutex`, lock contention on every
-//!   `get()` call.
-//! - `ArcSupplier<T>`: Lock-free, can call `get()` concurrently without
-//!   contention.
-//!
-//! Actual performance depends on the callback and contention pattern; measure
-//! the workload when the distinction matters.
+//! `ArcSupplier<T>` stores an `Arc<dyn Fn() -> T + Send + Sync>` and does not
+//! add a mutex around the callback. Stateful wrappers use synchronization to
+//! support their mutable callback contract. This wrapper-level distinction
+//! does not imply that user callbacks have no locks or contention.
 
 mod box_supplier;
 pub use box_supplier::BoxSupplier;
