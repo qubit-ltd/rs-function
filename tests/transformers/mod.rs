@@ -64,7 +64,7 @@ mod transformer_arc_transformer_tests;
 mod transformer_complex_composition_tests;
 mod transformer_edge_cases_tests;
 mod transformer_once;
-#[cfg(all(feature = "rc", feature = "once"))]
+#[cfg(feature = "once")]
 mod transformer_once_tests;
 #[cfg(feature = "rc")]
 mod transformer_rc_conditional_tests;

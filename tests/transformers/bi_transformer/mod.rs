@@ -10,7 +10,6 @@ mod arc_bi_transformer_tests;
 mod arc_binary_operator_tests;
 mod arc_conditional_bi_transformer_tests;
 mod arc_conditional_tests;
-#[cfg(feature = "rc")]
 mod bi_transformer_and_then_tests;
 #[cfg(all(feature = "rc", feature = "once"))]
 mod binary_operator_tests;

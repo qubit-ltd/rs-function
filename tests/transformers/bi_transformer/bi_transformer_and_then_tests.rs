@@ -20,7 +20,9 @@ mod tests {
     use qubit_function::BiTransformer;
     use qubit_function::BoxBiTransformer;
     use qubit_function::BoxTransformer;
+    #[cfg(feature = "rc")]
     use qubit_function::RcBiTransformer;
+    #[cfg(feature = "rc")]
     use qubit_function::RcTransformer;
 
     // ========================================================================
@@ -138,6 +140,7 @@ mod tests {
     // RcBiTransformer::and_then tests
     // ========================================================================
 
+    #[cfg(feature = "rc")]
     #[test]
     fn test_rc_bi_transformer_and_then_with_closure() {
         let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
@@ -149,6 +152,7 @@ mod tests {
         assert_eq!(composed.apply(3, 5), 16); // (3 + 5) * 2
     }
 
+    #[cfg(feature = "rc")]
     #[test]
     fn test_rc_bi_transformer_and_then_with_transformer() {
         let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
@@ -159,6 +163,7 @@ mod tests {
         assert_eq!(composed.apply(20, 22), "42");
     }
 
+    #[cfg(feature = "rc")]
     #[test]
     fn test_rc_bi_transformer_and_then_clone() {
         let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
@@ -171,6 +176,7 @@ mod tests {
         assert_eq!(composed_clone.apply(3, 5), 16);
     }
 
+    #[cfg(feature = "rc")]
     #[test]
     fn test_rc_bi_transformer_and_then_chain() {
         let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
@@ -204,6 +210,7 @@ mod tests {
         assert_eq!(composed.apply(3, 5), 16);
     }
 
+    #[cfg(feature = "rc")]
     #[test]
     fn test_rc_bi_transformer_and_then_with_box_transformer() {
         let add = RcBiTransformer::new(|x: i32, y: i32| x + y);
