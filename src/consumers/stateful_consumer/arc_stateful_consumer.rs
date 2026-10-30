@@ -99,9 +99,7 @@ pub struct ArcStatefulConsumer<T> {
 
 impl<T> ArcStatefulConsumer<T> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
-    impl_consumer_common_methods!(ArcStatefulConsumer<T>, (FnMut(&T) + Send + 'static), |f| {
-        Arc::new(Mutex::new(f))
-    });
+    impl_consumer_common_methods!(ArcStatefulConsumer<T>, |f| { Arc::new(Mutex::new(f)) });
 
     // Generates: when() and and_then() methods that borrow &self (Arc can
     // clone)

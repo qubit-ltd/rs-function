@@ -85,7 +85,6 @@ impl<T, U> RcStatefulBiConsumer<T, U> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
     impl_consumer_common_methods!(
         RcStatefulBiConsumer<T, U>,
-        (FnMut(&T, &U) + 'static),
         |f| Rc::new(RefCell::new(f))
     );
 

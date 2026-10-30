@@ -20,8 +20,7 @@
 //! # Parameters
 //!
 //! * `$struct_name<$generics>` - Struct name with generic parameters
-//! * `$fn_trait_with_bounds` - Closure trait with complete bounds (e.g.,
-//!   `Fn(&T) + 'static`)
+//! * The type branch determines the semantic trait and thread capabilities.
 //! * `$wrapper_expr` - Wrapper expression (uses `f` for the closure)
 //!
 //! # Example
@@ -58,7 +57,6 @@
 //! impl<T> BoxConsumer<T> {
 //!     impl_consumer_common_methods!(
 //!         BoxConsumer<T>,
-//!         (Fn(&T) + 'static),
 //!         |f| Box::new(f)
 //!     );
 //! }
@@ -66,7 +64,6 @@
 //! impl<T> ArcStatefulConsumer<T> {
 //!     impl_consumer_common_methods!(
 //!         ArcStatefulConsumer<T>,
-//!         (FnMut(&T) + Send + 'static),
 //!         |f| Arc::new(parking_lot::Mutex::new(f))
 //!     );
 //! }
@@ -228,14 +225,12 @@ macro_rules! impl_consumer_metadata_method {
 /// constructor inside an existing consumer `impl` block.
 ///
 /// The macro supports consumer types with one or two generic parameters and
-/// accepts the closure bounds and wrapper expression used by the concrete
-/// consumer type.
+/// determines the semantic trait and thread capabilities from the consumer
+/// type branch; the wrapper expression specifies how the closure is stored.
 ///
 /// # Parameters
 ///
 /// * `$struct_name<$generics>` - Consumer type with one or two type parameters.
-/// * `$fn_trait_with_bounds` - Closure trait and its bounds, such as `Fn(&T) +
-///   'static`.
 /// * `$wrapper_expr` - Expression that wraps the supplied closure, using `f`.
 ///
 /// # Internal invocation syntax
@@ -248,7 +243,6 @@ macro_rules! impl_consumer_metadata_method {
 /// impl<T> BoxConsumer<T> {
 ///     impl_consumer_common_methods!(
 ///         BoxConsumer<T>,
-///         (Fn(&T) + 'static),
 ///         |f| Box::new(f)
 ///     );
 /// }
@@ -257,7 +251,6 @@ macro_rules! impl_consumer_common_methods {
     // Single generic parameter - Consumer types
     (
         $struct_name:ident < $t:ident >,
-        ($($fn_trait_with_bounds:tt)+),
         |$f:ident| $wrapper_expr:expr
     ) => {
         $crate::consumers::macros::impl_consumer_new_methods!($struct_name<$t>, |$f| $wrapper_expr);
@@ -282,7 +275,6 @@ macro_rules! impl_consumer_common_methods {
     // Two generic parameters - BiConsumer types
     (
         $struct_name:ident < $t:ident, $u:ident >,
-        ($($fn_trait_with_bounds:tt)+),
         |$f:ident| $wrapper_expr:expr
     ) => {
         $crate::consumers::macros::impl_consumer_new_methods!($struct_name<$t, $u>, |$f| $wrapper_expr);

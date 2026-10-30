@@ -80,7 +80,6 @@ impl<T, U> RcBiConsumer<T, U> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
     impl_consumer_common_methods!(
         RcBiConsumer<T, U>,
-        (Fn(&T, &U) + 'static),
         |f| Rc::new(f)
     );
 

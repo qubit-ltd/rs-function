@@ -78,7 +78,6 @@ impl<T, U> ArcBiConsumer<T, U> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
     impl_consumer_common_methods!(
         ArcBiConsumer<T, U>,
-        (Fn(&T, &U) + Send + Sync + 'static),
         |f| Arc::new(f)
     );
 

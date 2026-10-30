@@ -77,7 +77,6 @@ impl<T, U> BoxBiConsumerOnce<T, U> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
     impl_consumer_common_methods!(
         BoxBiConsumerOnce<T, U>,
-        (FnOnce(&T, &U) + 'static),
         |f| Box::new(f)
     );
 

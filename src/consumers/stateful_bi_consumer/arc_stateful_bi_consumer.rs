@@ -102,7 +102,6 @@ impl<T, U> ArcStatefulBiConsumer<T, U> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
     impl_consumer_common_methods!(
         ArcStatefulBiConsumer<T, U>,
-        (FnMut(&T, &U) + Send + 'static),
         |f| Arc::new(Mutex::new(f))
     );
 

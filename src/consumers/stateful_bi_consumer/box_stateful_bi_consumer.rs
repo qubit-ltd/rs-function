@@ -82,7 +82,6 @@ impl<T, U> BoxStatefulBiConsumer<T, U> {
     // Generates: new(), new_with_name(), name(), set_name(), noop()
     impl_consumer_common_methods!(
         BoxStatefulBiConsumer<T, U>,
-        (FnMut(&T, &U) + 'static),
         |f| Box::new(f)
     );
 
