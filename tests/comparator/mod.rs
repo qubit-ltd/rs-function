@@ -8,13 +8,20 @@
 
 mod arc_comparator_tests;
 mod box_comparator_tests;
+#[cfg(feature = "rc")]
 mod comparator_arc_comparator_tests;
+#[cfg(feature = "rc")]
 mod comparator_box_comparator_tests;
+#[cfg(feature = "rc")]
 mod comparator_closure_tests;
+#[cfg(feature = "rc")]
 mod comparator_conversion_tests;
 mod comparator_edge_cases_tests;
+#[cfg(feature = "rc")]
 mod comparator_generic_tests;
+#[cfg(feature = "rc")]
 mod comparator_rc_comparator_tests;
+#[cfg(feature = "rc")]
 mod comparator_tests;
 #[cfg(feature = "rc")]
 mod rc_comparator_tests;

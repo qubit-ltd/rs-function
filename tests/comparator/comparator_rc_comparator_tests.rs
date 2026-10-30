@@ -5,7 +5,6 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-#![cfg(feature = "full")]
 use std::cmp::Ordering;
 
 use qubit_function::comparator::BoxComparator;
