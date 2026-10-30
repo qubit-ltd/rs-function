@@ -62,9 +62,10 @@ Unless noted otherwise, examples below assume the `full` feature is enabled.
 ## Quick Start
 
 When an API only invokes a callback immediately, it can accept the semantic
-trait directly. This application-defined generic function borrows the callback
-for the call, so its closure can also borrow local state; it is an example, not
-a new method provided by this crate:
+trait directly. This application-defined generic function takes ownership of
+the callback value for the call. The callback trait has no `'static` bound, so
+the closure may borrow local state that remains valid during the call. This is
+an example, not a new method provided by this crate:
 
 ```rust
 use qubit_function::Consumer;
@@ -79,6 +80,24 @@ fn main() {
         assert_eq!(value, &expected);
     });
     assert_eq!(expected, "ready");
+}
+```
+
+If the caller needs to keep and reuse the callback, accept it by reference:
+
+```rust
+use qubit_function::Consumer;
+
+fn observe_borrowed<T, C: Consumer<T>>(input: &T, callback: &C) {
+    callback.accept(input);
+}
+
+fn main() {
+    let expected = String::from("ready");
+    let callback = |value: &String| assert_eq!(value, &expected);
+    observe_borrowed(&expected, &callback);
+    observe_borrowed(&expected, &callback);
+    callback.accept(&expected);
 }
 ```
 
@@ -109,6 +128,47 @@ uniform `'static` or thread bound: the API that receives a callback sets those
 requirements. If an API accepts a semantic trait directly, pass the callback
 without wrapping it unless type erasure, storage, sharing, naming, or
 composition is needed.
+
+Directly calling a wrapper can accept an input type with a short-lived borrow.
+Here, `ArcTransformer` stores a closure that captures no borrowed state, while
+the `&'a str` input is used only during `apply`:
+
+```rust
+use qubit_function::{ArcTransformer, Transformer};
+
+fn length<'a>(input: &'a str) -> usize {
+    ArcTransformer::<&'a str, usize>::new(|value: &'a str| value.len()).apply(input)
+}
+
+let input = String::from("abc");
+assert_eq!(length(input.as_str()), 3);
+```
+
+Transformer composition methods add separate type bounds: the current
+`when`, `or_else`, and `and_then` methods require the relevant input and output
+types to be `'static`. These bounds apply to types used in the composition;
+they are distinct from the `'static` requirement on a wrapper's stored
+callback capture. The existing contract test
+[`transformer_when_lifetime_contract_tests.rs`](tests/transformer_when_lifetime_contract_tests.rs)
+shows a direct call accepting a borrowed input while a `when(...).or_else(...)`
+chain rejects that short-lived type.
+
+Wrappers can also carry diagnostic names for debugging and display. Methods
+such as `map` and `map_err` preserve the source name; `and_then` returns a new
+unnamed composition and does not concatenate names from its steps. Cloning a
+wrapper shares callback state, while each clone can be named independently.
+Set a name explicitly on the final composition when needed:
+
+```rust
+use qubit_function::{BoxCallable, Callable};
+
+let mut task = BoxCallable::new_with_name("load", || Ok::<i32, String>(20))
+    .map(|value| value + 1)
+    .and_then(|value| Ok(value * 2))
+    .with_name("load-and-transform");
+assert_eq!(task.name(), Some("load-and-transform"));
+assert_eq!(task.call(), Ok(42));
+```
 
 Use a task `Box` wrapper when a composed callback will be submitted to an
 executor. The wrapper, including every returned composition, is `Send`:
@@ -1046,6 +1106,14 @@ cargo run --features full --example task_demo
 cargo run --features full --example comparator_demo
 cargo run --features full --example tester_demo
 ```
+
+## Learn More
+
+- [API documentation](https://docs.rs/qubit-function/0.18.3/qubit_function/) for the complete type and method reference.
+- **Submit a task and obtain its result**: start with [`Callable`](https://docs.rs/qubit-function/0.18.3/qubit_function/trait.Callable.html) or [`Runnable`](https://docs.rs/qubit-function/0.18.3/qubit_function/trait.Runnable.html). These describe callable tasks; the application or executor handles submission, scheduling, and result processing.
+- **Share observation notifications**: see [`ArcConsumer`](https://docs.rs/qubit-function/0.18.3/qubit_function/struct.ArcConsumer.html). The crate provides a thread-safe shared callback wrapper; the application decides when notifications are delivered and how to handle them.
+- **Modify HTTP request data**: see [`ArcMutatingFunction`](https://docs.rs/qubit-function/0.18.3/qubit_function/struct.ArcMutatingFunction.html). The crate provides a mutable-input callback; HTTP integration, invocation timing, and business handling belong to the application or downstream.
+- [简体中文 README](README.zh_CN.md)
 
 ## Testing
 

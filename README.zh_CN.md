@@ -57,8 +57,9 @@ qubit-function = { version = "0.18", features = ["full"] }
 ## 快速开始
 
 如果 API 只在调用期间执行回调，可以直接接收语义 trait。下面这个由应用
-自行定义的泛型函数只在本次调用中借用回调，因此闭包也可以借用局部状态；它是示例，
-不是本 crate 新增的方法：
+自行定义的泛型函数会按值接收回调，并在本次调用中使用它。回调 trait 没有 `'static`
+约束，因此闭包可以借用调用期间仍然有效的局部状态。此函数只是示例，不是本 crate
+新增的方法：
 
 ```rust
 use qubit_function::Consumer;
@@ -73,6 +74,24 @@ fn main() {
         assert_eq!(value, &expected);
     });
     assert_eq!(expected, "ready");
+}
+```
+
+如果调用方还要保留并重复使用回调，可以通过引用传入：
+
+```rust
+use qubit_function::Consumer;
+
+fn observe_borrowed<T, C: Consumer<T>>(input: &T, callback: &C) {
+    callback.accept(input);
+}
+
+fn main() {
+    let expected = String::from("ready");
+    let callback = |value: &String| assert_eq!(value, &expected);
+    observe_borrowed(&expected, &callback);
+    observe_borrowed(&expected, &callback);
+    callback.accept(&expected);
 }
 ```
 
@@ -97,6 +116,41 @@ fn main() {
 `Send` 要求，但所存储的捕获仍须满足 `'static`，不能保存任意栈借用。语义 trait
 本身没有统一的 `'static` 或线程约束，接收回调的 API 决定这些要求。如果 API 直接接收
 语义 trait，通常可以直接传入回调；只有在需要类型擦除、保存、共享、命名或组合时才包装。
+
+直接调用包装器时，输入类型可以带有短期借用。例如，下面的 `ArcTransformer` 捕获的是
+无借用状态的闭包，输入 `&'a str` 只在 `apply` 调用期间使用：
+
+```rust
+use qubit_function::{ArcTransformer, Transformer};
+
+fn length<'a>(input: &'a str) -> usize {
+    ArcTransformer::<&'a str, usize>::new(|value: &'a str| value.len()).apply(input)
+}
+
+let input = String::from("abc");
+assert_eq!(length(input.as_str()), 3);
+```
+
+Transformer 的组合方法另有类型约束：现有 `when`、`or_else` 和 `and_then` 组合要求
+相关输入、输出类型满足 `'static`。这项限制针对参与组合的类型；它与包装器所存回调的
+捕获必须满足 `'static` 是两回事。直接调用成功而 `when(...).or_else(...)` 链拒绝短期借用
+类型的边界，见 [`transformer_when_lifetime_contract_tests.rs`](tests/transformer_when_lifetime_contract_tests.rs)。
+
+包装器还可以携带诊断名称，供调试和显示使用。`map`/`map_err` 等方法会保留源名称；
+`and_then` 生成的新组合默认没有名称，不会自动拼接链中各步骤的名称。克隆包装器后，
+共享的是回调状态，名称仍可分别设置。需要为组合结果标记名称时，可在链末显式调用
+`with_name`：
+
+```rust
+use qubit_function::{BoxCallable, Callable};
+
+let mut task = BoxCallable::new_with_name("load", || Ok::<i32, String>(20))
+    .map(|value| value + 1)
+    .and_then(|value| Ok(value * 2))
+    .with_name("load-and-transform");
+assert_eq!(task.name(), Some("load-and-transform"));
+assert_eq!(task.call(), Ok(42));
+```
 
 组合后的回调需要提交给执行器时，使用任务 `Box` 包装器。包装器及其组合结果均为
 `Send`：
@@ -1017,6 +1071,14 @@ cargo run --features full --example task_demo
 cargo run --features full --example comparator_demo
 cargo run --features full --example tester_demo
 ```
+
+## 延伸阅读
+
+- [API 文档](https://docs.rs/qubit-function/0.18.3/qubit_function/) — 查看完整类型与方法。
+- **提交任务并取得结果**：从 [`Callable`](https://docs.rs/qubit-function/0.18.3/qubit_function/trait.Callable.html) 或 [`Runnable`](https://docs.rs/qubit-function/0.18.3/qubit_function/trait.Runnable.html) 开始。它们描述可调用任务；任务提交、调度和结果处理由应用或执行器负责。
+- **共享观察通知**：查看 [`ArcConsumer`](https://docs.rs/qubit-function/0.18.3/qubit_function/struct.ArcConsumer.html)。库提供线程安全共享的回调包装器，通知何时发送及如何处理由应用决定。
+- **修改 HTTP 请求数据**：查看 [`ArcMutatingFunction`](https://docs.rs/qubit-function/0.18.3/qubit_function/struct.ArcMutatingFunction.html)。库提供可变输入回调能力；HTTP 集成、调用时机和业务处理由应用或下游负责。
+- [English README](README.md)
 
 ## 测试
 
