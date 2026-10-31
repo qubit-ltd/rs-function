@@ -1213,9 +1213,9 @@ cargo run --features full --example tester_demo
 
 - [API 文档](https://docs.rs/qubit-function/0.18.3/qubit_function/) — 查看完整类型与方法。
 - 在线 API 页面依赖该版本已发布且 docs.rs 构建成功。从仓库根目录运行 `cargo doc --all-features --no-deps --open` 可本地生成文档；无桌面环境时去掉 `--open`。默认入口为 `target/doc/qubit_function/index.html`；设置了 `CARGO_TARGET_DIR` 时使用实际 target 目录。
-- **提交任务并取得结果**：从 [`Callable`](https://docs.rs/qubit-function/0.18.3/qubit_function/trait.Callable.html)（[源码](src/tasks/callable/callable.rs)）或 [`Runnable`](https://docs.rs/qubit-function/0.18.3/qubit_function/trait.Runnable.html)（[源码](src/tasks/runnable/runnable.rs)）开始。它们描述可调用任务；任务提交、调度和结果处理由应用或执行器负责。
-- **共享观察通知**：查看 [`ArcConsumer`](https://docs.rs/qubit-function/0.18.3/qubit_function/struct.ArcConsumer.html)（[源码](src/consumers/consumer/arc_consumer.rs)）。库提供线程安全共享的回调包装器，通知何时发送及如何处理由应用决定。
-- **修改 HTTP 请求数据**：查看 [`ArcMutatingFunction`](https://docs.rs/qubit-function/0.18.3/qubit_function/struct.ArcMutatingFunction.html)（[源码](src/functions/mutating_function/arc_mutating_function.rs)）。库提供可变输入回调能力；HTTP 集成、调用时机和业务处理由应用或下游负责。
+- **提交任务并取得结果**：从 [`Callable`](https://docs.rs/qubit-function/0.18.3/qubit_function/tasks/callable/trait.Callable.html)（[源码](src/tasks/callable/callable.rs)）或 [`Runnable`](https://docs.rs/qubit-function/0.18.3/qubit_function/tasks/runnable/trait.Runnable.html)（[源码](src/tasks/runnable/runnable.rs)）开始。它们描述可调用任务；任务提交、调度和结果处理由应用或执行器负责。
+- **共享观察通知**：查看 [`ArcConsumer`](https://docs.rs/qubit-function/0.18.3/qubit_function/consumers/consumer/struct.ArcConsumer.html)（[源码](src/consumers/consumer/arc_consumer.rs)）。库提供线程安全共享的回调包装器，通知何时发送及如何处理由应用决定。
+- **修改 HTTP 请求数据**：查看 [`ArcMutatingFunction`](https://docs.rs/qubit-function/0.18.3/qubit_function/functions/mutating_function/struct.ArcMutatingFunction.html)（[源码](src/functions/mutating_function/arc_mutating_function.rs)）。库提供可变输入回调能力；HTTP 集成、调用时机和业务处理由应用或下游负责。
 - [English README](README.md)
 
 ## 测试
