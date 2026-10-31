@@ -11,8 +11,9 @@
 //! This example demonstrates the three implementations of Consumer
 //! (BoxConsumer, ArcConsumer, RcConsumer) and their various usage patterns.
 //!
-//! Consumer is used to consume (read) values without modifying the original
-//! value. If you need to modify values, please refer to mutator_demo.rs
+//! Consumer accepts shared references. Callbacks may still use interior
+//! mutability or produce external side effects. For direct mutable access
+//! through `&mut T`, see mutator_demo.rs.
 
 use std::sync::Arc;
 use std::sync::Mutex;
@@ -27,8 +28,10 @@ use qubit_function::StatefulConsumer;
 
 fn main() {
     println!("=== Consumer Examples ===\n");
-    println!("Note: Consumer only reads values, does not modify the original value");
-    println!("If you need to modify values, please refer to mutator_demo.rs\n");
+    println!(
+        "Note: Consumer accepts shared references; callbacks may still use interior mutability or produce external side effects"
+    );
+    println!("For direct mutable access through &mut T, see mutator_demo.rs\n");
 
     // ========================================================================
     // Example 1: BoxConsumer basic usage

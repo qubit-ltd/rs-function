@@ -19,17 +19,18 @@ use crate::functions::macros::impl_shared_conditional_function;
 // RcConditionalFunction - Rc-based Conditional Function
 // ============================================================================
 
-/// A single-threaded function wrapper that invokes its callback only when its
-/// predicate accepts the input.
+/// An intermediate builder holding an `RcFunction` and its `RcPredicate`.
 ///
-/// This type is typically created by calling `RcFunction::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
+/// Created by `RcFunction::when()`. This builder does not implement
+/// `Function` and cannot be invoked directly. Call `or_else()` to provide
+/// the fallback and obtain an `RcFunction`. Calling `apply()` on that
+/// returned function evaluates the predicate and invokes the selected branch.
 ///
 /// # Features
 ///
 /// - **Shared Ownership**: Cloneable via `Rc`, multiple owners allowed
 /// - **Single-Threaded**: Not thread-safe, cannot be sent across threads
-/// - **Conditional Execution**: Only transforms when predicate returns `true`
+/// - **Branch Selection**: The completed wrapper invokes one selected branch
 /// - **Ownership Cost**: `Rc` uses non-atomic reference counting; `Arc` uses
 ///   atomic reference counting, and neither wrapper locks callback invocation
 ///

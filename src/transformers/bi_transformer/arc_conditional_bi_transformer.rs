@@ -19,14 +19,15 @@ use crate::transformers::macros::impl_shared_conditional_transformer;
 // ArcConditionalBiTransformer - Arc-based Conditional BiTransformer
 // ============================================================================
 
-/// ArcConditionalBiTransformer struct
+/// An intermediate builder holding an `ArcBiTransformer` and its
+/// `ArcBiPredicate`.
 ///
-/// A thread-safe conditional bi-transformer that only executes when a
-/// bi-predicate is satisfied. Uses `ArcBiTransformer` and `ArcBiPredicate` for
-/// shared ownership across threads.
-///
-/// This type is typically created by calling `ArcBiTransformer::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
+/// Created by `ArcBiTransformer::when()`. This builder does not implement
+/// `BiTransformer` and cannot be invoked directly. Call `or_else()` to
+/// provide the fallback and obtain an `ArcBiTransformer`. Calling `apply()`
+/// on that returned transformer evaluates the predicate and invokes the
+/// selected branch.
+/// The transformer and predicate use shared ownership across threads.
 ///
 /// # Type Parameters
 ///
@@ -38,9 +39,8 @@ use crate::transformers::macros::impl_shared_conditional_transformer;
 ///
 /// - **Shared Ownership**: Cloneable via `Arc`, multiple owners allowed
 /// - **Thread-Safe**: Implements `Send + Sync`, safe for concurrent use
-/// - **Conditional Execution**: Only transforms when bi-predicate returns
-///   `true`
-/// - **Chainable**: Can add `or_else` branch to create if-then-else logic
+/// - **Branch Selection**: The completed wrapper invokes one selected branch
+/// - **Completion**: Call `or_else()` to obtain an invocable wrapper
 ///
 /// # Examples
 ///

@@ -19,13 +19,14 @@ use crate::functions::macros::impl_shared_conditional_function;
 // ArcConditionalFunction - Arc-based Conditional Function
 // ============================================================================
 
-/// A thread-safe wrapper that invokes an `ArcFunction` only when its
-/// `ArcPredicate` accepts the input.
+/// An intermediate builder holding an `ArcFunction` and its `ArcPredicate`.
 ///
-/// This type is typically created by calling `ArcFunction::when()` and is
-/// designed to work with the `or_else()` method to create if-then-else logic.
+/// Created by `ArcFunction::when()`. This builder does not implement
+/// `Function` and cannot be invoked directly. Call `or_else()` to provide
+/// the fallback and obtain an `ArcFunction`. Calling `apply()` on that
+/// returned function evaluates the predicate and invokes the selected branch.
 /// Both callbacks and the predicate use shared ownership, so cloning this
-/// wrapper does not consume the original value.
+/// builder does not consume the original value.
 ///
 /// # Type Parameters
 ///
@@ -36,8 +37,8 @@ use crate::functions::macros::impl_shared_conditional_function;
 ///
 /// - **Shared Ownership**: Cloneable via `Arc`, multiple owners allowed
 /// - **Thread-Safe**: Implements `Send + Sync`, safe for concurrent use
-/// - **Conditional Execution**: Only transforms when predicate returns `true`
-/// - **Chainable**: Can add `or_else` branch to create if-then-else logic
+/// - **Branch Selection**: The completed wrapper invokes one selected branch
+/// - **Completion**: Call `or_else()` to obtain an invocable wrapper
 ///
 /// # Examples
 ///

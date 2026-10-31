@@ -46,8 +46,9 @@
 pub trait BiConsumerOnce<T, U> {
     /// Consumes this consumer while operating on references to both inputs.
     ///
-    /// The operation may read the values or produce side effects, but it does
-    /// not modify the input values themselves.
+    /// Shared references do not provide direct mutable access to either input.
+    /// Callbacks may still modify state through interior mutability or produce
+    /// external side effects.
     ///
     /// # Parameters
     ///
