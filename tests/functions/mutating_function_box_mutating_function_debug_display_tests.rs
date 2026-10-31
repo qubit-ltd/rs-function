@@ -11,6 +11,7 @@
 use qubit_function::ArcMutatingFunction;
 use qubit_function::BoxMutatingFunction;
 use qubit_function::MutatingFunction;
+#[cfg(feature = "rc")]
 use qubit_function::RcMutatingFunction;
 
 // ============================================================================
@@ -44,6 +45,7 @@ fn test_box_mutating_function_debug_display() {
     assert_eq!(named_display_str, "BoxMutatingFunction(mutating_double)");
 }
 
+#[cfg(feature = "rc")]
 #[test]
 fn test_rc_mutating_function_debug_display() {
     // Test Debug and Display for RcMutatingFunction without name
@@ -115,6 +117,7 @@ fn test_box_mutating_function_name_methods() {
     assert_eq!(value, 10);
 }
 
+#[cfg(feature = "rc")]
 #[test]
 fn test_rc_mutating_function_name_methods() {
     // Test new_with_name, name(), and set_name()
@@ -210,6 +213,7 @@ fn test_box_conditional_mutating_function_debug_display() {
     assert!(named_display_str.ends_with(")"));
 }
 
+#[cfg(feature = "rc")]
 #[test]
 fn test_rc_conditional_mutating_function_debug_display() {
     // Test Debug and Display for RcConditionalMutatingFunction without name

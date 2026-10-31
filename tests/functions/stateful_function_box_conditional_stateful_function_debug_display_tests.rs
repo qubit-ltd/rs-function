@@ -10,6 +10,7 @@
 
 use qubit_function::ArcStatefulFunction;
 use qubit_function::BoxStatefulFunction;
+#[cfg(feature = "rc")]
 use qubit_function::RcStatefulFunction;
 use qubit_function::StatefulFunction;
 
@@ -71,6 +72,7 @@ fn test_box_conditional_stateful_function_debug_display() {
     assert!(named_display_str.ends_with(")"), "{named_display_str}");
 }
 
+#[cfg(feature = "rc")]
 #[test]
 fn test_rc_conditional_stateful_function_debug_display() {
     // Test Debug and Display for RcConditionalStatefulFunction without name

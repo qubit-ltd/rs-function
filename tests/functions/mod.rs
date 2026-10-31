@@ -35,7 +35,6 @@ mod function_tests;
 mod macros;
 mod mutating_function;
 mod mutating_function_arc_mutating_function_tests;
-#[cfg(feature = "rc")]
 mod mutating_function_box_mutating_function_debug_display_tests;
 mod mutating_function_closure_tests;
 mod mutating_function_once;
@@ -45,7 +44,7 @@ mod mutating_function_once_tests;
 mod mutating_function_rc_mutating_function_tests;
 mod mutating_function_tests;
 mod stateful_function;
-#[cfg(all(feature = "rc", feature = "stateful"))]
+#[cfg(feature = "stateful")]
 mod stateful_function_box_conditional_stateful_function_debug_display_tests;
 #[cfg(all(feature = "rc", feature = "stateful"))]
 mod stateful_function_rc_stateful_function_when_with_predicate_tests;
