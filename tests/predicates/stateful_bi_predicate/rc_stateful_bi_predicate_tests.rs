@@ -21,9 +21,7 @@ fn test_rc_shared_bi_predicate_remaining_logical_contracts() {
         "::",
         "test_rc_shared_bi_predicate_remaining_logical_contracts"
     );
-    let (_, exact_name) = qualified
-        .split_once("::")
-        .expect("test path includes crate prefix");
+    let (_, exact_name) = qualified.split_once("::").expect("test path includes crate prefix");
     run_isolated(exact_name, || {
         let inputs = [(false, false), (false, true), (true, false), (true, true)];
         let expected = [

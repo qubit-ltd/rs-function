@@ -34,9 +34,7 @@ fn test_rc_map_stateful_releases_source_before_mapper() {
         "::",
         "test_rc_map_stateful_releases_source_before_mapper"
     );
-    let (_, exact_name) = qualified
-        .split_once("::")
-        .expect("test path includes crate prefix");
+    let (_, exact_name) = qualified.split_once("::").expect("test path includes crate prefix");
     run_isolated(exact_name, || {
         let mut sequence = 0;
         let mut source = RcStatefulSupplier::new(move || {
@@ -53,14 +51,8 @@ fn test_rc_map_stateful_releases_source_before_mapper() {
 
 #[test]
 fn test_rc_map_stateful_recovers_after_mapper_panic() {
-    let qualified = concat!(
-        module_path!(),
-        "::",
-        "test_rc_map_stateful_recovers_after_mapper_panic"
-    );
-    let (_, exact_name) = qualified
-        .split_once("::")
-        .expect("test path includes crate prefix");
+    let qualified = concat!(module_path!(), "::", "test_rc_map_stateful_recovers_after_mapper_panic");
+    let (_, exact_name) = qualified.split_once("::").expect("test path includes crate prefix");
     run_isolated(exact_name, || {
         let mut sequence = 0;
         let mut source = RcStatefulSupplier::new(move || {
@@ -78,11 +70,7 @@ fn test_rc_map_stateful_recovers_after_mapper_panic() {
         let mut cloned = mapped.clone();
         let result = catch_unwind(AssertUnwindSafe(|| mapped.get()));
         assert!(result.is_err(), "the first mapper panic must propagate");
-        assert_eq!(
-            mapped.get(),
-            22,
-            "source and mapper state must survive panic"
-        );
+        assert_eq!(mapped.get(), 22, "source and mapper state must survive panic");
         assert_eq!(cloned.get(), 33, "clones must still share mapper state");
         assert_eq!(source.get(), 4);
     });
