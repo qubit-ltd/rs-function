@@ -15,7 +15,6 @@ mod macros;
 mod mutators;
 mod predicates;
 mod relaxed_bounds_stateful_arc_conditionals_accept_send_non_sync_callbacks;
-mod relaxed_bounds_tests;
 mod suppliers;
 mod tasks;
 mod testers;
