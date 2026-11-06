@@ -391,8 +391,13 @@ impl BoxTester {
 }
 
 impl Not for BoxTester {
+    /// The negated tester retains the boxed representation and metadata.
     type Output = BoxTester;
 
+    /// Returns a tester that yields the logical negation of this tester.
+    ///
+    /// The operation consumes the original callback and preserves its
+    /// diagnostic metadata; invoking the returned tester invokes the callback.
     #[inline]
     fn not(self) -> Self::Output {
         let metadata = self.metadata;
@@ -402,6 +407,10 @@ impl Not for BoxTester {
 }
 
 impl Tester for BoxTester {
+    /// Invokes the wrapped callback and returns its Boolean result.
+    ///
+    /// The callback is called through dynamic dispatch and may perform any
+    /// effects associated with its captured state.
     #[inline]
     fn test(&self) -> bool {
         (self.function)()
@@ -409,6 +418,15 @@ impl Tester for BoxTester {
 }
 
 impl fmt::Debug for BoxTester {
+    /// Formats the tester with its diagnostic name, when one is available.
+    ///
+    /// # Parameters
+    ///
+    /// * `formatter` - The formatter receiving the debug representation.
+    ///
+    /// # Returns
+    ///
+    /// The result of writing the debug representation to `formatter`.
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         formatter
             .debug_struct("BoxTester")
@@ -418,6 +436,15 @@ impl fmt::Debug for BoxTester {
 }
 
 impl fmt::Display for BoxTester {
+    /// Formats the tester as `BoxTester` or `BoxTester(name)`.
+    ///
+    /// # Parameters
+    ///
+    /// * `formatter` - The formatter receiving the display representation.
+    ///
+    /// # Returns
+    ///
+    /// The result of writing the display representation to `formatter`.
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.metadata.name() {
             Some(name) => write!(formatter, "BoxTester({name})"),

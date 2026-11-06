@@ -108,6 +108,22 @@ impl_transformer_clone!(ArcStatefulBiTransformer<T, U, R>);
 
 // Implement StatefulBiTransformer trait for ArcStatefulBiTransformer
 impl<T, U, R> StatefulBiTransformer<T, U, R> for ArcStatefulBiTransformer<T, U, R> {
+    /// Applies the shared mutable callback to both inputs while holding its
+    /// mutex.
+    ///
+    /// Calls through clones are serialized. The callback runs under the lock,
+    /// so synchronously re-entering this transformer from the callback
+    /// deadlocks. If the callback panics, mutations already performed are
+    /// retained and the mutex is not poisoned.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - The first input value consumed by the callback.
+    /// * `second` - The second input value consumed by the callback.
+    ///
+    /// # Returns
+    ///
+    /// The value returned by the callback.
     #[inline]
     fn apply(&mut self, first: T, second: U) -> R {
         let mut func = self.function.lock();

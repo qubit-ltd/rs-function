@@ -61,7 +61,9 @@ use super::Transformer;
 /// let op = create_incrementer();
 /// assert_eq!(op.apply(41), 42);
 /// ```
-pub trait UnaryOperator<T>: Transformer<T, T> {}
+pub trait UnaryOperator<T>: Transformer<T, T> {
+    // empty
+}
 
 /// Blanket implementation of UnaryOperator for all Transformer<T, T>
 ///

@@ -80,6 +80,18 @@ impl_transformer_constant_method!(stateful BoxStatefulBiTransformer<T, U, R>);
 impl_transformer_debug_display!(BoxStatefulBiTransformer<T, U, R>);
 
 impl<T, U, R> StatefulBiTransformer<T, U, R> for BoxStatefulBiTransformer<T, U, R> {
+    /// Calls the stored callback with both owned inputs and returns its result.
+    ///
+    /// The callback may update its captured state during this call.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - The first input value, moved into the callback.
+    /// * `second` - The second input value, moved into the callback.
+    ///
+    /// # Returns
+    ///
+    /// The value produced by the callback.
     #[inline(always)]
     fn apply(&mut self, first: T, second: U) -> R {
         (self.function)(first, second)

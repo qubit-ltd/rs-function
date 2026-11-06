@@ -56,6 +56,11 @@ impl<E> LocalBoxRunnable<E> {
     /// This adapts `Supplier<Result<(), E>>` to `Runnable<E>` without requiring
     /// the supplier to be `Send`.
     ///
+    /// # Type Parameters
+    ///
+    /// * `S` - A reusable supplier that produces the runnable's result and is
+    ///   valid for the lifetime of the stored callback.
+    ///
     /// # Parameters
     ///
     /// * `supplier` - The supplier that produces the runnable result.
@@ -76,6 +81,7 @@ impl<E> LocalBoxRunnable<E> {
     /// # Returns
     ///
     /// Returns `Some(name)` when a name is set, or `None` otherwise.
+    #[must_use]
     #[inline(always)]
     pub fn name(&self) -> Option<&str> {
         self.metadata.name()
@@ -116,6 +122,10 @@ impl<E> LocalBoxRunnable<E> {
     ///
     /// The next runnable is skipped if this runnable returns `Err`.
     ///
+    /// # Type Parameters
+    ///
+    /// * `N` - The reusable runnable to execute after this one succeeds.
+    ///
     /// # Parameters
     ///
     /// * `next` - The runnable to execute after this runnable succeeds.
@@ -139,6 +149,11 @@ impl<E> LocalBoxRunnable<E> {
     /// Runs this runnable before a local callable.
     ///
     /// The callable is skipped if this runnable returns `Err`.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `R` - The result type produced by the callable.
+    /// * `C` - The callable to execute after this runnable succeeds.
     ///
     /// # Parameters
     ///

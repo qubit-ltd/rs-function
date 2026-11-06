@@ -104,6 +104,15 @@ impl_box_conditional_consumer!(
 );
 
 impl<T, U> StatefulBiConsumer<T, U> for BoxConditionalStatefulBiConsumer<T, U> {
+    /// Runs the wrapped consumer only when the predicate accepts both inputs.
+    ///
+    /// A successful predicate check may update the callback's captured state;
+    /// rejected inputs leave that callback state unchanged.
+    ///
+    /// # Parameters
+    ///
+    /// - `first`: Shared reference to the first input value.
+    /// - `second`: Shared reference to the second input value.
     fn accept(&mut self, first: &T, second: &U) {
         if self.predicate.test(first, second) {
             self.consumer.accept(first, second);

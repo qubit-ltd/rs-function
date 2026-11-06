@@ -19,6 +19,11 @@ use crate::tasks::runnable_with::RunnableWith;
 /// The erased callback representation used by this implementation.
 /// It is shared through `Rc` and dynamically mutably borrowed through
 /// `RefCell` when invoked.
+///
+/// # Type Parameters
+///
+/// * `T` - The mutable input type accepted by the callback.
+/// * `E` - The error type returned by the callback.
 type RcRunnableWithFn<T, E> = Rc<RefCell<dyn FnMut(&mut T) -> Result<(), E>>>;
 
 /// A single-threaded runnable that shares a mutable callback between clones.
@@ -59,6 +64,9 @@ pub struct RcRunnableWith<T, E> {
 }
 
 impl<T, E> Clone for RcRunnableWith<T, E> {
+    /// Clones the wrapper while retaining shared callback and metadata state.
+    ///
+    /// The cloned wrapper observes mutations made through either clone.
     #[inline]
     fn clone(&self) -> Self {
         Self {
@@ -81,6 +89,10 @@ impl<T, E> RcRunnableWith<T, E> {
 
 impl<T, E> RunnableWith<T, E> for RcRunnableWith<T, E> {
     /// Executes the shared runnable with mutable input.
+    ///
+    /// # Parameters
+    ///
+    /// * `input` - Mutable input passed to the shared callback.
     #[inline]
     fn run_with(&mut self, input: &mut T) -> Result<(), E> {
         let mut function = self.function.borrow_mut();

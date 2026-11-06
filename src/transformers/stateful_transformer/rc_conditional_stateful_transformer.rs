@@ -78,6 +78,10 @@ impl<T, R> RcConditionalStatefulTransformer<T, R> {
     /// # Returns
     ///
     /// A shared stateful transformer that applies the selected branch.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `F` - The stateful transformer used for the else branch.
     pub fn or_else<F>(&self, else_transformer: F) -> RcStatefulTransformer<T, R>
     where
         T: 'static,

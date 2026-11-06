@@ -99,6 +99,16 @@ impl_box_conditional_consumer!(BoxConditionalConsumer<T>, BoxConsumer, Consumer)
 
 // Consumer trait implementation
 impl<T> Consumer<T> for BoxConditionalConsumer<T> {
+    /// Runs the wrapped consumer only when the predicate accepts `value`.
+    ///
+    /// The input and wrapper are both borrowed immutably. The callback may
+    /// still perform side effects through interior mutability or external
+    /// state.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - Input inspected by the predicate and, when accepted, passed
+    ///   to the wrapped consumer.
     fn accept(&self, value: &T) {
         if self.predicate.test(value) {
             self.consumer.accept(value);

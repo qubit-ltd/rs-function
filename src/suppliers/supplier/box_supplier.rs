@@ -92,6 +92,9 @@ impl<T> BoxSupplier<T> {
 impl_supplier_debug_display!(BoxSupplier<T>);
 
 impl<T> Supplier<T> for BoxSupplier<T> {
+    /// Invokes the boxed callback through a shared reference and returns its
+    /// generated value. The callback may perform interior mutation or other
+    /// side effects; this wrapper adds no synchronization around invocation.
     #[inline(always)]
     fn get(&self) -> T {
         (self.function)()

@@ -130,6 +130,20 @@ impl<T, R> BoxMutatingFunctionOnce<T, R> {
 }
 
 impl<T, R> MutatingFunctionOnce<T, R> for BoxMutatingFunctionOnce<T, R> {
+    /// Invokes the owned callback once with the mutable input.
+    ///
+    /// This forwarding implementation consumes the wrapper, allowing the
+    /// callback to move captured values while it mutates `input` and produces
+    /// its result.
+    ///
+    /// # Parameters
+    ///
+    /// * `input` - The value passed mutably to the callback.
+    ///
+    /// # Returns
+    ///
+    /// The result returned by the callback after it has had the opportunity
+    /// to mutate `input`.
     #[inline(always)]
     fn apply(self, input: &mut T) -> R {
         (self.function)(input)

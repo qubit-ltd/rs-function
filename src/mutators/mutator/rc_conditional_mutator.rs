@@ -76,6 +76,15 @@ impl_shared_conditional_mutator!(
 );
 
 impl<T> Mutator<T> for RcConditionalMutator<T> {
+    /// Applies the wrapped mutator only when the predicate accepts `value`.
+    ///
+    /// The predicate examines the value before the wrapped mutator runs. If it
+    /// returns `false`, the wrapped mutator is not invoked.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - The mutable value checked by the predicate and conditionally
+    ///   changed by the wrapped mutator.
     fn apply(&self, value: &mut T) {
         if self.predicate.test(value) {
             self.mutator.apply(value);

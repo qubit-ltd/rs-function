@@ -84,6 +84,14 @@ impl_shared_conditional_mutator!(
 );
 
 impl<T> StatefulMutator<T> for ArcConditionalStatefulMutator<T> {
+    /// Applies the wrapped mutator only when the predicate accepts `value`.
+    ///
+    /// The predicate is evaluated first for each call. If it returns `false`,
+    /// the value and the wrapped mutator's captured state remain unchanged.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - The value tested by the predicate and conditionally mutated.
     fn apply(&mut self, value: &mut T) {
         if self.predicate.test(value) {
             self.mutator.apply(value);

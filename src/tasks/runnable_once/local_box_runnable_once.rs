@@ -60,6 +60,11 @@ impl<E> LocalBoxRunnableOnce<E> {
     /// This is an explicit bridge from `SupplierOnce<Result<(), E>>` to
     /// `RunnableOnce<E>` without requiring `Send`.
     ///
+    /// # Type Parameters
+    ///
+    /// * `S` - The one-time supplier type that produces the runnable result.
+    /// * `E` - The error type produced by the supplier and runnable.
+    ///
     /// # Parameters
     ///
     /// * `supplier` - The supplier that produces the runnable result.
@@ -80,6 +85,11 @@ impl<E> LocalBoxRunnableOnce<E> {
     /// Chains another runnable after this runnable succeeds.
     ///
     /// The second runnable is not executed if this runnable returns `Err`.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `N` - The runnable to execute after this runnable succeeds.
+    /// * `E` - The error type shared by both runnables.
     ///
     /// # Parameters
     ///
@@ -106,6 +116,12 @@ impl<E> LocalBoxRunnableOnce<E> {
     /// The callable is not executed if this runnable returns `Err`.
     /// Because this operation sequences two independent callbacks, the
     /// returned callable is unnamed.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `R` - The result type produced by the callable.
+    /// * `C` - The callable to execute after this runnable succeeds.
+    /// * `E` - The error type shared by both computations.
     ///
     /// # Parameters
     ///

@@ -13,4 +13,9 @@
 /// be shared across threads. It receives immutable borrows of both inputs;
 /// any mutation or external effects must come from the callback's captured
 /// state or other shared resources.
+///
+/// # Type Parameters
+///
+/// * `T` - The type of the first input, borrowed immutably by the callback.
+/// * `U` - The type of the second input, borrowed immutably by the callback.
 pub(in crate::consumers::bi_consumer) type ThreadSafeBiConsumerFn<T, U> = dyn Fn(&T, &U) + Send + Sync;

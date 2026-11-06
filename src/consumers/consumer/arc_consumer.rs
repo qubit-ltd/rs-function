@@ -85,6 +85,15 @@ impl<T> ArcConsumer<T> {
 }
 
 impl<T> Consumer<T> for ArcConsumer<T> {
+    /// Invokes the shared callback with a borrowed input value.
+    ///
+    /// The call is synchronous and does not grant mutable access to the input
+    /// or wrapper. The callback may still mutate captured state or perform
+    /// other side effects.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - The value reference passed to the wrapped callback.
     #[inline(always)]
     fn accept(&self, value: &T) {
         (self.function)(value)

@@ -73,6 +73,10 @@ impl<E> RcRunnable<E> {
 
     /// Creates a shared runnable from a reusable supplier.
     ///
+    /// # Type Parameters
+    ///
+    /// * `S` - The supplier type that produces the runnable result.
+    ///
     /// # Parameters
     ///
     /// * `supplier` - The supplier that produces the runnable result.

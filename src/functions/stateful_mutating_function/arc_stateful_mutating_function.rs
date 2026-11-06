@@ -190,6 +190,16 @@ impl_function_identity_method!(ArcStatefulMutatingFunction<T, T>, mutating, Stat
 // Implement StatefulMutatingFunction trait for ArcStatefulMutatingFunction<T,
 // R>
 impl<T, R> StatefulMutatingFunction<T, R> for ArcStatefulMutatingFunction<T, R> {
+    /// Locks the shared callback, applies it to `t`, and returns its result.
+    ///
+    /// The lock is held while the callback runs, so synchronous re-entry
+    /// through a clone of this wrapper deadlocks. A panic releases the lock
+    /// without poisoning it; mutations completed before the panic remain.
+    ///
+    /// # Parameters
+    ///
+    /// - `t`: The mutable input passed to the shared callback. The callback may
+    ///   modify it before returning.
     #[inline]
     fn apply(&mut self, t: &mut T) -> R {
         let mut function = self.function.lock();

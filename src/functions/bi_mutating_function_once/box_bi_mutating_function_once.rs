@@ -17,6 +17,12 @@ use crate::functions::macros::impl_function_debug_display;
 use crate::macros::impl_closure_once_trait;
 
 /// The erased callback representation used by this implementation.
+///
+/// # Type Parameters
+///
+/// * `T` - Type of the first mutable input borrowed by the callback.
+/// * `U` - Type of the second mutable input borrowed by the callback.
+/// * `R` - Type of the value returned by the callback.
 type BoxBiMutatingFunctionOnceFn<T, U, R> = Box<dyn FnOnce(&mut T, &mut U) -> R>;
 
 // ============================================================================
@@ -90,6 +96,10 @@ impl<T, U, R> BoxBiMutatingFunctionOnce<T, U, R> {
     /// The value is moved into the function and returned by ownership, so `R`
     /// does not need to implement `Clone`. The mutable inputs are not changed.
     ///
+    /// # Parameters
+    ///
+    /// * `value` - Value returned by the function when it is invoked.
+    ///
     /// # Examples
     ///
     /// ```rust
@@ -112,6 +122,16 @@ impl<T, U, R> BoxBiMutatingFunctionOnce<T, U, R> {
 
 // Implement BiMutatingFunctionOnce trait for BoxBiMutatingFunctionOnce
 impl<T, U, R> BiMutatingFunctionOnce<T, U, R> for BoxBiMutatingFunctionOnce<T, U, R> {
+    /// Invokes the stored callback once with exclusive access to both inputs.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - First input, which the callback may modify.
+    /// * `second` - Second input, which the callback may modify.
+    ///
+    /// # Returns
+    ///
+    /// The value produced by the callback after it mutates the inputs.
     #[inline(always)]
     fn apply(self, first: &mut T, second: &mut U) -> R {
         (self.function)(first, second)

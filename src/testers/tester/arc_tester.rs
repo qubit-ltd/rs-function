@@ -440,6 +440,7 @@ impl ArcTester {
 }
 
 impl Not for ArcTester {
+    /// The owned negation is represented by another shared `ArcTester`.
     type Output = ArcTester;
 
     /// Returns a tester that negates the result of this tester.
@@ -459,6 +460,7 @@ impl Not for ArcTester {
 }
 
 impl Not for &ArcTester {
+    /// Negating a borrowed tester produces an owned shared `ArcTester`.
     type Output = ArcTester;
 
     /// Returns a tester that negates the result of the borrowed tester.

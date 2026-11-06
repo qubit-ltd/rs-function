@@ -86,6 +86,16 @@ impl_transformer_clone!(RcTransformer<T, R>);
 
 // Implement Transformer for RcTransformer
 impl<T, R> Transformer<T, R> for RcTransformer<T, R> {
+    /// Invokes the shared callback with the owned input and returns its output.
+    ///
+    /// # Parameters
+    ///
+    /// * `input` - The value passed by ownership to the wrapped callback.
+    ///
+    /// # Returns
+    ///
+    /// The output produced by the callback. Any panic raised by the callback
+    /// propagates to the caller.
     #[inline(always)]
     fn apply(&self, input: T) -> R {
         (self.function)(input)

@@ -19,6 +19,11 @@ use crate::consumers::macros::impl_consumer_debug_display;
 use crate::consumers::macros::impl_shared_consumer_methods;
 
 /// The erased callback representation used by this implementation.
+///
+/// # Type Parameters
+///
+/// - `T` is the type of the first shared input passed to the callback.
+/// - `U` is the type of the second shared input passed to the callback.
 type RcStatefulBiConsumerFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U)>>;
 
 // =======================================================================
@@ -73,6 +78,11 @@ type RcStatefulBiConsumerFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U)>>;
 /// Each call holds a mutable `RefCell` borrow while the user callback runs.
 /// Synchronous re-entry through the same shared wrapper panics with a borrow
 /// error. Mutations completed before a panic are not rolled back.
+///
+/// # Type Parameters
+///
+/// - `T` is the type of the first value passed by shared reference.
+/// - `U` is the type of the second value passed by shared reference.
 #[must_use = "callback wrappers do nothing unless stored or invoked"]
 pub struct RcStatefulBiConsumer<T, U> {
     /// The wrapped callback implementation.
@@ -100,6 +110,16 @@ impl<T, U> RcStatefulBiConsumer<T, U> {
 }
 
 impl<T, U> StatefulBiConsumer<T, U> for RcStatefulBiConsumer<T, U> {
+    /// Invokes the shared mutable callback with both inputs.
+    ///
+    /// The callback is mutably borrowed for the duration of the call. A
+    /// synchronous reentrant call through shared state panics if that borrow
+    /// is still active.
+    ///
+    /// # Parameters
+    ///
+    /// - `first` is the first input supplied to the callback.
+    /// - `second` is the second input supplied to the callback.
     #[inline]
     fn accept(&mut self, first: &T, second: &U) {
         let mut function = self.function.borrow_mut();

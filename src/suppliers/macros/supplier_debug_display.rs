@@ -61,6 +61,20 @@ macro_rules! impl_supplier_debug_display {
     // Single generic parameter
     ($struct_name:ident < $t:ident >) => {
         impl<$t> std::fmt::Debug for $struct_name<$t> {
+            /// Formats the supplier's diagnostic name and a placeholder for its
+            /// callback.
+            ///
+            /// # Parameters
+            ///
+            /// * `f` - The formatter that receives the debug representation.
+            ///
+            /// # Returns
+            ///
+            /// Returns `Ok(())` after writing the representation.
+            ///
+            /// # Errors
+            ///
+            /// Returns an error if writing to the formatter fails.
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 f.debug_struct(stringify!($struct_name))
                     .field("name", &self.metadata.name())
@@ -70,6 +84,19 @@ macro_rules! impl_supplier_debug_display {
         }
 
         impl<$t> std::fmt::Display for $struct_name<$t> {
+            /// Formats the supplier's type name and optional diagnostic name.
+            ///
+            /// # Parameters
+            ///
+            /// * `f` - The formatter that receives the display representation.
+            ///
+            /// # Returns
+            ///
+            /// Returns `Ok(())` after writing the representation.
+            ///
+            /// # Errors
+            ///
+            /// Returns an error if writing to the formatter fails.
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 match self.metadata.name() {
                     Some(name) => {

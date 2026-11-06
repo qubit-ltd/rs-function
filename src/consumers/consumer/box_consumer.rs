@@ -78,6 +78,14 @@ impl<T> BoxConsumer<T> {
 }
 
 impl<T> Consumer<T> for BoxConsumer<T> {
+    /// Invokes the owned callback with a shared reference to `value`.
+    ///
+    /// The wrapper and input remain immutably borrowed for the call. The
+    /// callback may still perform interior-mutability or external side effects.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - The input value passed by shared reference to the callback.
     #[inline(always)]
     fn accept(&self, value: &T) {
         (self.function)(value)

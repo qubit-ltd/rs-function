@@ -80,6 +80,19 @@ impl_transformer_debug_display!(BoxTransformer<T, R>);
 
 // Implement Transformer for BoxTransformer
 impl<T, R> Transformer<T, R> for BoxTransformer<T, R> {
+    /// Applies the wrapped callback to an owned input value.
+    ///
+    /// The callback is invoked through a shared reference, so this wrapper can
+    /// be reused for multiple inputs. Any panic or side effect from the
+    /// callback is propagated unchanged.
+    ///
+    /// # Parameters
+    ///
+    /// * `input` - The value consumed by the callback.
+    ///
+    /// # Returns
+    ///
+    /// The value returned by the wrapped callback.
     #[inline(always)]
     fn apply(&self, input: T) -> R {
         (self.function)(input)

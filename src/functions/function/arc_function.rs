@@ -93,6 +93,20 @@ impl_function_debug_display!(ArcFunction<T, R>);
 
 // Implement Function trait for ArcFunction<T, R>
 impl<T, R> Function<T, R> for ArcFunction<T, R> {
+    /// Invokes the shared callback with a borrow of the supplied input.
+    ///
+    /// The callback is retained in an `Arc` and may be invoked repeatedly or
+    /// concurrently when its captured state satisfies the `Send + Sync`
+    /// bounds. Any panic from the callback propagates to the caller.
+    ///
+    /// # Parameters
+    ///
+    /// * `t` - Input borrowed for the duration of this invocation.
+    ///
+    /// # Returns
+    ///
+    /// The value produced by the callback; the value is returned directly
+    /// without additional wrapping or conversion.
     #[inline(always)]
     fn apply(&self, t: &T) -> R {
         (self.function)(t)

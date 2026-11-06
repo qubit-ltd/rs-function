@@ -78,6 +78,15 @@ impl_shared_conditional_consumer!(
 );
 
 impl<T> StatefulConsumer<T> for RcConditionalStatefulConsumer<T> {
+    /// Runs the shared callback only when the shared predicate accepts `value`.
+    ///
+    /// The input is borrowed for the call, while callback state is mutated
+    /// through the shared single-threaded consumer wrapper.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - Input passed to the predicate and, when accepted, the
+    ///   callback.
     fn accept(&mut self, value: &T) {
         if self.predicate.test(value) {
             self.consumer.accept(value);

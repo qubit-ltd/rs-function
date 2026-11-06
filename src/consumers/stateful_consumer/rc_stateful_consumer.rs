@@ -19,6 +19,10 @@ use crate::consumers::macros::impl_consumer_debug_display;
 use crate::consumers::macros::impl_shared_consumer_methods;
 
 /// The erased callback representation used by this implementation.
+///
+/// # Type Parameters
+///
+/// * `T` - The input type borrowed by the stored callback.
 type RcStatefulConsumerFn<T> = Rc<RefCell<dyn FnMut(&T)>>;
 
 // ============================================================================
@@ -100,6 +104,15 @@ impl<T> RcStatefulConsumer<T> {
 }
 
 impl<T> StatefulConsumer<T> for RcStatefulConsumer<T> {
+    /// Invokes the shared callback with the borrowed input.
+    ///
+    /// The callback is mutably borrowed for the duration of the call. A
+    /// synchronous re-entry through the same wrapper panics because
+    /// `RefCell` cannot grant a second mutable borrow.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - The input passed to the callback by shared reference.
     #[inline]
     fn accept(&mut self, value: &T) {
         let mut function = self.function.borrow_mut();

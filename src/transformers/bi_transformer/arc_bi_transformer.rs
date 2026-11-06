@@ -87,6 +87,20 @@ impl_transformer_clone!(ArcBiTransformer<T, U, R>);
 
 // Implement BiTransformer trait for ArcBiTransformer
 impl<T, U, R> BiTransformer<T, U, R> for ArcBiTransformer<T, U, R> {
+    /// Invokes the shared callback with both owned input values.
+    ///
+    /// This forwards each call to the wrapped `Fn(T, U) -> R`; the callback
+    /// is shared through `Arc` and must satisfy the wrapper's thread-safety
+    /// bounds. Both inputs are consumed and the callback's output is returned.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - The first input value, consumed by the callback.
+    /// * `second` - The second input value, consumed by the callback.
+    ///
+    /// # Returns
+    ///
+    /// The value produced by the wrapped callback.
     #[inline(always)]
     fn apply(&self, first: T, second: U) -> R {
         (self.function)(first, second)

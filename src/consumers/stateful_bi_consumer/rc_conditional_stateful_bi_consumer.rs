@@ -78,6 +78,19 @@ impl_shared_conditional_consumer!(
 );
 
 impl<T, U> StatefulBiConsumer<T, U> for RcConditionalStatefulBiConsumer<T, U> {
+    /// Runs the wrapped callback only when its predicate accepts both inputs.
+    ///
+    /// The predicate and callback receive shared references, so mutation of
+    /// either input requires interior mutability. The shared callback wrapper
+    /// also enforces its `RefCell` borrowing rules during invocation.
+    ///
+    /// # Parameters
+    ///
+    /// - `first`: Shared reference to the first value passed to the predicate
+    ///   and consumer.
+    /// - `second`: Shared reference to the second value passed to the predicate
+    ///   and consumer.
+    #[inline]
     fn accept(&mut self, first: &T, second: &U) {
         if self.predicate.test(first, second) {
             self.consumer.accept(first, second);

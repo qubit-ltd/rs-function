@@ -90,6 +90,18 @@ impl_transformer_clone!(ArcTransformer<T, R>);
 
 // Implement Transformer for ArcTransformer
 impl<T, R> Transformer<T, R> for ArcTransformer<T, R> {
+    /// Invokes the shared callback with an owned input and returns its output.
+    ///
+    /// The callback is stored in an `Arc` and is callable through a shared
+    /// reference; its captured state must therefore support concurrent calls.
+    ///
+    /// # Parameters
+    ///
+    /// * `input` - The owned value passed to the callback.
+    ///
+    /// # Returns
+    ///
+    /// The value returned by the callback.
     #[inline(always)]
     fn apply(&self, input: T) -> R {
         (self.function)(input)

@@ -99,6 +99,19 @@ impl_shared_conditional_consumer!(
 
 // Hand-written Consumer trait implementation
 impl<T> Consumer<T> for ArcConditionalConsumer<T> {
+    /// Tests the predicate before forwarding the borrowed input to the wrapped
+    /// consumer.
+    ///
+    /// The wrapped consumer is called only when the predicate returns `true`;
+    /// otherwise this method has no callback side effect. Both callbacks are
+    /// invoked through shared references, so any mutation must use interior
+    /// mutability or external state.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - Input borrowed by the predicate and, when it accepts the
+    ///   input, by the wrapped consumer. The input is never moved or mutated
+    ///   through this reference.
     fn accept(&self, value: &T) {
         if self.predicate.test(value) {
             self.consumer.accept(value);

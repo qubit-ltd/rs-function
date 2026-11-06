@@ -72,7 +72,15 @@ pub struct RcStatefulFunction<T, R> {
     pub(super) metadata: crate::internal::CallbackMetadata,
 }
 
-/// The erased callback representation used by this implementation.
+/// Stores the mutable callback behind shared, single-threaded ownership.
+///
+/// The callback is invoked while a mutable `RefCell` borrow is held, so
+/// synchronous re-entry through another clone panics with a borrow error.
+///
+/// # Type Parameters
+///
+/// * `T` - The borrowed input type accepted by the callback.
+/// * `R` - The output type returned by each callback invocation.
 type RcStatefulFn<T, R> = Rc<RefCell<dyn FnMut(&T) -> R>>;
 
 impl<T, R> RcStatefulFunction<T, R> {
@@ -109,6 +117,20 @@ impl_function_debug_display!(RcStatefulFunction<T, R>);
 
 // Implement StatefulFunction trait for RcStatefulFunction<T, R>
 impl<T, R> StatefulFunction<T, R> for RcStatefulFunction<T, R> {
+    /// Invokes the shared callback with a mutable borrow of its `RefCell`.
+    ///
+    /// # Parameters
+    ///
+    /// * `t` - The borrowed input passed to the callback.
+    ///
+    /// # Returns
+    ///
+    /// The value returned by the callback.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the callback re-enters this wrapper or another clone while
+    /// the mutable `RefCell` borrow is active.
     #[inline]
     fn apply(&mut self, t: &T) -> R {
         let mut function = self.function.borrow_mut();

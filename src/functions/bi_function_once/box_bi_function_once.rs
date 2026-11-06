@@ -19,6 +19,12 @@ use crate::macros::impl_closure_once_trait;
 /// The erased callback representation used by this implementation.
 ///
 /// The callback borrows both inputs and can be invoked only once.
+///
+/// # Type Parameters
+///
+/// * `T` - The type of the first borrowed input.
+/// * `U` - The type of the second borrowed input.
+/// * `R` - The output type produced by the callback.
 type BoxBiFunctionOnceFn<T, U, R> = Box<dyn FnOnce(&T, &U) -> R>;
 
 // ============================================================================
@@ -66,25 +72,20 @@ pub struct BoxBiFunctionOnce<T, U, R> {
 
 // Implement BoxBiFunctionOnce
 impl<T, U, R> BoxBiFunctionOnce<T, U, R> {
-    // Generate new(), new_with_name(), new_with_optional_name(), name(),
-    // set_name()
-    impl_function_common_methods!(
-        BoxBiFunctionOnce<T, U, R>,
-        (FnOnce(&T, &U) -> R + 'static),
-        |f| Box::new(f)
-    );
-
-    // Generate when(), and_then()
-    impl_box_function_methods!(
-        BoxBiFunctionOnce<T, U, R>,
-        BoxConditionalBiFunctionOnce,
-        FunctionOnce
-    );
-
     /// Creates a function that returns the captured value when called.
     ///
     /// The value is moved into the function and returned by ownership, so `R`
-    /// does not need to implement `Clone`.
+    /// does not need to implement `Clone`; storing the callback requires
+    /// `R: 'static`.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - The value returned by the function when it is invoked.
+    ///
+    /// # Returns
+    ///
+    /// A one-time function that returns the captured value for either pair of
+    /// input references.
     ///
     /// # Examples
     ///
@@ -103,8 +104,35 @@ impl<T, U, R> BoxBiFunctionOnce<T, U, R> {
     }
 }
 
+impl<T, U, R> BoxBiFunctionOnce<T, U, R> {
+    // Generate new(), new_with_name(), new_with_optional_name(), name(),
+    // set_name()
+    impl_function_common_methods!(
+        BoxBiFunctionOnce<T, U, R>,
+        (FnOnce(&T, &U) -> R + 'static),
+        |f| Box::new(f)
+    );
+
+    // Generate when(), and_then()
+    impl_box_function_methods!(
+        BoxBiFunctionOnce<T, U, R>,
+        BoxConditionalBiFunctionOnce,
+        FunctionOnce
+    );
+}
+
 // Implement BiFunctionOnce trait for BoxBiFunctionOnce
 impl<T, U, R> BiFunctionOnce<T, U, R> for BoxBiFunctionOnce<T, U, R> {
+    /// Applies the wrapped callback to both borrowed inputs and consumes it.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - Shared reference to the first input value.
+    /// * `second` - Shared reference to the second input value.
+    ///
+    /// # Returns
+    ///
+    /// The value produced by the wrapped callback.
     #[inline(always)]
     fn apply(self, first: &T, second: &U) -> R {
         (self.function)(first, second)

@@ -81,6 +81,16 @@ impl<T> BoxStatefulConsumer<T> {
 }
 
 impl<T> StatefulConsumer<T> for BoxStatefulConsumer<T> {
+    /// Invokes the boxed callback with a shared borrow of `value`.
+    ///
+    /// The callback may update its captured state through `FnMut`; it cannot
+    /// directly mutate the input, though it may use interior mutability.
+    ///
+    /// # Parameters
+    ///
+    /// * `self` — mutable access to the consumer permits its callback state to
+    ///   change.
+    /// * `value` — input borrowed immutably for the duration of the callback.
     #[inline(always)]
     fn accept(&mut self, value: &T) {
         (self.function)(value)

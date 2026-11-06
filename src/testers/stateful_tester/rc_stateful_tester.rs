@@ -213,6 +213,7 @@ impl Clone for RcStatefulTester {
 }
 
 impl Not for RcStatefulTester {
+    /// The shared tester wrapper produced by negation.
     type Output = RcStatefulTester;
 
     /// Creates a tester that negates this tester and takes ownership of it.
@@ -231,6 +232,7 @@ impl Not for RcStatefulTester {
 }
 
 impl Not for &RcStatefulTester {
+    /// The shared tester wrapper produced by negation.
     type Output = RcStatefulTester;
 
     /// Creates a negated tester while retaining the original wrapper.
@@ -258,6 +260,15 @@ impl StatefulTester for RcStatefulTester {
 
 impl fmt::Debug for RcStatefulTester {
     /// Formats the tester using its optional diagnostic name.
+    ///
+    /// # Parameters
+    ///
+    /// * `formatter` - The destination formatter receiving the debug structure.
+    ///
+    /// # Returns
+    ///
+    /// `Ok(())` when formatting succeeds, or the formatter's error if writing
+    /// fails.
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         formatter
             .debug_struct("RcStatefulTester")
@@ -268,6 +279,15 @@ impl fmt::Debug for RcStatefulTester {
 
 impl fmt::Display for RcStatefulTester {
     /// Displays the tester type and its optional diagnostic name.
+    ///
+    /// # Parameters
+    ///
+    /// * `formatter` - The destination formatter receiving the display text.
+    ///
+    /// # Returns
+    ///
+    /// `Ok(())` when formatting succeeds, or the formatter's error if writing
+    /// fails.
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.metadata.name() {
             Some(name) => write!(formatter, "RcStatefulTester({name})"),

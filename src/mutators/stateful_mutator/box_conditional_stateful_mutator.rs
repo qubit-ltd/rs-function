@@ -96,6 +96,14 @@ pub struct BoxConditionalStatefulMutator<T> {
 impl_box_conditional_mutator!(BoxConditionalStatefulMutator<T>, BoxStatefulMutator, StatefulMutator);
 
 impl<T> StatefulMutator<T> for BoxConditionalStatefulMutator<T> {
+    /// Applies the wrapped mutator only when the predicate accepts `value`.
+    ///
+    /// The predicate observes the value before mutation; if it returns `false`,
+    /// neither the value nor the wrapped mutator's captured state is changed.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - The value the predicate inspects and the mutator may change.
     fn apply(&mut self, value: &mut T) {
         if self.predicate.test(value) {
             self.mutator.apply(value);

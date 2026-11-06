@@ -90,6 +90,15 @@ impl<T, U> BoxBiConsumer<T, U> {
 }
 
 impl<T, U> BiConsumer<T, U> for BoxBiConsumer<T, U> {
+    /// Invokes the stored callback with shared references to both values.
+    ///
+    /// The callback is called through `&self`, so the wrapper remains
+    /// available for subsequent invocations.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - First input value passed to the stored callback.
+    /// * `second` - Second input value passed to the stored callback.
     #[inline(always)]
     fn accept(&self, first: &T, second: &U) {
         (self.function)(first, second)

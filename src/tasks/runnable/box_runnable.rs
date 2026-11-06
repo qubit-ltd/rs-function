@@ -60,6 +60,10 @@ impl<E> BoxRunnable<E> {
     /// This is an explicit bridge from `Supplier<Result<(), E>>` to
     /// `Runnable<E>`.
     ///
+    /// # Type Parameters
+    ///
+    /// * `S` - The supplier type that produces the runnable result.
+    ///
     /// # Parameters
     ///
     /// * `supplier` - The supplier that produces the runnable result.
@@ -80,6 +84,10 @@ impl<E> BoxRunnable<E> {
     /// Chains another runnable after this runnable succeeds.
     ///
     /// The second runnable is not executed if this runnable returns `Err`.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `N` - The runnable type to execute after this runnable succeeds.
     ///
     /// # Parameters
     ///
@@ -107,6 +115,11 @@ impl<E> BoxRunnable<E> {
     /// The callable is not executed if this runnable returns `Err`.
     /// Because this operation sequences two independent callbacks, the
     /// returned callable is unnamed.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `R` - The success value produced by the callable.
+    /// * `C` - The callable type to execute after this runnable succeeds.
     ///
     /// # Parameters
     ///

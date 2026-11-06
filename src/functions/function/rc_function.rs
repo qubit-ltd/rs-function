@@ -93,6 +93,16 @@ impl_function_debug_display!(RcFunction<T, R>);
 
 // Implement Function trait for RcFunction<T, R>
 impl<T, R> Function<T, R> for RcFunction<T, R> {
+    /// Invokes the shared callback with a borrow of the input and returns its
+    /// output.
+    ///
+    /// # Parameters
+    ///
+    /// * `t` - The input value borrowed for this callback invocation.
+    ///
+    /// # Returns
+    ///
+    /// The value produced by the callback.
     #[inline(always)]
     fn apply(&self, t: &T) -> R {
         (self.function)(t)

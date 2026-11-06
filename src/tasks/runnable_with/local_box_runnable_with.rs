@@ -16,6 +16,11 @@ use crate::tasks::callable_with::LocalBoxCallableWith;
 use crate::tasks::runnable_with::RunnableWith;
 
 /// The erased callback representation used by this implementation.
+///
+/// # Type Parameters
+///
+/// * `T` - The mutable input type accepted by the callback.
+/// * `E` - The error type returned when the callback fails.
 type LocalBoxRunnableWithFn<T, E> = Box<dyn FnMut(&mut T) -> Result<(), E>>;
 
 /// Local box-based runnable with mutable input.
@@ -132,6 +137,18 @@ impl<T, E> LocalBoxRunnableWith<T, E> {
 
 impl<T, E> RunnableWith<T, E> for LocalBoxRunnableWith<T, E> {
     /// Executes the local boxed runnable with mutable input.
+    ///
+    /// # Parameters
+    ///
+    /// * `input` - The mutable input passed to the stored callback.
+    ///
+    /// # Returns
+    ///
+    /// Returns `Ok(())` when the callback succeeds, or its error otherwise.
+    ///
+    /// # Errors
+    ///
+    /// Returns the error produced by the stored callback.
     #[inline(always)]
     fn run_with(&mut self, input: &mut T) -> Result<(), E> {
         (self.function)(input)

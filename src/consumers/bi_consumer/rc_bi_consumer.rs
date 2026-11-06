@@ -95,6 +95,15 @@ impl<T, U> RcBiConsumer<T, U> {
 }
 
 impl<T, U> BiConsumer<T, U> for RcBiConsumer<T, U> {
+    /// Invokes the shared callback with both input values.
+    ///
+    /// The inputs are borrowed for the duration of the call. The wrapper uses
+    /// single-threaded `Rc` ownership and does not add interior mutability.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - First value observed by the callback.
+    /// * `second` - Second value observed by the callback.
     #[inline(always)]
     fn accept(&self, first: &T, second: &U) {
         (self.function)(first, second)

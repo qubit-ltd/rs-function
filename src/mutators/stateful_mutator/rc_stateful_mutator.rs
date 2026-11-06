@@ -27,6 +27,10 @@ use crate::mutators::macros::impl_shared_mutator_methods;
 ///
 /// The callback is not required to be `Send` because `Rc` cannot cross thread
 /// boundaries. `RefCell` provides exclusive access when it is invoked.
+///
+/// # Type Parameters
+///
+/// * `T` - The value that the callback can mutate.
 type RcMutMutatorFn<T> = Rc<RefCell<dyn FnMut(&mut T)>>;
 
 /// Rc-based stateful mutator.
@@ -106,6 +110,15 @@ impl<T> RcStatefulMutator<T> {
 }
 
 impl<T> StatefulMutator<T> for RcStatefulMutator<T> {
+    /// Invokes the shared callback to mutate the input and its captured state.
+    ///
+    /// The callback is called while holding a mutable `RefCell` borrow. A
+    /// reentrant call through the same shared wrapper panics if that borrow is
+    /// still active.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - The input value passed mutably to the callback.
     #[inline]
     fn apply(&mut self, value: &mut T) {
         let mut function = self.function.borrow_mut();

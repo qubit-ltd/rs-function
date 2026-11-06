@@ -219,6 +219,7 @@ impl Clone for ArcStatefulTester {
 }
 
 impl Not for ArcStatefulTester {
+    /// The shared tester produced by applying logical negation.
     type Output = ArcStatefulTester;
 
     /// Creates a tester that negates this tester's result.
@@ -237,6 +238,7 @@ impl Not for ArcStatefulTester {
 }
 
 impl Not for &ArcStatefulTester {
+    /// The shared tester produced by applying logical negation.
     type Output = ArcStatefulTester;
 
     /// Creates a tester that negates this tester's result without consuming it.
@@ -264,6 +266,16 @@ impl StatefulTester for ArcStatefulTester {
 
 impl fmt::Debug for ArcStatefulTester {
     /// Formats the tester using its type name and optional diagnostic name.
+    ///
+    /// # Parameters
+    ///
+    /// * `self` - The tester whose diagnostic representation is formatted.
+    /// * `formatter` - The destination formatter supplied by the formatting
+    ///   framework.
+    ///
+    /// # Returns
+    ///
+    /// `Ok(())` when formatting succeeds, or the formatter's error otherwise.
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         formatter
             .debug_struct("ArcStatefulTester")
@@ -274,6 +286,16 @@ impl fmt::Debug for ArcStatefulTester {
 
 impl fmt::Display for ArcStatefulTester {
     /// Formats the tester using its type name and optional diagnostic name.
+    ///
+    /// # Parameters
+    ///
+    /// * `self` - The tester whose display representation is formatted.
+    /// * `formatter` - The destination formatter supplied by the formatting
+    ///   framework.
+    ///
+    /// # Returns
+    ///
+    /// `Ok(())` when formatting succeeds, or the formatter's error otherwise.
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.metadata.name() {
             Some(name) => write!(formatter, "ArcStatefulTester({name})"),

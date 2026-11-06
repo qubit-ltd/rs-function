@@ -80,6 +80,11 @@ impl_shared_conditional_consumer!(
 // Hand-written BiConsumer trait implementation
 impl<T, U> BiConsumer<T, U> for RcConditionalBiConsumer<T, U> {
     /// Invokes the wrapped callback when the predicate accepts both inputs.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - First input value to test and pass to the callback.
+    /// * `second` - Second input value to test and pass to the callback.
     fn accept(&self, first: &T, second: &U) {
         if self.predicate.test(first, second) {
             self.consumer.accept(first, second);

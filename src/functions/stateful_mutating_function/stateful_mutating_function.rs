@@ -137,6 +137,14 @@ where
     F: FnMut(&mut T) -> R,
 {
     /// Forwards the mutable input to the closure and returns its result.
+    ///
+    /// # Parameters
+    ///
+    /// * `t` - The mutable input forwarded to the closure.
+    ///
+    /// # Returns
+    ///
+    /// The result produced by the closure.
     #[inline(always)]
     fn apply(&mut self, t: &mut T) -> R {
         self(t)

@@ -88,6 +88,10 @@ impl<T> BoxConsumerOnce<T> {
 
 impl<T> ConsumerOnce<T> for BoxConsumerOnce<T> {
     /// Consumes this wrapper and invokes its callback with `value`.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - The value reference passed unchanged to the owned callback.
     #[inline(always)]
     fn accept(self, value: &T) {
         (self.function)(value)

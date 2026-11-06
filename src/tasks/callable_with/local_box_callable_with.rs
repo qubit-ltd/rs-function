@@ -13,6 +13,12 @@ use crate::macros::impl_common_new_methods;
 use crate::tasks::callable_with::CallableWith;
 
 /// The erased callback representation used by this implementation.
+///
+/// # Type Parameters
+///
+/// * `T` - The mutable input type accepted by the callback.
+/// * `R` - The success value returned by the callback.
+/// * `E` - The error value returned when the callback fails.
 type LocalBoxCallableWithFn<T, R, E> = Box<dyn FnMut(&mut T) -> Result<R, E>>;
 
 /// Local box-based callable with mutable input.
@@ -67,6 +73,11 @@ impl<T, R, E> LocalBoxCallableWith<T, R, E> {
     ///
     /// * `mapper` - Function that transforms the success value.
     ///
+    /// # Type Parameters
+    ///
+    /// * `U` - The mapped success value type.
+    /// * `M` - The callback type that maps successful values.
+    ///
     /// # Returns
     ///
     /// A new local callable with mutable input that maps successful results.
@@ -94,6 +105,11 @@ impl<T, R, E> LocalBoxCallableWith<T, R, E> {
     /// # Parameters
     ///
     /// * `mapper` - Function that transforms the error value.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `E2` - The mapped error value type.
+    /// * `M` - The callback type that maps errors.
     ///
     /// # Returns
     ///
@@ -124,6 +140,11 @@ impl<T, R, E> LocalBoxCallableWith<T, R, E> {
     ///
     /// * `next` - Function receiving the success value and mutable input.
     ///
+    /// # Type Parameters
+    ///
+    /// * `U` - The success value type returned by `next`.
+    /// * `N` - The callback type that performs the next computation.
+    ///
     /// # Returns
     ///
     /// A new local callable that runs `next` only after success.
@@ -150,6 +171,18 @@ impl<T, R, E> LocalBoxCallableWith<T, R, E> {
 
 impl<T, R, E> CallableWith<T, R, E> for LocalBoxCallableWith<T, R, E> {
     /// Executes the local boxed callable with mutable input.
+    ///
+    /// # Parameters
+    ///
+    /// * `input` - Mutable input passed to the wrapped callback.
+    ///
+    /// # Returns
+    ///
+    /// The callback's success value or error.
+    ///
+    /// # Errors
+    ///
+    /// Returns the error produced by the wrapped callback.
     #[inline(always)]
     fn call_with(&mut self, input: &mut T) -> Result<R, E> {
         (self.function)(input)

@@ -19,6 +19,10 @@ use crate::macros::impl_common_name_methods;
 ///
 /// Cloning this handle shares the same callback allocation; the callback
 /// compares borrowed values and returns their ordering.
+///
+/// # Type Parameters
+///
+/// * `T` - The value type accepted by the comparison callback.
 type RcComparatorFn<T> = Rc<dyn Fn(&T, &T) -> Ordering>;
 
 /// An Rc-based single-threaded comparator with shared ownership.
@@ -51,6 +55,14 @@ pub struct RcComparator<T> {
 }
 
 impl<T> Clone for RcComparator<T> {
+    /// Clones the shared callback handle and its diagnostic metadata.
+    ///
+    /// The callback allocation is shared; the comparison behavior is not
+    /// copied or changed.
+    ///
+    /// # Returns
+    ///
+    /// A new handle sharing the same callback and metadata.
     fn clone(&self) -> Self {
         Self {
             function: Rc::clone(&self.function),
@@ -72,6 +84,11 @@ impl<T> RcComparator<T> {
     /// # Returns
     ///
     /// A new `RcComparator` instance.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The value type accepted by the comparator.
+    /// * `F` - A comparator implementation with no non-static borrows.
     ///
     /// # Examples
     ///
@@ -104,6 +121,11 @@ impl<T> RcComparator<T> {
     /// # Returns
     ///
     /// A named `RcComparator` wrapping `source`.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The value type accepted by the comparator.
+    /// * `F` - A comparator implementation with no non-static borrows.
     #[inline]
     pub fn new_with_name<F>(name: &str, source: F) -> Self
     where
@@ -129,6 +151,11 @@ impl<T> RcComparator<T> {
     ///
     /// An `RcComparator` containing the supplied name, or no name when `name`
     /// is `None`.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The value type accepted by the comparator.
+    /// * `F` - A comparator implementation with no non-static borrows.
     #[inline]
     pub fn new_with_optional_name<F>(source: F, name: Option<String>) -> Self
     where
@@ -156,6 +183,12 @@ impl<T> RcComparator<T> {
     /// # Returns
     ///
     /// A new `RcComparator` that compares by the extracted key.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The value type from which keys are extracted.
+    /// * `K` - The ordered key type, which may be unsized.
+    /// * `F` - A non-capturing-borrow key extractor stored for later calls.
     ///
     /// # Examples
     ///
@@ -196,6 +229,11 @@ impl<T> RcComparator<T> {
     /// # Returns
     ///
     /// An `RcComparator` containing `metadata`.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The value type accepted by the comparator.
+    /// * `F` - A comparator implementation with no non-static borrows.
     #[inline]
     pub(crate) fn new_with_metadata<F>(source: F, metadata: CallbackMetadata) -> Self
     where
@@ -253,6 +291,11 @@ impl<T> RcComparator<T> {
     ///
     /// A new `RcComparator` that chains this comparator with another.
     ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The value type accepted by both comparators.
+    /// * `C` - The comparator moved into the result as the tie-breaker.
+    ///
     /// # Examples
     ///
     /// ```rust
@@ -303,6 +346,18 @@ impl<T> RcComparator<T> {
 }
 
 impl<T> Comparator<T> for RcComparator<T> {
+    /// Compares `a` and `b` using the callback stored in this wrapper.
+    ///
+    /// The returned ordering is exactly the callback's result.
+    ///
+    /// # Parameters
+    ///
+    /// * `a` - The first value to compare.
+    /// * `b` - The second value to compare.
+    ///
+    /// # Returns
+    ///
+    /// The ordering returned by the wrapped callback.
     #[inline(always)]
     fn compare(&self, a: &T, b: &T) -> Ordering {
         (self.function)(a, b)
@@ -310,6 +365,15 @@ impl<T> Comparator<T> for RcComparator<T> {
 }
 
 impl<T> fmt::Debug for RcComparator<T> {
+    /// Formats the comparator's diagnostic name without exposing its callback.
+    ///
+    /// # Parameters
+    ///
+    /// * `formatter` - The formatter receiving the debug representation.
+    ///
+    /// # Returns
+    ///
+    /// `Ok(())` when formatting succeeds, or the formatter's error otherwise.
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         formatter
             .debug_struct("RcComparator")
@@ -319,6 +383,15 @@ impl<T> fmt::Debug for RcComparator<T> {
 }
 
 impl<T> fmt::Display for RcComparator<T> {
+    /// Formats the comparator name, or its type label when unnamed.
+    ///
+    /// # Parameters
+    ///
+    /// * `formatter` - The formatter receiving the display representation.
+    ///
+    /// # Returns
+    ///
+    /// `Ok(())` when formatting succeeds, or the formatter's error otherwise.
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.metadata.name() {
             Some(name) => write!(formatter, "RcComparator({name})"),

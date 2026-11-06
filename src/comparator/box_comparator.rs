@@ -15,6 +15,10 @@ use crate::internal::CallbackMetadata;
 use crate::macros::impl_common_name_methods;
 
 /// The erased callback representation used by this implementation.
+///
+/// # Type Parameters
+///
+/// * `T` - The value type accepted by the erased callback.
 type BoxComparatorFn<T> = Box<dyn Fn(&T, &T) -> Ordering>;
 
 /// A boxed comparator with single ownership.
@@ -51,6 +55,12 @@ impl<T> BoxComparator<T> {
     ///
     /// * `source` - The comparator implementation to wrap
     ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The type of values compared.
+    /// * `F` - The comparator implementation; it must be `'static` so it can be
+    ///   stored in the boxed callback.
+    ///
     /// # Returns
     ///
     /// A new `BoxComparator` instance.
@@ -80,6 +90,12 @@ impl<T> BoxComparator<T> {
     /// * `name` - The diagnostic name assigned to the comparator.
     /// * `source` - The comparator implementation to wrap.
     ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The type of values compared.
+    /// * `F` - The comparator implementation; it must be `'static` so it can be
+    ///   stored in the boxed callback.
+    ///
     /// # Returns
     ///
     /// A named `BoxComparator` wrapping `source`.
@@ -100,6 +116,13 @@ impl<T> BoxComparator<T> {
     ///
     /// * `source` - The comparator implementation to wrap.
     /// * `name` - The optional diagnostic name assigned to the comparator.
+    ///   `Some(name)` stores that name; `None` leaves the comparator unnamed.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The type of values compared.
+    /// * `F` - The comparator implementation; it must be `'static` so it can be
+    ///   stored in the boxed callback.
     ///
     /// # Returns
     ///
@@ -121,6 +144,12 @@ impl<T> BoxComparator<T> {
     ///
     /// * `source` - The comparator implementation to wrap.
     /// * `metadata` - The callback metadata to preserve.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The type of values compared.
+    /// * `F` - The comparator implementation; it must be `'static` so it can be
+    ///   stored in the boxed callback.
     ///
     /// # Returns
     ///
@@ -145,6 +174,12 @@ impl<T> BoxComparator<T> {
     /// # Parameters
     ///
     /// * `key_fn` - A function that extracts a comparable key from values
+    ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The type of values compared.
+    /// * `K` - The ordered key type; it may be unsized.
+    /// * `F` - A `'static` function that borrows a key from each value.
     ///
     /// # Returns
     ///
@@ -184,6 +219,10 @@ impl<T> BoxComparator<T> {
     ///
     /// A new `BoxComparator` that reverses the comparison order.
     ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The value type; it must be `'static` for the returned callback.
+    ///
     /// # Examples
     ///
     /// ```rust
@@ -217,6 +256,12 @@ impl<T> BoxComparator<T> {
     ///   - An `RcComparator<T>`
     ///   - An `ArcComparator<T>`
     ///   - Any type implementing `Comparator<T>`
+    ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The type of values compared.
+    /// * `C` - The `'static` comparator used when this comparator reports
+    ///   equality.
     ///
     /// # Returns
     ///
@@ -267,6 +312,10 @@ impl<T> BoxComparator<T> {
     ///
     /// A closure that implements `Fn(&T, &T) -> Ordering`.
     ///
+    /// # Type Parameters
+    ///
+    /// * `T` - The value type accepted by the returned closure.
+    ///
     /// # Examples
     ///
     /// ```rust
@@ -285,6 +334,16 @@ impl<T> BoxComparator<T> {
 }
 
 impl<T> Comparator<T> for BoxComparator<T> {
+    /// Compares the values by invoking the wrapped callback.
+    ///
+    /// # Parameters
+    ///
+    /// * `a` - The first value to compare.
+    /// * `b` - The second value to compare.
+    ///
+    /// # Returns
+    ///
+    /// The ordering returned by the wrapped comparator.
     #[inline(always)]
     fn compare(&self, a: &T, b: &T) -> Ordering {
         (self.function)(a, b)
@@ -292,6 +351,12 @@ impl<T> Comparator<T> for BoxComparator<T> {
 }
 
 impl<T> fmt::Debug for BoxComparator<T> {
+    /// Formats the wrapper's type and diagnostic name without exposing its
+    /// callback implementation.
+    ///
+    /// # Parameters
+    ///
+    /// * `formatter` - The formatter that receives the debug representation.
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         formatter
             .debug_struct("BoxComparator")
@@ -301,6 +366,11 @@ impl<T> fmt::Debug for BoxComparator<T> {
 }
 
 impl<T> fmt::Display for BoxComparator<T> {
+    /// Formats the diagnostic name, or the unnamed wrapper label when absent.
+    ///
+    /// # Parameters
+    ///
+    /// * `formatter` - The formatter that receives the display representation.
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.metadata.name() {
             Some(name) => write!(formatter, "BoxComparator({name})"),

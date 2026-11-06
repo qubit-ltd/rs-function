@@ -71,6 +71,13 @@ impl<T, U, R> BoxBiTransformerOnce<T, U, R> {
 
 // Implement BiTransformerOnce trait for BoxBiTransformerOnce
 impl<T, U, R> BiTransformerOnce<T, U, R> for BoxBiTransformerOnce<T, U, R> {
+    /// Invokes the owned callback with both inputs, consuming the wrapper and
+    /// the inputs in the process.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - The first input value, consumed by the callback.
+    /// * `second` - The second input value, consumed by the callback.
     #[inline(always)]
     fn apply(self, first: T, second: U) -> R {
         (self.function)(first, second)
@@ -83,6 +90,10 @@ impl<T, U, R> BoxBiTransformerOnce<T, U, R> {
     /// The value is moved into the transformer and does not need to implement
     /// `Clone`. If the transformer is dropped without being called, the
     /// captured value is dropped with it.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - The owned value returned when the transformer is applied.
     ///
     /// # Examples
     ///

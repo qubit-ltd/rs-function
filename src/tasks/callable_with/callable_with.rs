@@ -54,6 +54,14 @@ impl<T, R, E, F> CallableWith<T, R, E> for F
 where
     F: FnMut(&mut T) -> Result<R, E>,
 {
+    /// Forwards mutable input to the wrapped function and returns its outcome.
+    ///
+    /// The function's side effects on `input` are retained whether it returns
+    /// `Ok` or `Err`.
+    ///
+    /// # Parameters
+    ///
+    /// * `input` - The mutable input passed to the wrapped function.
     #[inline(always)]
     fn call_with(&mut self, input: &mut T) -> Result<R, E> {
         self(input)

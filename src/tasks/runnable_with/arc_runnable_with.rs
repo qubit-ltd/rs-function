@@ -20,6 +20,11 @@ use crate::tasks::runnable_with::RunnableWith;
 ///
 /// The callback receives mutable input and returns `Result<(), E>`. Cloned
 /// handles invoke the same callback state, with the mutex serializing access.
+///
+/// # Type Parameters
+///
+/// * `T` - The mutable input type accepted by the callback.
+/// * `E` - The error type returned when the callback fails.
 type ArcRunnableWithFn<T, E> = Arc<Mutex<dyn FnMut(&mut T) -> Result<(), E> + Send>>;
 
 /// Thread-safe shared runnable with mutable input.

@@ -79,6 +79,16 @@ impl_transformer_debug_display!(BoxStatefulTransformer<T, R>);
 
 // Implement StatefulTransformer trait for BoxStatefulTransformer
 impl<T, R> StatefulTransformer<T, R> for BoxStatefulTransformer<T, R> {
+    /// Invokes the owned mutable callback with the input, preserving any
+    /// callback state for subsequent transformations.
+    ///
+    /// # Parameters
+    ///
+    /// * `input` - The value passed to the callback; ownership is transferred.
+    ///
+    /// # Returns
+    ///
+    /// The output produced by the callback.
     #[inline(always)]
     fn apply(&mut self, input: T) -> R {
         (self.function)(input)

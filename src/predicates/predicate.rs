@@ -288,6 +288,10 @@ where
     F: Fn(&T) -> bool,
 {
     /// Applies this closure to the borrowed value and returns its result.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - The value borrowed for this predicate evaluation.
     #[inline(always)]
     fn test(&self, value: &T) -> bool {
         self(value)

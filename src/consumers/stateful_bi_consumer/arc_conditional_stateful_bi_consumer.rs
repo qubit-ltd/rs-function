@@ -86,6 +86,18 @@ impl_shared_conditional_consumer!(
 );
 
 impl<T, U> StatefulBiConsumer<T, U> for ArcConditionalStatefulBiConsumer<T, U> {
+    /// Runs the wrapped consumer only when the predicate accepts both inputs.
+    ///
+    /// If the predicate returns `false`, this call has no effect on the
+    /// wrapped consumer. The mutable consumer state is shared with clones and
+    /// serialized by the underlying `ArcStatefulBiConsumer` mutex.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - First value passed to the predicate and, when accepted, the
+    ///   wrapped consumer.
+    /// * `second` - Second value passed to the predicate and, when accepted,
+    ///   the wrapped consumer.
     fn accept(&mut self, first: &T, second: &U) {
         if self.predicate.test(first, second) {
             self.consumer.accept(first, second);

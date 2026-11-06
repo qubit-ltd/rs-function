@@ -14,6 +14,11 @@ use crate::tasks::callable_with::BoxCallableWith;
 use crate::tasks::runnable_with::RunnableWith;
 
 /// The erased callback representation used by this implementation.
+///
+/// # Type Parameters
+///
+/// * `T` - The mutable input type accepted by the callback.
+/// * `E` - The error type returned when the callback fails.
 type BoxRunnableWithFn<T, E> = Box<dyn FnMut(&mut T) -> Result<(), E> + Send>;
 
 /// A boxed, fallible action that can mutate its input and move across threads.
@@ -66,6 +71,10 @@ impl<T, E> BoxRunnableWith<T, E> {
     ///
     /// * `next` - The runnable to execute after this runnable succeeds.
     ///
+    /// # Type Parameters
+    ///
+    /// * `N` - The follow-up runnable type.
+    ///
     /// # Returns
     ///
     /// A runnable executing both actions in sequence.
@@ -94,6 +103,11 @@ impl<T, E> BoxRunnableWith<T, E> {
     ///
     /// * `callable` - The callable to execute after this runnable succeeds.
     ///
+    /// # Type Parameters
+    ///
+    /// * `R` - The success value produced by the callable.
+    /// * `C` - The follow-up callable type.
+    ///
     /// # Returns
     ///
     /// A callable producing the second computation's result.
@@ -116,6 +130,18 @@ impl<T, E> BoxRunnableWith<T, E> {
 
 impl<T, E> RunnableWith<T, E> for BoxRunnableWith<T, E> {
     /// Executes the boxed runnable with mutable input.
+    ///
+    /// # Parameters
+    ///
+    /// * `input` - The mutable value passed to the runnable.
+    ///
+    /// # Returns
+    ///
+    /// Returns `Ok(())` when the runnable succeeds, or `Err(E)` when it fails.
+    ///
+    /// # Errors
+    ///
+    /// Returns the error produced by the wrapped callback.
     #[inline(always)]
     fn run_with(&mut self, input: &mut T) -> Result<(), E> {
         (self.function)(input)

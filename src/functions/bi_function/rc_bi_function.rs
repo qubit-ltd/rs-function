@@ -19,7 +19,14 @@ use crate::functions::macros::impl_function_constant_method;
 use crate::functions::macros::impl_function_debug_display;
 use crate::functions::macros::impl_shared_function_methods;
 
-/// The erased callback representation used by this implementation.
+/// Stores the callback behind shared ownership without exposing its concrete
+/// closure type.
+///
+/// # Type Parameters
+///
+/// - `T` — The type of the first borrowed input.
+/// - `U` — The type of the second borrowed input.
+/// - `R` — The value returned by the callback.
 type RcBiFunctionFn<T, U, R> = Rc<dyn Fn(&T, &U) -> R>;
 
 // ============================================================================

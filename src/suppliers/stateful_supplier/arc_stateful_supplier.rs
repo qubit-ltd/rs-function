@@ -145,6 +145,12 @@ impl<T> ArcStatefulSupplier<T> {
     ///
     /// * `mapper` - A stateful transformer applied to each supplied value.
     ///
+    /// # Type Parameters
+    ///
+    /// * `U` - The value type produced by the mapper.
+    /// * `M` - A `Send` stateful transformer that is stored in the returned
+    ///   supplier and must be `'static`.
+    ///
     /// # Returns
     ///
     /// A thread-safe shared stateful supplier that returns the mapped value.
@@ -274,6 +280,11 @@ impl_supplier_debug_display!(ArcStatefulSupplier<T>);
 impl_supplier_clone!(ArcStatefulSupplier<T>);
 
 impl<T> StatefulSupplier<T> for ArcStatefulSupplier<T> {
+    /// Invokes the shared callback and returns its next value.
+    ///
+    /// The mutex is held while the callback runs, so concurrent clones
+    /// serialize access to the callback's mutable state. A panic from the
+    /// callback propagates to the caller; the mutex is not poisoned.
     #[inline]
     fn get(&mut self) -> T {
         let mut function = self.function.lock();

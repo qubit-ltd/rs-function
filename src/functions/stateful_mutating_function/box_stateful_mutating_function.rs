@@ -167,6 +167,20 @@ impl_function_identity_method!(BoxStatefulMutatingFunction<T, T>, mutating, Stat
 // Implement StatefulMutatingFunction trait for BoxStatefulMutatingFunction<T,
 // R>
 impl<T, R> StatefulMutatingFunction<T, R> for BoxStatefulMutatingFunction<T, R> {
+    /// Invokes the owned callback with the mutable input and returns its
+    /// result.
+    ///
+    /// The callback may update both its captured state and `t`. Any panic from
+    /// the callback propagates to the caller, and completed mutations are not
+    /// rolled back.
+    ///
+    /// # Parameters
+    ///
+    /// - `t`: The input passed mutably to the callback.
+    ///
+    /// # Returns
+    ///
+    /// The value returned by the callback.
     #[inline(always)]
     fn apply(&mut self, t: &mut T) -> R {
         (self.function)(t)

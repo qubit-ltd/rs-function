@@ -76,8 +76,12 @@ where
     T: 'static,
     U: 'static,
 {
+    /// The shared Rc-backed predicate produced by negation.
     type Output = RcBiPredicate<T, U>;
 
+    /// Returns a predicate whose result is the logical negation of this one.
+    ///
+    /// The callback and metadata are moved into the returned predicate.
     fn not(self) -> Self::Output {
         let metadata = self.metadata;
         let function = self.function;
@@ -90,8 +94,13 @@ where
     T: 'static,
     U: 'static,
 {
+    /// The shared Rc-backed predicate produced by negation.
     type Output = RcBiPredicate<T, U>;
 
+    /// Returns a predicate whose result is the logical negation of this one.
+    ///
+    /// The callback and metadata are cloned, leaving the borrowed predicate
+    /// usable.
     fn not(self) -> Self::Output {
         let function = self.function.clone();
         RcBiPredicate::new_with_metadata(
@@ -110,6 +119,12 @@ impl_predicate_debug_display!(RcBiPredicate<T, U>);
 
 // Implements BiPredicate trait for RcBiPredicate<T, U>
 impl<T, U> BiPredicate<T, U> for RcBiPredicate<T, U> {
+    /// Evaluates the wrapped callback for the two borrowed values.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - The first value to evaluate.
+    /// * `second` - The second value to evaluate.
     #[inline(always)]
     fn test(&self, first: &T, second: &U) -> bool {
         (self.function)(first, second)

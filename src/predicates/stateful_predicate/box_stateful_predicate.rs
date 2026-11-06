@@ -58,6 +58,11 @@ impl<T> BoxStatefulPredicate<T> {
     ///
     /// * `other` - The other predicate to combine with.
     ///
+    /// # Type Parameters
+    ///
+    /// * `P` - The type of the other stateful predicate.
+    /// * `T` - The type of values tested by both predicates.
+    ///
     /// # Returns
     ///
     /// A new `BoxStatefulPredicate` representing logical AND.
@@ -79,6 +84,11 @@ impl<T> BoxStatefulPredicate<T> {
     ///
     /// * `other` - The other predicate to combine with.
     ///
+    /// # Type Parameters
+    ///
+    /// * `P` - The type of the other stateful predicate.
+    /// * `T` - The type of values tested by both predicates.
+    ///
     /// # Returns
     ///
     /// A new `BoxStatefulPredicate` representing logical OR.
@@ -98,6 +108,11 @@ impl<T> BoxStatefulPredicate<T> {
     /// # Parameters
     ///
     /// * `other` - The other predicate to combine with.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `P` - The type of the other stateful predicate.
+    /// * `T` - The type of values tested by both predicates.
     ///
     /// # Returns
     ///
@@ -120,6 +135,11 @@ impl<T> BoxStatefulPredicate<T> {
     ///
     /// * `other` - The other predicate to combine with.
     ///
+    /// # Type Parameters
+    ///
+    /// * `P` - The type of the other stateful predicate.
+    /// * `T` - The type of values tested by both predicates.
+    ///
     /// # Returns
     ///
     /// A new `BoxStatefulPredicate` representing logical XOR.
@@ -140,6 +160,11 @@ impl<T> BoxStatefulPredicate<T> {
     ///
     /// * `other` - The other predicate to combine with.
     ///
+    /// # Type Parameters
+    ///
+    /// * `P` - The type of the other stateful predicate.
+    /// * `T` - The type of values tested by both predicates.
+    ///
     /// # Returns
     ///
     /// A new `BoxStatefulPredicate` representing logical NOR.
@@ -157,8 +182,13 @@ impl<T> Not for BoxStatefulPredicate<T>
 where
     T: 'static,
 {
+    /// The boxed predicate type produced by unary negation.
     type Output = BoxStatefulPredicate<T>;
 
+    /// Returns a boxed predicate that negates this predicate's result.
+    ///
+    /// The operation preserves the callback metadata and evaluates the
+    /// wrapped stateful predicate once for each input.
     fn not(self) -> Self::Output {
         let metadata = self.metadata;
         let mut function = self.function;
@@ -172,6 +202,11 @@ impl_predicate_debug_display!(BoxStatefulPredicate<T>);
 
 // Implements StatefulPredicate trait for BoxStatefulPredicate<T>
 impl<T> StatefulPredicate<T> for BoxStatefulPredicate<T> {
+    /// Evaluates the wrapped mutable callback for the borrowed value.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - The value to test without mutating it.
     #[inline(always)]
     fn test(&mut self, value: &T) -> bool {
         (self.function)(value)

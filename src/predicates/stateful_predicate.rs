@@ -80,6 +80,18 @@ impl<F, T> StatefulPredicate<T> for F
 where
     F: FnMut(&T) -> bool,
 {
+    /// Evaluates the closure with the borrowed value and returns its result.
+    ///
+    /// The mutable closure receiver allows this blanket implementation to
+    /// preserve any state updates performed during the call.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - The value passed to the closure by shared reference.
+    ///
+    /// # Returns
+    ///
+    /// The boolean result produced by the closure.
     fn test(&mut self, value: &T) -> bool {
         self(value)
     }

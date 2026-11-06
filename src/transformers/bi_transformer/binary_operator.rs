@@ -63,7 +63,9 @@ use super::BiTransformer;
 /// let op = create_adder();
 /// assert_eq!(op.apply(20, 22), 42);
 /// ```
-pub trait BinaryOperator<T>: BiTransformer<T, T, T> {}
+pub trait BinaryOperator<T>: BiTransformer<T, T, T> {
+    // empty
+}
 
 /// Blanket implementation of BinaryOperator for all BiTransformer<T, T, T>
 ///

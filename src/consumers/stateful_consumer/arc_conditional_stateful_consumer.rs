@@ -88,6 +88,17 @@ impl_shared_conditional_consumer!(
 );
 
 impl<T> StatefulConsumer<T> for ArcConditionalStatefulConsumer<T> {
+    /// Runs the shared stateful callback only when the predicate accepts
+    /// `value`.
+    ///
+    /// The callback executes while its shared mutex is held; re-entering the
+    /// same callback synchronously can deadlock. Mutations made before a panic
+    /// remain in the shared callback state.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - Input borrowed for predicate evaluation and callback
+    ///   execution.
     fn accept(&mut self, value: &T) {
         if self.predicate.test(value) {
             self.consumer.accept(value);

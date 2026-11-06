@@ -20,6 +20,12 @@ use crate::functions::macros::impl_function_debug_display;
 use crate::functions::macros::impl_shared_function_methods;
 
 /// The erased callback representation used by this implementation.
+///
+/// # Type Parameters
+///
+/// * `T` - Type of the first mutably borrowed callback input.
+/// * `U` - Type of the second mutably borrowed callback input.
+/// * `R` - Type returned by the callback.
 type RcBiMutatingFunctionFn<T, U, R> = Rc<dyn Fn(&mut T, &mut U) -> R>;
 
 // ============================================================================
@@ -92,6 +98,16 @@ impl<T, U, R> RcBiMutatingFunction<T, U, R> {
 
 // Implement BiMutatingFunction trait for RcBiMutatingFunction
 impl<T, U, R> BiMutatingFunction<T, U, R> for RcBiMutatingFunction<T, U, R> {
+    /// Invokes the shared callback with exclusive access to both inputs.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - First input, which the callback may mutate.
+    /// * `second` - Second input, which the callback may mutate.
+    ///
+    /// # Returns
+    ///
+    /// The result produced by the callback after it processes both inputs.
     #[inline(always)]
     fn apply(&self, first: &mut T, second: &mut U) -> R {
         (self.function)(first, second)

@@ -17,6 +17,12 @@ use crate::macros::impl_common_new_methods;
 use crate::tasks::callable_with::CallableWith;
 
 /// The erased callback representation used by this implementation.
+///
+/// # Type Parameters
+///
+/// * `T` - The mutable input type passed to the callback.
+/// * `R` - The success value returned by the callback.
+/// * `E` - The error value returned when the callback fails.
 type RcCallableWithFn<T, R, E> = Rc<RefCell<dyn FnMut(&mut T) -> Result<R, E>>>;
 
 /// Single-threaded shared callable with mutable input.
@@ -57,6 +63,10 @@ pub struct RcCallableWith<T, R, E> {
 }
 
 impl<T, R, E> Clone for RcCallableWith<T, R, E> {
+    /// Creates another handle to the same callback and clones its metadata.
+    ///
+    /// Both wrappers share callback state, so invoking either one can affect
+    /// later invocations through the other.
     #[inline]
     fn clone(&self) -> Self {
         Self {

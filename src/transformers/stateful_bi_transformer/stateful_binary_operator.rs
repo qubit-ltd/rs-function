@@ -5,7 +5,7 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-//! Defines the `StatefulBinaryOperator` public type.
+//! Defines the `StatefulBinaryOperator` public trait.
 
 use super::StatefulBiTransformer;
 
@@ -62,7 +62,9 @@ use super::StatefulBiTransformer;
 /// let mut op = create_adder();
 /// assert_eq!(op.apply(20, 22), 42);
 /// ```
-pub trait StatefulBinaryOperator<T>: StatefulBiTransformer<T, T, T> {}
+pub trait StatefulBinaryOperator<T>: StatefulBiTransformer<T, T, T> {
+    // empty
+}
 
 /// Blanket implementation of StatefulBinaryOperator for all
 /// StatefulBiTransformer<T, T, T>

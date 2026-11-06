@@ -99,6 +99,13 @@ impl_box_conditional_consumer!(
 // Hand-written BiConsumer trait implementation
 impl<T, U> BiConsumer<T, U> for BoxConditionalBiConsumer<T, U> {
     /// Invokes the wrapped callback when the predicate accepts both inputs.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - The first input, borrowed for predicate evaluation and, if
+    ///   accepted, callback invocation.
+    /// * `second` - The second input, borrowed for predicate evaluation and, if
+    ///   accepted, callback invocation.
     fn accept(&self, first: &T, second: &U) {
         if self.predicate.test(first, second) {
             self.consumer.accept(first, second);

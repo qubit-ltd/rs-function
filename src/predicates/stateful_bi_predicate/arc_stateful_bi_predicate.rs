@@ -20,6 +20,11 @@ use crate::predicates::macros::impl_predicate_common_methods;
 use crate::predicates::macros::impl_predicate_debug_display;
 
 /// The erased callback representation used by this implementation.
+///
+/// # Type Parameters
+///
+/// * `T` - The type of the first value accepted by the callback.
+/// * `U` - The type of the second value accepted by the callback.
 type ArcStatefulBiPredicateFn<T, U> = Arc<Mutex<dyn FnMut(&T, &U) -> bool + Send + 'static>>;
 
 /// An Arc-based stateful bi-predicate with thread-safe shared ownership.
@@ -88,6 +93,10 @@ impl<T, U> ArcStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `ArcStatefulBiPredicate` representing logical AND.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `P` - A sendable stateful bi-predicate that owns the other operand.
     #[inline]
     pub fn and<P>(&self, mut other: P) -> ArcStatefulBiPredicate<T, U>
     where
@@ -117,6 +126,10 @@ impl<T, U> ArcStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `ArcStatefulBiPredicate` representing logical OR.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `P` - A sendable stateful bi-predicate that owns the other operand.
     #[inline]
     pub fn or<P>(&self, mut other: P) -> ArcStatefulBiPredicate<T, U>
     where
@@ -145,6 +158,10 @@ impl<T, U> ArcStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `ArcStatefulBiPredicate` representing logical NAND.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `P` - A sendable stateful bi-predicate that owns the other operand.
     #[inline]
     pub fn nand<P>(&self, mut other: P) -> ArcStatefulBiPredicate<T, U>
     where
@@ -174,6 +191,10 @@ impl<T, U> ArcStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `ArcStatefulBiPredicate` representing logical XOR.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `P` - A sendable stateful bi-predicate that owns the other operand.
     #[inline]
     pub fn xor<P>(&self, mut other: P) -> ArcStatefulBiPredicate<T, U>
     where
@@ -202,6 +223,10 @@ impl<T, U> ArcStatefulBiPredicate<T, U> {
     /// # Returns
     ///
     /// A new `ArcStatefulBiPredicate` representing logical NOR.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `P` - A sendable stateful bi-predicate that owns the other operand.
     #[inline]
     pub fn nor<P>(&self, mut other: P) -> ArcStatefulBiPredicate<T, U>
     where
@@ -225,8 +250,13 @@ where
     T: 'static,
     U: 'static,
 {
+    /// The resulting wrapper type produced by negating this predicate.
     type Output = ArcStatefulBiPredicate<T, U>;
 
+    /// Creates a predicate that returns the logical negation of this one.
+    ///
+    /// The new predicate takes ownership of the shared callback and preserves
+    /// its diagnostic metadata.
     fn not(self) -> Self::Output {
         let metadata = self.metadata;
         let function = self.function;
@@ -245,8 +275,13 @@ where
     T: 'static,
     U: 'static,
 {
+    /// The resulting wrapper type produced by negating a borrowed predicate.
     type Output = ArcStatefulBiPredicate<T, U>;
 
+    /// Creates a predicate that returns the logical negation of this one.
+    ///
+    /// The new predicate shares the callback state and clones its diagnostic
+    /// metadata.
     fn not(self) -> Self::Output {
         let function = self.function.clone();
         ArcStatefulBiPredicate::new_with_metadata(
@@ -267,6 +302,15 @@ impl_predicate_clone!(ArcStatefulBiPredicate<T, U>);
 impl_predicate_debug_display!(ArcStatefulBiPredicate<T, U>);
 
 impl<T, U> StatefulBiPredicate<T, U> for ArcStatefulBiPredicate<T, U> {
+    /// Evaluates the callback while holding the shared mutex.
+    ///
+    /// The mutable borrow permits stateful callbacks; the input values remain
+    /// immutably borrowed for the duration of the call.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - The first value passed to the callback.
+    /// * `second` - The second value passed to the callback.
     #[inline]
     fn test(&mut self, first: &T, second: &U) -> bool {
         let mut function = self.function.lock();

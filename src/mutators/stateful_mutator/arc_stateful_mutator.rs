@@ -27,6 +27,10 @@ use crate::mutators::macros::impl_shared_mutator_methods;
 ///
 /// The callback must be `Send` so the shared mutator can cross thread
 /// boundaries; the mutex provides exclusive access when it is invoked.
+///
+/// # Type Parameters
+///
+/// * `T` - The value type accepted by the callback.
 type ArcMutMutatorFn<T> = Arc<Mutex<dyn FnMut(&mut T) + Send>>;
 
 /// Arc-based stateful mutator.
@@ -105,6 +109,15 @@ impl<T> ArcStatefulMutator<T> {
 }
 
 impl<T> StatefulMutator<T> for ArcStatefulMutator<T> {
+    /// Applies the shared callback to `value` while holding its mutex.
+    ///
+    /// The callback's captured state is updated in place and shared by all
+    /// clones. Concurrent calls are serialized; re-entering this callback
+    /// through the same shared state deadlocks.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - Mutable value passed to the callback, which may update it.
     #[inline]
     fn apply(&mut self, value: &mut T) {
         let mut function = self.function.lock();

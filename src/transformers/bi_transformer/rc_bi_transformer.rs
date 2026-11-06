@@ -87,6 +87,19 @@ impl_transformer_clone!(RcBiTransformer<T, U, R>);
 
 // Implement BiTransformer trait for RcBiTransformer
 impl<T, U, R> BiTransformer<T, U, R> for RcBiTransformer<T, U, R> {
+    /// Applies the shared callback to both inputs and returns its result.
+    ///
+    /// The callback is invoked synchronously on the current thread. Both
+    /// inputs are moved into it, and its output is returned unchanged.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - The first input passed to the callback.
+    /// * `second` - The second input passed to the callback.
+    ///
+    /// # Returns
+    ///
+    /// The output produced by the callback.
     #[inline(always)]
     fn apply(&self, first: T, second: U) -> R {
         (self.function)(first, second)

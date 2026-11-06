@@ -15,6 +15,11 @@ use super::RcTransformer;
 /// `T` to another value of the same type `T`. Equivalent to Java's
 /// `UnaryOperator<T>` with shared, single-threaded ownership.
 ///
+/// # Type Parameters
+///
+/// * `T` - The input and output value type. No additional trait bounds are
+///   required.
+///
 /// # Examples
 ///
 /// ```rust

@@ -117,6 +117,10 @@ macro_rules! impl_box_conditional_consumer {
             /// executes the first action (based on the predicate), and then
             /// always executes the second action.
             ///
+            /// # Type Parameters
+            ///
+            /// - `C`: The consumer chained after this conditional consumer.
+            ///
             /// # Parameters
             ///
             /// * `next` - The next consumer to execute after the conditional consumer.
@@ -168,6 +172,10 @@ macro_rules! impl_box_conditional_consumer {
             ///
             /// Executes the original consumer when the condition is satisfied, otherwise
             /// executes `else_consumer`.
+            ///
+            /// # Type Parameters
+            ///
+            /// - `C`: The consumer used for the else branch.
             ///
             /// # Parameters
             ///
@@ -245,6 +253,10 @@ macro_rules! impl_box_conditional_consumer {
             /// executes the first action (based on the predicate), and then
             /// always executes the second action.
             ///
+            /// # Type Parameters
+            ///
+            /// - `C`: The bi-consumer chained after this conditional bi-consumer.
+            ///
             /// # Parameters
             ///
             /// * `next` - The bi-consumer to execute after the conditional bi-consumer.
@@ -297,6 +309,10 @@ macro_rules! impl_box_conditional_consumer {
             ///
             /// Executes the original bi-consumer when the condition is satisfied, otherwise
             /// executes `else_consumer`.
+            ///
+            /// # Type Parameters
+            ///
+            /// - `C`: The bi-consumer used for the else branch.
             ///
             /// # Parameters
             ///

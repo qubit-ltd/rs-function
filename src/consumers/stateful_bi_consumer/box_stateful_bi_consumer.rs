@@ -14,7 +14,14 @@ use crate::consumers::macros::impl_box_consumer_methods;
 use crate::consumers::macros::impl_consumer_common_methods;
 use crate::consumers::macros::impl_consumer_debug_display;
 
-/// The erased callback representation used by this implementation.
+/// The boxed, type-erased callback stored by [`BoxStatefulBiConsumer`].
+///
+/// The callback mutably borrows both inputs and may mutate its captured state.
+///
+/// # Type Parameters
+///
+/// - `T`: Type of the first input borrowed by the callback.
+/// - `U`: Type of the second input borrowed by the callback.
 type BoxStatefulBiConsumerFn<T, U> = Box<dyn FnMut(&T, &U)>;
 
 // =======================================================================
@@ -94,6 +101,15 @@ impl<T, U> BoxStatefulBiConsumer<T, U> {
 }
 
 impl<T, U> StatefulBiConsumer<T, U> for BoxStatefulBiConsumer<T, U> {
+    /// Invokes the stored callback with the two borrowed input values.
+    ///
+    /// The callback may mutate its captured state. This method forwards both
+    /// references without cloning either input.
+    ///
+    /// # Parameters
+    ///
+    /// - `first`: First input passed to the callback.
+    /// - `second`: Second input passed to the callback.
     #[inline(always)]
     fn accept(&mut self, first: &T, second: &U) {
         (self.function)(first, second)

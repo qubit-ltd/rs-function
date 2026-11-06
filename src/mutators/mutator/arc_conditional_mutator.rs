@@ -35,6 +35,12 @@ use crate::mutators::macros::impl_shared_conditional_mutator;
 /// - **Conditional Execution**: Only mutates when predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 ///
+/// # Type Parameters
+///
+/// - `T`: The value type inspected by the predicate and modified by the
+///   mutator. The callback bounds required by the shared wrapper are enforced
+///   when it is created through `ArcMutator::when()`.
+///
 /// # Examples
 ///
 /// ```rust
@@ -67,6 +73,15 @@ impl_shared_conditional_mutator!(
 );
 
 impl<T> Mutator<T> for ArcConditionalMutator<T> {
+    /// Applies the wrapped mutator only when the predicate accepts `value`.
+    ///
+    /// The predicate observes the value before mutation. When it returns
+    /// `false`, this method leaves the value unchanged.
+    ///
+    /// # Parameters
+    ///
+    /// - `value`: The value tested by the predicate and conditionally mutated.
+    #[inline]
     fn apply(&self, value: &mut T) {
         if self.predicate.test(value) {
             self.mutator.apply(value);

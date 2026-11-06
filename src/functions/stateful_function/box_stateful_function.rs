@@ -92,6 +92,17 @@ impl_function_debug_display!(BoxStatefulFunction<T, R>);
 
 // Implement StatefulFunction trait for BoxStatefulFunction<T, R>
 impl<T, R> StatefulFunction<T, R> for BoxStatefulFunction<T, R> {
+    /// Invokes the boxed callback with a shared reference to the input.
+    ///
+    /// The callback may update its retained state before producing the output.
+    ///
+    /// # Parameters
+    ///
+    /// * `t` - The input value borrowed for this invocation.
+    ///
+    /// # Returns
+    ///
+    /// The output produced by the callback.
     #[inline(always)]
     fn apply(&mut self, t: &T) -> R {
         (self.function)(t)

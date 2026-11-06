@@ -84,6 +84,15 @@ impl_function_debug_display!(BoxFunction<T, R>);
 
 // Implement Function trait for BoxFunction<T, R>
 impl<T, R> Function<T, R> for BoxFunction<T, R> {
+    /// Invokes the wrapped callback with a shared reference to the input.
+    ///
+    /// # Parameters
+    ///
+    /// * `t` - The input value borrowed for this invocation.
+    ///
+    /// # Returns
+    ///
+    /// The value produced by the wrapped callback.
     #[inline(always)]
     fn apply(&self, t: &T) -> R {
         (self.function)(t)

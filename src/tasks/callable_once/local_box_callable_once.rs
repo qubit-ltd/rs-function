@@ -58,6 +58,10 @@ impl<R, E> LocalBoxCallableOnce<R, E> {
     /// This is an explicit bridge from `SupplierOnce<Result<R, E>>` to
     /// `CallableOnce<R, E>` without requiring `Send`.
     ///
+    /// # Type Parameters
+    ///
+    /// * `S` - The one-time supplier that produces the callable result.
+    ///
     /// # Parameters
     ///
     /// * `supplier` - The supplier that produces the callable result.
@@ -77,6 +81,11 @@ impl<R, E> LocalBoxCallableOnce<R, E> {
 
     /// Maps the success value of this callable.
     /// The returned callable preserves the source diagnostic name.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `U` - The success value type produced by `mapper`.
+    /// * `M` - The one-time mapping function.
     ///
     /// # Parameters
     ///
@@ -100,6 +109,11 @@ impl<R, E> LocalBoxCallableOnce<R, E> {
     /// Maps the error value of this callable.
     /// The returned callable preserves the source diagnostic name.
     ///
+    /// # Type Parameters
+    ///
+    /// * `E2` - The error value type produced by `mapper`.
+    /// * `M` - The one-time error mapping function.
+    ///
     /// # Parameters
     ///
     /// * `mapper` - Function that transforms the error value.
@@ -122,6 +136,11 @@ impl<R, E> LocalBoxCallableOnce<R, E> {
     /// Chains another fallible computation after this callable succeeds.
     /// The returned wrapper is unnamed; assign a name to the final composition
     /// if needed.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `U` - The success value type produced by the next computation.
+    /// * `N` - The one-time computation chained after this callable succeeds.
     ///
     /// # Parameters
     ///

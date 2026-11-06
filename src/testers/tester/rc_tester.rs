@@ -281,8 +281,10 @@ impl RcTester {
 }
 
 impl Not for RcTester {
+    /// The negated tester remains an `RcTester` so its callback can be shared.
     type Output = RcTester;
 
+    /// Consumes this tester and returns a tester that negates its result.
     #[inline]
     fn not(self) -> Self::Output {
         let metadata = self.metadata;
@@ -292,8 +294,10 @@ impl Not for RcTester {
 }
 
 impl Not for &RcTester {
+    /// The negated tester remains an `RcTester` so its callback can be shared.
     type Output = RcTester;
 
+    /// Borrows this tester and returns a negated tester without consuming it.
     #[inline]
     fn not(self) -> Self::Output {
         let func = Rc::clone(&self.function);
@@ -302,6 +306,7 @@ impl Not for &RcTester {
 }
 
 impl Tester for RcTester {
+    /// Evaluates the wrapped callback and returns its boolean result.
     #[inline]
     fn test(&self) -> bool {
         (self.function)()
@@ -324,6 +329,11 @@ impl Clone for RcTester {
 }
 
 impl fmt::Debug for RcTester {
+    /// Formats the tester's type name and optional diagnostic name.
+    ///
+    /// # Parameters
+    ///
+    /// * `formatter` - The formatter that receives the debug representation.
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         formatter
             .debug_struct("RcTester")
@@ -333,6 +343,12 @@ impl fmt::Debug for RcTester {
 }
 
 impl fmt::Display for RcTester {
+    /// Formats the tester's type name and includes its diagnostic name when
+    /// set.
+    ///
+    /// # Parameters
+    ///
+    /// * `formatter` - The formatter that receives the display representation.
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.metadata.name() {
             Some(name) => write!(formatter, "RcTester({name})"),

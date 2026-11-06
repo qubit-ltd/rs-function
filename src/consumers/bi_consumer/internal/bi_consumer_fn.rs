@@ -12,4 +12,9 @@
 /// The callback observes both inputs through shared references and returns no
 /// value; the wrappers own or share the callback according to their respective
 /// ownership models.
+///
+/// # Type Parameters
+///
+/// * `T` - Type of the first value borrowed by the callback.
+/// * `U` - Type of the second value borrowed by the callback.
 pub(in crate::consumers::bi_consumer) type BiConsumerFn<T, U> = dyn Fn(&T, &U);

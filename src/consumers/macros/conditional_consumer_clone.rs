@@ -67,6 +67,12 @@ macro_rules! impl_conditional_consumer_clone {
     // Single generic parameter - Consumer types
     ($struct_name:ident < $t:ident >) => {
         impl<$t> Clone for $struct_name<$t> {
+            /// Clones the shared consumer and predicate handles.
+            ///
+            /// # Returns
+            ///
+            /// A wrapper sharing the original consumer and predicate callbacks.
+            #[inline]
             fn clone(&self) -> Self {
                 Self {
                     consumer: self.consumer.clone(),
@@ -78,6 +84,12 @@ macro_rules! impl_conditional_consumer_clone {
     // Two generic parameters - BiConsumer types
     ($struct_name:ident < $t:ident, $u:ident >) => {
         impl<$t, $u> Clone for $struct_name<$t, $u> {
+            /// Clones the shared consumer and predicate handles.
+            ///
+            /// # Returns
+            ///
+            /// A wrapper sharing the original consumer and predicate callbacks.
+            #[inline]
             fn clone(&self) -> Self {
                 Self {
                     consumer: self.consumer.clone(),

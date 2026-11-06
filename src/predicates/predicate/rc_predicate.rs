@@ -69,6 +69,7 @@ impl<T> Not for RcPredicate<T>
 where
     T: 'static,
 {
+    /// The shared predicate wrapper returned by the negation operation.
     type Output = RcPredicate<T>;
 
     /// Returns a predicate that negates this predicate's result.
@@ -86,6 +87,7 @@ impl<T> Not for &RcPredicate<T>
 where
     T: 'static,
 {
+    /// The shared predicate wrapper returned by the negation operation.
     type Output = RcPredicate<T>;
 
     /// Returns a predicate that negates this predicate's result.
@@ -106,6 +108,15 @@ impl_predicate_debug_display!(RcPredicate<T>);
 
 // Implements Predicate trait for RcPredicate<T>
 impl<T> Predicate<T> for RcPredicate<T> {
+    /// Evaluates the wrapped callback against the borrowed value.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - The value passed to the predicate callback.
+    ///
+    /// # Returns
+    ///
+    /// `true` when the callback accepts `value`, and `false` otherwise.
     #[inline]
     fn test(&self, value: &T) -> bool {
         (self.function)(value)

@@ -106,6 +106,20 @@ impl_function_debug_display!(ArcMutatingFunction<T, R>);
 impl_function_identity_method!(ArcMutatingFunction<T, T>, mutating, MutatingFunction);
 
 impl<T, R> MutatingFunction<T, R> for ArcMutatingFunction<T, R> {
+    /// Invokes the shared callback with exclusive access to the input.
+    ///
+    /// The callback may mutate `input`; its returned value is forwarded
+    /// unchanged. The wrapper itself is only immutably borrowed, allowing
+    /// shared ownership while each invocation still requires `&mut T`.
+    ///
+    /// # Parameters
+    ///
+    /// * `input` - The value passed to the callback with exclusive mutable
+    ///   access; the callback may update it before returning.
+    ///
+    /// # Returns
+    ///
+    /// The callback's result, forwarded unchanged.
     #[inline(always)]
     fn apply(&self, input: &mut T) -> R {
         (self.function)(input)

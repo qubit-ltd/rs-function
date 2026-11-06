@@ -18,6 +18,10 @@ use crate::mutators::macros::impl_mutator_debug_display;
 use crate::mutators::macros::impl_shared_mutator_methods;
 
 /// Type alias for the erased single-threaded mutator callback.
+///
+/// # Type Parameters
+///
+/// - `T`: The value the callback can mutate.
 type RcMutatorFn<T> = Rc<dyn Fn(&mut T)>;
 
 // ============================================================================
@@ -91,6 +95,14 @@ impl<T> RcMutator<T> {
 }
 
 impl<T> Mutator<T> for RcMutator<T> {
+    /// Applies the shared callback to the value.
+    ///
+    /// # Parameters
+    ///
+    /// - `value`: The value passed mutably to the wrapped callback.
+    ///
+    /// The callback receives exclusive access to `value`; this method only
+    /// borrows the mutator, so the same single-threaded wrapper can be reused.
     #[inline(always)]
     fn apply(&self, value: &mut T) {
         (self.function)(value)

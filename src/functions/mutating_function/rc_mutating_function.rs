@@ -107,6 +107,16 @@ impl_function_debug_display!(RcMutatingFunction<T, R>);
 impl_function_identity_method!(RcMutatingFunction<T, T>, mutating, MutatingFunction);
 
 impl<T, R> MutatingFunction<T, R> for RcMutatingFunction<T, R> {
+    /// Invokes the shared callback with exclusive access to the input and
+    /// returns the callback's result.
+    ///
+    /// # Parameters
+    ///
+    /// * `input` - The value the callback may mutate during invocation.
+    ///
+    /// # Returns
+    ///
+    /// The value returned by the callback after it processes `input`.
     #[inline(always)]
     fn apply(&self, input: &mut T) -> R {
         (self.function)(input)

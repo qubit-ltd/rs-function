@@ -100,6 +100,11 @@ impl<T> BoxStatefulSupplier<T> {
     /// between calls. The source's diagnostic name is preserved. Panics from
     /// either callback propagate to the caller.
     ///
+    /// # Type Parameters
+    ///
+    /// * `U` - The value type produced by the mapped supplier.
+    /// * `M` - The stateful transformer applied to each source value.
+    ///
     /// # Parameters
     ///
     /// * `mapper` - A stateful transformer applied to each supplied value.
@@ -182,6 +187,10 @@ impl<T> BoxStatefulSupplier<T> {
 impl_supplier_debug_display!(BoxStatefulSupplier<T>);
 
 impl<T> StatefulSupplier<T> for BoxStatefulSupplier<T> {
+    /// Invokes the stored mutable callback and returns its next value.
+    ///
+    /// Callback state is retained for the next call. Panics from the callback
+    /// propagate to the caller.
     #[inline(always)]
     fn get(&mut self) -> T {
         (self.function)()

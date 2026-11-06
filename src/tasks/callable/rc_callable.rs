@@ -30,6 +30,7 @@ use crate::tasks::callable::Callable;
 ///
 /// * `R` - The success value returned by the computation.
 /// * `E` - The error value returned when the computation fails.
+///
 /// # Borrowing and reentrancy
 ///
 /// Each call holds a mutable `RefCell` borrow while the user callback runs.
@@ -53,6 +54,16 @@ pub struct RcCallable<R, E> {
 }
 
 impl<R, E> Clone for RcCallable<R, E> {
+    /// Clones the wrapper while sharing its callback and copying its metadata
+    /// handle.
+    ///
+    /// Mutating the diagnostic name on either wrapper does not change the
+    /// other's metadata, and both wrappers invoke the same stateful callback.
+    ///
+    /// # Returns
+    ///
+    /// A wrapper sharing this callback and carrying an independent metadata
+    /// handle.
     #[inline]
     fn clone(&self) -> Self {
         Self {
@@ -71,6 +82,10 @@ impl<R, E> RcCallable<R, E> {
     );
 
     /// Creates an `RcCallable` from a reusable supplier.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `S` - The supplier type that repeatedly produces `Result<R, E>`.
     ///
     /// # Parameters
     ///

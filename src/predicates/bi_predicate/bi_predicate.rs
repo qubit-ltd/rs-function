@@ -47,6 +47,11 @@ where
     F: Fn(&T, &U) -> bool,
 {
     /// Calls the closure with both values and returns its decision.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - The first value passed to the closure.
+    /// * `second` - The second value passed to the closure.
     #[inline(always)]
     fn test(&self, first: &T, second: &U) -> bool {
         self(first, second)

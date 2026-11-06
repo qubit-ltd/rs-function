@@ -22,6 +22,10 @@ use crate::mutators::macros::impl_shared_mutator_methods;
 // ============================================================================
 
 /// The erased callback representation used by `ArcMutator`.
+///
+/// # Type Parameters
+///
+/// - `T`: The value type passed to the callback for mutation.
 type ArcMutatorFn<T> = Arc<dyn Fn(&mut T) + Send + Sync>;
 
 /// ArcMutator struct
@@ -37,6 +41,11 @@ type ArcMutatorFn<T> = Arc<dyn Fn(&mut T) + Send + Sync>;
 /// - **Shared-receiver calls**: Uses `Fn`, so invocation does not require `&mut
 ///   self`; interior mutability and external side effects remain possible
 /// - **Chainable**: Method chaining via `&self` (non-consuming)
+///
+/// # Type Parameters
+///
+/// - `T`: The value type modified by the callback. The callback must be `Send +
+///   Sync + 'static` so the mutator can be shared across threads.
 ///
 /// # Use Cases
 ///
@@ -83,6 +92,13 @@ impl<T> ArcMutator<T> {
 }
 
 impl<T> Mutator<T> for ArcMutator<T> {
+    /// Applies the shared callback to `value` through a shared borrow of this
+    /// mutator.
+    ///
+    /// # Parameters
+    ///
+    /// - `value`: The value to mutate. The callback may also perform interior
+    ///   mutation or external side effects.
     #[inline(always)]
     fn apply(&self, value: &mut T) {
         (self.function)(value)

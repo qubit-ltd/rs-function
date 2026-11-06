@@ -94,6 +94,15 @@ impl<T> RcConsumer<T> {
 }
 
 impl<T> Consumer<T> for RcConsumer<T> {
+    /// Invokes the shared callback with a borrowed value.
+    ///
+    /// The value is not consumed, and this implementation requires the
+    /// consumer to remain on its owning thread because it uses `Rc`.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - The input borrowed by the callback for the duration of this
+    ///   call.
     #[inline]
     fn accept(&self, value: &T) {
         (self.function)(value)

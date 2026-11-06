@@ -7,7 +7,6 @@
 // =============================================================================
 //! Defines the `BoxBiConsumerOnce` public type.
 
-use super::BiConsumerOnceFn;
 use crate::BiConsumerOnce;
 use crate::BiPredicate;
 use crate::BoxConditionalBiConsumerOnce;
@@ -15,6 +14,14 @@ use crate::consumers::macros::impl_box_consumer_methods;
 use crate::consumers::macros::impl_consumer_common_methods;
 use crate::consumers::macros::impl_consumer_debug_display;
 use crate::macros::impl_closure_once_trait;
+
+/// Callable once with references to both input values and no return value.
+///
+/// # Type Parameters
+///
+/// - `T` is the type of the first value borrowed by the callback.
+/// - `U` is the type of the second value borrowed by the callback.
+type BiConsumerOnceFn<T, U> = dyn FnOnce(&T, &U);
 
 // =======================================================================
 // 2. BoxBiConsumerOnce - Single Ownership Implementation
@@ -47,6 +54,11 @@ use crate::macros::impl_closure_once_trait;
 /// shared-wrapper lock; an optional diagnostic name uses shared `Arc<str>`
 /// storage. Memory usage and allocation depend on the capture and name. No
 /// fixed pointer count or unconditional performance ranking is guaranteed.
+///
+/// # Type Parameters
+///
+/// - `T` is the type of the first value borrowed by the callback.
+/// - `U` is the type of the second value borrowed by the callback.
 ///
 /// # Examples
 ///
@@ -89,6 +101,16 @@ impl<T, U> BoxBiConsumerOnce<T, U> {
 }
 
 impl<T, U> BiConsumerOnce<T, U> for BoxBiConsumerOnce<T, U> {
+    /// Consumes this wrapper and invokes its one-time callback with both
+    /// borrowed inputs.
+    ///
+    /// The callback is taken from the box and called exactly once; the input
+    /// values remain borrowed for the duration of the call.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` is a reference to the first value passed to the callback.
+    /// * `second` is a reference to the second value passed to the callback.
     #[inline(always)]
     fn accept(self, first: &T, second: &U) {
         (self.function)(first, second)

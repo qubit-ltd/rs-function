@@ -16,6 +16,12 @@ use crate::tasks::callable_with::CallableWith;
 ///
 /// The `Send` bound allows the callback wrapper to move between threads when
 /// its other contained values satisfy the corresponding bounds.
+///
+/// # Type Parameters
+///
+/// * `T` - The mutable input type passed to the callback.
+/// * `R` - The success value returned by the callback.
+/// * `E` - The error value returned when the callback fails.
 type BoxCallableWithFn<T, R, E> = Box<dyn FnMut(&mut T) -> Result<R, E> + Send>;
 
 /// Box-based callable with mutable input.
@@ -167,6 +173,18 @@ impl<T, R, E> BoxCallableWith<T, R, E> {
 
 impl<T, R, E> CallableWith<T, R, E> for BoxCallableWith<T, R, E> {
     /// Executes the boxed callable with mutable input.
+    ///
+    /// # Parameters
+    ///
+    /// * `input` - The mutable input passed to the callback.
+    ///
+    /// # Returns
+    ///
+    /// Returns the callback's success value or error unchanged.
+    ///
+    /// # Errors
+    ///
+    /// Returns the error produced by the callback.
     #[inline(always)]
     fn call_with(&mut self, input: &mut T) -> Result<R, E> {
         (self.function)(input)

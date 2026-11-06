@@ -66,6 +66,7 @@ impl<T> Not for BoxPredicate<T>
 where
     T: 'static,
 {
+    /// The boxed predicate type produced by logical negation.
     type Output = BoxPredicate<T>;
 
     /// Returns a predicate that negates this predicate's result.
@@ -90,6 +91,15 @@ impl_predicate_debug_display!(BoxPredicate<T>);
 // Implements Predicate trait for BoxPredicate<T>
 impl<T> Predicate<T> for BoxPredicate<T> {
     /// Tests the borrowed value by invoking the wrapped predicate.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - The value passed by shared reference to the wrapped
+    ///   callback.
+    ///
+    /// # Returns
+    ///
+    /// `true` if the wrapped predicate accepts `value`, and `false` otherwise.
     #[inline(always)]
     fn test(&self, value: &T) -> bool {
         (self.function)(value)

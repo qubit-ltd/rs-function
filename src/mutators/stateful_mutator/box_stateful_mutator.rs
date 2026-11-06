@@ -83,6 +83,12 @@ impl<T> BoxStatefulMutator<T> {
 }
 
 impl<T> StatefulMutator<T> for BoxStatefulMutator<T> {
+    /// Applies the wrapped callback to the value and updates its captured
+    /// state.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - Mutable value passed directly to the callback.
     #[inline(always)]
     fn apply(&mut self, value: &mut T) {
         (self.function)(value)

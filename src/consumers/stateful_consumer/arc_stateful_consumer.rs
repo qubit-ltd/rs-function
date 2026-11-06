@@ -19,7 +19,14 @@ use crate::consumers::macros::impl_consumer_common_methods;
 use crate::consumers::macros::impl_consumer_debug_display;
 use crate::consumers::macros::impl_shared_consumer_methods;
 
-/// The erased callback representation used by this implementation.
+/// Stores a mutable callback behind shared ownership and mutual exclusion.
+///
+/// The callback accepts a borrowed input and must be safe to send between
+/// threads. The mutex serializes callback access across all shared owners.
+///
+/// # Type Parameters
+///
+/// * `T` - The input type borrowed by the callback.
 type ArcStatefulConsumerFn<T> = Arc<Mutex<dyn FnMut(&T) + Send>>;
 
 // ============================================================================
@@ -114,6 +121,20 @@ impl<T> ArcStatefulConsumer<T> {
 }
 
 impl<T> StatefulConsumer<T> for ArcStatefulConsumer<T> {
+    /// Locks the shared callback and invokes it with the borrowed input.
+    ///
+    /// The lock is held for the duration of the callback, serializing calls
+    /// made through every clone. Synchronous re-entry through the same shared
+    /// callback deadlocks.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - The input passed by reference to the callback.
+    ///
+    /// # Panics
+    ///
+    /// Propagates any panic raised by the callback. The mutex is released
+    /// during unwinding and is not poisoned.
     #[inline]
     fn accept(&mut self, value: &T) {
         let mut function = self.function.lock();

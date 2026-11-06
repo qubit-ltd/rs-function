@@ -35,13 +35,6 @@
 //! Unlike BiConsumer, BiConsumerOnce consumes itself on first call. Suitable
 //! for initialization callbacks, cleanup callbacks, etc.
 
-// ==========================================================================
-// Type Aliases
-// ==========================================================================
-
-/// Callable once with references to both input values and no return value.
-type BiConsumerOnceFn<T, U> = dyn FnOnce(&T, &U);
-
 mod box_bi_consumer_once;
 pub use box_bi_consumer_once::BoxBiConsumerOnce;
 mod box_conditional_bi_consumer_once;

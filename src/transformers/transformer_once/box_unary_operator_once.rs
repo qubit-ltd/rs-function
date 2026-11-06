@@ -19,6 +19,10 @@ use super::BoxTransformerOnce;
 /// to another value of the same type `T`. Equivalent to Java's
 /// `UnaryOperator<T>` with consuming semantics (FnOnce).
 ///
+/// # Type Parameters
+///
+/// * `T` - The type of both the input value and the returned value.
+///
 /// # Examples
 ///
 /// ```rust

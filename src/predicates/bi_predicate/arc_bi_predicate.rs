@@ -81,8 +81,13 @@ where
     T: 'static,
     U: 'static,
 {
+    /// The owned, shared wrapper produced by logical negation.
     type Output = ArcBiPredicate<T, U>;
 
+    /// Returns a predicate that negates this predicate's result.
+    ///
+    /// The callback and diagnostic metadata move into the returned wrapper,
+    /// preserving the original predicate's name.
     fn not(self) -> Self::Output {
         let metadata = self.metadata;
         let function = self.function;
@@ -95,8 +100,13 @@ where
     T: 'static,
     U: 'static,
 {
+    /// The owned, shared wrapper produced by logical negation.
     type Output = ArcBiPredicate<T, U>;
 
+    /// Returns a predicate that negates this predicate's result.
+    ///
+    /// The callback and metadata are cloned, so the borrowed predicate
+    /// remains available and the returned wrapper retains its diagnostic name.
     fn not(self) -> Self::Output {
         let function = self.function.clone();
         ArcBiPredicate::new_with_metadata(
@@ -115,6 +125,14 @@ impl_predicate_debug_display!(ArcBiPredicate<T, U>);
 
 // Implements BiPredicate trait for ArcBiPredicate<T, U>
 impl<T, U> BiPredicate<T, U> for ArcBiPredicate<T, U> {
+    /// Evaluates the wrapped callback with both borrowed values.
+    ///
+    /// This delegates directly to the callback and returns its boolean result.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - The first value passed to the predicate.
+    /// * `second` - The second value passed to the predicate.
     #[inline(always)]
     fn test(&self, first: &T, second: &U) -> bool {
         (self.function)(first, second)

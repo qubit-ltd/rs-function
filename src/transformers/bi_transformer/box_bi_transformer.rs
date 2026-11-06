@@ -78,6 +78,17 @@ impl_transformer_debug_display!(BoxBiTransformer<T, U, R>);
 
 // Implement BiTransformer trait for BoxBiTransformer
 impl<T, U, R> BiTransformer<T, U, R> for BoxBiTransformer<T, U, R> {
+    /// Applies the wrapped callback to both consumed input values and returns
+    /// its result without cloning or retaining either input.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - The first input value, consumed by the callback.
+    /// * `second` - The second input value, consumed by the callback.
+    ///
+    /// # Returns
+    ///
+    /// The output produced by the wrapped callback.
     #[inline(always)]
     fn apply(&self, first: T, second: U) -> R {
         (self.function)(first, second)

@@ -164,6 +164,12 @@ impl_supplier_debug_display!(ArcSupplier<T>);
 impl_supplier_clone!(ArcSupplier<T>);
 
 impl<T> Supplier<T> for ArcSupplier<T> {
+    /// Invokes the shared callback and returns its newly produced value.
+    ///
+    /// The callback is called through `&self`, so callers can share this
+    /// supplier across threads when `T` and the callback satisfy the required
+    /// thread-safety bounds. Any callback side effects, blocking, or locking
+    /// remain the callback's responsibility.
     #[inline(always)]
     fn get(&self) -> T {
         (self.function)()

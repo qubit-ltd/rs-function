@@ -187,6 +187,25 @@ impl_function_identity_method!(RcStatefulMutatingFunction<T, T>, mutating, State
 
 // Implement StatefulMutatingFunction trait for RcStatefulMutatingFunction<T, R>
 impl<T, R> StatefulMutatingFunction<T, R> for RcStatefulMutatingFunction<T, R> {
+    /// Invokes the shared callback with mutable access to the input.
+    ///
+    /// The `RefCell` mutable borrow remains active for the duration of the
+    /// callback. Re-entry through a clone of this wrapper therefore panics on
+    /// an overlapping borrow; mutations completed before that panic remain in
+    /// effect.
+    ///
+    /// # Parameters
+    ///
+    /// - `t`: The input to pass to the callback with mutable access.
+    ///
+    /// # Returns
+    ///
+    /// The value returned by the callback.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the callback re-enters this wrapper through a clone while its
+    /// mutable callback borrow is active.
     #[inline]
     fn apply(&mut self, t: &mut T) -> R {
         let mut function = self.function.borrow_mut();

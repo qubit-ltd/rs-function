@@ -56,6 +56,10 @@ pub struct ArcCallable<R, E> {
 }
 
 impl<R, E> Clone for ArcCallable<R, E> {
+    /// Creates another handle to the same callback and metadata.
+    ///
+    /// The cloned callable shares the callback's mutable state through the
+    /// same `Arc<Mutex<_>>`; it does not create an independent callback.
     #[inline]
     fn clone(&self) -> Self {
         Self {
@@ -74,6 +78,10 @@ impl<R, E> ArcCallable<R, E> {
     );
 
     /// Creates an `ArcCallable` from a reusable supplier.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `S` - The supplier type that produces each callable result.
     ///
     /// # Parameters
     ///

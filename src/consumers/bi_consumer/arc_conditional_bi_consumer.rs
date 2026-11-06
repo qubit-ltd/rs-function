@@ -80,6 +80,11 @@ impl_shared_conditional_consumer!(
 // Hand-written BiConsumer trait implementation
 impl<T, U> BiConsumer<T, U> for ArcConditionalBiConsumer<T, U> {
     /// Invokes the wrapped consumer when the predicate accepts both inputs.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - First input value evaluated by the predicate and consumer.
+    /// * `second` - Second input value evaluated by the predicate and consumer.
     fn accept(&self, first: &T, second: &U) {
         if self.predicate.test(first, second) {
             self.consumer.accept(first, second);

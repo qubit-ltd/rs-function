@@ -113,6 +113,19 @@ impl<T> BoxMutatorOnce<T> {
 }
 
 impl<T> MutatorOnce<T> for BoxMutatorOnce<T> {
+    /// Consumes this wrapper and invokes its callback with the value to mutate.
+    ///
+    /// The callback is called exactly once and may move its captured values;
+    /// any panic from the callback propagates to the caller.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - The value that the callback may modify through a mutable
+    ///   reference.
+    ///
+    /// # Panics
+    ///
+    /// Propagates any panic raised by the callback.
     #[inline(always)]
     fn apply(self, value: &mut T) {
         (self.function)(value)

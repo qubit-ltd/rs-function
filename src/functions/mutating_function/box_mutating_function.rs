@@ -104,6 +104,14 @@ impl_function_identity_method!(BoxMutatingFunction<T, T>, mutating, MutatingFunc
 impl<T, R> MutatingFunction<T, R> for BoxMutatingFunction<T, R> {
     /// Invokes the wrapped callback with the mutable input and returns its
     /// result.
+    ///
+    /// # Parameters
+    ///
+    /// * `t` - The input value the callback may modify.
+    ///
+    /// # Returns
+    ///
+    /// The value returned by the callback.
     #[inline]
     fn apply(&self, t: &mut T) -> R {
         (self.function)(t)

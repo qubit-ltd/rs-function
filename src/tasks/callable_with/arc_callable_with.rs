@@ -17,6 +17,12 @@ use crate::macros::impl_common_new_methods;
 use crate::tasks::callable_with::CallableWith;
 
 /// The erased callback representation used by this implementation.
+///
+/// # Type Parameters
+///
+/// * `T` - The mutable input type accepted by the callback.
+/// * `R` - The success value returned by the callback.
+/// * `E` - The error value returned when the callback fails.
 type ArcCallableWithFn<T, R, E> = Arc<Mutex<dyn FnMut(&mut T) -> Result<R, E> + Send>>;
 
 /// Thread-safe shared callable with mutable input.
@@ -59,6 +65,10 @@ pub struct ArcCallableWith<T, R, E> {
 }
 
 impl<T, R, E> Clone for ArcCallableWith<T, R, E> {
+    /// Creates another wrapper sharing the callback and cloning its metadata.
+    ///
+    /// Both wrappers serialize callback execution through the same mutex, so
+    /// mutable callback state is shared between them.
     #[inline]
     fn clone(&self) -> Self {
         Self {

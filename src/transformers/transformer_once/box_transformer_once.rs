@@ -33,6 +33,11 @@ use crate::transformers::macros::impl_transformer_identity_method;
 /// - **Reusability**: Can only be called once (consumes self and input)
 /// - **Thread Safety**: Not thread-safe (no `Send + Sync` requirement)
 ///
+/// # Type Parameters
+///
+/// - `T`: The input type consumed by the wrapped callback.
+/// - `R`: The output type returned by the wrapped callback.
+///
 /// # Examples
 ///
 /// ```
@@ -67,6 +72,15 @@ impl_transformer_identity_method!(BoxTransformerOnce, TransformerOnce);
 
 // Implement TransformerOnce trait for BoxTransformerOnce
 impl<T, R> TransformerOnce<T, R> for BoxTransformerOnce<T, R> {
+    /// Consumes this transformer and applies its one-time callback to `input`.
+    ///
+    /// # Parameters
+    ///
+    /// - `input`: The owned input value passed to the callback.
+    ///
+    /// # Returns
+    ///
+    /// The value produced by the callback.
     #[inline(always)]
     fn apply(self, input: T) -> R {
         (self.function)(input)
@@ -79,6 +93,11 @@ impl<T, R> BoxTransformerOnce<T, R> {
     /// The value is moved into the transformer and does not need to implement
     /// `Clone`. If the transformer is dropped without being called, the
     /// captured value is dropped with it.
+    ///
+    /// # Parameters
+    ///
+    /// - `value`: The owned value returned whenever the resulting transformer
+    ///   is applied.
     ///
     /// # Examples
     ///

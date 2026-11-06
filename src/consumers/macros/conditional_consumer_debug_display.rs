@@ -66,6 +66,19 @@ macro_rules! impl_conditional_consumer_debug_display {
     // Single generic parameter - Consumer types
     ($struct_name:ident < $t:ident >) => {
         impl<$t> std::fmt::Debug for $struct_name<$t> {
+            /// Formats the wrapper's type name and its consumer and predicate.
+            ///
+            /// # Parameters
+            ///
+            /// * `f` - Formatter that receives the debug representation.
+            ///
+            /// # Returns
+            ///
+            /// `Ok(())` when formatting succeeds.
+            ///
+            /// # Errors
+            ///
+            /// Returns the formatter's error if writing the representation fails.
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 f.debug_struct(stringify!($struct_name))
                     .field("consumer", &self.consumer)
@@ -75,6 +88,19 @@ macro_rules! impl_conditional_consumer_debug_display {
         }
 
         impl<$t> std::fmt::Display for $struct_name<$t> {
+            /// Formats a concise summary of the consumer and predicate.
+            ///
+            /// # Parameters
+            ///
+            /// * `f` - Formatter that receives the display representation.
+            ///
+            /// # Returns
+            ///
+            /// `Ok(())` when formatting succeeds.
+            ///
+            /// # Errors
+            ///
+            /// Returns the formatter's error if writing the representation fails.
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 write!(
                     f,
@@ -90,6 +116,19 @@ macro_rules! impl_conditional_consumer_debug_display {
     // Two generic parameters - BiConsumer types
     ($struct_name:ident < $t:ident, $u:ident >) => {
         impl<$t, $u> std::fmt::Debug for $struct_name<$t, $u> {
+            /// Formats the wrapper's type name and its consumer and predicate.
+            ///
+            /// # Parameters
+            ///
+            /// * `f` - Formatter that receives the debug representation.
+            ///
+            /// # Returns
+            ///
+            /// `Ok(())` when formatting succeeds.
+            ///
+            /// # Errors
+            ///
+            /// Returns the formatter's error if writing the representation fails.
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 f.debug_struct(stringify!($struct_name))
                     .field("consumer", &self.consumer)
@@ -99,6 +138,19 @@ macro_rules! impl_conditional_consumer_debug_display {
         }
 
         impl<$t, $u> std::fmt::Display for $struct_name<$t, $u> {
+            /// Formats a concise summary of the consumer and predicate.
+            ///
+            /// # Parameters
+            ///
+            /// * `f` - Formatter that receives the display representation.
+            ///
+            /// # Returns
+            ///
+            /// `Ok(())` when formatting succeeds.
+            ///
+            /// # Errors
+            ///
+            /// Returns the formatter's error if writing the representation fails.
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 write!(
                     f,

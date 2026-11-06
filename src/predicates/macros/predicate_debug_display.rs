@@ -24,6 +24,20 @@ macro_rules! impl_predicate_debug_display {
     // Single generic parameter
     ($struct_name:ident < $t:ident >) => {
         impl<$t> std::fmt::Debug for $struct_name<$t> {
+            /// Formats the wrapper's type name, diagnostic name, and callback
+            /// placeholder.
+            ///
+            /// # Parameters
+            ///
+            /// * `f` - The formatter receiving the debug representation.
+            ///
+            /// # Returns
+            ///
+            /// The formatting result from the formatter.
+            ///
+            /// # Errors
+            ///
+            /// Returns an error if the formatter cannot write the representation.
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 f.debug_struct(stringify!($struct_name))
                     .field("name", &self.metadata.name())
@@ -33,6 +47,19 @@ macro_rules! impl_predicate_debug_display {
         }
 
         impl<$t> std::fmt::Display for $struct_name<$t> {
+            /// Formats the wrapper's type name and diagnostic name.
+            ///
+            /// # Parameters
+            ///
+            /// * `f` - The formatter receiving the display representation.
+            ///
+            /// # Returns
+            ///
+            /// The formatting result from the formatter.
+            ///
+            /// # Errors
+            ///
+            /// Returns an error if the formatter cannot write the representation.
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 match self.metadata.name() {
                     Some(name) => {
@@ -48,6 +75,20 @@ macro_rules! impl_predicate_debug_display {
     // Two generic parameters
     ($struct_name:ident < $t:ident, $u:ident >) => {
         impl<$t, $u> std::fmt::Debug for $struct_name<$t, $u> {
+            /// Formats the wrapper's type name, diagnostic name, and callback
+            /// placeholder.
+            ///
+            /// # Parameters
+            ///
+            /// * `f` - The formatter receiving the debug representation.
+            ///
+            /// # Returns
+            ///
+            /// The formatting result from the formatter.
+            ///
+            /// # Errors
+            ///
+            /// Returns an error if the formatter cannot write the representation.
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 f.debug_struct(stringify!($struct_name))
                     .field("name", &self.metadata.name())
@@ -57,6 +98,19 @@ macro_rules! impl_predicate_debug_display {
         }
 
         impl<$t, $u> std::fmt::Display for $struct_name<$t, $u> {
+            /// Formats the wrapper's type name and diagnostic name.
+            ///
+            /// # Parameters
+            ///
+            /// * `f` - The formatter receiving the display representation.
+            ///
+            /// # Returns
+            ///
+            /// The formatting result from the formatter.
+            ///
+            /// # Errors
+            ///
+            /// Returns an error if the formatter cannot write the representation.
             fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
                 match self.metadata.name() {
                     Some(name) => {

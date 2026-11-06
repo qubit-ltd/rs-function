@@ -81,6 +81,15 @@ impl<T> BoxMutator<T> {
 }
 
 impl<T> Mutator<T> for BoxMutator<T> {
+    /// Applies the stored callback to `value` through a mutable borrow.
+    ///
+    /// The callback is invoked by shared reference to the mutator, so it must
+    /// implement `Fn`; interior mutability and external side effects are still
+    /// possible inside the callback.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - The value to mutate through its exclusive mutable borrow.
     #[inline(always)]
     fn apply(&self, value: &mut T) {
         (self.function)(value)

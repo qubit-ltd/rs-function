@@ -40,6 +40,10 @@ use crate::consumers::macros::impl_conditional_consumer_debug_display;
 /// The conditional wrapper is reusable; `accept` mutably borrows it and
 /// borrows the input by shared reference.
 ///
+/// # Type Parameters
+///
+/// * `T` — the input type borrowed by the wrapped consumer and predicate.
+///
 /// # Examples
 ///
 /// ## Basic Conditional Execution
@@ -111,6 +115,11 @@ impl_box_conditional_consumer!(BoxConditionalStatefulConsumer<T>, BoxStatefulCon
 impl<T> StatefulConsumer<T> for BoxConditionalStatefulConsumer<T> {
     /// Forwards the borrowed value to the wrapped consumer when the predicate
     /// matches.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` — input borrowed for predicate evaluation and conditional
+    ///   forwarding.
     fn accept(&mut self, value: &T) {
         if self.predicate.test(value) {
             self.consumer.accept(value);

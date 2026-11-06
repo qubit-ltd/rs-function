@@ -24,6 +24,10 @@ use crate::predicates::macros::impl_shared_predicate_methods;
 /// shared across threads. Composition methods borrow `&self`, allowing the
 /// original predicate to remain usable after composition.
 ///
+/// # Type Parameters
+///
+/// * `T` - The value type borrowed by the predicate callback.
+///
 /// # Examples
 ///
 /// ```rust
@@ -70,8 +74,17 @@ impl<T> Not for ArcPredicate<T>
 where
     T: 'static,
 {
+    /// The shared predicate type produced by logical negation.
     type Output = ArcPredicate<T>;
 
+    /// Returns a predicate that negates this predicate's result.
+    ///
+    /// The callback and its diagnostic metadata are moved into the returned
+    /// predicate, preserving the original callback's ownership semantics.
+    ///
+    /// # Returns
+    ///
+    /// A predicate that returns the negation of this predicate's result.
     fn not(self) -> Self::Output {
         let metadata = self.metadata;
         let function = self.function;
@@ -83,8 +96,17 @@ impl<T> Not for &ArcPredicate<T>
 where
     T: 'static,
 {
+    /// The shared predicate type produced by logical negation.
     type Output = ArcPredicate<T>;
 
+    /// Returns a predicate that negates this predicate's result.
+    ///
+    /// The callback and its diagnostic metadata are cloned, leaving the
+    /// borrowed predicate usable.
+    ///
+    /// # Returns
+    ///
+    /// A predicate that returns the negation of this predicate's result.
     fn not(self) -> Self::Output {
         let function = self.function.clone();
         ArcPredicate::new_with_metadata(move |value: &T| !function(value), self.metadata.clone())
@@ -100,6 +122,18 @@ impl_predicate_debug_display!(ArcPredicate<T>);
 
 // Implements Predicate trait for ArcPredicate<T>
 impl<T> Predicate<T> for ArcPredicate<T> {
+    /// Applies the shared callback to the borrowed value.
+    ///
+    /// The callback may use interior mutability or other side effects even
+    /// though it is invoked through a shared reference.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - The value borrowed by the callback for this evaluation.
+    ///
+    /// # Returns
+    ///
+    /// `true` when the callback accepts `value`, or `false` otherwise.
     #[inline(always)]
     fn test(&self, value: &T) -> bool {
         (self.function)(value)

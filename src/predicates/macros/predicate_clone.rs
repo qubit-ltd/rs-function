@@ -69,6 +69,11 @@ macro_rules! impl_predicate_clone {
     // Single generic parameter
     ($struct_name:ident < $t:ident >) => {
         impl<$t> Clone for $struct_name<$t> {
+            /// Clones the shared callback handle and its diagnostic metadata.
+            ///
+            /// # Returns
+            ///
+            /// A new wrapper sharing the callback and metadata storage.
             #[inline]
             fn clone(&self) -> Self {
                 Self {
@@ -81,6 +86,11 @@ macro_rules! impl_predicate_clone {
     // Two generic parameters
     ($struct_name:ident < $t:ident, $u:ident >) => {
         impl<$t, $u> Clone for $struct_name<$t, $u> {
+            /// Clones the shared callback handle and its diagnostic metadata.
+            ///
+            /// # Returns
+            ///
+            /// A new wrapper sharing the callback and metadata storage.
             #[inline]
             fn clone(&self) -> Self {
                 Self {

@@ -36,6 +36,10 @@ use crate::mutators::macros::impl_conditional_mutator_debug_display;
 /// - **Implements MutatorOnce**: Can be used anywhere a `MutatorOnce` is
 ///   expected
 ///
+/// # Type Parameters
+///
+/// * `T` - The value type that the mutator conditionally modifies.
+///
 /// # Examples
 ///
 /// ## Basic Conditional Execution
@@ -108,6 +112,14 @@ pub struct BoxConditionalMutatorOnce<T> {
 impl_box_conditional_mutator!(BoxConditionalMutatorOnce<T>, BoxMutatorOnce, MutatorOnce);
 
 impl<T> MutatorOnce<T> for BoxConditionalMutatorOnce<T> {
+    /// Tests the predicate and, when it passes, runs the one-time mutator on
+    /// the mutable value. The callback is consumed even when the predicate
+    /// rejects the value.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - The mutable value tested by the predicate and potentially
+    ///   modified by the callback.
     fn apply(self, value: &mut T) {
         if self.predicate.test(value) {
             self.mutator.apply(value);

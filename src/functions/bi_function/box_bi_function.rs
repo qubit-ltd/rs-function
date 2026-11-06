@@ -17,6 +17,12 @@ use crate::functions::macros::impl_function_constant_method;
 use crate::functions::macros::impl_function_debug_display;
 
 /// The erased callback representation used by this implementation.
+///
+/// # Type Parameters
+///
+/// - `T` - The type of the first borrowed input.
+/// - `U` - The type of the second borrowed input.
+/// - `R` - The value returned by the callback.
 type BoxBiFunctionFn<T, U, R> = Box<dyn Fn(&T, &U) -> R>;
 
 // ============================================================================
@@ -75,6 +81,15 @@ impl<T, U, R> BoxBiFunction<T, U, R> {
 // Implement BiFunction trait for BoxBiFunction
 impl<T, U, R> BiFunction<T, U, R> for BoxBiFunction<T, U, R> {
     /// Invokes the stored callback with borrowed inputs and returns its result.
+    ///
+    /// # Parameters
+    ///
+    /// - `first` - The first input passed by reference to the callback.
+    /// - `second` - The second input passed by reference to the callback.
+    ///
+    /// # Returns
+    ///
+    /// The value produced by the stored callback.
     #[inline(always)]
     fn apply(&self, first: &T, second: &U) -> R {
         (self.function)(first, second)

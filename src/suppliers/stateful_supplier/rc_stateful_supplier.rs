@@ -128,6 +128,11 @@ impl<T> RcStatefulSupplier<T> {
     /// the caller; a panic during the mapper call releases the `RefCell` borrow
     /// through normal unwinding.
     ///
+    /// # Type Parameters
+    ///
+    /// * `U` - The owned value produced by the mapper.
+    /// * `M` - The stateful transformation applied to each source value.
+    ///
     /// # Parameters
     ///
     /// * `mapper` - A stateful transformer applied to each supplied value.
@@ -226,6 +231,14 @@ impl_supplier_debug_display!(RcStatefulSupplier<T>);
 impl_supplier_clone!(RcStatefulSupplier<T>);
 
 impl<T> StatefulSupplier<T> for RcStatefulSupplier<T> {
+    /// Calls the wrapped callback while holding its mutable `RefCell` borrow.
+    ///
+    /// The callback's next value is returned directly. Reentrant calls through
+    /// another clone panic while the shared callback is already borrowed.
+    ///
+    /// # Returns
+    ///
+    /// The value produced by the wrapped callback.
     #[inline]
     fn get(&mut self) -> T {
         let mut function = self.function.borrow_mut();

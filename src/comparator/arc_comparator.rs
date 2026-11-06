@@ -15,7 +15,11 @@ use crate::Comparator;
 use crate::internal::CallbackMetadata;
 use crate::macros::impl_common_name_methods;
 
-/// The erased callback representation used by this implementation.
+/// The erased, thread-safe callback representation stored by `ArcComparator`.
+///
+/// # Type Parameters
+///
+/// * `T` - The value type accepted by both callback arguments.
 type ArcComparatorFn<T> = Arc<dyn Fn(&T, &T) -> Ordering + Send + Sync>;
 
 /// An Arc-based thread-safe comparator with shared ownership.
@@ -48,6 +52,10 @@ pub struct ArcComparator<T> {
 }
 
 impl<T> Clone for ArcComparator<T> {
+    /// Clones the shared callback and its diagnostic metadata.
+    ///
+    /// The callback allocation remains shared between the original and the
+    /// clone; cloning does not copy or invoke the comparator implementation.
     fn clone(&self) -> Self {
         Self {
             function: Arc::clone(&self.function),
@@ -312,6 +320,12 @@ impl<T> ArcComparator<T> {
 }
 
 impl<T> Comparator<T> for ArcComparator<T> {
+    /// Compares two values by invoking the wrapped callback.
+    ///
+    /// # Parameters
+    ///
+    /// * `a` - The first value to compare.
+    /// * `b` - The second value to compare.
     #[inline(always)]
     fn compare(&self, a: &T, b: &T) -> Ordering {
         (self.function)(a, b)
@@ -319,6 +333,15 @@ impl<T> Comparator<T> for ArcComparator<T> {
 }
 
 impl<T> fmt::Debug for ArcComparator<T> {
+    /// Formats the comparator and its optional diagnostic name.
+    ///
+    /// The callback itself is omitted because it has no stable debug
+    /// representation.
+    ///
+    /// # Parameters
+    ///
+    /// * `formatter` - The formatter that receives the comparator's debug
+    ///   representation.
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         formatter
             .debug_struct("ArcComparator")
@@ -328,6 +351,12 @@ impl<T> fmt::Debug for ArcComparator<T> {
 }
 
 impl<T> fmt::Display for ArcComparator<T> {
+    /// Writes the comparator's display label, including its name when set.
+    ///
+    /// # Parameters
+    ///
+    /// * `formatter` - The formatter that receives the comparator's display
+    ///   representation.
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.metadata.name() {
             Some(name) => write!(formatter, "ArcComparator({name})"),

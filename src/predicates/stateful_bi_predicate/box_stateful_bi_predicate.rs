@@ -16,6 +16,11 @@ use crate::predicates::macros::impl_predicate_common_methods;
 use crate::predicates::macros::impl_predicate_debug_display;
 
 /// The erased callback representation used by this implementation.
+///
+/// # Type Parameters
+///
+/// * `T` - The type of the first value passed to the callback.
+/// * `U` - The type of the second value passed to the callback.
 type BoxStatefulBiPredicateFn<T, U> = dyn FnMut(&T, &U) -> bool;
 
 /// A Box-based stateful bi-predicate with single ownership.
@@ -202,6 +207,7 @@ where
     T: 'static,
     U: 'static,
 {
+    /// The boxed predicate type returned when negating this wrapper.
     type Output = BoxStatefulBiPredicate<T, U>;
 
     /// Negates the wrapped predicate while preserving its diagnostic metadata.
@@ -221,6 +227,19 @@ where
 impl_predicate_debug_display!(BoxStatefulBiPredicate<T, U>);
 
 impl<T, U> StatefulBiPredicate<T, U> for BoxStatefulBiPredicate<T, U> {
+    /// Evaluates the wrapped callback for the supplied pair of values.
+    ///
+    /// The mutable receiver allows the callback to update its internal state;
+    /// both input values remain immutably borrowed.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - The first value passed to the callback.
+    /// * `second` - The second value passed to the callback.
+    ///
+    /// # Returns
+    ///
+    /// `true` when the callback accepts the pair, and `false` otherwise.
     #[inline(always)]
     fn test(&mut self, first: &T, second: &U) -> bool {
         (self.function)(first, second)

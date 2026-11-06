@@ -75,6 +75,14 @@ impl<T, R> BoxFunctionOnce<T, R> {
     /// The value is moved into the function and returned by ownership, so `R`
     /// does not need to implement `Clone`.
     ///
+    /// # Parameters
+    ///
+    /// - `value`: The value to return when the function is applied.
+    ///
+    /// # Returns
+    ///
+    /// A boxed function that consumes itself and returns `value`.
+    ///
     /// # Examples
     ///
     /// ```rust
@@ -92,6 +100,18 @@ impl<T, R> BoxFunctionOnce<T, R> {
 }
 
 impl<T, R> FunctionOnce<T, R> for BoxFunctionOnce<T, R> {
+    /// Applies the wrapped callback to `input`, consuming this wrapper.
+    ///
+    /// The input is borrowed for the duration of the callback, and the
+    /// callback's output is returned unchanged.
+    ///
+    /// # Parameters
+    ///
+    /// - `input`: The value borrowed by the wrapped callback.
+    ///
+    /// # Returns
+    ///
+    /// The output produced by the wrapped callback.
     #[inline(always)]
     fn apply(self, input: &T) -> R {
         (self.function)(input)

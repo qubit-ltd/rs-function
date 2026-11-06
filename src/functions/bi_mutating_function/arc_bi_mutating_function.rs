@@ -20,6 +20,12 @@ use crate::functions::macros::impl_function_debug_display;
 use crate::functions::macros::impl_shared_function_methods;
 
 /// The erased callback representation used by this implementation.
+///
+/// # Type Parameters
+///
+/// - `T` - The type of the first mutably borrowed input.
+/// - `U` - The type of the second mutably borrowed input.
+/// - `R` - The value produced by the callback.
 type ArcBiMutatingFunctionFn<T, U, R> = Arc<dyn Fn(&mut T, &mut U) -> R + Send + Sync>;
 
 // ============================================================================

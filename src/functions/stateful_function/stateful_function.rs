@@ -51,6 +51,16 @@ impl<T, R, F> StatefulFunction<T, R> for F
 where
     F: FnMut(&T) -> R,
 {
+    /// Invokes the mutable callback with the borrowed input and returns its
+    /// output, preserving any callback state for subsequent invocations.
+    ///
+    /// # Parameters
+    ///
+    /// * `t` - The input value borrowed for this invocation.
+    ///
+    /// # Returns
+    ///
+    /// The output produced by the callback.
     #[inline(always)]
     fn apply(&mut self, t: &T) -> R {
         self(t)

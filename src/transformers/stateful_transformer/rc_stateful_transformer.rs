@@ -95,6 +95,24 @@ impl_transformer_clone!(RcStatefulTransformer<T, R>);
 
 // Implement StatefulTransformer trait for RcStatefulTransformer
 impl<T, R> StatefulTransformer<T, R> for RcStatefulTransformer<T, R> {
+    /// Applies the wrapped callback to `input` and returns its output.
+    ///
+    /// The callback runs while this wrapper holds an exclusive `RefCell`
+    /// borrow.
+    ///
+    /// # Parameters
+    ///
+    /// * `input` - The input value to transform; ownership is transferred.
+    ///
+    /// # Returns
+    ///
+    /// The output produced by the callback.
+    ///
+    /// # Panics
+    ///
+    /// Panics with a borrow error if the same shared callback is re-entered
+    /// while it is already borrowed mutably. Callback state changes completed
+    /// before a panic remain applied.
     #[inline]
     fn apply(&mut self, input: T) -> R {
         let mut self_fn = self.function.borrow_mut();

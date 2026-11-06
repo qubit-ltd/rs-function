@@ -22,6 +22,13 @@ use crate::consumers::macros::impl_shared_consumer_methods;
 /// The erased callback representation used by this implementation.
 ///
 /// The shared mutex serializes mutable callback access across cloned consumers.
+/// The stored callback must be `Send`; the input types have no additional
+/// bounds.
+///
+/// # Type Parameters
+///
+/// - `T`: Type of the first borrowed value passed to the callback.
+/// - `U`: Type of the second borrowed value passed to the callback.
 type ArcStatefulBiConsumerFn<T, U> = Arc<Mutex<dyn FnMut(&T, &U) + Send>>;
 
 // =======================================================================
@@ -118,6 +125,18 @@ impl<T, U> ArcStatefulBiConsumer<T, U> {
 }
 
 impl<T, U> StatefulBiConsumer<T, U> for ArcStatefulBiConsumer<T, U> {
+    /// Invokes the shared callback with both input values while holding the
+    /// mutex, serializing mutable access across cloned consumers.
+    ///
+    /// # Parameters
+    ///
+    /// - `first`: Shared reference to the first input value.
+    /// - `second`: Shared reference to the second input value.
+    ///
+    /// # Panics
+    ///
+    /// Propagates a panic raised by the callback. The mutex is released without
+    /// poisoning, and callback mutations completed before the panic remain.
     #[inline]
     fn accept(&mut self, first: &T, second: &U) {
         let mut function = self.function.lock();

@@ -86,6 +86,17 @@ pub struct BoxConditionalMutator<T> {
 impl_box_conditional_mutator!(BoxConditionalMutator<T>, BoxMutator, Mutator);
 
 impl<T> Mutator<T> for BoxConditionalMutator<T> {
+    /// Applies the wrapped mutator only when the predicate accepts `value`.
+    ///
+    /// The predicate is evaluated first for every call. When it returns
+    /// `false`, the value is left unchanged; when it returns `true`, the
+    /// wrapped mutator may modify the value through its mutable reference.
+    /// Callback side effects follow the behavior of the supplied predicate
+    /// and mutator.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - The value to inspect and conditionally mutate.
     fn apply(&self, value: &mut T) {
         if self.predicate.test(value) {
             self.mutator.apply(value);

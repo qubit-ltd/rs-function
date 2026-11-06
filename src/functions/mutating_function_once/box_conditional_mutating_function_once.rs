@@ -38,6 +38,12 @@ use crate::functions::macros::impl_conditional_function_debug_display;
 /// - **Conditional Execution**: Only transforms when predicate returns `true`
 /// - **Chainable**: Can add `or_else` branch to create if-then-else logic
 ///
+/// # Type Parameters
+///
+/// * `T` - The input type borrowed immutably by the predicate and mutably by
+///   the selected callback.
+/// * `R` - The result type returned by the selected callback.
+///
 /// # Examples
 ///
 /// ## With or_else Branch

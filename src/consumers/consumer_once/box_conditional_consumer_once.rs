@@ -96,6 +96,11 @@ impl<T> ConsumerOnce<T> for BoxConditionalConsumerOnce<T> {
     ///
     /// If the predicate returns `false`, the callback is dropped without being
     /// invoked.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - The input borrowed by the predicate and, when it returns
+    ///   `true`, by the wrapped consumer.
     fn accept(self, value: &T) {
         if self.predicate.test(value) {
             self.consumer.accept(value);

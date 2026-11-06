@@ -77,6 +77,11 @@ pub struct ArcStatefulFunction<T, R> {
 }
 
 /// The erased callback representation used by this implementation.
+///
+/// # Type Parameters
+///
+/// * `T` is the borrowed input type accepted by the callback.
+/// * `R` is the value returned by each callback invocation.
 type ArcStatefulFn<T, R> = Arc<Mutex<dyn FnMut(&T) -> R + Send + 'static>>;
 
 impl<T, R> ArcStatefulFunction<T, R> {
@@ -113,6 +118,15 @@ impl_function_debug_display!(ArcStatefulFunction<T, R>);
 
 // Implement StatefulFunction trait for ArcStatefulFunction<T, R>
 impl<T, R> StatefulFunction<T, R> for ArcStatefulFunction<T, R> {
+    /// Invokes the shared callback with a borrowed input and returns its
+    /// result.
+    ///
+    /// The callback runs while the internal mutex is held, so re-entering this
+    /// wrapper synchronously from the callback deadlocks.
+    ///
+    /// # Parameters
+    ///
+    /// * `t` - The input borrowed for this callback invocation.
     #[inline]
     fn apply(&mut self, t: &T) -> R {
         let mut function = self.function.lock();

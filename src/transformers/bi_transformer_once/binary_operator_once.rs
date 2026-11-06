@@ -47,7 +47,9 @@ use super::BiTransformerOnce;
 /// let multiply = |x: i32, y: i32| x * y;
 /// assert_eq!(combine(6, 7, multiply), 42);
 /// ```
-pub trait BinaryOperatorOnce<T>: BiTransformerOnce<T, T, T> {}
+pub trait BinaryOperatorOnce<T>: BiTransformerOnce<T, T, T> {
+    // empty
+}
 
 /// Blanket implementation of BinaryOperatorOnce for all BiTransformerOnce<T, T,
 /// T>

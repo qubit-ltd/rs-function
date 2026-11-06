@@ -19,6 +19,10 @@ use crate::predicates::macros::impl_predicate_common_methods;
 use crate::predicates::macros::impl_predicate_debug_display;
 
 /// The erased callback representation used by this implementation.
+///
+/// # Type Parameters
+///
+/// * `T` - The value type borrowed by the stored callback.
 type RcStatefulPredicateFn<T> = Rc<RefCell<dyn FnMut(&T) -> bool>>;
 
 /// An Rc-based stateful predicate with single-threaded shared ownership.
@@ -76,6 +80,11 @@ impl<T> RcStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `RcStatefulPredicate` representing logical AND.
+    ///
+    /// # Panics
+    ///
+    /// Panics if this predicate's callback synchronously re-enters this
+    /// wrapper while the callback is already borrowed.
     #[inline]
     pub fn and<P>(&self, mut other: P) -> RcStatefulPredicate<T>
     where
@@ -108,6 +117,11 @@ impl<T> RcStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `RcStatefulPredicate` representing logical OR.
+    ///
+    /// # Panics
+    ///
+    /// Panics if this predicate's callback synchronously re-enters this
+    /// wrapper while the callback is already borrowed.
     #[inline]
     pub fn or<P>(&self, mut other: P) -> RcStatefulPredicate<T>
     where
@@ -139,6 +153,11 @@ impl<T> RcStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `RcStatefulPredicate` representing logical NAND.
+    ///
+    /// # Panics
+    ///
+    /// Panics if this predicate's callback synchronously re-enters this
+    /// wrapper while the callback is already borrowed.
     #[inline]
     pub fn nand<P>(&self, mut other: P) -> RcStatefulPredicate<T>
     where
@@ -171,6 +190,11 @@ impl<T> RcStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `RcStatefulPredicate` representing logical XOR.
+    ///
+    /// # Panics
+    ///
+    /// Panics if this predicate's callback synchronously re-enters this
+    /// wrapper while the callback is already borrowed.
     #[inline]
     pub fn xor<P>(&self, mut other: P) -> RcStatefulPredicate<T>
     where
@@ -202,6 +226,11 @@ impl<T> RcStatefulPredicate<T> {
     /// # Returns
     ///
     /// A new `RcStatefulPredicate` representing logical NOR.
+    ///
+    /// # Panics
+    ///
+    /// Panics if this predicate's callback synchronously re-enters this
+    /// wrapper while the callback is already borrowed.
     #[inline]
     pub fn nor<P>(&self, mut other: P) -> RcStatefulPredicate<T>
     where
@@ -223,8 +252,10 @@ impl<T> Not for RcStatefulPredicate<T>
 where
     T: 'static,
 {
+    /// The predicate wrapper produced by logical negation.
     type Output = RcStatefulPredicate<T>;
 
+    /// Consumes this wrapper and returns a predicate that negates its result.
     fn not(self) -> Self::Output {
         let metadata = self.metadata;
         let function = self.function;
@@ -242,8 +273,11 @@ impl<T> Not for &RcStatefulPredicate<T>
 where
     T: 'static,
 {
+    /// The predicate wrapper produced by logical negation.
     type Output = RcStatefulPredicate<T>;
 
+    /// Borrows this wrapper and returns a predicate that shares its callback
+    /// state while negating each result.
     fn not(self) -> Self::Output {
         let function = self.function.clone();
         RcStatefulPredicate::new_with_metadata(
@@ -265,6 +299,20 @@ impl_predicate_debug_display!(RcStatefulPredicate<T>);
 
 // Implements StatefulPredicate trait for RcStatefulPredicate<T>
 impl<T> StatefulPredicate<T> for RcStatefulPredicate<T> {
+    /// Invokes the stored mutable callback for `value`.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - The value passed by reference to the stored callback.
+    ///
+    /// # Returns
+    ///
+    /// `true` when the callback accepts `value`, and `false` otherwise.
+    ///
+    /// # Panics
+    ///
+    /// Propagates a panic from the callback. Synchronous re-entry through
+    /// this wrapper also panics while its callback is already borrowed.
     #[inline]
     fn test(&mut self, value: &T) -> bool {
         let mut function = self.function.borrow_mut();

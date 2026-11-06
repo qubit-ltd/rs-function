@@ -69,8 +69,17 @@ where
     T: 'static,
     U: 'static,
 {
+    /// The boxed bi-predicate type produced by logical negation.
     type Output = BoxBiPredicate<T, U>;
 
+    /// Returns a boxed predicate that negates this predicate's result.
+    ///
+    /// The callback and its diagnostic metadata are moved into the returned
+    /// wrapper, preserving the original name while transferring ownership.
+    ///
+    /// # Returns
+    ///
+    /// A boxed predicate that returns the logical negation of this predicate.
     fn not(self) -> Self::Output {
         let metadata = self.metadata;
         let function = self.function;
@@ -83,6 +92,19 @@ where
 impl_predicate_debug_display!(BoxBiPredicate<T, U>);
 
 impl<T, U> BiPredicate<T, U> for BoxBiPredicate<T, U> {
+    /// Evaluates the wrapped callback for the two borrowed inputs.
+    ///
+    /// The callback is invoked through shared references; any interior
+    /// mutability or external side effects come from the callback itself.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - The first value passed to the callback.
+    /// * `second` - The second value passed to the callback.
+    ///
+    /// # Returns
+    ///
+    /// The boolean result returned by the wrapped callback.
     #[inline(always)]
     fn test(&self, first: &T, second: &U) -> bool {
         (self.function)(first, second)

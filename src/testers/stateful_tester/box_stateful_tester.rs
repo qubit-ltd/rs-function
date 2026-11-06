@@ -161,8 +161,18 @@ impl BoxStatefulTester {
 }
 
 impl Not for BoxStatefulTester {
+    /// The owned wrapper type produced by logical negation.
     type Output = BoxStatefulTester;
 
+    /// Returns a tester that negates this tester's result.
+    ///
+    /// # Parameters
+    ///
+    /// * `self` - The tester whose result is negated.
+    ///
+    /// # Returns
+    ///
+    /// A tester that returns the logical negation of this tester's result.
     #[inline]
     fn not(self) -> Self::Output {
         let metadata = self.metadata;
@@ -172,6 +182,15 @@ impl Not for BoxStatefulTester {
 }
 
 impl StatefulTester for BoxStatefulTester {
+    /// Evaluates the wrapped mutable callback and returns its result.
+    ///
+    /// # Parameters
+    ///
+    /// * `self` - The tester whose callback is evaluated.
+    ///
+    /// # Returns
+    ///
+    /// The boolean value returned by the wrapped callback.
     #[inline]
     fn test(&mut self) -> bool {
         (self.function)()
@@ -180,6 +199,20 @@ impl StatefulTester for BoxStatefulTester {
 
 impl fmt::Debug for BoxStatefulTester {
     /// Formats the wrapper type and its optional diagnostic name.
+    ///
+    /// # Parameters
+    ///
+    /// * `self` - The tester whose diagnostic representation is formatted.
+    /// * `formatter` - The destination for the formatted representation.
+    ///
+    /// # Returns
+    ///
+    /// `Ok(())` when formatting succeeds, or `Err(fmt::Error)` if the
+    /// formatter cannot accept more output.
+    ///
+    /// # Errors
+    ///
+    /// Returns `fmt::Error` when the formatter cannot accept more output.
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         formatter
             .debug_struct("BoxStatefulTester")
@@ -191,6 +224,20 @@ impl fmt::Debug for BoxStatefulTester {
 impl fmt::Display for BoxStatefulTester {
     /// Displays `BoxStatefulTester(name)` when named, or
     /// `BoxStatefulTester` when no diagnostic name is set.
+    ///
+    /// # Parameters
+    ///
+    /// * `self` - The tester whose display representation is formatted.
+    /// * `formatter` - The destination for the formatted representation.
+    ///
+    /// # Returns
+    ///
+    /// `Ok(())` when formatting succeeds, or `Err(fmt::Error)` if the
+    /// formatter cannot accept more output.
+    ///
+    /// # Errors
+    ///
+    /// Returns `fmt::Error` when the formatter cannot accept more output.
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self.metadata.name() {
             Some(name) => write!(formatter, "BoxStatefulTester({name})"),

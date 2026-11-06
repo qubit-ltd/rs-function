@@ -105,6 +105,24 @@ impl_transformer_clone!(RcStatefulBiTransformer<T, U, R>);
 
 // Implement StatefulBiTransformer trait for RcStatefulBiTransformer
 impl<T, U, R> StatefulBiTransformer<T, U, R> for RcStatefulBiTransformer<T, U, R> {
+    /// Invokes the shared mutable callback with both consumed inputs.
+    ///
+    /// The callback's state is shared by every clone of this wrapper.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - The first value passed to the callback.
+    /// * `second` - The second value passed to the callback.
+    ///
+    /// # Returns
+    ///
+    /// The value returned by the callback.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the callback synchronously re-enters this wrapper while its
+    /// mutable `RefCell` borrow is active. State mutations completed before a
+    /// panic are not rolled back.
     #[inline]
     fn apply(&mut self, first: T, second: U) -> R {
         let mut self_fn = self.function.borrow_mut();

@@ -20,6 +20,12 @@ use crate::functions::macros::impl_function_debug_display;
 ///
 /// The callback mutably borrows both inputs for each invocation and may be
 /// called repeatedly.
+///
+/// # Type Parameters
+///
+/// - `T` - The type of the first input.
+/// - `U` - The type of the second input.
+/// - `R` - The value produced by each callback invocation.
 type BoxBiMutatingFunctionFn<T, U, R> = Box<dyn Fn(&mut T, &mut U) -> R>;
 
 // ============================================================================
@@ -89,6 +95,17 @@ impl<T, U, R> BoxBiMutatingFunction<T, U, R> {
 
 // Implement BiMutatingFunction trait for BoxBiMutatingFunction
 impl<T, U, R> BiMutatingFunction<T, U, R> for BoxBiMutatingFunction<T, U, R> {
+    /// Calls the stored callback with mutable access to both inputs and returns
+    /// its result.
+    ///
+    /// # Parameters
+    ///
+    /// - `first` - The first input, which the callback may modify.
+    /// - `second` - The second input, which the callback may modify.
+    ///
+    /// # Returns
+    ///
+    /// The value produced by the callback.
     #[inline(always)]
     fn apply(&self, first: &mut T, second: &mut U) -> R {
         (self.function)(first, second)

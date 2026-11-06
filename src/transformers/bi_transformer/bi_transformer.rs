@@ -45,6 +45,17 @@ impl<T, U, R, F> BiTransformer<T, U, R> for F
 where
     F: Fn(T, U) -> R,
 {
+    /// Forwards both owned inputs to the implementing closure and returns its
+    /// output.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - The first input value to forward; it is consumed.
+    /// * `second` - The second input value to forward; it is consumed.
+    ///
+    /// # Returns
+    ///
+    /// The output returned by the implementing closure.
     #[inline(always)]
     fn apply(&self, first: T, second: U) -> R {
         self(first, second)

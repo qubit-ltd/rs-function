@@ -20,6 +20,10 @@ use crate::predicates::macros::impl_predicate_common_methods;
 use crate::predicates::macros::impl_predicate_debug_display;
 
 /// The erased callback representation used by this implementation.
+///
+/// # Type Parameters
+///
+/// * `T` - The borrowed value type accepted by the callback.
 type ArcStatefulPredicateFn<T> = Arc<Mutex<dyn FnMut(&T) -> bool + Send + 'static>>;
 
 /// An Arc-based stateful predicate with thread-safe shared ownership.
@@ -239,6 +243,7 @@ impl<T> Not for ArcStatefulPredicate<T>
 where
     T: 'static,
 {
+    /// The predicate wrapper produced by negating this predicate.
     type Output = ArcStatefulPredicate<T>;
 
     /// Returns a predicate that negates this callback while retaining its
@@ -260,6 +265,7 @@ impl<T> Not for &ArcStatefulPredicate<T>
 where
     T: 'static,
 {
+    /// The predicate wrapper produced by negating the shared predicate.
     type Output = ArcStatefulPredicate<T>;
 
     /// Returns a predicate that negates the shared callback without consuming
@@ -285,6 +291,14 @@ impl_predicate_debug_display!(ArcStatefulPredicate<T>);
 
 // Implements StatefulPredicate trait for ArcStatefulPredicate<T>
 impl<T> StatefulPredicate<T> for ArcStatefulPredicate<T> {
+    /// Evaluates the callback while holding the shared mutex.
+    ///
+    /// The callback may update its internal state. Re-entering this predicate
+    /// synchronously through the same shared state deadlocks.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - The value borrowed by the callback for this evaluation.
     #[inline]
     fn test(&mut self, value: &T) -> bool {
         let mut function = self.function.lock();

@@ -47,7 +47,9 @@ use super::TransformerOnce;
 /// let double = |x: i32| x * 2;
 /// assert_eq!(apply(21, double), 42);
 /// ```
-pub trait UnaryOperatorOnce<T>: TransformerOnce<T, T> {}
+pub trait UnaryOperatorOnce<T>: TransformerOnce<T, T> {
+    // empty
+}
 
 /// Blanket implementation of UnaryOperatorOnce for all TransformerOnce<T, T>
 ///

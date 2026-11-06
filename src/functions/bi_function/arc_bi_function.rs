@@ -23,6 +23,12 @@ use crate::functions::macros::impl_shared_function_methods;
 ///
 /// The shared allocation permits cheap clones while requiring callbacks to be
 /// safe for concurrent calls.
+///
+/// # Type Parameters
+///
+/// * `T` — Type of the first borrowed callback input.
+/// * `U` — Type of the second borrowed callback input.
+/// * `R` — Callback result type.
 type ArcBiFunctionFn<T, U, R> = Arc<dyn Fn(&T, &U) -> R + Send + Sync>;
 
 // ============================================================================
@@ -92,6 +98,11 @@ impl_function_clone!(ArcBiFunction<T, U, R>);
 // Implement BiFunction trait for ArcBiFunction
 impl<T, U, R> BiFunction<T, U, R> for ArcBiFunction<T, U, R> {
     /// Invokes the stored callback with borrowed inputs and returns its result.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` — First input, borrowed for the duration of the callback.
+    /// * `second` — Second input, borrowed for the duration of the callback.
     #[inline(always)]
     fn apply(&self, first: &T, second: &U) -> R {
         (self.function)(first, second)

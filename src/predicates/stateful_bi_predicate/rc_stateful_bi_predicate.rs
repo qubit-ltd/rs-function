@@ -23,6 +23,11 @@ use crate::predicates::macros::impl_predicate_debug_display;
 /// Cloned wrappers retain the same callback state through the `Rc` handle.
 /// Each invocation requires a mutable `RefCell` borrow, so synchronous
 /// re-entry through a shared wrapper panics while that borrow is active.
+///
+/// # Type Parameters
+///
+/// * `T` - The type of the first value passed to the callback.
+/// * `U` - The type of the second value passed to the callback.
 type RcStatefulBiPredicateFn<T, U> = Rc<RefCell<dyn FnMut(&T, &U) -> bool>>;
 
 /// An Rc-based stateful bi-predicate with single-threaded shared ownership.
@@ -271,6 +276,7 @@ where
     T: 'static,
     U: 'static,
 {
+    /// The predicate returned by negating an owned `RcStatefulBiPredicate`.
     type Output = RcStatefulBiPredicate<T, U>;
 
     /// Negates this predicate while transferring its shared callback state.
@@ -305,6 +311,7 @@ where
     T: 'static,
     U: 'static,
 {
+    /// The predicate returned by negating a borrowed `RcStatefulBiPredicate`.
     type Output = RcStatefulBiPredicate<T, U>;
 
     /// Creates a negated predicate that shares this predicate's callback.

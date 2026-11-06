@@ -97,6 +97,20 @@ impl_transformer_debug_display!(ArcStatefulTransformer<T, R>);
 impl_transformer_clone!(ArcStatefulTransformer<T, R>);
 
 impl<T, R> StatefulTransformer<T, R> for ArcStatefulTransformer<T, R> {
+    /// Runs the callback while holding the shared mutex and returns its output.
+    ///
+    /// # Parameters
+    ///
+    /// * `input` - The owned value moved into the wrapped callback.
+    ///
+    /// # Returns
+    ///
+    /// The value returned by the wrapped callback.
+    ///
+    /// The input is moved into the callback. Calls through clones are
+    /// serialized, and synchronous re-entry through the same shared state
+    /// deadlocks. Callback side effects completed before a panic are not
+    /// rolled back.
     #[inline]
     fn apply(&mut self, input: T) -> R {
         let mut func = self.function.lock();

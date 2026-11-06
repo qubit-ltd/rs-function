@@ -76,6 +76,15 @@ impl<T, F> Comparator<T> for F
 where
     F: Fn(&T, &T) -> Ordering,
 {
+    /// Delegates comparison to the wrapped function and returns its ordering.
+    ///
+    /// The input references are forwarded unchanged, and the function's
+    /// comparison semantics determine the result.
+    ///
+    /// # Parameters
+    ///
+    /// * `a` - The first value to compare.
+    /// * `b` - The second value to compare.
     #[inline(always)]
     fn compare(&self, a: &T, b: &T) -> Ordering {
         self(a, b)

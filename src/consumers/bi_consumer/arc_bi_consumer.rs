@@ -95,6 +95,13 @@ impl<T, U> ArcBiConsumer<T, U> {
 
 impl<T, U> BiConsumer<T, U> for ArcBiConsumer<T, U> {
     /// Invokes the shared callback with both borrowed input values.
+    ///
+    /// # Parameters
+    ///
+    /// * `first` - The first input value, borrowed for the duration of the
+    ///   callback invocation.
+    /// * `second` - The second input value, borrowed for the duration of the
+    ///   callback invocation.
     #[inline(always)]
     fn accept(&self, first: &T, second: &U) {
         (self.function)(first, second)

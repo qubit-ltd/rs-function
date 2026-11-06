@@ -60,6 +60,9 @@ impl<E, F> RunnableOnce<E> for F
 where
     F: FnOnce() -> Result<(), E>,
 {
+    /// Executes the closure, consuming it and returning its result unchanged.
+    ///
+    /// Any error or panic produced by the closure propagates to the caller.
     #[inline(always)]
     fn run_once(self) -> Result<(), E> {
         self()

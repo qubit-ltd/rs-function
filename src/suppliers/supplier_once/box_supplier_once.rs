@@ -66,13 +66,20 @@ pub struct BoxSupplierOnce<T> {
 
 impl<T> BoxSupplierOnce<T> {
     impl_supplier_new_methods!(BoxSupplierOnce<T>, |f| Box::new(f));
-    crate::macros::impl_common_name_methods!("supplier");
 
     /// Creates a one-time supplier that returns the owned value.
     ///
     /// The value is moved into the supplier and does not need to implement
     /// `Clone`. If the supplier is dropped without being called, the captured
     /// value is dropped with it.
+    ///
+    /// # Parameters
+    ///
+    /// * `value` - The owned value to return when the supplier is consumed.
+    ///
+    /// # Returns
+    ///
+    /// A one-time supplier that yields `value` without cloning it.
     ///
     /// # Examples
     ///
@@ -89,6 +96,8 @@ impl<T> BoxSupplierOnce<T> {
         Self::new(move || value)
     }
 
+    crate::macros::impl_common_name_methods!("supplier");
+
     // Generates: map(), filter(), zip()
     impl_box_supplier_methods!(BoxSupplierOnce<T>, SupplierOnce);
 
@@ -98,6 +107,11 @@ impl<T> BoxSupplierOnce<T> {
     /// supplier and can move captured values into its output without cloning.
     /// The source supplier's diagnostic name is preserved. Panics from either
     /// callback propagate to the caller.
+    ///
+    /// # Type Parameters
+    ///
+    /// * `U` - The output type produced by the mapper.
+    /// * `M` - The one-time transformer applied to the supplied value.
     ///
     /// # Parameters
     ///
@@ -130,6 +144,15 @@ impl<T> BoxSupplierOnce<T> {
 
 // Generates: implement SupplierOnce for BoxSupplierOnce<T>
 impl<T> SupplierOnce<T> for BoxSupplierOnce<T> {
+    /// Consumes this supplier and invokes its callback once.
+    ///
+    /// # Parameters
+    ///
+    /// * `self` - The supplier consumed to invoke its stored callback.
+    ///
+    /// # Returns
+    ///
+    /// The value produced by the callback.
     #[inline(always)]
     fn get(self) -> T {
         (self.function)()
