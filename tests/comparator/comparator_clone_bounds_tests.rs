@@ -17,7 +17,7 @@ use qubit_function::comparator::Comparator;
 struct NoClone(i32);
 
 #[test]
-fn arc_comparator_clone_does_not_require_clone_for_values() {
+fn test_arc_comparator_clone_does_not_require_clone_for_values() {
     let calls = Arc::new(AtomicUsize::new(0));
     let callback_calls = Arc::clone(&calls);
     let original = ArcComparator::new_with_name("original", move |left: &NoClone, right: &NoClone| {
@@ -38,7 +38,7 @@ fn arc_comparator_clone_does_not_require_clone_for_values() {
 
 #[cfg(feature = "rc")]
 #[test]
-fn rc_comparator_clone_does_not_require_clone_for_values() {
+fn test_rc_comparator_clone_does_not_require_clone_for_values() {
     use std::cell::Cell;
     use std::rc::Rc;
 

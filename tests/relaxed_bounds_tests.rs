@@ -5,11 +5,7 @@
 //
 //    Licensed under the Apache License, Version 2.0.
 // =============================================================================
-#![allow(
-    dead_code,
-    unused_imports,
-    reason = "split contract fixtures share support definitions"
-)]
+#![allow(dead_code, reason = "split contract fixtures share support definitions")]
 #![cfg(all(feature = "rc", feature = "once", feature = "stateful"))]
 
 use std::cell::Cell;
@@ -30,7 +26,6 @@ use qubit_function::ArcStatefulConsumer;
 use qubit_function::ArcStatefulFunction;
 use qubit_function::ArcStatefulMutatingFunction;
 use qubit_function::ArcStatefulMutator;
-use qubit_function::ArcStatefulSupplier;
 use qubit_function::ArcStatefulTransformer;
 use qubit_function::ArcSupplier;
 use qubit_function::ArcTransformer;
@@ -63,7 +58,6 @@ use qubit_function::StatefulConsumer;
 use qubit_function::StatefulFunction;
 use qubit_function::StatefulMutatingFunction;
 use qubit_function::StatefulMutator;
-use qubit_function::StatefulSupplier;
 use qubit_function::StatefulTransformer;
 use qubit_function::Supplier;
 use qubit_function::SupplierOnce;

@@ -174,7 +174,7 @@ fn test_once_constants_keep_name_and_call_paths() {
 }
 
 #[test]
-fn once_constants_move_non_clone_values_without_cloning() {
+fn test_once_constants_move_non_clone_values_without_cloning() {
     let function = BoxFunctionOnce::<i32, Resource>::constant(Resource("function".into()));
     assert_eq!(function.apply(&0).0, "function");
 
