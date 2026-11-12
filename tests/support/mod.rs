@@ -36,11 +36,11 @@ pub(super) fn compile_consumer(features: &[&str], source: &str) -> Output {
     );
     let bin_name_pattern = "[[bin]]\nname = \"qubit-function-contract-fixture\"";
     assert_eq!(FIXTURE_MANIFEST.matches(bin_name_pattern).count(), 1);
-    assert_eq!(FIXTURE_MANIFEST.matches("path = \"../../..\"").count(), 1);
+    assert_eq!(FIXTURE_MANIFEST.matches("path = \"../../../\"").count(), 1);
     let manifest = FIXTURE_MANIFEST
         .replace(bin_name_pattern, &format!("[[bin]]\nname = \"{bin_name}\""))
         .replace(
-            "path = \"../../..\"",
+            "path = \"../../../\"",
             &format!("path = \"{}\"", toml_basic_string(env!("CARGO_MANIFEST_DIR"))),
         );
     fs::write(project_root.join("Cargo.toml"), manifest)
