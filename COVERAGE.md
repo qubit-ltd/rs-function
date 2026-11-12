@@ -143,3 +143,32 @@ separate compile-contract cache.
 
 - [cargo-llvm-cov](https://github.com/taiki-e/cargo-llvm-cov)
 - [LLVM Coverage Mapping](https://llvm.org/docs/CoverageMappingFormat.html)
+
+## Candidate Source Downstream Contracts
+
+To check adapter contracts against candidate sibling checkouts, run from this
+repository with Python 3.11 or later and Rust toolchain 1.94.0 installed:
+
+```bash
+python3 -B scripts/check-downstream-contracts.py \
+  --sibling-root /path/to/rust-common \
+  --report-dir /tmp/rs-function-downstream-report
+```
+
+The sibling root must contain `rs-function`, `rs-executor`,
+`rs-rayon-executor`, `rs-tokio-executor`, and `rs-thread-pool` checkouts. The
+script copies `rs-executor/tests/adapter_contracts` into a temporary project,
+patches all five crates to those checkouts, resolves and then locks Cargo
+metadata, validates each package name, local source, and exact manifest path,
+and runs the fixture with `--locked`. The report directory contains the
+checkout revisions and dirty states, metadata JSON, command logs, and the
+final report. The temporary project and its build target are removed afterward;
+the original downstream manifests and lockfile are not changed.
+
+A missing checkout, registry fallback, duplicate package, wrong source path,
+command failure, missing toolchain, or timeout fails the command. Read the
+associated metadata or `cargo-test.log` file for diagnostics. The default
+per-command timeout is 1200 seconds and can be changed with `--timeout`.
+This is a candidate-source downstream contract check; it does not contribute
+to this crate's coverage percentage and does not validate HTTP or CAS runtime
+behavior.

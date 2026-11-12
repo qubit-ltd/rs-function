@@ -119,3 +119,25 @@ cargo llvm-cov clean
 
 - [cargo-llvm-cov](https://github.com/taiki-e/cargo-llvm-cov)
 - [LLVM Coverage Mapping](https://llvm.org/docs/CoverageMappingFormat.html)
+
+## 候选源码下游契约
+
+要使用候选同级 checkout 检查 adapter 契约，请在本仓库中运行以下命令。需要 Python 3.11
+或更高版本，并已安装 Rust 1.94.0 toolchain：
+
+```bash
+python3 -B scripts/check-downstream-contracts.py \
+  --sibling-root /path/to/rust-common \
+  --report-dir /tmp/rs-function-downstream-report
+```
+
+同级根目录必须包含 `rs-function`、`rs-executor`、`rs-rayon-executor`、`rs-tokio-executor`
+和 `rs-thread-pool` 五个 checkout。脚本会将
+`rs-executor/tests/adapter_contracts` 复制到临时工程，将五个 crate 都 patch 到这些 checkout，先解析再锁定
+Cargo metadata，核验每个包的名称、本地来源和准确 manifest 路径，然后使用 `--locked` 运行 fixture。
+报告目录包含 checkout revision、dirty 状态、metadata JSON、命令日志和最终报告。脚本结束后会删除临时工程及其
+构建 target；不会改动原下游 manifest 或 lock 文件。
+
+缺少 checkout、回退到 registry、包重复、来源路径错误、命令失败、缺少 toolchain 或超时都会导致命令失败。
+请查看对应 metadata 或 `cargo-test.log` 诊断。每条命令默认超时 1200 秒，可通过 `--timeout` 修改。
+这是候选源码下游契约检查，不计入本 crate 覆盖率，也不验证 HTTP 或 CAS 的运行行为。
