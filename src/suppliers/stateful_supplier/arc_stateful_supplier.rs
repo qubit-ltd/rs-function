@@ -53,28 +53,28 @@ use crate::suppliers::macros::impl_supplier_debug_display;
 ///
 /// ```rust
 /// use qubit_function::{ArcStatefulSupplier, StatefulSupplier};
-/// use std::sync::{Arc, Mutex};
 /// use std::thread;
 ///
-/// let counter = Arc::new(Mutex::new(0));
-/// let counter_clone = Arc::clone(&counter);
-///
+/// let mut counter = 0_usize;
 /// let supplier = ArcStatefulSupplier::new(move || {
-///     let mut c = counter_clone.lock().expect("mutex should not be poisoned");
-///     *c += 1;
-///     *c
+///     counter += 1;
+///     counter
 /// });
-///
 /// let mut s1 = supplier.clone();
 /// let mut s2 = supplier.clone();
-///
 /// let h1 = thread::spawn(move || s1.get());
 /// let h2 = thread::spawn(move || s2.get());
-///
-/// let v1 = h1.join().expect("thread should not panic");
-/// let v2 = h2.join().expect("thread should not panic");
-/// assert!(v1 != v2);
+/// let mut values = [
+///     h1.join().expect("thread should not panic"),
+///     h2.join().expect("thread should not panic"),
+/// ];
+/// values.sort_unstable();
+/// assert_eq!(values, [1, 2]);
 /// ```
+///
+/// The clones share the closure's mutable state, and the supplier's internal
+/// mutex serializes calls to that closure. External shared synchronization is
+/// only needed when other code also needs access to the same state.
 ///
 /// ## Reusable Transformations
 ///
