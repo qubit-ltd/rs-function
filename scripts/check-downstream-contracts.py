@@ -37,6 +37,11 @@ def compare_registry_lock_changes(original: dict, candidate: dict):
     return replacements, unrelated
 
 
+def toml_string(value: str) -> str:
+    """Encode a TOML basic string while keeping non-BMP Unicode scalar values."""
+    return json.dumps(value, ensure_ascii=False)
+
+
 def check_metadata(metadata, expected):
     errors = []
     packages = metadata.get("packages") if isinstance(metadata, dict) else None
@@ -73,7 +78,7 @@ def rewrite_manifest(original: str, paths: dict[str, Path]) -> str:
         match = re.match(r'^(\s*)([A-Za-z0-9_-]+)\s*=\s*(.*?)(\r?\n)?$', line)
         if section == "patch.crates-io" and match and match.group(2) in TARGETS:
             name = match.group(2)
-            line = f'{match.group(1)}{name} = {{ path = {json.dumps(str(paths[name]))} }}{match.group(4) or ""}'
+            line = f'{match.group(1)}{name} = {{ path = {toml_string(str(paths[name]))} }}{match.group(4) or ""}'
             patched.add(name)
         if section == "dev-dependencies" and match and match.group(2) in TARGETS:
             name, value = match.group(2), dependencies[match.group(2)]
@@ -82,7 +87,7 @@ def rewrite_manifest(original: str, paths: dict[str, Path]) -> str:
                 raise ValueError(f"unsupported fixture dependency declaration for {name}")
             if isinstance(value, dict) and set(value) - {"version", "path"}:
                 raise ValueError(f"unsupported keys for fixture dependency {name}: {sorted(set(value) - {'version', 'path'})}")
-            line = f'{match.group(1)}{name} = {{ version = {json.dumps(version)}, path = {json.dumps(str(paths[name]))} }}{match.group(4) or ""}'
+            line = f'{match.group(1)}{name} = {{ version = {toml_string(version)}, path = {toml_string(str(paths[name]))} }}{match.group(4) or ""}'
             replaced.add(name)
         lines.append(line)
     if replaced != set(TARGETS):
@@ -92,7 +97,11 @@ def rewrite_manifest(original: str, paths: dict[str, Path]) -> str:
         result += "\n[patch.crates-io]\n"
     for name in TARGETS:
         if name not in patched:
-            result += f'{name} = {{ path = {json.dumps(str(paths[name]))} }}\n'
+            result += f'{name} = {{ path = {toml_string(str(paths[name]))} }}\n'
+    try:
+        tomllib.loads(result)
+    except tomllib.TOMLDecodeError as error:
+        raise ValueError(f"rewritten fixture Cargo.toml is invalid: {error}") from error
     return result
 
 

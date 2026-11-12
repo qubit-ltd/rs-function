@@ -55,6 +55,21 @@ class MetadataTests(unittest.TestCase):
 
 
 class ManifestTests(unittest.TestCase):
+    def test_rewritten_manifest_round_trips_non_bmp_paths(self):
+        import tomllib
+        with tempfile.TemporaryDirectory() as temp:
+            unicode_root = Path(temp) / "candidate-🧪-路径"
+            unicode_root.mkdir()
+            paths = {name: unicode_root / directory for name, directory in checker.TARGETS.items()}
+            original = ('[dev-dependencies]\n'
+                        'qubit-function = "^0.18"\nqubit-executor = "^0.9"\n'
+                        'qubit-rayon-executor = "^0.9"\nqubit-tokio-executor = "^0.12"\n'
+                        'qubit-thread-pool = "^0.12"\n')
+            parsed = tomllib.loads(checker.rewrite_manifest(original, paths))
+            for name, crate_root in paths.items():
+                self.assertEqual(Path(parsed["dev-dependencies"][name]["path"]), crate_root)
+                self.assertEqual(Path(parsed["patch"]["crates-io"][name]["path"]), crate_root)
+
     def test_rewrites_known_fixture_without_touching_original(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
