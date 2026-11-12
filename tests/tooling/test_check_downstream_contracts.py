@@ -124,6 +124,42 @@ class LockTests(unittest.TestCase):
 
 
 class ProcessTests(unittest.TestCase):
+    def test_cleanup_deadline_boundary_never_sleeps_negative(self):
+        cases = (
+            ([0.0, 4.999, 5.001], 1, 2),
+            ([0.0, 5.0], 0, 1),
+            ([0.0, 5.001], 0, 1),
+        )
+        for clock_values, expected_sleeps, expected_probes in cases:
+            with self.subTest(clock_values=clock_values):
+                process = unittest.mock.Mock(pid=12345)
+                process.wait.return_value = -signal.SIGKILL
+
+                def sleep_checked(delay):
+                    if delay < 0:
+                        raise ValueError("sleep length must be non-negative")
+                    self.assertLessEqual(delay, 0.05)
+
+                with unittest.mock.patch.object(
+                    checker.time, "monotonic", side_effect=clock_values
+                ), unittest.mock.patch.object(
+                    checker.time, "sleep", side_effect=sleep_checked
+                ) as sleep, unittest.mock.patch.object(
+                    checker.os, "killpg"
+                ) as killpg, unittest.mock.patch.object(
+                    checker.signal, "signal", return_value=signal.SIG_DFL
+                ):
+                    checker._cleanup_process_group(process)
+
+                self.assertEqual(sleep.call_count, expected_sleeps)
+                self.assertEqual(
+                    killpg.call_args_list,
+                    [unittest.mock.call(12345, signal.SIGTERM)]
+                    + [unittest.mock.call(12345, 0)] * expected_probes
+                    + [unittest.mock.call(12345, signal.SIGKILL)],
+                )
+                process.wait.assert_called_once_with(timeout=5)
+
     def test_keyboard_interrupt_cleans_group_before_reraise(self):
         class FakeProcess:
             pid = 12345

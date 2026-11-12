@@ -124,13 +124,14 @@ def _cleanup_process_group(process):
                     os.killpg(process.pid, 0)
                 except ProcessLookupError:
                     break
-                if time.monotonic() >= deadline:
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
                     try:
                         os.killpg(process.pid, signal.SIGKILL)
                     except ProcessLookupError:
                         pass
                     break
-                time.sleep(min(0.05, deadline - time.monotonic()))
+                time.sleep(min(0.05, remaining))
     except BaseException as error:
         errors.append(error)
     finally:
