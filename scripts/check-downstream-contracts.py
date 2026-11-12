@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Run rs-executor adapter contracts against the five local candidate checkouts."""
 from __future__ import annotations
-import argparse, hashlib, json, os, re, shutil, signal, subprocess, sys, tempfile, time, tomllib
+import argparse, hashlib, json, os, re, shutil, signal, subprocess, sys, tempfile, time, tomllib, threading
 from pathlib import Path
 
 TARGETS = {
@@ -105,6 +105,51 @@ def rewrite_manifest(original: str, paths: dict[str, Path]) -> str:
     return result
 
 
+def _cleanup_process_group(process):
+    """Terminate the command's session, escalating even if its leader exits."""
+    errors = []
+    previous_sigint_handler = None
+    if threading.current_thread() is threading.main_thread():
+        previous_sigint_handler = signal.signal(signal.SIGINT, signal.SIG_IGN)
+
+    try:
+        try:
+            os.killpg(process.pid, signal.SIGTERM)
+        except ProcessLookupError:
+            pass
+        else:
+            deadline = time.monotonic() + 5
+            while True:
+                try:
+                    os.killpg(process.pid, 0)
+                except ProcessLookupError:
+                    break
+                if time.monotonic() >= deadline:
+                    try:
+                        os.killpg(process.pid, signal.SIGKILL)
+                    except ProcessLookupError:
+                        pass
+                    break
+                time.sleep(min(0.05, deadline - time.monotonic()))
+    except BaseException as error:
+        errors.append(error)
+    finally:
+        try:
+            process.wait(timeout=5)
+        except BaseException as error:
+            errors.append(error)
+        if previous_sigint_handler is not None:
+            try:
+                signal.signal(signal.SIGINT, previous_sigint_handler)
+            except BaseException as error:
+                errors.append(error)
+
+    if errors:
+        if any(not isinstance(error, Exception) for error in errors):
+            raise BaseExceptionGroup("process-group cleanup failed", errors)
+        raise ExceptionGroup("process-group cleanup failed", errors)
+
+
 def run(command, log, timeout, env, stderr_log=None):
     log.write_text("# $ " + " ".join(map(str, command)) + "\n", encoding="utf-8")
     start = time.monotonic()
@@ -116,17 +161,24 @@ def run(command, log, timeout, env, stderr_log=None):
                                        env=env, start_new_session=True)
             try:
                 code = process.wait(timeout=timeout)
-            except subprocess.TimeoutExpired:
-                os.killpg(process.pid, signal.SIGTERM)
-                # Keep the process group alive through the full grace period:
-                # the leader may exit on SIGTERM while descendants ignore it.
-                time.sleep(5)
+            except subprocess.TimeoutExpired as original:
                 try:
-                    os.killpg(process.pid, signal.SIGKILL)
-                except ProcessLookupError:
-                    pass
-                process.wait()
-                raise TimeoutError(f"command timed out after {timeout}s: {command[0]}")
+                    _cleanup_process_group(process)
+                except BaseException as cleanup_error:
+                    raise BaseExceptionGroup(
+                        "command timed out and process-group cleanup failed",
+                        [original, cleanup_error],
+                    )
+                raise TimeoutError(f"command timed out after {timeout}s: {command[0]}") from original
+            except BaseException as original:
+                try:
+                    _cleanup_process_group(process)
+                except BaseException as cleanup_error:
+                    raise BaseExceptionGroup(
+                        "command failed and process-group cleanup failed",
+                        [original, cleanup_error],
+                    )
+                raise
     finally:
         if stderr_stream:
             stderr_stream.close()
@@ -206,6 +258,11 @@ def main():
         report.write_text("\n".join(lines), encoding="utf-8")
         print(f"PASS; report: {report}")
         return 0
+    except KeyboardInterrupt:
+        lines += ["", "Result: INTERRUPTED", ""]
+        report.write_text("\n".join(lines), encoding="utf-8")
+        print(f"INTERRUPTED; report: {report}", file=sys.stderr)
+        return 130
     except Exception as error:
         lines += ["", f"Result: FAIL — {type(error).__name__}: {error}", ""]
         report.write_text("\n".join(lines), encoding="utf-8")
