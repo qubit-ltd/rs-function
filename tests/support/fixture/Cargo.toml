@@ -10,7 +10,7 @@ name = "qubit-function-contract-fixture"
 path = "main.rs"
 
 [dependencies]
-qubit-function = { path = "../../..", default-features = false }
+qubit-function = { path = "../../../", default-features = false , version = "^0.18" }
 
 [features]
 default = []
