@@ -37,6 +37,22 @@ class MetadataTests(unittest.TestCase):
         roots = checker.checkout_roots(Path("/siblings"), Path("/candidate-function"))
         self.assertEqual(roots["qubit-function"], Path("/candidate-function"))
 
+    def test_manifest_rewrite_uses_crate_directories_metadata_uses_manifest_files(self):
+        roots = checker.checkout_roots(Path("/siblings"), Path("/candidate-function"))
+        expected = checker.expected_manifests(roots)
+        original = ('[dev-dependencies]\n'
+                    'qubit-function = "^0.18"\n'
+                    'qubit-executor = { path = "../../", version = "^0.9" }\n'
+                    'qubit-rayon-executor = "^0.9"\n'
+                    'qubit-tokio-executor = "^0.12"\n'
+                    'qubit-thread-pool = "^0.12"\n')
+        converted = checker.rewrite_manifest(original, roots)
+        import tomllib
+        parsed = tomllib.loads(converted)
+        for name, root in roots.items():
+            self.assertEqual(Path(parsed["dev-dependencies"][name]["path"]), root)
+            self.assertEqual(expected[name], root / "Cargo.toml")
+
 
 class ManifestTests(unittest.TestCase):
     def test_rewrites_known_fixture_without_touching_original(self):

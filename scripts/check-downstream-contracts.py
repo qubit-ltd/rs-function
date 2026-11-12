@@ -17,6 +17,10 @@ def checkout_roots(sibling_root: Path, function_root: Path) -> dict[str, Path]:
     return roots
 
 
+def expected_manifests(roots: dict[str, Path]) -> dict[str, Path]:
+    return {name: root / "Cargo.toml" for name, root in roots.items()}
+
+
 def check_metadata(metadata, expected):
     errors = []
     packages = metadata.get("packages") if isinstance(metadata, dict) else None
@@ -124,7 +128,7 @@ def main():
     report_dir.mkdir(parents=True, exist_ok=True)
     report = report_dir / "downstream-contracts.md"
     lines = ["# Candidate downstream contract audit", "", f"Sibling root: `{sibling_root}`", ""]
-    expected = {}
+    expected = expected_manifests(roots)
     try:
         for name, root in roots.items():
             manifest = root / "Cargo.toml"
@@ -134,7 +138,6 @@ def main():
             status = subprocess.run(["git", "-C", str(root), "status", "--porcelain=v1"], check=True, text=True, capture_output=True).stdout
             diff = subprocess.run(["git", "-C", str(root), "diff", "--stat", "HEAD"], check=True, text=True, capture_output=True).stdout.strip()
             untracked = subprocess.run(["git", "-C", str(root), "ls-files", "--others", "--exclude-standard"], check=True, text=True, capture_output=True).stdout.strip()
-            expected[name] = manifest.resolve()
             summary = "; ".join(part for part in (diff, f"untracked: {untracked}" if untracked else "") if part) or "clean"
             lines.append(f"- {name}: `{head}`, dirty={bool(status)}; status=`{status.strip() or 'clean'}`; diff summary=`{summary}`")
         env = os.environ.copy()
@@ -144,7 +147,7 @@ def main():
             shutil.copytree(sibling_root / "rs-executor/tests/adapter_contracts", fixture, ignore=shutil.ignore_patterns("target", ".infra"))
             manifest = fixture / "Cargo.toml"
             original = manifest.read_text(encoding="utf-8")
-            manifest.write_text(rewrite_manifest(original, expected), encoding="utf-8")
+            manifest.write_text(rewrite_manifest(original, roots), encoding="utf-8")
             lock = fixture / "Cargo.lock"
             original_lock = lock.read_bytes()
             original_locked = tomllib.loads(original_lock.decode("utf-8"))
