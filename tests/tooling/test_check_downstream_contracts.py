@@ -78,6 +78,32 @@ class ManifestTests(unittest.TestCase):
             checker.rewrite_manifest(original, {name: Path("/sibling/Cargo.toml") for name in checker.TARGETS})
 
 
+class LockTests(unittest.TestCase):
+    def test_allows_only_target_registry_entries_to_be_replaced(self):
+        original = {"package": [
+            {"name": "qubit-function", "version": "0.18.4", "source": "registry+crates-io"},
+            {"name": "qubit-rayon-executor", "version": "0.9.0", "source": "registry+crates-io"},
+            {"name": "unrelated", "version": "1.0.0", "source": "registry+crates-io"},
+        ]}
+        candidate = {"package": [
+            {"name": "unrelated", "version": "1.0.0", "source": "registry+crates-io"},
+        ]}
+        expected = [
+            ("qubit-function", "0.18.4", "registry+crates-io"),
+            ("qubit-rayon-executor", "0.9.0", "registry+crates-io"),
+        ]
+        replacements, unrelated = checker.compare_registry_lock_changes(original, candidate)
+        self.assertEqual(replacements, expected)
+        self.assertEqual(unrelated, [])
+
+        candidate["package"][0]["version"] = "1.1.0"
+        _, unrelated = checker.compare_registry_lock_changes(original, candidate)
+        self.assertEqual(unrelated, [
+            ("unrelated", "1.0.0", "registry+crates-io"),
+            ("unrelated", "1.1.0", "registry+crates-io"),
+        ])
+
+
 class ProcessTests(unittest.TestCase):
     def test_failure_code_and_timeout_reap_process_group(self):
         with tempfile.TemporaryDirectory() as temp:

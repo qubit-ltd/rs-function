@@ -21,6 +21,22 @@ def expected_manifests(roots: dict[str, Path]) -> dict[str, Path]:
     return {name: root / "Cargo.toml" for name, root in roots.items()}
 
 
+def compare_registry_lock_changes(original: dict, candidate: dict):
+    def registry_packages(lock):
+        return {
+            (package.get("name"), package.get("version"), package.get("source"))
+            for package in lock.get("package", [])
+            if str(package.get("source", "")).startswith("registry+")
+        }
+
+    before = registry_packages(original)
+    after = registry_packages(candidate)
+    removed, added = before - after, after - before
+    replacements = sorted(entry for entry in removed if entry[0] in TARGETS)
+    unrelated = sorted(entry for entry in (removed | added) if entry not in replacements)
+    return replacements, unrelated
+
+
 def check_metadata(metadata, expected):
     errors = []
     packages = metadata.get("packages") if isinstance(metadata, dict) else None
@@ -167,12 +183,10 @@ def main():
                     raise RuntimeError("source validation failed: " + "; ".join(errors))
                 lines.append(f"- `cargo +1.94.0 metadata {'--locked' if extra else '(resolve)'}`: exit 0, {elapsed}s; five exact local sources verified.")
             final_locked = tomllib.loads(lock.read_text(encoding="utf-8"))
-            def registry_packages(doc):
-                return {(p.get("name"), p.get("version"), p.get("source"))
-                        for p in doc.get("package", []) if str(p.get("source", "")).startswith("registry+")}
-            changed_registry = sorted(registry_packages(original_locked) ^ registry_packages(final_locked))
+            target_replacements, changed_registry = compare_registry_lock_changes(original_locked, final_locked)
             lines.append(f"- Temporary Cargo.lock SHA-256: `{hashlib.sha256(lock.read_bytes()).hexdigest()}`")
-            lines.append(f"- Registry package lock changes: `{changed_registry or 'none'}`")
+            lines.append(f"- Target registry entries replaced by local path patches: `{target_replacements or 'none'}`")
+            lines.append(f"- Unrelated registry package lock changes: `{changed_registry or 'none'}`")
             if changed_registry:
                 raise RuntimeError("Cargo.lock changed unrelated registry dependencies: " + repr(changed_registry))
             code, elapsed = run(["cargo", "+1.94.0", "test", "--locked", "--manifest-path", str(manifest)], report_dir / "cargo-test.log", args.timeout, env)
