@@ -25,3 +25,16 @@ jobs:
       pages: write
       id-token: write
     uses: qubit-ltd/rs-infra-ci/.github/workflows/github-ci.yml@main
+
+  tooling-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Run candidate checker regression tests
+        run: python3 -B -m unittest discover -s tests/tooling -p 'test_check_downstream_contracts.py'

@@ -122,6 +122,17 @@ cargo llvm-cov clean
 
 ## 候选源码下游契约
 
+检查器的专项回归测试会由 `.github/workflows/ci.yml` 中的 `tooling-tests` 任务自动运行。
+本地使用 Python 3.11 或更高版本运行相同测试集：
+
+```bash
+python3 -B -m unittest discover -s tests/tooling -p 'test_check_downstream_contracts.py'
+```
+
+进程组中断测试要求 POSIX 环境。按 Ctrl-C 后，检查器会清理其受控子进程组、写入
+`Result: INTERRUPTED`，并以状态码 130 退出。这些轻量测试覆盖检查器自身的回归；它们不运行下面的完整下游
+adapter 契约测试，后者需要五个同级 checkout 和 Rust。
+
 要使用候选同级 checkout 检查 adapter 契约，请在本仓库中运行以下命令。需要 Python 3.11
 或更高版本，并已安装 Rust 1.94.0 toolchain：
 

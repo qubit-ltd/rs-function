@@ -146,6 +146,20 @@ separate compile-contract cache.
 
 ## Candidate Source Downstream Contracts
 
+The checker’s focused regression suite runs automatically in the `tooling-tests`
+job in `.github/workflows/ci.yml`. Run the same suite locally with Python 3.11
+or later:
+
+```bash
+python3 -B -m unittest discover -s tests/tooling -p 'test_check_downstream_contracts.py'
+```
+
+The process-group interruption tests require a POSIX environment. Ctrl-C cleans
+up the checker’s controlled child process group, writes `Result: INTERRUPTED`,
+and exits with status 130. These lightweight tests cover the checker’s own
+regressions; they do not run the full downstream adapter contract suite below,
+which requires five sibling checkouts and Rust.
+
 To check adapter contracts against candidate sibling checkouts, run from this
 repository with Python 3.11 or later and Rust toolchain 1.94.0 installed:
 
