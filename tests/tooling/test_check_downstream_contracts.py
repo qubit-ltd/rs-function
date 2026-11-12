@@ -66,13 +66,23 @@ class ProcessTests(unittest.TestCase):
     def test_failure_code_and_timeout_reap_process_group(self):
         with tempfile.TemporaryDirectory() as temp:
             log = Path(temp) / "command.log"
+            ready = Path(temp) / "child-ready"
+            pid_file = Path(temp) / "child.pid"
             marker = Path(temp) / "child-survived"
-            child = "import signal,time,pathlib; signal.signal(signal.SIGTERM, signal.SIG_IGN); time.sleep(.4); pathlib.Path(%r).write_text('alive')" % str(marker)
-            parent = "import subprocess,sys,time; subprocess.Popen([sys.executable,'-c',%r]); time.sleep(20)" % child
+            child = ("import os,signal,time,pathlib; signal.signal(signal.SIGTERM, signal.SIG_IGN); "
+                     "pathlib.Path(%r).write_text(str(os.getpid())); pathlib.Path(%r).touch(); "
+                     "time.sleep(6.5); pathlib.Path(%r).write_text('alive')") % (str(pid_file), str(ready), str(marker))
+            wait_for_ready = f"while not pathlib.Path({str(ready)!r}).exists():\n time.sleep(.01)"
+            parent = ("import pathlib,subprocess,sys,time; subprocess.Popen([sys.executable,'-c',%r]); "
+                      "exec(%r); time.sleep(20)") % (child, wait_for_ready)
             with self.assertRaises(TimeoutError):
-                checker.run([sys.executable, "-c", parent], log, 0.05, os.environ.copy())
-            time.sleep(0.5)
+                checker.run([sys.executable, "-c", parent], log, 1, os.environ.copy())
+            time.sleep(0.75)
             self.assertFalse(marker.exists(), "a child process survived timeout cleanup")
+            child_pid = int(pid_file.read_text())
+            proc_status = Path(f"/proc/{child_pid}/stat")
+            if proc_status.exists():
+                self.assertEqual(proc_status.read_text().split()[2], "Z", "descendant is still running")
             code, _ = checker.run([sys.executable, "-c", "raise SystemExit(7)"], log, 2, os.environ.copy())
             self.assertEqual(code, 7)
 

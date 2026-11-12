@@ -89,10 +89,9 @@ def run(command, log, timeout, env, stderr_log=None):
                 code = process.wait(timeout=timeout)
             except subprocess.TimeoutExpired:
                 os.killpg(process.pid, signal.SIGTERM)
-                try:
-                    process.wait(timeout=5)
-                except subprocess.TimeoutExpired:
-                    pass
+                # Keep the process group alive through the full grace period:
+                # the leader may exit on SIGTERM while descendants ignore it.
+                time.sleep(5)
                 try:
                     os.killpg(process.pid, signal.SIGKILL)
                 except ProcessLookupError:
